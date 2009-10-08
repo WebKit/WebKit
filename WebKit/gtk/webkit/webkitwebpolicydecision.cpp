@@ -86,7 +86,7 @@ void webkit_web_policy_decision_use(WebKitWebPolicyDecision* decision)
     WebKitWebPolicyDecisionPrivate* priv = decision->priv;
 
     if (!priv->isCancelled)
-        (core(priv->frame)->loader()->*(priv->framePolicyFunction))(WebCore::PolicyUse);
+        (core(priv->frame)->loader()->policyChecker()->*(priv->framePolicyFunction))(WebCore::PolicyUse);
 }
 
 /**
@@ -104,7 +104,7 @@ void webkit_web_policy_decision_ignore(WebKitWebPolicyDecision* decision)
     WebKitWebPolicyDecisionPrivate* priv = decision->priv;
 
     if (!priv->isCancelled)
-        (core(priv->frame)->loader()->*(priv->framePolicyFunction))(WebCore::PolicyIgnore);
+        (core(priv->frame)->loader()->policyChecker()->*(priv->framePolicyFunction))(WebCore::PolicyIgnore);
 }
 
 /**
@@ -122,7 +122,7 @@ void webkit_web_policy_decision_download(WebKitWebPolicyDecision* decision)
     WebKitWebPolicyDecisionPrivate* priv = decision->priv;
 
     if (!priv->isCancelled)
-        (core(priv->frame)->loader()->*(priv->framePolicyFunction))(WebCore::PolicyDownload);
+        (core(priv->frame)->loader()->policyChecker()->*(priv->framePolicyFunction))(WebCore::PolicyDownload);
 }
 
 void webkit_web_policy_decision_cancel(WebKitWebPolicyDecision* decision)
