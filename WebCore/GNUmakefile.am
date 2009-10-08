@@ -332,6 +332,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
+	WebCore/bindings/js/JSCallbackData.cpp \
+	WebCore/bindings/js/JSCallbackData.h \
 	WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSClipboardCustom.cpp \

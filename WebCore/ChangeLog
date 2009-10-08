@@ -1,3 +1,9 @@
+2009-10-07  Xan Lopez  <xlopez@igalia.com>
+
+        Fix more breakage in the GTK+ build.
+
+        * GNUmakefile.am:
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
