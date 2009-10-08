@@ -646,14 +646,6 @@ media/video-source-error.html
 # <http://webkit.org/b/28467>
 http/tests/loading/preload-img-test.html
 
-# Missing LayoutTestController implementation
-http/tests/xmlhttprequest/origin-whitelisting-all.html
-http/tests/xmlhttprequest/origin-whitelisting-exact-match.html
-http/tests/xmlhttprequest/origin-whitelisting-https.html
-http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
-http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html
-http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
-
 # No TextInputController
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html

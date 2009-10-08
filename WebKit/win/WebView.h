@@ -759,6 +759,9 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(const RECT*);
 
+    virtual HRESULT STDMETHODCALLTYPE whiteListAccessFromOrigin(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains);
+    virtual HRESULT STDMETHODCALLTYPE resetOriginAccessWhiteLists();
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 

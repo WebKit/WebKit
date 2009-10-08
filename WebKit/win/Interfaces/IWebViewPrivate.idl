@@ -201,4 +201,13 @@ interface IWebViewPrivate : IUnknown
 
     // If rect is 0, the entire backing store will be invalidated.
     HRESULT invalidateBackingStore([in] const RECT* rect);
+
+    // Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
+    // - destinationProtocol: The protocol to grant access to.
+    // - destinationHost: The host to grant access to.
+    // - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
+    HRESULT whiteListAccessFromOrigin([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+
+    // Removes all white list entries created with whiteListAccessFromOrigin.
+    HRESULT resetOriginAccessWhiteLists();
 }

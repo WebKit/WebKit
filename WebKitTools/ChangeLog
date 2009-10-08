@@ -1,3 +1,18 @@
+2009-10-07  Adam Roben  <aroben@apple.com>
+
+        Implement DRT support for origin whitelisting
+
+        Fixes <http://webkit.org/b/30185>.
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting): Reset any origin
+        whitelist, to match Mac DRT.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::whiteListAccessFromOrigin): Call through to
+        IWebViewPrivate::whiteListAccessFromOrigin.
+
 2009-10-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

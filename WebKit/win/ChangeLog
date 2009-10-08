@@ -1,3 +1,20 @@
+2009-10-07  Adam Roben  <aroben@apple.com>
+
+        Expose origin whitelisting in the WebKit API on Windows
+
+        Fixes <http://webkit.org/b/30185>.
+
+        Reviewed by Eric Seidel.
+
+        * Interfaces/IWebViewPrivate.idl: Added whiteListAccessFromOrigin and
+        resetOriginAccessWhiteLists, to match the Mac SPI.
+
+        * WebView.cpp:
+        (WebView::whiteListAccessFromOrigin):
+        (WebView::resetOriginAccessWhiteLists):
+        * WebView.h:
+        Added. These just call through to SecurityOrigin.
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

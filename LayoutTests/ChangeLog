@@ -1,3 +1,13 @@
+2009-10-07  Adam Roben  <aroben@apple.com>
+
+        Start running origin whitelist tests on Windows
+
+        Fixes <http://webkit.org/b/30185>.
+
+        Reviewed by Eric Seidel.
+
+        * platform/win/Skipped:
+
 2009-10-08  Xan Lopez  <xlopez@igalia.com>
 
         Fix typo in skipped test.
