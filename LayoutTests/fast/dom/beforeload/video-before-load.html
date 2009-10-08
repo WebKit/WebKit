@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+</script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>
+
+<video src="../../../media/content/test.mp4" onbeforeload="print('PASS', 'green'); if (window.layoutTestController) window.layoutTestController.notifyDone(); return false;" onload="print('FAIL', 'red'); if (window.layoutTestController) window.layoutTestController.notifyDone();"></video>
+
+</body>
+</html>

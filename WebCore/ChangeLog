@@ -1,3 +1,16 @@
+2009-10-07  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Make beforeload work on <video>/<audio> elements.
+
+        Added fast/dom/beforeload/video-before-load.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseMappedAttribute):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+
 2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
