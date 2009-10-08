@@ -1,3 +1,25 @@
+2009-10-07  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30188
+        
+        Fixes an issue where performing a non DHTML drag-and-drop operation 
+        does not work as expected. For instance, dragging some selected text 
+        to an external application, such as TextEdit.
+        
+        This issue was a regression that arose from patching bug #30107.
+        
+        This change is covered by the manual test: 
+        drag-out-of-background-window.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): When performing a non-DHTML drag 
+        operation then default to drag operations DragOperationGeneric and 
+        DragOperationCopy according to similar functionality removed when fixing
+        bug #30107, see: 
+        http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430 
+
 2009-10-07  Xan Lopez  <xlopez@igalia.com>
 
         Fix more breakage in the GTK+ build.
