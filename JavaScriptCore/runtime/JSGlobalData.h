@@ -36,7 +36,6 @@
 #include "MarkStack.h"
 #include "NumericStrings.h"
 #include "SmallStrings.h"
-#include "Structure.h"
 #include "TimeoutChecker.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

@@ -42,25 +42,6 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
-static inline void getEnumerablePropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames)
-{
-    // Add properties from the static hashtables of properties
-    for (; classInfo; classInfo = classInfo->parentClass) {
-        const HashTable* table = classInfo->propHashTable(exec);
-        if (!table)
-            continue;
-        table->initializeIfNeeded(exec);
-        ASSERT(table->table);
-
-        int hashSizeMask = table->compactSize - 1;
-        const HashEntry* entry = table->table;
-        for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key() && !(entry->attributes() & DontEnum))
-                propertyNames.add(entry->key());
-        }
-    }
-}
-
 void JSObject::markChildren(MarkStack& markStack)
 {
 #ifndef NDEBUG
@@ -443,52 +424,12 @@ bool JSObject::getPropertySpecificValue(ExecState*, const Identifier& propertyNa
 
 void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    bool shouldCache = propertyNames.shouldCache() && !(propertyNames.size() || m_structure->isDictionary());
-
-    if (shouldCache) {
-        if (PropertyNameArrayData* data = m_structure->enumerationCache()) {
-            if (data->cachedPrototypeChain() == m_structure->prototypeChain(exec)) {
-                propertyNames.setData(data);
-                return;
-            }
-
-            m_structure->clearEnumerationCache();
-        }
-    }
-
-    getOwnPropertyNames(exec, propertyNames);
-
-    if (prototype().isObject()) {
-        propertyNames.setShouldCache(false); // No need for our prototypes to waste memory on caching, since they're not being enumerated directly.
-        JSObject* prototype = asObject(this->prototype());
-        while(1) {
-            if (!prototype->structure()->typeInfo().hasDefaultGetPropertyNames()) {
-                prototype->getPropertyNames(exec, propertyNames);
-                break;
-            }
-            prototype->getOwnPropertyNames(exec, propertyNames);
-            JSValue nextProto = prototype->prototype();
-            if (!nextProto.isObject())
-                break;
-            prototype = asObject(nextProto);
-        }
-    }
-
-    if (shouldCache) {
-        StructureChain* protoChain = m_structure->prototypeChain(exec);
-        if (!protoChain->isCacheable())
-            return;
-        RefPtr<PropertyNameArrayData> data = propertyNames.data();
-        data->setCachedPrototypeChain(protoChain);
-        data->setCachedStructure(m_structure);
-        m_structure->setEnumerationCache(data.release());
-    }
+    m_structure->getEnumerablePropertyNames(exec, propertyNames, this);
 }
 
 void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    m_structure->getEnumerablePropertyNames(propertyNames);
-    getEnumerablePropertyNames(exec, classInfo(), propertyNames);
+    m_structure->getOwnEnumerablePropertyNames(exec, propertyNames, this);
 }
 
 bool JSObject::toBoolean(ExecState*) const
