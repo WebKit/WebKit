@@ -1,3 +1,18 @@
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor PolicyChecker out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30155
+
+        Move the policy callback to the policy object.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNavigationAction):
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

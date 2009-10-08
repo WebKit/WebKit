@@ -1,3 +1,54 @@
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor PolicyChecker out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30155
+
+        This patch separates PolicyChecker from FrameLoader.  Loader policy is
+        in change of managing the FrameLoaderClient callbacks.  Ideally, it
+        shouldn't know anything about FrameLoader, but I couldn't quite remove
+        all knowledge (although we might be able to do more later).  In a
+        future patch, I'll move PolicyChecker into a separate file.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::PolicyChecker::handleUnimplementablePolicy):
+        (WebCore::PolicyChecker::cannotShowMIMEType):
+        (WebCore::PolicyChecker::PolicyChecker):
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkContentPolicy):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::PolicyChecker::cancelCheck):
+        (WebCore::PolicyChecker::stopCheck):
+        (WebCore::PolicyChecker::continueAfterContentPolicy):
+        (WebCore::PolicyChecker::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        (WebCore::PolicyChecker::continueAfterNewWindowPolicy):
+        (WebCore::PolicyChecker::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/FrameLoader.h:
+        (WebCore::PolicyChecker::loadType):
+        (WebCore::PolicyChecker::setLoadType):
+        (WebCore::PolicyChecker::delegateIsDecidingNavigationPolicy):
+        (WebCore::PolicyChecker::delegateIsHandlingUnimplementablePolicy):
+        (WebCore::FrameLoader::policy):
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didCancel):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2009-10-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

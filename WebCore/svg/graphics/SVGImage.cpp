@@ -244,7 +244,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_chromeClient.set(new SVGImageChromeClient(this));
         
         // FIXME: If this SVG ends up loading itself, we might leak the world.
-        // THe comment said that the Cache code does not know about CachedImages
+        // The comment said that the Cache code does not know about CachedImages
         // holding Frames and won't know to break the cycle. But 
         m_page.set(new Page(m_chromeClient.get(), dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient, dummyPluginHalterClient));
         m_page->settings()->setJavaScriptEnabled(false);
@@ -256,7 +256,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         ResourceRequest fakeRequest(KURL(ParsedURLString, ""));
         FrameLoader* loader = frame->loader();
         loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
-        loader->cancelContentPolicyCheck(); // cancel any policy checks
+        loader->policyChecker()->cancelCheck(); // cancel any policy checks
         loader->commitProvisionalLoad(0);
         loader->setResponseMIMEType("image/svg+xml");
         loader->begin(KURL()); // create the empty document

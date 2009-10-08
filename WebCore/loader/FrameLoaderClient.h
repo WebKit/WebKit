@@ -60,6 +60,7 @@ namespace WebCore {
     class KURL;
     class NavigationAction;
     class PluginView;
+    class PolicyChecker;
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
@@ -72,7 +73,7 @@ namespace WebCore {
     class String;
     class Widget;
 
-    typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
+    typedef void (PolicyChecker::*FramePolicyFunction)(PolicyAction);
 
     class FrameLoaderClient {
     public:

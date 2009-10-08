@@ -93,7 +93,7 @@ void MainResourceLoader::didCancel(const ResourceError& error)
     RefPtr<MainResourceLoader> protect(this);
 
     if (m_waitingForContentPolicy) {
-        frameLoader()->cancelContentPolicyCheck();
+        frameLoader()->policyChecker()->cancelCheck();
         ASSERT(m_waitingForContentPolicy);
         m_waitingForContentPolicy = false;
         deref(); // balances ref in didReceiveResponse
@@ -182,7 +182,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // synchronously for these redirect cases.
     if (!redirectResponse.isNull()) {
         ref(); // balanced by deref in continueAfterNavigationPolicy
-        frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
+        frameLoader()->policyChecker()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
     }
 }
 
@@ -205,7 +205,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemoteWebArchive = equalIgnoringCase("application/x-webarchive", mimeType) && !m_substituteData.isValid() && !url.isLocalFile();
         if (!frameLoader()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
-            frameLoader()->cannotShowMIMEType(r);
+            frameLoader()->policyChecker()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState())
                 stopLoadingForPolicyChange();
@@ -320,7 +320,25 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;
     ref(); // balanced by deref in continueAfterContentPolicy and didCancel
-    frameLoader()->checkContentPolicy(m_response.mimeType(), callContinueAfterContentPolicy, this);
+
+    ASSERT(frameLoader()->activeDocumentLoader());
+
+    // Always show content with valid substitute data.
+    if (frameLoader()->activeDocumentLoader()->substituteData().isValid()) {
+        callContinueAfterContentPolicy(this, PolicyUse);
+        return;
+    }
+
+#if ENABLE(FTPDIR)
+    // Respect the hidden FTP Directory Listing pref so it can be tested even if the policy delegate might otherwise disallow it
+    Settings* settings = m_frame->settings();
+    if (settings && settings->forceFTPDirectoryListings() && m_response.mimeType() == "application/x-ftp-directory") {
+        callContinueAfterContentPolicy(this, PolicyUse);
+        return;
+    }
+#endif
+
+    frameLoader()->policyChecker()->checkContentPolicy(m_response.mimeType(), callContinueAfterContentPolicy, this);
 }
 
 void MainResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)

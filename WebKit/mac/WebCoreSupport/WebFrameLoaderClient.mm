@@ -718,7 +718,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate) {
-        (core(m_webFrame.get())->loader()->*function)(PolicyUse);
+        (core(m_webFrame.get())->loader()->policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -1207,7 +1207,7 @@ void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
     m_policyListener = nil;
     m_policyFunction = 0;
 
-    (core(m_webFrame.get())->loader()->*function)(action);
+    (core(m_webFrame.get())->loader()->policyChecker()->*function)(action);
 }
 
 String WebFrameLoaderClient::userAgent(const KURL& url)
