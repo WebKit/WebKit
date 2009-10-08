@@ -252,7 +252,7 @@ WebInspector.CookieItemsView.prototype = {
     
     resize: function()
     {
-        if (this._datagrid)
+        if (this._dataGrid)
             this._dataGrid.updateWidths();
     },
 
