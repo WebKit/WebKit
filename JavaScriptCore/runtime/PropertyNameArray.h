@@ -23,14 +23,11 @@
 
 #include "CallFrame.h"
 #include "Identifier.h"
-#include "StructureChain.h"
+#include "Structure.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
-    
-    class Structure;
-    class StructureChain;
 
     class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
     public:

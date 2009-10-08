@@ -30,7 +30,6 @@
 #include "JSType.h"
 #include "JSValue.h"
 #include "PropertyMapHashTable.h"
-#include "PropertyNameArray.h"
 #include "StructureChain.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
@@ -77,6 +76,8 @@ namespace JSC {
 
         ~Structure();
 
+        void markAggregate(MarkStack&);
+
         // These should be used with caution.  
         size_t addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t removePropertyWithoutTransition(const Identifier& propertyName);
@@ -115,6 +116,9 @@ namespace JSC {
             return hasTransition(propertyName._ustring.rep(), attributes);
         }
 
+        void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
+        void getOwnEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
+
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
@@ -122,11 +126,6 @@ namespace JSC {
 
         JSCell* specificValue() { return m_specificValueInPrevious; }
         void despecifyDictionaryFunction(const Identifier& propertyName);
-
-        void setEnumerationCache(PassRefPtr<PropertyNameArrayData> data) { m_cachedPropertyNameArrayData = data; }
-        PropertyNameArrayData* enumerationCache() { return m_cachedPropertyNameArrayData.get(); }
-        void clearEnumerationCache();
-        void getEnumerablePropertyNames(PropertyNameArray&);
 
     private:
         Structure(JSValue prototype, const TypeInfo&);
@@ -141,6 +140,8 @@ namespace JSC {
         size_t put(const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t remove(const Identifier& propertyName);
         void addAnonymousSlots(unsigned slotCount);
+        void getEnumerableNamesFromPropertyTable(PropertyNameArray&);
+        void getEnumerableNamesFromClassInfoTable(ExecState*, const ClassInfo*, PropertyNameArray&);
 
         void expandPropertyMapHashTable();
         void rehashPropertyMapHashTable();
@@ -160,6 +161,8 @@ namespace JSC {
                 return;
             materializePropertyMap();
         }
+
+        void clearEnumerationCache();
 
         signed char transitionCount() const
         {
