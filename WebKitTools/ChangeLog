@@ -2,6 +2,16 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Added support for a parameter setting the button that was
+        pressed in the mouseDown function.
+        https://bugs.webkit.org/show_bug.cgi?id=30220
+
+        * WebKitTools/DumpRenderTree/gtk/EventSender.cpp:
+
+2009-10-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Added a line to the bottom of the expected result to match
         the output of the test.
         https://bugs.webkit.org/show_bug.cgi?id=30220

@@ -139,7 +139,10 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     GdkEvent event;
     memset(&event, 0, sizeof(event));
     event.type = GDK_BUTTON_PRESS;
-    event.button.button = 1;
+    if (argumentCount == 1) {
+        event.button.button = (int)JSValueToNumber(context, arguments[0], exception) + 1;
+        g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    }
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
     event.button.window = GTK_WIDGET(view)->window;
@@ -176,7 +179,10 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     GdkEvent event;
     memset(&event, 0, sizeof(event));
     event.type = GDK_BUTTON_RELEASE;
-    event.button.button = 1;
+    if (argumentCount == 1) {
+        event.button.button = (int)JSValueToNumber(context, arguments[0], exception) + 1;
+        g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    }
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
     event.button.window = GTK_WIDGET(view)->window;
