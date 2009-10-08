@@ -71,6 +71,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::startOffsetAttrString, SVGLength, StartOffset, startOffset)
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::methodAttrString, int, Method, method)
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::spacingAttrString, int, Spacing, spacing)
+    
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
     };
 
 } // namespace WebCore

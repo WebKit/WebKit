@@ -66,6 +66,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGGradientElementIdentifier, SVGNames::spreadMethodAttrString, int, SpreadMethod, spreadMethod)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGGradientElementIdentifier, SVGNames::gradientUnitsAttrString, int, GradientUnits, gradientUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGGradientElementIdentifier, SVGNames::gradientTransformAttrString, SVGTransformList, GradientTransform, gradientTransform)
+
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
     };
 
 } // namespace WebCore

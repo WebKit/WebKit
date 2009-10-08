@@ -43,6 +43,7 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
+    , m_href(this, XLinkNames::hrefAttr)
 {
 }
 

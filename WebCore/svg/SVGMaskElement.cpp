@@ -55,6 +55,7 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , m_y(this, SVGNames::yAttr, LengthModeHeight, "-10%")
     , m_width(this, SVGNames::widthAttr, LengthModeWidth, "120%")
     , m_height(this, SVGNames::heightAttr, LengthModeHeight, "120%")
+    , m_href(this, XLinkNames::hrefAttr)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.

@@ -65,6 +65,9 @@ namespace WebCore {
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGAElement, SVGNames::aTagString, SVGNames::targetAttrString, String, Target, target)
+
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGAElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
     };
 
 } // namespace WebCore

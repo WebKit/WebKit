@@ -1,3 +1,63 @@
+2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by George Staikos.
+
+        Move SVGURIReference ANIMATED_* macros in classes that inherit from it
+        https://bugs.webkit.org/show_bug.cgi?id=30184
+
+        The long term goal is to kill the need for the virtual contextElement() function in SVG code. 
+        No change in functionality, thus no new tests.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        (WebCore::SVGMPathElement::pathElement):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPatternElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        * svg/SVGScriptElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::SVGURIReference):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        * svg/SVGUseElement.h:
+
 2009-10-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

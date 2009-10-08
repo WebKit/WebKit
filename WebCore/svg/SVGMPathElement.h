@@ -31,8 +31,8 @@ namespace WebCore {
     class SVGPathElement;
     
     class SVGMPathElement : public SVGElement,
-                                   SVGURIReference,
-                                   SVGExternalResourcesRequired {
+                            public SVGURIReference,
+                            public SVGExternalResourcesRequired {
     public:
         SVGMPathElement(const QualifiedName&, Document*);
         virtual ~SVGMPathElement();
@@ -43,6 +43,9 @@ namespace WebCore {
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }
+
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMPathElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href) 
     };
 
 } // namespace WebCore

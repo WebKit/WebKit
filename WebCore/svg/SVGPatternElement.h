@@ -70,6 +70,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGNames::patternTagString, SVGNames::patternContentUnitsAttrString, int, PatternContentUnits, patternContentUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGNames::patternTagString, SVGNames::patternTransformAttrString, SVGTransformList, PatternTransform, patternTransform)
 
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
+
         mutable RefPtr<SVGPaintServerPattern> m_resource;
 
     private:

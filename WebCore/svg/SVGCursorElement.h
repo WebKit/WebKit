@@ -57,6 +57,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGNames::cursorTagString, SVGNames::xAttrString, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGNames::cursorTagString, SVGNames::yAttrString, SVGLength, Y, y)
 
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
+
         HashSet<SVGElement*> m_clients;
     };
 

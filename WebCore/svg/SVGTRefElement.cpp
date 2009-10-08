@@ -35,6 +35,7 @@ namespace WebCore {
 SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGURIReference()
+    , m_href(this, XLinkNames::hrefAttr)
 {
 }
 

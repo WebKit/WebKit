@@ -45,7 +45,8 @@ SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* doc)
     , m_y(this, SVGNames::yAttr, LengthModeHeight)
     , m_width(this, SVGNames::widthAttr, LengthModeWidth)
     , m_height(this, SVGNames::heightAttr, LengthModeHeight)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create()) 
+    , m_href(this, XLinkNames::hrefAttr)
     , m_imageLoader(this)
 {
 }

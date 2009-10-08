@@ -55,6 +55,9 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGNames::feImageTagString, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
+        // SVGURIReference
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
+
         CachedResourceHandle<CachedImage> m_cachedImage;
     };
 

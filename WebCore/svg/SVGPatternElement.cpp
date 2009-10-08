@@ -64,6 +64,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , m_patternUnits(this, SVGNames::patternUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(this, SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_patternTransform(this, SVGNames::patternTransformAttr, SVGTransformList::create(SVGNames::patternTransformAttr))
+    , m_href(this, XLinkNames::hrefAttr)
 {
 }
 
