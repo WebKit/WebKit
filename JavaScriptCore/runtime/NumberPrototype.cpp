@@ -28,6 +28,7 @@
 #include "PrototypeFunction.h"
 #include "dtoa.h"
 #include "Operations.h"
+#include "StructureChain.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>

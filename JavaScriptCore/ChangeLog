@@ -1,5 +1,11 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: added missing #include.
+
+        * runtime/NumberPrototype.cpp:
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Migrated some code that didn't belong out of Structure.
