@@ -80,6 +80,11 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGNames::markerTagString, SVGOrientTypeAttrIdentifier, int, OrientType, orientType)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGNames::markerTagString, SVGOrientAngleAttrIdentifier, SVGAngle, OrientAngle, orientAngle)
 
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
+
         RefPtr<SVGResourceMarker> m_marker;
     };
 

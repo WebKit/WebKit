@@ -34,6 +34,7 @@ SVGGElement::SVGGElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

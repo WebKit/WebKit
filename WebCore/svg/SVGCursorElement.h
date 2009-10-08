@@ -60,6 +60,11 @@ namespace WebCore {
         // SVGURIReference
         ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
 
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
+
         HashSet<SVGElement*> m_clients;
     };
 

@@ -52,7 +52,8 @@ namespace WebCore {
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
     : SVGSMILElement(tagName, doc)
     , SVGTests()
-    , SVGExternalResourcesRequired()
+    , SVGExternalResourcesRequired() 
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
     , m_animationValid(false)
 {
 }

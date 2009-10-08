@@ -35,7 +35,6 @@ namespace WebCore {
 char SVGExternalResourcesRequiredIdentifier[] = "SVGExternalResourcesRequired";
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired()
-    : m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

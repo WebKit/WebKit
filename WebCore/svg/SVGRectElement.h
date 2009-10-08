@@ -57,6 +57,11 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::heightAttrString, SVGLength, Height, height)
         ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::rxAttrString, SVGLength, Rx, rx)
         ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::ryAttrString, SVGLength, Ry, ry)
+
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

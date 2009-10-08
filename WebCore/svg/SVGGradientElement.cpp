@@ -49,6 +49,7 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* d
     , m_gradientUnits(this, SVGNames::gradientUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_gradientTransform(this, SVGNames::gradientTransformAttr, SVGTransformList::create(SVGNames::gradientTransformAttr))
     , m_href(this, XLinkNames::hrefAttr)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

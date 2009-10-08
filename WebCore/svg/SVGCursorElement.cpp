@@ -41,6 +41,7 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
     , m_x(this, SVGNames::xAttr, LengthModeWidth)
     , m_y(this, SVGNames::yAttr, LengthModeHeight)
     , m_href(this, XLinkNames::hrefAttr)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

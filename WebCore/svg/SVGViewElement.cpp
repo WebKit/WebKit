@@ -40,6 +40,7 @@ SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
     , SVGZoomAndPan()
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

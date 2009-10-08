@@ -109,6 +109,11 @@ namespace WebCore {
         float calculatePercentForSpline(float percent, unsigned splineIndex) const;
         
     protected:
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
+
         bool m_animationValid;
 
         Vector<String> m_values;

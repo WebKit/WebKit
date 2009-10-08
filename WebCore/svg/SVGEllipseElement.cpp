@@ -42,6 +42,7 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
     , m_cy(this, SVGNames::cyAttr, LengthModeHeight)
     , m_rx(this, SVGNames::rxAttr, LengthModeWidth)
     , m_ry(this, SVGNames::ryAttr, LengthModeHeight)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }    
 

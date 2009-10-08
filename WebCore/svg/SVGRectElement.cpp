@@ -43,6 +43,7 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
     , m_height(this, SVGNames::heightAttr, LengthModeHeight)
     , m_rx(this, SVGNames::rxAttr, LengthModeWidth)
     , m_ry(this, SVGNames::ryAttr, LengthModeHeight)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

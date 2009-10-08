@@ -42,6 +42,7 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     , m_y1(this, SVGNames::y1Attr, LengthModeHeight)
     , m_x2(this, SVGNames::x2Attr, LengthModeWidth)
     , m_y2(this, SVGNames::y2Attr, LengthModeHeight)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

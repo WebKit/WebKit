@@ -37,7 +37,8 @@ SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* doc, 
     : SVGElement(tagName, doc)
     , SVGURIReference()
     , SVGExternalResourcesRequired()
-    , m_href(this, XLinkNames::hrefAttr)
+    , m_href(this, XLinkNames::hrefAttr) 
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
     , m_data(this, this)
 {
     m_data.setCreatedByParser(createdByParser);

@@ -55,6 +55,11 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, SVGNames::clipPathTagString, SVGNames::clipPathUnitsAttrString, int, ClipPathUnits, clipPathUnits)
 
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
+
         RefPtr<SVGResourceClipper> m_clipper;
     };
 

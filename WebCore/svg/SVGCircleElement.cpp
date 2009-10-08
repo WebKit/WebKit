@@ -41,6 +41,7 @@ SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
     , m_cx(this, SVGNames::cxAttr, LengthModeWidth)
     , m_cy(this, SVGNames::cyAttr, LengthModeHeight)
     , m_r(this, SVGNames::rAttr, LengthModeOther)
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 

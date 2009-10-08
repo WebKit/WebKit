@@ -148,6 +148,11 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::widthAttrString, SVGLength, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::heightAttrString, SVGLength, Height, height)
 
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
+
         virtual void documentWillBecomeInactive();
         virtual void documentDidBecomeActive();
 

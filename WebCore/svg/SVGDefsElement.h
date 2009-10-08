@@ -45,6 +45,11 @@ namespace WebCore {
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
+
+        // SVGExternalResourcesRequired
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

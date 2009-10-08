@@ -1,3 +1,104 @@
+2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Move SVGExternalResourcesRequired ANIMATED_* macros in classes that inherit from it
+        https://bugs.webkit.org/show_bug.cgi?id=30218
+
+        The long term goal is to kill the need for the virtual contextElement() function in SVG code. 
+        No change in functionality, thus no new tests.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        * svg/SVGAElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h:
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDefsElement.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::SVGExternalResourcesRequired):
+        * svg/SVGExternalResourcesRequired.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLineElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        * svg/SVGPolyElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        * svg/SVGScriptElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        * svg/SVGViewElement.h:
+
 2009-10-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

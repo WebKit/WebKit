@@ -50,6 +50,7 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , m_markerUnits(this, SVGNames::markerUnitsAttr, SVG_MARKERUNITS_STROKEWIDTH)
     , m_orientType(this, SVGNames::orientAttr, SVG_MARKER_ORIENT_ANGLE)
     , m_orientAngle(this, SVGNames::orientAttr, SVGAngle::create())
+    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
 }
