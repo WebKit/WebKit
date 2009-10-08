@@ -1,3 +1,37 @@
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Migrated some code that didn't belong out of Structure.
+        
+        SunSpider says maybe 1.03x faster.
+
+        * runtime/JSCell.h: Nixed Structure::markAggregate, and made marking of
+        a Structure's prototype the direct responsility of the object using it.
+        (Giving Structure a mark function was misleading because it implied that
+        all live structures get marked during GC, when they don't.)
+        
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        (JSC::JSGlobalObject::markChildren): Added code to mark prototypes stored
+        on the global object. Maybe this wasn't necessary, but now we don't have
+        to wonder.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getEnumerableNamesFromClassInfoTable):
+        * runtime/JSObject.h:
+        (JSC::JSObject::markChildrenDirect):
+        * runtime/PropertyNameArray.h:
+        * runtime/Structure.cpp:
+        * runtime/Structure.h:
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::enumerationCache): Moved property name gathering code
+        from Structure to JSObject because having a Structure iterate its JSObject
+        was a layering violation. A JSObject is implemented using a Structure; not
+        the other way around.
+
 2009-10-08  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
