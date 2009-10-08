@@ -322,7 +322,6 @@
 #include "bindings/V8SVGTRefElement.cpp"
 #include "bindings/V8SVGTSpanElement.cpp"
 #include "bindings/V8SVGUnitTypes.cpp"
-#include "bindings/V8SVGURIReference.cpp"
 #include "bindings/V8SVGUseElement.cpp"
 #include "bindings/V8SVGViewElement.cpp"
 #include "bindings/V8SVGZoomEvent.cpp"

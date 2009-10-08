@@ -346,7 +346,6 @@
             'svg/SVGTransform.idl',
             'svg/SVGTransformList.idl',
             'svg/SVGTransformable.idl',
-            'svg/SVGURIReference.idl',
             'svg/SVGUnitTypes.idl',
             'svg/SVGUseElement.idl',
             'svg/SVGViewElement.idl',
