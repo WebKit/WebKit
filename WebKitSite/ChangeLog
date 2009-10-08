@@ -1,3 +1,11 @@
+2009-10-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add new Windows build prerequisite: Visual Studio 2005 Service Pack 1 ATL Security Update
+
+        * building/tools.html:
+
 2009-10-06  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.
