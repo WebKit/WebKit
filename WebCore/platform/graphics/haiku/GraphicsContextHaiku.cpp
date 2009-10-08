@@ -369,6 +369,11 @@ void GraphicsContext::clip(const Path& path)
     m_data->m_view->ConstrainClippingRegion(path.platformPath());
 }
 
+void GraphicsContext::canvasClip(const Path& path)
+{
+    clip(path);
+}
+
 void GraphicsContext::clipOut(const Path& path)
 {
     if (paintingDisabled())

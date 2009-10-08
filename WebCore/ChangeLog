@@ -1,3 +1,45 @@
+2009-10-08  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Currently, Skia clip paths are 1-bit. This patch makes our path
+        clipping anti-aliased for non-canvas drawing.
+
+        http://code.google.com/p/chromium/issues/detail?id=5927
+        https://bugs.webkit.org/show_bug.cgi?id=28820
+        http://www.imperialviolet.org/2009/09/02/anti-aliased-clipping.html
+
+        Already covered by layout tests. New baselines will be needed in the
+        Chromium tree.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::clip):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::clipPathAntiAliased):
+        (PlatformContextSkia::restore):
+        (PlatformContextSkia::applyAntiAliasedClipPaths):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+
 2009-10-08  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

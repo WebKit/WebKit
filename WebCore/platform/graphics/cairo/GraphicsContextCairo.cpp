@@ -931,6 +931,11 @@ void GraphicsContext::clip(const Path& path)
     m_data->clip(path);
 }
 
+void GraphicsContext::canvasClip(const Path& path)
+{
+    clip(path);
+}
+
 void GraphicsContext::clipOut(const Path& path)
 {
     if (paintingDisabled())
