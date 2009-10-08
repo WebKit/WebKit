@@ -2148,9 +2148,6 @@ void FrameLoader::receivedData(const char* data, int length)
 
 bool FrameLoader::willLoadMediaElementURL(KURL& url)
 {
-    if (!m_client->shouldLoadMediaElementURL(url))
-        return false;
-
     ResourceRequest request(url);
 
     unsigned long identifier;

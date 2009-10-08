@@ -795,24 +795,3 @@ bool WebFrameLoaderClient::shouldUsePluginDocument(const String& mimeType) const
 
     return webView->shouldUseEmbeddedView(mimeType);
 }
-
-bool WebFrameLoaderClient::shouldLoadMediaElementURL(const KURL& url) const
-{
-    WebView* webView = m_webFrame->webView();
-    if (!webView)
-        return true;
-
-    COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (FAILED(webView->policyDelegate(&policyDelegate)) || !policyDelegate)
-        return true;
-
-    COMPtr<IWebPolicyDelegatePrivate> policyDelegatePrivate(Query, policyDelegate);
-    if (!policyDelegatePrivate)
-        return true;
-
-    BOOL retval;
-    if (FAILED(policyDelegatePrivate->shouldLoadMediaURL(webView, BString(url), m_webFrame, &retval)))
-        return true;
-
-    return retval;
-}

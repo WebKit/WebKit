@@ -1,3 +1,13 @@
+2009-10-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove the shouldLoadMediaElementURL implementation.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebPolicyDelegatePrivate.h:
+
 2009-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         Re-land 49269-49271 since reverting them did not fix the tests.

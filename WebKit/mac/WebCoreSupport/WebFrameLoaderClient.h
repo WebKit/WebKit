@@ -208,7 +208,6 @@ private:
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>) const;
     
     virtual bool canCachePage() const;
-    virtual bool shouldLoadMediaElementURL(const WebCore::KURL&) const;
     
     RetainPtr<WebFrame> m_webFrame;
 

@@ -49,6 +49,4 @@ typedef enum {
 @interface NSObject (WebPolicyDelegatePrivate)
 // Needed for <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
 - (BOOL)webView:(WebView *)webView shouldGoToHistoryItem:(WebHistoryItem *)item;
-
-- (BOOL)webView:(WebView *)webView shouldLoadMediaURL:(NSURL *)url inFrame:(WebFrame *)frame;
 @end

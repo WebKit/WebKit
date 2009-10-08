@@ -1,3 +1,14 @@
+2009-10-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove the shouldLoadMediaElementURL implementation.
+
+        * Interfaces/IWebPolicyDelegatePrivate.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldUsePluginDocument):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2009-10-08  Adam Roben  <aroben@apple.com>
 
         Make IWebInspectorPrivate be accessed in a more standard way

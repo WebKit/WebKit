@@ -41,5 +41,4 @@ interface IWebFrame;
 ]
 interface IWebPolicyDelegatePrivate : IUnknown
 {
-    HRESULT shouldLoadMediaURL([in] IWebView* webView, [in] BSTR url, [in] IWebFrame* frame, [out, retval] BOOL* retval);
 }
