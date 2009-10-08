@@ -89,48 +89,13 @@ StringImpl::StringImpl()
     hash();
 }
 
-inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
+inline StringImpl::StringImpl(const UChar* characters, unsigned length)
     : m_data(characters)
     , m_length(length)
     , m_hash(0)
 {
     ASSERT(characters);
     ASSERT(length);
-}
-
-// This constructor is only for use by AtomicString.
-StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
-    : m_data(0)
-    , m_length(length)
-    , m_hash(hash)
-{
-    ASSERT(hash);
-    ASSERT(characters);
-    ASSERT(length);
-
-    setInTable();
-    UChar* data = newUCharVector(length);
-    memcpy(data, characters, length * sizeof(UChar));
-    m_data = data;
-}
-
-// This constructor is only for use by AtomicString.
-StringImpl::StringImpl(const char* characters, unsigned length, unsigned hash)
-    : m_data(0)
-    , m_length(length)
-    , m_hash(hash)
-{
-    ASSERT(hash);
-    ASSERT(characters);
-    ASSERT(length);
-
-    setInTable();
-    UChar* data = newUCharVector(length);
-    for (unsigned i = 0; i != length; ++i) {
-        unsigned char c = characters[i];
-        data[i] = c;
-    }
-    m_data = data;
 }
 
 StringImpl::~StringImpl()
@@ -933,7 +898,7 @@ PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer& buffer)
     unsigned length = buffer.length();
     if (length == 0)
         return empty();
-    return adoptRef(new StringImpl(buffer.release(), length, AdoptBuffer()));
+    return adoptRef(new StringImpl(buffer.release(), length));
 }
 
 PassRefPtr<StringImpl> StringImpl::adopt(Vector<UChar>& vector)
@@ -941,7 +906,7 @@ PassRefPtr<StringImpl> StringImpl::adopt(Vector<UChar>& vector)
     size_t size = vector.size();
     if (size == 0)
         return empty();
-    return adoptRef(new StringImpl(vector.releaseBuffer(), size, AdoptBuffer()));
+    return adoptRef(new StringImpl(vector.releaseBuffer(), size));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
@@ -957,7 +922,7 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     size_t size = sizeof(StringImpl) + length * sizeof(UChar);
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
     data = reinterpret_cast<UChar*>(string + 1);
-    string = new (string) StringImpl(data, length, AdoptBuffer());
+    string = new (string) StringImpl(data, length);
     return adoptRef(string);
 }
 
@@ -998,7 +963,7 @@ PassRefPtr<StringImpl> StringImpl::create(const JSC::UString& str)
 {
     SharedUChar* sharedBuffer = const_cast<JSC::UString*>(&str)->rep()->sharedBuffer();
     if (sharedBuffer) {
-        PassRefPtr<StringImpl> impl = adoptRef(new StringImpl(const_cast<UChar*>(str.data()), str.size(), AdoptBuffer()));
+        PassRefPtr<StringImpl> impl = adoptRef(new StringImpl(str.data(), str.size()));
         sharedBuffer->ref();
         impl->m_sharedBufferAndFlags.set(sharedBuffer);
         return impl;
@@ -1043,7 +1008,7 @@ PassRefPtr<StringImpl> StringImpl::crossThreadString()
 {
     SharedUChar* shared = sharedBuffer();
     if (shared) {
-        RefPtr<StringImpl> impl = adoptRef(new StringImpl(const_cast<UChar*>(m_data), m_length, AdoptBuffer()));
+        RefPtr<StringImpl> impl = adoptRef(new StringImpl(m_data, m_length));
         impl->m_sharedBufferAndFlags.set(shared->crossThreadCopy().releaseRef());
         return impl.release();
     }

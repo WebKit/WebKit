@@ -65,7 +65,9 @@ struct CStringTranslator {
 
     static void translate(StringImpl*& location, const char* const& c, unsigned hash)
     {
-        location = new StringImpl(c, strlen(c), hash); 
+        location = StringImpl::create(c).releaseRef(); 
+        location->setHash(hash);
+        location->setInTable();
     }
 };
 
@@ -140,7 +142,9 @@ struct UCharBufferTranslator {
 
     static void translate(StringImpl*& location, const UCharBuffer& buf, unsigned hash)
     {
-        location = new StringImpl(buf.s, buf.length, hash); 
+        location = StringImpl::create(buf.s, buf.length).releaseRef(); 
+        location->setHash(hash);
+        location->setInTable();
     }
 };
 
@@ -164,7 +168,9 @@ struct HashAndCharactersTranslator {
 
     static void translate(StringImpl*& location, const HashAndCharacters& buffer, unsigned hash)
     {
-        location = new StringImpl(buffer.characters, buffer.length, hash); 
+        location = StringImpl::create(buffer.characters, buffer.length).releaseRef();
+        location->setHash(hash);
+        location->setInTable();
     }
 };
 

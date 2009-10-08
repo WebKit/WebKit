@@ -1,3 +1,29 @@
+2009-10-08  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make AtomicString create its StringImpl via create(), not the constructor,
+        so it gets allocated in a single heap block, saving memory and CPU cycles.
+        This eliminates two StringImpl constructors, making the remaining ones
+        unambiguous, so the "AdoptBuffer" parameter is no longer needed.
+        Added const attribute to UChar* in StringImpl constructor, eliminating the
+        need for several const_casts in calls to it.
+        StringImpl also unfriends AtomicString (OMG drama!!!)
+        https://bugs.webkit.org/show_bug.cgi?id=30141
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::CStringTranslator::translate): Call StringImpl::create().
+        (WebCore::UCharBufferTranslator::translate): Ditto.
+        (WebCore::HashAndCharactersTranslator::translate): Ditto.
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Remove unnecessary AdoptBuffer param.
+        (WebCore::StringImpl::adopt): Ditto.
+        (WebCore::StringImpl::createUninitialized): Ditto.
+        (WebCore::StringImpl::create): Ditto.
+        (WebCore::StringImpl::crossThreadString): Ditto.
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::setHash): Used by AtomicString when creating StringImpls.
+
 2009-10-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
