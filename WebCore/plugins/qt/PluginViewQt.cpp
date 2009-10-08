@@ -110,9 +110,11 @@ void PluginView::updatePluginWidget()
     if (m_drawable)
         XFreePixmap(QX11Info::display(), m_drawable);
 
-    if (!m_isWindowed)
+    if (!m_isWindowed) {
         m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), 
                                    ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
+        QApplication::syncX(); // make sure that the server knows about the Drawable
+    }
 
     // do not call setNPWindowIfNeeded immediately, will be called on paint()
     m_hasPendingGeometryChange = true;
@@ -206,13 +208,9 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
             QPainter painter(&qtDrawable);
             painter.fillRect(m_clipRect, Qt::white);
         }
-    }
 
-    if (syncX) {
-        // We also sync for opaque mode though we made no changes to the drawable.
-        // Not sure why this is needed but gdk fails to recognize the Pixmap handle
-        // that we send below without this.
-        QApplication::syncX();
+        if (syncX)
+            QApplication::syncX();
     }
 
     XEvent xevent;

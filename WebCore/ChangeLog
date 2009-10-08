@@ -1,3 +1,22 @@
+2009-10-08  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless plugins: Remove unnecessary XSync for opaque mode.
+        
+        The reason for the XSync was that the plugin would not know about the
+        Drawable. It turns out that the real reason behind this is that even
+        though XCreatePixmap returns a handle, this id is unknown to the server
+        until we flush the connection.
+        
+        So, move the XSync to right after we create the Pixmap.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30207
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+
 2009-10-07  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.
