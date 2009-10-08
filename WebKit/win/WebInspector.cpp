@@ -72,6 +72,8 @@ HRESULT STDMETHODCALLTYPE WebInspector::QueryInterface(REFIID riid, void** ppvOb
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IWebInspector))
         *ppvObject = static_cast<IWebInspector*>(this);
+    else if (IsEqualGUID(riid, IID_IWebInspectorPrivate))
+        *ppvObject = static_cast<IWebInspectorPrivate*>(this);
     else if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebInspector*>(this);
     else

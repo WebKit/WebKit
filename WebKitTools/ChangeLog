@@ -1,3 +1,17 @@
+2009-10-08  Adam Roben  <aroben@apple.com>
+
+        Use QueryInterface to get IWebInspectorPrivate
+
+        Fixes <http://webkit.org/b/30215> Make IWebInspectorPrivate be
+        accessed in a more standard way
+
+        Reviewed by John Sullivan and Tim Hatcher.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::evaluateInWebInspector): Get the IWebInspector
+        by calling IWebViewPrivate::inspector, then use QueryInterface to get
+        to the IWebInspectorPrivate interface.
+
 2009-10-07  Adam Roben  <aroben@apple.com>
 
         Implement DRT support for origin whitelisting

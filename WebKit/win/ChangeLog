@@ -1,5 +1,29 @@
 2009-10-08  Adam Roben  <aroben@apple.com>
 
+        Make IWebInspectorPrivate be accessed in a more standard way
+
+        IWebViewPrivate::inspectorPrivate has been removed. Callers should
+        instead use IWebViewPrivate::inspector and then use QueryInterface to
+        get the IWebInspectorPrivate interface. This matches how our other COM
+        classes work.
+
+        Fixes <http://webkit.org/b/30215> Make IWebInspectorPrivate be
+        accessed in a more standard way
+
+        Reviewed by John Sullivan and Tim Hatcher.
+
+        * Interfaces/IWebViewPrivate.idl: Removed inspectorPrivate.
+
+        * WebInspector.cpp:
+        (WebInspector::QueryInterface): Support querying to
+        IWebInspectorPrivate.
+
+        * WebView.cpp:
+        * WebView.h:
+        Removed inspectorPrivate.
+
+2009-10-08  Adam Roben  <aroben@apple.com>
+
         Move the new IWebViewPrivate::inspectorPrivate function after all
         functions that existed when Safari 4.0.3 was released
 

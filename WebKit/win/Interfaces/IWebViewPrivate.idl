@@ -208,6 +208,4 @@ interface IWebViewPrivate : IUnknown
 
     // Removes all white list entries created with whiteListAccessFromOrigin.
     HRESULT resetOriginAccessWhiteLists();
-
-    HRESULT inspectorPrivate([out, retval] IWebInspectorPrivate**);
 }
