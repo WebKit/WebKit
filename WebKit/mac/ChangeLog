@@ -1,3 +1,11 @@
+2009-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert 49269-49271 to see if it fixes test failures on SnowLeopard that do not
+        reproduce locally.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
