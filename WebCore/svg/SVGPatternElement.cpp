@@ -66,6 +66,8 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , m_patternTransform(this, SVGNames::patternTransformAttr, SVGTransformList::create(SVGNames::patternTransformAttr))
     , m_href(this, XLinkNames::hrefAttr)
     , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_viewBox(this, SVGNames::viewBoxAttr)
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
 {
 }
 
@@ -197,7 +199,7 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         }
     }
 
-    TransformationMatrix viewBoxCTM = viewBoxToViewTransform(patternBoundaries.width(), patternBoundaries.height()); 
+    TransformationMatrix viewBoxCTM = viewBoxToViewTransform(viewBox(), preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height()); 
     FloatRect patternBoundariesIncludingOverflow = patternBoundaries;
 
     // Apply objectBoundingBoxMode fixup for patternContentUnits, if viewBox is not set.

@@ -68,6 +68,8 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_width(this, SVGNames::widthAttr, LengthModeWidth, "100%")
     , m_height(this, SVGNames::heightAttr, LengthModeHeight, "100%") 
     , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_viewBox(this, SVGNames::viewBoxAttr)
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
     , m_viewSpec(0)
@@ -514,13 +516,8 @@ TransformationMatrix SVGSVGElement::viewBoxToViewTransform(float viewWidth, floa
             viewBoxRect = currentView()->viewBox();
     } else
         viewBoxRect = viewBox();
-    if (!viewBoxRect.width() || !viewBoxRect.height())
-        return TransformationMatrix();
 
-    TransformationMatrix ctm = preserveAspectRatio()->getCTM(viewBoxRect.x(),
-            viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(),
-            0, 0, viewWidth, viewHeight);
-
+    TransformationMatrix ctm = SVGFitToViewBox::viewBoxToViewTransform(viewBoxRect, preserveAspectRatio(), viewWidth, viewHeight);
     if (useCurrentView() && currentView())
         return currentView()->transform()->concatenate().matrix() * ctm;
 

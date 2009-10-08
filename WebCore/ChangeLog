@@ -1,3 +1,43 @@
+2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Move SVGFitToViewBox ANIMATED_* macros in classes that inherit from it
+        https://bugs.webkit.org/show_bug.cgi?id=30230
+
+        This patch also devirtualizes viewBoxToViewTransform(), is it's superflous.
+        viewBoxToViewTransform() is now a simple static heper function in SVGFitToViewBox.
+        As a result, the SVGSVGElement::viewBoxToViewTransform() function now resuses the same logic.
+
+        As side-effect this patch fixes svg/custom/linking-a-03-b-transform.svg, the return
+        statement in SVGSVGElement::viewBoxToViewTransform() was clearly wrong.
+
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::viewBoxToViewTransform):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/SVGPatternElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/SVGViewSpec.h:
+
 2009-10-08  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.

@@ -39,8 +39,6 @@ namespace WebCore {
 char SVGFitToViewBoxIdentifier[] = "SVGFitToViewBox";
 
 SVGFitToViewBox::SVGFitToViewBox()
-    : m_viewBox(this, SVGNames::viewBoxAttr)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
 {
 }
 
@@ -81,15 +79,13 @@ bool SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, float& x, 
     return true;
 }
 
-TransformationMatrix SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
+TransformationMatrix SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, SVGPreserveAspectRatio* preserveAspectRatio, float viewWidth, float viewHeight)
 {
-    FloatRect viewBoxRect = viewBox();
+    ASSERT(preserveAspectRatio);
     if (!viewBoxRect.width() || !viewBoxRect.height())
         return TransformationMatrix();
 
-    return preserveAspectRatio()->getCTM(viewBoxRect.x(),
-            viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(),
-            0, 0, viewWidth, viewHeight);
+    return preserveAspectRatio->getCTM(viewBoxRect.x(), viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(), 0, 0, viewWidth, viewHeight);
 }
 
 bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)

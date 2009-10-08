@@ -1,3 +1,16 @@
+2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Move SVGFitToViewBox ANIMATED_* macros in classes that inherit from it
+        https://bugs.webkit.org/show_bug.cgi?id=30230
+
+        Update the results of linking-a-03-b-transform.svg, it works again.
+
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.checksum:
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.txt:
+
 2009-10-08  Xan Lopez  <xlopez@igalia.com>
 
         Skip another failing test with reference to its bug.

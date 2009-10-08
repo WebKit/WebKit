@@ -128,7 +128,7 @@ namespace WebCore {
 
         virtual void svgAttributeChanged(const QualifiedName&);
 
-        virtual TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         void inheritViewAttributes(SVGViewElement*);
 
@@ -153,6 +153,10 @@ namespace WebCore {
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 
+        // SVGFitToViewBox
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+ 
         virtual void documentWillBecomeInactive();
         virtual void documentDidBecomeActive();
 
