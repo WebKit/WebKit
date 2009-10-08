@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class JSCallbackData;
+
 class JSCustomVoidCallback : public VoidCallback {
 public: 
     static PassRefPtr<JSCustomVoidCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
@@ -43,13 +45,14 @@ public:
         return adoptRef(new JSCustomVoidCallback(callback, globalObject));
     }
     
+    virtual ~JSCustomVoidCallback();
+    
     virtual void handleEvent();
     
 private:
     JSCustomVoidCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+    JSCallbackData* m_data;
 };
 
 } // namespace WebCore

@@ -28955,6 +28955,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCallbackData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCallbackData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSAbstractWorkerCustom.cpp"
 					>
 				</File>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,42 +26,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCustomVoidCallback.h"
+#ifndef JSCallbackData_h
+#define JSCallbackData_h
 
-#include "Frame.h"
-#include "JSCallbackData.h"
-#include "JSDOMWindowCustom.h"
-#include "ScriptController.h"
-#include <runtime/JSLock.h>
-#include <wtf/MainThread.h>
+#include "JSDOMGlobalObject.h"
+#include <runtime/JSObject.h>
+#include <runtime/Protect.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
-    
-using namespace JSC;
-    
-JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_data(new JSCallbackData(callback, globalObject))
-{
-}
 
-JSCustomVoidCallback::~JSCustomVoidCallback()
-{
-    callOnMainThread(JSCallbackData::deleteData, m_data);
-#ifndef NDEBUG
-    m_data = 0;
-#endif
-}
-    
-void JSCustomVoidCallback::handleEvent()
-{
-    ASSERT(m_data);
+// We have to clean up this data on the main thread because unprotecting a
+// JSObject on a non-main thread without synchronization would corrupt the heap
+// (and synchronization would be slow).
 
-    RefPtr<JSCustomVoidCallback> protect(this);
-        
-    JSC::JSLock lock(SilenceAssertionsOnly);
-    MarkedArgumentBuffer args;
-    m_data->invokeCallback(args);
-}
+class JSCallbackData {
+public:
+    static void deleteData(void*);
+
+    JSCallbackData(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+        : m_callback(callback)
+        , m_globalObject(globalObject)
+    {
+    }
+    
+    ~JSCallbackData()
+    {
+        ASSERT(isMainThread());
+    }
+
+    JSC::JSObject* callback() { return m_callback.get(); }
+    JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
+    
+    JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, bool* raisedException = 0);
+
+private:
+    JSC::ProtectedPtr<JSC::JSObject> m_callback;
+    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+};
 
 } // namespace WebCore
+
+#endif // JSCallbackData_h

@@ -429,6 +429,8 @@
             'bindings/js/DOMObjectWithSVGContext.h',
             'bindings/js/GCController.cpp',
             'bindings/js/GCController.h',
+            'bindings/js/JSCallbackData.cpp',
+            'bindings/js/JSCallbackData.h',
             'bindings/js/JSAttrCustom.cpp',
             'bindings/js/JSAudioConstructor.cpp',
             'bindings/js/JSAudioConstructor.h',

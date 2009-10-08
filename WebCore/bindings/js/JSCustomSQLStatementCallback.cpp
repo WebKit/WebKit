@@ -36,55 +36,38 @@
 #include "JSSQLResultSet.h"
 #include "JSSQLTransaction.h"
 #include <runtime/JSLock.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
     
 using namespace JSC;
     
 JSCustomSQLStatementCallback::JSCustomSQLStatementCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_callback(callback)
-    , m_globalObject(globalObject)
+    : m_data(new JSCallbackData(callback, globalObject))
 {
 }
     
+JSCustomSQLStatementCallback::~JSCustomSQLStatementCallback()
+{
+    callOnMainThread(JSCallbackData::deleteData, m_data);
+#ifndef NDEBUG
+    m_data = 0;
+#endif
+}
+
 void JSCustomSQLStatementCallback::handleEvent(SQLTransaction* transaction, SQLResultSet* resultSet, bool& raisedException)
 {
-    ASSERT(m_callback);
-    ASSERT(m_globalObject);
-        
-    ExecState* exec = m_globalObject->globalExec();
-        
-    JSC::JSLock lock(SilenceAssertionsOnly);
-
-    JSValue function = m_callback->get(exec, Identifier(exec, "handleEvent"));
-    CallData callData;
-    CallType callType = function.getCallData(callData);
-    if (callType == CallTypeNone) {
-        callType = m_callback->getCallData(callData);
-        if (callType == CallTypeNone) {
-            // FIXME: Should an exception be thrown here?
-            return;
-        }
-        function = m_callback;
-    }
+    ASSERT(m_data);
 
     RefPtr<JSCustomSQLStatementCallback> protect(this);
 
+    JSC::JSLock lock(SilenceAssertionsOnly);
+    ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), transaction));
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), resultSet));
-        
-    m_globalObject->globalData()->timeoutChecker.start();
-    call(exec, function, callType, callData, m_callback, args);
-    m_globalObject->globalData()->timeoutChecker.stop();
 
-    if (exec->hadException()) {
-        reportCurrentException(exec);
-
-        raisedException = true;
-    }
-
-    Document::updateStyleForAllDocuments();
+    m_data->invokeCallback(args, &raisedException);
 }
 
 }

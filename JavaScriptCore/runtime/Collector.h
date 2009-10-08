@@ -96,7 +96,6 @@ namespace JSC {
         };
         Statistics statistics() const;
 
-        void setGCProtectNeedsLocking();
         void protect(JSValue);
         void unprotect(JSValue);
 
@@ -151,7 +150,6 @@ namespace JSC {
         CollectorHeap primaryHeap;
         CollectorHeap numberHeap;
 
-        OwnPtr<Mutex> m_protectedValuesMutex; // Only non-null if the client explicitly requested it via setGCPrtotectNeedsLocking().
         ProtectCountSet m_protectedValues;
 
         HashSet<MarkedArgumentBuffer*>* m_markListSet;

@@ -1,3 +1,23 @@
+2009-10-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed <rdar://problem/5751979> Database code takes JSLock on secondary
+        thread, permanently slowing down JavaScript
+        
+        Removed the optional lock from Heap::protect, Heap::unprotect, and friends,
+        since WebCore no longer uses it.
+
+        * JavaScriptCore.exp:
+        * runtime/Collector.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::protectedGlobalObjectCount):
+        (JSC::Heap::protectedObjectCount):
+        (JSC::Heap::protectedObjectTypeCounts):
+        * runtime/Collector.h:
+
 2009-10-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

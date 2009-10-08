@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class JSCallbackData;
 class SQLError;
 
 class JSCustomSQLTransactionErrorCallback : public SQLTransactionErrorCallback {
@@ -47,13 +48,14 @@ public:
         return adoptRef(new JSCustomSQLTransactionErrorCallback(callback, globalObject));
     }
     
+    virtual ~JSCustomSQLTransactionErrorCallback();
+    
     virtual void handleEvent(SQLError*);
 
 private:
     JSCustomSQLTransactionErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject* globalObject);
 
-    JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+    JSCallbackData* m_data;
 };
 
 }

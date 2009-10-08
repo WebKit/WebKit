@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,41 +27,51 @@
  */
 
 #include "config.h"
-#include "JSCustomVoidCallback.h"
-
-#include "Frame.h"
 #include "JSCallbackData.h"
-#include "JSDOMWindowCustom.h"
-#include "ScriptController.h"
-#include <runtime/JSLock.h>
-#include <wtf/MainThread.h>
 
-namespace WebCore {
-    
+#include "Document.h"
+#include "JSDOMBinding.h"
+
 using namespace JSC;
     
-JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : m_data(new JSCallbackData(callback, globalObject))
+namespace WebCore {
+
+void JSCallbackData::deleteData(void* context)
 {
+    delete static_cast<JSCallbackData*>(context);
 }
 
-JSCustomVoidCallback::~JSCustomVoidCallback()
+JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedException)
 {
-    callOnMainThread(JSCallbackData::deleteData, m_data);
-#ifndef NDEBUG
-    m_data = 0;
-#endif
+    ASSERT(callback());
+    ASSERT(globalObject());
+
+    ExecState* exec = globalObject()->globalExec();
+    
+    JSValue function = callback()->get(exec, Identifier(exec, "handleEvent"));
+    CallData callData;
+    CallType callType = function.getCallData(callData);
+    if (callType == CallTypeNone) {
+        callType = callback()->getCallData(callData);
+        if (callType == CallTypeNone)
+            return JSValue();
+        function = callback();
+    }
+    
+    globalObject()->globalData()->timeoutChecker.start();
+    JSValue result = call(exec, function, callType, callData, callback(), args);
+    globalObject()->globalData()->timeoutChecker.stop();
+
+    Document::updateStyleForAllDocuments();
+
+    if (exec->hadException()) {
+        reportCurrentException(exec);
+        if (raisedException)
+            *raisedException = true;
+        return result;
+    }
+    
+    return result;
 }
     
-void JSCustomVoidCallback::handleEvent()
-{
-    ASSERT(m_data);
-
-    RefPtr<JSCustomVoidCallback> protect(this);
-        
-    JSC::JSLock lock(SilenceAssertionsOnly);
-    MarkedArgumentBuffer args;
-    m_data->invokeCallback(args);
-}
-
 } // namespace WebCore

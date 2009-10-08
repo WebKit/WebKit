@@ -37,7 +37,8 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-    
+
+class JSCallbackData;    
 class SQLError;
     
 class JSCustomSQLStatementErrorCallback : public SQLStatementErrorCallback {
@@ -46,14 +47,15 @@ public:
     {
         return adoptRef(new JSCustomSQLStatementErrorCallback(callback, globalObject));
     }
-        
+
+    virtual ~JSCustomSQLStatementErrorCallback();
+
     virtual bool handleEvent(SQLTransaction*, SQLError*);
 
 private:
     JSCustomSQLStatementErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+    JSCallbackData* m_data;
 };
     
 }

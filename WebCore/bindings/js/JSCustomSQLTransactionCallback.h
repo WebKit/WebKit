@@ -41,6 +41,7 @@ namespace JSC {
 namespace WebCore {
 
 class Frame;
+class JSCallbackData;
 class JSDOMGlobalObject;
 
 class JSCustomSQLTransactionCallback : public SQLTransactionCallback {
@@ -57,10 +58,7 @@ public:
 private:
     JSCustomSQLTransactionCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    static void deleteData(void*);
-
-    class Data;
-    Data* m_data;
+    JSCallbackData* m_data;
 };
 
 }

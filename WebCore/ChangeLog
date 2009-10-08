@@ -1,3 +1,62 @@
+2009-10-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed <rdar://problem/5751979> Database code takes JSLock on secondary
+        thread, permanently slowing down JavaScript
+
+        Changed callback objects to use a standard helper object. The helper
+        object ASSERTs that it is deleted on the main thread, so no lock is
+        required when unprotecting its members. It also centralizes some previously
+        duplicated code.
+        
+        Callback objects that might be deleted on a secondary thread use
+        callOnMainThread to delete their helper objects on the main thread.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCallbackData.cpp: Copied from bindings/js/JSCustomSQLTransactionCallback.cpp.
+        (WebCore::JSCallbackData::deleteData):
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCallbackData.h: Copied from bindings/js/JSCustomSQLTransactionCallback.cpp.
+        (WebCore::JSCallbackData::JSCallbackData):
+        (WebCore::JSCallbackData::~JSCallbackData):
+        (WebCore::JSCallbackData::callback):
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::JSCustomPositionCallback):
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionCallback.h:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::JSCustomPositionErrorCallback):
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::JSCustomSQLStatementCallback):
+        (WebCore::JSCustomSQLStatementCallback::~JSCustomSQLStatementCallback):
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback):
+        (WebCore::JSCustomSQLStatementErrorCallback::~JSCustomSQLStatementErrorCallback):
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback):
+        (WebCore::JSCustomSQLTransactionErrorCallback::~JSCustomSQLTransactionErrorCallback):
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::JSCustomVoidCallback):
+        (WebCore::JSCustomVoidCallback::~JSCustomVoidCallback):
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.h:
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+
 2009-10-07  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dave Levin.

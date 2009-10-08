@@ -26,14 +26,14 @@
 #ifndef JSCustomPositionCallback_h
 #define JSCustomPositionCallback_h
 
+#include "JSCallbackData.h"
 #include "PositionCallback.h"
-#include "JSDOMGlobalObject.h"
-#include <runtime/Protect.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class Geoposition;
+class JSDOMGlobalObject;
 
 class JSCustomPositionCallback : public PositionCallback {
 public:
@@ -46,9 +46,8 @@ private:
     JSCustomPositionCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     virtual void handleEvent(Geoposition*);
-
-    JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+    
+    JSCallbackData m_data;
 };
     
 } // namespace WebCore
