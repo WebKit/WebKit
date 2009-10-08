@@ -35,7 +35,6 @@
         (JSC::JSValue::operator bool): Test for the empty value tag, instead
         of testing for the cell tag with a 0 payload.
 
-<<<<<<< .mine
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
@@ -70,7 +69,6 @@
         was a layering violation. A JSObject is implemented using a Structure; not
         the other way around.
 
-=======
 2009-10-08  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
@@ -83,7 +81,6 @@
         * jit/JITCall.cpp:
         (JSC::JIT::compileOpCall):
 
->>>>>>> .r49322
 2009-10-07  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: removed no longer exported symbol.
