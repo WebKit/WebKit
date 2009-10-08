@@ -116,8 +116,6 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT inspector([out, retval] IWebInspector**);
 
-    HRESULT inspectorPrivate([out, retval] IWebInspectorPrivate**);
-
     HRESULT clearUndoRedoOperations();
 
     HRESULT setProhibitsMainFrameScrolling([in] BOOL prohibits);
@@ -210,4 +208,6 @@ interface IWebViewPrivate : IUnknown
 
     // Removes all white list entries created with whiteListAccessFromOrigin.
     HRESULT resetOriginAccessWhiteLists();
+
+    HRESULT inspectorPrivate([out, retval] IWebInspectorPrivate**);
 }

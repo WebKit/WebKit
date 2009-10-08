@@ -1,3 +1,16 @@
+2009-10-08  Adam Roben  <aroben@apple.com>
+
+        Move the new IWebViewPrivate::inspectorPrivate function after all
+        functions that existed when Safari 4.0.3 was released
+
+        Fixes <http://webkit.org/b/30085> REGRESSION (r49091): run-safari
+        crashes in Safari.dll
+
+        Reviewed by John Sullivan.
+
+        * Interfaces/IWebViewPrivate.idl: Moved inspectorPrivate to the end of
+        the interface, so it won't modify the vtable that Safari 4.0.3 sees.
+
 2009-10-07  Adam Roben  <aroben@apple.com>
 
         Expose origin whitelisting in the WebKit API on Windows
