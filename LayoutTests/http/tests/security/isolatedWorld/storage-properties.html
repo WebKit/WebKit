@@ -10,6 +10,7 @@ sessionStorage.foo = "Visible";
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.evaluateScriptInIsolatedWorld(
+    0,
     "document.getElementById('console').innerHTML = localStorage.foo + ' and ' + sessionStorage.foo");
 }
 </script>

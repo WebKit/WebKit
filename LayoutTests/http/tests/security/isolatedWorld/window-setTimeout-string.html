@@ -16,6 +16,7 @@ if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.waitUntilDone();
   layoutTestController.evaluateScriptInIsolatedWorld(
+    0,
     "document.foo = 'PASS';\n" +
     "window.func = function () {\n" +
     "  alert(document.foo);\n" +

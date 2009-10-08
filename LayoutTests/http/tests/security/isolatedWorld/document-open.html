@@ -7,6 +7,7 @@ window.open = function () { alert("FAIL: Visible in isolated world."); };
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.evaluateScriptInIsolatedWorld(
+    0,
     "window.open = function () { alert('PASS'); };\n" +
     "document.open(1, 2, 3);");
 }

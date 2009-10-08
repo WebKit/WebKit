@@ -15,7 +15,7 @@ bt.click();
 document.body.world = 'Main';
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
-  layoutTestController.evaluateScriptInIsolatedWorld(document.getElementById('isolatedScript').innerHTML);
+  layoutTestController.evaluateScriptInIsolatedWorld(0, document.getElementById('isolatedScript').innerHTML);
 }
 </script>
 </body>

@@ -13,6 +13,7 @@ for (p in window) {
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.evaluateScriptInIsolatedWorld(
+    0,
     "(function() {\n" +
     "  for (p in window) {\n" +
     "    var obj = window[p];\n" +

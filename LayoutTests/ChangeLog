@@ -1,3 +1,40 @@
+2009-10-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        r49278 added support for reusing isolated worlds, and the
+        corresponding change to Chromium's LayoutTestController changed
+        to expect two arguments. The first argument is the world that
+        the script should run in.
+
+        This change fixes the tests by updating them all to pass 0
+        for the world id. The specific world id used for these tests
+        doesn't really matter because they don't test world interaction.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30231
+
+        * http/tests/security/isolatedWorld/all-window-properties.html:
+        * http/tests/security/isolatedWorld/all-window-prototypes.html:
+        * http/tests/security/isolatedWorld/body-properties.html:
+        * http/tests/security/isolatedWorld/body-prototype.html:
+        * http/tests/security/isolatedWorld/click-event.html:
+        * http/tests/security/isolatedWorld/document-open.html:
+        * http/tests/security/isolatedWorld/document-properties.html:
+        * http/tests/security/isolatedWorld/document-prototype.html:
+        * http/tests/security/isolatedWorld/global-variables.html:
+        * http/tests/security/isolatedWorld/image-properties.html:
+        * http/tests/security/isolatedWorld/image-prototype.html:
+        * http/tests/security/isolatedWorld/location-properties.html:
+        * http/tests/security/isolatedWorld/location-prototype.html:
+        * http/tests/security/isolatedWorld/number-prototype.html:
+        * http/tests/security/isolatedWorld/object-prototype.html:
+        * http/tests/security/isolatedWorld/storage-properties.html:
+        * http/tests/security/isolatedWorld/storage-prototype.html:
+        * http/tests/security/isolatedWorld/string-prototype.html:
+        * http/tests/security/isolatedWorld/window-properties.html:
+        * http/tests/security/isolatedWorld/window-setTimeout-function.html:
+        * http/tests/security/isolatedWorld/window-setTimeout-string.html:
+
 2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.

@@ -7,6 +7,7 @@ String.prototype.foo = "FAIL: Visible in isolated world.";
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.evaluateScriptInIsolatedWorld(
+    0,
     "document.getElementById('console').innerHTML = ''.foo");
 }
 </script>
