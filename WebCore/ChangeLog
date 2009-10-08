@@ -1,3 +1,17 @@
+2009-10-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30237>.
+        DOM Content and Load lines aren't shown if a page is loaded when the inspector is up.
+        
+        Make sure to call update script object if we have an InspectorFrontend to
+        call it on when we get one of the new events.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::mainResourceFiredDOMContentEvent):
+        (WebCore::InspectorController::mainResourceFiredLoadEvent):
+
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: updated for removal of Structure::markAggregate().
