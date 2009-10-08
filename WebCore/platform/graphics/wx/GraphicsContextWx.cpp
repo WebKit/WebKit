@@ -344,11 +344,6 @@ void GraphicsContext::clip(const Path&)
     notImplemented();
 }
 
-void GraphicsContext::canvasClip(const Path& path)
-{
-    clip(path);
-}
-
 void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
 {
     notImplemented();

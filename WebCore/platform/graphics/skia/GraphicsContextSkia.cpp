@@ -296,7 +296,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
         r.inset(SkIntToScalar(thickness), SkIntToScalar(thickness));
         path.addOval(r, SkPath::kCCW_Direction);
     }
-    platformContext()->clipPathAntiAliased(path);
+    platformContext()->canvas()->clipPath(path);
 }
 
 void GraphicsContext::addPath(const Path& path)
@@ -356,18 +356,6 @@ void GraphicsContext::clip(const Path& path)
     if (!isPathSkiaSafe(getCTM(), p))
         return;
 
-    platformContext()->clipPathAntiAliased(p);
-}
-
-void GraphicsContext::canvasClip(const Path& path)
-{
-    if (paintingDisabled())
-        return;
-
-    const SkPath& p = *path.platformPath();
-    if (!isPathSkiaSafe(getCTM(), p))
-        return;
-
     platformContext()->canvas()->clipPath(p);
 }
 
@@ -419,7 +407,7 @@ void GraphicsContext::clipPath(WindRule clipRule)
         return;
 
     path.setFillType(clipRule == RULE_EVENODD ? SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
-    platformContext()->clipPathAntiAliased(path);
+    platformContext()->canvas()->clipPath(path);
 }
 
 void GraphicsContext::clipToImageBuffer(const FloatRect& rect,

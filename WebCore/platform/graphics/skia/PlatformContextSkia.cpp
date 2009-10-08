@@ -45,7 +45,6 @@
 #include "SkDashPathEffect.h"
 
 #include <wtf/MathExtras.h>
-#include <wtf/Vector.h>
 
 namespace WebCore 
 {
@@ -95,10 +94,6 @@ struct PlatformContextSkia::State {
     // If m_imageBufferClip is non-empty, this is the region the image is clipped to.
     WebCore::FloatRect m_clip;
 #endif
-
-    // This is a list of clipping paths which are currently active, in the
-    // order in which they were pushed.
-    WTF::Vector<SkPath> m_antiAliasClipPaths;
 
 private:
     // Not supported.
@@ -254,21 +249,6 @@ void PlatformContextSkia::beginLayerClippedToImage(const WebCore::FloatRect& rec
 }
 #endif
 
-void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
-{
-    // If we are currently tracking any anti-alias clip paths, then we already
-    // have a layer in place and don't need to add another.
-    bool haveLayerOutstanding = m_state->m_antiAliasClipPaths.size();
-
-    // See comments in applyAntiAliasedClipPaths about how this works.
-    m_state->m_antiAliasClipPaths.append(clipPath);
-
-    if (!haveLayerOutstanding) {
-        SkRect bounds = clipPath.getBounds();
-        canvas()->saveLayerAlpha(&bounds, 255, static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag | SkCanvas::kClipToLayer_SaveFlag));
-    }
-}
-
 void PlatformContextSkia::restore()
 {
 #if defined(__linux__) || PLATFORM(WIN_OS)
@@ -277,9 +257,6 @@ void PlatformContextSkia::restore()
         canvas()->restore();
     }
 #endif
-
-    if (!m_state->m_antiAliasClipPaths.isEmpty())
-        applyAntiAliasedClipPaths(m_state->m_antiAliasClipPaths);
 
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
@@ -572,40 +549,3 @@ void PlatformContextSkia::applyClipFromImage(const WebCore::FloatRect& rect, con
     m_canvas->drawBitmap(imageBuffer, SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()), &paint);
 }
 #endif
-
-void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
-{
-    // Anti-aliased clipping:
-    //
-    // Skia's clipping is 1-bit only. Consider what would happen if it were 8-bit:
-    // We have a square canvas, filled with white and we declare a circular
-    // clipping path. Then we fill twice with a black rectangle. The fractional
-    // pixels would first get the correct color (white * alpha + black * (1 -
-    // alpha)), but the second fill would apply the alpha to the already
-    // modified color and the result would be too dark.
-    //
-    // This, anti-aliased clipping needs to be performed after the drawing has
-    // been done. In order to do this, we create a new layer of the canvas in
-    // clipPathAntiAliased and store the clipping path. All drawing is done to
-    // the layer's bitmap while it's in effect. When WebKit calls restore() to
-    // undo the clipping, this function is called.
-    //
-    // Here, we walk the list of clipping paths backwards and, for each, we
-    // clear outside of the clipping path. We only need a single extra layer
-    // for any number of clipping paths.
-    //
-    // When we call restore on the SkCanvas, the layer's bitmap is composed
-    // into the layer below and we end up with correct, anti-aliased clipping.
-
-    SkPaint paint;
-    paint.setXfermodeMode(SkXfermode::kClear_Mode);
-    paint.setAntiAlias(true);
-    paint.setStyle(SkPaint::kFill_Style);
-
-    for (size_t i = paths.size() - 1; i < paths.size(); --i) {
-        paths[i].setFillType(SkPath::kInverseWinding_FillType);
-        m_canvas->drawPath(paths[i], paint);
-    }
-
-    m_canvas->restore();
-}

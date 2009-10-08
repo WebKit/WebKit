@@ -1219,11 +1219,6 @@ void GraphicsContext::clip(const Path& path)
     notImplemented();
 }
 
-void GraphicsContext::canvasClip(const Path& path)
-{
-    clip(path);
-}
-
 void GraphicsContext::clipOut(const Path&)
 {
     notImplemented();

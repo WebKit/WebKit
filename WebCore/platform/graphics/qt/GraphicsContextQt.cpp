@@ -1053,11 +1053,6 @@ void GraphicsContext::clip(const Path& path)
     m_data->p()->setClipPath(*path.platformPath(), Qt::IntersectClip);
 }
 
-void GraphicsContext::canvasClip(const Path& path)
-{
-    clip(path);
-}
-
 void GraphicsContext::clipOut(const Path& path)
 {
     if (paintingDisabled())

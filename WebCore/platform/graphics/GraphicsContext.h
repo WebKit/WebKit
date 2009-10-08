@@ -297,11 +297,6 @@ namespace WebCore {
         void addPath(const Path&);
 
         void clip(const Path&);
-
-        // This clip function is used only by <canvas> code. It allows
-        // implementations to handle clipping on the canvas differently since
-        // the disipline is different.
-        void canvasClip(const Path&);
         void clipOut(const Path&);
 
         void scale(const FloatSize&);

@@ -163,11 +163,6 @@ void GraphicsContextPlatformPrivate::clip(const Path&)
     notImplemented();
 }
 
-void GraphicsContext::canvasClip(const Path& path)
-{
-    clip(path);
-}
-
 void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
 {
     if (!m_hdc)

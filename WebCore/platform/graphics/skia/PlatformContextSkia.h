@@ -92,7 +92,6 @@ public:
     void beginLayerClippedToImage(const WebCore::FloatRect&,
                                   const WebCore::ImageBuffer*);
 #endif
-    void clipPathAntiAliased(const SkPath&);
 
     // Sets up the common flags on a paint for antialiasing, effects, etc.
     // This is implicitly called by setupPaintFill and setupPaintStroke, but
@@ -173,7 +172,6 @@ private:
     // m_canvas that are also in imageBuffer.
     void applyClipFromImage(const WebCore::FloatRect&, const SkBitmap&);
 #endif
-    void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
 
     // Defines drawing style.
     struct State;
