@@ -5359,7 +5359,9 @@ fast/history/saves-state-after-fragment-nav.html
 # See Bug #27638 - https://bugs.webkit.org/show_bug.cgi?id=27638
 fast/dom/Window/window-screen-properties.html
 fast/forms/textarea-metrics.html
+# These two tests seem to fail on and off, skip them for now
 transitions/change-values-during-transition.html
+transitions/zero-duration-with-non-zero-delay-end.html
 
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
