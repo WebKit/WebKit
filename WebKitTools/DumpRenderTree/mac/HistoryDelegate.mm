@@ -66,4 +66,9 @@
     printf("WebView performed a server redirect from \"%s\" to \"%s\".\n", [[source _drt_descriptionSuitableForTestResult] UTF8String], [[dest _drt_descriptionSuitableForTestResult] UTF8String]);
 }
 
+- (void)webView:(WebView *)webView updateHistoryTitle:(NSString *)title forURL:(NSString *)url
+{
+    printf("WebView updated the title for history URL \"%s\" to \"%s\".\n", [[[NSURL URLWithString:url]_drt_descriptionSuitableForTestResult] UTF8String], [title UTF8String]);
+}
+
 @end

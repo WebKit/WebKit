@@ -1,3 +1,13 @@
+2009-10-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Send title changes to the global history delegate.
+        <rdar://problem/7285293> and https://webkit.org/b/29904
+
+        * http/tests/globalhistory/history-delegate-basic-title-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-basic-title.html: Added.
+
 2009-10-07  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Roben.

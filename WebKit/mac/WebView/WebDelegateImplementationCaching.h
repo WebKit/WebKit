@@ -85,6 +85,7 @@ struct WebHistoryDelegateImplementationCache {
     IMP navigatedFunc;
     IMP clientRedirectFunc;
     IMP serverRedirectFunc;
+    IMP setTitleFunc;
 };
 
 WebResourceDelegateImplementationCache* WebViewGetResourceLoadDelegateImplementations(WebView *);

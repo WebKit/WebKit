@@ -1,3 +1,13 @@
+2009-10-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Send title changes to the global history delegate.
+        <rdar://problem/7285293> and https://webkit.org/b/29904
+
+        * DumpRenderTree/mac/HistoryDelegate.mm:
+        (-[HistoryDelegate webView:updateHistoryTitle:forURL:]):
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Remove some folks from committers.py who were listed on

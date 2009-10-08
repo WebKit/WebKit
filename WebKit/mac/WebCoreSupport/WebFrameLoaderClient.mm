@@ -1064,15 +1064,25 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return loader.release();
 }
 
-// FIXME: <rdar://problem/4880065> - Push Global History into WebCore
-// Once that task is complete, this will go away
-void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
+void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
-    NSURL* nsURL = URL;
+    WebView* view = getWebView(m_webFrame.get());
+    
+    if ([view historyDelegate]) {
+        WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
+        if (!implementations->setTitleFunc)
+            return;
+            
+        CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title, (NSString *)url);
+        return;
+    }
+    
+    NSURL* nsURL = url;
     nsURL = [nsURL _webkit_canonicalize];
     if(!nsURL)
         return;
     NSString *titleNSString = title;
+       
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
 }
 

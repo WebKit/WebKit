@@ -1,3 +1,17 @@
+2009-10-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Send title changes to the global history delegate.
+        <rdar://problem/7285293> and https://webkit.org/b/29904
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setTitle):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebHistoryDelegate.h:
+        * WebView/WebView.mm:
+        (-[WebView _cacheHistoryDelegateImplementations]):
+
 2009-10-07  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

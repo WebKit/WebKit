@@ -1,0 +1,4 @@
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-basic-title.html" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+WebView updated the title for history URL "http://127.0.0.1:8000/globalhistory/history-delegate-basic-title.html" to "Test Title 1".
+WebView updated the title for history URL "http://127.0.0.1:8000/globalhistory/history-delegate-basic-title.html" to "Test Title 2".
+This test sees if the history delegate is notified of title changes.
