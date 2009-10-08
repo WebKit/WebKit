@@ -1,3 +1,9 @@
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: added missing #include.
+
+        * ForwardingHeaders/runtime/StructureChain.h: Copied from WebCore/ForwardingHeaders/runtime/PropertyNameArray.h.
+
 2009-10-08  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

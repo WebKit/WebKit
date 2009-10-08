@@ -2,6 +2,12 @@
 
         Windows build fix: added missing #include.
 
+        * runtime/PropertyNameArray.h:
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: added missing #include.
+
         * runtime/NumberPrototype.cpp:
 
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
