@@ -1,3 +1,14 @@
+2009-10-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Added a line to the bottom of the expected result to match
+        the output of the test.
+        https://bugs.webkit.org/show_bug.cgi?id=30220
+
+        * LayoutTests/platform/gtk/editing/pasteboard/middle-click-onpaste-
+        expected.txt:
+
 2009-10-08  Adam Roben  <aroben@apple.com>
 
         Use QueryInterface to get IWebInspectorPrivate
