@@ -1,3 +1,15 @@
+2009-10-08  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix for JIT'ed op_call instructions (evals, constructs, etc.)
+        when !ENABLE(JIT_OPTIMIZE_CALL) && USE(JSVALUE32_64)
+
+        https://bugs.webkit.org/show_bug.cgi?id=30201
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
 2009-10-07  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: removed no longer exported symbol.

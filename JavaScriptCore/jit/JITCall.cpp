@@ -243,10 +243,10 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         stubCall.addArgument(JIT::Imm32(registerOffset));
         stubCall.addArgument(JIT::Imm32(argCount));
         stubCall.call();
-        wasEval = branch32(Equal, regT1, Imm32(JSValue::EmptyValueTag));
+        wasEval = branch32(NotEqual, regT1, Imm32(JSValue::EmptyValueTag));
     }
 
-    emitLoad(callee, regT1, regT2);
+    emitLoad(callee, regT1, regT0);
 
     if (opcodeID == op_call)
         compileOpCallSetupArgs(instruction);
@@ -254,12 +254,12 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         compileOpConstructSetupArgs(instruction);
 
     emitJumpSlowCaseIfNotJSCell(callee, regT1);
-    addSlowCase(branchPtr(NotEqual, Address(regT2), ImmPtr(m_globalData->jsFunctionVPtr)));
+    addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsFunctionVPtr)));
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
         JITStubCall(this, cti_op_construct_JSConstruct).call(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
-        emitLoad(callee, regT1, regT2);
+        emitLoad(callee, regT1, regT0);
     }
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
@@ -272,7 +272,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     if (opcodeID == op_call_eval)
         wasEval.link(this);
 
-    emitStore(dst, regT1, regT0);;
+    emitStore(dst, regT1, regT0);
 
     sampleCodeBlock(m_codeBlock);
 }
