@@ -133,8 +133,8 @@ void FEComposite::apply(Filter* filter)
     FloatRect srcRect = FloatRect(0.f, 0.f, -1.f, -1.f);
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext->drawImage(m_in->resultImage()->image(), calculateDrawingRect(m_in->subRegion()));
         filterContext->drawImage(m_in2->resultImage()->image(), calculateDrawingRect(m_in2->subRegion()));
+        filterContext->drawImage(m_in->resultImage()->image(), calculateDrawingRect(m_in->subRegion()));
         break;
     case FECOMPOSITE_OPERATOR_IN:
         filterContext->save();

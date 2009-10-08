@@ -1,3 +1,17 @@
+2009-10-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        SVG feComposite: operator over mixes up inputs
+        [https://bugs.webkit.org/show_bug.cgi?id=30205]
+
+        SVG feComposite operator over mixed up the inputs.
+        The pixel-test svg/filters/feComposite.svg can already test this.
+        No new test result is needed as long as filters are disabled.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+
 2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by George Staikos.
