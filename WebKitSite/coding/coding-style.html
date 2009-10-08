@@ -41,21 +41,8 @@ int main()
 }
 </pre>
 </li>
-<li>In a header, code inside a namespace should be indented.
+<li>Code inside a namespace should not be indented.
 <h4 class="right">Right:</h4>
-<pre class="code">
-// Document.h
-namespace WebCore {
-
-    class Document {
-        Document();
-        ...
-    };
-
-} // namespace WebCore
-</pre>
-
-<h4 class="wrong">Wrong:</h4>
 <pre class="code">
 // Document.h
 namespace WebCore {
@@ -66,12 +53,7 @@ class Document {
 };
 
 } // namespace WebCore
-</pre>
-</li>
 
-<li>In an implementation file (files with the extension .cpp, .c or .mm), code inside a namespace should <em>not</em> be indented.
-<h4 class="right">Right:</h4>
-<pre class="code">
 // Document.cpp
 namespace WebCore {
 
@@ -85,6 +67,16 @@ Document::Document()
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
+// Document.h
+namespace WebCore {
+
+    class Document {
+        Document();
+        ...
+    };
+
+} // namespace WebCore
+
 // Document.cpp
 namespace WebCore {
 
@@ -96,6 +88,7 @@ namespace WebCore {
 } // namespace WebCore
 </pre>
 </li>
+
 <li>A case label should line up with its switch statement.  The case statement is indented.
 <h4 class="right">Right:</h4>
 <pre class="code">

@@ -1,3 +1,12 @@
+2009-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=30196
+        Change style guidelines for indentation in header files
+
+        * coding/coding-style.html: Don't indent in a namespace in a header file.
+
 2009-10-07  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.
