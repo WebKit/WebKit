@@ -826,11 +826,6 @@ body.drawer-visible #drawer {
     vertical-align: top;
 }
 
-.invisible {
-    color: inherit;
-    text-decoration: none;
-}
-
 .webkit-line-gutter-backdrop {
     /* Keep this in sync with view-source.css (.webkit-line-gutter-backdrop) */
     width: 31px;

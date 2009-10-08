@@ -1,3 +1,20 @@
+2009-10-08  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        unselectable resources in resource panel
+        https://bugs.webkit.org/show_bug.cgi?id=30079
+
+        manual test added
+        
+        Also changed the way DnD for resources in the Resources panel is 
+        handled.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.onattach):
+        (WebInspector.ResourceSidebarTreeElement.prototype.ondragstart):
+        * manual-tests/inspector/duplicate-resource-urls.html: Added.
+
 2009-10-08  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

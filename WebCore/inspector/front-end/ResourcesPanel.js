@@ -1269,13 +1269,12 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     {
         WebInspector.SidebarTreeElement.prototype.onattach.call(this);
 
-        var link = document.createElement("a");
-        link.href = this.resource.url;
-        link.className = "invisible";
-        while (this._listItemNode.firstChild)
-            link.appendChild(this._listItemNode.firstChild);
-        this._listItemNode.appendChild(link);
         this._listItemNode.addStyleClass("resources-category-" + this.resource.category.name);
+        this._listItemNode.draggable = true;
+        
+        // FIXME: should actually add handler to parent, to be resolved via
+        // https://bugs.webkit.org/show_bug.cgi?id=30227
+        this._listItemNode.addEventListener("dragstart", this.ondragstart.bind(this), false);
     },
 
     onselect: function()
@@ -1286,6 +1285,13 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     ondblclick: function(treeElement, event)
     {
         InjectedScriptAccess.openInInspectedWindow(this.resource.url, function() {});
+    },
+
+    ondragstart: function(event) {
+        event.dataTransfer.setData("text/plain", this.resource.url);
+        event.dataTransfer.setData("text/uri-list", this.resource.url + "\r\n");
+        event.dataTransfer.effectAllowed = "copy";
+        return true;
     },
 
     get mainTitle()
