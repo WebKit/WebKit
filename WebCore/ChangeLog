@@ -1,3 +1,15 @@
+2009-10-08  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        SVGURIReference Build problem for V8.  An additional stale reference to SVGURIReference bindings
+        which wasn't exposed until a clean build.
+        https://bugs.webkit.org/show_bug.cgi?id=30217
+
+        No new tests, just a build fix.
+
+        * bindings/v8/V8Index.cpp:
+
 2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Sort XCode project file.

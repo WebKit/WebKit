@@ -367,7 +367,6 @@
 #include "V8SVGTransform.h"
 #include "V8SVGTransformList.h"
 #include "V8SVGUnitTypes.h"
-#include "V8SVGURIReference.h"
 #include "V8SVGZoomEvent.h"
 #endif
 
