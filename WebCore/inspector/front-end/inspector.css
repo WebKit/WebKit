@@ -1645,6 +1645,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-position: -46px 0px;
 }
 
+.pane > .title > select > option, .pane > .title > select > hr {
+    color: black;
+}
+
 .pane > .body {
     position: relative;
     display: none;

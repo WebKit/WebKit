@@ -1,3 +1,15 @@
+2009-10-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=29811>
+        Text in Inspector's Styles gear menu is invisible.
+        
+        Adds a style rule for the option text and hr's in the gear menu,
+        to prevent them from being transparent.
+
+        * inspector/front-end/inspector.css:
+
 2009-10-08  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.
