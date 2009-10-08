@@ -1,3 +1,70 @@
+2009-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Take one branch instead of two to test for JSValue().
+        
+        1.1% SunSpider speedup.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_create_arguments):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val): Test for the empty value tag, instead
+        of testing for the cell tag with a 0 payload.
+
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description): Added support for dumping the new empty value,
+        and deleted values, in debug builds.
+
+        * runtime/JSValue.h:
+        (JSC::JSValue::JSValue()): Construct JSValue() with the empty value tag.
+
+        (JSC::JSValue::JSValue(JSCell*)): Convert null pointer to the empty value
+        tag, to avoid having two different c++ versions of null / empty.
+
+        (JSC::JSValue::operator bool): Test for the empty value tag, instead
+        of testing for the cell tag with a 0 payload.
+
+<<<<<<< .mine
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Migrated some code that didn't belong out of Structure.
+        
+        SunSpider says maybe 1.03x faster.
+
+        * runtime/JSCell.h: Nixed Structure::markAggregate, and made marking of
+        a Structure's prototype the direct responsility of the object using it.
+        (Giving Structure a mark function was misleading because it implied that
+        all live structures get marked during GC, when they don't.)
+        
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        (JSC::JSGlobalObject::markChildren): Added code to mark prototypes stored
+        on the global object. Maybe this wasn't necessary, but now we don't have
+        to wonder.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getEnumerableNamesFromClassInfoTable):
+        * runtime/JSObject.h:
+        (JSC::JSObject::markChildrenDirect):
+        * runtime/PropertyNameArray.h:
+        * runtime/Structure.cpp:
+        * runtime/Structure.h:
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::enumerationCache): Moved property name gathering code
+        from Structure to JSObject because having a Structure iterate its JSObject
+        was a layering violation. A JSObject is implemented using a Structure; not
+        the other way around.
+
+=======
 2009-10-08  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
@@ -10,6 +77,7 @@
         * jit/JITCall.cpp:
         (JSC::JIT::compileOpCall):
 
+>>>>>>> .r49322
 2009-10-07  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: removed no longer exported symbol.
