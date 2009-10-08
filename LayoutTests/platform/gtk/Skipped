@@ -793,10 +793,12 @@ editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/doubleclick-whitespace.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/drag-text-delay.html
-editing/selection/extend-selection.html
 editing/selection/extend-selection-bidi.html
 editing/selection/getRangeAt.html
 editing/selection/hit-test-anonymous.html
+# home-end.html and extended-selection.html have some potential breakage, commenting for now: https://bugs.webkit.org/show_bug.cgi?id=30208
+editing/selection/home-end.html
+editing/selection/extended-selection.html
 editing/selection/legal-positions.html
 editing/selection/move-begin-end.html
 editing/selection/removeAllRanges.html

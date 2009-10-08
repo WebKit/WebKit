@@ -1,3 +1,11 @@
+2009-10-08  Xan Lopez  <xlopez@igalia.com>
+
+        Skip editing/selection/home-end.html, since it seems to be
+        somewhat broken. See https://bugs.webkit.org/show_bug.cgi?id=30208
+        for details.
+
+        * platform/gtk/Skipped:
+
 2009-10-07  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Adam Barth.
