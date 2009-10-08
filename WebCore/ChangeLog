@@ -1,3 +1,19 @@
+2009-10-07  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dave Levin.
+
+        Fix StringImpl::m_buffer
+        https://bugs.webkit.org/show_bug.cgi?id=30189
+
+        Fix my previous StringImpl patch to avoid using an indefinite-length array member,
+        since MSVC doesn't like it. Instead, go back to offsetting by sizeof(StringImpl).
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::createUninitialized):
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::bufferIsInternal):
+
 2009-10-07  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Adam Barth.

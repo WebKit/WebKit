@@ -36,7 +36,6 @@
 #include "ThreadGlobalData.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -83,7 +82,6 @@ StringImpl::StringImpl()
     : m_data(0)
     , m_length(0)
     , m_hash(0)
-    , m_buffer()
 {
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
     // with impunity. The empty string is special because it is never entered into
@@ -95,7 +93,6 @@ inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
     : m_data(characters)
     , m_length(length)
     , m_hash(0)
-    , m_buffer()
 {
     ASSERT(characters);
     ASSERT(length);
@@ -106,7 +103,6 @@ StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
     : m_data(0)
     , m_length(length)
     , m_hash(hash)
-    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
@@ -123,7 +119,6 @@ StringImpl::StringImpl(const char* characters, unsigned length, unsigned hash)
     : m_data(0)
     , m_length(length)
     , m_hash(hash)
-    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
@@ -959,9 +954,9 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one 
     // heap allocation from this call.
-    size_t size = OBJECT_OFFSETOF(StringImpl, m_buffer) + length * sizeof(UChar);
+    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
-    data = const_cast<UChar*>(&string->m_buffer[0]);
+    data = reinterpret_cast<UChar*>(string + 1);
     string = new (string) StringImpl(data, length, AdoptBuffer());
     return adoptRef(string);
 }
