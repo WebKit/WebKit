@@ -558,7 +558,7 @@ WebInspector.DOMStorageSidebarTreeElement.prototype = {
 
     get mainTitle()
     {
-        return this.domStorage.domain;
+        return this.domStorage.domain ? this.domStorage.domain : WebInspector.UIString("Local Files");
     },
 
     set mainTitle(x)
@@ -591,6 +591,16 @@ WebInspector.CookieSidebarTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.panels.storage.showCookies(this._cookieDomain);
+    },
+    
+    get mainTitle()
+    {
+        return this._cookieDomain ? this._cookieDomain : WebInspector.UIString("Local Files");
+    },
+
+    set mainTitle(x)
+    {
+        // Do nothing.
     },
 
     get subtitle()

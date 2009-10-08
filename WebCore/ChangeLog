@@ -1,3 +1,19 @@
+2009-10-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/30233>
+        Local Storage and Cookies show Blank Titles on Local Files.
+
+        If a local storage or cookies sidebar item has no domain, set the 
+        title to "Local Files", because that is what it represents.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.get mainTitle):
+        (WebInspector.CookieSidebarTreeElement.prototype.get mainTitle):
+        (WebInspector.CookieSidebarTreeElement.prototype.set mainTitle):
+
 2009-10-08  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
