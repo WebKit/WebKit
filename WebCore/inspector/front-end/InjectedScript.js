@@ -1108,6 +1108,8 @@ Object.type = function(obj)
         return "date";
     if (obj instanceof win.RegExp)
         return "regexp";
+    if (obj instanceof win.NodeList)
+        return "array";
     if (obj instanceof win.Error)
         return "error";
     return type;
