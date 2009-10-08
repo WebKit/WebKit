@@ -1,3 +1,13 @@
+2009-10-08  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix failing media layout tests.  Don't make beforeload block loads of objects that aren't in the
+        document, since video/audio (and images eventually too) can load when not in the document yet.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::dispatchBeforeLoadEvent):
+
 2009-10-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
