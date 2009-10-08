@@ -1,5 +1,12 @@
 2009-10-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Re-land 49269-49271 since reverting them did not fix the tests.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+
+2009-10-07  Simon Fraser  <simon.fraser@apple.com>
+
         Revert 49269-49271 to see if it fixes test failures on SnowLeopard that do not
         reproduce locally.
 
