@@ -1,5 +1,12 @@
 2009-10-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: removed no longer exported symbol.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-10-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Fixed <rdar://problem/5751979> Database code takes JSLock on secondary

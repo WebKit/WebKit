@@ -232,7 +232,6 @@ EXPORTS
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
-    ?setGCProtectNeedsLocking@Heap@JSC@@QAEXXZ
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setLength@JSArray@JSC@@QAEXI@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
