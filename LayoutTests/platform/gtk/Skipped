@@ -3530,6 +3530,8 @@ http/tests/webarchive/test-preload-resources.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 media/video-size-intrinsic-scale.html
+# See https://bugs.webkit.org/show_bug.cgi?id=30221
+media/video-document-types.html
 #   Tests timing out
 media/controls-drag-timebar.html
 media/event-attributes.html

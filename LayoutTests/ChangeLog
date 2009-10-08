@@ -1,5 +1,11 @@
 2009-10-08  Xan Lopez  <xlopez@igalia.com>
 
+        Skip another failing test with reference to its bug.
+
+        * platform/gtk/Skipped:
+
+2009-10-08  Xan Lopez  <xlopez@igalia.com>
+
         Skip flakey transition test.
 
         * platform/gtk/Skipped:
