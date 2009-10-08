@@ -58,6 +58,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class String;
     class V8EventListener;
+    class V8IsolatedWorld;
 
     // FIXME: use standard logging facilities in WebCore.
     void logInfo(Frame*, const String& message, const String& url);
@@ -166,7 +167,7 @@ namespace WebCore {
         // global scope, its own prototypes for intrinsic JavaScript objects (String,
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
-        void evaluateInNewWorld(const Vector<ScriptSourceCode>& sources, int extensionGroup);
+        void evaluateInIsolatedWorld(int worldId, const Vector<ScriptSourceCode>& sources, int extensionGroup);
 
         // Evaluate JavaScript in a new context. The script gets its own global scope
         // and its own prototypes for intrinsic JavaScript objects (String, Array,
@@ -348,6 +349,8 @@ namespace WebCore {
         void releaseStorageMutex();
 
         void disconnectEventListeners();
+        
+        void resetIsolatedWorlds();
 
         static bool canAccessPrivate(DOMWindow*);
 
@@ -414,6 +417,16 @@ namespace WebCore {
 
         // All of the extensions registered with the context.
         static V8Extensions m_extensions;
+
+        // The isolated worlds we are tracking for this frame. We hold them alive
+        // here so that they can be used again by future calls to
+        // evaluateInIsolatedWorld().
+        //
+        // Note: although the pointer is raw, the instance is kept alive by a strong
+        // reference to the v8 context it contains, which is not made weak until we
+        // call world->destroy().
+        typedef HashMap<int, V8IsolatedWorld*> IsolatedWorldMap;
+        IsolatedWorldMap m_isolatedWorlds;
     };
 
     template <int tag, typename T>

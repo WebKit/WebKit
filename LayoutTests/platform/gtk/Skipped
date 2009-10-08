@@ -5389,6 +5389,7 @@ http/tests/security/isolatedWorld/number-prototype.html
 http/tests/security/isolatedWorld/object-prototype.html
 http/tests/security/isolatedWorld/string-prototype.html
 http/tests/security/isolatedWorld/window-properties.html
+http/tests/security/isolatedWorld/world-reuse.html
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html

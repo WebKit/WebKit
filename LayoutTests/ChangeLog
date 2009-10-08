@@ -1,3 +1,14 @@
+2009-10-07  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update isolated worlds under v8 to support world reuse.
+        https://bugs.webkit.org/show_bug.cgi?id=30145
+
+        * http/tests/security/isolatedWorld/iframe.html: Added.
+        * http/tests/security/isolatedWorld/world-reuse-expected.txt: Added.
+        * http/tests/security/isolatedWorld/world-reuse.html: Added.
+
 2009-10-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

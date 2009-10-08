@@ -274,10 +274,32 @@ bool V8Proxy::handleOutOfMemory()
     return true;
 }
 
-void V8Proxy::evaluateInNewWorld(const Vector<ScriptSourceCode>& sources, int extensionGroup)
+void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
     initContextIfNeeded();
-    V8IsolatedWorld::evaluate(sources, this, extensionGroup);
+
+    v8::HandleScope handleScope;
+    V8IsolatedWorld* world = 0;
+
+    if (worldID > 0) {
+        IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
+        if (iter != m_isolatedWorlds.end()) {
+            world = iter->second;
+        } else {
+            world = new V8IsolatedWorld(this, extensionGroup);
+            m_isolatedWorlds.set(worldID, world);
+        }
+    } else {
+        world = new V8IsolatedWorld(this, extensionGroup);
+    }
+
+    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(world->context());
+    v8::Context::Scope context_scope(context);
+    for (size_t i = 0; i < sources.size(); ++i)
+      evaluate(sources[i], 0);
+
+    if (worldID == 0)
+      world->destroy();
 }
 
 void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int extensionGroup)
@@ -708,9 +730,20 @@ void V8Proxy::disconnectEventListeners()
     m_listenerGuard->disconnectListeners();
     m_listenerGuard = V8ListenerGuard::create();
 }
+    
+void V8Proxy::resetIsolatedWorlds()
+{
+    for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
+         iter != m_isolatedWorlds.end(); ++iter) {
+        iter->second->destroy();
+    }
+    m_isolatedWorlds.clear();
+}
 
 void V8Proxy::clearForClose()
 {
+    resetIsolatedWorlds();
+
     if (!context().IsEmpty()) {
         v8::HandleScope handleScope;
 
@@ -722,6 +755,8 @@ void V8Proxy::clearForClose()
 void V8Proxy::clearForNavigation()
 {
     disconnectEventListeners();
+    resetIsolatedWorlds();
+
     if (!context().IsEmpty()) {
         v8::HandleScope handle;
         clearDocumentWrapper();

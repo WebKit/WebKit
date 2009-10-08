@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+
+  // World id 0 is never saved, so this should print 'undefined'.
+  layoutTestController.evaluateScriptInIsolatedWorld(0, "var foo = 'foo';");
+  layoutTestController.evaluateScriptInIsolatedWorld(0,
+    "document.body.appendChild(document.createTextNode('Expecting undefined: ' + window.foo));" +
+    "document.body.appendChild(document.createElement('br'));");
+
+  // Since these two run in the same world, this should print 'bar'.
+  layoutTestController.evaluateScriptInIsolatedWorld(1, "var bar = 'bar';");
+  layoutTestController.evaluateScriptInIsolatedWorld(1,
+    "document.body.appendChild(document.createTextNode('Expecting bar: ' + window.bar));" +
+    "document.body.appendChild(document.createElement('br'));");
+
+  // Since these two are in different worlds, this should print 'undefined'.
+  layoutTestController.evaluateScriptInIsolatedWorld(2, "var baz = 'baz';");
+  layoutTestController.evaluateScriptInIsolatedWorld(3,
+    "document.body.appendChild(document.createTextNode('Expecting undefined: ' + window.baz));" +
+    "document.body.appendChild(document.createElement('br'));");
+
+  // Worlds should not be shared across documents, so another frame that uses the same
+  // world id should not see our variables.
+  var iframe = document.createElement("iframe");
+  document.body.insertBefore(iframe, document.body.firstChild);
+  document.body.insertBefore(document.createElement("br"), iframe.nextSibling);
+  var iframeComplete = function(result) {
+    document.body.appendChild(document.createTextNode('Expecting undefined,undefined: ' + result));
+    document.body.appendChild(document.createElement('br'));
+    reloadFrame();
+  }
+  iframe.src = "iframe.html";
+  
+  // Also, navigating a single frame should not result in sharing variables.
+  function reloadFrame() {
+    iframeComplete = function(result) {
+      document.body.appendChild(document.createTextNode('Expecting undefined,undefined: ' + result));
+      document.body.appendChild(document.createElement('br'));
+      layoutTestController.notifyDone();
+    }
+    iframe.contentWindow.location.reload(true);
+  }
+}
+</script>
+</body>
+</html>

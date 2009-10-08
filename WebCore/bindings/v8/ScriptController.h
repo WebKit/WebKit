@@ -65,13 +65,18 @@ namespace WebCore {
         ScriptValue evaluate(const ScriptSourceCode&);
 
         void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
-        
-        // Executes JavaScript in a new world associated with the web frame. The
-        // script gets its own global scope, its own prototypes for intrinsic
-        // JavaScript objects (String, Array, and so-on), and its own wrappers for
-        // all DOM nodes and DOM constructors.
-        // FIXME: Move to using evaluateInIsolatedWorld instead.
-        void evaluateInNewWorld(const Vector<ScriptSourceCode>&, int extensionGroup);
+
+        // Executes JavaScript in an isolated world. The script gets its own global scope,
+        // its own prototypes for intrinsic JavaScript objects (String, Array, and so-on),
+        // and its own wrappers for all DOM nodes and DOM constructors.
+        //
+        // If an isolated world with the specified ID already exists, it is reused.
+        // Otherwise, a new world is created.
+        //
+        // If the worldID is 0, a new world is always created.
+        //
+        // FIXME: Get rid of extensionGroup here.
+        void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
 
         // Executes JavaScript in a new context associated with the web frame. The
         // script gets its own global scope and its own prototypes for intrinsic

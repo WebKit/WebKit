@@ -45,32 +45,27 @@ namespace WebCore {
 
 int V8IsolatedWorld::isolatedWorldCount = 0;
 
-static void contextWeakReferenceCallback(v8::Persistent<v8::Value> object, void* isolated_world)
+void V8IsolatedWorld::contextWeakReferenceCallback(v8::Persistent<v8::Value> object, void* isolated_world)
 {
     // Our context is going away.  Time to clean up the world.
     V8IsolatedWorld* world = static_cast<V8IsolatedWorld*>(isolated_world);
     delete world;
 }
 
-void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy* proxy, int extensionGroup)
+V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
 {
+    ++isolatedWorldCount;
+
     v8::HandleScope scope;
-    v8::Persistent<v8::Context> context = proxy->createNewContext(v8::Handle<v8::Object>(), extensionGroup);
+    m_context = SharedPersistent<v8::Context>::create(proxy->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
 
     // Run code in the new context.
-    v8::Context::Scope context_scope(context);
+    v8::Context::Scope context_scope(m_context->get());
 
-    // The lifetime of this object is controlled by the V8 GC.
-    // We need to create the world before touching DOM wrappers.
-    V8IsolatedWorld* world = new V8IsolatedWorld(context);
+    m_context->get()->Global()->SetHiddenValue(V8HiddenPropertyName::isolatedWorld(), v8::External::Wrap(this));
 
-    V8Proxy::installHiddenObjectPrototype(context);
-    proxy->installDOMWindow(context, proxy->frame()->domWindow());
-
-    proxy->frame()->loader()->client()->didCreateIsolatedScriptContext();
-
-    for (size_t i = 0; i < sources.size(); ++i)
-        proxy->evaluate(sources[i], 0);
+    V8Proxy::installHiddenObjectPrototype(m_context->get());
+    proxy->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
 
     // Using the default security token means that the canAccess is always
     // called, which is slow.
@@ -78,20 +73,14 @@ void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy*
     //        created contexts so that they can all be updated when the
     //        document domain
     //        changes.
-    // FIXME: Move this statement above proxy->evaluate?  It seems like we
-    //        should set up the token before running the script.
-    context->UseDefaultSecurityToken();
+    m_context->get()->UseDefaultSecurityToken();
 
-    context.Dispose();
-    // WARNING!  This might well delete |world|.
+    proxy->frame()->loader()->client()->didCreateIsolatedScriptContext();
 }
 
-V8IsolatedWorld::V8IsolatedWorld(v8::Handle<v8::Context> context)
-    : m_context(SharedPersistent<v8::Context>::create(v8::Persistent<v8::Context>::New(context)))
+void V8IsolatedWorld::destroy()
 {
-    ++isolatedWorldCount;
     m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
-    context->Global()->SetHiddenValue(V8HiddenPropertyName::isolatedWorld(), v8::External::Wrap(this));
 }
 
 V8IsolatedWorld::~V8IsolatedWorld()
