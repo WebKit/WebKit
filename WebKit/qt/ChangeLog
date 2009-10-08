@@ -1,3 +1,21 @@
+2009-10-08  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Part of testOptionalJSObjects autotest was marked as "expect to fail".
+
+        Two places in tst_QWebPage::testOptionalJSObjects were marked as
+        expected to fail. The problem concern checking if a feature is enabled
+        or disabled. According to discussion on webkit dev mailing list
+        a disabled feature should be invisible from java script level, but
+        there are exceptions from the rule. So we decided to disable the test
+        for now.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29867
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::testOptionalJSObjects):
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
