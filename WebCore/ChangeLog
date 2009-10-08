@@ -1,3 +1,17 @@
+2009-10-07  Joel Stanley  <joel@jms.id.au>
+
+        Reviewed by Mark Rowe.
+
+        Include <limits> for std::numeric_limits.  Required by gcc-4.4
+        https://bugs.webkit.org/show_bug.cgi?id=30197
+
+        * html/canvas/CanvasByteArray.h:
+        * html/canvas/CanvasIntArray.h:
+        * html/canvas/CanvasShortArray.h:
+        * html/canvas/CanvasUnsignedByteArray.h:
+        * html/canvas/CanvasUnsignedIntArray.h:
+        * html/canvas/CanvasUnsignedShortArray.h:
+
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

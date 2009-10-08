@@ -27,6 +27,7 @@
 #define CanvasByteArray_h
 
 #include "CanvasArray.h"
+#include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
