@@ -1,3 +1,15 @@
+2009-10-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Re-add the QApplication::syncX() line for plugin windows removed
+        by r49169. Also changed the location of the sync just after the
+        creation instead of just before sending it to the plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=25053
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::platformStart):
+
 2009-10-08  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
