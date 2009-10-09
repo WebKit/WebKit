@@ -175,20 +175,32 @@ bool StringImpl::isLower()
 
 PassRefPtr<StringImpl> StringImpl::lower()
 {
-    UChar* data;
-    PassRefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+    // First scan the string for uppercase and non-ASCII characters:
     int32_t length = m_length;
-
-    // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
+    bool noUpper = true;
     for (int i = 0; i < length; i++) {
         UChar c = m_data[i];
         ored |= c;
-        data[i] = toASCIILower(c);
+        noUpper = noUpper && !isASCIIUpper(c);
     }
-    if (!(ored & ~0x7F))
-        return newImpl;
+    
+    // Nothing to do if the string is all ASCII with no uppercase.
+    if (noUpper && !(ored & ~0x7F))
+        return this;
 
+    UChar* data;
+    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+
+    if (!(ored & ~0x7F)) {
+        // Do a faster loop for the case where all the characters are ASCII.
+        for (int i = 0; i < length; i++) {
+            UChar c = m_data[i];
+            data[i] = toASCIILower(c);
+        }
+        return newImpl;
+    }
+    
     // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
     int32_t realLength = Unicode::toLower(data, length, m_data, m_length, &error);
@@ -203,6 +215,9 @@ PassRefPtr<StringImpl> StringImpl::lower()
 
 PassRefPtr<StringImpl> StringImpl::upper()
 {
+    // This function could be optimized for no-op cases the way lower() is,
+    // but in empirical testing, few actual calls to upper() are no-ops, so
+    // it wouldn't be worth the extra time for pre-scanning.
     UChar* data;
     PassRefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
     int32_t length = m_length;
@@ -287,6 +302,8 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
     while (end && isSpaceOrNewline(m_data[end]))
         end--;
 
+    if (!start && end == m_length - 1)
+        return this;
     return create(m_data + start, end + 1 - start);
 }
 
@@ -329,12 +346,16 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
     const UChar* from = m_data;
     const UChar* fromend = from + m_length;
     int outc = 0;
+    bool changedToSpace = false;
     
     UChar* to = data.characters();
     
     while (true) {
-        while (from != fromend && isSpaceOrNewline(*from))
+        while (from != fromend && isSpaceOrNewline(*from)) {
+            if (*from != ' ')
+                changedToSpace = true;
             from++;
+        }
         while (from != fromend && !isSpaceOrNewline(*from))
             to[outc++] = *from++;
         if (from != fromend)
@@ -345,6 +366,9 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
     
     if (outc > 0 && to[outc - 1] == ' ')
         outc--;
+    
+    if (static_cast<unsigned>(outc) == m_length && !changedToSpace)
+        return this;
     
     data.shrink(outc);
     

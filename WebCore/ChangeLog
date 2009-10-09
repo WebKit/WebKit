@@ -1,3 +1,22 @@
+2009-10-09  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+        
+        Optimization: Many StringImpl transformations are no-ops and should just return 'this'
+        https://bugs.webkit.org/show_bug.cgi?id=30186
+
+        Optimized StringImpl methods lower(), stripWhiteSpace() and simplifyWhiteSpace() to
+        detect no-ops and return this instead of creating a new instance.
+        Empirical testing shows that the majority of calls to these methods are no-ops, making
+        this worthwhile even if (in the case of lower()) the non-no-op case is slightly slowed.
+        Upper() is very rarely a no-op, so it wasn't worthwhile to optimize it.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::lower):
+        (WebCore::StringImpl::upper): Just add a comment explaining why this wasn't optimized
+        (WebCore::StringImpl::stripWhiteSpace):
+        (WebCore::StringImpl::simplifyWhiteSpace):
+
 2009-10-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
