@@ -87,7 +87,6 @@
 #define WebKitXSSAuditorEnabledPreferenceKey @"WebKitXSSAuditorEnabled"
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
 #define WebKitWebGLEnabledPreferenceKey @"WebKitWebGLEnabled"
-#define WebKitPluginHalterEnabledPreferenceKey @"WebKitPluginHalterEnabled"
 #define WebKitPluginAllowedRunTimePreferenceKey @"WebKitPluginAllowedRunTime"
 
 // These are private both because callers should be using the cover methods and because the

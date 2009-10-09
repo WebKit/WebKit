@@ -56,3 +56,12 @@ bool WebPluginHalterClient::shouldHaltPlugin(WebCore::Node* n) const
 
     return shouldHalt;
 }
+
+bool WebPluginHalterClient::enabled() const
+{
+    IWebPluginHalterDelegate* d;
+    if (FAILED(m_webView->pluginHalterDelegate(&d)) || !d)
+        return false;
+
+    return true;
+}

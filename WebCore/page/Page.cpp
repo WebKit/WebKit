@@ -137,7 +137,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartPlugins(true)
-    , m_pluginHalterClient(pluginHalterClient)
 {
 #if !ENABLE(CONTEXT_MENUS)
     UNUSED_PARAM(contextMenuClient);
@@ -157,7 +156,10 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     ASSERT(!allPages->contains(this));
     allPages->add(this);
 
-    pluginHalterEnabledStateChanged();
+    if (pluginHalterClient) {
+        m_pluginHalter.set(new PluginHalter(pluginHalterClient));
+        m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
+    }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     JavaScriptDebugServer::shared().pageCreated(this);
@@ -732,16 +734,6 @@ InspectorTimelineAgent* Page::inspectorTimelineAgent() const
     return m_inspectorController->timelineAgent();
 }
 #endif
-
-void Page::pluginHalterEnabledStateChanged()
-{
-    if (m_settings->pluginHalterEnabled()) {
-        ASSERT(!m_pluginHalter);
-        m_pluginHalter.set(new PluginHalter(m_pluginHalterClient));
-        m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
-    } else
-        m_pluginHalter = 0;
-}
 
 void Page::pluginAllowedRunTimeChanged()
 {

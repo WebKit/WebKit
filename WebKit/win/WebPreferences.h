@@ -380,12 +380,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE shouldUseHighResolutionTimers(
     /* [retval][out] */ BOOL* useHighResolutionTimers);
 
-    virtual HRESULT STDMETHODCALLTYPE setPluginHalterEnabled(
-    /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE pluginHalterEnabled(
-    /* [retval][out] */ BOOL* enabled);
-
     virtual HRESULT STDMETHODCALLTYPE setPluginAllowedRunTime(
     /* [in] */ UINT allowedRunTime);
 

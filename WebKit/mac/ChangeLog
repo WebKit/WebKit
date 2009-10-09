@@ -1,3 +1,31 @@
+2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking
+        for the existence of a PluginHalterDelegate.
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebPluginHalterClient.h:
+        Add declaration for new function.
+
+        * WebCoreSupport/WebPluginHalterClient.mm:
+        (WebPluginHalterClient::enabled):
+        Check whether the UIDelegate responds to shouldHaltPlugin.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        Remove the "enabled" preference key.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Remove the initialization of the pref.
+
+        * WebView/WebPreferencesPrivate.h:
+        Remove the getter/setter for this pref.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+        Remove propagation of the pref. 
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

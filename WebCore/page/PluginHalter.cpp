@@ -28,7 +28,6 @@
 #include "PluginHalter.h"
 
 #include "HaltablePlugin.h"
-#include "PluginHalterClient.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
@@ -49,6 +48,9 @@ void PluginHalter::didStartPlugin(HaltablePlugin* obj)
     ASSERT_ARG(obj, obj);
     ASSERT_ARG(obj, !m_plugins.contains(obj));
 
+    if (!m_client->enabled())
+        return;
+
     double currentTime = WTF::currentTime();
 
     m_plugins.add(obj, currentTime);
@@ -61,6 +63,9 @@ void PluginHalter::didStartPlugin(HaltablePlugin* obj)
 
 void PluginHalter::didStopPlugin(HaltablePlugin* obj)
 {
+    if (!m_client->enabled())
+        return;
+
     m_plugins.remove(obj);
 }
 

@@ -1,3 +1,34 @@
+2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking
+        for the existence of a PluginHalterDelegate.
+
+        Reviewed by Dan Bernstein.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        Remove the getter and setter.
+
+        * WebCoreSupport/WebPluginHalterClient.cpp:
+        (WebPluginHalterClient::enabled):
+        Return true if the delegate exists.
+
+        * WebCoreSupport/WebPluginHalterClient.h:
+        Declare implementation of enabled().
+
+        * WebPreferenceKeysPrivate.h:
+        Removed the pref key.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        Removed initialization of the pref.
+
+        * WebPreferences.h:
+        Removed declaration of the getter/setter.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+        Don't propagate the pref.
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -92,9 +92,6 @@ interface IWebPreferencesPrivate : IUnknown
     // Used by DumpRenderTree.
     HRESULT setPreferenceForTest([in] BSTR key, [in] BSTR value);
 
-    HRESULT setPluginHalterEnabled([in] BOOL enabled);
-    HRESULT pluginHalterEnabled([out, retval] BOOL* enabled);
-
     HRESULT setPluginAllowedRunTime([in] UINT allowedRunTime);
     HRESULT pluginAllowedRunTime([out, retval] UINT* allowedRunTime);
 }

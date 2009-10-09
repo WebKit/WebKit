@@ -113,9 +113,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)experimentalWebSocketsEnabled;
 - (void)setExperimentalWebSocketsEnabled:(BOOL)websocketsEnabled;
 
-- (BOOL)pluginHalterEnabled;
-- (void)setPluginHalterEnabled:(BOOL)enabled;
-
 - (unsigned)pluginAllowedRunTime;
 - (void)setPluginAllowedRunTime:(unsigned)allowedRunTime;
 

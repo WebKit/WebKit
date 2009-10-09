@@ -117,7 +117,6 @@ Settings::Settings(Page* page)
     , m_xssAuditorEnabled(false)
     , m_acceleratedCompositingEnabled(true)
     , m_experimentalNotificationsEnabled(false)
-    , m_pluginHalterEnabled(false)
     , m_webGLEnabled(false)
 #if ENABLE(WEB_SOCKETS)
     , m_experimentalWebSocketsEnabled(false)
@@ -513,16 +512,6 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
 void Settings::setExperimentalNotificationsEnabled(bool enabled)
 {
     m_experimentalNotificationsEnabled = enabled;
-}
-
-void Settings::setPluginHalterEnabled(bool enabled)
-{
-    if (m_pluginHalterEnabled == enabled)
-        return;
-
-    m_pluginHalterEnabled = enabled;
-
-    m_page->pluginHalterEnabledStateChanged();
 }
 
 void Settings::setPluginAllowedRunTime(unsigned runTime)

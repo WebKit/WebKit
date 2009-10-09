@@ -1,3 +1,49 @@
+2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking
+        for the existence of a PluginHalterDelegate.
+
+        This fixes a leak of WebPluginHalterClients:
+        https://bugs.webkit.org/show_bug.cgi?id=30119.
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.base.exp:
+        Removed the export of WebCore::Settings::setPluginHalterEnabled().
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyPluginHalterClient::enabled):
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Remove initialization of m_pluginHalterClient, which was removed. If a
+        non-null PluginHalterClient was passed, create the PluginHalter, and
+        set its allowed run time.
+
+        * page/Page.h:
+        Removed pluginHalterEnabledStateChanged() and m_pluginHalterClient.
+
+        * page/PluginHalter.cpp:
+        (WebCore::PluginHalter::didStartPlugin):
+        Check whether the PluginHalterClient is enabled.
+        (WebCore::PluginHalter::didStopPlugin):
+        Ditto.
+
+        * page/PluginHalter.h:
+        Made m_client an OwnPtr.
+
+        * page/PluginHalterClient.h:
+        Added a function to return the enabled state.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        Remove initialization of removed member.
+
+        * page/Settings.h:
+        Removed settings for the enabled state of the PluginHalter; we now use
+        the existence of a WebPluginHalterDelegate to determine whether the
+        PluginHalter is enabled.
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

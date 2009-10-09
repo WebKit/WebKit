@@ -42,3 +42,8 @@ bool WebPluginHalterClient::shouldHaltPlugin(Node* pluginNode) const
     ASSERT_ARG(pluginNode, pluginNode);    
     return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webView:shouldHaltPlugin:), kit(pluginNode));
 }
+
+bool WebPluginHalterClient::enabled() const
+{
+    return [[m_webView UIDelegate] respondsToSelector:@selector(webView:shouldHaltPlugin:)];
+}

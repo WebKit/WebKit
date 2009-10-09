@@ -35,6 +35,7 @@ public:
     virtual ~PluginHalterClient() { }
 
     virtual bool shouldHaltPlugin(Node*) const = 0;
+    virtual bool enabled() const = 0;
 };
 
 } // namespace WebCore

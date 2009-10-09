@@ -39,6 +39,7 @@ public:
     WebPluginHalterClient(WebView* webView);
 
     virtual bool shouldHaltPlugin(WebCore::Node* n) const;
+    virtual bool enabled() const;
 
 private:
     WebView* m_webView;

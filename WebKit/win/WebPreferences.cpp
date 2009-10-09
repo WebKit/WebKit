@@ -253,8 +253,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPluginHalterEnabledPreferenceKey), kCFBooleanFalse);
-
     RetainPtr<CFStringRef> pluginAllowedRunTime(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%u"), numeric_limits<unsigned>::max()));
     CFDictionaryAddValue(defaults, CFSTR(WebKitPluginAllowedRunTimePreferenceKey), pluginAllowedRunTime.get());
 
@@ -1345,19 +1343,6 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setShouldUseHighResolutionTimers(BOOL 
 HRESULT STDMETHODCALLTYPE WebPreferences::shouldUseHighResolutionTimers(BOOL* useHighResolutionTimers)
 {
     *useHighResolutionTimers = boolValueForKey(CFSTR(WebKitUseHighResolutionTimersPreferenceKey));
-    return S_OK;
-}
-
-
-HRESULT STDMETHODCALLTYPE WebPreferences::setPluginHalterEnabled(BOOL enabled)
-{
-    setBoolValue(CFSTR(WebKitPluginHalterEnabledPreferenceKey), enabled);
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebPreferences::pluginHalterEnabled(BOOL* enabled)
-{
-    *enabled = boolValueForKey(CFSTR(WebKitPluginHalterEnabledPreferenceKey));
     return S_OK;
 }
 

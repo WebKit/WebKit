@@ -4441,11 +4441,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setShouldUseHighResolutionTimers(enabled);
 
-    hr = prefsPrivate->pluginHalterEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setPluginHalterEnabled(enabled);
-
     UINT runTime;
     hr = prefsPrivate->pluginAllowedRunTime(&runTime);
     if (FAILED(hr))
