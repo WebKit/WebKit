@@ -1,3 +1,28 @@
+2009-10-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG Filter feGaussianBlur implementation is missing
+        [https://bugs.webkit.org/show_bug.cgi?id=28141]
+
+        This is the implementation of GaussianBlur filter for SVG.
+
+        There is already a test for feGaussianBlur
+        Test: svg/W3C-SVG-1.1/filters-gauss-01-b-w3c.svg 
+
+        Test: svg/filters/feGaussianBlur.svg
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::isAlphaImage):
+        (WebCore::FilterEffect::setIsAlphaImage):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::apply):
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::boxBlur):
+        (WebCore::FEGaussianBlur::apply):
+
 2009-10-09  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

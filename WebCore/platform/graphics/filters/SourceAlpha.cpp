@@ -59,6 +59,8 @@ void SourceAlpha::apply(Filter* filter)
     if (!filterContext)
         return;
 
+    setIsAlphaImage(true);
+
     FloatRect imageRect(FloatPoint(), filter->sourceImage()->image()->size());
     filterContext->save();
     filterContext->clipToImageBuffer(imageRect, filter->sourceImage());

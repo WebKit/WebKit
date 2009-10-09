@@ -1,5 +1,16 @@
 2009-10-09  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Test for feGaussianBlur implementation
+
+        * platform/mac/svg/filters/feGaussianBlur-expected.checksum: Added.
+        * platform/mac/svg/filters/feGaussianBlur-expected.png: Added.
+        * platform/mac/svg/filters/feGaussianBlur-expected.txt: Added.
+        * svg/filters/feGaussianBlur.svg: Added.
+
+2009-10-09  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Attribute "operator" schould only be accessible by "operator", not by "_operator"
