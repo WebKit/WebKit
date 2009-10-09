@@ -133,12 +133,17 @@ javascriptcore_sources += \
 	JavaScriptCore/icu/unicode/utf_old.h \
 	JavaScriptCore/icu/unicode/utypes.h \
 	JavaScriptCore/icu/unicode/uversion.h \
+	JavaScriptCore/assembler/ARMAssembler.h \
+	JavaScriptCore/assembler/ARMAssembler.cpp \
 	JavaScriptCore/assembler/X86Assembler.h \
 	JavaScriptCore/assembler/AbstractMacroAssembler.h \
 	JavaScriptCore/assembler/AssemblerBuffer.h \
+	JavaScriptCore/assembler/AssemblerBufferWithConstantPool.h \
 	JavaScriptCore/assembler/CodeLocation.h \
 	JavaScriptCore/assembler/LinkBuffer.h \
 	JavaScriptCore/assembler/MacroAssembler.h \
+	JavaScriptCore/assembler/MacroAssemblerARM.h \
+	JavaScriptCore/assembler/MacroAssemblerARM.cpp \
 	JavaScriptCore/assembler/MacroAssemblerCodeRef.h \
 	JavaScriptCore/assembler/MacroAssemblerX86.h \
 	JavaScriptCore/assembler/MacroAssemblerX86_64.h \
