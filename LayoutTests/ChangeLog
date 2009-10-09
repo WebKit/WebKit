@@ -1,3 +1,21 @@
+2009-10-09  Darin Adler  <darin@apple.com>
+
+        Requested by Mark Rowe.
+
+        Moved DOM test that was in fast/js to fast/dom where it belongs.
+
+        * fast/dom/Document/invalid-domain-change-throws-exception-expected.txt:
+        Copied from fast/js/invalid-domain-change-throws-exception-expected.txt.
+        * fast/dom/Document/invalid-domain-change-throws-exception.html:
+        Copied from fast/js/invalid-domain-change-throws-exception.html.
+        Regenerated with the make-script-test-wrappers.
+        * fast/dom/Document/script-tests/invalid-domain-change-throws-exception.js:
+        Copied from fast/js/resources/invalid-domain-change-throws-exception.js.
+
+        * fast/js/invalid-domain-change-throws-exception-expected.txt: Removed.
+        * fast/js/invalid-domain-change-throws-exception.html: Removed.
+        * fast/js/resources/invalid-domain-change-throws-exception.js: Removed.
+
 2009-10-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein.
