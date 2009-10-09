@@ -240,11 +240,11 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
         return false;
 
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(false);
-
+    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
     setCallingPlugin(true);
     bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
+    PluginView::setCurrentPluginView(0);
 
     return accepted;
 }

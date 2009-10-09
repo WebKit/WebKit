@@ -1,3 +1,14 @@
+2009-10-09  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Plugins : Add missing setCurrentPlugin(0)
+
+        https://bugs.webkit.org/show_bug.cgi?id=30248
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+
 2009-10-09  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
