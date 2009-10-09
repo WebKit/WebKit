@@ -502,13 +502,14 @@ HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop(
     *performedEffect = 0;
 
     draggingInfo = new DraggingInfo(object, source);
-    replaySavedEvents();
+    HRESULT oleDragAndDropReturnValue = DRAGDROP_S_CANCEL;
+    replaySavedEvents(&oleDragAndDropReturnValue);
     if (draggingInfo) {
         *performedEffect = draggingInfo->performedDropEffect();
         delete draggingInfo;
         draggingInfo = 0;
     }
-    return S_OK;
+    return oleDragAndDropReturnValue;
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::webViewGetDlgCode( 
