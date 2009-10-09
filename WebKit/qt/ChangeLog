@@ -1,3 +1,29 @@
+2009-10-09  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Sets Qt::WA_InputMethodEnabled and Qt::ImhHiddenText for password fields in EditorClientQt
+        setInputMethodState. This change is needed so widgets such as the s60 software 
+        input panel can receive input method events for password fields.
+        It's up to the Qt platform to determine which widget will receive input method 
+        events when these flags are set.
+        Also added implementation for setInputMethodEnabled and setInputMethodHint 
+        to QGraphicsWebViewPrivate and QWebViewPrivate. This change removes the direct
+        dependency on QWebView and uses QWebPageClient.
+        Added autotest to tst_qwebpage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=30023
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::setInputMethodEnabled):
+        (QGraphicsWebViewPrivate::setInputMethodHint):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::setInputMethodEnabled):
+        (QWebViewPrivate::setInputMethodHint):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

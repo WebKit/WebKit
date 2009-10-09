@@ -1212,7 +1212,8 @@ void tst_QWebPage::frameAt()
 void tst_QWebPage::inputMethods()
 {
     m_view->page()->mainFrame()->setHtml("<html><body>" \
-                                            "<input type='text' id='input1' style='font-family: serif' value='' maxlength='20'/>" \
+                                            "<input type='text' id='input1' style='font-family: serif' value='' maxlength='20'/><br>" \
+                                            "<input type='password'/>" \
                                             "</body></html>");
     m_view->page()->mainFrame()->setFocus();
 
@@ -1294,6 +1295,21 @@ void tst_QWebPage::inputMethods()
     variant = m_view->page()->inputMethodQuery(Qt::ImSurroundingText);
     value = variant.value<QString>();
     QCOMPARE(value, QString("QtWebKit"));
+#endif
+
+    //ImhHiddenText
+    QMouseEvent evpresPassword(QEvent::MouseButtonPress, inputs.at(1).geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    m_view->page()->event(&evpresPassword);
+    QMouseEvent evrelPassword(QEvent::MouseButtonRelease, inputs.at(1).geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    m_view->page()->event(&evrelPassword);
+
+    QVERIFY(m_view->testAttribute(Qt::WA_InputMethodEnabled));
+#if QT_VERSION >= 0x040600
+    QVERIFY(m_view->inputMethodHints() & Qt::ImhHiddenText);
+
+    m_view->page()->event(&evpres);
+    m_view->page()->event(&evrel);
+    QVERIFY(!(m_view->inputMethodHints() & Qt::ImhHiddenText));
 #endif
 }
 

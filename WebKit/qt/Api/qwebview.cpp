@@ -47,6 +47,10 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
+    virtual void setInputMethodEnabled(bool enable);
+#if QT_VERSION >= 0x040600
+    virtual void setInputMethodHint(Qt::InputMethodHint hint, bool enable);
+#endif
 
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;
@@ -76,6 +80,19 @@ void QWebViewPrivate::update(const QRect & dirtyRect)
     view->update(dirtyRect);
 }
 
+void QWebViewPrivate::setInputMethodEnabled(bool enable)
+{
+    view->setAttribute(Qt::WA_InputMethodEnabled, enable);
+}
+#if QT_VERSION >= 0x040600
+void QWebViewPrivate::setInputMethodHint(Qt::InputMethodHint hint, bool enable)
+{
+    if (enable)
+        view->setInputMethodHints(view->inputMethodHints() | hint);
+    else
+        view->setInputMethodHints(view->inputMethodHints() & ~hint);
+}
+#endif
 #ifndef QT_NO_CURSOR
 QCursor QWebViewPrivate::cursor() const
 {

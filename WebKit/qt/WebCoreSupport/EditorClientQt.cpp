@@ -41,6 +41,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "HTMLElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
@@ -48,6 +49,7 @@
 #include "Page.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "QWebPageClient.h"
 #include "Range.h"
 
 #include <stdio.h>
@@ -596,10 +598,26 @@ bool EditorClientQt::isEditing() const
 
 void EditorClientQt::setInputMethodState(bool active)
 {
-    QWidget *view = m_page->view();
-    if (view)
-        view->setAttribute(Qt::WA_InputMethodEnabled, active);
-
+    QWebPageClient* webPageClient = m_page->d->client;
+    if (webPageClient) {
+#if QT_VERSION >= 0x040600
+        bool isPasswordField = false;
+        if (!active) {
+            // Setting the Qt::WA_InputMethodEnabled attribute true and Qt::ImhHiddenText flag
+            // for password fields. The Qt platform is responsible for determining which widget 
+            // will receive input method events for password fields.
+            Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+            if (frame && frame->document() && frame->document()->focusedNode()) {
+                if (frame->document()->focusedNode()->hasTagName(HTMLNames::inputTag)) {
+                    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedNode());
+                    active = isPasswordField = inputElement->isPasswordField();
+              }
+            }
+        }
+        webPageClient->setInputMethodHint(Qt::ImhHiddenText, isPasswordField);
+#endif
+        webPageClient->setInputMethodEnabled(active);
+    }
     emit m_page->microFocusChanged();
 }
 
