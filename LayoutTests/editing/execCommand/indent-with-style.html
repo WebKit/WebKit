@@ -1,0 +1,39 @@
+<html>
+<body>
+This tests indenting two and three. You should see two and three indented and with the same background color as one and four.
+<p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=23995">Bug 23995</a>
+</p>
+<div id="e" contenteditable="true">
+    <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">one</span></div>
+    <div id="test1"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">two</span></div>
+    <div id="test2"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">three</span></div>
+    <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div>
+</div>
+<br>
+<ul>
+<li>Before ordered list:<span id="c1"></span></li>
+<li>After ordered:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var e = document.getElementById('e');
+var t1 = document.getElementById("test1");
+var t2 = document.getElementById("test2");
+var s = window.getSelection();
+var r = document.createRange();
+
+r.setStart(t1,0);
+r.setEnd(t2,1);
+s.removeAllRanges();
+s.addRange(r);
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+document.execCommand("Indent", false, "");
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+</script>

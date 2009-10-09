@@ -33,7 +33,6 @@
 #include "InsertLineBreakCommand.h"
 #include "InsertListCommand.h"
 #include "Range.h"
-#include "DocumentFragment.h"
 #include "SplitElementCommand.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -68,6 +67,37 @@ IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeO
 {
 }
 
+// This function is a workaround for moveParagraph's tendency to strip blockquotes. It updates lastBlockquote to point to the
+// correct level for the current paragraph, and returns a pointer to a placeholder br where the insertion should be performed.
+PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(const VisiblePosition& currentParagraph, RefPtr<Element>& lastBlockquote)
+{
+    int currentBlockquoteLevel = 0;
+    int lastBlockquoteLevel = 0;
+    Node* node = currentParagraph.deepEquivalent().node();
+    while ((node = enclosingNodeWithTag(Position(node->parentNode(), 0), blockquoteTag)))
+        currentBlockquoteLevel++;
+    node = lastBlockquote.get();
+    while ((node = enclosingNodeWithTag(Position(node->parentNode(), 0), blockquoteTag)))
+        lastBlockquoteLevel++;
+    while (currentBlockquoteLevel > lastBlockquoteLevel) {
+        RefPtr<Element> newBlockquote = createIndentBlockquoteElement(document());
+        appendNode(newBlockquote, lastBlockquote);
+        lastBlockquote = newBlockquote;
+        lastBlockquoteLevel++;
+    }
+    while (currentBlockquoteLevel < lastBlockquoteLevel) {
+        lastBlockquote = static_cast<Element*>(enclosingNodeWithTag(Position(lastBlockquote->parentNode(), 0), blockquoteTag));
+        lastBlockquoteLevel--;
+    }
+    RefPtr<Element> placeholder = createBreakElement(document());
+    appendNode(placeholder, lastBlockquote);
+    // Add another br before the placeholder if it collapsed.
+    VisiblePosition visiblePos(Position(placeholder.get(), 0));
+    if (!isStartOfParagraph(visiblePos))
+        insertNodeBefore(createBreakElement(document()), placeholder);
+    return placeholder.release();
+}
+
 bool IndentOutdentCommand::tryIndentingAsListItem(const VisiblePosition& endOfCurrentParagraph)
 {
     // If our selection is not inside a list, bail out.
@@ -81,14 +111,19 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const VisiblePosition& endOfCu
     // FIXME: we need to deal with the case where there is no li (malformed HTML)
     if (!selectedListItem->hasTagName(liTag))
         return false;
-
+    
     // FIXME: previousElementSibling does not ignore non-rendered content like <span></span>.  Should we?
     Element* previousList = selectedListItem->previousElementSibling();
     Element* nextList = selectedListItem->nextElementSibling();
 
     RefPtr<Element> newList = document()->createElement(listNode->tagQName(), false);
+    RefPtr<Element> newListItem = selectedListItem->cloneElementWithoutChildren();
+    RefPtr<Element> placeholder = createBreakElement(document());
     insertNodeBefore(newList, selectedListItem);
-    appendParagraphIntoNode(visiblePositionBeforeNode(selectedListItem), visiblePositionAfterNode(selectedListItem), newList.get());
+    appendNode(newListItem, newList);
+    appendNode(placeholder, newListItem);
+
+    moveParagraph(startOfParagraph(endOfCurrentParagraph), endOfCurrentParagraph, VisiblePosition(Position(placeholder, 0)), true);
 
     if (canMergeLists(previousList, newList.get()))
         mergeIdenticalElements(previousList, newList);
@@ -98,79 +133,29 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const VisiblePosition& endOfCu
     return true;
 }
     
-void IndentOutdentCommand::indentIntoBlockquote(const VisiblePosition& startOfCurrentParagraph, const VisiblePosition& endOfCurrentParagraph, RefPtr<Element>& targetBlockquote, Node* nodeToSplitTo)
+void IndentOutdentCommand::indentIntoBlockquote(const VisiblePosition& endOfCurrentParagraph, const VisiblePosition& endOfNextParagraph, RefPtr<Element>& targetBlockquote)
 {
     Node* enclosingCell = 0;
 
     if (!targetBlockquote) {
-        // Create a new blockquote and insert it as a child of the enclosing block element. We accomplish
+        // Create a new blockquote and insert it as a child of the root editable element. We accomplish
         // this by splitting all parents of the current paragraph up to that point.
         targetBlockquote = createIndentBlockquoteElement(document());
-        if (isTableCell(nodeToSplitTo))
-            enclosingCell = nodeToSplitTo;
-        RefPtr<Node> startOfNewBlock = splitTreeToNode(startOfCurrentParagraph.deepEquivalent().node(), nodeToSplitTo);
+        Position start = startOfParagraph(endOfCurrentParagraph).deepEquivalent();
+        enclosingCell = enclosingNodeOfType(start, &isTableCell);
+        Node* nodeToSplitTo = enclosingCell ? enclosingCell : editableRootForPosition(start);
+        RefPtr<Node> startOfNewBlock = splitTreeToNode(start.node(), nodeToSplitTo);
         insertNodeBefore(targetBlockquote, startOfNewBlock);
     }
 
-    VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
-    appendParagraphIntoNode(startOfCurrentParagraph, endOfCurrentParagraph, targetBlockquote.get());
+    RefPtr<Element> insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, targetBlockquote);
 
     // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
     // the next paragraph is in the same cell.
     if (enclosingCell && enclosingCell != enclosingNodeOfType(endOfNextParagraph.deepEquivalent(), &isTableCell))
         targetBlockquote = 0;
-}
 
-// Enclose all nodes between start and end by newParent, which is a sibling node of nodes between start and end
-// FIXME: moveParagraph is overly complicated.  We need to clean up moveParagraph so that it uses appendParagraphIntoNode
-// or prepare more specialized functions and delete moveParagraph
-void IndentOutdentCommand::appendParagraphIntoNode(const VisiblePosition& start, const VisiblePosition& end, Node* newParent)
-{
-    ASSERT(newParent);
-    ASSERT(newParent->isContentEditable());
-    ASSERT(isStartOfParagraph(start) && isEndOfParagraph(end));
-
-    Position endOfParagraph = end.deepEquivalent().downstream();
-    Node* insertionPoint = newParent->lastChild();// Remember the place to put br later
-    // Look for the beginning of the last paragraph in newParent
-    Node* startOfLastParagraph = startOfParagraph(Position(newParent, newParent->childNodeCount())).deepEquivalent().node();
-    if (startOfLastParagraph && !startOfLastParagraph->isDescendantOf(newParent))
-        startOfLastParagraph = 0;
-
-    // Extend the range so that we can append wrapping nodes as well if they're containd within the paragraph
-    ExceptionCode ec = 0;
-    RefPtr<Range> selectedRange = createRange(document(), start, end, ec);
-    RefPtr<Range> extendedRange = extendRangeToWrappingNodes(selectedRange, selectedRange.get(), newParent->parentNode());
-    newParent->appendChild(extendedRange->extractContents(ec), ec);
-
-    // If the start of paragraph didn't change by appending nodes, we should insert br to seperate the paragraphs.
-    Node* startOfNewParagraph = startOfParagraph(Position(newParent, newParent->childNodeCount())).deepEquivalent().node();
-    if (startOfNewParagraph == startOfLastParagraph) {
-        if (insertionPoint)
-            newParent->insertBefore(createBreakElement(document()), insertionPoint->nextSibling(), ec);
-        else
-            newParent->appendChild(createBreakElement(document()), ec);
-    }
-
-    // Remove unnecessary br from the place where we moved the paragraph from
-    removeUnnecessaryLineBreakAt(endOfParagraph);
-}
-
-void IndentOutdentCommand::removeUnnecessaryLineBreakAt(const Position& endOfParagraph)
-{
-    // If there is something in this paragraph, then don't remove br.
-    if (!isStartOfParagraph(endOfParagraph) || !isEndOfParagraph(endOfParagraph))
-        return;
-
-    // We only care about br at the end of paragraph
-    Node* br = endOfParagraph.node();
-    Node* parentNode = br->parentNode();
-
-    // If the node isn't br or the parent node is empty, then don't remove.
-    if (!br->hasTagName(brTag) || isVisiblyAdjacent(positionInParentBeforeNode(parentNode), positionInParentAfterNode(parentNode)))
-        return;
-
-    removeNodeAndPruneAncestors(br);
+    moveParagraph(startOfParagraph(endOfCurrentParagraph), endOfCurrentParagraph, VisiblePosition(Position(insertionPoint, 0)), true);
 }
 
 void IndentOutdentCommand::indentRegion()
@@ -178,7 +163,8 @@ void IndentOutdentCommand::indentRegion()
     VisibleSelection selection = selectionForParagraphIteration(endingSelection());
     VisiblePosition startOfSelection = selection.visibleStart();
     VisiblePosition endOfSelection = selection.visibleEnd();
-    RefPtr<Range> selectedRange = selection.firstRange();
+    int startIndex = indexForVisiblePosition(startOfSelection);
+    int endIndex = indexForVisiblePosition(endOfSelection);
 
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
@@ -203,24 +189,10 @@ void IndentOutdentCommand::indentRegion()
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         if (tryIndentingAsListItem(endOfCurrentParagraph))
             blockquoteForNextIndent = 0;
-        else {
-            VisiblePosition startOfCurrentParagraph = startOfParagraph(endOfCurrentParagraph);
-            Node* blockNode = enclosingBlock(endOfCurrentParagraph.deepEquivalent().node()->parentNode());
-            // extend the region so that it contains all the ancestor blocks within the selection
-            ExceptionCode ec;
-            Element* unsplittableNode = unsplittableElementForPosition(endOfCurrentParagraph.deepEquivalent());
-            RefPtr<Range> originalRange = createRange(document(), endOfCurrentParagraph, endOfCurrentParagraph, ec);
-            RefPtr<Range> extendedRange = extendRangeToWrappingNodes(originalRange, selectedRange.get(), unsplittableNode);
-            if (originalRange != extendedRange) {
-                ExceptionCode ec = 0;
-                endOfCurrentParagraph = endOfParagraph(extendedRange->endPosition().previous());
-                blockNode = enclosingBlock(extendedRange->commonAncestorContainer(ec));
-            }
-
-            endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
-            indentIntoBlockquote(startOfCurrentParagraph, endOfCurrentParagraph, blockquoteForNextIndent, blockNode);
-            // blockquoteForNextIndent will be updated in the function
-        }
+        else
+            indentIntoBlockquote(endOfCurrentParagraph, endOfNextParagraph, blockquoteForNextIndent);
+            // blockquoteForNextIndent maybe updated
+            // this is due to the way prepareBlockquoteLevelForInsertion was designed.
         // Sanity check: Make sure our moveParagraph calls didn't remove endOfNextParagraph.deepEquivalent().node()
         // If somehow we did, return to prevent crashes.
         if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().node()->inDocument()) {
@@ -229,7 +201,13 @@ void IndentOutdentCommand::indentRegion()
         }
         endOfCurrentParagraph = endOfNextParagraph;
     }
-
+    
+    updateLayout();
+    
+    RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0, true);
+    RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0, true);
+    if (startRange && endRange)
+        setEndingSelection(VisibleSelection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::outdentParagraph()

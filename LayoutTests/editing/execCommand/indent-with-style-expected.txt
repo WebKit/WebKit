@@ -1,0 +1,17 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 9 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > BLOCKQUOTE > DIV > BODY > HTML > #document to 5 of #text > SPAN > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting two and three. You should see two and three indented and with the same background color as one and four.
+Bug 23995
+
+one
+two
+three
+four
+
+Before ordered list: <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">one</span></div> <div id="test1"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">two</span></div> <div id="test2"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">three</span></div> <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div>
+After ordered: <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">one</span></div> <blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0); ">two</span><br><span class="Apple-style-span" style="background-color: rgb(255, 0, 0); ">three</span></blockquote> <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div>

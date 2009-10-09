@@ -4,4 +4,4 @@ a
 hello
 world
 b
-a <ul> <li>hello<blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div id="test"> world </div></blockquote></li></ul> b
+a <ul> <li>hello</li></ul><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;">world</blockquote> b

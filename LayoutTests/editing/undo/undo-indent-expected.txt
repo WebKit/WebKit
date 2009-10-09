@@ -1,0 +1,23 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 9 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > LI > OL > OL > DIV > BODY > HTML > #document to 5 of #text > LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting "three" then undoing the indent. You should see one, two and three numbered 1 through 3 then four as a sublist with number 1.
+Bugzilla bug 
+Radar bug
+
+one
+two
+three
+four
+Before indent: <li>one</li> <li>two</li> <li id="test">three</li> <ol><li>four</li></ol>
+After indent: <li>one</li> <li>two</li> <ol><li id="test">three</li><li>four</li></ol>
+After undoing: <li>one</li> <li>two</li> <li id="test">three</li> <ol><li>four</li></ol>
+The test passed

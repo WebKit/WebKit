@@ -1,3 +1,27 @@
+2009-10-09  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Undoing a indent removes text instead of it's formatting.
+        <rdar://problem/7169206>
+        https://bugs.webkit.org/show_bug.cgi?id=28722
+        Added test case for https://bugs.webkit.org/show_bug.cgi?id=23995
+
+        * editing/execCommand/19653-1-expected.txt: Re-baselined.
+        * editing/execCommand/indent-div-inside-list-expected.txt: Re-baselined.
+        * editing/execCommand/indent-nested-blockquotes-expected.txt: Re-baselined.
+        * editing/execCommand/indent-nested-div-expected.txt: Re-baselined.
+        * editing/execCommand/indent-second-paragraph-in-blockquote-expected.txt: Re-baselined.
+        * editing/execCommand/indent-with-style-expected.txt: Added.
+        * editing/execCommand/indent-with-style.html: Added.
+        * editing/undo/undo-indent-expected.txt: Added.
+        * editing/undo/undo-indent.html: Added.
+        * platform/mac/editing/execCommand/4641880-2-expected.txt: Re-baselined.
+        * platform/mac/editing/execCommand/4916541-expected.txt: Re-baselined.
+        * platform/mac/editing/execCommand/5138441-expected.txt: Re-baselined.
+        * platform/mac/editing/execCommand/5481523-expected.txt: Re-baselined.
+        * platform/mac/editing/execCommand/indent-selection-expected.txt: Re-baselined.
+
 2009-10-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -1,0 +1,50 @@
+<html>
+<body>
+<div>
+This tests indenting "three" then undoing the indent. You should see one, two and three numbered 1 through 3 then four as a sublist with number 1.
+<p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=28722">Bugzilla bug</a>
+<br>
+<a href="rdar://problem/7169206">Radar bug</a>
+</p>
+<ol id="e" contenteditable="true">
+<li>one</li>
+<li>two</li>
+<li id="test">three</li>
+<ol><li>four</li></ol>
+</ol>
+</div>
+
+<ul>
+<li>Before indent:<span id="c1"></span></li>
+<li>After indent:<span id="c2"></span></li>
+<li>After undoing:<span id="c3"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var e = document.getElementById('e');
+
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+var s = window.getSelection();
+var r = document.createRange();
+r.selectNode(document.getElementById('test'));
+s.removeAllRanges();
+s.addRange(r);
+document.execCommand("Indent", false, "");
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+
+document.execCommand("Undo");
+document.getElementById('c3').appendChild(document.createTextNode(e.innerHTML));
+
+if (document.getElementById('c1').innerHTML == document.getElementById('c3').innerHTML)
+    document.write("The test passed");
+else
+    document.write("The test failed.");
+</script>

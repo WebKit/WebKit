@@ -1,3 +1,23 @@
+2009-10-09  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Undoing a indent removes text instead of it's formatting.
+        <rdar://problem/7169206>
+        https://bugs.webkit.org/show_bug.cgi?id=28722
+        Restored the behavior prior to http://trac.webkit.org/changeset/46143. This change implemented the
+        indent command making simple DOM operation, without using moveParagraph which cause undo to be broken.
+        
+        Added editing/undo/undo-indent.html test.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion): Restored. 
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem): Merged changes.
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote): Restored.
+        (WebCore::IndentOutdentCommand::indentRegion): Restored and added call to updateLayout to
+        ensure TextIterator could correctly calculate the position starting from the index.
+        * editing/IndentOutdentCommand.h: Restored.
+
 2009-10-09  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.
