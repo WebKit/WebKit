@@ -505,18 +505,9 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/dtoa.cpp \
 	JavaScriptCore/wtf/dtoa.h
 
-# Debug build
-if ENABLE_DEBUG
 javascriptcore_built_sources += \
 	DerivedSources/Grammar.cpp \
 	DerivedSources/Grammar.h
-
-else
-javascriptcore_built_nosources += \
-	DerivedSources/Grammar.cpp \
-	DerivedSources/Grammar.h
-
-endif # END ENABLE_DEBUG
 
 DerivedSources/Grammar.h: DerivedSources/Grammar.cpp;
 
