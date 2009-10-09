@@ -1,3 +1,18 @@
+2009-10-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [v8] Need change to V8WorkerContextEventListener::reportError signature to match the base class.
+        https://bugs.webkit.org/show_bug.cgi?id=30264
+
+        The base class method changed in r48884.
+
+        Test: fast/worker/worker-script-error.html
+
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::reportError):
+        * bindings/v8/V8WorkerContextEventListener.h:
+
 2009-10-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

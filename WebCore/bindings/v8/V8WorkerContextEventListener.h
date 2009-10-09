@@ -50,7 +50,7 @@ namespace WebCore {
         }
 
         virtual void handleEvent(ScriptExecutionContext*, Event*);
-        virtual bool reportError(const String& message, const String& url, int lineNumber);
+        virtual bool reportError(ScriptExecutionContext*, const String& message, const String& url, int lineNumber);
 
         WorkerContextExecutionProxy* proxy() const { return m_proxy; }
 
