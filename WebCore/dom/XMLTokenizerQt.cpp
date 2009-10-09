@@ -621,7 +621,7 @@ void XMLTokenizer::parseEndElement()
             } else 
                 m_scriptElement = 0;
         } else
-            m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
     }
     m_requestingScript = false;
     setCurrentNode(parent.get());

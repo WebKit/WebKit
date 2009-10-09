@@ -59,6 +59,12 @@ namespace WebCore {
         // or this accessor should be made JSProxy*
         V8Proxy* proxy() { return m_proxy.get(); }
 
+        ScriptValue executeScript(const ScriptSourceCode&);
+        ScriptValue executeScript(const String& script, bool forceUserGesture = false);
+
+        // Returns true if argument is a JavaScript URL.
+        bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
+
         // Evaluate a script file in the environment of this proxy.
         // If succeeded, 'succ' is set to true and result is returned
         // as a string.
@@ -161,6 +167,8 @@ namespace WebCore {
     private:
         Frame* m_frame;
         const String* m_sourceURL;
+
+        bool m_inExecuteScript;
 
         bool m_processingTimerCallback;
         bool m_paused;

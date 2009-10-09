@@ -296,7 +296,7 @@ void XMLTokenizer::notifyFinished(CachedResource* unusedResource)
     if (errorOccurred) 
         scriptElement->dispatchErrorEvent();
     else {
-        m_view->frame()->loader()->executeScript(sourceCode);
+        m_view->frame()->script()->executeScript(sourceCode);
         scriptElement->dispatchLoadEvent();
     }
 

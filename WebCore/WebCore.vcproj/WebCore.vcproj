@@ -29707,6 +29707,10 @@
 					>
 				</File>
 			</Filter>
+      <File
+        RelativePath="..\bindings\ScriptControllerBase.cpp"
+        >
+      </File>
 		</Filter>
 		<Filter
 			Name="plugins"

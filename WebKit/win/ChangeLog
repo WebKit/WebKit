@@ -1,3 +1,15 @@
+2009-10-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move executeScript from FrameLoader to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=30200
+
+        Update API call.
+
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
 2009-10-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

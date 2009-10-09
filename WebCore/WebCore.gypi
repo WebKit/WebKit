@@ -624,6 +624,7 @@
             'bindings/js/StringSourceProvider.h',
             'bindings/js/WorkerScriptController.cpp',
             'bindings/js/WorkerScriptController.h',
+            'bindings/ScriptControllerBase.cpp',
             'bindings/v8/ChildThreadDOMData.cpp',
             'bindings/v8/ChildThreadDOMData.h',
             'bindings/v8/custom/V8AbstractWorkerCustom.cpp',

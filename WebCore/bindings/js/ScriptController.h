@@ -80,6 +80,12 @@ public:
         return m_windowShell->window();
     }
 
+    ScriptValue executeScript(const ScriptSourceCode&);
+    ScriptValue executeScript(const String& script, bool forceUserGesture = false);
+
+    // Returns true if argument is a JavaScript URL.
+    bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
+
     ScriptValue evaluate(const ScriptSourceCode&);
     void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
 
@@ -154,6 +160,8 @@ private:
     Frame* m_frame;
     int m_handlerLineNumber;
     const String* m_sourceURL;
+
+    bool m_inExecuteScript;
 
     bool m_processingTimerCallback;
     bool m_paused;

@@ -125,7 +125,7 @@ void ScheduledAction::execute(Document* document)
         executeFunctionInContext(window, window->shell());
         Document::updateStyleForAllDocuments();
     } else
-        frame->loader()->executeScript(m_code);
+        frame->script()->executeScript(m_code);
 
     frame->script()->setProcessingTimerCallback(false);
 }

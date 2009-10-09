@@ -161,6 +161,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/ScheduledAction.cpp
         bindings/js/JSWebKitCSSMatrixConstructor.cpp
         bindings/js/JSWebKitPointConstructor.cpp
+        bindings/ScriptControllerBase.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_BRIDGE">

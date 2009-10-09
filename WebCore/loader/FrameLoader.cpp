@@ -175,7 +175,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_sentRedirectNotification(false)
     , m_inStopAllLoaders(false)
     , m_isExecutingJavaScriptFormAction(false)
-    , m_isRunningScript(false)
     , m_didCallImplicitClose(false)
     , m_wasUnloadEventEmitted(false)
     , m_unloadEventBeingDispatched(false)
@@ -315,7 +314,7 @@ void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool l
 
     ResourceRequest request(url, referrer, refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy);
     
-    if (executeIfJavaScriptURL(request.url(), userGesture))
+    if (m_frame->script()->executeIfJavaScriptURL(request.url(), userGesture))
         return;
 
     urlSelected(request, "_self", 0, lockHistory, lockBackForwardList, userGesture);
@@ -323,7 +322,7 @@ void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool l
 
 void FrameLoader::urlSelected(const ResourceRequest& request, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture)
 {
-    if (executeIfJavaScriptURL(request.url(), userGesture, false))
+    if (m_frame->script()->executeIfJavaScriptURL(request.url(), userGesture, false))
         return;
 
     String target = passedTarget;
@@ -360,7 +359,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
         return false;
 
     if (!scriptURL.isEmpty())
-        frame->loader()->executeIfJavaScriptURL(scriptURL);
+        frame->script()->executeIfJavaScriptURL(scriptURL);
 
     return true;
 }
@@ -432,7 +431,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
 
     if (protocolIsJavaScript(u)) {
         m_isExecutingJavaScriptFormAction = true;
-        executeIfJavaScriptURL(u, false, false);
+        m_frame->script()->executeIfJavaScriptURL(u, false, false);
         m_isExecutingJavaScriptFormAction = false;
         return;
     }
@@ -647,62 +646,6 @@ void FrameLoader::didExplicitOpen()
         m_URL = m_frame->document()->url();
 }
 
-bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool replaceDocument)
-{
-    if (!protocolIsJavaScript(url))
-        return false;
-
-    if (m_frame->page() && !m_frame->page()->javaScriptURLsAreAllowed())
-        return true;
-
-    const int javascriptSchemeLength = sizeof("javascript:") - 1;
-
-    String script = url.string().substring(javascriptSchemeLength);
-    ScriptValue result;
-    if (m_frame->script()->xssAuditor()->canEvaluateJavaScriptURL(script))
-        result = executeScript(decodeURLEscapeSequences(script), userGesture);
-
-    String scriptResult;
-    if (!result.getString(scriptResult))
-        return true;
-
-    SecurityOrigin* currentSecurityOrigin = m_frame->document()->securityOrigin();
-
-    // FIXME: We should always replace the document, but doing so
-    //        synchronously can cause crashes:
-    //        http://bugs.webkit.org/show_bug.cgi?id=16782
-    if (replaceDocument) {
-        stopAllLoaders();
-        begin(m_URL, true, currentSecurityOrigin);
-        write(scriptResult);
-        end();
-    }
-
-    return true;
-}
-
-ScriptValue FrameLoader::executeScript(const String& script, bool forceUserGesture)
-{
-    return executeScript(ScriptSourceCode(script, forceUserGesture ? KURL() : m_URL));
-}
-
-ScriptValue FrameLoader::executeScript(const ScriptSourceCode& sourceCode)
-{
-    if (!m_frame->script()->isEnabled() || m_frame->script()->isPaused())
-        return ScriptValue();
-
-    bool wasRunningScript = m_isRunningScript;
-    m_isRunningScript = true;
-
-    ScriptValue result = m_frame->script()->evaluate(sourceCode);
-
-    if (!wasRunningScript) {
-        m_isRunningScript = false;
-        Document::updateStyleForAllDocuments();
-    }
-
-    return result;
-}
 
 void FrameLoader::cancelAndClear()
 {
@@ -713,6 +656,14 @@ void FrameLoader::cancelAndClear()
 
     clear(false);
     m_frame->script()->updatePlatformScriptObjects();
+}
+
+void FrameLoader::replaceDocument(const String& html)
+{
+    stopAllLoaders();
+    begin(m_URL, true, m_frame->document()->securityOrigin());
+    write(html);
+    end();
 }
 
 void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)

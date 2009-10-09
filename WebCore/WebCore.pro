@@ -767,6 +767,7 @@ SOURCES += \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
     bindings/js/SerializedScriptValue.cpp \
+    bindings/ScriptControllerBase.cpp \
     bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \
     bridge/npruntime.cpp \

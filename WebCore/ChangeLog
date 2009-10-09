@@ -1,3 +1,45 @@
+2009-10-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move executeScript from FrameLoader to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=30200
+
+        These methods have virtually no interaction with FrameLoader.  They
+        really seem like they ought to belong to ScriptController.
+
+        * WebCore.base.exp:
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::executeScript):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/ScriptController.h:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::executeScript):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/v8/ScriptController.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseEndElement):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::replaceDocument):
+        * loader/FrameLoader.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: added missing #include.
