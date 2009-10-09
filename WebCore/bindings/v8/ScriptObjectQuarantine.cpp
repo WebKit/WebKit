@@ -57,10 +57,25 @@ bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObj
 {
     ASSERT(database);
 
-    // FIXME: Implement when Database V8 bindings are enabled
+#if ENABLE(DATABASE)
+    v8::HandleScope handleScope;
+    Frame* frame = database->document()->frame();
+    if (!frame)
+        return false;
+
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
+    if (context.IsEmpty())
+        return false;
+
+    v8::Context::Scope scope(context);
+    v8::Handle<v8::Value> v8Database = V8DOMWrapper::convertToV8Object(V8ClassIndex::DATABASE, database);
+    ScriptState* scriptState = frame->page()->inspectorController()->frontendScriptState();
+    quarantinedObject = ScriptObject(scriptState, v8::Local<v8::Object>(v8::Object::Cast(*v8Database)));
+#else
     ASSERT_NOT_REACHED();
     quarantinedObject = ScriptObject();
-    return false;
+#endif
+    return true;
 }
 
 bool getQuarantinedScriptObject(Storage* storage, ScriptObject& quarantinedObject)
@@ -72,7 +87,9 @@ bool getQuarantinedScriptObject(Storage* storage, ScriptObject& quarantinedObjec
 #if ENABLE(DOM_STORAGE)
     v8::HandleScope handleScope;
     v8::Local<v8::Context> context = V8Proxy::context(frame);
-    // FIXME: What if context.IsEmpty()?
+    if (context.IsEmpty())
+        return false;
+
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> v8Storage = V8DOMWrapper::convertToV8Object(V8ClassIndex::STORAGE, storage);
