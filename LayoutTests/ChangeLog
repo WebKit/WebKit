@@ -1,3 +1,24 @@
+2009-10-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30260
+        <rdar://problem/6447115> REGRESSION: Logging out from SAP doesn't work
+
+        * http/tests/xmlhttprequest/logout-expected.txt: Added.
+        * http/tests/xmlhttprequest/logout.html: Added.
+        * http/tests/xmlhttprequest/resources/logout: Added.
+        * http/tests/xmlhttprequest/resources/logout/resource.php: Added.
+        Test that the logout method in question works (it currently works in Firefox, too).
+
+        * http/tests/xmlhttprequest/re-login-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/re-login-async.html: Added.
+        * http/tests/xmlhttprequest/re-login-expected.txt: Added.
+        * http/tests/xmlhttprequest/re-login.html: Added.
+        * http/tests/xmlhttprequest/resources/re-login: Added.
+        * http/tests/xmlhttprequest/resources/re-login/resource.php: Added.
+        Test that switching to a new credential works again, too.
+
 2009-10-09  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

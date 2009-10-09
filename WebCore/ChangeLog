@@ -1,3 +1,58 @@
+2009-10-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30260
+        <rdar://problem/6447115> REGRESSION: Logging out from SAP doesn't work
+
+        Tests: http/tests/xmlhttprequest/logout.html
+               http/tests/xmlhttprequest/re-login-async.html
+               http/tests/xmlhttprequest/re-login.html
+
+        Fix several issues with existing credential handling code.
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::pathToDefaultProtectionSpaceMap): Changed the data structure to a simpler one.
+        (WebCore::originsWithCredentials): The reason for two-stage lookup above was that we didn't
+        want to iterate paths for origins that never had credentials associated with them. Changed
+        to use a separate HashSet for this.
+        (WebCore::pathToDefaultProtectionSpaceMap): The concept of default per-path credentials didn't
+        match the spec very well. UAs are supposed to deduce protection space from an URL, and then
+        use whichever credentials are known for this protection space. So, OriginToDefaultBasicCredentialMap
+        is now PathToDefaultProtectionSpaceMap.
+        (WebCore::protectionSpaceMapKeyFromURL): Factored out a helper that extracts a directory
+        URL from a given URL. These directory URLs are what we use as keys in PathToDefaultProtectionSpaceMap.
+        (WebCore::CredentialStorage::set): Updated for above changes.
+        (WebCore::findDefaultProtectionSpaceForURL): Factored out code iterating path length to find
+        a prefix in OriginToDefaultBasicCredentialMap.
+        (WebCore::CredentialStorage::set): Another version of set() can update credentials for a
+        URL default protection space. It does nothing if the given URL doesn't correspond to a known
+        protection space.
+        (WebCore::CredentialStorage::get): Renamed from getDefaultAuthenticationCredential.
+
+        * platform/network/CredentialStorage.h: Made the distinction between methods that use a known
+        protection space and those that deduce one from URL more clear.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start): Update credentials before starting the request for real.
+        This makes the following pattern work:
+          var req = new XMLHttpRequest("GET", "logout.html", "logout", "logout"); // wrong credentials
+          req.send("");
+          req.abort();
+        Abort() is used here to avoid having UA present an auth dialog after getting a 401 response.
+        Note that one cannot log in using the same method, because there isn't a known protection
+        space for the URL yet in that case, so the added code has no effect.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Use a correct persistence for
+        calling receivedCredential(). This fixes logging in using an async XHR (withut abort(), of
+        course), and matches sync case.
+        (+[WebCoreSynchronousLoader loadRequest:allowStoredCredentials:returningResponse:error:]):
+        Renamed getDefaultAuthenticationCredential() to get().
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::WebCoreSynchronousLoader::load):
+        Same changes as in Mac code.
+
 2009-10-09  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

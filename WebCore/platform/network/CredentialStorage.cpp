@@ -43,13 +43,19 @@ static ProtectionSpaceToCredentialMap& protectionSpaceToCredentialMap()
     return map;
 }
 
-typedef HashMap<String, HashMap<String, Credential> > OriginToDefaultBasicCredentialMap;
-static OriginToDefaultBasicCredentialMap& originToDefaultBasicCredentialMap()
+static HashSet<String> originsWithCredentials()
 {
-    DEFINE_STATIC_LOCAL(OriginToDefaultBasicCredentialMap, map, ());
+    DEFINE_STATIC_LOCAL(HashSet<String>, set, ());
+    return set;
+}
+
+typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
+static PathToDefaultProtectionSpaceMap& pathToDefaultProtectionSpaceMap()
+{
+    DEFINE_STATIC_LOCAL(PathToDefaultProtectionSpaceMap, map, ());
     return map;
 }
-    
+
 static String originStringFromURL(const KURL& url)
 {
     if (url.port())
@@ -58,32 +64,37 @@ static String originStringFromURL(const KURL& url)
     return url.protocol() + "://" + url.host() + "/";
 }
 
+static String protectionSpaceMapKeyFromURL(const KURL& url)
+{
+    ASSERT(url.isValid());
+
+    // Remove the last path component that is not a directory to determine the subtree for which credentials will apply.
+    // We keep a leading slash, but remove a trailing one.
+    String directoryURL = url.string().substring(0, url.pathEnd());
+    unsigned directoryURLPathStart = url.pathStart();
+    ASSERT(directoryURL[directoryURLPathStart] == '/');
+    if (directoryURL.length() > directoryURLPathStart + 1) {
+        int index = directoryURL.reverseFind('/');
+        ASSERT(index > 0);
+        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) != directoryURLPathStart) ? index : directoryURLPathStart + 1);
+    }
+    ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
+
+    return directoryURL;
+}
+
 void CredentialStorage::set(const Credential& credential, const ProtectionSpace& protectionSpace, const KURL& url)
 {
     ASSERT(url.protocolInHTTPFamily());
     ASSERT(url.isValid());
 
     protectionSpaceToCredentialMap().set(protectionSpace, credential);
-    
+    originsWithCredentials().add(originStringFromURL(url));
+
     ProtectionSpaceAuthenticationScheme scheme = protectionSpace.authenticationScheme();
-    if (url.protocolInHTTPFamily() && (scheme == ProtectionSpaceAuthenticationSchemeHTTPBasic || scheme == ProtectionSpaceAuthenticationSchemeDefault)) {
-        String origin = originStringFromURL(url);
-        
-        HashMap<String, Credential> pathToCredentialMap;
-        pair<HashMap<String, HashMap<String, Credential> >::iterator, bool> result = originToDefaultBasicCredentialMap().add(origin, pathToCredentialMap);
-        
-        // Remove the last path component that is not a directory to determine the subpath for which this credential applies.
-        // We keep a leading slash, but remove a trailing one.
-        String path = url.path();
-        ASSERT(path.length() > 0);
-        ASSERT(path[0] == '/');
-        if (path.length() > 1) {
-            int index = path.reverseFind('/');
-            path = path.substring(0, index ? index : 1);
-        }
-        ASSERT(path.length() == 1 || path[path.length() - 1] != '/');
-        
-        result.first->second.set(path, credential);
+    if (scheme == ProtectionSpaceAuthenticationSchemeHTTPBasic || scheme == ProtectionSpaceAuthenticationSchemeDefault) {
+        // The map can contain both a path and its subpath - while redundant, this makes lookups faster.
+        pathToDefaultProtectionSpaceMap().set(protectionSpaceMapKeyFromURL(url), protectionSpace);
     }
 }
 
@@ -92,33 +103,53 @@ Credential CredentialStorage::get(const ProtectionSpace& protectionSpace)
     return protectionSpaceToCredentialMap().get(protectionSpace);
 }
 
-Credential CredentialStorage::getDefaultAuthenticationCredential(const KURL& url)
+static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const KURL& url)
 {
     ASSERT(url.protocolInHTTPFamily());
-    String origin = originStringFromURL(url);
-    const HashMap<String, Credential>& pathToCredentialMap(originToDefaultBasicCredentialMap().get(origin));
-    if (pathToCredentialMap.isEmpty())
-        return Credential();
-    
-    // Check to see if there is a stored credential for the subpath ancestry of this url.
-    String path = url.path();
-    Credential credential = pathToCredentialMap.get(path);
-    while (credential.isEmpty() && !path.isNull()) {
-        int index = path.reverseFind('/');
-        if (index == 0) {
-            credential = pathToCredentialMap.get("/");
-            break;
-        } else if (index == -1) {
-            // This case should never happen, as all HTTP URL paths should start with a leading /
-            ASSERT_NOT_REACHED();
-            credential = pathToCredentialMap.get(path);
-            break;
-        } else {
-            path = path.substring(0, index);
-            credential = pathToCredentialMap.get(path);
-        }
+    ASSERT(url.isValid());
+
+    PathToDefaultProtectionSpaceMap& map = pathToDefaultProtectionSpaceMap();
+
+    // Don't spend time iterating the path for origins that don't have any credentials.
+    if (!originsWithCredentials().contains(originStringFromURL(url)))
+        return map.end();
+
+    String directoryURL = protectionSpaceMapKeyFromURL(url);
+    unsigned directoryURLPathStart = url.pathStart();
+    while (true) {
+        PathToDefaultProtectionSpaceMap::iterator iter = map.find(directoryURL);
+        if (iter != map.end())
+            return iter;
+
+        if (directoryURL.length() == directoryURLPathStart + 1)  // path is "/" already, cannot shorten it any more
+            return map.end();
+
+        int index = directoryURL.reverseFind('/', -2);
+        ASSERT(index > 0);
+        directoryURL = directoryURL.substring(0, (static_cast<unsigned>(index) == directoryURLPathStart) ? index + 1 : index);
+        ASSERT(directoryURL.length() > directoryURLPathStart);
+        ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
     }
-    return credential;
+}
+
+bool CredentialStorage::set(const Credential& credential, const KURL& url)
+{
+    ASSERT(url.protocolInHTTPFamily());
+    ASSERT(url.isValid());
+    PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
+    if (iter == pathToDefaultProtectionSpaceMap().end())
+        return false;
+    ASSERT(originsWithCredentials().contains(originStringFromURL(url)));
+    protectionSpaceToCredentialMap().set(iter->second, credential);
+    return true;
+}
+
+Credential CredentialStorage::get(const KURL& url)
+{
+    PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
+    if (iter == pathToDefaultProtectionSpaceMap().end())
+        return Credential();
+    return protectionSpaceToCredentialMap().get(iter->second);
 }
 
 } // namespace WebCore
