@@ -1,3 +1,15 @@
+2009-10-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for WebCore's CSSParserValueList
+        https://bugs.webkit.org/show_bug.cgi?id=30249
+
+        Inherits CSSParserValueList class from FastAllocBase because it has 
+        been instantiated by 'new' in WebCore/css/CSSGrammar.y:1271.
+
+        * css/CSSParserValues.h:
+
 2009-10-09  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
