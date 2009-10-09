@@ -46,12 +46,6 @@ using namespace JSC;
 #include "Lookup.h"
 #include "Lexer.lut.h"
 
-// A bridge for yacc from the C world to the C++ world.
-int jscyylex(void* lvalp, void* llocp, void* globalData)
-{
-    return static_cast<JSGlobalData*>(globalData)->lexer->lex(lvalp, llocp);
-}
-
 namespace JSC {
 
 static const UChar byteOrderMark = 0xFEFF;

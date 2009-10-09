@@ -169,6 +169,47 @@ namespace JSC {
         return jsSingleCharacterSubstring(globalData, m_value, i);
     }
 
+    inline JSString* jsString(JSGlobalData* globalData, const UString& s)
+    {
+        int size = s.size();
+        if (!size)
+            return globalData->smallStrings.emptyString(globalData);
+        if (size == 1) {
+            UChar c = s.data()[0];
+            if (c <= 0xFF)
+                return globalData->smallStrings.singleCharacterString(globalData, c);
+        }
+        return new (globalData) JSString(globalData, s);
+    }
+        
+    inline JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
+    {
+        ASSERT(offset <= static_cast<unsigned>(s.size()));
+        ASSERT(length <= static_cast<unsigned>(s.size()));
+        ASSERT(offset + length <= static_cast<unsigned>(s.size()));
+        if (!length)
+            return globalData->smallStrings.emptyString(globalData);
+        if (length == 1) {
+            UChar c = s.data()[offset];
+            if (c <= 0xFF)
+                return globalData->smallStrings.singleCharacterString(globalData, c);
+        }
+        return new (globalData) JSString(globalData, UString::Rep::create(s.rep(), offset, length));
+    }
+
+    inline JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)
+    {
+        int size = s.size();
+        if (!size)
+            return globalData->smallStrings.emptyString(globalData);
+        if (size == 1) {
+            UChar c = s.data()[0];
+            if (c <= 0xFF)
+                return globalData->smallStrings.singleCharacterString(globalData, c);
+        }
+        return new (globalData) JSString(globalData, s, JSString::HasOtherOwner);
+    }
+
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
     inline JSString* jsString(ExecState* exec, const UString& s) { return jsString(&exec->globalData(), s); }
     inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->globalData(), c); }

@@ -1,7 +1,6 @@
 {
     'variables': {
         'javascriptcore_files': [
-            'AllInOneFile.cpp',
             'API/APICast.h',
             'API/JavaScript.h',
             'API/JavaScriptCore.h',

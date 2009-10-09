@@ -136,6 +136,12 @@ namespace JSC {
         return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
     }
 
+    // A bridge for yacc from the C world to the C++ world.
+    inline int jscyylex(void* lvalp, void* llocp, void* globalData)
+    {
+        return static_cast<JSGlobalData*>(globalData)->lexer->lex(lvalp, llocp);
+    }
+
 } // namespace JSC
 
 #endif // Lexer_h

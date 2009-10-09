@@ -68,20 +68,12 @@ namespace JSC {
 
         void* operator new(size_t size, ExecState* exec)
         {
-    #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-            return exec->heap()->inlineAllocateNumber(size);
-    #else
             return exec->heap()->allocateNumber(size);
-    #endif
         }
 
         void* operator new(size_t size, JSGlobalData* globalData)
         {
-    #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-            return globalData->heap.inlineAllocateNumber(size);
-    #else
             return globalData->heap.allocateNumber(size);
-    #endif
         }
 
         static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(NumberType, NeedsThisConversion | HasDefaultMark)); }

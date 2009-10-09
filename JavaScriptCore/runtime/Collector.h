@@ -71,14 +71,6 @@ namespace JSC {
 
         void destroy();
 
-#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-        // We can inline these functions because everything is compiled as
-        // one file, so the heapAllocate template definitions are available.
-        // However, allocateNumber is used via jsNumberCell outside JavaScriptCore.
-        // Thus allocateNumber needs to provide a non-inline version too.
-        void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
-        void* inlineAllocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
-#endif
         void* allocateNumber(size_t);
         void* allocate(size_t);
 

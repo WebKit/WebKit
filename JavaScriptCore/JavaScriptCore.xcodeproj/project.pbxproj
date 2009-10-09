@@ -44,11 +44,30 @@
 		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
+		140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */; };
+		140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85E0255597D01FF60F7 /* JSFunction.cpp */; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1421359A0A677F4F00A8195E /* JSBase.cpp */; };
+		14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8580255597D01FF60F7 /* Debugger.cpp */; };
+		1428082D107EC0570013E7B2 /* CallData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA62DFE0E2826230004F30D /* CallData.cpp */; };
+		1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA62DFF0E2826310004F30D /* ConstructData.cpp */; };
+		1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D85B0ED218E900B89619 /* RegisterFile.cpp */; };
+		14280841107EC0930013E7B2 /* RegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A87D0255597D01FF60F7 /* RegExp.cpp */; };
+		14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */; };
+		14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A87B0255597D01FF60F7 /* RegExpObject.cpp */; };
+		14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */; };
+		14280850107EC0D70013E7B2 /* Operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8770255597D01FF60F7 /* Operations.cpp */; };
+		14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9B80E184545000F9297 /* GetterSetter.cpp */; };
+		1428085D107EC0F80013E7B2 /* JSNumberCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9B90E184580000F9297 /* JSNumberCell.cpp */; };
+		14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */; };
+		14280864107EC11A0013E7B2 /* BooleanObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8500255597D01FF60F7 /* BooleanObject.cpp */; };
+		14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */; };
+		14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */; };
+		14280875107EC13E0013E7B2 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
 		1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D77B0ED20D7300B89619 /* Interpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D7D30ED2128200B89619 /* Interpreter.cpp */; settings = {COMPILER_FLAGS = "-fno-var-tracking"; }; };
 		1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */; };
@@ -81,11 +100,61 @@
 		1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8900A508B100005F061 /* JSCallbackFunction.cpp */; };
 		1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */; };
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
+		14469DD7107EC79E00650446 /* dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F6412039D5B5F0078395C /* dtoa.cpp */; };
+		14469DDE107EC7E700650446 /* Lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8680255597D01FF60F7 /* Lookup.cpp */; };
+		14469DDF107EC7E700650446 /* MathObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86A0255597D01FF60F7 /* MathObject.cpp */; };
+		14469DE0107EC7E700650446 /* NativeErrorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */; };
+		14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */; };
+		14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C20E16D4E900A06E92 /* NumberConstructor.cpp */; };
+		14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8700255597D01FF60F7 /* NumberObject.cpp */; };
+		14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C40E16D4E900A06E92 /* NumberPrototype.cpp */; };
+		14469DE5107EC7E700650446 /* ObjectConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C60E16D4E900A06E92 /* ObjectConstructor.cpp */; };
+		14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */; };
+		14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */; };
+		14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* PropertySlot.cpp */; };
+		14469DE9107EC7E700650446 /* PrototypeFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */; };
+		14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9374D3A8038D9D74008635CE /* ScopeChain.cpp */; };
+		14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */; };
+		14469DEC107EC7E700650446 /* StringObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C20E16EE3300B34460 /* StringObject.cpp */; };
+		14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */; };
+		14469DEE107EC7E700650446 /* UString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* UString.cpp */; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
 		147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */; };
 		147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B84620E6DE6B1004775A4 /* PutPropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		147F39BD107EC37600427A48 /* ArgList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF605110E203EF800B9A64D /* ArgList.cpp */; };
+		147F39BE107EC37600427A48 /* Arguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC257DE50E1F51C50016B6C9 /* Arguments.cpp */; };
+		147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */; };
+		147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */; };
+		147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */; };
+		147F39C2107EC37600427A48 /* Completion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A09220ED1E09C00F1F681 /* Completion.cpp */; };
+		147F39C3107EC37600427A48 /* DateConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD203450E17135E002C7E82 /* DateConstructor.cpp */; };
+		147F39C4107EC37600427A48 /* DateConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21202280AD4310C00ED79B6 /* DateConversion.cpp */; };
+		147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1166000E1997B1008066DD /* DateInstance.cpp */; };
+		147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD203470E17135E002C7E82 /* DatePrototype.cpp */; };
+		147F39C7107EC37600427A48 /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC337BEA0E1B00CB0076918A /* Error.cpp */; };
+		147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */; };
+		147F39C9107EC37600427A48 /* ErrorInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E98A0E183E38000F9297 /* ErrorInstance.cpp */; };
+		147F39CA107EC37600427A48 /* ErrorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */; };
+		147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */; };
+		147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */; };
+		147F39CD107EC37600427A48 /* GlobalEvalFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC257DED0E1F52ED0016B6C9 /* GlobalEvalFunction.cpp */; };
+		147F39CE107EC37600427A48 /* Identifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A349D038AE80F008635CE /* Identifier.cpp */; };
+		147F39CF107EC37600427A48 /* InternalFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */; };
+		147F39D0107EC37600427A48 /* JSArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */; };
+		147F39D1107EC37600427A48 /* JSCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */; };
+		147F39D2107EC37600427A48 /* JSGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */; };
+		147F39D3107EC37600427A48 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
+		147F39D4107EC37600427A48 /* JSObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22A3980E16E14800AF21C8 /* JSObject.cpp */; };
+		147F39D5107EC37600427A48 /* JSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9B60E1842FA000F9297 /* JSString.cpp */; };
+		147F39D6107EC37600427A48 /* JSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8870255597D01FF60F7 /* JSValue.cpp */; };
+		147F39D7107EC37600427A48 /* JSVariableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */; };
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
+		148F21A3107EC5310042EC2C /* grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB3F4809D11B2400F49DEB /* grammar.cpp */; };
+		148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07200ED1CE3300F1F681 /* BytecodeGenerator.cpp */; };
+		148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8650255597D01FF60F7 /* Lexer.cpp */; };
+		148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86D0255597D01FF60F7 /* Nodes.cpp */; };
+		148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */; };
 		14A23D750F4E1ABB0023CDAD /* JITStubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */; };
 		14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */; };
@@ -96,7 +165,11 @@
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (); }; };
+		14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
+		14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
+		14F8BA4F107EC899009892DC /* Collector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8520255597D01FF60F7 /* Collector.cpp */; };
 		180B9B080F16D94F009BDBC5 /* CurrentTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 180B9AF00F16C569009BDBC5 /* CurrentTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */; };
 		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
@@ -112,7 +185,6 @@
 		5D6A566B0F05995500266145 /* Threading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6A566A0F05995500266145 /* Threading.cpp */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
 		6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507D2970E871E4A00D7D896 /* JSTypeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659126BC0BDD1728001921FB /* AllInOneFile.cpp */; };
 		65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-format-attribute"; }; };
 		7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */; };
@@ -608,7 +680,6 @@
 		657EB7450B708F540063461B /* ListHashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListHashSet.h; sourceTree = "<group>"; };
 		657EEBBF094E445E008C9C7B /* HashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashCountedSet.h; sourceTree = "<group>"; tabWidth = 8; };
 		6580F795094070560082C219 /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
-		659126BC0BDD1728001921FB /* AllInOneFile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AllInOneFile.cpp; sourceTree = "<group>"; };
 		6592C316098B7DE10003D4F6 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		6592C317098B7DE10003D4F6 /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
 		65B174BE09D1000200820339 /* chartables.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; path = chartables.c; sourceTree = "<group>"; };
@@ -1001,7 +1072,6 @@
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
-				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				1432EBD70A34CAD400717B9F /* API */,
@@ -2210,26 +2280,57 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */,
+				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
+				147F39BE107EC37600427A48 /* Arguments.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
+				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
+				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
 				65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */,
+				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,
+				14280864107EC11A0013E7B2 /* BooleanObject.cpp in Sources */,
+				14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */,
 				A7A1F7AC0F252B3C00E184E2 /* ByteArray.cpp in Sources */,
+				148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */,
+				1428082D107EC0570013E7B2 /* CallData.cpp in Sources */,
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
 				1429D9C40ED23C3900B89619 /* CharacterClass.cpp in Sources */,
 				7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */,
 				969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */,
 				E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */,
 				E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */,
+				14F8BA4F107EC899009892DC /* Collector.cpp in Sources */,
+				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
+				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
+				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */,
+				147F39C3107EC37600427A48 /* DateConstructor.cpp in Sources */,
+				147F39C4107EC37600427A48 /* DateConversion.cpp in Sources */,
+				147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */,
 				41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */,
+				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
+				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
+				14469DD7107EC79E00650446 /* dtoa.cpp in Sources */,
+				147F39C7107EC37600427A48 /* Error.cpp in Sources */,
+				147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */,
+				147F39C9107EC37600427A48 /* ErrorInstance.cpp in Sources */,
+				147F39CA107EC37600427A48 /* ErrorPrototype.cpp in Sources */,
 				1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */,
+				86CA032E1038E8440028A609 /* Executable.cpp in Sources */,
 				A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */,
 				86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */,
 				A782F1A50EEC9FA20036273F /* ExecutableAllocatorPosix.cpp in Sources */,
+				14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */,
+				147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */,
+				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
+				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
+				147F39CD107EC37600427A48 /* GlobalEvalFunction.cpp in Sources */,
+				148F21A3107EC5310042EC2C /* grammar.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
+				147F39CE107EC37600427A48 /* Identifier.cpp in Sources */,
 				E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */,
+				147F39CF107EC37600427A48 /* InternalFunction.cpp in Sources */,
 				1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
 				86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */,
@@ -2238,28 +2339,58 @@
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				14A23D750F4E1ABB0023CDAD /* JITStubs.cpp in Sources */,
 				140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */,
+				140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */,
+				147F39D0107EC37600427A48 /* JSArray.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
 				A791EF290F11E07900AE1F68 /* JSByteArray.cpp in Sources */,
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
 				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
+				147F39D1107EC37600427A48 /* JSCell.cpp in Sources */,
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
+				140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */,
+				147F39D2107EC37600427A48 /* JSGlobalObject.cpp in Sources */,
+				14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */,
+				147F39D3107EC37600427A48 /* JSImmediate.cpp in Sources */,
+				14280875107EC13E0013E7B2 /* JSLock.cpp in Sources */,
 				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
+				1428085D107EC0F80013E7B2 /* JSNumberCell.cpp in Sources */,
+				147F39D4107EC37600427A48 /* JSObject.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
 				A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */,
+				140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */,
+				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
+				147F39D6107EC37600427A48 /* JSValue.cpp in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
+				147F39D7107EC37600427A48 /* JSVariableObject.cpp in Sources */,
+				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,
+				148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
+				14469DDE107EC7E700650446 /* Lookup.cpp in Sources */,
 				06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */,
 				06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */,
+				A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */,
+				A7C530E4102A3813005BC741 /* MarkStackPosix.cpp in Sources */,
+				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
+				14469DE0107EC7E700650446 /* NativeErrorConstructor.cpp in Sources */,
+				14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */,
+				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
+				14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */,
+				14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */,
+				14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */,
+				14469DE5107EC7E700650446 /* ObjectConstructor.cpp in Sources */,
+				14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
 				969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */,
+				14280850107EC0D70013E7B2 /* Operations.cpp in Sources */,
+				148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */,
 				93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */,
 				930754C108B0F68000AB3056 /* pcre_compile.cpp in Sources */,
 				930754EB08B0F78500AB3056 /* pcre_exec.cpp in Sources */,
@@ -2271,29 +2402,40 @@
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
 				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
+				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
+				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
+				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
+				14469DE9107EC7E700650446 /* PrototypeFunction.cpp in Sources */,
 				088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */,
 				905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */,
 				86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */,
 				86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */,
 				86EAC4990F93E8D1008EC948 /* RegexJIT.cpp in Sources */,
+				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
+				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
+				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
+				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
+				1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
+				14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
+				14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */,
+				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,
+				14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
+				14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */,
 				5D6A566B0F05995500266145 /* Threading.cpp in Sources */,
 				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
 				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,
 				0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */,
+				14469DEE107EC7E700650446 /* UString.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				869083150E6518D7000D36ED /* WREC.cpp in Sources */,
 				1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */,
 				1429DAE10ED2645B00B89619 /* WRECGenerator.cpp in Sources */,
 				1429DAC00ED263E700B89619 /* WRECParser.cpp in Sources */,
-				A7C530E4102A3813005BC741 /* MarkStackPosix.cpp in Sources */,
-				A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */,
-				86CA032E1038E8440028A609 /* Executable.cpp in Sources */,
-				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

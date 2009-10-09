@@ -78,11 +78,7 @@ extern const double Inf = NaNInf.doubles.Inf_Double;
 
 void* JSCell::operator new(size_t size, ExecState* exec)
 {
-#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-    return exec->heap()->inlineAllocate(size);
-#else
     return exec->heap()->allocate(size);
-#endif
 }
 
 bool JSCell::getUInt32(uint32_t&) const

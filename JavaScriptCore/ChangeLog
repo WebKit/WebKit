@@ -1,3 +1,53 @@
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        At long last, I pronounce the death of AllInOneFile.cpp.
+        
+        SunSpider reports a 1.01x speedup.
+
+        * AllInOneFile.cpp: Removed.
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added missing project files
+        to compilation stages.
+
+        * parser/Grammar.y:
+        * parser/Lexer.cpp:
+        * parser/Lexer.h:
+        (JSC::jscyylex):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/Collector.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::operator new):
+        * runtime/JSCell.h:
+        (JSC::JSCell::operator new):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::operator new):
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::operator new):
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructorPrivate::RegExpConstructorPrivate):
+        (JSC::RegExpConstructorPrivate::lastOvector):
+        (JSC::RegExpConstructorPrivate::tempOvector):
+        (JSC::RegExpConstructorPrivate::changeLastOvector):
+        (JSC::RegExpConstructor::performMatch):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        * yarr/RegexJIT.cpp:
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::executeRegex): Inlined a few things that Shark said
+        were hot, on the presumption that AllInOneFile.cpp used to inline them
+        automatically.
+
 2009-10-08  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
