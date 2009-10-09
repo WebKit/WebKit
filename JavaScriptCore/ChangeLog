@@ -1,5 +1,12 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: updated exports.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Tiger build fix: fixed file name case.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
