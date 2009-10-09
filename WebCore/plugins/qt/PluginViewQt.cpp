@@ -107,10 +107,10 @@ void PluginView::updatePluginWidget()
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
         return;
 
-    if (m_drawable)
-        XFreePixmap(QX11Info::display(), m_drawable);
+    if (!m_isWindowed && m_windowRect.size() != oldWindowRect.size()) {
+        if (m_drawable)
+            XFreePixmap(QX11Info::display(), m_drawable);
 
-    if (!m_isWindowed) {
         m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), 
                                    ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
         QApplication::syncX(); // make sure that the server knows about the Drawable

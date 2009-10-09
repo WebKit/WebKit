@@ -1,3 +1,14 @@
+2009-10-09  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless Plugins : Create Pixmap only when size changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30214
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+
 2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking
