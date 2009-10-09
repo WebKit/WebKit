@@ -611,7 +611,8 @@ void XMLTokenizer::parseEndElement()
         if (!scriptHref.isEmpty()) {
             // we have a src attribute 
             String scriptCharset = scriptElement->scriptCharset();
-            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+            if (element->dispatchBeforeLoadEvent(scriptHref) &&
+                (m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
                 m_scriptElement = element;
                 m_pendingScript->addClient(this);
 

@@ -1,3 +1,16 @@
+2009-10-09  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] beforeload event does not fire on script elements in XML
+        https://bugs.webkit.org/show_bug.cgi?id=30235
+
+        r49194 was lacking a change to XMLTokenizerQt.cpp, equivalent to the one
+        made in XMLTokenizerLibxml2.cpp.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseEndElement):
+
 2009-10-09  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.
