@@ -1,5 +1,11 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Tiger build fix: fixed file name case.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         At long last, I pronounce the death of AllInOneFile.cpp.
