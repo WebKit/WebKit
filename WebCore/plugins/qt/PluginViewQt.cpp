@@ -196,7 +196,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         // (because backing store contents are already transformed). What we really mean to do 
         // here is to check if we are painting on QWebView, but let's be a little permissive :)
         QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-        const bool backingStoreHasUntransformedContents = qobject_cast<QWidget*>(client->pluginParent());
+        const bool backingStoreHasUntransformedContents = client && qobject_cast<QWidget*>(client->pluginParent());
 
         if (hasValidBackingStore && backingStorePixmap->depth() == drawableDepth 
             && backingStoreHasUntransformedContents) {
