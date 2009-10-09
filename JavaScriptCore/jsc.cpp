@@ -29,6 +29,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSLock.h"
+#include "JSString.h"
 #include "PrototypeFunction.h"
 #include "SamplingTool.h"
 #include <math.h>

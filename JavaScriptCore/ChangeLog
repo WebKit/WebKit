@@ -1,5 +1,11 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Qt build fix: added missing #include.
+
+        * jsc.cpp:
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Tiger build fix: initialize variable whose initialization the compiler
         can't otherwise figure out.
 
