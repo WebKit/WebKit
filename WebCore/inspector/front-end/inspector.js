@@ -1043,7 +1043,8 @@ WebInspector.addDatabase = function(payload)
 
 WebInspector.addCookieDomain = function(domain)
 {
-    this.panels.storage.addCookieDomain(domain);
+    if (this.panels.storage)
+        this.panels.storage.addCookieDomain(domain);
 }
 
 WebInspector.addDOMStorage = function(payload)

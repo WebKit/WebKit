@@ -1,3 +1,14 @@
+2009-10-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix Chromium breakage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30104
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.addCookieDomain): check that Storage panel is present before calling its methods.
+
 2009-10-09  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.
