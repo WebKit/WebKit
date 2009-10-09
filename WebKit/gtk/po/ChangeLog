@@ -1,3 +1,12 @@
+2009-10-09  Rimas Kudelis  <rq@akl.lt>
+
+        Rubber-stamped by Gustavo Noronha
+
+        https://bugs.webkit.org/show_bug.cgi?id=30054
+        Localization of WebKit GTK into Lithuanian
+
+        * lt.po: Added.
+
 2009-07-18  Jorge González  <aloriel@gmail.com>
 
         Rubber-stamped by Jan Alonzo.
