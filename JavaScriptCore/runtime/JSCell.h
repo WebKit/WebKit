@@ -338,11 +338,6 @@ namespace JSC {
             append(value.asCell());
     }
 
-    inline void Structure::markAggregate(MarkStack& markStack)
-    {
-        markStack.append(m_prototype);
-    }
-
     inline Heap* Heap::heap(JSValue v)
     {
         if (!v.isCell())

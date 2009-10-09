@@ -21,6 +21,9 @@
 #include "config.h"
 #include "PropertyNameArray.h"
 
+#include "Structure.h"
+#include "StructureChain.h"
+
 namespace JSC {
 
 static const size_t setThreshold = 20;
