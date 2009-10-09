@@ -862,7 +862,7 @@ void HTMLInputElement::attach()
         if (!m_imageLoader)
             m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
-        if (renderer()) {
+        if (renderer() && m_imageLoader->haveFiredBeforeLoadEvent()) {
             RenderImage* imageObj = toRenderImage(renderer());
             imageObj->setCachedImage(m_imageLoader->image()); 
             

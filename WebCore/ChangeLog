@@ -1,3 +1,54 @@
+2009-10-08  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement beforeload for images.  ImageLoadEventSender has been refactored into a more generic
+        ImageEventSender that can be used by both load and beforeload events.  If the document has any
+        beforeload listeners, then the installation of images onto the renderer becomes asynchronous
+        and will be held up until the beforeload event can fire at a later date.
+
+        Both beforeload and load events now fire at the end of the tokenizer write() methods, so that
+        in the typical parsing case we don't have to put off the beforeload/load events until after
+        a layout or paint might already have happened.  This lets beforeload/load not cause extra
+        layouts and repaints.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::dispatchBeforeLoadEvent):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        (WebCore::Document::):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageBeforeLoadEventSender::ImageBeforeLoadEventSender):
+        (WebCore::ImageLoadEventSender::ImageLoadEventSender):
+        (WebCore::beforeLoadEventSender):
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::setLoadingImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingEvents):
+        (WebCore::ImageEventSender::ImageEventSender):
+        (WebCore::ImageEventSender::dispatchEventSoon):
+        (WebCore::ImageEventSender::cancelEvent):
+        (WebCore::ImageEventSender::dispatchPendingEvents):
+        (WebCore::ImageEventSender::timerFired):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::haveFiredBeforeLoadEvent):
+        * wml/WMLImageElement.cpp:
+        (WebCore::WMLImageElement::attach):
+
 2009-10-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -94,13 +94,12 @@ void WMLImageElement::attach()
 {
     WMLElement::attach();
 
-    if (renderer() && renderer()->isImage()) {
+    if (renderer() && renderer()->isImage() && m_imageLoader.haveFiredBeforeLoadEvent()) {
         RenderImage* imageObj = toRenderImage(renderer());
         if (imageObj->hasImage())
             return;
-
         imageObj->setCachedImage(m_imageLoader.image());
-
+        
         // If we have no image at all because we have no src attribute, set
         // image height and width for the alt text instead.
         if (!m_imageLoader.image() && !imageObj->cachedImage())

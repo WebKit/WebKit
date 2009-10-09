@@ -912,6 +912,9 @@ static void dispatchChildRemovalEvents(Node* child)
 
 bool ContainerNode::dispatchBeforeLoadEvent(const String& sourceURL)
 {
+    if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+        return true;
+
     RefPtr<ContainerNode> protector(this);
     RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
     dispatchEvent(beforeLoadEvent.get());

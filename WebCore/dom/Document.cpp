@@ -1711,7 +1711,7 @@ void Document::implicitClose()
     if (f)
         f->animation()->resumeAnimations(this);
 
-    ImageLoader::dispatchPendingLoadEvents();
+    ImageLoader::dispatchPendingEvents();
     dispatchWindowLoadEvent();
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, false), this);
     if (f)
@@ -2960,6 +2960,8 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(ANIMATIONITERATION_LISTENER);
     else if (eventType == eventNames().webkitTransitionEndEvent)
         addListenerType(TRANSITIONEND_LISTENER);
+    else if (eventType == eventNames().beforeloadEvent)
+        addListenerType(BEFORELOAD_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

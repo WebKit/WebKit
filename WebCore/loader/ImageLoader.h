@@ -53,9 +53,10 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
+    bool haveFiredBeforeLoadEvent() const { return m_firedBeforeLoad; }
     bool haveFiredLoadEvent() const { return m_firedLoad; }
 
-    static void dispatchPendingLoadEvents();
+    static void dispatchPendingEvents();
 
 protected:
     virtual void notifyFinished(CachedResource*);
@@ -64,14 +65,18 @@ private:
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomicString&) const = 0;
 
-    friend class ImageLoadEventSender;
+    friend class ImageEventSender;
+    void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
 
     void setLoadingImage(CachedImage*);
 
+    void updateRenderer();
+
     Element* m_element;
     CachedResourceHandle<CachedImage> m_image;
     AtomicString m_failedLoadURL;
+    bool m_firedBeforeLoad : 1;
     bool m_firedLoad : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;

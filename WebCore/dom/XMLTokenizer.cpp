@@ -40,6 +40,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "ImageLoader.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
@@ -105,6 +106,9 @@ void XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
     }
     
     doWrite(s.toString());
+    
+    // After parsing, go ahead and dispatch image beforeload/load events.
+    ImageLoader::dispatchPendingEvents();
 }
 
 void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
