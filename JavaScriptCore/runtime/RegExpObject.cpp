@@ -159,7 +159,7 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
     }
 
     int position;
-    int length;
+    int length = 0;
     regExpConstructor->performMatch(d->regExp.get(), input, static_cast<int>(d->lastIndex), position, length);
     if (position < 0) {
         d->lastIndex = 0;

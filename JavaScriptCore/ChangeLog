@@ -1,5 +1,13 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Tiger build fix: initialize variable whose initialization the compiler
+        can't otherwise figure out.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: updated exports.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
