@@ -1,5 +1,13 @@
 2009-10-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Tiger build fix: added a few more variable initializations.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncSearch):
+
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
         Qt build fix: added missing #include.
 
         * jsc.cpp:
