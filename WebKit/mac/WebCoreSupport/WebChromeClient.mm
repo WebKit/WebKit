@@ -548,6 +548,15 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
     
 void WebChromeClient::populateVisitedLinks()
 {
+    if ([m_webView historyDelegate]) {
+        WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(m_webView);
+        
+        if (implementations->populateVisitedLinksFunc)
+            CallHistoryDelegate(implementations->populateVisitedLinksFunc, m_webView, @selector(populateVisitedLinksForWebView:));
+
+        return;
+    }
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [[WebHistory optionalSharedHistory] _addVisitedLinksToPageGroup:[m_webView page]->group()];
     END_BLOCK_OBJC_EXCEPTIONS;

@@ -200,6 +200,9 @@ typedef enum {
 - (void)setMediaVolume:(float)volume;
 - (float)mediaVolume;
 
+// Add visited links
+- (void)addVisitedLinks:(NSArray *)visitedLinks;
+
 @end
 
 @interface WebView (WebPrivate)

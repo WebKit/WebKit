@@ -548,6 +548,11 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
     return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, integer2, object2);
 }
 
+id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector)
+{
+    return CallDelegate(implementation, self, self->_private->historyDelegate, selector);
+}
+
 id CallHistoryDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
     return CallDelegate(implementation, self, self->_private->historyDelegate, selector, object1, object2);

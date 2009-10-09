@@ -39,4 +39,6 @@
 
 - (void)webView:(WebView *)webView updateHistoryTitle:(NSString *)title forURL:(NSString *)url;
 
+- (void)populateVisitedLinksForWebView:(WebView *)webView;
+
 @end

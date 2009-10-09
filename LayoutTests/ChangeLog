@@ -1,3 +1,13 @@
+2009-10-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Ask the History Delegate to populate the visited links hash.
+        <rdar://problem/7285293> and https://webkit.org/b/29904
+
+        * http/tests/globalhistory/history-delegate-basic-visited-links-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-basic-visited-links.html: Added.
+
 2009-10-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Eric Seidel.

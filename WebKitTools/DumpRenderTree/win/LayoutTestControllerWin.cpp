@@ -912,3 +912,8 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
 
     inspectorPrivate->evaluateInFrontend(callId, bstrT(script).GetBSTR());
 }
+
+void LayoutTestController::removeAllVisitedLinks()
+{
+    // FIXME: Implement this.
+}

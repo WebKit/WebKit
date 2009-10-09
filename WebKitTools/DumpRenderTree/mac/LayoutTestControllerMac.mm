@@ -333,6 +333,11 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     [[WebPreferences standardPreferences] _setPreferenceForTestWithValue:valueNS forKey:keyNS];
 }
 
+void LayoutTestController::removeAllVisitedLinks()
+{
+    [WebHistory _removeAllVisitedLinks];
+}
+
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));

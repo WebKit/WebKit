@@ -801,6 +801,11 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     return [_historyPrivate data];
 }
 
++ (void)_removeAllVisitedLinks
+{
+    PageGroup::removeAllVisitedLinks();
+}
+
 @end
 
 @implementation WebHistory (WebInternal)

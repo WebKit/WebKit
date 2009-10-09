@@ -1,3 +1,32 @@
+2009-10-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Ask the History Delegate to populate the visited links hash.
+        <rdar://problem/7285293> and https://webkit.org/b/29904
+
+        Add the ability for LayoutTestController to clear all visited links.
+        Also lets the History Delegate dump visited links, but only if this test specifically cleared them.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (removeAllVisitedLinksCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::removeAllVisitedLinks):
+
+        * DumpRenderTree/mac/HistoryDelegate.mm:
+        (-[HistoryDelegate populateVisitedLinksForWebView:]):
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::removeAllVisitedLinks):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::removeAllVisitedLinks):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::removeAllVisitedLinks):
+
+
 2009-10-08  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Roben.

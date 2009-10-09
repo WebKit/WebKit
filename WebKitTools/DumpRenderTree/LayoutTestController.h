@@ -62,6 +62,7 @@ public:
     void queueLoadingScript(JSStringRef script);
     void queueNonLoadingScript(JSStringRef script);
     void queueReload();
+    void removeAllVisitedLinks();
     void setAcceptsEditing(bool acceptsEditing);
     void setAppCacheMaximumSize(unsigned long long quota);
     void setAuthorAndUserStylesEnabled(bool);
@@ -137,6 +138,9 @@ public:
 
     bool dumpTitleChanges() const { return m_dumpTitleChanges; }
     void setDumpTitleChanges(bool dumpTitleChanges) { m_dumpTitleChanges = dumpTitleChanges; }
+
+    bool dumpVisitedLinksCallback() const { return m_dumpVisitedLinksCallback; }
+    void setDumpVisitedLinksCallback(bool dumpVisitedLinksCallback) { m_dumpVisitedLinksCallback = dumpVisitedLinksCallback; }
     
     bool dumpWillCacheResponse() const { return m_dumpWillCacheResponse; }
     void setDumpWillCacheResponse(bool dumpWillCacheResponse) { m_dumpWillCacheResponse = dumpWillCacheResponse; }
@@ -225,6 +229,7 @@ private:
     bool m_dumpSourceAsWebArchive;
     bool m_dumpStatusCallbacks;
     bool m_dumpTitleChanges;
+    bool m_dumpVisitedLinksCallback;
     bool m_dumpWillCacheResponse;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;

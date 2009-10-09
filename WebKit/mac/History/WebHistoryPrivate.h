@@ -53,5 +53,5 @@ extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
 */
 - (NSData *)_data;
 
-
++ (void)_removeAllVisitedLinks;
 @end
