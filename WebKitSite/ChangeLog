@@ -1,3 +1,11 @@
+2009-10-08  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        Added a basic description of the layout and rendering project and added links to the blog entries on rendering.
+
+        * projects/layout/index.html:
+
 2009-10-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
