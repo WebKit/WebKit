@@ -1,3 +1,29 @@
+2009-10-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] QoS support in the video sink
+        https://bugs.webkit.org/show_bug.cgi?id=29959
+
+        Removed the async buffer queue from the sink. Synchronize the
+        render method of the sink using a g_timeout_add() combined with a
+        gcond triggered when the buffer has been rendered.
+        Also fixed the video sink reference handling in the player, now
+        that the idle is not there anymore to mess up things.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_init):
+        (webkit_video_sink_timeout_func):
+        (webkit_video_sink_render):
+        (webkit_video_sink_dispose):
+        (unlock_buffer_mutex):
+        (webkit_video_sink_unlock):
+        (webkit_video_sink_stop):
+        (webkit_video_sink_class_init):
+
 2009-10-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

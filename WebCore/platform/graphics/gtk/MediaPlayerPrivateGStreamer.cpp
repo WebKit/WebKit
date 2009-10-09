@@ -158,12 +158,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 640, 480);
 }
 
-static gboolean idleUnref(gpointer data)
-{
-    g_object_unref(reinterpret_cast<GObject*>(data));
-    return FALSE;
-}
-
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     if (m_surface)
@@ -174,15 +168,8 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
         gst_object_unref(GST_OBJECT(m_playBin));
     }
 
-    // FIXME: We should find a better way to handle the lifetime of this object; this is
-    // needed because the object is sometimes being destroyed inbetween a call to
-    // webkit_video_sink_render, and the idle it schedules. Adding a ref in
-    // webkit_video_sink_render that would be balanced by the idle is not an option,
-    // because in some cases the destruction of the sink may happen in time for the idle
-    // to be removed from the queue, so it may not run. It would also cause lots of ref
-    // counting churn (render/idle are called many times). This is an ugly race.
     if (m_videoSink) {
-        g_idle_add(idleUnref, m_videoSink);
+        g_object_unref(m_videoSink);
         m_videoSink = 0;
     }
 }
@@ -815,10 +802,7 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 
     m_videoSink = webkit_video_sink_new(m_surface);
 
-    // This ref is to protect the sink from being destroyed before we stop the idle it
-    // creates internally. See the comment in ~MediaPlayerPrivate.
-    g_object_ref(m_videoSink);
-
+    g_object_ref_sink(m_videoSink);
     g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
 
     g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);

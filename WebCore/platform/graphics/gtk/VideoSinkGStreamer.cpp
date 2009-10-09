@@ -65,7 +65,6 @@ static guint webkit_video_sink_signals[LAST_SIGNAL] = { 0, };
 
 struct _WebKitVideoSinkPrivate {
     cairo_surface_t* surface;
-    GAsyncQueue* async_queue;
     gboolean rgb_ordering;
     int width;
     int height;
@@ -73,6 +72,10 @@ struct _WebKitVideoSinkPrivate {
     int fps_d;
     int par_n;
     int par_d;
+    GstBuffer* buffer;
+    guint timeout_id;
+    GMutex* buffer_mutex;
+    GCond* data_cond;
 };
 
 #define _do_init(bla) \
@@ -83,8 +86,8 @@ struct _WebKitVideoSinkPrivate {
 
 GST_BOILERPLATE_FULL(WebKitVideoSink,
                      webkit_video_sink,
-                     GstBaseSink,
-                     GST_TYPE_BASE_SINK,
+                     GstVideoSink,
+                     GST_TYPE_VIDEO_SINK,
                      _do_init);
 
 static void
@@ -102,11 +105,12 @@ webkit_video_sink_init(WebKitVideoSink* sink, WebKitVideoSinkClass* klass)
     WebKitVideoSinkPrivate* priv;
 
     sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
-    priv->async_queue = g_async_queue_new();
+    priv->data_cond = g_cond_new();
+    priv->buffer_mutex = g_mutex_new();
 }
 
 static gboolean
-webkit_video_sink_idle_func(gpointer data)
+webkit_video_sink_timeout_func(gpointer data)
 {
     WebKitVideoSink* sink = reinterpret_cast<WebKitVideoSink*>(data);
     WebKitVideoSinkPrivate* priv = sink->priv;
@@ -117,17 +121,22 @@ webkit_video_sink_idle_func(gpointer data)
     gfloat par;
     gint bwidth, bheight;
 
-    if (!priv->async_queue)
-        return FALSE;
+    g_mutex_lock(priv->buffer_mutex);
+    buffer = priv->buffer;
+    priv->timeout_id = 0;
 
-    buffer = (GstBuffer*)g_async_queue_try_pop(priv->async_queue);
-    if (!buffer || G_UNLIKELY(!GST_IS_BUFFER(buffer)))
+    if (!buffer || G_UNLIKELY(!GST_IS_BUFFER(buffer))) {
+        g_cond_signal(priv->data_cond);
+        g_mutex_unlock(priv->buffer_mutex);
         return FALSE;
+    }
 
     caps = GST_BUFFER_CAPS(buffer);
     if (!gst_video_format_parse_caps(caps, &format, &bwidth, &bheight)) {
         GST_ERROR_OBJECT(sink, "Unknown video format in buffer caps '%s'",
                          gst_caps_to_string(caps));
+        g_cond_signal(priv->data_cond);
+        g_mutex_unlock(priv->buffer_mutex);
         return FALSE;
     }
 
@@ -136,7 +145,6 @@ webkit_video_sink_idle_func(gpointer data)
 
     par = (gfloat) par_n / (gfloat) par_d;
 
-    // TODO: consider priv->rgb_ordering?
     cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer),
                                                                CAIRO_FORMAT_RGB24,
                                                                bwidth, bheight,
@@ -151,10 +159,13 @@ webkit_video_sink_idle_func(gpointer data)
     cairo_rectangle(cr, 0, 0, priv->width, priv->height);
     cairo_fill(cr);
     cairo_destroy(cr);
+
     gst_buffer_unref(buffer);
-    g_async_queue_unref(priv->async_queue);
+    priv->buffer = 0;
 
     g_signal_emit(sink, webkit_video_sink_signals[REPAINT_REQUESTED], 0);
+    g_cond_signal(priv->data_cond);
+    g_mutex_unlock(priv->buffer_mutex);
 
     return FALSE;
 }
@@ -165,10 +176,17 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(bsink);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
-    g_async_queue_ref(priv->async_queue);
-    g_async_queue_push(priv->async_queue, gst_buffer_ref(buffer));
-    g_idle_add_full(G_PRIORITY_HIGH_IDLE, webkit_video_sink_idle_func, sink, 0);
+    g_mutex_lock(priv->buffer_mutex);
+    priv->buffer = gst_buffer_ref(buffer);
 
+    // Use HIGH_IDLE+20 priority, like Gtk+ for redrawing operations.
+    priv->timeout_id = g_timeout_add_full(G_PRIORITY_HIGH_IDLE + 20, 0,
+                                          webkit_video_sink_timeout_func,
+                                          gst_object_ref(sink),
+                                          (GDestroyNotify)gst_object_unref);
+
+    g_cond_wait(priv->data_cond, priv->buffer_mutex);
+    g_mutex_unlock(priv->buffer_mutex);
     return GST_FLOW_OK;
 }
 
@@ -225,18 +243,41 @@ webkit_video_sink_dispose(GObject* object)
         priv->surface = 0;
     }
 
-    if (priv->async_queue) {
-        g_async_queue_unref(priv->async_queue);
-        priv->async_queue = 0;
+    if (priv->data_cond) {
+        g_cond_free(priv->data_cond);
+        priv->data_cond = 0;
+    }
+
+    if (priv->buffer_mutex) {
+        g_mutex_free(priv->buffer_mutex);
+        priv->buffer_mutex = 0;
     }
 
     G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 static void
-webkit_video_sink_finalize(GObject* object)
+unlock_buffer_mutex(WebKitVideoSinkPrivate* priv)
 {
-    G_OBJECT_CLASS(parent_class)->finalize(object);
+    g_mutex_lock(priv->buffer_mutex);
+
+    if (priv->buffer) {
+        gst_buffer_unref(priv->buffer);
+        priv->buffer = 0;
+    }
+
+    g_cond_signal(priv->data_cond);
+    g_mutex_unlock(priv->buffer_mutex);
+
+}
+
+static gboolean
+webkit_video_sink_unlock(GstBaseSink* object)
+{
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(object);
+    unlock_buffer_mutex(sink->priv);
+    GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock,
+                                 (object), TRUE);
 }
 
 static void
@@ -276,17 +317,7 @@ static gboolean
 webkit_video_sink_stop(GstBaseSink* base_sink)
 {
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(base_sink)->priv;
-
-    g_async_queue_lock(priv->async_queue);
-
-    /* Remove all remaining objects from the queue */
-    while (GstBuffer* buffer = (GstBuffer*)g_async_queue_try_pop_unlocked(priv->async_queue))
-        gst_buffer_unref(buffer);
-
-    g_async_queue_unlock(priv->async_queue);
-
-    g_idle_remove_by_data(base_sink);
-
+    unlock_buffer_mutex(priv);
     return TRUE;
 }
 
@@ -302,8 +333,8 @@ webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     gobject_class->get_property = webkit_video_sink_get_property;
 
     gobject_class->dispose = webkit_video_sink_dispose;
-    gobject_class->finalize = webkit_video_sink_finalize;
 
+    gstbase_sink_class->unlock = webkit_video_sink_unlock;
     gstbase_sink_class->render = webkit_video_sink_render;
     gstbase_sink_class->preroll = webkit_video_sink_render;
     gstbase_sink_class->stop = webkit_video_sink_stop;

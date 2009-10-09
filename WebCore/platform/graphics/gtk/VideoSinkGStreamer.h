@@ -22,7 +22,7 @@
 
 #include <cairo.h>
 #include <glib-object.h>
-#include <gst/base/gstbasesink.h>
+#include <gst/video/gstvideosink.h>
 
 G_BEGIN_DECLS
 
@@ -54,13 +54,13 @@ typedef struct _WebKitVideoSinkPrivate WebKitVideoSinkPrivate;
 
 struct _WebKitVideoSink {
     /*< private >*/
-    GstBaseSink parent;
+    GstVideoSink parent;
     WebKitVideoSinkPrivate *priv;
 };
 
 struct _WebKitVideoSinkClass {
     /*< private >*/
-    GstBaseSinkClass parent_class;
+    GstVideoSinkClass parent_class;
 
     /* Future padding */
     void (* _webkit_reserved1)(void);
