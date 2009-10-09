@@ -288,6 +288,7 @@ DOM_CLASSES = \
     SVGFEImageElement \
     SVGFEMergeElement \
     SVGFEMergeNodeElement \
+    SVGFEMorphologyElement \
     SVGFEOffsetElement \
     SVGFEPointLightElement \
     SVGFESpecularLightingElement \

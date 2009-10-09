@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-FEMorphology::FEMorphology(FilterEffect* in, MorphologyOperatorType type, const float& radiusX, const float& radiusY)
+FEMorphology::FEMorphology(FilterEffect* in, MorphologyOperatorType type, float radiusX, float radiusY)
     : FilterEffect()
     , m_in(in)
     , m_type(type)
@@ -37,7 +37,7 @@ FEMorphology::FEMorphology(FilterEffect* in, MorphologyOperatorType type, const 
 {
 }
 
-PassRefPtr<FEMorphology> FEMorphology::create(FilterEffect* in, MorphologyOperatorType type, const float& radiusX, const float& radiusY)
+PassRefPtr<FEMorphology> FEMorphology::create(FilterEffect* in, MorphologyOperatorType type, float radiusX, float radiusY)
 {
     return adoptRef(new FEMorphology(in, type, radiusX, radiusY));
 }
@@ -88,8 +88,8 @@ static TextStream& operator<<(TextStream& ts, MorphologyOperatorType t)
             ts << "UNKNOWN"; break;
         case FEMORPHOLOGY_OPERATOR_ERODE:
             ts << "ERODE"; break;
-        case FEMORPHOLOGY_OPERATOR_DIALATE:
-            ts << "DIALATE"; break;
+        case FEMORPHOLOGY_OPERATOR_DILATE:
+            ts << "DILATE"; break;
     }
     return ts;
 }

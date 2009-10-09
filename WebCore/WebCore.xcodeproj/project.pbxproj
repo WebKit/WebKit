@@ -1212,6 +1212,13 @@
 		7A74ECBD101839DA00BF939E /* JSInspectorBackendCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */; };
 		7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */; };
 		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
+		84224183107E77F400766A87 /* JSSVGFEMorphologyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */; };
+		84224184107E77F400766A87 /* JSSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */; };
+		8422418C107E786F00766A87 /* DOMSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
+		8422418D107E786F00766A87 /* DOMSVGFEMorphologyElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8422418A107E786F00766A87 /* DOMSVGFEMorphologyElement.mm */; };
+		8422418E107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */; };
+		84224193107E78A700766A87 /* SVGFEMorphologyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84224190107E78A700766A87 /* SVGFEMorphologyElement.cpp */; };
+		84224194107E78A700766A87 /* SVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224191107E78A700766A87 /* SVGFEMorphologyElement.h */; };
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
 		845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845E72F90FD2623900A87D79 /* SVGFilter.cpp */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
@@ -6480,6 +6487,14 @@
 		7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorBackendCustom.cpp; sourceTree = "<group>"; };
 		7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
 		7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
+		84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEMorphologyElement.cpp; sourceTree = "<group>"; };
+		84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEMorphologyElement.h; sourceTree = "<group>"; };
+		84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEMorphologyElement.h; sourceTree = "<group>"; };
+		8422418A107E786F00766A87 /* DOMSVGFEMorphologyElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEMorphologyElement.mm; sourceTree = "<group>"; };
+		8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEMorphologyElementInternal.h; sourceTree = "<group>"; };
+		84224190107E78A700766A87 /* SVGFEMorphologyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMorphologyElement.cpp; sourceTree = "<group>"; };
+		84224191107E78A700766A87 /* SVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEMorphologyElement.h; sourceTree = "<group>"; };
+		84224192107E78A700766A87 /* SVGFEMorphologyElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEMorphologyElement.idl; sourceTree = "<group>"; };
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = filters/Filter.h; sourceTree = "<group>"; };
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
@@ -11491,6 +11506,9 @@
 				8502AB320AD438C000378540 /* DOMSVGFEMergeNodeElement.h */,
 				8502AB330AD438C000378540 /* DOMSVGFEMergeNodeElement.mm */,
 				A8E544610CA9D1C20097D09B /* DOMSVGFEMergeNodeElementInternal.h */,
+				84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */,
+				8422418A107E786F00766A87 /* DOMSVGFEMorphologyElement.mm */,
+				8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */,
 				8502AB340AD438C000378540 /* DOMSVGFEOffsetElement.h */,
 				8502AB350AD438C000378540 /* DOMSVGFEOffsetElement.mm */,
 				A8E5445F0CA9D1C20097D09B /* DOMSVGFEOffsetElementInternal.h */,
@@ -12990,6 +13008,8 @@
 				B2FA3C9F0AB75A6E000E5AC4 /* JSSVGFEMergeElement.h */,
 				B2FA3CA00AB75A6E000E5AC4 /* JSSVGFEMergeNodeElement.cpp */,
 				B2FA3CA10AB75A6E000E5AC4 /* JSSVGFEMergeNodeElement.h */,
+				84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */,
+				84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */,
 				B2FA3CA20AB75A6E000E5AC4 /* JSSVGFEOffsetElement.cpp */,
 				B2FA3CA30AB75A6E000E5AC4 /* JSSVGFEOffsetElement.h */,
 				B2FA3CA40AB75A6E000E5AC4 /* JSSVGFEPointLightElement.cpp */,
@@ -13542,6 +13562,9 @@
 				B22278600D00BF200071B782 /* SVGFEMergeNodeElement.cpp */,
 				B22278610D00BF200071B782 /* SVGFEMergeNodeElement.h */,
 				B22278620D00BF200071B782 /* SVGFEMergeNodeElement.idl */,
+				84224190107E78A700766A87 /* SVGFEMorphologyElement.cpp */,
+				84224191107E78A700766A87 /* SVGFEMorphologyElement.h */,
+				84224192107E78A700766A87 /* SVGFEMorphologyElement.idl */,
 				B22278630D00BF200071B782 /* SVGFEOffsetElement.cpp */,
 				B22278640D00BF200071B782 /* SVGFEOffsetElement.h */,
 				B22278650D00BF200071B782 /* SVGFEOffsetElement.idl */,
@@ -16246,6 +16269,8 @@
 				8502AB5E0AD438C000378540 /* DOMSVGFEMergeNodeElement.h in Headers */,
 				8502AB9D0AD4394E00378540 /* DOMSVGFEMergeNodeElementInternal.h in Headers */,
 				A8E5455F0CA9D1C20097D09B /* DOMSVGFEMergeNodeElementInternal.h in Headers */,
+				8422418C107E786F00766A87 /* DOMSVGFEMorphologyElement.h in Headers */,
+				8422418E107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h in Headers */,
 				8502AB600AD438C000378540 /* DOMSVGFEOffsetElement.h in Headers */,
 				8502AB9E0AD4394E00378540 /* DOMSVGFEOffsetElementInternal.h in Headers */,
 				A8E5455D0CA9D1C20097D09B /* DOMSVGFEOffsetElementInternal.h in Headers */,
@@ -17096,6 +17121,7 @@
 				B2FA3D850AB75A6F000E5AC4 /* JSSVGFEImageElement.h in Headers */,
 				B2FA3D870AB75A6F000E5AC4 /* JSSVGFEMergeElement.h in Headers */,
 				B2FA3D890AB75A6F000E5AC4 /* JSSVGFEMergeNodeElement.h in Headers */,
+				84224184107E77F400766A87 /* JSSVGFEMorphologyElement.h in Headers */,
 				B2FA3D8B0AB75A6F000E5AC4 /* JSSVGFEOffsetElement.h in Headers */,
 				B2FA3D8D0AB75A6F000E5AC4 /* JSSVGFEPointLightElement.h in Headers */,
 				B2FA3D8F0AB75A6F000E5AC4 /* JSSVGFESpecularLightingElement.h in Headers */,
@@ -17667,6 +17693,7 @@
 				B22279F40D00BF220071B782 /* SVGFEMergeElement.h in Headers */,
 				B22279F70D00BF220071B782 /* SVGFEMergeNodeElement.h in Headers */,
 				B25599890D00D8BA00BB825C /* SVGFEMorphology.h in Headers */,
+				84224194107E78A700766A87 /* SVGFEMorphologyElement.h in Headers */,
 				B255998B0D00D8BA00BB825C /* SVGFEOffset.h in Headers */,
 				B22279FA0D00BF220071B782 /* SVGFEOffsetElement.h in Headers */,
 				B22279FD0D00BF220071B782 /* SVGFEPointLightElement.h in Headers */,
@@ -18595,6 +18622,7 @@
 				8502AB5B0AD438C000378540 /* DOMSVGFEImageElement.mm in Sources */,
 				8502AB5D0AD438C000378540 /* DOMSVGFEMergeElement.mm in Sources */,
 				8502AB5F0AD438C000378540 /* DOMSVGFEMergeNodeElement.mm in Sources */,
+				8422418D107E786F00766A87 /* DOMSVGFEMorphologyElement.mm in Sources */,
 				8502AB610AD438C000378540 /* DOMSVGFEOffsetElement.mm in Sources */,
 				8502AB630AD438C000378540 /* DOMSVGFEPointLightElement.mm in Sources */,
 				8502AB650AD438C000378540 /* DOMSVGFESpecularLightingElement.mm in Sources */,
@@ -19291,6 +19319,7 @@
 				B2FA3D840AB75A6F000E5AC4 /* JSSVGFEImageElement.cpp in Sources */,
 				B2FA3D860AB75A6F000E5AC4 /* JSSVGFEMergeElement.cpp in Sources */,
 				B2FA3D880AB75A6F000E5AC4 /* JSSVGFEMergeNodeElement.cpp in Sources */,
+				84224183107E77F400766A87 /* JSSVGFEMorphologyElement.cpp in Sources */,
 				B2FA3D8A0AB75A6F000E5AC4 /* JSSVGFEOffsetElement.cpp in Sources */,
 				B2FA3D8C0AB75A6F000E5AC4 /* JSSVGFEPointLightElement.cpp in Sources */,
 				B2FA3D8E0AB75A6F000E5AC4 /* JSSVGFESpecularLightingElement.cpp in Sources */,
@@ -19829,6 +19858,7 @@
 				B22279F30D00BF220071B782 /* SVGFEMergeElement.cpp in Sources */,
 				B22279F60D00BF220071B782 /* SVGFEMergeNodeElement.cpp in Sources */,
 				B25599880D00D8BA00BB825C /* SVGFEMorphology.cpp in Sources */,
+				84224193107E78A700766A87 /* SVGFEMorphologyElement.cpp in Sources */,
 				B255998A0D00D8BA00BB825C /* SVGFEOffset.cpp in Sources */,
 				B22279F90D00BF220071B782 /* SVGFEOffsetElement.cpp in Sources */,
 				B22279FC0D00BF220071B782 /* SVGFEPointLightElement.cpp in Sources */,

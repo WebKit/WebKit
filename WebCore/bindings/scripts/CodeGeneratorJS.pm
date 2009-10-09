@@ -1933,6 +1933,8 @@ sub NativeToJSValue
     }
 
     if ($codeGenerator->IsSVGAnimatedType($type)) {
+        # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
+        $value =~ s/operator\(\)/_operator\(\)/ if ($value =~ /operator/);
         $value =~ s/\(\)//;
         $value .= "Animated()";
     }

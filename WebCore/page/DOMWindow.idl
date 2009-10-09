@@ -560,7 +560,7 @@ module window {
         attribute SVGFECompositeElementConstructor SVGFECompositeElement;
 //      attribute SVGFEConvolveMatrixElementConstructor SVGFEConvolveMatrixElement;
         attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
-//      attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
+        attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
         attribute SVGFETurbulenceElementConstructor SVGFETurbulenceElement;
 #endif
 #endif

@@ -547,6 +547,7 @@ IDL_BINDINGS += \
     svg/SVGFEImageElement.idl \
     svg/SVGFEMergeElement.idl \
     svg/SVGFEMergeNodeElement.idl \
+    svg/SVGFEMorphologyElement.idl \
     svg/SVGFEOffsetElement.idl \
     svg/SVGFEPointLightElement.idl \
     svg/SVGFESpecularLightingElement.idl \
@@ -2161,6 +2162,7 @@ HEADERS += \
     svg/SVGFELightElement.h \
     svg/SVGFEMergeElement.h \
     svg/SVGFEMergeNodeElement.h \
+    svg/SVGFEMorphologyElement.h \
     svg/SVGFEOffsetElement.h \
     svg/SVGFEPointLightElement.h \
     svg/SVGFESpecularLightingElement.h \
@@ -2901,6 +2903,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFELightElement.cpp \
         svg/SVGFEMergeElement.cpp \
         svg/SVGFEMergeNodeElement.cpp \
+        svg/SVGFEMorphologyElement.cpp \
         svg/SVGFEOffsetElement.cpp \
         svg/SVGFEPointLightElement.cpp \
         svg/SVGFESpecularLightingElement.cpp \

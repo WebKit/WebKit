@@ -1,3 +1,45 @@
+2009-10-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        feMorphology filter is not implemented
+        [https://bugs.webkit.org/show_bug.cgi?id=5863]
+
+        Adds SVGFEMorphologyElement, for the SVG filter. It also fixes a bug
+        with the attribute "operator". It was only accessible via "_operator" 
+        on JavaScript.
+
+        Test: svg/dom/operatorAttribute.xhtml
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.SVG.Filters.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMSVG.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * page/DOMWindow.idl:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEMorphologyElement.cpp: Added.
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::~SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::setRadius):
+        (WebCore::SVGFEMorphologyElement::parseMappedAttribute):
+        (WebCore::SVGFEMorphologyElement::build):
+        * svg/SVGFEMorphologyElement.h: Added.
+        * svg/SVGFEMorphologyElement.idl: Added.
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::operator<<):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        (WebCore::):
+        * svg/svgtags.in:
+
 2009-10-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -725,6 +725,8 @@ sub GenerateHeader
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
             my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attributeIsReadonly);
+            # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
+            $attributeName =~ s/operator/_operator/ if ($attributeName =~ /operator/);
             $property .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName;
 
             my $publicInterfaceKey = $property . ";";
@@ -1149,6 +1151,11 @@ sub GenerateImplementation
 
             # - GETTER
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
+
+            # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
+            $attributeName =~ s/operatorAnimated/_operatorAnimated/ if ($attributeName =~ /operatorAnimated/);
+            $getterSig =~ s/operator/_operator/ if ($getterSig =~ /operator/);
+
             my $hasGetterException = @{$attribute->getterExceptions};
             my $getterContentHead;
             my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};

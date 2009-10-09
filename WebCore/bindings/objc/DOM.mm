@@ -176,6 +176,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::feImageTag, [DOMSVGFEImageElement class]);
     addElementClass(SVGNames::feMergeTag, [DOMSVGFEMergeElement class]);
     addElementClass(SVGNames::feMergeNodeTag, [DOMSVGFEMergeNodeElement class]);
+    addElementClass(SVGNames::feMorphologyTag, [DOMSVGFEMorphologyElement class]);
     addElementClass(SVGNames::feOffsetTag, [DOMSVGFEOffsetElement class]);
     addElementClass(SVGNames::fePointLightTag, [DOMSVGFEPointLightElement class]);
     addElementClass(SVGNames::feSpecularLightingTag, [DOMSVGFESpecularLightingElement class]);

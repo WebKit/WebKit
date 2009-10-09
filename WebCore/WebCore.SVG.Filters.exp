@@ -15,6 +15,7 @@
 .objc_class_name_DOMSVGFEImageElement
 .objc_class_name_DOMSVGFEMergeElement
 .objc_class_name_DOMSVGFEMergeNodeElement
+.objc_class_name_DOMSVGFEMorphologyElement
 .objc_class_name_DOMSVGFEOffsetElement
 .objc_class_name_DOMSVGFEPointLightElement
 .objc_class_name_DOMSVGFESpecularLightingElement

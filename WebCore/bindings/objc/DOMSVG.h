@@ -75,6 +75,7 @@
 #import <WebCore/DOMSVGFEImageElement.h>
 #import <WebCore/DOMSVGFEMergeElement.h>
 #import <WebCore/DOMSVGFEMergeNodeElement.h>
+#import <WebCore/DOMSVGFEMorphologyElement.h>
 #import <WebCore/DOMSVGFEOffsetElement.h>
 #import <WebCore/DOMSVGFEPointLightElement.h>
 #import <WebCore/DOMSVGFESpecularLightingElement.h>

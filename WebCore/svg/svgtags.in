@@ -47,9 +47,7 @@ feGaussianBlur createWithNew
 feImage createWithNew
 feMerge createWithNew
 feMergeNode createWithNew
-#if 0
 feMorphology createWithNew
-#endif
 feOffset createWithNew
 fePointLight createWithNew
 feSpecularLighting createWithNew

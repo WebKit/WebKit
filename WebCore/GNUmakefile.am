@@ -2711,6 +2711,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGFEImageElement.idl \
 	WebCore/svg/SVGFEMergeElement.idl \
 	WebCore/svg/SVGFEMergeNodeElement.idl \
+	WebCore/svg/SVGFEMorphologyElement.idl \
 	WebCore/svg/SVGFEOffsetElement.idl \
 	WebCore/svg/SVGFEPointLightElement.idl \
 	WebCore/svg/SVGFESpecularLightingElement.idl \
@@ -2965,6 +2966,8 @@ webcore_sources += \
 	WebCore/svg/SVGFEMergeElement.h \
 	WebCore/svg/SVGFEMergeNodeElement.cpp \
 	WebCore/svg/SVGFEMergeNodeElement.h \
+	WebCore/svg/SVGFEMorphologyElement.cpp \
+	WebCore/svg/SVGFEMorphologyElement.h \
 	WebCore/svg/SVGFEOffsetElement.cpp \
 	WebCore/svg/SVGFEOffsetElement.h \
 	WebCore/svg/SVGFEPointLightElement.cpp \
