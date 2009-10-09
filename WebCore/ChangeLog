@@ -1,6 +1,6 @@
 2009-10-08  Dave Hyatt  <hyatt@apple.com>
 
-        Reviewed by Adam Roben.
+        Reviewed by Darin Adler.
 
         Implement beforeload for images.  ImageLoadEventSender has been refactored into a more generic
         ImageEventSender that can be used by both load and beforeload events.  If the document has any
