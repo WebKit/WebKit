@@ -1,3 +1,13 @@
+2009-10-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add SPI to specifically enable visited link tracking.
+
+        * History/WebHistory.mm:
+        (+[WebHistory _setVisitedLinkTrackingEnabled:]):
+        * History/WebHistoryPrivate.h:
+
 2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking

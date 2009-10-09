@@ -801,6 +801,11 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     return [_historyPrivate data];
 }
 
++ (void)_setVisitedLinkTrackingEnabled:(BOOL)visitedLinkTrackingEnabled
+{
+    PageGroup::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
+}
+
 + (void)_removeAllVisitedLinks
 {
     PageGroup::removeAllVisitedLinks();
