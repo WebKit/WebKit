@@ -1,3 +1,19 @@
+2009-10-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/7290671> Crash after navigating away from a page with subframe containing plug-in
+
+        At the time that -stop is called on a WebBaseNetscapePluginView that is contained within a subframe
+        the WebFrame's data source has been zeroed out.  This was causing -[WebBaseNetscapePluginView webFrame]
+        to return nil during -stop, preventing the plug-in view from unregistering itself from the PluginHalter.
+        We fix this by having -webFrame retrieve the frame directly rather than retrieving it from the data source.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView dataSource]): Get the data source from the WebFrame.
+        (-[WebBaseNetscapePluginView webFrame]): Get the Frame directly from the element's document rather
+        than taking a windy route through the WebDataSource.
+
 2009-10-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein.

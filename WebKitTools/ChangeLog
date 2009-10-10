@@ -1,3 +1,17 @@
+2009-10-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Enable plug-in halting in DumpRenderTree.
+
+        We drop the plug-in halting delay to 1 second and opt in the delegate method to never halt plug-ins.
+        This is sufficient to ensure that the crash covered by <rdar://problem/7290671> no longer occurs.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:shouldHaltPlugin:]):
+
 2009-10-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein.

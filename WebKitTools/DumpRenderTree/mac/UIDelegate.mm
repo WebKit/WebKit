@@ -157,6 +157,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         [geolocation setIsAllowed:gLayoutTestController->geolocationPermission()];
 }
 
+- (BOOL)webView:(WebView *)sender shouldHaltPlugin:(DOMNode *)pluginNode
+{
+    return NO;
+}
+
 - (void)dealloc
 {
     [draggingInfo release];

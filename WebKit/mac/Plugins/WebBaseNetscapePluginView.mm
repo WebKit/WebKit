@@ -640,13 +640,12 @@ private:
 
 - (WebDataSource *)dataSource
 {
-    WebFrame *webFrame = kit(_element->document()->frame());
-    return [webFrame _dataSource];
+    return [[self webFrame] _dataSource];
 }
 
 - (WebFrame *)webFrame
 {
-    return [[self dataSource] webFrame];
+    return kit(_element->document()->frame());
 }
 
 - (WebView *)webView

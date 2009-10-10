@@ -410,6 +410,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setXSSAuditorEnabled:NO];
     [preferences setExperimentalNotificationsEnabled:NO];
     [preferences setExperimentalWebSocketsEnabled:NO];
+    [preferences setPluginAllowedRunTime:1];
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
