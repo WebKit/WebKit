@@ -62,6 +62,7 @@ private:
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     // style-removal helpers
+    bool shouldRemoveTextDecorationTag(CSSStyleDeclaration* styleToApply, int textDecorationAddedByTag) const;
     bool implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(HTMLElement*, CSSMutableStyleDeclaration*);
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
     void removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*);

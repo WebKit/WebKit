@@ -4,21 +4,21 @@ This test striking through the first 21st letters. Every letter including spaces
 execStrikethroughCommand: <span id="test"><s>"</s>The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
 execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
 execStrikethroughCommand: <span id="test"><s>"Th</s>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e </s>quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e qu</s>ick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quic</s>k brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick </s>brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick br</s>own fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick brow</s>n fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick brown </s>fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick brown fo</s>x jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test">"<span class="Apple-style-span">T</span><span class="Apple-style-span">h</span>e quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
-execStrikethroughCommand: <span id="test"><s>"</s><span class="Apple-style-span"><s>T</s></span><span class="Apple-style-span"><s>h</s></span><s>e quick brown fox </s>jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The </s>quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The qu</s>ick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quic</s>k brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick </s>brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick br</s>own fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick brow</s>n fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick brown </s>fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick brown fo</s>x jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test">"The quick brown fox jumps over the lazy dog" uses every letter in the english language. </span>
+execStrikethroughCommand: <span id="test"><s>"The quick brown fox </s>jumps over the lazy dog" uses every letter in the english language. </span>

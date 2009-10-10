@@ -1,3 +1,28 @@
+2009-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        ApplyStyleCommand removes presentational tags even when not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=28091
+
+        This patch updates implicitlyStyledElementShouldBeRemovedWhenApplyingStyle to return true
+        (triggering removal of tag) only if the style implicitly added by the element is not present in
+        the new style to apply. It also changes surroundNodeRangeWithElement so that it merges the
+        surrounding element when possible. applyTextDecorationStyle is modified so that it does not add
+        style span when the style attribute is empty.
+
+        Test: editing/execCommand/toggle-style-3.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::shouldRemoveTextDecorationTag): Returns true if specified text
+        decoration is not present in the style to apply
+        (WebCore::ApplyStyleCommand::implicitlyStyledElementShouldBeRemovedWhenApplyingStyle): No longer
+        returns true if the tag is used in new style
+        (WebCore::ApplyStyleCommand::applyTextDecorationStyle): Does not add style-span when redundant
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Merges the newly created element
+        with the surrounding identical elements
+        * editing/ApplyStyleCommand.h:
+
 2009-10-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

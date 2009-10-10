@@ -31,11 +31,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,180) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 12x28
+          RenderInline {B} at (0,0) size 25x28
             RenderText {#text} at (2,2) size 12x28
               text run at (2,2) width 12: "a"
-          RenderInline {B} at (0,0) size 13x28
             RenderText {#text} at (14,2) size 13x28
               text run at (14,2) width 13: "b"
-selection start: position 0 of child 0 {#text} of child 1 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {#text} of child 1 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

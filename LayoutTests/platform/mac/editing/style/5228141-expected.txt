@@ -11,10 +11,9 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 0x18
             RenderBR {BR} at (0,0) size 0x18
         RenderBlock {DIV} at (0,18) size 784x107
-          RenderInline {B} at (0,0) size 166x18
+          RenderInline {B} at (0,0) size 242x18
             RenderText {#text} at (0,89) size 166x18
               text run at (0,89) width 166: "This text should be bold."
-          RenderInline {B} at (0,0) size 76x18
             RenderImage {IMG} at (166,0) size 76x103
 selection start: position 0 of child 0 {BR} of child 0 {B} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {IMG} of child 1 {B} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 1 {IMG} of child 0 {B} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

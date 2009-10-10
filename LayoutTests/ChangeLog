@@ -1,3 +1,25 @@
+2009-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        ApplyStyleCommand removes presentational tags even when not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=28091
+
+        This patch adds test to make sure to preserve presentational tag
+        (u, s, strike, i, em, sup, sub, b, & strong) when the corresponding style is present in
+        the final computed style. i.e. avoid removing tag and re-applying the style later
+
+        * editing/execCommand/19653-2-expected.txt: Two b elements are merged.
+        * editing/execCommand/createLink-expected.txt: Two anchor elements are merged.
+        * editing/execCommand/script-tests/toggle-style-3.js: Added.
+        (testSingleToggle):
+        * editing/execCommand/strikethroughSelection-expected.txt: Redundant style spans are no longer added.
+        * editing/execCommand/toggle-style-3-expected.txt: Added.
+        * editing/execCommand/toggle-style-3.html: Added.
+        * editing/execCommand/unlink-expected.txt: Two anchor elements are merged.
+        * platform/mac/editing/style/5228141-expected.txt: Two b elements are merged.
+        * platform/mac/editing/style/style-boundary-001-expected.txt: Two b elements are merged.
+
 2009-10-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
