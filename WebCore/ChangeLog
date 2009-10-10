@@ -1,3 +1,17 @@
+2009-10-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Adding new attributes in Element Panel is
+        counterintuitive.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30057
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._onmousemove):
+        (WebInspector.ElementsTreeElement.prototype.set hovered):
+        (WebInspector.ElementsTreeElement.prototype.toggleNewAttributeButton):
+
 2009-10-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.

@@ -197,12 +197,15 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _onmousemove: function(event)
     {
+        var element = this._treeElementFromEvent(event);
+        if (element && this._previousHoveredElement === element)
+            return;
+
         if (this._previousHoveredElement) {
             this._previousHoveredElement.hovered = false;
             delete this._previousHoveredElement;
         }
 
-        var element = this._treeElementFromEvent(event);
         if (element && !element.elementCloseTag) {
             element.hovered = true;
             this._previousHoveredElement = element;
@@ -276,36 +279,38 @@ WebInspector.ElementsTreeElement.prototype = {
             if (x) {
                 this.updateSelection();
                 this.listItemElement.addStyleClass("hovered");
-            } else
+                this._pendingToggleNewAttribute = setTimeout(this.toggleNewAttributeButton.bind(this, true), 500);
+            } else {
                 this.listItemElement.removeStyleClass("hovered");
-            if (this._canAddAttributes)
-                this.toggleNewAttributeButton();
+                if (this._pendingToggleNewAttribute) {
+                    clearTimeout(this._pendingToggleNewAttribute);
+                    delete this._pendingToggleNewAttribute;
+                }
+                this.toggleNewAttributeButton(false);
+            }
         }
     },
 
-    toggleNewAttributeButton: function()
+    toggleNewAttributeButton: function(visible)
     {
-        function removeWhenEditing(event)
+        function removeAddAttributeSpan()
         {
             if (this._addAttributeElement && this._addAttributeElement.parentNode)
                 this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
             delete this._addAttributeElement;
         }
 
-        if (!this._addAttributeElement && this._hovered && !this._editing) {
+        if (!this._addAttributeElement && visible && !this._editing) {
             var span = document.createElement("span");
-            span.className = "add-attribute";
-            span.textContent = "\u2026";
-            span.addEventListener("dblclick", removeWhenEditing.bind(this), false);
+            span.className = "add-attribute webkit-html-attribute-name";
+            span.textContent = " ?=\"\"";
+            span.addEventListener("dblclick", removeAddAttributeSpan.bind(this), false);
             this._addAttributeElement = span;
 
             var tag = this.listItemElement.getElementsByClassName("webkit-html-tag")[0];
             this._insertInLastAttributePosition(tag, span);
-        } else if (!this._hovered && this._addAttributeElement) {
-            if (this._addAttributeElement.parentNode)
-                this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
-            delete this._addAttributeElement;
-        }
+        } else if (!visible && this._addAttributeElement)
+            removeAddAttributeSpan.call(this);
     },
     
     updateSelection: function()
