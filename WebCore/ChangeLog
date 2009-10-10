@@ -1,3 +1,18 @@
+2009-10-09  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] KURLGoogle's protocolIs barfs on input containing hyphens
+        https://bugs.webkit.org/show_bug.cgi?id=30262
+
+        This is not testable from WebKit since WebKit never uses the member
+        function form of protocolIs with input that can be controlled from a
+        web page.  It always passes string literals lacking hyphens.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::lowerCaseEqualsASCII): Only assert if toASCIILower would
+        transform the input character.
+
 2009-10-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.
