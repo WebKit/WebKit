@@ -1,3 +1,73 @@
+2009-10-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor HistoryController out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30246
+
+        HistoryController is in charge of managing the current / previous /
+        provisional HistoryItems.  The split isn't perfect, but it's a place to
+        start.  I'll move HistoryController into its own file in another patch.
+
+        * WebCore.base.exp:
+        * loader/FrameLoader.cpp:
+        (WebCore::HistoryController::HistoryController):
+        (WebCore::HistoryController::~HistoryController):
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::begin):
+        (WebCore::HistoryController::restoreDocumentState):
+        (WebCore::HistoryController::setCurrentItem):
+        (WebCore::HistoryController::setProvisionalItem):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        (WebCore::FrameLoader::scrollToAnchor):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::HistoryController::updateForFrameLoadCompleted):
+        (WebCore::FrameLoader::frameLoadCompleted):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::HistoryController::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent):
+        (WebCore::HistoryController::createHistoryItem):
+        (WebCore::FrameLoader::checkDidPerformFirstNavigation):
+        (WebCore::HistoryController::addBackForwardItemClippedAtTarget):
+        (WebCore::HistoryController::createHistoryItemTree):
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::invalidateCurrentItemCachedPage):
+        (WebCore::HistoryController::saveDocumentState):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::HistoryController::urlsMatchItem):
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::recursiveGoToItem):
+        (WebCore::HistoryController::childFramesMatchItem):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForClientRedirect):
+        (WebCore::HistoryController::updateForBackForwardNavigation):
+        (WebCore::HistoryController::updateForReload):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::updateForAnchorScroll):
+        (WebCore::HistoryController::saveDocumentAndScrollState):
+        (WebCore::HistoryController::setCurrentItemTitle):
+        (WebCore::FrameLoader::didChangeTitle):
+        * loader/FrameLoader.h:
+        (WebCore::HistoryController::current):
+        (WebCore::HistoryController::provisional):
+        (WebCore::FrameLoader::policyChecker):
+        (WebCore::FrameLoader::history):
+        (WebCore::FrameLoader::creatingInitialEmptyDocument):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2009-10-09  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed - fixing an obvious typo in my previous check-in.

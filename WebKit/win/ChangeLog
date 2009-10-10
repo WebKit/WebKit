@@ -1,3 +1,15 @@
+2009-10-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor HistoryController out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30246
+
+        Update API call.
+
+        * WebView.cpp:
+        (WebView::loadBackForwardListFromOtherView):
+
 2009-10-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove the WebKitPluginHalterEnabledPreferenceKey in favor of checking

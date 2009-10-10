@@ -291,7 +291,7 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
         databasePolicy = DatabasePolicyContinue;
 #endif
     m_mainFrame->loader()->stopAllLoaders(databasePolicy);
-    m_mainFrame->loader()->goToItem(item, type);
+    m_mainFrame->loader()->history()->goToItem(item, type);
 }
 
 int Page::getHistoryLength()

@@ -79,6 +79,56 @@ namespace WebCore {
 
     bool isBackForwardLoadType(FrameLoadType);
 
+    class HistoryController : public Noncopyable {
+    public:
+        HistoryController(Frame*);
+        ~HistoryController();
+
+        void saveScrollPositionAndViewStateToItem(HistoryItem*);
+        void restoreScrollPositionAndViewState();
+
+        void updateBackForwardListForFragmentScroll();
+
+        void saveDocumentState();
+        void saveDocumentAndScrollState();
+        void restoreDocumentState();
+
+        void invalidateCurrentItemCachedPage();
+
+        void goToItem(HistoryItem*, FrameLoadType);
+        bool urlsMatchItem(HistoryItem*) const;
+
+        void updateForBackForwardNavigation();
+        void updateForReload();
+        void updateForStandardLoad();
+        void updateForRedirectWithLockedBackForwardList();
+        void updateForClientRedirect();
+        void updateForCommit();
+        void updateForAnchorScroll();
+        void updateForFrameLoadCompleted();
+
+        HistoryItem* currentItem() const { return m_currentItem.get(); }
+        void setCurrentItem(HistoryItem*);
+        void setCurrentItemTitle(const String&);
+
+        HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
+        void setProvisionalItem(HistoryItem*);
+
+    private:
+        PassRefPtr<HistoryItem> createItem(bool useOriginal);
+        PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
+
+        void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
+        bool childFramesMatchItem(HistoryItem*) const;
+        void updateBackForwardListClippedAtTarget(bool doClip);
+
+        Frame* m_frame;
+
+        RefPtr<HistoryItem> m_currentItem;
+        RefPtr<HistoryItem> m_previousItem;
+        RefPtr<HistoryItem> m_provisionalItem;
+    };
+
     class FrameLoader : public Noncopyable {
     public:
         FrameLoader(Frame*, FrameLoaderClient*);
@@ -88,7 +138,8 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
-        PolicyChecker* policyChecker() { return &m_policyChecker; }
+        PolicyChecker* policyChecker() const { return &m_policyChecker; }
+        HistoryController* history() const { return &m_history; }
 
         // FIXME: This is not cool, people. There are too many different functions that all start loads.
         // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
@@ -255,7 +306,6 @@ namespace WebCore {
 
         void dispatchWindowObjectAvailable();
         void dispatchDocumentElementAvailable();
-        void restoreDocumentState();
 
         // Mixed content related functions.
         static bool isMixedContent(SecurityOrigin* context, const KURL&);
@@ -286,6 +336,8 @@ namespace WebCore {
         void finishedParsing();
         void checkCompleted();
 
+        void checkDidPerformFirstNavigation();
+
         bool isComplete() const;
 
         bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
@@ -300,14 +352,9 @@ namespace WebCore {
         void commitProvisionalLoad(PassRefPtr<CachedPage>);
         bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
-        void goToItem(HistoryItem*, FrameLoadType);
-        void saveDocumentAndScrollState();
-
-        HistoryItem* currentHistoryItem();
-        void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
-
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
         bool committedFirstRealDocumentLoad() const { return m_committedFirstRealDocumentLoad; }
+        bool creatingInitialEmptyDocument() const { return m_creatingInitialEmptyDocument; }
 
         void iconLoadDecisionAvailable();
 
@@ -328,6 +375,7 @@ namespace WebCore {
         bool allChildrenAreComplete() const; // immediate children, not all descendants
         void clientRedirected(const KURL&, double delay, double fireDate, bool lockBackForwardList);
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
+        void loadItem(HistoryItem*, FrameLoadType);
 
         // FIXME: This is public because this asynchronous callback from the FrameLoaderClient
         // uses the policy machinery (and therefore is called via the PolicyChecker).  Once we
@@ -335,31 +383,11 @@ namespace WebCore {
         void continueLoadAfterWillSubmitForm();
 
     private:
-        PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
-        PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
-
         bool canCachePageContainingThisFrame();
 #ifndef NDEBUG
         void logCanCachePageDecision();
         bool logCanCacheFrameDecision(int indentLevel);
 #endif
-
-        void addBackForwardItemClippedAtTarget(bool doClip);
-        void restoreScrollPositionAndViewState();
-        void saveDocumentState();
-        void loadItem(HistoryItem*, FrameLoadType);
-        bool urlsMatchItem(HistoryItem*) const;
-        void invalidateCurrentItemCachedPage();
-        void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
-        bool childFramesMatchItem(HistoryItem*) const;
-
-        void updateHistoryForBackForwardNavigation();
-        void updateHistoryForReload();
-        void updateHistoryForStandardLoad();
-        void updateHistoryForRedirectWithLockedBackForwardList();
-        void updateHistoryForClientRedirect();
-        void updateHistoryForCommit();
-        void updateHistoryForAnchorScroll();
 
         void checkTimerFired(Timer<FrameLoader>*);
 
@@ -401,7 +429,6 @@ namespace WebCore {
         void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
         bool shouldScrollToAnchor(bool isFormSubmission, FrameLoadType, const KURL&);
-        void addHistoryItemForFragmentScroll();
 
         void checkLoadCompleteForThisFrame();
 
@@ -467,12 +494,11 @@ namespace WebCore {
 
         bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
-        void saveScrollPositionAndViewStateToItem(HistoryItem*);
-
         Frame* m_frame;
         FrameLoaderClient* m_client;
 
-        PolicyChecker m_policyChecker;
+        mutable PolicyChecker m_policyChecker;
+        mutable HistoryController m_history;
 
         FrameState m_state;
         FrameLoadType m_loadType;
@@ -534,10 +560,6 @@ namespace WebCore {
         bool m_isDisplayingInitialEmptyDocument;
         bool m_committedFirstRealDocumentLoad;
 
-        RefPtr<HistoryItem> m_currentHistoryItem;
-        RefPtr<HistoryItem> m_previousHistoryItem;
-        RefPtr<HistoryItem> m_provisionalHistoryItem;
-        
         bool m_didPerformFirstNavigation;
         bool m_loadingFromCachedPage;
         
