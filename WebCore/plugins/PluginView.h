@@ -255,7 +255,7 @@ namespace WebCore {
 
         void handleKeyboardEvent(KeyboardEvent*);
         void handleMouseEvent(MouseEvent*);
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) && ENABLE(NETSCAPE_PLUGIN_API)
         void handleFocusInEvent();
         void handleFocusOutEvent();
 #endif
@@ -324,7 +324,7 @@ private:
         Point globalMousePosForPlugin() const;
 #endif
 
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) && ENABLE(NETSCAPE_PLUGIN_API)
         bool m_hasPendingGeometryChange;
         Pixmap m_drawable;
         Visual* m_visual;

@@ -1,5 +1,40 @@
 2009-10-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Reviewed by Holger Freyther.
+
+        Build fix if Netscape plugin support is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=30275
+
+        In addition to fixing the build break with guards
+        remove notImplemented() from PluginViewNone.cpp and
+        make them just just be empty functions.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::handleEvent):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::getValueStatic):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::updatePluginWidget):
+
+2009-10-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Unreviewed.
 
         [Qt] Build fix for QtWebKit after r49415.

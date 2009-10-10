@@ -148,7 +148,7 @@ void PluginView::handleEvent(Event* event)
         handleMouseEvent(static_cast<MouseEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) && ENABLE(NETSCAPE_PLUGIN_API)
     else if (event->type() == eventNames().DOMFocusOutEvent)
         handleFocusOutEvent();
     else if (event->type() == eventNames().DOMFocusInEvent)
@@ -818,7 +818,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_drawingModel(NPDrawingModel(-1))
     , m_eventModel(NPEventModel(-1))
 #endif
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) && ENABLE(NETSCAPE_PLUGIN_API)
     , m_hasPendingGeometryChange(false)
     , m_drawable(0)
     , m_visual(0)
