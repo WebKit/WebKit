@@ -7605,8 +7605,8 @@
 		A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageMac.mm; sourceTree = "<group>"; };
 		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
 		A7D20F3B107F373800A80392 /* CanvasActiveInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasActiveInfo.idl; path = canvas/CanvasActiveInfo.idl; sourceTree = "<group>"; };
-		A7D20F60107F406900A80392 /* JSCanvasActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasActiveInfo.cpp; path = /Users/oliver/builds/Debug/DerivedSources/WebCore/JSCanvasActiveInfo.cpp; sourceTree = "<absolute>"; };
-		A7D20F61107F406900A80392 /* JSCanvasActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCanvasActiveInfo.h; path = /Users/oliver/builds/Debug/DerivedSources/WebCore/JSCanvasActiveInfo.h; sourceTree = "<absolute>"; };
+		A7D20F60107F406900A80392 /* JSCanvasActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasActiveInfo.cpp; sourceTree = "<group>"; };
+		A7D20F61107F406900A80392 /* JSCanvasActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasActiveInfo.h; sourceTree = "<group>"; };
 		A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasActiveInfo.h; path = canvas/CanvasActiveInfo.h; sourceTree = "<group>"; };
 		A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETile.cpp; sourceTree = "<group>"; };
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };

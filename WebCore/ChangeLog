@@ -1,5 +1,11 @@
 2009-10-10  Oliver Hunt  <oliver@apple.com>
 
+        Fix paths in xcode.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2009-10-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Eric Carlson.
 
         Implement getActiveAttrib and getActiveUniform
