@@ -715,44 +715,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_REPAINT_THROTTLING 0
 #endif
 
-#if !defined(ENABLE_JIT)
-
-/* The JIT is tested & working on x86_64 Mac */
-#if PLATFORM(X86_64) && PLATFORM(MAC)
-    #define ENABLE_JIT 1
-/* The JIT is tested & working on x86 Mac */
-#elif PLATFORM(X86) && PLATFORM(MAC)
-    #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
-    /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */
-    #define ENABLE_JIT 0
-    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
-/* The JIT is tested & working on x86 Windows */
-#elif PLATFORM(X86) && PLATFORM(WIN)
-    #define ENABLE_JIT 1
-#endif
-
-#if PLATFORM(QT)
-#if PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MSVC)
-    #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
-#elif PLATFORM(X86) && PLATFORM(LINUX) && GCC_VERSION >= 40100
-    #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX)
-    #define ENABLE_JIT 1
-    #if PLATFORM(ARM_THUMB2)
-        #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
-    #endif
-#endif
-#endif /* PLATFORM(QT) */
-
-#endif /* !defined(ENABLE_JIT) */
-
 #if ENABLE(JIT)
 #ifndef ENABLE_JIT_OPTIMIZE_CALL
 #define ENABLE_JIT_OPTIMIZE_CALL 1

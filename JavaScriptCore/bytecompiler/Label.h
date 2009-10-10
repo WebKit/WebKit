@@ -51,19 +51,17 @@ namespace JSC {
             m_location = location;
 
             unsigned size = m_unresolvedJumps.size();
-            for (unsigned i = 0; i < size; ++i) {
-                unsigned j = m_unresolvedJumps[i];
-                m_codeBlock->instructions()[j].u.operand = m_location - j;
-            }
+            for (unsigned i = 0; i < size; ++i)
+                m_codeBlock->instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
         }
 
-        int offsetFrom(int location) const
+        int bind(int opcode, int offset) const
         {
             if (m_location == invalidLocation) {
-                m_unresolvedJumps.append(location);
+                m_unresolvedJumps.append(std::make_pair(opcode, offset));
                 return 0;
             }
-            return m_location - location;
+            return m_location - opcode;
         }
 
         void ref() { ++m_refCount; }
@@ -77,7 +75,7 @@ namespace JSC {
         bool isForward() const { return m_location == invalidLocation; }
 
     private:
-        typedef Vector<int, 8> JumpVector;
+        typedef Vector<std::pair<int, int>, 8> JumpVector;
 
         static const unsigned invalidLocation = UINT_MAX;
 

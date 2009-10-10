@@ -1,5 +1,82 @@
 2009-10-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Eliminated some legacy bytecode weirdness.
+        
+        Use vPC[x] subscripting instead of ++vPC to access instruction operands.
+        This is simpler, and often more efficient.
+
+        To support this, and to remove use of hard-coded offsets in bytecode and
+        JIT code generation and dumping, calculate jump offsets from the beginning
+        of an instruction, rather than the middle or end.
+        
+        Also, use OPCODE_LENGTH instead of hard-coded constants for the sizes of
+        opcodes.
+        
+        SunSpider reports no change in JIT mode, and a 1.01x speedup in Interpreter
+        mode.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::printConditionalJump):
+        (JSC::CodeBlock::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJump):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        (JSC::BytecodeGenerator::emitJumpScopes):
+        (JSC::BytecodeGenerator::emitNextPropertyName):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::emitJumpSubroutine):
+        (JSC::prepareJumpTableForImmediateSwitch):
+        (JSC::prepareJumpTableForCharacterSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * bytecompiler/Label.h:
+        (JSC::Label::setLocation):
+        (JSC::Label::bind):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_loop):
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emitSlow_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emitSlow_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_loop_if_true):
+        (JSC::JIT::emitSlow_op_loop_if_true):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_jmp_scopes):
+
+2009-10-09  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Migrated some code that didn't belong out of Structure.
