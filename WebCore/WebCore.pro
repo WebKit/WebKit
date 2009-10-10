@@ -1103,6 +1103,7 @@ SOURCES += \
     loader/DocumentThreadableLoader.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
+    loader/HistoryController.cpp \
     loader/FTPDirectoryDocument.cpp \
     loader/FTPDirectoryParser.cpp \
     loader/icon/IconLoader.cpp \

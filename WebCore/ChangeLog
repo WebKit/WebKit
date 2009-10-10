@@ -1,3 +1,13 @@
+2009-10-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Build fix for QtWebKit after r49415.
+
+        Add HistoryController.cpp to the build.
+
+        * WebCore.pro:
+
 2009-10-09  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
