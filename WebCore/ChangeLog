@@ -1,3 +1,22 @@
+2009-10-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Move HistoryController to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=30272
+
+        Purely mechanical.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp: Added.
+        * loader/HistoryController.h: Added.
+
 2009-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

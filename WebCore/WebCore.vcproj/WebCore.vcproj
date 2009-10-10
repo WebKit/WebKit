@@ -17417,6 +17417,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\HistoryController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\HistoryController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ImageDocument.cpp"
 				>
 			</File>

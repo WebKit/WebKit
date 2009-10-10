@@ -1232,6 +1232,8 @@ webcore_sources += \
 	WebCore/loader/FrameLoader.h \
 	WebCore/loader/FrameLoaderClient.h \
 	WebCore/loader/FrameLoaderTypes.h \
+	WebCore/loader/HistoryController.cpp \
+	WebCore/loader/HistoryController.h \
 	WebCore/loader/ImageDocument.cpp \
 	WebCore/loader/ImageDocument.h \
 	WebCore/loader/ImageLoader.cpp \

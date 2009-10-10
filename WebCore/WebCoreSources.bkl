@@ -720,6 +720,7 @@ This file contains the list of files needed to build WebCore.
         loader/FrameLoader.cpp
         loader/FTPDirectoryDocument.cpp
         loader/FTPDirectoryParser.cpp
+        loader/HistoryController.cpp
         loader/ImageDocument.cpp
         loader/ImageLoader.cpp
         loader/MainResourceLoader.cpp

@@ -1616,6 +1616,8 @@
             'loader/FrameLoader.h',
             'loader/FrameLoaderClient.h',
             'loader/FrameLoaderTypes.h',
+            'loader/HistoryController.cpp',
+            'loader/HistoryController.h',
             'loader/ImageDocument.cpp',
             'loader/ImageDocument.h',
             'loader/ImageLoader.cpp',
