@@ -43,7 +43,7 @@ static ProtectionSpaceToCredentialMap& protectionSpaceToCredentialMap()
     return map;
 }
 
-static HashSet<String> originsWithCredentials()
+static HashSet<String>& originsWithCredentials()
 {
     DEFINE_STATIC_LOCAL(HashSet<String>, set, ());
     return set;

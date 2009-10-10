@@ -1,3 +1,15 @@
+2009-10-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed - fixing an obvious typo in my previous check-in.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30260
+        <rdar://problem/6447115> REGRESSION: Logging out from SAP doesn't work
+
+        Fixes existing tests (which I thought I had run the previous time).
+
+        * platform/network/CredentialStorage.cpp: (WebCore::originsWithCredentials): Return the
+        set by reference.
+
 2009-10-09  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
