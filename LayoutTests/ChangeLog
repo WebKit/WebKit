@@ -1,3 +1,24 @@
+2009-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Implement getActiveAttrib and getActiveUniform
+        https://bugs.webkit.org/show_bug.cgi?id=30276
+
+        Adds test for getActiveAttrib and getActiveUniform.  Additionally
+        adds a basic shader pair, and a utility library to do the more
+        mechanical work needed to set up a WebGL context for testing.
+
+        * fast/canvas/webgl/getActiveTest-expected.txt: Added.
+        * fast/canvas/webgl/getActiveTest.html: Added.
+        * fast/canvas/webgl/resources/fragmentShader.frag: Added.
+        * fast/canvas/webgl/resources/shader-test.js: Added.
+        (getShaderSource):
+        (create3DContext):
+        (loadStandardProgram):
+        * fast/canvas/webgl/resources/vertexShader.vert: Added.
+        * fast/canvas/webgl/script-tests/getActiveTest.js: Added.
+
 2009-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

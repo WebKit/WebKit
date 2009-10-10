@@ -1,3 +1,39 @@
+2009-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Implement getActiveAttrib and getActiveUniform
+        https://bugs.webkit.org/show_bug.cgi?id=30276
+
+        Implements the getActiveAttrib and getActiveUniform APIs.
+        Rather simple patch, adds CanvasActiveInfo definition and implementation
+        and adds forwarding to the GraphicsContext3D.
+
+        Test: fast/canvas/webgl/getActiveTest.html
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CanvasActiveInfo.h: Added.
+        (WebCore::CanvasActiveInfo::create):
+        (WebCore::CanvasActiveInfo::name):
+        (WebCore::CanvasActiveInfo::type):
+        (WebCore::CanvasActiveInfo::size):
+        (WebCore::CanvasActiveInfo::CanvasActiveInfo):
+        * html/canvas/CanvasActiveInfo.idl: Added.
+        * html/canvas/CanvasObject.h:
+        (WebCore::CanvasObject::context):
+          Need to make the context public as it is needed to ensure we don't
+          provide a program from one context as an argument to another.
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::getActiveAttrib):
+        (WebCore::CanvasRenderingContext3D::getActiveUniform):
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasRenderingContext3D.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+
 2009-10-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

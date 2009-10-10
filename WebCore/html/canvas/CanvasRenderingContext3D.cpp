@@ -28,6 +28,8 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasRenderingContext3D.h"
+
+#include "CanvasActiveInfo.h"
 #include "CanvasBuffer.h"
 #include "CanvasFramebuffer.h"
 #include "CanvasProgram.h"
@@ -475,6 +477,26 @@ void CanvasRenderingContext3D::generateMipmap(unsigned long target)
 {
     m_context.generateMipmap(target);
     cleanupAfterGraphicsCall(false);
+}
+
+PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveAttrib(CanvasProgram* program, unsigned long index, ExceptionCode& ec)
+{
+    ActiveInfo info;
+    if (!program || program->context() != this || !m_context.getActiveAttrib(program, index, info)) {
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+    return CanvasActiveInfo::create(info.name, info.type, info.size);
+}
+
+PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveUniform(CanvasProgram* program, unsigned long index, ExceptionCode& ec)
+{
+    ActiveInfo info;
+    if (!program || program->context() != this || !m_context.getActiveUniform(program, index, info)) {
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+    return CanvasActiveInfo::create(info.name, info.type, info.size);
 }
 
 int CanvasRenderingContext3D::getAttribLocation(CanvasProgram* program, const String& name)

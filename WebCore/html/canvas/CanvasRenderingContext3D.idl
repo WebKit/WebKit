@@ -530,8 +530,11 @@ module html {
         void         generateMipmap(in unsigned long target);
         
         // FIXME: these need to be added per the WebGL spec
-        // CanvasActiveInfo getActiveAttrib(GLuint program, GLuint index);
-        // CanvasActiveInfo getActiveUniform(GLuint program, GLuint index);
+        CanvasActiveInfo getActiveAttrib(in CanvasProgram program, in unsigned long index)
+            raises (DOMException);
+        CanvasActiveInfo getActiveUniform(in CanvasProgram program, in unsigned long index)
+            raises (DOMException);
+
         // CanvasShaderArray glGetAttachedShaders(GLuint program);
 
         int          getAttribLocation(in CanvasProgram program, in DOMString name);

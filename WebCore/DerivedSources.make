@@ -70,6 +70,7 @@ DOM_CLASSES = \
     CSSValueList \
     CSSVariablesRule \
     CSSVariablesDeclaration \
+    CanvasActiveInfo \
     CanvasArray \
     CanvasArrayBuffer \
     CanvasBuffer \

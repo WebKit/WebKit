@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class CanvasActiveInfo;
 class CanvasBuffer;
 class CanvasFramebuffer;
 class CanvasObject;
@@ -123,7 +124,10 @@ class WebKitCSSMatrix;
         void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
         void frontFace(unsigned long mode);
         void generateMipmap(unsigned long target);
-        
+
+        PassRefPtr<CanvasActiveInfo> getActiveAttrib(CanvasProgram*, unsigned long index, ExceptionCode&);
+        PassRefPtr<CanvasActiveInfo> getActiveUniform(CanvasProgram*, unsigned long index, ExceptionCode&);
+
         int  getAttribLocation(CanvasProgram*, const String& name);
 
         bool getBoolean(unsigned long pname);

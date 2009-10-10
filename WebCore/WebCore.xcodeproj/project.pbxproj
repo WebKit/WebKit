@@ -2396,6 +2396,9 @@
 		A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CFB3D00B7ED10A0070C32D /* DragImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */; };
 		A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */; };
+		A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D20F60107F406900A80392 /* JSCanvasActiveInfo.cpp */; };
+		A7D20F63107F406900A80392 /* JSCanvasActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSCanvasActiveInfo.h */; };
+		A7D20F6D107F438B00A80392 /* CanvasActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */; };
 		A7D27FC40E0A599F0079AD2B /* SVGFETile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */; };
 		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
@@ -7601,6 +7604,10 @@
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
 		A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageMac.mm; sourceTree = "<group>"; };
 		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
+		A7D20F3B107F373800A80392 /* CanvasActiveInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasActiveInfo.idl; path = canvas/CanvasActiveInfo.idl; sourceTree = "<group>"; };
+		A7D20F60107F406900A80392 /* JSCanvasActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasActiveInfo.cpp; path = /Users/oliver/builds/Debug/DerivedSources/WebCore/JSCanvasActiveInfo.cpp; sourceTree = "<absolute>"; };
+		A7D20F61107F406900A80392 /* JSCanvasActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCanvasActiveInfo.h; path = /Users/oliver/builds/Debug/DerivedSources/WebCore/JSCanvasActiveInfo.h; sourceTree = "<absolute>"; };
+		A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasActiveInfo.h; path = canvas/CanvasActiveInfo.h; sourceTree = "<group>"; };
 		A7D27FC30E0A599F0079AD2B /* SVGFETile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFETile.cpp; sourceTree = "<group>"; };
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
 		A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoader.h; path = workers/WorkerScriptLoader.h; sourceTree = "<group>"; };
@@ -10620,6 +10627,8 @@
 				49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */,
 				49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */,
 				49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */,
+				A7D20F3B107F373800A80392 /* CanvasActiveInfo.idl */,
+				A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */,
 			);
 			name = canvas;
 			sourceTree = "<group>";
@@ -12713,6 +12722,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				A7D20F60107F406900A80392 /* JSCanvasActiveInfo.cpp */,
+				A7D20F61107F406900A80392 /* JSCanvasActiveInfo.h */,
 				49EECF19105072F300099FAB /* JSCanvasArray.cpp */,
 				49EECF1A105072F300099FAB /* JSCanvasArray.h */,
 				49EECEF2105070C400099FAB /* JSCanvasArrayBuffer.cpp */,
@@ -18011,6 +18022,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
+				A7D20F63107F406900A80392 /* JSCanvasActiveInfo.h in Headers */,
+				A7D20F6D107F438B00A80392 /* CanvasActiveInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20139,6 +20152,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
+				A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

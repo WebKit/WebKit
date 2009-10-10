@@ -30,9 +30,10 @@
 #include "GraphicsContext3D.h"
 
 #include "CachedImage.h"
+#include "CanvasActiveInfo.h"
+#include "CanvasArray.h"
 #include "CanvasBuffer.h"
 #include "CanvasFramebuffer.h"
-#include "CanvasArray.h"
 #include "CanvasFloatArray.h"
 #include "CanvasIntArray.h"
 #include "CanvasObject.h"
@@ -440,6 +441,46 @@ void GraphicsContext3D::generateMipmap(unsigned long target)
 {
     ensureContext(m_contextObj);
     ::glGenerateMipmapEXT(target);
+}
+
+bool GraphicsContext3D::getActiveAttrib(CanvasProgram* program, unsigned long index, ActiveInfo& info)
+{
+    if (!program->object())
+        return false;
+    ensureContext(m_contextObj);
+    GLint maxAttributeSize = 0;
+    ::glGetProgramiv(static_cast<GLuint>(program->object()), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeSize);
+    GLchar name[maxAttributeSize]; // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes null termination
+    GLsizei nameLength = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    ::glGetActiveAttrib(static_cast<GLuint>(program->object()), index, maxAttributeSize, &nameLength, &size, &type, name);
+    if (!nameLength)
+        return false;
+    info.name = String(name, nameLength);
+    info.type = type;
+    info.size = size;
+    return true;
+}
+    
+bool GraphicsContext3D::getActiveUniform(CanvasProgram* program, unsigned long index, ActiveInfo& info)
+{
+    if (!program->object())
+        return false;
+    ensureContext(m_contextObj);
+    GLint maxUniformSize = 0;
+    ::glGetProgramiv(static_cast<GLuint>(program->object()), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
+    GLchar name[maxUniformSize]; // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination
+    GLsizei nameLength = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    ::glGetActiveUniform(static_cast<GLuint>(program->object()), index, maxUniformSize, &nameLength, &size, &type, name);
+    if (!nameLength)
+        return false;
+    info.name = String(name, nameLength);
+    info.type = type;
+    info.size = size;
+    return true;
 }
 
 int GraphicsContext3D::getAttribLocation(CanvasProgram* program, const String& name)

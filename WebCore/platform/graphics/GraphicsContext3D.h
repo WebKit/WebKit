@@ -45,6 +45,7 @@ const Platform3DObject NullPlatform3DObject = 0;
 #endif
 
 namespace WebCore {
+    class CanvasActiveInfo;
     class CanvasArray;
     class CanvasBuffer;
     class CanvasUnsignedByteArray;
@@ -61,7 +62,13 @@ namespace WebCore {
     class HTMLVideoElement;
     class ImageData;
     class WebKitCSSMatrix;
-    
+
+    struct ActiveInfo {
+        String name;
+        unsigned type;
+        int size;
+    };
+
     // FIXME: ideally this would be used on all platforms.
 #if PLATFORM(CHROMIUM)
     class GraphicsContext3DInternal;
@@ -140,6 +147,9 @@ namespace WebCore {
         void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
         void frontFace(unsigned long mode);
         void generateMipmap(unsigned long target);
+
+        bool getActiveAttrib(CanvasProgram* program, unsigned long index, ActiveInfo&);
+        bool getActiveUniform(CanvasProgram* program, unsigned long index, ActiveInfo&);
 
         int  getAttribLocation(CanvasProgram*, const String& name);
 

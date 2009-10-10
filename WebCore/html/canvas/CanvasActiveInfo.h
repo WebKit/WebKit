@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,43 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasObject_h
-#define CanvasObject_h
+#ifndef CanvasActiveInfo_h
+#define CanvasActiveInfo_h
 
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#include "GraphicsContext3D.h"
-
 namespace WebCore {
 
-    class CanvasRenderingContext3D;
-    
-    class CanvasObject : public RefCounted<CanvasObject> {
-    public:
-        virtual ~CanvasObject();
-        
-        Platform3DObject object() const { return m_object; }
-        void setObject(Platform3DObject);
-        void deleteObject();
-        
-        void detachContext()
-        {
-            deleteObject();
-            m_context = 0;
-        }
+class CanvasActiveInfo : public RefCounted<CanvasActiveInfo> {
+public:
+    static PassRefPtr<CanvasActiveInfo> create(const String& name, unsigned type, int size)
+    {
+        return adoptRef(new CanvasActiveInfo(name, type, size));
+    }
+    String name() const { return m_name; }
+    unsigned type() const { return m_type; }
+    int size() const { return m_size; }
 
-        CanvasRenderingContext3D* context() const { return m_context; }
+private:
+    CanvasActiveInfo(const String& name, unsigned type, int size)
+        : m_name(name)
+        , m_type(type)
+        , m_size(size)
+    {
+        ASSERT(name.length());
+        ASSERT(type);
+        ASSERT(size);
+    }
+    String m_name;
+    unsigned m_type;
+    int m_size;
+};
 
-    protected:
-        CanvasObject(CanvasRenderingContext3D*);
-        virtual void _deleteObject(Platform3DObject) = 0;
-    
-    private:
-        Platform3DObject m_object;
-        CanvasRenderingContext3D* m_context;
-    };
-    
-} // namespace WebCore
+}
 
-#endif // CanvasObject_h
+#endif // CanvasActiveInfo_h
