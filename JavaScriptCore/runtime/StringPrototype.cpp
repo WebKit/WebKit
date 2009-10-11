@@ -25,6 +25,7 @@
 #include "CachedCall.h"
 #include "Error.h"
 #include "Executable.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "ObjectPrototype.h"
@@ -72,6 +73,10 @@ static JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState*, JSObject*, JSVa
 static JSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState*, JSObject*, JSValue, const ArgList&);
 
+static JSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*, JSObject*, JSValue, const ArgList&);
+
 }
 
 #include "StringPrototype.lut.h"
@@ -117,6 +122,9 @@ const ClassInfo StringPrototype::info = { "String", &StringObject::info, 0, Exec
     fontsize              stringProtoFuncFontsize          DontEnum|Function       1
     anchor                stringProtoFuncAnchor            DontEnum|Function       1
     link                  stringProtoFuncLink              DontEnum|Function       1
+    trim                  stringProtoFuncTrim              DontEnum|Function       0
+    trimLeft              stringProtoFuncTrimLeft          DontEnum|Function       0
+    trimRight             stringProtoFuncTrimRight         DontEnum|Function       0
 @end
 */
 
@@ -899,4 +907,51 @@ JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec, JSObject*, JSValue th
     return jsNontrivialString(exec, UString(buffer, bufferSize, false));
 }
 
+enum {
+    TrimLeft = 1,
+    TrimRight = 2
+};
+
+static inline bool isTrimWhitespace(UChar c)
+{
+    return isStrWhiteSpace(c) || c == 0x200b;
+}
+
+static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKind)
+{
+    UString str = thisValue.toThisString(exec);
+    int left = 0;
+    if (trimKind & TrimLeft) {
+        while (left < str.size() && isTrimWhitespace(str[left]))
+            left++;
+    }
+    int right = str.size();
+    if (trimKind & TrimRight) {
+        while (right > left && isTrimWhitespace(str[right - 1]))
+            right--;
+    }
+
+    // Don't gc allocate a new string if we don't have to.
+    if (left == 0 && right == str.size() && thisValue.isString())
+        return thisValue;
+
+    return jsString(exec, str.substr(left, right - left));
+}
+
+JSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+{
+    return trimString(exec, thisValue, TrimLeft | TrimRight);
+}
+
+JSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+{
+    return trimString(exec, thisValue, TrimLeft);
+}
+
+JSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+{
+    return trimString(exec, thisValue, TrimRight);
+}
+    
+    
 } // namespace JSC

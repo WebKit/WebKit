@@ -1,3 +1,21 @@
+2009-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Support for String.trim(), String.trimLeft() and String.trimRight() methods
+        https://bugs.webkit.org/show_bug.cgi?id=26590
+
+        Implement trim, trimLeft, and trimRight
+
+        * runtime/StringPrototype.cpp:
+        (JSC::isTrimWhitespace):
+           Our normal string whitespace function does not include U+200B which
+           is needed for compatibility with mozilla's implementation of trim.
+           U+200B does not appear to be expected according to spec, however I am
+           choosing to be lax, and match mozilla behavior so have added this
+           exception.
+        (JSC::trimString):
+
 2009-10-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

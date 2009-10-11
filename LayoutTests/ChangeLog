@@ -1,3 +1,16 @@
+2009-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Support for String.trim(), String.trimLeft() and String.trimRight() methods
+        https://bugs.webkit.org/show_bug.cgi?id=26590
+
+        Add tests for trim, trimLeft, and trimRight
+
+        * fast/js/script-tests/string-trim.js: Added.
+        * fast/js/string-trim-expected.txt: Added.
+        * fast/js/string-trim.html: Added.
+
 2009-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
