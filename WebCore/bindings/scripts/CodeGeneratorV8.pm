@@ -460,6 +460,7 @@ sub GenerateNormalAttrGetter
     my $dataNode = shift;
     my $classIndex = shift;
     my $implClassName = shift;
+    my $interfaceName = shift;
 
     my $attrExt = $attribute->signature->extendedAttributes;
 
@@ -562,10 +563,11 @@ END
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
         if ($reflect || $reflectURL) {
-            $implIncludes{"HTMLNames.h"} = 1;
             my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
+            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+            $implIncludes{"${namespace}.h"} = 1;
             my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-            $getterString = "imp->$getAttributeFunctionName(HTMLNames::${contentAttributeName}Attr";
+            $getterString = "imp->$getAttributeFunctionName(${namespace}::${contentAttributeName}Attr";
         } else {
             $getterString = "imp->$getterFunc(";
         }
@@ -677,6 +679,7 @@ sub GenerateNormalAttrSetter
     my $dataNode = shift;
     my $classIndex = shift;
     my $implClassName = shift;
+    my $interfaceName = shift;
 
     my $attrExt = $attribute->signature->extendedAttributes;
 
@@ -755,9 +758,10 @@ END
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
         if ($reflect || $reflectURL) {
-            $implIncludes{"HTMLNames.h"} = 1;
             my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
-            push(@implContentDecls, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $result");
+            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+            $implIncludes{"${namespace}.h"} = 1;
+            push(@implContentDecls, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, $result");
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
@@ -1136,7 +1140,7 @@ sub GenerateImplementation
         if ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
             $implIncludes{"V8CustomBinding.h"} = 1;
         } else {
-            GenerateNormalAttrGetter($attribute, $dataNode, $classIndex, $implClassName);
+            GenerateNormalAttrGetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
         }
         if ($attribute->signature->extendedAttributes->{"CustomSetter"} ||
             $attribute->signature->extendedAttributes->{"V8CustomSetter"}) {
@@ -1145,7 +1149,7 @@ sub GenerateImplementation
             $dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"} || die "Replaceable attribute can only be used in interface that defines ExtendsDOMGlobalObject attribute!";
             # GenerateReplaceableAttrSetter($implClassName);
         } elsif ($attribute->type !~ /^readonly/ && !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
-            GenerateNormalAttrSetter($attribute, $dataNode, $classIndex, $implClassName);
+            GenerateNormalAttrSetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
         }
     }
 

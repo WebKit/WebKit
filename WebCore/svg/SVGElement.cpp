@@ -3,6 +3,7 @@
                   2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
     Copyright (C) 2008 Apple Inc. All rights reserved.
     Copyright (C) 2008 Alp Toker <alp@atoker.com>
+    Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -75,16 +76,6 @@ SVGElement::~SVGElement()
 bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
     return DOMImplementation::hasFeature(feature, version);
-}
-
-String SVGElement::id() const
-{
-    return getAttribute(idAttr);
-}
-
-void SVGElement::setId(const String& value, ExceptionCode&)
-{
-    setAttribute(idAttr, value);
 }
 
 String SVGElement::xmlbase() const
@@ -243,7 +234,7 @@ void SVGElement::insertedIntoDocument()
     StyledElement::insertedIntoDocument();
     SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
 
-    String resourceId = SVGURIReference::getTarget(id());
+    String resourceId = SVGURIReference::getTarget(getAttribute(idAttr));
     if (extensions->isPendingResource(resourceId)) {
         std::auto_ptr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(resourceId));
         if (clients->isEmpty())

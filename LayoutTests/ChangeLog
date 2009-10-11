@@ -1,3 +1,21 @@
+2009-10-10  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Sam Weinig.
+
+        Allow [Reflect] on SVG elements.
+        https://bugs.webkit.org/show_bug.cgi?id=28936
+
+        Update the JS binding generators to reference SVGNames instead of
+        HTMLNames, if [Reflect]ing an attribute on an SVG element.  Make
+        SVGElement::id use [Reflect].
+
+        Also make [Reflect] on an attribute with a setter exception work in ObjC
+        bindings.
+
+        * svg/dom/script-tests/id-reflect.js: Added.
+        * svg/dom/id-reflect-expected.txt: Added.
+        * svg/dom/id-reflect.html: Added.
+
 2009-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

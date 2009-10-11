@@ -524,7 +524,7 @@ sub GenerateCPPAttributeSignature
 
 sub GenerateCPPAttribute
 {
-    my ($attribute, $className, $implementationClass) = @_;
+    my ($attribute, $className, $implementationClass, $IDLType) = @_;
 
     my $implementationClassWithoutNamespace = StripNamespace($implementationClass);
 
@@ -598,9 +598,10 @@ sub GenerateCPPAttribute
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
         if ($reflect || $reflectURL) {
-            $CPPImplementationWebCoreIncludes{"HTMLNames.h"} = 1;
             my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
-            push(@setterImplementation, "    impl${implementationClassWithoutNamespace}()->setAttribute(WebCore::HTMLNames::${contentAttributeName}Attr, " . join(", ", @setterParams) . ");\n");
+            my $namespace = $codeGenerator->NamespaceForAttributeName($IDLType, $contentAttributeName);
+            $CPPImplementationWebCoreIncludes{"${namespace}.h"} = 1;
+            push(@setterImplementation, "    impl${implementationClassWithoutNamespace}()->setAttribute(WebCore::${namespace}::${contentAttributeName}Attr, " . join(", ", @setterParams) . ");\n");
         } else {
             push(@setterImplementation, "    impl${implementationClassWithoutNamespace}()->${setterName}(" . join(", ", @setterParams) . ");\n");
         }
@@ -620,10 +621,11 @@ sub GenerateCPPAttribute
     my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
     my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
     if ($reflect || $reflectURL) {
-        $implIncludes{"HTMLNames.h"} = 1;
         my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
+        my $namespace = $codeGenerator->NamespaceForAttributeName($IDLType, $contentAttributeName);
+        $implIncludes{"${namespace}.h"} = 1;
         my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-        $implementationGetter = "impl${implementationClassWithoutNamespace}()->${getAttributeFunctionName}(WebCore::HTMLNames::${contentAttributeName}Attr)";
+        $implementationGetter = "impl${implementationClassWithoutNamespace}()->${getAttributeFunctionName}(WebCore::${namespace}::${contentAttributeName}Attr)";
     } else {
         $implementationGetter = "impl${implementationClassWithoutNamespace}()->" . $codeGenerator->WK_lcfirst($attributeName) . "(" . ($hasGetterException ? "ec" : ""). ")";
     }
@@ -1154,7 +1156,7 @@ sub GenerateCPPImplementation
 
                 AddIncludesForTypeInCPPImplementation($attribute->signature->type);
 
-                my %attributes = GenerateCPPAttribute($attribute, $className, $implementationClass);
+                my %attributes = GenerateCPPAttribute($attribute, $className, $implementationClass, $IDLType);
                 push(@CPPImplementationContent, values(%attributes));
             }
         }
@@ -1182,7 +1184,7 @@ sub GenerateCPPImplementation
 
             AddIncludesForTypeInCPPImplementation($attribute->signature->type);
 
-            my %attributes = GenerateCPPAttribute($attribute, $className, $implementationClass);
+            my %attributes = GenerateCPPAttribute($attribute, $className, $implementationClass, $IDLType);
             push(@CPPImplementationContent, values(%attributes));
         }
     }

@@ -59,6 +59,12 @@ my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
                            "SVGAnimatedTransformList" => 1);
 
+my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick" => 1,
+                               "onerror" => 1, "onload" => 1, "onmousedown" => 1,
+                               "onmousemove" => 1, "onmouseout" => 1, "onmouseover" => 1,
+                               "onmouseup" => 1, "onresize" => 1, "onscroll" => 1,
+                               "onunload" => 1);
+
 # Cache of IDL file pathnames.
 my $idlFiles;
 
@@ -345,6 +351,14 @@ sub WK_lcfirst
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
     return $ret;
+}
+
+# Return the C++ namespace that a given attribute name string is defined in.
+sub NamespaceForAttributeName
+{
+    my ($object, $interfaceName, $attributeName) = @_;
+    return "SVGNames" if $interfaceName =~ /^SVG/ && !$svgAttributesInHTMLHash{$attributeName};
+    return "HTMLNames";
 }
 
 1;

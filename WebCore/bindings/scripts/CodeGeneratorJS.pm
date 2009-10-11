@@ -1323,10 +1323,11 @@ sub GenerateImplementation
                         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
                         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
                         if ($reflect || $reflectURL) {
-                            $implIncludes{"HTMLNames.h"} = 1;
                             my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
+                            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+                            $implIncludes{"${namespace}.h"} = 1;
                             my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
-                            $value = "imp->$getAttributeFunctionName(HTMLNames::${contentAttributeName}Attr)"
+                            $value = "imp->$getAttributeFunctionName(${namespace}::${contentAttributeName}Attr)"
                         } else {
                             $value = "imp->$implGetterFunctionName()";
                         }
@@ -1483,9 +1484,10 @@ sub GenerateImplementation
                                 my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
                                 my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
                                 if ($reflect || $reflectURL) {
-                                    $implIncludes{"HTMLNames.h"} = 1;
                                     my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
-                                    push(@implContent, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $nativeValue");
+                                    my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+                                    $implIncludes{"${namespace}.h"} = 1;
+                                    push(@implContent, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, $nativeValue");
                                 } else {
                                     push(@implContent, "    imp->set$implSetterFunctionName($nativeValue");
                                 }

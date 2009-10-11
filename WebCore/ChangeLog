@@ -1,3 +1,31 @@
+2009-10-10  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Sam Weinig.
+
+        Allow [Reflect] on SVG elements.
+        https://bugs.webkit.org/show_bug.cgi?id=28936
+
+        Update the JS binding generators to reference SVGNames instead of
+        HTMLNames, if [Reflect]ing an attribute on an SVG element.  Make
+        SVGElement::id use [Reflect].
+
+        Also make [Reflect] on an attribute with a setter exception work in ObjC
+        bindings.
+
+        Test: svg/dom/id-reflect.html
+
+        * bindings/scripts/CodeGenerator.pm: Add a function to determine the
+        appropriate C++ namespace for attribute name constants.
+        * bindings/scripts/CodeGeneratorObjC.pm: Generate ExceptionCode handling
+        code for [Reflect] on an attribute with a setter exception.
+        * bindings/scripts/CodeGeneratorCOM.pm: Generate "SVGNames" instead of
+        "HTMLNames" when appropriate.
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto.
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        * svg/SVGElement.cpp: Remove getter and setter methods for id.
+        * svg/SVGElement.h: Ditto.
+        * svg/SVGElement.idl: Add [Reflect] to id.
+
 2009-10-10  Oliver Hunt  <oliver@apple.com>
 
         Fix paths in xcode.

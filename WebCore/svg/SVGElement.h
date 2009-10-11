@@ -41,8 +41,6 @@ namespace WebCore {
         static PassRefPtr<SVGElement> create(const QualifiedName&, Document*);
         virtual ~SVGElement();
 
-        String id() const;
-        void setId(const String&, ExceptionCode&);
         String xmlbase() const;
         void setXmlbase(const String&, ExceptionCode&);
 
