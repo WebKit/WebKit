@@ -1,3 +1,32 @@
+2009-10-11  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        Sets a 500K stack limit for JavaScript workers in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=29797
+
+        Runaway recursion in JavaScript workers crashes the Chromium
+        worker process on OS X. This is because V8's default stack limit
+        is 512K on ia32 or 1M on x64, but the worker process runs workers
+        on a thread with the OS X default stack size--512K. Because there
+        are already some C++ frames on the stack when V8 establishes its
+        512K default stack limit, and V8 doesn't precisely enforce the
+        stack limit, runaway recursion in V8 workers overflows the OS
+        stack and segfaults, killing the worker process. This is described
+        in Chromium bug 21653 <http://crbug.com/21653>.
+
+        This patch sets the V8 stack limit for worker JavaScript in
+        Chromium to a more conservative 500K on all platforms. This allows
+        some "headroom" for the C++ stack in use when the limit is set up,
+        and some "legroom" for the V8 helper functions which in practice
+        briefly flout the V8 stack limit.
+
+        Test: LayoutTests/fast/workers/use-machine-stack.html
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initV8IfNeeded):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+
 2009-10-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for wxMac 2.9, use wxGC API for measuring text.

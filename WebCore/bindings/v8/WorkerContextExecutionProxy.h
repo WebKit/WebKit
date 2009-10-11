@@ -107,6 +107,8 @@ namespace WebCore {
 
         static bool forgetV8EventObject(Event*);
 
+        static const int kWorkerMaxStackSize = 500 * 1024;
+
         WorkerContext* m_workerContext;
         v8::Persistent<v8::Context> m_context;
         int m_recursion;

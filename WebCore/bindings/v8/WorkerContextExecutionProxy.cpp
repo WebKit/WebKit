@@ -125,6 +125,11 @@ void WorkerContextExecutionProxy::initV8IfNeeded()
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
 
+    v8::ResourceConstraints resource_constraints;
+    uint32_t here;
+    resource_constraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
+    v8::SetResourceConstraints(&resource_constraints);
+
     v8Initialized = true;
 }
 
