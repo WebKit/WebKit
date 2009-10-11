@@ -76,7 +76,8 @@ V8AbstractEventListener::V8AbstractEventListener(Frame* frame, PassRefPtr<V8List
 V8AbstractEventListener::~V8AbstractEventListener()
 {
     if (!m_listener.IsEmpty()) {
-        v8::HandleScope scope;
+        v8::HandleScope handleScope;
+        v8::Context::Scope scope(m_context->get());
         v8::Local<v8::Object> listener = v8::Local<v8::Object>::New(m_listener);
         V8EventListenerList::clearWrapper(listener, m_isAttribute);
     }
