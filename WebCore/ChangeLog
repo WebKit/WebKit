@@ -1,3 +1,16 @@
+2009-10-11  Lyon Chen  <lyon.chen@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Correct the position of #endif sentence inside WebCore::Document::finishedParsing().
+
+        https://bugs.webkit.org/show_bug.cgi?id=30244
+
+        This change requires no test case as it fix a compiling error.
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+
 2009-10-11  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Adam Barth.
