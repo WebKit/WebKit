@@ -30,6 +30,7 @@
 
 #include <wx/defs.h>
 #include <wx/gdicmn.h>
+#include <wx/graphics.h>
 
 #ifdef BUILDING_ON_TIGER
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
@@ -91,98 +92,21 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
 void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxCoord *height,
                             wxCoord *descent, wxCoord *externalLeading )
 {
-    ATSUStyle* ATSUIStyle;
-
-    if ( font.Ok() )
+    wxGraphicsContext * const gc = wxGraphicsContext::Create();
+    gc->SetFont(font, *wxBLACK); // colour doesn't matter but must be specified
+    struct GCTextExtent
     {
-        OSStatus status ;
-
-        status = ATSUCreateAndCopyStyle( (ATSUStyle) font.MacGetATSUStyle() , (ATSUStyle*) &ATSUIStyle ) ;
-
-        wxASSERT_MSG( status == noErr, wxT("couldn't create ATSU style") ) ;
-
-        // we need the scale here ...
-
-        Fixed atsuSize = IntToFixed( int( /*m_scaleY*/ 1 * font.GetPointSize()) ) ;
-        //RGBColor atsuColor = MAC_WXCOLORREF( m_textForegroundColor.GetPixel() ) ;
-        ATSUAttributeTag atsuTags[] =
-        {
-                kATSUSizeTag //,
-        //        kATSUColorTag ,
-        } ;
-        ByteCount atsuSizes[sizeof(atsuTags) / sizeof(ATSUAttributeTag)] =
-        {
-                sizeof( Fixed ) //,
-        //        sizeof( RGBColor ) ,
-        } ;
-        ATSUAttributeValuePtr atsuValues[sizeof(atsuTags) / sizeof(ATSUAttributeTag)] =
-        {
-                &atsuSize //,
-        //        &atsuColor ,
-        } ;
-
-        status = ::ATSUSetAttributes(
-            (ATSUStyle)ATSUIStyle, sizeof(atsuTags) / sizeof(ATSUAttributeTag) ,
-            atsuTags, atsuSizes, atsuValues);
-
-        wxASSERT_MSG( status == noErr , wxT("couldn't modify ATSU style") ) ;
-    }
-    
-    wxCHECK_RET( ATSUIStyle != NULL, wxT("GetTextExtent - no valid font set") ) ;
-
-    OSStatus status = noErr ;
-
-    ATSUTextLayout atsuLayout ;
-    UniCharCount chars = str.length() ;
-    UniChar* ubuf = NULL ;
-
-#if SIZEOF_WCHAR_T == 4
-    wxMBConvUTF16 converter ;
-#if wxUSE_UNICODE
-    size_t unicharlen = converter.WC2MB( NULL , str.wc_str() , 0 ) ;
-    ubuf = (UniChar*) malloc( unicharlen + 2 ) ;
-    converter.WC2MB( (char*) ubuf , str.wc_str(), unicharlen + 2 ) ;
-#else
-    const wxWCharBuffer wchar = str.wc_str( wxConvLocal ) ;
-    size_t unicharlen = converter.WC2MB( NULL , wchar.data() , 0 ) ;
-    ubuf = (UniChar*) malloc( unicharlen + 2 ) ;
-    converter.WC2MB( (char*) ubuf , wchar.data() , unicharlen + 2 ) ;
-#endif
-    chars = unicharlen / 2 ;
-#else
-#if wxUSE_UNICODE
-    ubuf = (UniChar*) str.wc_str() ;
-#else
-    wxWCharBuffer wchar = str.wc_str( wxConvLocal ) ;
-    chars = wxWcslen( wchar.data() ) ;
-    ubuf = (UniChar*) wchar.data() ;
-#endif
-#endif
-
-    status = ::ATSUCreateTextLayoutWithTextPtr( (UniCharArrayPtr) ubuf , 0 , chars , chars , 1 ,
-        &chars , (ATSUStyle*) &ATSUIStyle , &atsuLayout ) ;
-
-    wxASSERT_MSG( status == noErr , wxT("couldn't create the layout of the text") );
-
-    ATSUTextMeasurement textBefore, textAfter ;
-    ATSUTextMeasurement textAscent, textDescent ;
-
-    status = ::ATSUGetUnjustifiedBounds( atsuLayout, kATSUFromTextBeginning, kATSUToTextEnd,
-        &textBefore , &textAfter, &textAscent , &textDescent );
-
-    if ( height )
-        *height = FixedToInt(textAscent + textDescent) ;
-    if ( descent )
-        *descent = FixedToInt(textDescent) ;
-    if ( externalLeading )
-        *externalLeading = 0 ;
+        wxDouble width, height, descent, externalLeading;
+    } e;
+    gc->GetTextExtent(str, &e.width, &e.height, &e.descent, &e.externalLeading);
     if ( width )
-        *width = FixedToInt(textAfter - textBefore) ;
+        *width = wxCoord(e.width + .5);
+    if ( height )
+        *height = wxCoord(e.height + .5);
+    if ( descent )
+        *descent = wxCoord(e.descent + .5);
+    if ( externalLeading )
+        *externalLeading = wxCoord(e.externalLeading + .5);
 
-#if SIZEOF_WCHAR_T == 4
-    free( ubuf ) ;
-#endif
-
-    ::ATSUDisposeTextLayout(atsuLayout);
-    ::ATSUDisposeStyle((ATSUStyle)ATSUIStyle);
+    delete gc;
 }

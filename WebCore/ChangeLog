@@ -1,3 +1,10 @@
+2009-10-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for wxMac 2.9, use wxGC API for measuring text.
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (GetTextExtent):
+
 2009-10-10  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Sam Weinig.
