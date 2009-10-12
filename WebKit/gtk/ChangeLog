@@ -1,3 +1,18 @@
+2009-10-12  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Crash when right-clicking misspelled word
+        https://bugs.webkit.org/show_bug.cgi?id=29772
+
+        Make sure the dictionary exist before adding it to the list of
+        dictionaries.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::checkSpellingOfString):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_set_property):
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

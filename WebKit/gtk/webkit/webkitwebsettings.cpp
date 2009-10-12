@@ -694,6 +694,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
 {
     WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
     WebKitWebSettingsPrivate* priv = web_settings->priv;
+    EnchantBroker* broker;
     SpellLanguage* lang;
     GSList* spellLanguages = NULL;
 
@@ -787,26 +788,32 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_SPELL_CHECKING_LANGUAGES:
         priv->spell_checking_languages = g_strdup(g_value_get_string(value));
 
+        broker = enchant_broker_init();
         if (priv->spell_checking_languages) {
             char** langs = g_strsplit(priv->spell_checking_languages, ",", -1);
             for (int i = 0; langs[i]; i++) {
-                lang = g_slice_new0(SpellLanguage);
-                lang->config = enchant_broker_init();
-                lang->speller = enchant_broker_request_dict(lang->config, langs[i]);
+                if (enchant_broker_dict_exists(broker, langs[i])) {
+                    lang = g_slice_new0(SpellLanguage);
+                    lang->config = enchant_broker_init();
+                    lang->speller = enchant_broker_request_dict(lang->config, langs[i]);
 
-                spellLanguages = g_slist_append(spellLanguages, lang);
+                    spellLanguages = g_slist_append(spellLanguages, lang);
+                }
             }
 
             g_strfreev(langs);
         } else {
             const char* language = pango_language_to_string(gtk_get_default_language());
 
-            lang = g_slice_new0(SpellLanguage);
-            lang->config = enchant_broker_init();
-            lang->speller = enchant_broker_request_dict(lang->config, language);
+            if (enchant_broker_dict_exists(broker, language)) {
+                lang = g_slice_new0(SpellLanguage);
+                lang->config = enchant_broker_init();
+                lang->speller = enchant_broker_request_dict(lang->config, language);
 
-            spellLanguages = g_slist_append(spellLanguages, lang);
+                spellLanguages = g_slist_append(spellLanguages, lang);
+            }
         }
+        enchant_broker_free(broker);
         g_slist_foreach(priv->spell_checking_languages_list, free_spell_checking_language, NULL);
         g_slist_free(priv->spell_checking_languages_list);
         priv->spell_checking_languages_list = spellLanguages;

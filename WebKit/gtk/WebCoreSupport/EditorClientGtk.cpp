@@ -615,6 +615,10 @@ void EditorClient::learnWord(const String& text)
 
 void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
 {
+    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+    if (!langs)
+        return;
+
     gchar* ctext = g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0);
     int utflen = g_utf8_strlen(ctext, -1);
 
@@ -632,7 +636,6 @@ void EditorClient::checkSpellingOfString(const UChar* text, int length, int* mis
             int start = i;
             int end = i;
             int wordLength;
-            GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
 
             while (attrs[end].is_word_end < 1)
                 end++;
