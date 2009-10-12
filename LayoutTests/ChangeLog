@@ -1,3 +1,15 @@
+2009-10-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eirc Seidel.
+
+        feMergeNod has a reference to an effect that doesn't exist. This test will
+        check if SVGFEMergeElement handles this correctly and stops the filter process.
+
+        * svg/filters/feMerge-wrong-input-expected.checksum: Added.
+        * svg/filters/feMerge-wrong-input-expected.png: Added.
+        * svg/filters/feMerge-wrong-input-expected.txt: Added.
+        * svg/filters/feMerge-wrong-input.svg: Added.
+
 2009-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

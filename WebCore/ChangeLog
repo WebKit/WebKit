@@ -1,3 +1,18 @@
+2009-10-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SVG - crash on feMerge when input not available
+        [https://bugs.webkit.org/show_bug.cgi?id=30297]
+
+        Make a early return in SVGFEMergeElement if the needed
+        filter effect doesn't exist.
+
+        Test: svg/filters/feMerge-wrong-input.svg
+
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build):
+
 2009-10-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
