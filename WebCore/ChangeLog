@@ -1,3 +1,16 @@
+2009-10-12  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30307
+        
+        Fix 0 sentinel for g_object_set() function call.
+
+        * platform/graphics/gtk/DataSourceGStreamer.cpp:
+        (webkit_data_src_uri_set_uri):
+        0 is passed as 32 bit value on x86-64 in vararg functions, but
+        g_object_set() expects a 64 bit 0. This will cause crashes.
+
 2009-10-12  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.

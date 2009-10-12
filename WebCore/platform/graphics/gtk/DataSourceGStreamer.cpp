@@ -214,7 +214,7 @@ static gboolean webkit_data_src_uri_set_uri(GstURIHandler* handler, const gchar*
             GInputStream* stream = g_memory_input_stream_new_from_data(decoded_data,
                                                                        decoded_size,
                                                                        g_free);
-            g_object_set(src->kid, "stream", stream, 0);
+            g_object_set(src->kid, "stream", stream, NULL);
             g_object_unref(stream);
 
             if (src->uri) {
