@@ -1,3 +1,11 @@
+2009-10-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add a palette() method that is needed by our RenderTheme.
+
+        * platform/qt/QWebPageClient.h:
+
 2009-10-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -54,6 +54,7 @@ public:
     virtual void updateCursor(const QCursor& cursor);
 #endif
 
+    virtual QPalette palette() const;
     virtual int screenNumber() const;
     virtual WId winId() const;
 
@@ -125,6 +126,11 @@ void QGraphicsWebViewPrivate::updateCursor(const QCursor& cursor)
     q->setCursor(cursor);
 }
 #endif
+
+QPalette QGraphicsWebViewPrivate::palette() const
+{
+    return q->palette();
+}
 
 int QGraphicsWebViewPrivate::screenNumber() const
 {

@@ -55,6 +55,7 @@ public:
 #endif
     }
 
+    virtual QPalette palette() const = 0;
     virtual int screenNumber() const = 0;
     virtual WId winId() const = 0;
 

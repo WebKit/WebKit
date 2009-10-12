@@ -1,3 +1,14 @@
+2009-10-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Implement the new palette() methods on the page clients
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::palette):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::palette):
+
 2009-10-12  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
