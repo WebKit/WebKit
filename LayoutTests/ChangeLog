@@ -1,3 +1,14 @@
+2009-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/7294267> REGRESSION (r48492): Gmail voice and
+        video chat doesn’t work
+        https://bugs.webkit.org/show_bug.cgi?id=30295
+
+        * plugins/setProperty-expected.txt: Added.
+        * plugins/setProperty.html: Added.
+
 2009-10-10  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Sam Weinig.

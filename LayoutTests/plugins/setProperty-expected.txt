@@ -1,0 +1,4 @@
+
+Test for https://bugs.webkit.org/show_bug.cgi?id=30295 REGRESSION (r48492): Gmail voice and video chat doesn't work.
+
+PASS: Successfully set a plug-in's property

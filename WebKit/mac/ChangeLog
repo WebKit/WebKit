@@ -1,3 +1,17 @@
+2009-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7294267> REGRESSION (r48492): Gmail voice and video chat
+        doesn’t work
+        https://bugs.webkit.org/show_bug.cgi?id=30295
+
+        Test: plugins/setProperty.html
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::setFieldValue): Fixed a typo. The function
+        should return early if m_instanceProxy is null.
+
 2009-10-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

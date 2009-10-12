@@ -370,7 +370,7 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
     
 void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue value) const
 {
-    if (m_instanceProxy)
+    if (!m_instanceProxy)
         return;
     
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
