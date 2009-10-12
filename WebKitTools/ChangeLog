@@ -1,3 +1,9 @@
+2009-10-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Add Collin to committers.py.
+
+        * Scripts/modules/committers.py:
+
 2009-10-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, add bindings to source/include dirs now that there are sources there.
