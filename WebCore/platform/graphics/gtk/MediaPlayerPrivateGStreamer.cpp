@@ -656,6 +656,10 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     int pixelAspectRatioDenominator = 0;
     double doublePixelAspectRatioNumerator = 0;
     double doublePixelAspectRatioDenominator = 0;
+    double displayWidth;
+    double displayHeight;
+    double scale, gapHeight, gapWidth;
+
     GstCaps *caps = gst_buffer_get_caps(m_buffer);
 
     if (!gst_video_format_parse_caps(caps, NULL, &width, &height) ||
@@ -664,6 +668,8 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
       return;
     }
 
+    displayWidth = width;
+    displayHeight = height;
     doublePixelAspectRatioNumerator = pixelAspectRatioNumerator;
     doublePixelAspectRatioDenominator = pixelAspectRatioDenominator;
 
@@ -676,11 +682,23 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     cairo_save(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
+    displayWidth *= doublePixelAspectRatioNumerator / doublePixelAspectRatioDenominator;
+    displayHeight *= doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator;
+
+    scale = MIN (rect.width () / displayWidth, rect.height () / displayHeight);
+    displayWidth *= scale;
+    displayHeight *= scale;
+
+    // Calculate gap between border an picture
+    gapWidth = (rect.width() - displayWidth) / 2.0;
+    gapHeight = (rect.height() - displayHeight) / 2.0;
+
     // paint the rectangle on the context and draw the surface inside.
-    cairo_translate(cr, rect.x(), rect.y());
+    cairo_translate(cr, rect.x() + gapWidth, rect.y() + gapHeight);
     cairo_rectangle(cr, 0, 0, rect.width(), rect.height());
     cairo_scale(cr, doublePixelAspectRatioNumerator / doublePixelAspectRatioDenominator,
                 doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator);
+    cairo_scale(cr, scale, scale);
     cairo_set_source_surface(cr, src, 0, 0);
     cairo_fill(cr);
     cairo_restore(cr);
