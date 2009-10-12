@@ -34,6 +34,7 @@
 #include "V8Attr.h"
 #include "V8BarInfo.h"
 #include "V8BeforeLoadEvent.h"
+#include "V8CanvasActiveInfo.h"
 #include "V8CanvasRenderingContext.h"
 #include "V8CanvasRenderingContext2D.h"
 #include "V8CanvasGradient.h"

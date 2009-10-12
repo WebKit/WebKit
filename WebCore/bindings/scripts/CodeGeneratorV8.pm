@@ -1624,6 +1624,7 @@ sub IsRefPtrType
 {
     my $type = shift;
     return 1 if $type eq "Attr";
+    return 1 if $type eq "CanvasActiveInfo";
     return 1 if $type eq "CanvasArray";
     return 1 if $type eq "CanvasArrayBuffer";
     return 1 if $type eq "CanvasBooleanArray";

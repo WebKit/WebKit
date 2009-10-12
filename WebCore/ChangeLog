@@ -1,3 +1,24 @@
+2009-10-11  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        Fixes a build break in the V8 bindings caused by revision 49420.
+        https://bugs.webkit.org/show_bug.cgi?id=30294
+
+        Revision 49420 introduces an IDL-defined CanvasActiveInfo
+        type. This causes a build break in the V8 bindings where
+        CanvasGraphicsContext3D naively refers to CanvasActiveInfo as a
+        non-ref type.
+
+        * WebCore.gypi: Include CanvasActiveInfo.idl in build.
+        * bindings/scripts/CodeGeneratorV8.pm: CanvasActiveInfo is a ref
+          ptr type.
+        * bindings/v8/DOMObjectsInclude.h: Include generated
+          CanvasActiveInfo files.
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+
 2009-10-11  Collin Jackson  <collinj@webkit.org>
 
         Reviewed by Adam Barth.

@@ -450,6 +450,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 
 #if ENABLE(3D_CANVAS)
 #define DOM_OBJECT_3D_CANVAS_TYPES(V)                                   \
+    V(CANVASACTIVEINFO, CanvasActiveInfo)                               \
     V(CANVASARRAY, CanvasArray)                                         \
     V(CANVASARRAYBUFFER, CanvasArrayBuffer)                             \
     V(CANVASBUFFER, CanvasBuffer)                                       \

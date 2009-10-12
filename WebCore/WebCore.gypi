@@ -77,6 +77,7 @@
             'dom/WebKitAnimationEvent.idl',
             'dom/WebKitTransitionEvent.idl',
             'dom/WheelEvent.idl',
+            'html/canvas/CanvasActiveInfo.idl',
             'html/canvas/CanvasArray.idl',
             'html/canvas/CanvasArrayBuffer.idl',
             'html/canvas/CanvasBuffer.idl',
