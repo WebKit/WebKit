@@ -63,10 +63,10 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, bool userGesture,
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
-    String script = url.string().substring(javascriptSchemeLength);
+    String script = decodeURLEscapeSequences(url.string().substring(javascriptSchemeLength));
     ScriptValue result;
     if (xssAuditor()->canEvaluateJavaScriptURL(script))
-        result = executeScript(decodeURLEscapeSequences(script), userGesture);
+        result = executeScript(script, userGesture);
 
     String scriptResult;
     if (!result.getString(scriptResult))

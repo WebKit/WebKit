@@ -1,3 +1,18 @@
+2009-10-11  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30242
+        
+        Tests that JavaScript URLs that are twice URL encoded do not bypass the XSSAuditor.
+
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode.html: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode2-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode2.html: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode3-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode3.html: Added.
+
 2009-10-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

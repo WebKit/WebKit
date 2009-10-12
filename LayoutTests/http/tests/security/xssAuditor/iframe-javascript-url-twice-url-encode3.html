@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setXSSAuditorEnabled(true);
+}
+</script>
+</head>
+<body>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<iframe src="javascript://%250Aalert(/XSS/)"></iframe>'>
+</iframe>
+</body>
+</html>
