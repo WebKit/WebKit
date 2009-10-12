@@ -1,5 +1,17 @@
 2009-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Rubberstamped by Eric Seidel.
+
+        [Gtk] Fix icu CFLAG for Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=29517
+
+        Don't escape the srcdir variable. Also use $host instead of the
+        os_foo variables.
+
+        * autotools/webkit.m4:
+
+2009-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Gustavo Noronha.
 
         [Gtk] Use the SQLite3 headers from WebKitLibraries if sqlite3 is undetected

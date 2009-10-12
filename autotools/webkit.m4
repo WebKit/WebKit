@@ -144,13 +144,16 @@ AC_MSG_RESULT([$with_unicode_backend])
 # with the WTF Unicode backend being based on GLib while text codecs and TextBreakIterator
 # keep the ICU dependency. That's why we temporarily add icu headers and libs for glib config case as well.
 if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; then
-	if test "$os_darwin" = "yes"; then
-		UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
+        case "$host" in
+            *-*-darwin*)
+		UNICODE_CFLAGS="-I$srcdir/JavaScriptCore/icu -I$srcdir/WebCore/icu"
 		UNICODE_LIBS="-licucore"
-	elif test "$os_win32" = "yes"; then
+                ;;
+            *-*-mingw*)
 		UNICODE_CFLAGS=""
 		UNICODE_LIBS="-licuin -licuuc"
-	else
+                ;;
+            *)
 		AC_PATH_PROG(icu_config, icu-config, no)
 		if test "$icu_config" = "no"; then
 			AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
@@ -161,7 +164,8 @@ if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; the
 		# See man (1) icu-config for more info.
 		UNICODE_CFLAGS=`$icu_config --cppflags`
 		UNICODE_LIBS=`$icu_config --ldflags-libsonly`
-	fi
+                ;;
+        esac
 fi
 
 if test "$with_unicode_backend" = "glib"; then
