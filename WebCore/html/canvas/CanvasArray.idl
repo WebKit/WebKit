@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS] CanvasArray {
+    interface [Conditional=3D_CANVAS, CustomToJS] CanvasArray {
         readonly attribute long length;
         int sizeInBytes();
         int alignedSizeInBytes();

@@ -1,3 +1,56 @@
+2009-10-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added automatic flush before compositing
+        https://bugs.webkit.org/show_bug.cgi?id=30236
+
+        This causes image to always render correctly. In writing a testcase
+        I needed to implement readPixels. This exposed a bug in reading back
+        values from a CanvasArray subclass, so I fixed that as well. Now when
+        you wrap a CanvasArray in a JSValue it actually wraps the specific
+        subclass. To do this I need to add virtual methods to each CanvasArray
+        subclass to determine the type and a custom toJS method for CanvasArray
+        to create the proper wrapper. 
+
+        Test: fast/canvas/webgl/triangle.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasArrayCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/CanvasArray.h:
+        (WebCore::CanvasArray::isByteArray):
+        (WebCore::CanvasArray::isUnsignedByteArray):
+        (WebCore::CanvasArray::isShortArray):
+        (WebCore::CanvasArray::isUnsignedShortArray):
+        (WebCore::CanvasArray::isIntArray):
+        (WebCore::CanvasArray::isUnsignedIntArray):
+        (WebCore::CanvasArray::isFloatArray):
+        * html/canvas/CanvasArray.idl:
+        * html/canvas/CanvasByteArray.h:
+        (WebCore::CanvasByteArray::isByteArray):
+        * html/canvas/CanvasFloatArray.h:
+        (WebCore::CanvasFloatArray::isFloatArray):
+        * html/canvas/CanvasIntArray.h:
+        (WebCore::CanvasIntArray::isIntArray):
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::readPixels):
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasRenderingContext3D.idl:
+        * html/canvas/CanvasShortArray.h:
+        (WebCore::CanvasShortArray::isShortArray):
+        * html/canvas/CanvasUnsignedByteArray.h:
+        (WebCore::CanvasUnsignedByteArray::isUnsignedByteArray):
+        * html/canvas/CanvasUnsignedIntArray.h:
+        (WebCore::CanvasUnsignedIntArray::isUnsignedIntArray):
+        * html/canvas/CanvasUnsignedShortArray.h:
+        (WebCore::CanvasUnsignedShortArray::isUnsignedShortArray):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/Canvas3DLayer.mm:
+        (-[Canvas3DLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+
 2009-10-12  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.

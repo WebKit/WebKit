@@ -34,6 +34,14 @@
 namespace WebCore {
     class CanvasArray : public RefCounted<CanvasArray> {
     public:
+        virtual bool isByteArray() const { return false; }
+        virtual bool isUnsignedByteArray() const { return false; }
+        virtual bool isShortArray() const { return false; }
+        virtual bool isUnsignedShortArray() const { return false; }
+        virtual bool isIntArray() const { return false; }
+        virtual bool isUnsignedIntArray() const { return false; }
+        virtual bool isFloatArray() const { return false; }
+        
         PassRefPtr<CanvasArrayBuffer> buffer() {
             return m_buffer;
         }

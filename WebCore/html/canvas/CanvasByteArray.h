@@ -38,6 +38,8 @@ namespace WebCore {
 
     class CanvasByteArray : public CanvasArray {
     public:
+        virtual bool isByteArray() const { return true; }
+
         static PassRefPtr<CanvasByteArray> create(unsigned length);
         static PassRefPtr<CanvasByteArray> create(signed char* array, unsigned length);
         static PassRefPtr<CanvasByteArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);

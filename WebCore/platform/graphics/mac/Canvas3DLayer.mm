@@ -72,6 +72,10 @@ using namespace WebCore;
 
 -(void)drawInCGLContext:(CGLContextObj)glContext pixelFormat:(CGLPixelFormatObj)pixelFormat forLayerTime:(CFTimeInterval)timeInterval displayTime:(const CVTimeStamp *)timeStamp
 {
+    CGLSetCurrentContext(m_contextObj);
+    glFinish();
+    CGLSetCurrentContext(glContext);
+
     CGRect frame = [self frame];
         
     // draw the FBO into the layer

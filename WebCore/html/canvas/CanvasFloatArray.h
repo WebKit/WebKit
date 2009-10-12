@@ -35,6 +35,8 @@ namespace WebCore {
     
     class CanvasFloatArray : public CanvasArray {
     public:
+        virtual bool isFloatArray() const { return true; }
+
         static PassRefPtr<CanvasFloatArray> create(unsigned length);
         static PassRefPtr<CanvasFloatArray> create(float* array, unsigned length);
         static PassRefPtr<CanvasFloatArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);

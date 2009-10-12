@@ -1,3 +1,18 @@
+2009-10-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added test case for bug
+        https://bugs.webkit.org/show_bug.cgi?id=30236
+
+        This test case draws a simple triangle, does a readPixels and looks at some pixels
+        to verify that the triangle rendered.
+
+        * fast/canvas/webgl/resources: Added.
+        * fast/canvas/webgl/resources/utils3d.js: Added.
+        * fast/canvas/webgl/triangle-expected.txt: Added.
+        * fast/canvas/webgl/triangle.html: Added.
+
 2009-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

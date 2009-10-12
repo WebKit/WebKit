@@ -758,6 +758,7 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
+		492273A31083B3B100EE5C84 /* JSCanvasArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 492273A21083B3B100EE5C84 /* JSCanvasArrayCustom.cpp */; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
 		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
@@ -5973,6 +5974,7 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
+		492273A21083B3B100EE5C84 /* JSCanvasArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasArrayCustom.cpp; sourceTree = "<group>"; };
 		49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasGradient.cpp; path = canvas/CanvasGradient.cpp; sourceTree = "<group>"; };
 		49484FB4102CF23C00187DD3 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasGradient.h; path = canvas/CanvasGradient.h; sourceTree = "<group>"; };
 		49484FB5102CF23C00187DD3 /* CanvasGradient.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasGradient.idl; path = canvas/CanvasGradient.idl; sourceTree = "<group>"; };
@@ -14337,6 +14339,7 @@
 			children = (
 				415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				492273A21083B3B100EE5C84 /* JSCanvasArrayCustom.cpp */,
 				49EECF7110508D9C00099FAB /* JSCanvasByteArrayCustom.cpp */,
 				49EECF7210508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp */,
 				49EECF7310508D9C00099FAB /* JSCanvasIntArrayCustom.cpp */,
@@ -20153,6 +20156,7 @@
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */,
+				492273A31083B3B100EE5C84 /* JSCanvasArrayCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

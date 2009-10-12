@@ -814,6 +814,13 @@ void CanvasRenderingContext3D::polygonOffset(double factor, double units)
     cleanupAfterGraphicsCall(false);
 }
 
+PassRefPtr<CanvasArray> CanvasRenderingContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
+{
+    RefPtr<CanvasArray> array = m_context.readPixels(x, y, width, height, format, type);
+    cleanupAfterGraphicsCall(false);
+    return array;
+}
+
 void CanvasRenderingContext3D::releaseShaderCompiler()
 {
     m_context.releaseShaderCompiler();

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spinning Box</title>
+    <script src="resources/utils3d.js"> </script>
+    <script id="vshader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        void main()
+        {
+            gl_Position = vPosition;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        void main()
+        {
+            gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        }
+    </script>
+
+    <script>
+        function fail(x,y, buf, shouldBe)
+        {
+            var i = (y*50+x) * 4;
+            var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+            document.getElementById("results").innerHTML = "Test <span style='color:red'>FAILED</span> "+reason;
+        }
+        
+        function pass()
+        {
+            document.getElementById("results").innerHTML = "Test <span style='color:green'>PASSED</span>";
+        }
+        
+        function init()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+                layoutTestController.dumpAsText();
+            }
+            
+            gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
+            gl.viewport(0, 0, 50, 50);
+            
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+            
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            
+            var buf = gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE);
+            
+            // Test several locations
+            // First line should be all black
+            for (var i = 0; i < 50; ++i)
+                if (buf[i*4] != 0 || buf[i*4+1] != 0 || buf[i*4+2] != 0 || buf[i*4+3] != 255) {
+                    fail(i, 0, buf, "(0,0,0,255)");
+                    return;
+                }
+                
+            // Line 15 should be red for at least 10 red pixels starting 20 pixels in
+            var offset = (15*50+20) * 4;
+            for (var i = 0; i < 10; ++i)
+                if (buf[offset+i*4] != 255 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+                    fail(20, 15, buf, "(255,0,0,255)");
+                    return;
+                }
+            // Last line should be all black
+            offset = (49*50) * 4
+            for (var i = 0; i < 50; ++i)
+                if (buf[offset+i*4] != 0 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+                    fail(i, 49, buf, "(0,0,0,255)");
+                    return;
+                }
+                
+            pass();
+       }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="example" width="50px" height="50px">
+    There is supposed to be an example drawing here, but it's not important.
+    </canvas>
+    <div id="results">Test <span style="color:red">FAILED</span></div>
+  </body>
+</html>

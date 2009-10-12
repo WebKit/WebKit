@@ -29,6 +29,13 @@
 
 #include "config.h"
 #include "JSCanvasArray.h"
+#include "JSCanvasByteArray.h"
+#include "JSCanvasUnsignedByteArray.h"
+#include "JSCanvasShortArray.h"
+#include "JSCanvasUnsignedShortArray.h"
+#include "JSCanvasIntArray.h"
+#include "JSCanvasUnsignedIntArray.h"
+#include "JSCanvasFloatArray.h"
 
 #include "CanvasArray.h"
 
@@ -38,17 +45,21 @@ namespace WebCore {
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasArray* object)
 {
-    if (!object)
-        return jsUndefined();
-        
-    
-
-#if ENABLE(3D_CANVAS)
-    if (object->is3d())
-        return getDOMObjectWrapper<JSCanvasRenderingContext3D>(exec, globalObject, static_cast<CanvasRenderingContext3D*>(object));
-#endif
-    ASSERT(object->is2d());
-    return getDOMObjectWrapper<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
+    if (object->isFloatArray())
+        return getDOMObjectWrapper<JSCanvasFloatArray>(exec, globalObject, static_cast<CanvasFloatArray*>(object));
+    if (object->isUnsignedByteArray())
+        return getDOMObjectWrapper<JSCanvasUnsignedByteArray>(exec, globalObject, static_cast<CanvasUnsignedByteArray*>(object));
+    if (object->isByteArray())
+        return getDOMObjectWrapper<JSCanvasByteArray>(exec, globalObject, static_cast<CanvasByteArray*>(object));
+    if (object->isIntArray())
+        return getDOMObjectWrapper<JSCanvasIntArray>(exec, globalObject, static_cast<CanvasIntArray*>(object));
+    if (object->isUnsignedIntArray())
+        return getDOMObjectWrapper<JSCanvasUnsignedIntArray>(exec, globalObject, static_cast<CanvasUnsignedIntArray*>(object));
+    if (object->isShortArray())
+        return getDOMObjectWrapper<JSCanvasShortArray>(exec, globalObject, static_cast<CanvasShortArray*>(object));
+    if (object->isUnsignedShortArray())
+        return getDOMObjectWrapper<JSCanvasUnsignedShortArray>(exec, globalObject, static_cast<CanvasUnsignedShortArray*>(object));
+    return jsUndefined();
 }
 
 } // namespace WebCore
