@@ -135,6 +135,9 @@ SOFT_LINK_CLASS(QTKit, QTMovieView)
 
 - (void)windowDidExitFullscreen
 {
+    // If we don't clear the movie, underlying movie data structures are leaked and the movie keeps playing <rdar://problem/7295070>
+    [[[self fullscreenWindow] movieView] setMovie:nil];
+
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];

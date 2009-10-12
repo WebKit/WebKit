@@ -1,3 +1,16 @@
+2009-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video keeps playing after going fullscreen, then closing window
+        https://bugs.webkit.org/show_bug.cgi?id=30164
+        
+        Clear the QTMovie on the QTMovieView when coming out of fullscreen,
+        to fix issue where the underlying movie keeps playing.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidExitFullscreen]):
+
 2009-10-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
