@@ -1,3 +1,30 @@
+2009-10-12  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29997
+        
+        Fixes double memcpy of all rendered video frames.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateRepaintCallback):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::duration):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_timeout_func):
+        (webkit_video_sink_dispose):
+        (unlock_buffer_mutex):
+        (webkit_video_sink_unlock):
+        (marshal_VOID__MINIOBJECT):
+        (webkit_video_sink_class_init):
+        (webkit_video_sink_new):
+        * platform/graphics/gtk/VideoSinkGStreamer.h:
+        Directly pass the buffers up to the MediaPlayerPrivate::paint()
+        method instead of rendering them first to an intermediate cairo
+        surface. This should increase performance and peak memory usage.
+
 2009-10-11  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

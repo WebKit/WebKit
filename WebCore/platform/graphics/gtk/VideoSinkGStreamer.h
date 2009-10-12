@@ -72,9 +72,7 @@ struct _WebKitVideoSinkClass {
 };
 
 GType       webkit_video_sink_get_type(void) G_GNUC_CONST;
-GstElement *webkit_video_sink_new(cairo_surface_t *surface);
-
-void webkit_video_sink_set_surface(WebKitVideoSink *sink, cairo_surface_t *surface);
+GstElement *webkit_video_sink_new(void);
 
 G_END_DECLS
 

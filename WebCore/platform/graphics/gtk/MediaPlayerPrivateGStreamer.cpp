@@ -39,7 +39,6 @@
 #include "Widget.h"
 #include "TimeRanges.h"
 
-#include <gst/base/gstbasesrc.h>
 #include <gst/gst.h>
 #include <gst/interfaces/mixer.h>
 #include <gst/interfaces/xoverlay.h>
@@ -105,8 +104,10 @@ gboolean mediaPlayerPrivateBufferingCallback(GstBus* bus, GstMessage* message, g
     return true;
 }
 
-static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, MediaPlayerPrivate* playerPrivate)
+void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivate* playerPrivate)
 {
+    g_return_if_fail(GST_IS_BUFFER(buffer));
+    gst_buffer_replace(&playerPrivate->m_buffer, buffer);
     playerPrivate->repaint();
 }
 
@@ -148,20 +149,19 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isStreaming(false)
     , m_size(IntSize())
     , m_visible(true)
+    , m_buffer(0)
     , m_paused(true)
     , m_seeking(false)
     , m_errorOccured(false)
 {
     do_gst_init();
-
-    // FIXME: The size shouldn't be fixed here, this is just a quick hack.
-    m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 640, 480);
 }
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
-    if (m_surface)
-        cairo_surface_destroy(m_surface);
+    if (m_buffer)
+        gst_buffer_unref(m_buffer);
+    m_buffer = 0;
 
     if (m_playBin) {
         gst_element_set_state(m_playBin, GST_STATE_NULL);
@@ -327,14 +327,16 @@ IntSize MediaPlayerPrivate::naturalSize() const
     // https://bugzilla.gnome.org/show_bug.cgi?id=596326
     int width = 0, height = 0;
     if (GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink")) {
-        gst_video_get_size(GST_PAD(pad), &width, &height);
         GstCaps* caps = GST_PAD_CAPS(pad);
         gfloat pixelAspectRatio;
         gint pixelAspectRatioNumerator, pixelAspectRatioDenominator;
 
-        if (!gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
-                                                     &pixelAspectRatioDenominator))
-            pixelAspectRatioNumerator = pixelAspectRatioDenominator = 1;
+        if (!gst_video_format_parse_caps(caps, NULL, &width, &height) ||
+            !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
+                                                           &pixelAspectRatioDenominator)) {
+            gst_object_unref(GST_OBJECT(pad));
+            return IntSize();
+        }
 
         pixelAspectRatio = (gfloat) pixelAspectRatioNumerator / (gfloat) pixelAspectRatioDenominator;
         width *= pixelAspectRatio;
@@ -626,18 +628,7 @@ void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
 
 void MediaPlayerPrivate::setSize(const IntSize& size)
 {
-    // Destroy and re-create the cairo surface only if the size
-    // changed.
-    if (size != m_size) {
-        if (m_surface)
-            cairo_surface_destroy(m_surface);
-        m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(),
-                                               size.height());
-        g_object_set(m_videoSink, "surface", m_surface, 0);
-    }
-
     m_size = size;
-
 }
 
 void MediaPlayerPrivate::setVisible(bool visible)
@@ -657,8 +648,30 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 
     if (!m_visible)
         return;
+    if (!m_buffer)
+        return;
+
+    int width = 0, height = 0;
+    int pixelAspectRatioNumerator = 0;
+    int pixelAspectRatioDenominator = 0;
+    double doublePixelAspectRatioNumerator = 0;
+    double doublePixelAspectRatioDenominator = 0;
+    GstCaps *caps = gst_buffer_get_caps(m_buffer);
+
+    if (!gst_video_format_parse_caps(caps, NULL, &width, &height) ||
+        !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator)) {
+      gst_caps_unref(caps);
+      return;
+    }
+
+    doublePixelAspectRatioNumerator = pixelAspectRatioNumerator;
+    doublePixelAspectRatioDenominator = pixelAspectRatioDenominator;
 
     cairo_t* cr = context->platformContext();
+    cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(m_buffer),
+                                                               CAIRO_FORMAT_RGB24,
+                                                               width, height,
+                                                               4 * width);
 
     cairo_save(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
@@ -666,9 +679,14 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     // paint the rectangle on the context and draw the surface inside.
     cairo_translate(cr, rect.x(), rect.y());
     cairo_rectangle(cr, 0, 0, rect.width(), rect.height());
-    cairo_set_source_surface(cr, m_surface, 0, 0);
+    cairo_scale(cr, doublePixelAspectRatioNumerator / doublePixelAspectRatioDenominator,
+                doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator);
+    cairo_set_source_surface(cr, src, 0, 0);
     cairo_fill(cr);
     cairo_restore(cr);
+
+    cairo_surface_destroy(src);
+    gst_caps_unref(caps);
 }
 
 static HashSet<String> mimeTypeCache()
@@ -800,7 +818,7 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 
     g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(), NULL);
 
-    m_videoSink = webkit_video_sink_new(m_surface);
+    m_videoSink = webkit_video_sink_new();
 
     g_object_ref_sink(m_videoSink);
     g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
