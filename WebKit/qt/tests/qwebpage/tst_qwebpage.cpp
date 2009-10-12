@@ -23,6 +23,7 @@
 #include <qwebelement.h>
 #include <qwebpage.h>
 #include <qwidget.h>
+#include <QGraphicsWidget>
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebhistory.h>
@@ -101,7 +102,9 @@ private slots:
     void contextMenuCrash();
     void database();
     void createPlugin();
+    void destroyPlugin_data();
     void destroyPlugin();
+    void createViewlessPlugin_data();
     void createViewlessPlugin();
     void multiplePageGroupsAndLocalStorage();
     void cursorMovements();
@@ -621,50 +624,93 @@ void tst_QWebPage::createPlugin()
     QCOMPARE(newPage->calls.count(), 0);
 }
 
-class PluginTrackedPage : public QWebPage
-{
+
+// Standard base class for template PluginTracerPage. In tests it is used as interface.
+class PluginCounterPage : public QWebPage {
 public:
-
-    int count;
-    QPointer<QWidget> widget;
-
-    PluginTrackedPage(QWidget *parent = 0) : QWebPage(parent), count(0) {
+    int m_count;
+    QPointer<QObject> m_widget;
+    PluginCounterPage(QObject* parent = 0) : QWebPage(parent), m_count(0), m_widget(0)
+    {
        settings()->setAttribute(QWebSettings::PluginsEnabled, true);
-    }
-
-    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&) {
-       count++;
-       QWidget *w = new QWidget;
-       widget = w;
-       return w;
     }
 };
 
+template<class T>
+class PluginTracerPage : public PluginCounterPage {
+public:
+    PluginTracerPage(QObject* parent = 0) : PluginCounterPage(parent) {}
+    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&)
+    {
+        m_count++;
+        return m_widget = new T();
+    }
+};
+
+class PluginFactory {
+public:
+    enum FactoredType {QWidgetType, QGraphicsWidgetType};
+    static PluginCounterPage* create(FactoredType type, QObject* parent = 0)
+    {
+        PluginCounterPage* result = 0;
+        switch (type) {
+        case QWidgetType:
+            result = new PluginTracerPage<QWidget>(parent);
+            break;
+        case QGraphicsWidgetType:
+            result = new PluginTracerPage<QGraphicsWidget>(parent);
+            break;
+        default: {/*Oops*/};
+        }
+        return result;
+    }
+
+    static void prepareTestData()
+    {
+        QTest::addColumn<int>("type");
+        QTest::newRow("QWidget") << (int)PluginFactory::QWidgetType;
+        QTest::newRow("QGraphicsWidget") << (int)PluginFactory::QGraphicsWidgetType;
+    }
+};
+
+void tst_QWebPage::destroyPlugin_data()
+{
+    PluginFactory::prepareTestData();
+}
+
 void tst_QWebPage::destroyPlugin()
 {
-    PluginTrackedPage* page = new PluginTrackedPage(m_view);
+    QFETCH(int, type);
+    PluginCounterPage* page = PluginFactory::create((PluginFactory::FactoredType)type, m_view);
     m_view->setPage(page);
 
     // we create the plugin, so the widget should be constructed
     QString content("<html><body><object type=\"application/x-qt-plugin\" classid=\"QProgressBar\"></object></body></html>");
     m_view->setHtml(content);
-    QVERIFY(page->widget != 0);
-    QCOMPARE(page->count, 1);
+    QVERIFY(page->m_widget);
+    QCOMPARE(page->m_count, 1);
 
     // navigate away, the plugin widget should be destructed
     m_view->setHtml("<html><body>Hi</body></html>");
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(page->widget == 0);
+    QVERIFY(!page->m_widget);
+}
+
+void tst_QWebPage::createViewlessPlugin_data()
+{
+    PluginFactory::prepareTestData();
 }
 
 void tst_QWebPage::createViewlessPlugin()
 {
-    PluginTrackedPage* page = new PluginTrackedPage;
+    QFETCH(int, type);
+    PluginCounterPage* page = PluginFactory::create((PluginFactory::FactoredType)type);
     QString content("<html><body><object type=\"application/x-qt-plugin\" classid=\"QProgressBar\"></object></body></html>");
     page->mainFrame()->setHtml(content);
-    QCOMPARE(page->count, 1);
-    QVERIFY(page->widget != 0);
+    QCOMPARE(page->m_count, 1);
+    QVERIFY(page->m_widget);
     delete page;
+
 }
 
 // import private API

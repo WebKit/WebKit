@@ -1,3 +1,27 @@
+2009-10-12  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QWebPage's createViewlessPlugin autotest crash fix.
+        
+        It is possible that plugins that are QWidgets or QGraphicsWidgets
+        are created before a view has been assigned to a QWebPage. The
+        plug-ins won't be fully functional, as by design, they should
+        visualise something, but they won't crash and will stay in memory.
+
+        An autotest that covers this use-case, is included.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30118
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginTrackedPageWidget::PluginTrackedPageWidget):
+        (PluginTrackedPageGraphicsWidget::PluginTrackedPageGraphicsWidget):
+        (PluginTrackedPageGraphicsWidget::createPlugin):
+        (tst_QWebPage::destroyPlugin):
+        (tst_QWebPage::createViewlessPlugin):
+
 2009-10-09  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.
