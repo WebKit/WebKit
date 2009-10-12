@@ -215,6 +215,14 @@ sub determineArchitecture
     }
 }
 
+sub jscPath($)
+{
+    my ($productDir) = @_;
+    my $jscName = "jsc";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$jscName";
+}
+
 sub argumentsForConfiguration()
 {
     determineConfiguration();
@@ -298,6 +306,16 @@ sub productDir
 {
     determineConfigurationProductDir();
     return $configurationProductDir;
+}
+
+sub jscProductDir
+{
+    my $productDir = determineConfigurationProductDir();
+    $productDir .= "/JavaScriptCore" if isQt();
+    $productDir .= "/$configuration" if (isQt() && isWindows());
+    $productDir .= "/Programs" if isGtk();
+
+    return $productDir;
 }
 
 sub configuration()

@@ -107,9 +107,7 @@ sub pathToJSC()
 
     buildJSC();
 
-    my $productDir = productDir();
-    # FIXME: This hack should be pushed down into productDir()
-    $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
+    my $productDir = jscProductDir();
 
     setupEnvironmentForExecution($productDir);
     return pathToBuiltJSC($productDir);

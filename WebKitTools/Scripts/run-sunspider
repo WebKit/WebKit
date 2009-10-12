@@ -103,23 +103,12 @@ sub setupEnvironmentForExecution($)
     # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
 }
 
-sub jscPath($)
-{
-    my ($productDir) = @_;
-    my $jscName = "jsc";
-    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$jscName";
-}
-
 buildJSC();
 
 chdirWebKit();
 chdir("SunSpider");
 
-my $productDir = productDir();
-# FIXME: This hack should be pushed down into productDir()
-$productDir .= "/JavaScriptCore" if isQt();
-$productDir .= "/Programs" if isGtk();
+my $productDir = jscProductDir();
 
 setupEnvironmentForExecution($productDir);
 my @args = ("--shell", jscPath($productDir), "--runs", $testRuns);

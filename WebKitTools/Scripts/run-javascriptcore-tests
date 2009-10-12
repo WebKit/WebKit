@@ -100,20 +100,9 @@ if (!defined($root) && !$skipBuild) {
 }
 
 
-my $productDir = productDir();
-
-$productDir .= "/JavaScriptCore" if isQt();
-$productDir .= "/Programs" if isGtk();
+my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
-
-sub jscPath($)
-{
-    my ($productDir) = @_;
-    my $jscName = "jsc";
-    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$jscName";
-}
 
 sub testapiPath($)
 {

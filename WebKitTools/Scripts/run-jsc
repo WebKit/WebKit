@@ -43,10 +43,10 @@ GetOptions("count|c=i" => \$count,
            "verbose|v" => \$verbose);
 die "$usage\n" if (@ARGV < 1);
 
-my $jsc = productDir() . "/jsc @ARGV";
+my $jsc = jscProductDir() . "/jsc @ARGV";
 $jsc .= " 2> /dev/null" unless $verbose;
 
-my $dyld = productDir();
+my $dyld = jscProductDir();
 
 $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
 print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";

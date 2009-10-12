@@ -1,3 +1,20 @@
+2009-10-12  Csaba Osztrogonac  <ossy@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        jsc scripts cleanup and Qt/GTK fix
+        https://bugs.webkit.org/show_bug.cgi?id=30288
+
+        Duplicated jscPath() moved to webkitdirs.pm.
+        New jscProductDir() added to webkitdirs.pm instead of duplicated codes.
+        Configuration added (release/debug) to path for Qt-port on Windows.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc:
+        * Scripts/run-sunspider:
+        * Scripts/sunspider-compare-results:
+        * Scripts/webkitdirs.pm:
+
 2009-10-11  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Add Collin to committers.py.
