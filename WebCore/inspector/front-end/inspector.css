@@ -2519,6 +2519,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     -webkit-background-size: 1px 6px;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
+    z-index: 400;
 }
 
 .summary-graph-legend {
@@ -2565,6 +2566,15 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     z-index: -100;
 }
 
+#resources-event-dividers {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    top: 0;
+    z-index: 300;
+}
+
 #resources-dividers-label-bar {
     position: absolute;
     top: 93px;
@@ -2583,6 +2593,13 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     top: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.resources-event-divider-padding {
+    position: absolute;
+    width: 8px;
+    top: 0;
+    bottom: 0;
 }
 
 .resources-onload-divider {

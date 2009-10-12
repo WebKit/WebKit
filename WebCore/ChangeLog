@@ -1,3 +1,18 @@
+2009-10-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/30315>.
+        Web Inspector: DOM Content and Load lines in Resources are unclear what they mean.
+        
+        Add tooltip text to the Load event and DOM Content event lines through
+        a new layer that allows these lines to be on top of the view.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._updateGraphDividersIfNeeded):
+        (WebInspector.ResourcesPanel.prototype._updateDividersLabelBarPosition):
+        * inspector/front-end/inspector.css:
+
 2009-10-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r49429, because it broke layout tests.

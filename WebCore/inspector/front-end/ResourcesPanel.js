@@ -71,6 +71,10 @@ WebInspector.ResourcesPanel = function()
     this.dividersElement = document.createElement("div");
     this.dividersElement.id = "resources-dividers";
     this.containerContentElement.appendChild(this.dividersElement);
+    
+    this.eventDividersElement = document.createElement("div");
+    this.eventDividersElement.id = "resources-event-dividers";
+    this.containerContentElement.appendChild(this.eventDividersElement);
 
     this.dividersLabelBarElement = document.createElement("div");
     this.dividersLabelBarElement.id = "resources-dividers-label-bar";
@@ -740,6 +744,7 @@ WebInspector.ResourcesPanel.prototype = {
         this._currentDividerSlice = slice;
 
         this.dividersElement.removeChildren();
+        this.eventDividersElement.removeChildren();
         this.dividersLabelBarElement.removeChildren();
 
         for (var i = 1; i <= dividerCount; ++i) {
@@ -769,20 +774,32 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (this.mainResourceLoadTime !== -1) {
             var percent = this.calculator.computePercentageFromEventTime(this.mainResourceLoadTime);
+
             var loadDivider = document.createElement("div");
             loadDivider.className = "resources-onload-divider";
-            loadDivider.style.left = percent + "%";
-            loadDivider.title = WebInspector.UIString("Load event fired");
-            this.dividersElement.appendChild(loadDivider);
+
+            var loadDividerPadding = document.createElement("div");
+            loadDividerPadding.className = "resources-event-divider-padding";
+            loadDividerPadding.style.left = percent + "%";
+            loadDividerPadding.title = WebInspector.UIString("Load event fired");
+            loadDividerPadding.appendChild(loadDivider);
+            
+            this.eventDividersElement.appendChild(loadDividerPadding);
         }
         
         if (this.mainResourceDOMContentTime !== -1) {
             var percent = this.calculator.computePercentageFromEventTime(this.mainResourceDOMContentTime);
+
             var domContentDivider = document.createElement("div");
             domContentDivider.className = "resources-ondomcontent-divider";
-            domContentDivider.title = WebInspector.UIString("DOMContent event fired");
-            domContentDivider.style.left = percent + "%";
-            this.dividersElement.appendChild(domContentDivider);
+            
+            var domContentDividerPadding = document.createElement("div");
+            domContentDividerPadding.className = "resources-event-divider-padding";
+            domContentDividerPadding.style.left = percent + "%";
+            domContentDividerPadding.title = WebInspector.UIString("DOMContent event fired");
+            domContentDividerPadding.appendChild(domContentDivider);
+            
+            this.eventDividersElement.appendChild(domContentDividerPadding);
         }
     },
 
@@ -796,6 +813,7 @@ WebInspector.ResourcesPanel.prototype = {
         var scrollTop = this.containerElement.scrollTop;
         var dividersTop = (scrollTop < this.summaryBar.element.offsetHeight ? this.summaryBar.element.offsetHeight : scrollTop);
         this.dividersElement.style.top = scrollTop + "px";
+        this.eventDividersElement.style.top = scrollTop + "px";
         this.dividersLabelBarElement.style.top = dividersTop + "px";
     },
 
