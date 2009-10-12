@@ -1,0 +1,17 @@
+layer at (0,0) size 800x2000
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2000
+  RenderBlock {HTML} at (0,0) size 800x2000
+    RenderBody {BODY} at (0,0) size 800x2000
+layer at (0,116) size 337x42
+  RenderBlock (positioned) {P} at (0,116) size 337x42
+    RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+      RenderText {#text} at (0,0) size 337x21
+        text run at (0,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=29346"
+    RenderBR {BR} at (337,16) size 0x0
+    RenderText {#text} at (0,21) size 268x21
+      text run at (0,21) width 268: "Green box should fill the black border."
+layer at (0,25) size 404x54 clip at (2,27) size 400x50
+  RenderBlock (positioned) {DIV} at (0,0) size 404x54 [border: (2px solid #000000)]
+layer at (2,27) size 400x50
+  RenderBlock {DIV} at (2,2) size 400x50 [bgcolor=#008000]

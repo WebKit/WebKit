@@ -1,3 +1,18 @@
+2009-10-12  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Add expected files for new passing fast tests.
+
+        * platform/qt/fast/css/counters/t1204-increment-00-c-o-expected.txt: Added.
+        * platform/qt/fast/css/counters/t1204-increment-01-c-o-expected.txt: Added.
+        * platform/qt/fast/css/text-rendering-expected.txt: Added.
+        * platform/qt/fast/forms/basic-buttons-expected.txt: Added.
+        * platform/qt/fast/forms/basic-inputs-expected.txt: Added.
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.txt: Added.
+        * platform/qt/fast/overflow/position-fixed-transform-clipping-expected.txt: Added.
+        * platform/qt/fast/repaint/line-in-scrolled-clipped-block-expected.txt: Added.
+
 2009-10-12  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
