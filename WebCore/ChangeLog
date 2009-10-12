@@ -1,3 +1,26 @@
+2009-10-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix <rdar://problem/7094146> Reproducible crash at
+        RenderObject::localToAbsolute()
+
+        Test: fast/dynamic/position-absolute-to-fixed-crash.html
+
+        The crash was caused by stale positioned objects lists following an
+        object transitioning from being absolutely position to being fixed
+        positioned.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange): In case of a transition between
+        absolute and fixed position, mark the parent as having a child needing
+        layout, so that this object will get inserted into its new container's
+        positioned objects list.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange): Changed a condition to cover
+        this transition, so that this object gets removed from its current
+        container's positioned objects list.
+
 2009-10-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

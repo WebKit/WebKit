@@ -1,3 +1,13 @@
+2009-10-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Test for <rdar://problem/7094146> Reproducible crash at
+        RenderObject::localToAbsolute()
+
+        * fast/dynamic/position-absolute-to-fixed-crash-expected.txt: Added.
+        * fast/dynamic/position-absolute-to-fixed-crash.html: Added.
+
 2009-10-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -139,6 +139,8 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
             markContainingBlocksForLayout();
             if (style()->position() == StaticPosition)
                 repaint();
+            else if (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition)
+                parent()->setChildNeedsLayout(true);
             if (isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
                 removeFloatingOrPositionedChildFromBlockLists();
         }

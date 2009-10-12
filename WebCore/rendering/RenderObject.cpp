@@ -1568,7 +1568,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
-        else if (isPositioned() && (newStyle->position() != AbsolutePosition && newStyle->position() != FixedPosition))
+        else if (isPositioned() && (m_style->position() != newStyle->position()))
             // For changes in positioning styles, we need to conceivably remove ourselves
             // from the positioned objects list.
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
