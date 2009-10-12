@@ -31,17 +31,16 @@
 
 namespace WebCore {
 
-FEFlood::FEFlood(FilterEffect* in, const Color& floodColor, const float& floodOpacity)
+FEFlood::FEFlood(const Color& floodColor, const float& floodOpacity)
     : FilterEffect()
-    , m_in(in)
     , m_floodColor(floodColor)
     , m_floodOpacity(floodOpacity)
 {
 }
 
-PassRefPtr<FEFlood> FEFlood::create(FilterEffect* in, const Color& floodColor, const float& floodOpacity)
+PassRefPtr<FEFlood> FEFlood::create(const Color& floodColor, const float& floodOpacity)
 {
-    return adoptRef(new FEFlood(in, floodColor, floodOpacity));
+    return adoptRef(new FEFlood(floodColor, floodOpacity));
 }
 
 Color FEFlood::floodColor() const

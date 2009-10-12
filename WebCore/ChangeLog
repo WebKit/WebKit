@@ -1,3 +1,26 @@
+2009-10-12  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop in="" from <feFlood>
+        https://bugs.webkit.org/show_bug.cgi?id=29001
+
+        This makes <feFlood in="bogus"> have an effect, too.
+
+        http://www.w3.org/2003/01/REC-SVG11-20030114-errata#feflood-attribute
+
+        Test: svg/dom/feFlood-no-in1.html
+
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFloodElement.idl:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::FEFlood):
+        (WebCore::FEFlood::create):
+        * svg/graphics/filters/SVGFEFlood.h:
+
 2009-10-12  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.
