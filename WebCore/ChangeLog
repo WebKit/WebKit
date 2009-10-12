@@ -1,3 +1,15 @@
+2009-10-11  Collin Jackson  <collinj@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Log mixed content warnings to console
+
+        https://bugs.webkit.org/show_bug.cgi?id=30290
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+
 2009-10-11  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Adam Barth.
