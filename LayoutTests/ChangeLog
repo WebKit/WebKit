@@ -1,3 +1,14 @@
+2009-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Update Fedora httpd.conf settings to closely match the generic httpd.conf
+        https://bugs.webkit.org/show_bug.cgi?id=30302
+
+        Closely match the default httpd.conf for layout tests.
+
+        * http/conf/fedora-httpd.conf:
+
 2009-10-12  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
