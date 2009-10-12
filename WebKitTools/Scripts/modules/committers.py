@@ -55,6 +55,7 @@ committers_unable_to_review = [
     Committer("Brian Weinstein", "bweinstein@apple.com"),
     Committer("Cameron McCormack", "cam@webkit.org"),
     Committer("Collin Jackson", "collinj@webkit.org"),
+    Committer("Csaba Osztrogonac", "ossy@webkit.org"),
     Committer("Daniel Bates", "dbates@webkit.org"),
     Committer("Drew Wilson", "atwilson@chromium.org"),
     Committer("Dirk Schulze", "krit@webkit.org"),
