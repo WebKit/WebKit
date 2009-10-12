@@ -92,29 +92,39 @@ void SVGRadialGradientElement::buildGradient() const
 
     RefPtr<SVGPaintServerRadialGradient> radialGradient = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(m_resource);
 
-    double adjustedFocusX = attributes.fx();
-    double adjustedFocusY = attributes.fy();
+    FloatPoint focalPoint;
+    FloatPoint centerPoint;
+    float radius;
+    if (attributes.boundingBoxMode()) {
+        focalPoint = FloatPoint(attributes.fx().valueAsPercentage(), attributes.fy().valueAsPercentage());
+        centerPoint = FloatPoint(attributes.cx().valueAsPercentage(), attributes.cy().valueAsPercentage());
+        radius = attributes.r().valueAsPercentage();
+    } else {
+        focalPoint = FloatPoint(attributes.fx().value(this), attributes.fy().value(this));
+        centerPoint = FloatPoint(attributes.cx().value(this), attributes.cy().value(this));
+        radius = attributes.r().value(this);
+    }
 
-    double fdx = attributes.fx() - attributes.cx();
-    double fdy = attributes.fy() - attributes.cy();
+    float adjustedFocusX = focalPoint.x();
+    float adjustedFocusY = focalPoint.y();
+
+    float fdx = focalPoint.x() - centerPoint.x();
+    float fdy = focalPoint.y() - centerPoint.y();
 
     // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and
     // r, set (fx, fy) to the point of intersection of the line through
     // (fx, fy) and the circle.
-    if (sqrt(fdx * fdx + fdy * fdy) > attributes.r()) {
-        double angle = atan2(attributes.fy() * 100.0, attributes.fx() * 100.0);
-        adjustedFocusX = cos(angle) * attributes.r();
-        adjustedFocusY = sin(angle) * attributes.r();
+    if (sqrt(fdx * fdx + fdy * fdy) > radius) {
+        float angle = atan2f(focalPoint.y() * 100.0f, focalPoint.x() * 100.0f);
+        adjustedFocusX = cosf(angle) * radius;
+        adjustedFocusY = sinf(angle) * radius;
     }
 
-    FloatPoint focalPoint = FloatPoint::narrowPrecision(attributes.fx(), attributes.fy());
-    FloatPoint centerPoint = FloatPoint::narrowPrecision(attributes.cx(), attributes.cy());
-
     RefPtr<Gradient> gradient = Gradient::create(
-        FloatPoint::narrowPrecision(adjustedFocusX, adjustedFocusY),
+        FloatPoint(adjustedFocusX, adjustedFocusY),
         0.f, // SVG does not support a "focus radius"
         centerPoint,
-        narrowPrecisionToFloat(attributes.r()));
+        radius);
     gradient->setSpreadMethod(attributes.spreadMethod());
 
     Vector<SVGGradientStop> stops = attributes.stops();
@@ -134,7 +144,7 @@ void SVGRadialGradientElement::buildGradient() const
     radialGradient->setGradientTransform(attributes.gradientTransform());
     radialGradient->setGradientCenter(centerPoint);
     radialGradient->setGradientFocal(focalPoint);
-    radialGradient->setGradientRadius(narrowPrecisionToFloat(attributes.r()));
+    radialGradient->setGradientRadius(radius);
     radialGradient->setGradientStops(attributes.stops());
 }
 
@@ -166,19 +176,19 @@ RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties() c
             const SVGRadialGradientElement* radial = static_cast<const SVGRadialGradientElement*>(current);
 
             if (!attributes.hasCx() && current->hasAttribute(SVGNames::cxAttr))
-                attributes.setCx(radial->cx().valueAsPercentage());
+                attributes.setCx(radial->cx());
 
             if (!attributes.hasCy() && current->hasAttribute(SVGNames::cyAttr))
-                attributes.setCy(radial->cy().valueAsPercentage());
+                attributes.setCy(radial->cy());
 
             if (!attributes.hasR() && current->hasAttribute(SVGNames::rAttr))
-                attributes.setR(radial->r().valueAsPercentage());
+                attributes.setR(radial->r());
 
             if (!attributes.hasFx() && current->hasAttribute(SVGNames::fxAttr))
-                attributes.setFx(radial->fx().valueAsPercentage());
+                attributes.setFx(radial->fx());
 
             if (!attributes.hasFy() && current->hasAttribute(SVGNames::fyAttr))
-                attributes.setFy(radial->fy().valueAsPercentage());
+                attributes.setFy(radial->fy());
         }
 
         processedGradients.add(current);

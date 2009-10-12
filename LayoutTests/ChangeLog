@@ -1,5 +1,21 @@
 2009-10-12  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Three old test results give back the absolute position instead of the realtive position.
+        The new test will check the correct behavior of gradients in userSpaceOnUse mode and
+        values in percentage.
+
+        * platform/mac/svg/custom/gradient-attr-update-expected.txt:
+        * platform/mac/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/mac/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.checksum: Added.
+        * platform/mac/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.png: Added.
+        * platform/mac/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt: Added.
+        * platform/mac/svg/custom/text-gradient-no-content-expected.txt:
+        * svg/custom/gradient-userSpaceOnUse-with-percentage.svg: Added.
+
+2009-10-12  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Eirc Seidel.
 
         feMergeNod has a reference to an effect that doesn't exist. This test will

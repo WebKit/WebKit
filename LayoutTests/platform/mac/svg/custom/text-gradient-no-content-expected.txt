@@ -1,4 +1,4 @@
-KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FF0000)]] [bounding box mode=0] [start=(0,0)] [end=(1,0)]}
+KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FF0000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

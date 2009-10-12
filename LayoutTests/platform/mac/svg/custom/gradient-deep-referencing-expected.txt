@@ -1,7 +1,7 @@
 KRenderingPaintServer {id="gradient1f" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,100)] [end=(100,100)]}
 KRenderingPaintServer {id="gradient1e" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,100)] [end=(100,0)]}
 KRenderingPaintServer {id="gradient1d" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,100)] [end=(100,0)]}
-KRenderingPaintServer {id="gradient1c" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]}
+KRenderingPaintServer {id="gradient1c" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(400,400)] [focal=(400,400)] [radius=400.00]}
 KRenderingPaintServer {id="gradient1b" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(0,0)]}
 KRenderingPaintServer {id="gradient1a" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(0,0)]}
 KRenderingPaintServer {id="gradient1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,100)] [end=(100,100)]}

@@ -1,3 +1,45 @@
+2009-10-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Gradients can't handle percentage values in userSpaceOnUse mode
+        [https://bugs.webkit.org/show_bug.cgi?id=30286]
+
+        Fixed *GradientAttributes to take SVGLength instead of double. This casues
+        the problem, that we can't calculate the correct size of a gradient on
+        userSpaceOnUse mode with percentage values.
+
+        Test: svg/custom/gradient-userSpaceOnUse-with-percentage.svg
+
+        * svg/LinearGradientAttributes.h:
+        (WebCore::LinearGradientAttributes::LinearGradientAttributes):
+        (WebCore::LinearGradientAttributes::x1):
+        (WebCore::LinearGradientAttributes::y1):
+        (WebCore::LinearGradientAttributes::x2):
+        (WebCore::LinearGradientAttributes::y2):
+        (WebCore::LinearGradientAttributes::setX1):
+        (WebCore::LinearGradientAttributes::setY1):
+        (WebCore::LinearGradientAttributes::setX2):
+        (WebCore::LinearGradientAttributes::setY2):
+        * svg/RadialGradientAttributes.h:
+        (WebCore::RadialGradientAttributes::RadialGradientAttributes):
+        (WebCore::RadialGradientAttributes::cx):
+        (WebCore::RadialGradientAttributes::cy):
+        (WebCore::RadialGradientAttributes::r):
+        (WebCore::RadialGradientAttributes::fx):
+        (WebCore::RadialGradientAttributes::fy):
+        (WebCore::RadialGradientAttributes::setCx):
+        (WebCore::RadialGradientAttributes::setCy):
+        (WebCore::RadialGradientAttributes::setR):
+        (WebCore::RadialGradientAttributes::setFx):
+        (WebCore::RadialGradientAttributes::setFy):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+
 2009-10-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.
