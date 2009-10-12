@@ -20,7 +20,6 @@
 #ifndef webkitsecurityorigin_h
 #define webkitsecurityorigin_h
 
-#include "webkitsecurityorigin.h"
 #include "webkitwebdatabase.h"
 
 G_BEGIN_DECLS

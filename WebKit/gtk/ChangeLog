@@ -1,3 +1,11 @@
+2009-10-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Remove unnecessary self-include.
+
+        * webkit/webkitsecurityorigin.h:
+
 2009-10-12  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.
