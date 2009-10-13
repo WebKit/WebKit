@@ -378,7 +378,8 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFinishLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    m_loadError = ResourceError(); // clears the previous error
+    // Clears the previous error.
+    m_loadError = ResourceError();
 
     if (!m_webFrame)
         return;
@@ -432,6 +433,8 @@ void FrameLoaderClientQt::revertToProvisionalState(DocumentLoader*)
 void FrameLoaderClientQt::postProgressStartedNotification()
 {
     if (m_webFrame && m_frame->page()) {
+        // A new load starts, so lets clear the previous error.
+        m_loadError = ResourceError();
         emit loadStarted();
         postProgressEstimateChangedNotification();
     }

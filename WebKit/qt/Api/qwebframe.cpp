@@ -540,15 +540,26 @@ QUrl QWebFrame::url() const
 */
 QUrl QWebFrame::requestedUrl() const
 {
-    // In the following edge cases (where the failing document
-    // loader does not get commited by the frame loader) it is
-    // safer to rely on outgoingReferrer than originalRequest.
-    if (!d->frame->loader()->activeDocumentLoader()
-        || (!d->frameLoaderClient->m_loadError.isNull()
-        &&  !d->frame->loader()->outgoingReferrer().isEmpty()))
-        return QUrl(d->frame->loader()->outgoingReferrer());
+    // There are some possible edge cases to be handled here,
+    // apart from checking if activeDocumentLoader is valid:
+    //
+    // * Method can be called while processing an unsucessful load.
+    //   In this case, frameLoaderClient will hold the current error
+    //   (m_loadError), and we will make use of it to recover the 'failingURL'.
+    // * If the 'failingURL' holds a null'ed string though, we fallback
+    //   to 'outgoingReferrer' (it yet is safer than originalRequest).
+    FrameLoader* loader = d->frame->loader();
+    FrameLoaderClientQt* loaderClient = d->frameLoaderClient;
 
-    return d->frame->loader()->originalRequest().url();
+    if (!loader->activeDocumentLoader()
+        || !loaderClient->m_loadError.isNull()) {
+        if (!loaderClient->m_loadError.failingURL().isNull())
+            return QUrl(loaderClient->m_loadError.failingURL());
+        else if (!loader->outgoingReferrer().isEmpty())
+            return QUrl(loader->outgoingReferrer());
+    }
+
+    return loader->originalRequest().url();
 }
 /*!
     \since 4.6

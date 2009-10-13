@@ -1,3 +1,32 @@
+2009-10-13  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] better handle possible edge cases on qwebframe::requestedUrl use
+        https://bugs.webkit.org/show_bug.cgi?id=30216
+
+        QWebFrame::requestedUrl can be called at any time during the load
+        process, including:
+
+        * An error handling (whereas an alternate error page for unsuccessful
+          load is being set);
+        * A ssl error exception call;
+        * During navigation notifications/callbacks (titleChanged, urlChanged,
+          progresses, addHistoryEntry, etc);
+        * Among others.
+
+        This patch makes requestedUrl calls to fallback to FrameLoaderClient
+        m_loadError's failingURL when an error has occurred, unless it is
+        null/empty.
+
+        Also, m_loadError is now being reset at each the main frame starts a
+        load, in order to avoid previous load errors footprints.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::requestedUrl):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+
 2009-10-12  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
