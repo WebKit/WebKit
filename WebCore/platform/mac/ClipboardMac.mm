@@ -107,11 +107,15 @@ static String utiTypeFromCocoaType(NSString *type)
 static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, NSString *cocoaType, NSPasteboard *pasteboard)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
-    if ([cocoaType isEqualToString:NSStringPboardType])
+    if ([cocoaType isEqualToString:NSStringPboardType]) {
         resultTypes.add("text/plain");
-    else if ([cocoaType isEqualToString:NSURLPboardType])
+        return;
+    }
+    if ([cocoaType isEqualToString:NSURLPboardType]) {
         resultTypes.add("text/uri-list");
-    else if ([cocoaType isEqualToString:NSFilenamesPboardType]) {
+        return;
+    }
+    if ([cocoaType isEqualToString:NSFilenamesPboardType]) {
         // If file list is empty, add nothing.
         // Note that there is a chance that the file list count could have changed since we grabbed the types array.
         // However, this is not really an issue for us doing a sanity check here.
@@ -122,12 +126,15 @@ static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, NSSt
             resultTypes.add("text/uri-list");
             resultTypes.add("Files");
         }
-    } else if (String utiType = utiTypeFromCocoaType(cocoaType))
-        resultTypes.add(utiType);
-    else {
-        // No mapping, just pass the whole string though
-        resultTypes.add(cocoaType);
+        return;
     }
+    String utiType = utiTypeFromCocoaType(cocoaType);
+    if (!utiType.isEmpty()) {
+        resultTypes.add(utiType);
+        return;
+    }
+    // No mapping, just pass the whole string though
+    resultTypes.add(cocoaType);
 }
 
 void ClipboardMac::clearData(const String& type)
