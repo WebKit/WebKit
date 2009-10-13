@@ -1561,6 +1561,9 @@ void Document::open(Document* ownerDocument)
 
     implicitOpen();
 
+    if (DOMWindow* domWindow = this->domWindow())
+        domWindow->removeAllEventListeners();
+
     if (m_frame)
         m_frame->loader()->didExplicitOpen();
 }
@@ -1582,7 +1585,11 @@ void Document::implicitOpen()
 {
     cancelParsing();
 
-    clear();
+    delete m_tokenizer;
+    m_tokenizer = 0;
+
+    removeChildren();
+
     m_tokenizer = createTokenizer();
     setParsing(true);
 
@@ -1858,16 +1865,6 @@ void Document::finishParsing()
     // (3) Data is still remaining to be parsed.
     if (m_tokenizer)
         m_tokenizer->finish();
-}
-
-void Document::clear()
-{
-    delete m_tokenizer;
-    m_tokenizer = 0;
-
-    removeChildren();
-    if (DOMWindow* domWindow = this->domWindow())
-        domWindow->removeAllEventListeners();
 }
 
 const KURL& Document::virtualURL() const

@@ -1,3 +1,18 @@
+2009-10-13  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Event listeners installed on a window object returned from window.open() don't work
+        https://bugs.webkit.org/show_bug.cgi?id=28716
+
+        * http/tests/security/resources/has-window-events.html: Added.
+        * http/tests/security/window-events-clear-domain-expected.txt: Added.
+        * http/tests/security/window-events-clear-domain.html: Added.
+        * http/tests/security/window-events-clear-port-expected.txt: Added.
+        * http/tests/security/window-events-clear-port.html: Added.
+        * http/tests/security/window-events-pass-expected.txt: Added.
+        * http/tests/security/window-events-pass.html: Added.
+
 2009-10-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Layout test fix, reverting previous change.

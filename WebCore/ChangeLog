@@ -1,3 +1,33 @@
+2009-10-13  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Event listeners installed on a window object returned from window.open() don't work
+        https://bugs.webkit.org/show_bug.cgi?id=28716
+
+        Tests: http/tests/security/window-events-clear-domain.html
+               http/tests/security/window-events-clear-port.html
+               http/tests/security/window-events-pass.html
+
+        * dom/Document.cpp: Split code of Document::clear() in a way to avoid removing all
+        window event handlers when implicitOpen is called. It is called in 2 cases - on
+        committing loaded content (no need to clean handlers) and on document.open() (needs to remove handlers).
+
+        (WebCore::Document::open): in addition to calling implicitOpen it also removes window
+        event handlers, to preserve the behavior of document.open().
+
+        (WebCore::Document::implicitOpen): includes the part of removed Document::clear() that
+        does not remove window event handlers.
+
+        * dom/Document.h: Removed clear().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): add check to avoid removing window event handlers
+        if we transition from temporary empty document to a loaded one.
+
+        (WebCore::FrameLoader::didOpenURL): Remove closeURL() which was called twice when loading.
+        (WebCore::FrameLoader::finishedLoadingDocument): add closeURL() to compensate for change above.
+
 2009-10-13  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Pavel Feldman.
