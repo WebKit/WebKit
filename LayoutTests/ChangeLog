@@ -1,3 +1,28 @@
+2009-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29078
+        <rdar://problem/7288221>
+
+        Test the lack of UTF-7 support. Remove old UTF-7 tests.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        * http/tests/misc/submit-get-in-utf7-expected.txt: Removed.
+        * http/tests/misc/submit-get-in-utf7.html: Removed.
+        * http/tests/misc/submit-post-in-utf7-expected.txt: Removed.
+        * http/tests/misc/submit-post-in-utf7.html: Removed.
+        * http/tests/misc/url-in-utf7-expected.txt: Removed.
+        * http/tests/misc/url-in-utf7.html: Removed.
+        * http/tests/security/xssAuditor/http-equiv-utf-7-encoded-expected.txt: Removed.
+        * http/tests/security/xssAuditor/http-equiv-utf-7-encoded.html: Removed.
+        * http/tests/security/xssAuditor/resources/echo-intertag-utf-7.pl: Removed.
+        * http/tests/security/xssAuditor/script-tag-utf-7-encoded-expected.txt: Removed.
+        * http/tests/security/xssAuditor/script-tag-utf-7-encoded.html: Removed.
+        * http/tests/security/xssAuditor/script-tag-utf-7-expected.txt: Removed.
+        * http/tests/security/xssAuditor/script-tag-utf-7.html: Removed.
+
 2009-10-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

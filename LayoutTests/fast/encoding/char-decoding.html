@@ -83,6 +83,12 @@ var thai = {
 
 batchTestDecode(thai);
 
+// UTF-7 is expressly forbidden, so decoding it should not work correctly.
+// This attempts to decode '<' as UTF-7 (+AD4) but it ends up being decoded
+// as a '+'.
+testDecode('UTF-7', '+AD4', 'U+002B');
+testDecode('utf-7', '+AD4', 'U+002B');
+
 successfullyParsed = true;
 
 </script>

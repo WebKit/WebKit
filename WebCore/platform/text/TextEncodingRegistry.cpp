@@ -129,6 +129,10 @@ static TextEncodingNameMap* textEncodingNameMap;
 static TextCodecMap* textCodecMap;
 static bool didExtendTextCodecMaps;
 
+static const char* const textEncodingNameBlacklist[] = {
+    "UTF-7"
+};
+
 #if ERROR_DISABLED
 
 static inline void checkExistingName(const char*, const char*) { }
@@ -169,6 +173,30 @@ static void addToTextCodecMap(const char* name, NewTextCodecFunction function, c
     const char* atomicName = textEncodingNameMap->get(name);
     ASSERT(atomicName);
     textCodecMap->add(atomicName, TextCodecFactory(function, additionalData));
+}
+
+static void pruneBlacklistedCodecs()
+{
+    size_t blacklistedCodecListLength = sizeof(textEncodingNameBlacklist) / sizeof(textEncodingNameBlacklist[0]);
+    for (size_t i = 0; i < blacklistedCodecListLength; ++i) {
+        const char* atomicName = textEncodingNameMap->get(textEncodingNameBlacklist[i]);
+        if (!atomicName)
+            continue;
+
+        Vector<const char*> names;
+        TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
+        TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();
+        for (; it != end; ++it) {
+            if (it->second == atomicName)
+                names.append(it->first);
+        }
+
+        size_t length = names.size();
+        for (size_t j = 0; j < length; ++j)
+            textEncodingNameMap->remove(names[j]);
+
+        textCodecMap->remove(atomicName);
+    }
 }
 
 static void buildBaseTextCodecMaps()
@@ -221,6 +249,8 @@ static void extendTextCodecMaps()
     TextCodecWince::registerExtendedEncodingNames(addToTextEncodingNameMap);
     TextCodecWince::registerExtendedCodecs(addToTextCodecMap);
 #endif
+
+    pruneBlacklistedCodecs();
 }
 
 PassOwnPtr<TextCodec> newTextCodec(const TextEncoding& encoding)

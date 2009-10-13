@@ -1,3 +1,17 @@
+2009-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29078
+        <rdar://problem/7288221>
+
+        Add a mechanism to blacklist certain codecs.  Initially, just blacklist UTF-7 as HTML5 encourages.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::pruneBlacklistedCodecs):
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::extendTextCodecMaps):
+
 2009-10-09  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

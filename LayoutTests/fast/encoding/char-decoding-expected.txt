@@ -153,6 +153,8 @@ PASS decode('dos-874', '%96') is 'U+2013'
 PASS decode('dos-874', '%A0') is 'U+00A0'
 PASS decode('dos-874', '%A1') is 'U+0E01'
 PASS decode('dos-874', '%DB') is 'U+F8C1'
+PASS decode('UTF-7', '+AD4') is 'U+002B'
+PASS decode('utf-7', '+AD4') is 'U+002B'
 PASS successfullyParsed is true
 
 TEST COMPLETE
