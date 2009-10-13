@@ -1,3 +1,21 @@
+2009-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Visibility:visible inside a compositing layer doesn't make the element visible
+        https://bugs.webkit.org/show_bug.cgi?id=30339
+        
+        When deciding if a layer had any renderable content, RenderLayerBacking::paintIntoLayer()
+        only consulted hasVisibleContent(), which does not take into a account child layers which
+        may be visible. We also have to consult hasVisibleDescendant() as well.
+
+        Test: compositing/compositing-visible-descendant.html
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasVisibleDescendant):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2009-10-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

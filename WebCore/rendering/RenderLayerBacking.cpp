@@ -886,7 +886,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    bool shouldPaint = m_owningLayer->hasVisibleContent() && m_owningLayer->isSelfPaintingLayer();
+    bool shouldPaint = (m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant()) && m_owningLayer->isSelfPaintingLayer();
 
     if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackground)) {
         // If this is the root then we need to send in a bigger bounding box

@@ -1,3 +1,17 @@
+2009-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Visibility:visible inside a compositing layer doesn't make the element visible
+        https://bugs.webkit.org/show_bug.cgi?id=30339
+        
+        Test painting of a visibilty:visible layer inside a composited, visibility:hidden layer.
+
+        * compositing/compositing-visible-descendant.html: Added.
+        * platform/mac/compositing/compositing-visible-descendant-expected.checksum: Added.
+        * platform/mac/compositing/compositing-visible-descendant-expected.png: Added.
+        * platform/mac/compositing/compositing-visible-descendant-expected.txt: Added.
+
 2009-10-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
