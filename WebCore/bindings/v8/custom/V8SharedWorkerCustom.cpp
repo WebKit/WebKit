@@ -38,7 +38,6 @@
 #include "Frame.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
-#include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
@@ -53,7 +52,7 @@ CALLBACK_FUNC_DECL(SharedWorkerConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    if (args.Length() < 1)
+    if (!args.Length())
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
 
     v8::TryCatch tryCatch;
@@ -73,17 +72,19 @@ CALLBACK_FUNC_DECL(SharedWorkerConstructor)
     if (!context)
         return v8::Undefined();
 
-    // Create the worker object.
+    // Create the SharedWorker object.
     // Note: it's OK to let this RefPtr go out of scope because we also call SetDOMWrapper(), which effectively holds a reference to obj.
     ExceptionCode ec = 0;
     RefPtr<SharedWorker> obj = SharedWorker::create(toWebCoreString(scriptUrl), name, context, ec);
+    if (ec)
+        return throwError(ec);
 
     // Setup the standard wrapper object internal fields.
     v8::Handle<v8::Object> wrapperObject = args.Holder();
-    V8Proxy::setDOMWrapper(wrapperObject, V8ClassIndex::SHAREDWORKER, obj.get());
+    V8DOMWrapper::setDOMWrapper(wrapperObject, V8ClassIndex::SHAREDWORKER, obj.get());
 
     obj->ref();
-    V8Proxy::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(wrapperObject));
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(wrapperObject));
 
     return wrapperObject;
 }

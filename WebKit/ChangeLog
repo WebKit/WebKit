@@ -1,3 +1,14 @@
+2009-10-13  Drew Wilson  <atwilson@atwilson-macpro.local>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=30289
+
+        * chromium/features.gypi:
+        Turned on ENABLE_SHARED_WORKERS by default. This doesn't actually turn on
+        SharedWorkers yet, as Chromium overrides this flag in its feature_overrides.gypi.
+
 2009-10-12  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

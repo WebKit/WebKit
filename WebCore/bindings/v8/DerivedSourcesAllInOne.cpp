@@ -208,6 +208,7 @@
 #include "bindings/V8RGBColor.cpp"
 #include "bindings/V8Screen.cpp"
 #include "bindings/V8SharedWorker.cpp"
+#include "bindings/V8SharedWorkerContext.cpp"
 #include "bindings/V8SQLError.cpp"
 #include "bindings/V8SQLResultSet.cpp"
 #include "bindings/V8SQLResultSetRowList.cpp"

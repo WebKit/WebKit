@@ -43,6 +43,8 @@
 #include "EventException.h"
 #include "MessagePort.h"
 #include "RangeException.h"
+#include "SharedWorker.h"
+#include "SharedWorkerContext.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8Index.h"

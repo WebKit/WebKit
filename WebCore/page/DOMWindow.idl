@@ -502,7 +502,7 @@ module window {
 #endif
 
 #if defined(ENABLE_SHARED_WORKERS) && ENABLE_SHARED_WORKERS
-        attribute [JSCCustomGetter] SharedWorkerConstructor SharedWorker; // Usable with the new operator
+        attribute [JSCCustomGetter, EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS

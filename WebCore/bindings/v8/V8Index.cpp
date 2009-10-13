@@ -401,6 +401,7 @@
 
 #if ENABLE(SHARED_WORKERS)
 #include "V8SharedWorker.h"
+#include "V8SharedWorkerContext.h"
 #endif
 
 #if ENABLE(3D_CANVAS)

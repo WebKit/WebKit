@@ -438,6 +438,24 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
 
 #endif // WORKERS
 
+#if ENABLE(SHARED_WORKERS)
+    case V8ClassIndex::SHAREDWORKER: {
+        // Reserve one more internal field for keeping event listeners.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        instanceTemplate->SetInternalFieldCount(V8Custom::kSharedWorkerInternalFieldCount);
+        descriptor->SetCallHandler(USE_CALLBACK(SharedWorkerConstructor));
+        break;
+    }
+
+    case V8ClassIndex::SHAREDWORKERCONTEXT: {
+        // Reserve internal fields for keeping event listeners.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        instanceTemplate->SetInternalFieldCount(V8Custom::kSharedWorkerContextInternalFieldCount);
+        break;
+    }
+#endif // SHARED_WORKERS
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     case V8ClassIndex::DOMAPPLICATIONCACHE: {
         // Reserve one more internal field for keeping event listeners.

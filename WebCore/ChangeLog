@@ -1,3 +1,37 @@
+2009-10-13  Drew Wilson  <atwilson@atwilson-macpro.local>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=30289
+
+        Cleaned up bitrot in SharedWorker V8 bindings.
+
+        * WebCore.gypi:
+        Removed default implementation of SharedWorkerRepository so Chromium can provide its own.
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        Added V8SharedWorkerContext.cpp.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        Added case statements for SHAREDWORKER and SHAREDWORKERCONTEXT.
+        * bindings/v8/V8Index.cpp:
+        Now includes V8SharedWorkerContext.h to allow supporting SharedWorkers.
+        * bindings/v8/V8Index.h:
+        Added definition for SHAREDWORKERCONTEXT wrapper.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        Added includes for SharedWorker.h and SharedWorkerContext.h.
+        * bindings/v8/custom/V8CustomBinding.h:
+        Reorganized Worker field indexes to be clearer, and fixed mismatch in worker field index.
+        Also added field indexes for SharedWorkers.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_RUNTIME_ENABLER):
+        Added runtime enabler for the SharedWorker constructor.
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        Cleaned up bitrot (various APIs have changed since this file was written).
+        * page/DOMWindow.idl:
+        Added EnabledAtRuntime flag to window.SharedWorker.
+
 2009-10-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

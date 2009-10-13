@@ -52,6 +52,7 @@
 #include "ScriptSourceCode.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
+#include "SharedWorkerRepository.h"
 #include "WindowFeatures.h"
 
 // Horizontal and vertical offset, from the parent content area, around newly
@@ -241,6 +242,13 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio)
     return MediaPlayer::isAvailable();
 }
 
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker)
+{
+    return SharedWorkerRepository::isAvailable();
+}
 #endif
 
 ACCESSOR_GETTER(DOMWindowImage)

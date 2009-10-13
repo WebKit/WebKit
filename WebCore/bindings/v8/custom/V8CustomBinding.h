@@ -124,17 +124,25 @@ namespace WebCore {
         static const int kMessagePortInternalFieldCount = kDefaultWrapperInternalFieldCount + 2;
 
 #if ENABLE(WORKERS)
-        static const int kWorkerRequestCacheIndex = kDefaultWrapperInternalFieldCount + 0;
-        static const int kWorkerInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
+        static const int kAbstractWorkerRequestCacheIndex = kDefaultWrapperInternalFieldCount + 0;
+        static const int kAbstractWorkerInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
+
+        static const int kWorkerRequestCacheIndex = kAbstractWorkerInternalFieldCount + 0;
+        static const int kWorkerInternalFieldCount = kAbstractWorkerInternalFieldCount + 1;
 
         static const int kWorkerContextRequestCacheIndex = kDefaultWrapperInternalFieldCount + 0;
         static const int kWorkerContextMinimumInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
 
         static const int kDedicatedWorkerContextRequestCacheIndex = kWorkerContextMinimumInternalFieldCount + 0;
         static const int kDedicatedWorkerContextInternalFieldCount = kWorkerContextMinimumInternalFieldCount + 1;
+#endif
 
-        static const int kAbstractWorkerRequestCacheIndex = kDefaultWrapperInternalFieldCount + 0;
-        static const int kAbstractWorkerInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
+#if ENABLE(SHARED_WORKERS)
+        static const int kSharedWorkerRequestCacheIndex = kAbstractWorkerInternalFieldCount + 0;
+        static const int kSharedWorkerInternalFieldCount = kAbstractWorkerInternalFieldCount + 1;
+
+        static const int kSharedWorkerContextRequestCacheIndex = kWorkerContextMinimumInternalFieldCount + 0;
+        static const int kSharedWorkerContextInternalFieldCount = kWorkerContextMinimumInternalFieldCount + 1;
 #endif
 
 #if ENABLE(NOTIFICATIONS)
@@ -625,6 +633,7 @@ namespace WebCore {
 
 #if ENABLE(SHARED_WORKERS)
         DECLARE_CALLBACK(SharedWorkerConstructor);
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

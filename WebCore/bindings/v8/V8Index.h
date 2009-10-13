@@ -100,7 +100,9 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #if ENABLE(SHARED_WORKERS)
 #define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                    \
     V(SHAREDWORKER, SharedWorker)
-#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)
+
+#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)                          \
+    V(SHAREDWORKERCONTEXT, SharedWorkerContext)
 #else
 #define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
 #define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)

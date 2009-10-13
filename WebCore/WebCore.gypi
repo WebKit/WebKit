@@ -3489,8 +3489,6 @@
             'workers/DedicatedWorkerContext.h',
             'workers/DedicatedWorkerThread.cpp',
             'workers/DedicatedWorkerThread.h',
-            'workers/DefaultSharedWorkerRepository.cpp',
-            'workers/DefaultSharedWorkerRepository.h',
             'workers/GenericWorkerTask.h',
             'workers/SharedWorker.cpp',
             'workers/SharedWorker.h',
