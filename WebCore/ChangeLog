@@ -1,5 +1,17 @@
 2009-10-13  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Pavel Feldman.
+
+        Fix a leak in the inspector by calling didRemoveNode with
+        an error code when it fails, instead of returning from the
+        Backend.
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::removeNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+
+2009-10-13  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         Fixes <https://bugs.webkit.org/show_bug.cgi?id=30337>.

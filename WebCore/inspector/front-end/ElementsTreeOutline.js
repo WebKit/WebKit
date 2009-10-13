@@ -854,6 +854,11 @@ WebInspector.ElementsTreeElement.prototype = {
         var self = this;
         function removeNodeCallback(removedNodeId)
         {
+            // -1 is an error code, which means removing the node from the DOM failed,
+            // so we shouldn't remove it from the tree.
+            if (removedNodeId === -1)
+                return;
+
             parentElement.removeChild(self);
         }
 

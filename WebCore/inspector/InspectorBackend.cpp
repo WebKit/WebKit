@@ -457,23 +457,32 @@ void InspectorBackend::copyNode(long nodeId)
 }
     
 void InspectorBackend::removeNode(long callId, long nodeId)
-{    
-    Node* node = nodeForId(nodeId);
-    if (!node)
+{
+    InspectorFrontend* frontend = inspectorFrontend();
+    if (!frontend)
         return;
 
-    Node* parentNode = node->parentNode();
-    if (!parentNode)
+    Node* node = nodeForId(nodeId);
+    if (!node) {
+        // Use -1 to denote an error condition.
+        frontend->didRemoveNode(callId, -1);
         return;
+    }
+
+    Node* parentNode = node->parentNode();
+    if (!parentNode) {
+        frontend->didRemoveNode(callId, -1);
+        return;
+    }
 
     ExceptionCode code;
     parentNode->removeChild(node, code);
-    
-    if (code)
+    if (code) {
+        frontend->didRemoveNode(callId, -1);
         return;
-    
-    if (InspectorFrontend* frontend = inspectorFrontend())
-        frontend->didRemoveNode(callId, nodeId);
+    }
+
+    frontend->didRemoveNode(callId, nodeId);
 }
 
 void InspectorBackend::getCookies(long callId, const String& domain)
