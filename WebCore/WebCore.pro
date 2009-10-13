@@ -2458,8 +2458,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     SOURCES += plugins/npapi.cpp
 
     unix {
-        DEFINES += ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH=1
-
         mac {
             SOURCES += \
                 plugins/mac/PluginPackageMac.cpp \

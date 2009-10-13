@@ -26,52 +26,20 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include "CString.h"
-#include "MIMETypeRegistry.h"
-#include "NotImplemented.h"
-#include "npruntime_impl.h"
-#include "PluginDatabase.h"
-#include "PluginDebug.h"
-
 namespace WebCore {
 
 void PluginPackage::determineQuirks(const String&)
 {
-    notImplemented();
 }
 
 bool PluginPackage::fetchInfo()
 {
-    notImplemented();
     return false;
 }
 
 bool PluginPackage::load()
 {
-    notImplemented();
     return false;
 }
-
-#if !ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
-unsigned PluginPackage::hash() const
-{ 
-    notImplemented();
-
-    return 0;
-}
-
-bool PluginPackage::equal(const PluginPackage&, const PluginPackage&)
-{
-    notImplemented();
-    return false;
-}
-
-int PluginPackage::compareFileVersion(const PlatformModuleVersion&) const
-{
-    notImplemented();
-    return 0;
-}
-
-#endif
 
 }

@@ -1,3 +1,29 @@
+2009-10-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Refactor ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH
+        https://bugs.webkit.org/show_bug.cgi?id=30278
+
+        Move the definition of ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 
+        from the make system into common code.
+
+        Enable ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH if NETSCAPE_PLUGIN_API 
+        support is not enabled.
+
+        Remove notImplemented() from PluginPackageNone.cpp and 
+        PluginDataNone.cpp make them just empty functions.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * plugins/PluginDataNone.cpp:
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * plugins/PluginPackageNone.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+
 2009-10-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
