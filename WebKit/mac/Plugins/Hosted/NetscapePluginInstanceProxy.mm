@@ -1442,6 +1442,11 @@ void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target
     memcpy(resolvedURLData, resolvedURL.data(), resolvedURLLength);
 }
 
+void NetscapePluginInstanceProxy::privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled)
+{
+    _WKPHPluginInstancePrivateBrowsingModeDidChange(m_pluginHostProxy->port(), m_pluginID, isPrivateBrowsingEnabled);
+}
+
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)

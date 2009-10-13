@@ -243,6 +243,10 @@ private:
     ASSERT_NOT_REACHED();
 }
 
+- (void)privateBrowsingModeDidChange
+{
+}
+
 - (void)removeTrackingRect
 {
     if (_trackingTag) {
@@ -506,6 +510,8 @@ private:
                                                      name:WebPreferencesChangedNotification
                                                    object:nil];
 
+        _isPrivateBrowsingEnabled = [[[self webView] preferences] privateBrowsingEnabled];
+        
         // View moved to an actual window. Start it if not already started.
         [self start];
 
@@ -586,9 +592,12 @@ private:
 - (void)preferencesHaveChanged:(NSNotification *)notification
 {
     WebPreferences *preferences = [[self webView] preferences];
-    BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
+
+    if ([notification object] != preferences)
+        return;
     
-    if ([notification object] == preferences && _isStarted != arePlugInsEnabled) {
+    BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
+    if (_isStarted != arePlugInsEnabled) {
         if (arePlugInsEnabled) {
             if ([self currentWindow]) {
                 [self start];
@@ -597,6 +606,12 @@ private:
             [self stop];
             [self invalidatePluginContentRect:[self bounds]];
         }
+    }
+    
+    BOOL isPrivateBrowsingEnabled = [preferences privateBrowsingEnabled];
+    if (isPrivateBrowsingEnabled != _isPrivateBrowsingEnabled) {
+        _isPrivateBrowsingEnabled = isPrivateBrowsingEnabled;
+        [self privateBrowsingModeDidChange];
     }
 }
 

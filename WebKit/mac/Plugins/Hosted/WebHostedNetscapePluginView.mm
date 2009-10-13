@@ -102,7 +102,8 @@ extern "C" {
 
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
 
-    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(), _mode == NP_FULL);
+    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(), 
+                                                                   _mode == NP_FULL, _isPrivateBrowsingEnabled);
     if (!_proxy) 
         return NO;
 
@@ -126,6 +127,12 @@ extern "C" {
     
     if (_pluginLayer)
         [newLayer addSublayer:_pluginLayer.get()];
+}
+
+- (void)privateBrowsingModeDidChange
+{
+    if (_proxy)
+        _proxy->privateBrowsingModeDidChange(_isPrivateBrowsingEnabled);
 }
 
 - (void)loadStream

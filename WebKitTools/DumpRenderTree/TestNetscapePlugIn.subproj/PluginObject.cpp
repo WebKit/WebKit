@@ -106,13 +106,17 @@ NPClass *getPluginClass(void)
 
 static bool identifiersInitialized = false;
 
-#define ID_PROPERTY_PROPERTY                    0
-#define ID_PROPERTY_EVENT_LOGGING               1
-#define ID_PROPERTY_HAS_STREAM                  2
-#define ID_PROPERTY_TEST_OBJECT                 3
-#define ID_PROPERTY_LOG_DESTROY                 4
-#define ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM 5
-#define NUM_PROPERTY_IDENTIFIERS                6
+enum {
+    ID_PROPERTY_PROPERTY = 0,
+    ID_PROPERTY_EVENT_LOGGING,
+    ID_PROPERTY_HAS_STREAM,
+    ID_PROPERTY_TEST_OBJECT,
+    ID_PROPERTY_LOG_DESTROY,
+    ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM,
+    ID_PROPERTY_PRIVATE_BROWSING_ENABLED,
+    ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED,
+    NUM_PROPERTY_IDENTIFIERS
+};
 
 static NPIdentifier pluginPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
 static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
@@ -122,6 +126,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "testObject",
     "logDestroy",
     "returnErrorFromNewStream",
+    "privateBrowsingEnabled",
+    "cachedPrivateBrowsingEnabled",
 };
 
 enum {
@@ -225,6 +231,14 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
         BOOLEAN_TO_NPVARIANT(plugin->returnErrorFromNewStream, *result);
+        return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_PRIVATE_BROWSING_ENABLED]) {
+        NPBool privateBrowsingEnabled = FALSE;
+        browser->getvalue(plugin->npp, NPNVprivateModeBool, &privateBrowsingEnabled);
+        BOOLEAN_TO_NPVARIANT(privateBrowsingEnabled, *result);
+        return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED]) {
+        BOOLEAN_TO_NPVARIANT(plugin->cachedPrivateBrowsingMode, *result);
         return true;
     }
     return false;

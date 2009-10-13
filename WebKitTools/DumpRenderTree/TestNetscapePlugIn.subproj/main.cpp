@@ -130,7 +130,9 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
     
+    browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
     browser->setvalue(instance, NPPVpluginEventModel, (void *)obj->eventModel);
+    
     return NPERR_NO_ERROR;
 }
 
@@ -383,5 +385,13 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 
 NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 {
-    return NPERR_GENERIC_ERROR;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
+
+    switch (variable) {
+        case NPNVprivateModeBool:
+            obj->cachedPrivateBrowsingMode = *(NPBool*)value;
+            return NPERR_NO_ERROR;
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
 }

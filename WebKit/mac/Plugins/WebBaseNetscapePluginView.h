@@ -62,6 +62,7 @@ class WebHaltablePlugin;
     BOOL _isStarted;
     BOOL _hasFocus;
     BOOL _isCompletelyObscured;
+    BOOL _isPrivateBrowsingEnabled;
     
     RefPtr<WebCore::HTMLPlugInElement> _element;
     RetainPtr<NSString> _MIMEType;

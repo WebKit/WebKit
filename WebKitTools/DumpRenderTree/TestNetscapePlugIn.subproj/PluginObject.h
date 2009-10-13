@@ -35,6 +35,7 @@ typedef struct {
     NPBool logSetWindow;
     NPBool logDestroy;
     NPBool returnErrorFromNewStream;
+    NPBool cachedPrivateBrowsingMode;
     NPObject* testObject;
     NPStream* stream;
     char* onStreamLoad;

@@ -1,3 +1,32 @@
+2009-10-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6660507> Add "privacy mode" to Netscape Plug-in API
+
+        Listen for WebPreferences notifications and update the _isPrivateBrowsingEnabled ivar 
+        when the value changes. Also call -[WebBaseNetscapePluginView privateBrowsingModeDidChange] when the
+        value changes. In process this just calls NPP_SetValue, and OOP it sends a MIG message to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::privateBrowsingModeDidChange):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        (-[WebHostedNetscapePluginView privateBrowsingModeDidChange]):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView privateBrowsingModeDidChange]):
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        (-[WebBaseNetscapePluginView preferencesHaveChanged:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView privateBrowsingModeDidChange]):
+        (-[WebNetscapePluginView getVariable:value:]):
+
 2009-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

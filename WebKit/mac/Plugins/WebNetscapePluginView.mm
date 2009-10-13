@@ -838,6 +838,21 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _eventHandler->syntheticKeyDownWithCommandModifier(keyCode, character);
 }
 
+- (void)privateBrowsingModeDidChange
+{
+    if (!_isStarted)
+        return;
+    
+    NPBool value = _isPrivateBrowsingEnabled;
+
+    [self willCallPlugInFunction];
+    {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        [_pluginPackage.get() pluginFuncs]->setvalue(plugin, NPNVprivateModeBool, &value);
+    }
+    [self didCallPlugInFunction];
+}
+
 #pragma mark WEB_NETSCAPE_PLUGIN
 
 - (BOOL)isNewWindowEqualToOldWindow
@@ -2022,10 +2037,16 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_NO_ERROR;
         }
 #endif /* NP_NO_CARBON */
-            
+
         case NPNVsupportsCocoaBool:
         {
             *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
+
+        case NPNVprivateModeBool:
+        {
+            *(NPBool *)value = _isPrivateBrowsingEnabled;
             return NPERR_NO_ERROR;
         }
 

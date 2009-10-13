@@ -236,4 +236,8 @@ simpleroutine PHBooleanAndDataReply(pluginHostPort :mach_port_t;
              
 simpleroutine PHPluginInstanceDidDraw(pluginHostPort :mach_port_t;
                                       pluginID :uint32_t);
+simpleroutine PHPluginInstancePrivateBrowsingModeDidChange(pluginHostPort :mach_port_t;
+                                                           pluginID :uint32_t;
+                                                           privateBrowsingEnabled :boolean_t);
+
                               
