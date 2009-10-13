@@ -4756,7 +4756,6 @@ fast/dom/Range/getBoundingClientRect.html
 fast/dom/Range/getClientRects.html
 fast/dom/location-assign.html
 fast/dom/tabindex-clamp.html
-fast/dom/Document/document-charset.html
 fast/dom/HTMLScriptElement/nested-execution.html
 fast/dom/Window/webkitConvertPoint.html
 fast/dom/Window/window-lookup-precedence.html

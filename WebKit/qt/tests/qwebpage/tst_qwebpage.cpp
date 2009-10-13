@@ -119,6 +119,7 @@ private slots:
     void testEnablePersistentStorage();
     void consoleOutput();
     void inputMethods();
+    void defaultTextEncoding();
 
     void crashTests_LazyInitializationOfMainFrame();
 
@@ -1460,6 +1461,30 @@ void tst_QWebPage::testEnablePersistentStorage()
     QVERIFY(!webPage.settings()->offlineStoragePath().isEmpty());
     QVERIFY(!webPage.settings()->offlineWebApplicationCachePath().isEmpty());
     QVERIFY(!webPage.settings()->iconDatabasePath().isEmpty());
+}
+
+void tst_QWebPage::defaultTextEncoding()
+{
+    QWebFrame* mainFrame = m_page->mainFrame();
+
+    QString defaultCharset = mainFrame->evaluateJavaScript("document.defaultCharset").toString();
+    QVERIFY(!defaultCharset.isEmpty());
+    QCOMPARE(QWebSettings::globalSettings()->defaultTextEncoding(), defaultCharset);
+
+    m_page->settings()->setDefaultTextEncoding(QString("utf-8"));
+    QString charset = mainFrame->evaluateJavaScript("document.defaultCharset").toString();
+    QCOMPARE(charset, QString("utf-8"));
+    QCOMPARE(m_page->settings()->defaultTextEncoding(), charset);
+
+    m_page->settings()->setDefaultTextEncoding(QString());
+    charset = mainFrame->evaluateJavaScript("document.defaultCharset").toString();
+    QVERIFY(!charset.isEmpty());
+    QCOMPARE(charset, defaultCharset);
+
+    QWebSettings::globalSettings()->setDefaultTextEncoding(QString("utf-8"));
+    charset = mainFrame->evaluateJavaScript("document.defaultCharset").toString();
+    QCOMPARE(charset, QString("utf-8"));
+    QCOMPARE(QWebSettings::globalSettings()->defaultTextEncoding(), charset);
 }
 
 void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()
