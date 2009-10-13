@@ -1,3 +1,17 @@
+2009-10-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Web Inspector: Use proper web view in inspector layout
+        tests for windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30298
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+
 2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Sam Weinig.

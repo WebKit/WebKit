@@ -876,34 +876,46 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
 
 void LayoutTestController::showWebInspector()
 {
-    COMPtr<IWebViewPrivate> webView;
-    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate(Query, webView);
+    if (!viewPrivate)
         return;
 
     COMPtr<IWebInspector> inspector;
-    if (SUCCEEDED(webView->inspector(&inspector)))
+    if (SUCCEEDED(viewPrivate->inspector(&inspector)))
         inspector->show();
 }
 
 void LayoutTestController::closeWebInspector()
 {
-    COMPtr<IWebViewPrivate> webView;
-    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate(Query, webView);
+    if (!viewPrivate)
         return;
 
     COMPtr<IWebInspector> inspector;
-    if (SUCCEEDED(webView->inspector(&inspector)))
+    if (SUCCEEDED(viewPrivate->inspector(&inspector)))
         inspector->close();
 }
 
 void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
 {
-    COMPtr<IWebViewPrivate> webView;
-    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate(Query, webView);
+    if (!viewPrivate)
         return;
 
     COMPtr<IWebInspector> inspector;
-    if (FAILED(webView->inspector(&inspector)))
+    if (FAILED(viewPrivate->inspector(&inspector)))
         return;
 
     COMPtr<IWebInspectorPrivate> inspectorPrivate(Query, inspector);
