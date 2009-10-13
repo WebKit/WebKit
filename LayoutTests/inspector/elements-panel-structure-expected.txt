@@ -1,7 +1,0 @@
-Tests that elements panel shows dom tree structure.
-
-
-<html>
-<head>
-<body onload="onload()">
-</html>

@@ -1,5 +1,19 @@
 2009-10-13  Pavel Feldman  <pfeldman@chromium.org>
 
+        Layout test fix, reverting previous change.
+
+        Reverting r49499 as it caused several layout test failures.
+
+        * inspector/console-tests-expected.txt: Removed.
+        * inspector/console-tests.html: Removed.
+        * inspector/elements-panel-structure-expected.txt: Removed.
+        * inspector/elements-panel-structure.html: Removed.
+        * inspector/evaluate-in-frontend-expected.txt: Removed.
+        * inspector/evaluate-in-frontend.html: Removed.
+        * inspector/evaluate-in-frontend.js: Removed.
+
+2009-10-13  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: add initial layout tests for web inspector.
