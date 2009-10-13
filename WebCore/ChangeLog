@@ -1,3 +1,39 @@
+2009-10-13  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Adam Barth.
+
+        Bug 28964 -  [Chromium] ChromiumDataObject should have getter/setter interface
+
+        Reworked and added to the getter/setter interface in ChromiumDataObject:
+        - added contains...() methods to just query the state
+        - added containsValid...URL() methods for URL data members
+        - removed takeFileNames() as this was too type-dependent
+        - changed return type of fileNames() to Vector<String>
+        - added interface methods to allow appending to and iteration over file names
+
+        No new tests (no functional behavior changed).
+
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::containsMainURL):
+        (WebCore::ChromiumDataObject::containsValidMainURL):
+        (WebCore::ChromiumDataObject::containsMainURLTitle):
+        (WebCore::ChromiumDataObject::containsTextPlain):
+        (WebCore::ChromiumDataObject::containsTextHTML):
+        (WebCore::ChromiumDataObject::containsHTMLBaseURL):
+        (WebCore::ChromiumDataObject::containsValidHTMLBaseURL):
+        (WebCore::ChromiumDataObject::containsContent):
+        (WebCore::ChromiumDataObject::containsContentFileExtension):
+        (WebCore::ChromiumDataObject::containsContentFileName):
+        (WebCore::ChromiumDataObject::setContentFileName):
+        (WebCore::ChromiumDataObject::containsFileNames):
+        (WebCore::ChromiumDataObject::fileNames):
+        (WebCore::ChromiumDataObject::clearFileNames):
+        (WebCore::ChromiumDataObject::countFileNames):
+        (WebCore::ChromiumDataObject::fileNameAt):
+        (WebCore::ChromiumDataObject::setFileNames):
+        (WebCore::ChromiumDataObject::appendToFileNames):
+        (WebCore::ChromiumDataObject::popFileName):
+
 2009-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
