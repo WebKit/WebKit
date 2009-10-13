@@ -1,3 +1,14 @@
+2009-10-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix REGRESSION(49479): Mouseover on resources graph doesn't show timings.
+        
+        Set pointer-events: none on the new overlay so mouseover events are passed
+        to the resources graph so we can show timings.
+
+        * inspector/front-end/inspector.css:
+
 2009-10-13  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

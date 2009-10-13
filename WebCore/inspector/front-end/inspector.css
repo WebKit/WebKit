@@ -2573,6 +2573,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     height: 100%;
     top: 0;
     z-index: 300;
+    pointer-events: none;
 }
 
 #resources-dividers-label-bar {
@@ -2600,6 +2601,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     width: 8px;
     top: 0;
     bottom: 0;
+    pointer-events: auto;
 }
 
 .resources-onload-divider {
