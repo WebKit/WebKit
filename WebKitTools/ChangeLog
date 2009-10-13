@@ -1,3 +1,9 @@
+2009-10-13  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, adding myself to the list of reviewers.
+
+        * Scripts/modules/committers.py:
+
 2009-10-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

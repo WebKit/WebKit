@@ -103,6 +103,7 @@ reviewers_list = [
     Reviewer("David Kilzer", "ddkilzer@webkit.org"),
     Reviewer("David Levin", "levin@chromium.org"),
     Reviewer("Dimitri Glazkov", "dglazkov@chromium.org"),
+    Reviewer("Dmitri Titov", "dimich@chromium.org"),
     Reviewer("Eric Carlson", "eric.carlson@apple.com"),
     Reviewer("Eric Seidel", "eric@webkit.org"),
     Reviewer("Gavin Barraclough", "barraclough@apple.com"),
