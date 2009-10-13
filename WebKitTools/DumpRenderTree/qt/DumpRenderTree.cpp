@@ -30,6 +30,9 @@
  */
 
 #include "DumpRenderTree.h"
+#include "EventSenderQt.h"
+#include "LayoutTestControllerQt.h"
+#include "TextInputControllerQt.h"
 #include "jsobjects.h"
 #include "testplugin.h"
 #include "WorkQueue.h"

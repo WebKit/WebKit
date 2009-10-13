@@ -26,23 +26,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef JSOBJECTS_H
-#define JSOBJECTS_H
+#ifndef TextInputControllerQt_h
+#define TextInputControllerQt_h
 
+#include <QList>
 #include <QObject>
+#include <QString>
+#include "qwebpage.h"
 
-class QWebPage;
-
-class GCController : public QObject
-{
+class TextInputController : public QObject {
     Q_OBJECT
 public:
-    GCController(QWebPage* parent);
+    TextInputController(QWebPage* parent);
 
 public slots:
-    void collect() const;
-    void collectOnAlternateThread(bool waitUntilDone) const;
-    size_t getJSObjectCount() const;
+    void doCommand(const QString& command);
+//     void setMarkedText(const QString& str, int from, int length);
+//     bool hasMarkedText();
+//     void unmarkText();
+//     QList<int> markedRange();
+//     QList<int> selectedRange();
+//     void validAttributesForMarkedText();
+//     void inserText(const QString&);
+//     void firstRectForCharacterRange();
+//     void characterIndexForPoint(int, int);
+//     void substringFromRange(int, int);
+//     void conversationIdentifier();
 };
-
-#endif
+#endif // TextInputControllerQt_h

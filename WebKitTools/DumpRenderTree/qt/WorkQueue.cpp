@@ -30,8 +30,6 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-#include "WorkQueueItem.h"
-
 static const unsigned queueLength = 1024;
 
 static WorkQueueItem* theQueue[queueLength];

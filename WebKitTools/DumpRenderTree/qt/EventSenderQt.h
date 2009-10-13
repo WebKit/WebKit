@@ -26,23 +26,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef JSOBJECTS_H
-#define JSOBJECTS_H
+#ifndef EventSenderQt_h
+#define EventSenderQt_h
 
+#include <QApplication>
+#include <QEvent>
+#include <QMouseEvent>
 #include <QObject>
+#include <QPoint>
+#include <QString>
+#include <QStringList>
 
-class QWebPage;
+#include <qwebpage.h>
+#include <qwebframe.h>
 
-class GCController : public QObject
-{
+class EventSender : public QObject {
     Q_OBJECT
 public:
-    GCController(QWebPage* parent);
+    EventSender(QWebPage* parent);
 
 public slots:
-    void collect() const;
-    void collectOnAlternateThread(bool waitUntilDone) const;
-    size_t getJSObjectCount() const;
-};
+    void mouseDown(int button = 0);
+    void mouseUp(int button = 0);
+    void mouseMoveTo(int x, int y);
+    void leapForward(int ms);
+    void keyDown(const QString& string, const QStringList& modifiers = QStringList());
+    void clearKillRing() {}
+    void contextClick();
+    void scheduleAsynchronousClick();
 
-#endif
+private:
+    QPoint m_mousePos;
+    QWebPage* m_page;
+    int m_timeLeap;
+    QWebFrame* frameUnderMouse() const;
+};
+#endif //  EventSenderQt_h

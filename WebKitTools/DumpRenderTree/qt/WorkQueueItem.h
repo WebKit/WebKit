@@ -30,8 +30,9 @@
 #ifndef WorkQueueItem_h
 #define WorkQueueItem_h
 
-#include <qstring.h>
-#include <qpointer.h>
+#include <QPointer>
+#include <QString>
+#include <qwebframe.h>
 #include <qwebpage.h>
 
 class WorkQueueItem {

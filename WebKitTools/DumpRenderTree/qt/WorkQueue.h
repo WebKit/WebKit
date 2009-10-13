@@ -30,7 +30,7 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
-class WorkQueueItem;
+#include "WorkQueueItem.h"
 
 class WorkQueue {
 public:

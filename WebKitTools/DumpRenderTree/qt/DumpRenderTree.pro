@@ -12,8 +12,23 @@ PKGCONFIG += fontconfig
 QT = core gui network
 macx: QT += xml
 
-HEADERS = WorkQueue.h WorkQueueItem.h DumpRenderTree.h jsobjects.h testplugin.h
-SOURCES = WorkQueue.cpp DumpRenderTree.cpp main.cpp jsobjects.cpp testplugin.cpp
+HEADERS = WorkQueue.h \
+    WorkQueueItem.h \
+    DumpRenderTree.h \
+    EventSenderQt.h \
+    TextInputControllerQt.h \
+    LayoutTestControllerQt.h \
+    jsobjects.h \
+    testplugin.h
+SOURCES = WorkQueue.cpp \
+    DumpRenderTree.cpp \
+    EventSenderQt.cpp \
+    TextInputControllerQt.cpp \
+    WorkQueueItemQt.cpp \
+    LayoutTestControllerQt.cpp \
+    main.cpp \
+    jsobjects.cpp \
+    testplugin.cpp
 
 unix:!mac {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

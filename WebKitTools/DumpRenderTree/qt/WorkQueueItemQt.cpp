@@ -26,23 +26,69 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef JSOBJECTS_H
-#define JSOBJECTS_H
+#include "config.h"
+#include "WorkQueueItem.h"
 
-#include <QObject>
-
-class QWebPage;
-
-class GCController : public QObject
+QWebFrame* findFrameNamed(const QString& frameName, QWebFrame* frame)
 {
-    Q_OBJECT
-public:
-    GCController(QWebPage* parent);
+    if (frame->frameName() == frameName)
+        return frame;
 
-public slots:
-    void collect() const;
-    void collectOnAlternateThread(bool waitUntilDone) const;
-    size_t getJSObjectCount() const;
-};
+    foreach (QWebFrame* childFrame, frame->childFrames())
+        if (QWebFrame* f = findFrameNamed(frameName, childFrame))
+            return f;
 
-#endif
+    return 0;
+}
+
+bool LoadItem::invoke() const
+{
+    //qDebug() << ">>>LoadItem::invoke";
+    Q_ASSERT(m_webPage);
+
+    QWebFrame* frame = 0;
+    const QString t = target();
+    if (t.isEmpty())
+        frame = m_webPage->mainFrame();
+    else
+        frame = findFrameNamed(t, m_webPage->mainFrame());
+
+    if (!frame)
+        return false;
+
+    frame->load(url());
+    return true;
+}
+
+bool ReloadItem::invoke() const
+{
+    //qDebug() << ">>>ReloadItem::invoke";
+    Q_ASSERT(m_webPage);
+    m_webPage->triggerAction(QWebPage::Reload);
+    return true;
+}
+
+bool ScriptItem::invoke() const
+{
+    //qDebug() << ">>>ScriptItem::invoke";
+    Q_ASSERT(m_webPage);
+    m_webPage->mainFrame()->evaluateJavaScript(script());
+    return true;
+}
+
+bool BackForwardItem::invoke() const
+{
+    //qDebug() << ">>>BackForwardItem::invoke";
+    Q_ASSERT(m_webPage);
+    if (!m_howFar)
+        return false;
+
+    if (m_howFar > 0) {
+        for (int i = 0; i != m_howFar; ++i)
+            m_webPage->triggerAction(QWebPage::Forward);
+    } else {
+        for (int i = 0; i != m_howFar; --i)
+            m_webPage->triggerAction(QWebPage::Back);
+    }
+    return true;
+}
