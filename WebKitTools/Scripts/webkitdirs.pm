@@ -1118,7 +1118,12 @@ sub buildVisualStudioProject
         $action = "/clean";
     }
 
-    my @command = ($vcBuildPath, $winProjectPath, $action, $config);
+    my $useenv = "/useenv";
+    if (isChromium()) {
+        $useenv = "";
+    }
+
+    my @command = ($vcBuildPath, $useenv, $winProjectPath, $action, $config);
 
     print join(" ", @command), "\n";
     return system @command;

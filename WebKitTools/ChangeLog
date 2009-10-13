@@ -1,3 +1,13 @@
+2009-10-12  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium Port - Windows
+        https://bugs.webkit.org/show_bug.cgi?id=29969
+
+        * Scripts/pdevenv: removed msvc's /useenv for chromium builds
+        * Scripts/webkitdirs.pm:
+
 2009-10-12  Csaba Osztrogonac  <ossy@webkit.org>
 
         Reviewed by Darin Adler.

@@ -28,8 +28,8 @@ if ($ENV{'VS80COMNTOOLS'}) {
 print $fh "\@echo off\n\n";
 print $fh "call \"\%" . $vsToolsVar . "\%\\vsvars32.bat\"\n\n";
 print $fh "set PATH=$vcBin;$scriptsPath;\%PATH\%\n\n";
-print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com /useenv " . join(" ", @ARGV) . ") ELSE ";
-print $fh "VCExpress.exe /useenv " . join(" ", @ARGV) . "\n";
+print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com " . join(" ", @ARGV) . ") ELSE ";
+print $fh "VCExpress.exe " . join(" ", @ARGV) . "\n";
 
 close $fh;
 

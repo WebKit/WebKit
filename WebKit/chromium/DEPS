@@ -35,17 +35,18 @@ vars = {
   'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
 
   # Dependencies' revisions to use:
-  'chromium_rev': '27692',
+  'chromium_rev': '28710',
   'google-url_rev': '119',
-  'gyp_rev': '671',
+  'gtest_rev': '329',
+  'gyp_rev': '685',
   'icu_rev': '27687',
-  'openvcdiff_rev': '26',
-  'skia_rev': '341',
-  'v8_rev': '2966',
+  'openvcdiff_rev': '28',
+  'skia_rev': '376',
+  'v8_rev': '3030',
 
   # Windows:
   'cygwin_rev': '11984',
-  'ffmpeg_ia32_rev': '26428',
+  'ffmpeg_ia32_rev': '28488',
   'pthreads-win32_rev': '26716',
   'python_24_rev': '22967',
 }
@@ -72,11 +73,15 @@ deps = {
   # testing
   'testing':
     Var('chromium_svn')+'/testing@'+Var('chromium_rev'),
+  'testing/gtest':
+    'http://googletest.googlecode.com/svn/trunk@'+Var('gtest_rev'),
 
   # v8 javascript engine
   'v8':
     'http://v8.googlecode.com/svn/trunk@'+Var('v8_rev'),
-  
+  'testing/gtest':
+    'http://googletest.googlecode.com/svn/trunk@'+Var('gtest_rev'),
+
   # net dependencies
   'net':
     Var('chromium_svn')+'/net@'+Var('chromium_rev'),
