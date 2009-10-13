@@ -69,7 +69,13 @@ public:
 
     template<typename FunctionType>
     explicit FunctionPtr(FunctionType* value)
+#if COMPILER(RVCT)
+     // RVTC compiler needs C-style cast as it fails with the following error
+     // Error:  #694: reinterpret_cast cannot cast away const or other type qualifiers
+        : m_value((void*)(value))
+#else
         : m_value(reinterpret_cast<void*>(value))
+#endif
     {
         ASSERT_VALID_CODE_POINTER(m_value);
     }

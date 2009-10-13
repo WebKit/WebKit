@@ -2656,7 +2656,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_throw)
 
     if (!handler) {
         *stackFrame.exception = exceptionValue;
-        STUB_SET_RETURN_ADDRESS(reinterpret_cast<void*>(ctiOpThrowNotCaught));
+        STUB_SET_RETURN_ADDRESS(FunctionPtr(ctiOpThrowNotCaught).value());
         return JSValue::encode(jsNull());
     }
 

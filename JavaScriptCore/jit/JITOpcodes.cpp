@@ -267,7 +267,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
-    move(ImmPtr(reinterpret_cast<void*>(ctiVMThrowTrampoline)), regT2);
+    move(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
     restoreReturnAddressBeforeReturn(regT2);
@@ -1749,7 +1749,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
     move(ImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
-    move(ImmPtr(reinterpret_cast<void*>(ctiVMThrowTrampoline)), regT2);
+    move(ImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
     restoreReturnAddressBeforeReturn(regT2);

@@ -1,3 +1,24 @@
+2009-10-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        ARM compiler does not understand reinterpret_cast<void*>
+        https://bugs.webkit.org/show_bug.cgi?id=29034
+
+        Change reinterpret_cast<void*> to regular C style (void*) cast 
+        for the ARM RVCT compiler.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr): 
+        * jit/JITOpcodes.cpp: Cast to FunctionPtr first 
+           instead of directly casting to reinterpret_cast
+        * jit/JITStubCall.h: Ditto + change the type of m_stub
+          from void* to FunctionPtr.
+        (JSC::JITStubCall::JITStubCall): 
+        (JSC::JITStubCall::call):
+        * jit/JITStubs.cpp: Ditto.
+        (JSC::DEFINE_STUB_FUNCTION(EncodedJSValue, op_throw)):
+
 2009-10-11  Oliver Hunt  <oliver@apple.com>
 
         Re-enable the JIT.
