@@ -1,6 +1,23 @@
 2009-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
+        Alter profile link format to enable multiple profile types
+        https://bugs.webkit.org/show_bug.cgi?id=30253
+
+        The new profile URL includes the profile type along with the
+        profile title and uid.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorController::addStartProfilingMessageToConsole):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector.linkifyStringAsFragment):
+
+2009-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
 
         Fix same-named profiles grouping in the Profiles panel.
 

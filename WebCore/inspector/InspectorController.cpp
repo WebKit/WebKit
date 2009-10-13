@@ -107,6 +107,7 @@ using namespace std;
 namespace WebCore {
 
 static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
+static const char* const CPUProfileType = "CPU";
 static const char* const resourceTrackingEnabledSettingName = "resourceTrackingEnabled";
 static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
@@ -1360,8 +1361,10 @@ void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<Profile>
     RefPtr<Profile> profile = prpProfile;
 
     UString message = "Profile \"webkit-profile://";
-    message += encodeWithURLEscapeSequences(profile->title());
+    message += encodeWithURLEscapeSequences(CPUProfileType);
     message += "/";
+    message += encodeWithURLEscapeSequences(profile->title());
+    message += "#";
     message += UString::from(profile->uid());
     message += "\" finished.";
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
@@ -1370,8 +1373,10 @@ void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<Profile>
 void InspectorController::addStartProfilingMessageToConsole(const UString& title, unsigned lineNumber, const UString& sourceURL)
 {
     UString message = "Profile \"webkit-profile://";
+    message += encodeWithURLEscapeSequences(CPUProfileType);
+    message += "/";
     message += encodeWithURLEscapeSequences(title);
-    message += "/0\" started.";
+    message += "#0\" started.";
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 

@@ -554,7 +554,7 @@ WebInspector.documentClick = function(event)
 
             WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
         } else {
-            var profileStringRegEx = new RegExp("webkit-profile://.+/([0-9]+)");
+            var profileStringRegEx = new RegExp("webkit-profile://.+/.+#([0-9]+)");
             var profileString = profileStringRegEx.exec(anchor.href);
             if (profileString)
                 WebInspector.showProfileById(profileString[1])
@@ -1375,7 +1375,7 @@ WebInspector.linkifyStringAsFragment = function(string)
         var nonLink = string.substring(0, linkIndex);
         container.appendChild(document.createTextNode(nonLink));
 
-        var profileStringRegEx = new RegExp("webkit-profile://(.+)/[0-9]+");
+        var profileStringRegEx = new RegExp("webkit-profile://.+/(.+)#[0-9]+");
         var profileStringMatches = profileStringRegEx.exec(title);
         var profileTitle;
         if (profileStringMatches)
