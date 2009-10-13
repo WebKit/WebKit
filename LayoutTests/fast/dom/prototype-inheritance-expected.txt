@@ -339,6 +339,8 @@ PASS inner.WebKitPoint.isInner is true
 PASS inner.WebKitPoint.constructor.isInner is true
 PASS inner.WebKitTransitionEvent.isInner is true
 PASS inner.WebKitTransitionEvent.constructor.isInner is true
+PASS inner.WebSocket.isInner is true
+PASS inner.WebSocket.constructor.isInner is true
 PASS inner.WheelEvent.isInner is true
 PASS inner.WheelEvent.constructor.isInner is true
 PASS inner.Worker.isInner is true

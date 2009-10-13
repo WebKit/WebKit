@@ -1,5 +1,16 @@
 2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed.  Fix 4 layout test failures by webkit r49488
+
+        WebKit r49488 enables window.WebSocket back. 
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
+2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Sam Weinig.
 
         Add a test to verify WebSocket's EventTarget methods.
