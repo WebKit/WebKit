@@ -182,12 +182,12 @@ WebInspector.ProfilesPanel.prototype = {
                 group._profilesTreeElement = new WebInspector.ProfileGroupSidebarTreeElement(profile.title);
 
                 // Insert at the same index for the first profile of the group.
-                var index = this.sidebarTree.children.indexOf(group[0]._profilesTreeElement);
-                this.sidebarTree.insertChild(group._profilesTreeElement, index);
+                var index = sidebarParent.children.indexOf(group[0]._profilesTreeElement);
+                sidebarParent.insertChild(group._profilesTreeElement, index);
 
                 // Move the first profile to the group.
                 var selected = group[0]._profilesTreeElement.selected;
-                this.sidebarTree.removeChild(group[0]._profilesTreeElement);
+                sidebarParent.removeChild(group[0]._profilesTreeElement);
                 group._profilesTreeElement.appendChild(group[0]._profilesTreeElement);
                 if (selected) {
                     group[0]._profilesTreeElement.select();

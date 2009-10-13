@@ -1,3 +1,16 @@
+2009-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix same-named profiles grouping in the Profiles panel.
+
+        The tree node re-parenting while adding a new group node was broken.
+         
+        https://bugs.webkit.org/show_bug.cgi?id=30299
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.addProfile):
+
 2009-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
