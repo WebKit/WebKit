@@ -56,6 +56,7 @@ namespace WebCore {
         String m_customErrorMessage;
 
         static bool isValidColorString(const String&);
+        bool isValidEmailAddress(const String&);
     };
 
 } // namespace WebCore

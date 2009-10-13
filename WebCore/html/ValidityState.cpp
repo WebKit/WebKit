@@ -26,6 +26,12 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KURL.h"
+#include "RegularExpression.h"
+#include <wtf/StdLibExtras.h>
+
+#define EMAIL_LOCALPART "[a-z0-9!#$%&'*+/=?^_`{|}~.-]+"
+#define EMAIL_DOMAINPART "[a-z0-9-]+(\\.[a-z0-9-]+)+"
+#define EMAIL_PATTERN EMAIL_LOCALPART "@" EMAIL_DOMAINPART
 
 namespace WebCore {
 
@@ -55,6 +61,19 @@ bool ValidityState::typeMismatch()
         return !HTMLInputElement::formStringToDouble(value, 0);
     case HTMLInputElement::URL:
         return !KURL(KURL(), value).isValid();
+    case HTMLInputElement::EMAIL:
+    {
+        if (!input->multiple())
+            return !isValidEmailAddress(value);
+            
+        Vector<String> email_list;
+        value.split(',', email_list);
+        for (unsigned i = 0; i < email_list.size(); ++i)
+            if (!isValidEmailAddress(email_list[i]))
+                return true;
+
+        return false;
+    }
     default:
         return false;
     }
@@ -93,6 +112,21 @@ bool ValidityState::isValidColorString(const String& value)
     }
     Color color(value);  // This accepts named colors such as "white".
     return color.isValid() && !color.hasAlpha();
+}
+
+bool ValidityState::isValidEmailAddress(const String& email)
+{
+    if (email.isEmpty())
+        return false;
+
+    DEFINE_STATIC_LOCAL(AtomicString, emailPattern, (EMAIL_PATTERN));
+    DEFINE_STATIC_LOCAL(RegularExpression, regExp, (emailPattern, TextCaseInsensitive));
+
+    int matchLength = 0;
+    int emailLength = email.length();
+    int matchOffset = regExp.match(email, 0, &matchLength);
+
+    return matchOffset == 0 && matchLength == emailLength;
 }
 
 } // namespace

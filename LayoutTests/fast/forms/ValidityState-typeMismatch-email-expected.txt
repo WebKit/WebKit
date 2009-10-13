@@ -1,0 +1,47 @@
+This test aims to check for typeMismatch flag with type=email input fields.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS something@something.com is a correct valid email address 
+PASS someone@localhost.localdomain is a correct valid email address 
+PASS someone@127.0.0.1 is a correct valid email address 
+PASS a@b.b is a correct valid email address 
+PASS a/b@domain.com is a correct valid email address 
+PASS {}@domain.com is a correct valid email address 
+PASS ddjk-s-jk@asl-.com is a correct valid email address 
+PASS m*'!%@something.sa is a correct valid email address 
+PASS tu!!7n7.ad##0!!!@company.ca is a correct valid email address 
+PASS %@com.com is a correct valid email address 
+PASS !#$%&'*+/=?^_`{|}~.-@com.com is a correct valid email address 
+PASS .wooly@example.com is a correct valid email address 
+PASS wo..oly@example.com is a correct valid email address 
+PASS someone@do-ma-in.com is a correct valid email address 
+PASS someone@do-.com is a correct valid email address 
+PASS somebody@-.com is a correct valid email address 
+PASS invalid:email@example.com is a correct invalid email address 
+PASS @somewhere.com is a correct invalid email address 
+PASS example.com is a correct invalid email address 
+PASS @@example.com is a correct invalid email address 
+PASS a space@example.com is a correct invalid email address 
+PASS something@ex..ample.com is a correct invalid email address 
+PASS a@c is a correct invalid email address 
+PASS someone@somewhere.com. is a correct invalid email address 
+PASS ""testlah""@example.com is a correct invalid email address 
+PASS "testblah"@example.com is a correct invalid email address 
+PASS someone@somewhere.com@ is a correct invalid email address 
+PASS someone@somewhere_com is a correct invalid email address 
+PASS someone@some:where.com is a correct invalid email address 
+PASS . is a correct invalid email address 
+PASS F/s/f/a@feo+re.com is a correct invalid email address 
+PASS some+long+email+address@some+host-weird-/looking.com is a correct invalid email address 
+PASS someone@somewhere.com,john@doe.com,a@b.c,a/b@c.c,ualla@ualla.127 is a correct valid email address list
+PASS tu!!7n7.ad##0!!!@company.ca,F/s/f/a@feo-re.com,m*'@a.b is a correct valid email address list
+PASS ,,,,,,,,,,, is a correct valid email address list
+PASS someone@somewhere.com,john@doe..com,a@b,a/b@c,ualla@ualla.127 is a correct invalid email address list
+PASS some+long+email+address@some+host:weird-/looking.com,F/s/f/a@feo+re.com,,m*'@'!% is a correct invalid email address list
+PASS ,,,,,,,,, ,, is a correct invalid email address list
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
