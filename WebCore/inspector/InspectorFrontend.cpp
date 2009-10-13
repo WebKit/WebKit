@@ -343,6 +343,14 @@ void InspectorFrontend::attributesUpdated(int id, const ScriptArray& attributes)
     function->call();
 }
 
+void InspectorFrontend::didRemoveNode(int callId, int nodeId)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didRemoveNode"));
+    function->appendArgument(callId);
+    function->appendArgument(nodeId);
+    function->call();
+}
+
 void InspectorFrontend::didGetChildNodes(int callId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetChildNodes"));

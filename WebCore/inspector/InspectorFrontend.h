@@ -120,6 +120,7 @@ namespace WebCore {
         void didGetChildNodes(int callId);
         void didApplyDomChange(int callId, bool success);
         void didGetEventListenersForNode(int callId, int nodeId, ScriptArray& listenersArray);
+        void didRemoveNode(int callId, int nodeId);
 
         void timelineWasEnabled();
         void timelineWasDisabled();

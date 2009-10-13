@@ -184,6 +184,22 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         return element;
     },
+    
+    handleKeyEvent: function(event)
+    {
+        var selectedElement = this.selectedTreeElement;
+
+        if (!selectedElement)
+            return;
+        
+        if (event.keyCode == 8 || event.keyCode == 46) {
+            // Delete or backspace pressed, delete the node.
+            selectedElement.remove();
+            return;
+        }
+        
+        TreeOutline.prototype.handleKeyEvent.call(this, event);
+    },
 
     _onmousedown: function(event)
     {
@@ -827,7 +843,25 @@ WebInspector.ElementsTreeElement.prototype = {
                 return true;
         }
         return false;
+    },
+    
+    remove: function()
+    {
+        var parentElement = this.parent;
+        if (!parentElement)
+            return;
+
+        var self = this;
+        function removeNodeCallback(removedNodeId)
+        {
+            parentElement.removeChild(self);
+        }
+
+        var callId = WebInspector.Callback.wrap(removeNodeCallback);
+        InspectorController.removeNode(callId, this.representedObject.id);
     }
 }
 
 WebInspector.ElementsTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+WebInspector.didRemoveNode = WebInspector.Callback.processCallback;

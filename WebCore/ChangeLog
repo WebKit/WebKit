@@ -2,6 +2,28 @@
 
         Reviewed by Timothy Hatcher.
 
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30337>.
+        Web Inspector: Should be able to delete nodes from the Elements Tree.
+        
+        When the delete key is pressed and a element is selected in the tree,
+        the element should be deleted from the Elements Tree and the DOM.
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::removeNode):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didRemoveNode):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodes):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.handleKeyEvent):
+
+2009-10-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
         Fix REGRESSION(49479): Mouseover on resources graph doesn't show timings.
         
         Set pointer-events: none on the new overlay so mouseover events are passed

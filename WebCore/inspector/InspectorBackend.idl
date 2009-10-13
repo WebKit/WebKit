@@ -109,6 +109,7 @@ module core {
         void setTextNodeValue(in long callId, in long nodeId, in DOMString value);
         void getEventListenersForNode(in long callId, in long nodeId);
         void copyNode(in long nodeId);
+        void removeNode(in long callId, in long nodeId);
 
         void getCookies(in long callId, in DOMString domain);
         void deleteCookie(in DOMString cookieName, in DOMString domain);

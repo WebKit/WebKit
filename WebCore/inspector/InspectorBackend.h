@@ -137,6 +137,7 @@ public:
     void setTextNodeValue(long callId, long nodeId, const String& value);
     void getEventListenersForNode(long callId, long nodeId);
     void copyNode(long nodeId);
+    void removeNode(long callId, long nodeId);
 
     void getCookies(long callId, const String& domain);
     void deleteCookie(const String& cookieName, const String& domain);
