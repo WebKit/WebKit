@@ -2,6 +2,19 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Add some initial autotests for QWebPage's ErrorPageExtention
+        https://bugs.webkit.org/show_bug.cgi?id=30296
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (ErrorPage::ErrorPage):
+        (ErrorPage::supportsExtension):
+        (ErrorPage::extension):
+        (tst_QWebPage::errorPageExtension):
+
+2009-10-13  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] better handle possible edge cases on qwebframe::requestedUrl use
         https://bugs.webkit.org/show_bug.cgi?id=30216
 

@@ -120,6 +120,7 @@ private slots:
     void consoleOutput();
     void inputMethods();
     void defaultTextEncoding();
+    void errorPageExtension();
 
     void crashTests_LazyInitializationOfMainFrame();
 
@@ -1485,6 +1486,55 @@ void tst_QWebPage::defaultTextEncoding()
     charset = mainFrame->evaluateJavaScript("document.defaultCharset").toString();
     QCOMPARE(charset, QString("utf-8"));
     QCOMPARE(QWebSettings::globalSettings()->defaultTextEncoding(), charset);
+}
+
+class ErrorPage : public QWebPage
+{
+public:
+
+    ErrorPage(QWidget* parent = 0): QWebPage(parent)
+    {
+    }
+
+    virtual bool supportsExtension(Extension extension) const
+    {
+        return extension == ErrorPageExtension;
+    }
+
+    virtual bool extension(Extension, const ExtensionOption* option, ExtensionReturn* output)
+    {
+        const ErrorPageExtensionOption* info = static_cast<const ErrorPageExtensionOption*>(option);
+        ErrorPageExtensionReturn* errorPage = static_cast<ErrorPageExtensionReturn*>(output);
+
+        if (info->frame == mainFrame()) {
+            errorPage->content = "data:text/html,error";
+            return true;
+        }
+
+        return false;
+    }
+};
+
+void tst_QWebPage::errorPageExtension()
+{
+    ErrorPage* page = new ErrorPage;
+    m_view->setPage(page);
+
+    QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
+
+    page->mainFrame()->load(QUrl("qrc:///frametest/index.html"));
+    QTRY_COMPARE(spyLoadFinished.count(), 1);
+
+    page->mainFrame()->setUrl(QUrl("http://non.existent/url"));
+    QTest::qWait(2000);
+    QTRY_COMPARE(spyLoadFinished.count(), 2);
+    QCOMPARE(page->mainFrame()->toPlainText(), QString("data:text/html,error"));
+    QCOMPARE(page->history()->count(), 2);
+    QCOMPARE(page->history()->currentItem().url(), QUrl("http://non.existent/url"));
+    QCOMPARE(page->history()->canGoBack(), true);
+    QCOMPARE(page->history()->canGoForward(), false);
+
+    m_view->setPage(0);
 }
 
 void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()
