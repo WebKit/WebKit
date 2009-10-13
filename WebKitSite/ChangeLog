@@ -1,3 +1,14 @@
+2009-10-11  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Change <a name> to id="" to fix styling problems
+        https://bugs.webkit.org/show_bug.cgi?id=30283
+
+        This prevents the headings from being styled like links.
+
+        * coding/contributing.html:
+
 2009-10-08  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Darin Adler.
