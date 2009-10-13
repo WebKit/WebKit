@@ -86,6 +86,13 @@
 
 2009-10-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Temporary debugging changes to figure out why the webgl tests are crashing on the build bot.
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
+2009-10-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Visibility:visible inside a compositing layer doesn't make the element visible
