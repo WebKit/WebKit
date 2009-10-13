@@ -1,3 +1,16 @@
+2009-10-12  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix issue caretRangeFromPoint() returns wrong result for a zoomed and 
+        scrolled page.
+        https://bugs.webkit.org/show_bug.cgi?id=30034
+
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html:
+        * fast/dom/elementFromPoint-relative-to-viewport-expected.txt:
+        * fast/dom/elementFromPoint-relative-to-viewport.html:
+
 2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.  Fix 4 layout test failures by webkit r49488

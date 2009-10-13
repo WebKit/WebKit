@@ -39,7 +39,7 @@
 
     description('This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.');
 
-    function testElement(element, label, offsetX, offsetY) {
+    function testElement(element, label, offsetX, offsetY, zoomOrNot) {
         for (var i = 0; i < 25; ++i) {
             var item = document.createElement("div");
             item.className = "testItem";
@@ -71,25 +71,34 @@
         window[unscrolledBox] = getFromPoint(0, 0);
 
         // Test scrolling down
-        window[scrolledDownBox] = getFromPoint(0, 50);
+        window[scrolledDownBox] = getFromPoint(0, 20);
 
         // Test scrolling right
         window[scrolledRightBox] = getFromPoint(50, 0);
 
         // Test scrolling down and right
-        window[scrolledDownAndRightBox] = getFromPoint(50, 50);
+        window[scrolledDownAndRightBox] = getFromPoint(50, 20);
 
         shouldBe(unscrolledBox, "'0'");
-        shouldBe(scrolledDownBox, "'15'");
-        shouldBe(scrolledRightBox, "'3'");
-        shouldBe(scrolledDownAndRightBox, "'18'");
+        shouldBe(scrolledDownBox, "'5'");
+        if (zoomOrNot == "zoom") {
+            shouldBe(scrolledRightBox, "'2'");
+            shouldBe(scrolledDownAndRightBox, "'7'");
+        } else {
+            shouldBe(scrolledRightBox, "'3'");
+            shouldBe(scrolledDownAndRightBox, "'8'");
+        }
     }
 
     var elementInitial = document.getElementById('test-initial');
     var elementOffscreen = document.getElementById('test-offscreen');
     var offset = elementInitial.getBoundingClientRect();
-    testElement(elementInitial, "Initial", offset.left, offset.top);
-    testElement(elementOffscreen, "Offscreen", offset.left, offset.top + 1100);
+    testElement(elementInitial, "Initial", offset.left, offset.top, "none");
+    testElement(elementOffscreen, "Offscreen", offset.left, offset.top + 1100, "none");
+    
+    eventSender.zoomPageOut();
+    testElement(elementInitial, "Initial", offset.left, offset.top, "zoom");
+    
     
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');

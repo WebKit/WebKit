@@ -31,7 +31,7 @@
     var elementTop = document.getElementById('test-top'),
         elementBottom = document.getElementById('test-bottom');
 
-    function testsWithBaseline(baselinePos, expectedContainer) {
+    function testsWithBaseline(baselinePos, expectedContainer, zoomOrNot) {
         function test(expectedOffset, scrollByX, scrollByY) {
             var hitPosition = { x: 15, y: 15 },
                 range,
@@ -64,10 +64,18 @@
             window.scrollTo(baselinePos.x + x, baselinePos.y + y);
         }
 
-        test(0, 0, 0);
-        test(12, 0, 25);
-        test(2, 25, 0);
-        test(14, 25, 25);
+        if (zoomOrNot == "zoom") {
+            test(1, 0, 0);
+            test(7, 0, 25);
+            test(3, 50, 0);
+            test(9, 50, 25);
+        } else {
+            test(0, 0, 0);
+            test(12, 0, 25);
+            test(2, 25, 0);
+            test(14, 25, 25);
+        }
+
         debug(" ");
     }
 
@@ -78,10 +86,13 @@
         bottomBaseline = { x: rectBottom.left - 8, y: rectBottom.top - 8 };
 
      // Testing inside initial containing block (top left)
-    testsWithBaseline(topBaseline, elementTop.firstChild);
+    testsWithBaseline(topBaseline, elementTop.firstChild, "none");
 
     // Testing outside initial containing block (mid-page)
-    testsWithBaseline(bottomBaseline, elementBottom.firstChild);
+    testsWithBaseline(bottomBaseline, elementBottom.firstChild, "none");
+
+    eventSender.zoomPageOut();
+    testsWithBaseline(topBaseline, elementTop.firstChild, "zoom");
 
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');

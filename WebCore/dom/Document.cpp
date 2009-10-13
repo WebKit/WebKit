@@ -943,7 +943,7 @@ Element* Document::elementFromPoint(int x, int y) const
         return 0;
 
     float zoomFactor = frame->pageZoomFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor, y * zoomFactor)) + view()->scrollOffset();
+    IntPoint point = roundedIntPoint(FloatPoint((x + view()->scrollX()) * zoomFactor, (y + view()->scrollY()) * zoomFactor));
 
     if (!frameView->visibleContentRect().contains(point))
         return 0;
@@ -973,7 +973,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
         return 0;
 
     float zoomFactor = frame->pageZoomFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor, y * zoomFactor)) + view()->scrollOffset();
+    IntPoint point = roundedIntPoint(FloatPoint((x + view()->scrollX()) * zoomFactor, (y + view()->scrollY()) * zoomFactor));
 
     if (!frameView->visibleContentRect().contains(point))
         return 0;
