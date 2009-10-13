@@ -82,6 +82,16 @@ namespace WebCore {
 
     void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedAttribute*, size_t attributeCount);
 
+    inline void configureAttribute(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute& attribute)
+    {
+        (attribute.onProto ? proto : instance)->SetAccessor(v8::String::New(attribute.name),
+            attribute.getter,
+            attribute.setter,
+            attribute.data == V8ClassIndex::INVALID_CLASS_INDEX ? v8::Handle<v8::Value>() : v8::Integer::New(V8ClassIndex::ToInt(attribute.data)),
+            attribute.settings,
+            attribute.attribute);
+    }
+
     // BatchedConstant translates into calls to Set() for setting up an object's
     // constants. It sets the constant on both the FunctionTemplate and the
     // ObjectTemplate. PropertyAttributes is always ReadOnly.

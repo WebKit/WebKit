@@ -45,6 +45,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
+#include "MediaPlayer.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "ScheduledAction.h"
@@ -233,6 +234,11 @@ ACCESSOR_GETTER(DOMWindowAudio)
 {
     DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     return V8DOMWrapper::getConstructor(V8ClassIndex::AUDIO, window);
+}
+
+ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio)
+{
+    return MediaPlayer::isAvailable();
 }
 
 #endif

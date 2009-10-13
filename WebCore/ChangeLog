@@ -1,3 +1,30 @@
+2009-10-13  Drew Wilson  <atwilson@atwilson-macpro.local>
+
+        Reviewed by Dimitri Glazkov.
+
+        window attributes (like localStorage) that are disabled at runtime are still visible
+        https://bugs.webkit.org/show_bug.cgi?id=30240
+
+        Adding codegen/bindings to support runtime disabling of attributes.
+
+        No new tests (only supported by chrome currently)
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        Refactored the guts of GenerateBatchedAttributeData into a separate GenerateSingleBatchedAttribute with a passed-in indentation level to allow generating a single BatchedAttribute struct.
+        Added support for the EnabledAtRuntime extended attribute, which generates a call to the appropriate XXXXEnabled() API before adding the attribute to the instance.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::batchConfigureAttributes):
+        Refactored attribute setting code into a common inline routine.
+        * bindings/v8/V8Proxy.h:
+        (WebCore::configureAttribute):
+        Inline function which configures a single attribute given a BatchedAttribute struct.
+        * bindings/v8/custom/V8CustomBinding.h:
+        Added (DECLARE_)ACCESSOR_RUNTIME_ENABLER to allow enabling attributes at runtime.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        Added code to enable window.Audio only if MediaPlayer.isAvailable() == true
+        * page/DOMWindow.idl:
+        Added [EnabledAtRuntime] extended attribute to the Audio attribute.
+
 2009-10-13  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adam Barth.
