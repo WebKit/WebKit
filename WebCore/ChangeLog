@@ -1,3 +1,9 @@
+2009-10-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build system fix. Typo in a filename.
+
+        * GNUmakefile.am:
+
 2009-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
