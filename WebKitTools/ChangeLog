@@ -1,3 +1,9 @@
+2009-10-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        No review, just adding self to the list of reviewers.
+
+        * Scripts/modules/committers.py:
+
 2009-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Adam Roben.

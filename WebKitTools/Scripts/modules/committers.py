@@ -119,6 +119,7 @@ reviewers_list = [
     Reviewer("Mark Rowe", "mrowe@apple.com"),
     Reviewer("Nikolas Zimmermann", "zimmermann@kde.org"),
     Reviewer("Oliver Hunt", "oliver@apple.com"),
+    Reviewer("Pavel Feldman", "pfeldman@chromium.org"),
     Reviewer("Sam Weinig", "sam@webkit.org"),
     Reviewer("Simon Fraser", "simon.fraser@apple.com"),
     Reviewer("Simon Hausmann", "hausmann@webkit.org"),
