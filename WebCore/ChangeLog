@@ -1,3 +1,31 @@
+2009-10-13  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Plugins : Remove all traces of winId. Use ownerWidget() instead.
+        
+        This is a bug for two reasons:
+        1. Everytime we use winId(), we end up creating a native widget. This causes an
+        unnecessary copy of contents from the backing store to the native widget.
+        2. Neither windowed nor windowless plugins require the winId of the QWebView or
+        QGraphicsView.
+        
+        Introduce ownerWidget() which returns a QWidget * without creating a native widget
+        (as opposed to QWidget::find(winId)).
+
+       https://bugs.webkit.org/show_bug.cgi?id=30170
+
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepthPerComponent):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QWebPageClient.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::setSharedXEventFields):
+        (WebCore::PluginView::initXEvent):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::platformStart):
+
 2009-10-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build system fix. Typo in a filename.

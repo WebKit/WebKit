@@ -249,15 +249,15 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     return accepted;
 }
 
-void setSharedXEventFields(XEvent* xEvent, QWidget* hostWindow)
+void setSharedXEventFields(XEvent* xEvent, QWidget* ownerWidget)
 {
     xEvent->xany.serial = 0; // we are unaware of the last request processed by X Server
     xEvent->xany.send_event = false;
-    xEvent->xany.display = hostWindow->x11Info().display();
+    xEvent->xany.display = QX11Info::display();
     // NOTE: event->xany.window doesn't always respond to the .window property of other XEvent's
     // but does in the case of KeyPress, KeyRelease, ButtonPress, ButtonRelease, and MotionNotify
     // events; thus, this is right:
-    xEvent->xany.window = hostWindow->window()->handle();
+    xEvent->xany.window = ownerWidget ? ownerWidget->window()->handle() : 0;
 }
 
 void PluginView::initXEvent(XEvent* xEvent)
@@ -265,8 +265,8 @@ void PluginView::initXEvent(XEvent* xEvent)
     memset(xEvent, 0, sizeof(XEvent));
 
     QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-    QWidget* window = QWidget::find(client->winId());
-    setSharedXEventFields(xEvent, window);
+    QWidget* ownerWidget = client ? client->ownerWidget() : 0;
+    setSharedXEventFields(xEvent, ownerWidget);
 }
 
 void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
@@ -577,13 +577,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
     switch (variable) {
     case NPNVxDisplay:
-        if (platformPluginWidget())
-            *(void **)value = platformPluginWidget()->x11Info().display();
-        else {
-            QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-            QWidget* window = QWidget::find(client->winId());
-            *(void **)value = window->x11Info().display();
-        }
+        *(void **)value = QX11Info::display();
         return NPERR_NO_ERROR;
 
     case NPNVxtAppContext:
@@ -628,7 +622,8 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
     case NPNVnetscapeWindow: {
         void* w = reinterpret_cast<void*>(value);
-        *((XID *)w) = m_parentFrame->view()->hostWindow()->platformPageClient()->winId();
+        QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+        *((XID *)w) = client ? client->ownerWidget()->winId() : 0;
         return NPERR_NO_ERROR;
     }
 
@@ -756,7 +751,7 @@ bool PluginView::platformStart()
     if (m_isWindowed) {
         if (m_needsXEmbed) {
             QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-            setPlatformWidget(new PluginContainerQt(this, QWidget::find(client->winId())));
+            setPlatformWidget(new PluginContainerQt(this, client->ownerWidget()));
             // sync our XEmbed container window creation before sending the xid to plugins.
             QApplication::syncX();
         } else {

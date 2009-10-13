@@ -57,7 +57,7 @@ public:
 
     virtual QPalette palette() const = 0;
     virtual int screenNumber() const = 0;
-    virtual WId winId() const = 0;
+    virtual QWidget* ownerWidget() const = 0;
 
     virtual QObject* pluginParent() const = 0;
 

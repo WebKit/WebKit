@@ -62,7 +62,7 @@ int screenDepthPerComponent(Widget* w)
         QWebPageClient* client = w->root()->hostWindow()->platformPageClient();
 
         if (client) {
-            QWidget* view = QWidget::find(client->winId());
+            QWidget* view = client->ownerWidget();
             if (view)
                 return view->depth();
         }
