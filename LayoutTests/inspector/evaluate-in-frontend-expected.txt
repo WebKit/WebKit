@@ -1,0 +1,4 @@
+This tests that layout test can evaluate scripts in the web inspector context.
+
+2 + 2 = 4
+
