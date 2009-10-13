@@ -1,3 +1,28 @@
+2009-10-09  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add support for the beforeload event to frames.  Complete support of the beforeload event by making sure
+        its wrapper gets properly constructed (so that the URL field of the event can be accessed).  Add support
+        for the Objective-C wrapper class as well.
+
+        Added fast/dom/beforeload/frame-before-load.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMEvents.mm:
+        (kitClass):
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEvent::isBeforeLoadEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::isBeforeLoadEvent):
+        * dom/Event.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2009-10-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

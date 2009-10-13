@@ -34,6 +34,8 @@ namespace WebCore {
 
 class BeforeLoadEvent : public Event {
 public:
+    virtual bool isBeforeLoadEvent() const { return true; }
+
     static PassRefPtr<BeforeLoadEvent> create(const String& url)
     {
         return adoptRef(new BeforeLoadEvent(url));

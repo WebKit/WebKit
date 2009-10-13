@@ -31,6 +31,7 @@
 
 #include "Clipboard.h"
 #include "Event.h"
+#include "JSBeforeLoadEvent.h"
 #include "JSClipboard.h"
 #include "JSErrorEvent.h"
 #include "JSKeyboardEvent.h"
@@ -46,6 +47,7 @@
 #include "JSWebKitTransitionEvent.h"
 #include "JSWheelEvent.h"
 #include "JSXMLHttpRequestProgressEvent.h"
+#include "BeforeLoadEvent.h"
 #include "ErrorEvent.h"
 #include "KeyboardEvent.h"
 #include "MessageEvent.h"
@@ -120,7 +122,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, XMLHttpRequestProgressEvent, event);
         else
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ProgressEvent, event);
-    }
+    } else if (event->isBeforeLoadEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, BeforeLoadEvent, event);
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, StorageEvent, event);

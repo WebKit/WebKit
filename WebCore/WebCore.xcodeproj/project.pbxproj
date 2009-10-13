@@ -4310,6 +4310,8 @@
 		BC9462D8107A7B4C00857193 /* BeforeLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */; };
 		BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */; };
 		BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC946347107A936600857193 /* JSBeforeLoadEvent.h */; };
+		BC946EEF107FDBAC00857193 /* DOMBeforeLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC946EED107FDBAC00857193 /* DOMBeforeLoadEvent.h */; };
+		BC946EF0107FDBAC00857193 /* DOMBeforeLoadEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC946EEE107FDBAC00857193 /* DOMBeforeLoadEvent.mm */; };
 		BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */; };
 		BC94D14E0C275C68006BC617 /* JSHistory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC94D14C0C275C68006BC617 /* JSHistory.cpp */; };
 		BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D14D0C275C68006BC617 /* JSHistory.h */; };
@@ -9430,6 +9432,8 @@
 		BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeforeLoadEvent.h; sourceTree = "<group>"; };
 		BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBeforeLoadEvent.cpp; sourceTree = "<group>"; };
 		BC946347107A936600857193 /* JSBeforeLoadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBeforeLoadEvent.h; sourceTree = "<group>"; };
+		BC946EED107FDBAC00857193 /* DOMBeforeLoadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBeforeLoadEvent.h; sourceTree = "<group>"; };
+		BC946EEE107FDBAC00857193 /* DOMBeforeLoadEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMBeforeLoadEvent.mm; sourceTree = "<group>"; };
 		BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScreenMac.mm; sourceTree = "<group>"; };
 		BC94D14C0C275C68006BC617 /* JSHistory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHistory.cpp; sourceTree = "<group>"; };
 		BC94D14D0C275C68006BC617 /* JSHistory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHistory.h; sourceTree = "<group>"; };
@@ -11819,6 +11823,8 @@
 		85AFA7AB0AAF3BB000E84305 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				BC946EED107FDBAC00857193 /* DOMBeforeLoadEvent.h */,
+				BC946EEE107FDBAC00857193 /* DOMBeforeLoadEvent.mm */,
 				85AFA8200AAF528A00E84305 /* DOMEvent.h */,
 				85AFA8210AAF528A00E84305 /* DOMEvent.mm */,
 				85D2AD670AB1A40A00C313EA /* DOMEventListener.h */,
@@ -18024,6 +18030,7 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				BC946EEF107FDBAC00857193 /* DOMBeforeLoadEvent.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				A7D20F63107F406900A80392 /* JSCanvasActiveInfo.h in Headers */,
 				A7D20F6D107F438B00A80392 /* CanvasActiveInfo.h in Headers */,
@@ -20154,6 +20161,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				BC946EF0107FDBAC00857193 /* DOMBeforeLoadEvent.mm in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */,
 				492273A31083B3B100EE5C84 /* JSCanvasArrayCustom.cpp in Sources */,

@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+</script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+</script>
+
+<iframe style="display:none" onbeforeload="print('PASS', 'green'); return event.url != 'http://www.daringfireball.net/';" onload="print('FAIL', 'red');" src="http://www.daringfireball.net/">
+</iframe>
+
+</body>
+</html>

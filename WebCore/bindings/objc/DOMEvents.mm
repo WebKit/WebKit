@@ -28,6 +28,7 @@
 #import "config.h"
 #import "DOMEventInternal.h"
 
+#import "DOMBeforeLoadEvent.h"
 #import "DOMKeyboardEvent.h"
 #import "DOMMessageEvent.h"
 #import "DOMMouseEvent.h"
@@ -67,5 +68,7 @@ Class kitClass(WebCore::Event* impl)
         return [DOMMessageEvent class];
     if (impl->isProgressEvent())
         return [DOMProgressEvent class];
+    if (impl->isBeforeLoadEvent())
+        return [DOMBeforeLoadEvent class];
     return [DOMEvent class];
 }
