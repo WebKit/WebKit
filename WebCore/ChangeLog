@@ -1,3 +1,19 @@
+2009-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30345
+        HTTP tests for credential handling fail on Tiger
+
+        We cannot prevent NSURLConnection from doing its credentil handling on Tiger anyway; so
+        let it do its work without intervention. Once again, we pass explicitly passed credentials
+        in URL, fixing regressions from Safari 3.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+
 2009-10-13  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by Adam Barth.

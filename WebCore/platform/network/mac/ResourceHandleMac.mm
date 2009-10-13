@@ -119,6 +119,7 @@ public:
     }
 };
 
+#ifndef BUILDING_ON_TIGER
 static String encodeBasicAuthorization(const String& user, const String& password)
 {
     CString unencodedString = (user + ":" + password).utf8();
@@ -128,6 +129,7 @@ static String encodeBasicAuthorization(const String& user, const String& passwor
     base64Encode(unencoded, encoded);
     return String(encoded.data(), encoded.size());
 }
+#endif
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -175,14 +177,19 @@ bool ResourceHandle::start(Frame* frame)
     } else 
         delegate = ResourceHandle::delegate();
 
-    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !d->m_request.url().protocolInHTTPFamily()) {
+    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty())
+#ifndef BUILDING_ON_TIGER
+     && !d->m_request.url().protocolInHTTPFamily() // On Tiger, always pass credentials in URL, so that they get stored even if the request gets cancelled right away.
+#endif
+    ) {
         // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
         KURL urlWithCredentials(d->m_request.url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPass(d->m_pass);
         d->m_request.setURL(urlWithCredentials);
     }
-    
+
+#ifndef BUILDING_ON_TIGER
     if ((!client() || client()->shouldUseCredentialStorage(this)) && d->m_request.url().protocolInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
@@ -201,6 +208,7 @@ bool ResourceHandle::start(Frame* frame)
         String authHeader = "Basic " + encodeBasicAuthorization(d->m_initialCredential.user(), d->m_initialCredential.password());
         d->m_request.addHTTPHeaderField("Authorization", authHeader);
     }
+#endif
 
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         associateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream], this);
@@ -491,6 +499,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         return;
     }
 
+#ifndef BUILDING_ON_TIGER
     if (!challenge.previousFailureCount() && (!client() || client()->shouldUseCredentialStorage(this))) {
         Credential credential = CredentialStorage::get(challenge.protectionSpace());
         if (!credential.isEmpty() && credential != d->m_initialCredential) {
@@ -499,6 +508,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             return;
         }
     }
+#endif
 
     d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
     NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:d->m_currentMacChallenge 
@@ -530,11 +540,6 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     if (credential.persistence() == CredentialPersistenceNone) {
         // NSURLCredentialPersistenceNone doesn't work on Tiger, so we have to use session persistence.
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceForSession);
-        KURL urlToStore;
-        if (challenge.failureResponse().httpStatusCode() == 401)
-            urlToStore = d->m_request.url();
-        CredentialStorage::set(webCredential, core([d->m_currentMacChallenge protectionSpace]), urlToStore);
-        
         [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
 #else
