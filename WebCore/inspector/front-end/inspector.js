@@ -486,7 +486,14 @@ window.addEventListener("load", windowLoaded, false);
 WebInspector.dispatch = function() {
     var methodName = arguments[0];
     var parameters = Array.prototype.slice.call(arguments, 1);
-    WebInspector[methodName].apply(this, parameters);
+
+    // We'd like to enforce asynchronous interaction between the inspector controller and the frontend.
+    // This is important to LayoutTests.
+    function delayDispatch()
+    {
+        WebInspector[methodName].apply(WebInspector, parameters);
+    }
+    setTimeout(delayDispatch, 0);
 }
 
 WebInspector.windowUnload = function(event)
