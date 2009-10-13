@@ -1,3 +1,20 @@
+2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        JavaScript bindings of WebSocket addEventListener/removeEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=29841
+
+        Test: fast/websockets/websocket-event-target.html
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::addEventListener):
+        (WebCore::JSWebSocket::removeEventListener):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * websockets/WebSocket.idl:
+
 2009-10-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

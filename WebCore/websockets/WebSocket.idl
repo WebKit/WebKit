@@ -55,13 +55,13 @@ module websockets {
         void close();
 
         // EventTarget interface
-        // [Custom] void addEventListener(in DOMString type,
-        //   in EventListener listener,
-        //   in boolean useCapture);
-        // [Custom] void removeEventListener(in DOMString type,
-        //   in EventListener listener,
-        //   in boolean useCapture);
-        // boolean dispatchEvent(in Event evt)
-        //   raises(EventException);
+        [Custom] void addEventListener(in DOMString type,
+                                       in EventListener listener,
+                                       in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type,
+                                          in EventListener listener,
+                                          in boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
     };
 }

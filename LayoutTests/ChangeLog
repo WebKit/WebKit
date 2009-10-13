@@ -1,3 +1,18 @@
+2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Add a test to verify WebSocket's EventTarget methods.
+        https://bugs.webkit.org/show_bug.cgi?id=29841
+
+        * fast/websockets/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/canvas/script-tests/TEMPLATE.html.
+        * fast/websockets/script-tests/websocket-event-target.js: Added.
+        (openListener):
+        (messageListener):
+        (closeListener):
+        * fast/websockets/websocket-event-target-expected.txt: Added.
+        * fast/websockets/websocket-event-target.html: Added.
+
 2009-10-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

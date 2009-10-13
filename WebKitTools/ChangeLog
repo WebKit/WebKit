@@ -1,3 +1,15 @@
+2009-10-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Enable experimentalWebSocket in DumpRenderTree for LayoutTest.
+        https://bugs.webkit.org/show_bug.cgi?id=29841
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-10-12  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

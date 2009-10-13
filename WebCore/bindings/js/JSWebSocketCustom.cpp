@@ -36,6 +36,7 @@
 #include "JSWebSocket.h"
 
 #include "KURL.h"
+#include "JSEventListener.h"
 #include "WebSocket.h"
 #include "NotImplemented.h"
 #include <runtime/Error.h>
@@ -59,7 +60,33 @@ JSValue JSWebSocket::send(ExecState* exec, const ArgList& args)
     return ret;
 }
 
-// FIXME: implement addEventListener/removeEventListener.
+JSValue JSWebSocket::addEventListener(ExecState* exec, const ArgList& args)
+{
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
+        return jsUndefined();
+
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
+        return jsUndefined();
+
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false), args.at(2).toBoolean(exec));
+    return jsUndefined();
+}
+
+JSValue JSWebSocket::removeEventListener(ExecState* exec, const ArgList& args)
+{
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
+        return jsUndefined();
+
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
+        return jsUndefined();
+
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    return jsUndefined();
+}
 
 }  // namespace WebCore
 

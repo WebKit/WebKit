@@ -627,6 +627,8 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR(WebSocketOnmessage);
         DECLARE_PROPERTY_ACCESSOR(WebSocketOnclose);
         DECLARE_CALLBACK(WebSocketConstructor);
+        DECLARE_CALLBACK(WebSocketAddEventListener);
+        DECLARE_CALLBACK(WebSocketRemoveEventListener);
         DECLARE_CALLBACK(WebSocketSend);
         DECLARE_CALLBACK(WebSocketClose);
 #endif
