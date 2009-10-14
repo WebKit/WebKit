@@ -1,11 +1,7 @@
 <script>
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
-</script>
-<p>This tests copy/delete/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
-<iframe src="../resources/contenteditable-iframe-src.html"></iframe>
 
-<script>
 function runTest() {
     var frame = frames[0];
     var sel = frame.getSelection();
@@ -20,7 +16,9 @@ function runTest() {
     if (window.layoutTestController)
         window.layoutTestController.notifyDone();
 }
+
 if (window.layoutTestController)
     window.layoutTestController.waitUntilDone();
-window.setTimeout(runTest, 100);
 </script>
+<p>This tests copy/delete/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

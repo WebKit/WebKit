@@ -1,11 +1,7 @@
 <script>
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
-</script>
-<p>This tests cut/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
-<iframe src="../resources/contenteditable-iframe-src.html"></iframe>
 
-<script>
 function foo() {
     var frame = frames[0];
     var sel = frame.getSelection();
@@ -21,5 +17,7 @@ function foo() {
 }
 if (window.layoutTestController)
     window.layoutTestController.waitUntilDone();
-window.setTimeout(foo, 100);
 </script>
+
+<p>This tests cut/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="foo();"></iframe>

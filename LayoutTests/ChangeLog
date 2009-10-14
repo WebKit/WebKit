@@ -1,3 +1,22 @@
+2009-10-13  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30269
+        Use onload to detect iframe load, rather than setTimeout.
+        This will give more consistent test results and hopefully faster run times.
+
+        * editing/execCommand/paste-1.html:
+        * editing/execCommand/paste-2.html:
+        * editing/pasteboard/subframe-dragndrop-1.html:
+        * editing/selection/4776665.html:
+        * editing/selection/4975120.html:
+        * editing/selection/5136696.html:
+        * editing/selection/drag-to-contenteditable-iframe.html:
+        * platform/mac/editing/selection/5136696-expected.txt: Rebaselined because moving a script tag eliminated an empty text node.
+        * platform/qt/editing/selection/5136696-expected.txt: Rebaselined because moving a script tag eliminated an empty text node.
+        * platform/win/editing/selection/5136696-expected.txt: Rebaselined because moving a script tag eliminated an empty text node.
+
 2009-10-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

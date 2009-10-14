@@ -1,8 +1,7 @@
-<p>This tests to make sure that a selection in one from isn't cleared when focusing a node in a different frame.</p>
-<iframe border="1" src="../resources/contenteditable-iframe-src.html"></iframe><br>
-<input type="text" id="input" value="This text field should be focused." size="30">
-
 <script>
+if (window.layoutTestController)
+    window.layoutTestController.waitUntilDone();
+    
 function runTest() {
     frame = frames[0];
     frame.focus();
@@ -14,7 +13,8 @@ function runTest() {
     if (window.layoutTestController)
         window.layoutTestController.notifyDone();
 }
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
-window.setTimeout(runTest, 200);
 </script>
+<p>This tests to make sure that a selection in one from isn't cleared when focusing a node in a different frame.</p>
+<iframe border="1" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe><br>
+<input type="text" id="input" value="This text field should be focused." size="30">
+

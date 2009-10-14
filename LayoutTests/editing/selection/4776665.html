@@ -1,17 +1,9 @@
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
      layoutTestController.dumpEditingCallbacks();
-</script>
-<p>This tests for a caret painting bug.  You should not see a caret in the editable subframe below.</p>
-<iframe src="../resources/contenteditable-iframe-src.html"></iframe>
-
-<script>
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+     window.layoutTestController.waitUntilDone();
+}
     
-// Wait for the frame to load.
-window.setTimeout(runTest, 200);
-
 function runTest() {
     var frame = frames[0];
     var doc = frame.document;
@@ -22,3 +14,5 @@ function runTest() {
         window.layoutTestController.notifyDone();
 }
 </script>
+<p>This tests for a caret painting bug.  You should not see a caret in the editable subframe below.</p>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

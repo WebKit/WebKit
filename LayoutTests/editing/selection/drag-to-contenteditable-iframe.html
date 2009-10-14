@@ -1,11 +1,12 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
      layoutTestController.dumpEditingCallbacks();
-</script>
+     layoutTestController.waitUntilDone();
+}
 
-<script>
+var loadedResources = 0;
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
@@ -15,11 +16,12 @@ function log(message) {
     li.appendChild(text);
 }
 
-function runTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-    // Let the subframe come into being.
-    window.setTimeout(step2, 100);
+function runTest() {     
+   // We need to wait for both the image and the iframe to load.
+   loadedResources++;
+   if (loadedResources == 2) {
+     step2();
+   }
 }
 
 function step2() 
@@ -53,9 +55,8 @@ function step2()
 
 <body style="padding:0; margin:0">  
 
-<iframe id="frame" style="width: 200px; height: 200px; border: 4px solid black;" src="../resources/contenteditable-iframe-src.html"></iframe>
-<img id="dragme" src="../resources/abe.png">
+<iframe id="frame" style="width: 200px; height: 200px; border: 4px solid black;" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>
+<img id="dragme" src="../resources/abe.png" onload="runTest();">
 
 <ul id="console"></ul>
-<script>runTest();</script>
 </body>

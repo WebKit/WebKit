@@ -1,11 +1,7 @@
 <script>
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
-</script>
-<body style="margin: 0px; padding: 0px;">
-<iframe style="margin: 0; padding: 0; height: 300px; width: 300px;" src="../resources/contenteditable-iframe-src.html"></iframe>
-<p>This test uses the eventSender to do drag and drop. To run it manually, drag the word selected in the above subframe and drop it after 'baz'.  The result should be 'foo baz bar'.</p>
-<script>
+     
 function runTest() {
     var frame = frames[0];
     var doc = frame.document;
@@ -41,8 +37,9 @@ function runTest() {
     }
 }
 if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
-// Give the subframe a moment to load.
-window.setTimeout(runTest, 100);
+    window.layoutTestController.waitUntilDone();         
 </script>
+<body style="margin: 0px; padding: 0px;">
+<iframe style="margin: 0; padding: 0; height: 300px; width: 300px;" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>
+<p>This test uses the eventSender to do drag and drop. To run it manually, drag the word selected in the above subframe and drop it after 'baz'.  The result should be 'foo baz bar'.</p>
 </body>
