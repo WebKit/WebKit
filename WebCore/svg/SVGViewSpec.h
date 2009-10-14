@@ -1,8 +1,6 @@
 /*
     Copyright (C) 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -53,13 +51,13 @@ namespace WebCore {
         String viewTargetString() const { return m_viewTargetString; }
         SVGElement* viewTarget() const;
 
-        virtual const SVGElement* contextElement() const;
+        const SVGElement* contextElement() const;
 
     private:
         // SVGFitToViewBox
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
- 
+        ANIMATED_PROPERTY_DECLARATIONS(SVGViewSpec, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGViewSpec, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+
         mutable RefPtr<SVGTransformList> m_transform;
         const SVGSVGElement* m_contextElement;
         String m_viewTargetString;

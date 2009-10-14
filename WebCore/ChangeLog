@@ -1,3 +1,78 @@
+2009-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by George Staikos.
+
+        Kill virtual contextElement() method spread all over SVG code
+        https://bugs.webkit.org/show_bug.cgi?id=30183
+
+        Remove virtual contextElement() function from all SVG*Element classes, as all animated properties live in the
+        SVG*Element classes now instead of the SVGFitToViewBox / SVGURIReference / SVGExternalResourcesRequired
+        subclasses. This is a first step to working animVal support. More patches will follow that depend on this change.
+
+        Remove "This file is part of the KDE project" from several files, change my old mail adress wildfox -> zimmermann,
+        and remove vim modelines on all files I touched. No change in functionality, thus no new tests.
+
+        * svg/SVGAElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGAltGlyphElement.h: Remove virtual contextElement() method.
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::::synchronize):
+        (WebCore::::startAnimation):
+        (WebCore::::stopAnimation):
+        * svg/SVGAnimationElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGCircleElement.h: Ditto.
+        * svg/SVGClipPathElement.h: Ditto.
+        * svg/SVGCursorElement.h: Ditto.
+        * svg/SVGDefsElement.h: Ditto.
+        * svg/SVGEllipseElement.h: Ditto.
+        * svg/SVGExternalResourcesRequired.h: Remove pure-virtual contextElement() method.
+        * svg/SVGFEImageElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGFELightElement.h: Remove virtual contextElement() method.
+        * svg/SVGFEMergeNodeElement.h: Ditto.
+        * svg/SVGFilterElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGFilterPrimitiveStandardAttributes.h: Remove virtual contextElement() method.
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox): Add Document* parameter - we used to fetch the Document pointer from the context element.
+        (WebCore::SVGFitToViewBox::parseMappedAttribute): Ditto.
+        * svg/SVGFitToViewBox.h: Remove pure-virtual contextElement() method.
+        * svg/SVGFontElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGForeignObjectElement.h: Ditto.
+        * svg/SVGGElement.h: Ditto.
+        * svg/SVGGradientElement.h: Ditto.
+        * svg/SVGImageElement.h: Ditto.
+        * svg/SVGLineElement.h: Ditto.
+        * svg/SVGMPathElement.h: Ditto. Fix license indention.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseMappedAttribute): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        * svg/SVGMarkerElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGMaskElement.h: Ditto.
+        * svg/SVGPathElement.h: Ditto.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        * svg/SVGPatternElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::updateAnimatedSVGAttribute): synchronizeProperty<...>() has been renamed to PropertySynchronizer<...>::synchronize().
+        * svg/SVGPolyElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGRectElement.h: Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        * svg/SVGSVGElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGScriptElement.h: Ditto.
+        * svg/SVGSwitchElement.h: Ditto.
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::parseMappedAttribute): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        * svg/SVGSymbolElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGTRefElement.h: Remove virtual contextElement() method.
+        * svg/SVGTextContentElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGTextPathElement.h: Remove virtual contextElement() method.
+        * svg/SVGUseElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseMappedAttribute): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        * svg/SVGViewElement.h: Remove virtual contextElement() method. Change OwnerType of ANIMATED_* macros to this class.
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::setViewBoxString): Pass document() to SVGFitToViewBox::parseMappedAttribute().
+        (WebCore::SVGViewSpec::parseViewSpec): Ditto.
+        * svg/SVGViewSpec.h: Devirtualize contextElement() method, it's the only place where contextElement() remains needed.
+
 2009-10-14  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -49,9 +47,6 @@ namespace WebCore {
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
         virtual bool build(SVGResourceFilter*);
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGNames::feImageTagString, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
@@ -59,7 +54,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 

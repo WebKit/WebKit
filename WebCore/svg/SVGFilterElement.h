@@ -3,8 +3,6 @@
     Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -51,9 +49,6 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::filterUnitsAttrString, int, FilterUnits, filterUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::primitiveUnitsAttrString, int, PrimitiveUnits, primitiveUnits)
@@ -68,7 +63,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 

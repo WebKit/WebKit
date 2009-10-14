@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) Research In Motion Limited 2009. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -62,8 +63,8 @@ namespace WebCore {
     struct IsDerivedFromSVGElement;
 
     // Helper template used for synchronizing SVG <-> XML properties
-    template<typename OwnerElement, typename DecoratedType>
-    void synchronizeProperty(const OwnerElement* ownerElement, const QualifiedName& attributeName, DecoratedType baseValue);
+    template<typename OwnerType, typename DecoratedType, bool isDerivedFromSVGElement>
+    struct PropertySynchronizer;
 
     // Abstract base class
     class SVGAnimatedPropertyBase : public Noncopyable {
@@ -343,7 +344,7 @@ namespace WebCore {
         if (!m_value.needsSynchronization()) 
             return; 
 
-        synchronizeProperty<OwnerElement, DecoratedType>(ownerElement(), m_attributeName, baseValue());
+        PropertySynchronizer<OwnerElement, DecoratedType, IsDerivedFromSVGElement<OwnerType>::value>::synchronize(ownerElement(), m_attributeName, baseValue());
         m_value.setSynchronized(); 
     }
 
@@ -351,8 +352,7 @@ namespace WebCore {
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::startAnimation() const
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
-        if (extensions) {
+        if (SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions()) {
             ASSERT(!extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             extensions->setBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier, m_value);
         }
@@ -362,8 +362,7 @@ namespace WebCore {
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::stopAnimation()
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
-        if (extensions) {
+        if (SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions()) {
             ASSERT(extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             setValue(extensions->baseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             extensions->removeBaseValue<AnimatedType>(ownerElement, m_attributeIdentifier);
@@ -406,39 +405,37 @@ namespace WebCore {
         static const bool value = true;
     };
 
-    class SVGExternalResourcesRequired;
+    class SVGViewSpec;
     template<>
-    struct IsDerivedFromSVGElement<SVGExternalResourcesRequired> : Noncopyable {
+    struct IsDerivedFromSVGElement<SVGViewSpec> : Noncopyable {
         static const bool value = false;
     };
 
-    class SVGFitToViewBox;
-    template<>
-    struct IsDerivedFromSVGElement<SVGFitToViewBox> : Noncopyable {
-        static const bool value = false;
-    };
-
-    class SVGURIReference;
-    template<>
-    struct IsDerivedFromSVGElement<SVGURIReference> : Noncopyable {
-        static const bool value = false;
-    };
-
-    // Central function handling the main SVG<->XML synchronization part.
+    // PropertySynchronizer implementation
     template<typename OwnerElement, typename DecoratedType>
-    void synchronizeProperty(const OwnerElement* ownerElement, const QualifiedName& attributeName, DecoratedType baseValue)
-    {
-        AtomicString value(SVGAnimatedTypeValue<DecoratedType>::toString(baseValue));
+    struct PropertySynchronizer<OwnerElement, DecoratedType, true> : Noncopyable {
+        static void synchronize(const OwnerElement* ownerElement, const QualifiedName& attributeName, DecoratedType baseValue)
+        {
+            AtomicString value(SVGAnimatedTypeValue<DecoratedType>::toString(baseValue));
 
-        NamedNodeMap* namedAttrMap = ownerElement->attributes(false); 
-        Attribute* old = namedAttrMap->getAttributeItem(attributeName);
-        if (old && value.isNull()) 
-            namedAttrMap->removeAttribute(old->name()); 
-        else if (!old && !value.isNull()) 
-            namedAttrMap->addAttribute(const_cast<OwnerElement*>(ownerElement)->createAttribute(attributeName, value));
-        else if (old && !value.isNull()) 
-            old->setValue(value); 
-    }
+            NamedNodeMap* namedAttrMap = ownerElement->attributes(false); 
+            Attribute* old = namedAttrMap->getAttributeItem(attributeName);
+            if (old && value.isNull()) 
+                namedAttrMap->removeAttribute(old->name()); 
+            else if (!old && !value.isNull()) 
+                namedAttrMap->addAttribute(const_cast<OwnerElement*>(ownerElement)->createAttribute(attributeName, value));
+            else if (old && !value.isNull()) 
+                old->setValue(value); 
+        }
+    };
+
+    template<typename OwnerElement, typename DecoratedType>
+    struct PropertySynchronizer<OwnerElement, DecoratedType, false> : Noncopyable {
+        static void synchronize(const OwnerElement*, const QualifiedName&, DecoratedType)
+        {
+            // no-op, for types not inheriting from Element, thus nothing to synchronize
+        }
+    };
 
     // Helper macro used to register animated properties within SVG* classes
     #define ANIMATED_PROPERTY_DECLARATIONS(OwnerType, ElementTag, AttributeTag, AnimatedType, UpperProperty, LowerProperty) \
@@ -451,8 +448,7 @@ namespace WebCore {
         void set##UpperProperty(DecoratedTypeFor##UpperProperty type) { m_##LowerProperty.setValue(type); } \
         DecoratedTypeFor##UpperProperty LowerProperty##BaseValue() const { return m_##LowerProperty.baseValue(); } \
         void set##UpperProperty##BaseValue(DecoratedTypeFor##UpperProperty type) { m_##LowerProperty.setBaseValue(type); } \
-        PassRefPtr<SVGAnimatedProperty##UpperProperty::TearOff> LowerProperty##Animated() const { return m_##LowerProperty.animatedTearOff(); } \
-        void synchronize##UpperProperty() const { m_##LowerProperty.synchronize(); }
+        PassRefPtr<SVGAnimatedProperty##UpperProperty::TearOff> LowerProperty##Animated() const { return m_##LowerProperty.animatedTearOff(); }
 
 };
 

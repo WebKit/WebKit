@@ -64,7 +64,7 @@ void SVGViewElement::parseMappedAttribute(MappedAttribute* attr)
         viewTarget()->reset(attr->value());
     else {
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr)
-           || SVGFitToViewBox::parseMappedAttribute(attr)
+           || SVGFitToViewBox::parseMappedAttribute(document(), attr)
            || SVGZoomAndPan::parseMappedAttribute(attr))
             return;
 

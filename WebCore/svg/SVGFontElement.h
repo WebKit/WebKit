@@ -47,15 +47,12 @@ namespace WebCore {
 
         SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
+    private:
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFontElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 
-    private:
         void ensureGlyphCache() const;
 
         typedef Vector<SVGHorizontalKerningPair> KerningPairVector;

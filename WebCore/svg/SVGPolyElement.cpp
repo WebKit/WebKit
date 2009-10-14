@@ -118,7 +118,7 @@ void SVGPolyElement::updateAnimatedSVGAttribute(const String& name) const
     if (name == SVGNames::pointsAttr.localName()) {
         m_synchronizingSVGAttributes = true;
 
-        synchronizeProperty<SVGPolyElement, SVGPointList*>(this, SVGNames::pointsAttr, m_points.get());
+        PropertySynchronizer<SVGPolyElement, SVGPointList*, true>::synchronize(this, SVGNames::pointsAttr, m_points.get());
         setSynchronizedSVGAttributes(true);
         m_synchronizingSVGAttributes = false;
         return;

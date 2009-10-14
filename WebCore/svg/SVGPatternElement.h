@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -58,9 +56,6 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource();
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGNames::patternTagString, SVGNames::xAttrString, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGNames::patternTagString, SVGNames::yAttrString, SVGLength, Y, y)
@@ -74,13 +69,13 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 
-        // SVGFitToViewBox
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+        // SVGPatternElement
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
  
         mutable RefPtr<SVGPaintServerPattern> m_resource;
 

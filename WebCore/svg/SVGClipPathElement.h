@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -49,14 +47,11 @@ namespace WebCore {
 
         virtual SVGResource* canvasResource();
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, SVGNames::clipPathTagString, SVGNames::clipPathUnitsAttrString, int, ClipPathUnits, clipPathUnits)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 

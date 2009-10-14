@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -60,8 +58,6 @@ namespace WebCore {
         Vector<SVGGradientStop> buildStops() const;
         mutable RefPtr<SVGPaintServerGradient> m_resource;
  
-        virtual const SVGElement* contextElement() const { return this; }
-
     protected:
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGGradientElementIdentifier, SVGNames::spreadMethodAttrString, int, SpreadMethod, spreadMethod)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGGradientElementIdentifier, SVGNames::gradientUnitsAttrString, int, GradientUnits, gradientUnits)
@@ -71,7 +67,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
     };

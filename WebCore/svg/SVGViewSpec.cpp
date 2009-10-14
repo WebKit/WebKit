@@ -1,8 +1,6 @@
 /*
     Copyright (C) 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -57,7 +55,7 @@ void SVGViewSpec::setViewBoxString(const String& viewBox)
     float x, y, w, h;
     const UChar* c = viewBox.characters();
     const UChar* end = c + viewBox.length();
-    if (!parseViewBox(c, end, x, y, w, h, false))
+    if (!parseViewBox(m_contextElement->document(), c, end, x, y, w, h, false))
         return;
     setViewBoxBaseValue(FloatRect(x, y, w, h));
 }
@@ -113,7 +111,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                     return false;
                 currViewSpec++;
                 float x, y, w, h;
-                if (!parseViewBox(currViewSpec, end, x, y, w, h, false))
+                if (!parseViewBox(m_contextElement->document(), currViewSpec, end, x, y, w, h, false))
                     return false;
                 setViewBoxBaseValue(FloatRect(x, y, w, h));
                 if (currViewSpec >= end || *currViewSpec != ')')

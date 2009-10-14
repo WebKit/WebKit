@@ -50,7 +50,7 @@ void SVGSymbolElement::parseMappedAttribute(MappedAttribute* attr)
         return;
     if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
         return;
-    if (SVGFitToViewBox::parseMappedAttribute(attr))
+    if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
         return;
 
     SVGStyledElement::parseMappedAttribute(attr);

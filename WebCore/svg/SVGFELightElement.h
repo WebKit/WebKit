@@ -39,9 +39,6 @@ namespace WebCore {
         virtual LightSource* lightSource() const = 0;
         virtual void parseMappedAttribute(MappedAttribute*);
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, SVGFELightElementIdentifier, SVGNames::azimuthAttrString, float, Azimuth, azimuth)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, SVGFELightElementIdentifier, SVGNames::elevationAttrString, float, Elevation, elevation)

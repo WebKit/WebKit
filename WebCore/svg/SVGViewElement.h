@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -46,18 +44,15 @@ namespace WebCore {
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+        ANIMATED_PROPERTY_DECLARATIONS(SVGViewElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
  
         // SVGFitToViewBox
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFitToViewBox, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGViewElement, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGViewElement, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
  
         mutable RefPtr<SVGStringList> m_viewTarget;
     };
