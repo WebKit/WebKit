@@ -105,6 +105,7 @@ public slots:
     void setFixedContentsSize(int width, int height);
     void setPrivateBrowsingEnabled(bool enable);
     void setPopupBlockingEnabled(bool enable);
+    void setPOSIXLocale(const QString& locale);
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);

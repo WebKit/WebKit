@@ -1,3 +1,16 @@
+2009-10-14  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement support for setPOSIXLocale on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=30268 
+ 
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setPOSIXLocale):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2009-10-13  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed, adding myself to reviewers list.
