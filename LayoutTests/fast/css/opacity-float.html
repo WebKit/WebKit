@@ -15,9 +15,34 @@ it.</p>
 <a id='test' style='opacity:.9'></a>
 
 <script>
-var opacity = document.getElementById('test').style.opacity.toString();
-if (opacity == '0.9')
-    document.write('PASS');
-else
-    document.write('FAIL: ' + opacity);
+var test = document.getElementById('test');
+
+function doTest(expected, input) {
+    test.style.opacity = input;
+    var opacity = test.style.opacity.toString();
+    if (opacity == expected)
+        document.write('PASS');
+    else
+        document.write('FAIL: expected ' + expected + ', got ' + opacity);
+    document.write('<br>');
+}
+
+var tests = [['0.9', '0.9'],
+             ['98765432198', '98765432198'],
+             ['9870000', '9870000'],
+             ['0.000321', '0.000321'],
+             ['50.02', '50.02'],
+             // Check we clip precision to six decimals.
+             ['1234.567891', '1234.567891234']];
+for (var i = 0; i < tests.length; i++)
+    doTest(tests[i][0], tests[i][1]);
+
+// Test a too-small value.
+doTest('0', '0.0000001');
+// Test that a beyond-precision digit will be rounded in.
+doTest('0.000001', '0.0000009');
+
+// Run the test list again with negatives.
+for (var i = 0; i < tests.length; i++)
+    doTest('-' + tests[i][0], '-' + tests[i][1]);
 </script>

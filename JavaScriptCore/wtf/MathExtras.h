@@ -102,6 +102,8 @@ inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x
 
 #if COMPILER(MSVC) || COMPILER(RVCT)
 
+inline long long llround(double num) { return static_cast<long long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
+inline long long llroundf(float num) { return static_cast<long long>(num > 0 ? num + 0.5f : ceil(num - 0.5f)); }
 inline long lround(double num) { return static_cast<long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
 inline long lroundf(float num) { return static_cast<long>(num > 0 ? num + 0.5f : ceilf(num - 0.5f)); }
 inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num - 0.5); }

@@ -1,3 +1,17 @@
+2009-10-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Stringify CSS units manually (without printf) to make the formatting
+        locale-insensitive and obey CSS spec with respect to large values.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::appendCSSDouble):
+        (WebCore::formatWithUnits):
+        (WebCore::CSSPrimitiveValue::cssText):
+
 2009-10-14  Mark Seaborn  <mseaborn@google.com>
 
         Reviewed by Darin Adler.

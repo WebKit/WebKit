@@ -1,3 +1,10 @@
+2009-10-14  Darin Adler  <darin@apple.com>
+
+        Additions so fix for https://bugs.webkit.org/show_bug.cgi?id=18994
+        can build on Windows.
+
+        * wtf/MathExtras.h: Added llround and llroundf for Windows.
+
 2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Set ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH for plugins while we're still building stubs.
