@@ -138,7 +138,7 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, ExceptionCode& ec)
         return String();
     }
 
-    if (m_size.isEmpty())
+    if (m_size.isEmpty() || !buffer())
         return String("data:,");
 
     if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))

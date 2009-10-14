@@ -1,3 +1,13 @@
+2009-10-09  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        New test for NULL ptr deref in canvas's toDataURL().
+        https://bugs.webkit.org/show_bug.cgi?id=30254
+
+        * fast/canvas/canvas-toDataURL-crash-expected.txt: Added.
+        * fast/canvas/canvas-toDataURL-crash.html: Added.
+
 2009-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r49554, because it broke Win and Chromium builds.
