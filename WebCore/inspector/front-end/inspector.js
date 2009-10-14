@@ -1262,9 +1262,9 @@ WebInspector.log = function(message)
     logMessage(message);
 }
 
-WebInspector.addProfile = function(profile)
+WebInspector.addProfileHeader = function(profile)
 {
-    this.panels.profiles.addProfile(profile);
+    this.panels.profiles.addProfileHeader(profile);
 }
 
 WebInspector.setRecordingProfile = function(isProfiling)

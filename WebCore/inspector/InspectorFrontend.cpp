@@ -261,9 +261,9 @@ void InspectorFrontend::failedToParseScriptSource(const JSC::SourceCode& source,
     function->call();
 }
 
-void InspectorFrontend::addProfile(const JSC::JSValue& profile)
+void InspectorFrontend::addProfileHeader(const ScriptValue& profile)
 {
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addProfile"));
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addProfileHeader"));
     function->appendArgument(profile);
     function->call();
 }
@@ -272,6 +272,22 @@ void InspectorFrontend::setRecordingProfile(bool isProfiling)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("setRecordingProfile"));
     function->appendArgument(isProfiling);
+    function->call();
+}
+
+void InspectorFrontend::didGetProfileHeaders(int callId, const ScriptArray& headers)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetProfileHeaders"));
+    function->appendArgument(callId);
+    function->appendArgument(headers);
+    function->call();
+}
+
+void InspectorFrontend::didGetProfile(int callId, const ScriptValue& profile)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetProfile"));
+    function->appendArgument(callId);
+    function->appendArgument(profile);
     function->call();
 }
 

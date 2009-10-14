@@ -1,3 +1,41 @@
+2009-10-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Migrate profiles to the injected script-based schema.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30328
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getProfileHeaders):
+        (WebCore::InspectorBackend::getProfile):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::getProfileHeaders):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::createProfileHeader):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addProfileHeader):
+        (WebCore::InspectorFrontend::didGetProfileHeaders):
+        (WebCore::InspectorFrontend::didGetProfile):
+        * inspector/InspectorFrontend.h:
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::ProfileNodeClass):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.ProfileView.profileCallback):
+        (WebInspector.ProfileView):
+        (WebInspector.ProfileView.prototype._mouseDownInDataGrid):
+        (WebInspector.ProfileView.prototype._assignParentsInProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addProfileHeader):
+
 2009-10-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
