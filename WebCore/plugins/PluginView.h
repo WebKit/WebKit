@@ -311,7 +311,7 @@ public:
 
 private:
 
-#if defined(XP_UNIX) || defined(Q_WS_X11)
+#if defined(XP_UNIX) || defined(Q_WS_X11) || PLATFORM(SYMBIAN)
         void setNPWindowIfNeeded();
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;

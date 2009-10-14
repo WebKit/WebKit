@@ -36,6 +36,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
+#if PLATFORM(SYMBIAN)
+class QPluginLoader;
+class NPInterface;
+#endif
+
 namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;
     typedef HashMap<String, Vector<String> > MIMEToExtensionsMap;
@@ -70,9 +75,17 @@ namespace WebCore {
         int compare(const PluginPackage&) const;
         PluginQuirkSet quirks() const { return m_quirks; }
         const PlatformModuleVersion& version() const { return m_moduleVersion; }
+#if PLATFORM(SYMBIAN)
+        NPInterface* npInterface() const { return m_npInterface; }
+#endif // PLATFORM(SYMBIAN)
 
     private:
         PluginPackage(const String& path, const time_t& lastModified);
+
+#if PLATFORM(SYMBIAN)
+        NPInterface* m_npInterface;
+        QPluginLoader* m_pluginLoader;
+#endif // PLATFORM(SYMBIAN)
         bool fetchInfo();
         bool isPluginBlacklisted();
         void determineQuirks(const String& mimeType);

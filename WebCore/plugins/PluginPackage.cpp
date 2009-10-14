@@ -113,6 +113,7 @@ PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
+#if !PLATFORM(SYMBIAN)
 void PluginPackage::unload()
 {
     if (!m_isLoaded)
@@ -125,6 +126,7 @@ void PluginPackage::unload()
 
     unloadWithoutShutdown();
 }
+#endif //!PLATFORM(SYMBIAN)
 
 void PluginPackage::unloadWithoutShutdown()
 {

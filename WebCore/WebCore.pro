@@ -164,7 +164,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 
 # Nescape plugins support (NPAPI)
 !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
-    unix|win32-*:!embedded:!wince*:!symbian {
+    unix|win32-*:!embedded:!wince*: {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
     } else {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
@@ -2457,44 +2457,61 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
     SOURCES += plugins/npapi.cpp
 
-    unix {
-        mac {
-            SOURCES += \
-                plugins/mac/PluginPackageMac.cpp \
-                plugins/mac/PluginViewMac.cpp
-            OBJECTIVE_SOURCES += \
-                platform/text/mac/StringImplMac.mm \
-                platform/mac/WebCoreNSStringExtras.mm
-            INCLUDEPATH += platform/mac
-            # Note: XP_MACOSX is defined in npapi.h
-        } else {
-            !embedded: CONFIG += x11
-            SOURCES += \
-                plugins/qt/PluginContainerQt.cpp \
-                plugins/qt/PluginPackageQt.cpp \
-                plugins/qt/PluginViewQt.cpp
-            HEADERS += \
-                plugins/qt/PluginContainerQt.h
-            DEFINES += XP_UNIX
+    symbian {
+        SOURCES += \
+        plugins/symbian/PluginPackageSymbian.cpp \
+        plugins/symbian/PluginDatabaseSymbian.cpp \
+        plugins/symbian/PluginViewSymbian.cpp \
+        plugins/symbian/PluginContainerSymbian.cpp
+
+        HEADERS += \
+        plugins/symbian/PluginContainerSymbian.h \
+        plugins/symbian/npinterface.h
+
+        LIBS += -lefsrv
+
+    } else {
+
+        unix {
+    
+            mac {
+                SOURCES += \
+                    plugins/mac/PluginPackageMac.cpp \
+                    plugins/mac/PluginViewMac.cpp
+                OBJECTIVE_SOURCES += \
+                    platform/text/mac/StringImplMac.mm \
+                    platform/mac/WebCoreNSStringExtras.mm
+                INCLUDEPATH += platform/mac
+                # Note: XP_MACOSX is defined in npapi.h
+            } else {
+                !embedded: CONFIG += x11
+                SOURCES += \
+                    plugins/qt/PluginContainerQt.cpp \
+                    plugins/qt/PluginPackageQt.cpp \
+                    plugins/qt/PluginViewQt.cpp
+                HEADERS += \
+                    plugins/qt/PluginContainerQt.h
+                DEFINES += XP_UNIX
+            }
         }
-    }
-
-    win32-* {
-        INCLUDEPATH += $$PWD/plugins/win
-
-        SOURCES += page/win/PageWin.cpp \
-                   plugins/win/PluginDatabaseWin.cpp \
-                   plugins/win/PluginPackageWin.cpp \
-                   plugins/win/PluginMessageThrottlerWin.cpp \
-                   plugins/win/PluginViewWin.cpp
-
-        LIBS += \
-            -ladvapi32 \
-            -lgdi32 \
-            -lshell32 \
-            -lshlwapi \
-            -luser32 \
-            -lversion
+    
+        win32-* {
+            INCLUDEPATH += $$PWD/plugins/win
+    
+            SOURCES += page/win/PageWin.cpp \
+                       plugins/win/PluginDatabaseWin.cpp \
+                       plugins/win/PluginPackageWin.cpp \
+                       plugins/win/PluginMessageThrottlerWin.cpp \
+                       plugins/win/PluginViewWin.cpp
+    
+            LIBS += \
+                -ladvapi32 \
+                -lgdi32 \
+                -lshell32 \
+                -lshlwapi \
+                -luser32 \
+                -lversion
+        }
     }
 
 } else {

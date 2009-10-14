@@ -106,6 +106,11 @@
     #include <stdio.h>
 #endif
 
+#if defined(XP_SYMBIAN)
+    #include <QEvent>
+    #include <QRegion>
+#endif
+
 #ifdef XP_WIN
     #include <windows.h>
 #endif
@@ -526,9 +531,9 @@ typedef struct _NPWindow
     uint32    height;
     NPRect    clipRect;    /* Clipping rectangle in port coordinates */
                         /* Used by MAC only.              */
-#ifdef XP_UNIX
+#if defined(XP_UNIX) || defined(XP_SYMBIAN)
     void *    ws_info;    /* Platform-dependent additonal data */
-#endif /* XP_UNIX */
+#endif /* XP_UNIX || XP_SYMBIAN */
     NPWindowType type;    /* Is this a window or a drawable? */
 } NPWindow;
 
@@ -578,6 +583,8 @@ typedef enum {
 typedef EventRecord    NPEvent;
 #endif
 
+#elif defined(XP_SYMBIAN)
+typedef QEvent NPEvent;
 #elif defined(XP_WIN)
 typedef struct _NPEvent
 {
@@ -608,6 +615,8 @@ typedef CGPathRef NPCGRegion;
 typedef HRGN NPRegion;
 #elif defined(XP_UNIX)
 typedef Region NPRegion;
+#elif defined(XP_SYMBIAN)
+typedef QRegion* NPRegion;
 #else
 typedef void *NPRegion;
 #endif /* XP_MAC */

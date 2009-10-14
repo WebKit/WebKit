@@ -1,3 +1,45 @@
+2009-10-14  Yael Aharon  <yael.aharon@nokia.com>
+ 
+        Reviewed by 
+ 
+        Enabling NPAPI plugin support on Qt Webkit for S60 platform
+        https://bugs.webkit.org/show_bug.cgi?id=29302
+
+        Also implemented by Mahesh Kulkarni<mahesh.kulkarni@nokia.com>, 
+        Rohini Ananth <rohini.ananth@nokia.com> and help from Norbert Lesr
+        <norbert.leser@nokia.com>
+         
+        * WebCore.pro:
+        Enabling ENABLE_NETSCAPE_PLUGIN_API for S60 and added S60 specific 
+        new plugin files to be compiled under symbian: macro
+
+        * bridge/npapi.h:
+        Added NPEvent and NPRegion definition for Symbian
+
+        * plugins/PluginPackage.h:
+        Added S60 specific plugin interface and plugin loader variables
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::unload): Added !PLATFORM(SYMBIAN) macro.
+        Default implementation to be used only for non-symbian platform
+        * plugins/PluginDatabase.cpp:
+        Macro !SYMBIAN checking
+        * plugins/PluginView.h:
+        Add Symbian to platforms that support setNPWindowIfNeeded
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect): Add Symbian to platforms that
+        call setNPWindowRect from setFrameRect
+         
+        Added folder 'symbian' which contains implementation files for S60
+        platform-specific NPAPI plugin functionality, under /plugins folder
+        * plugins/symbian
+        * plugins/symbian/npinterface.h:
+        Plugin Interface to be implemented by S60 NPAPI plugins 
+        * plugins/symbian/PluginContainerSymbian.h:
+        * plugins/symbian/PluginContainerSymbian.cpp:
+        * plugins/symbian/PluginDatabaseSymbian.cpp:
+        * plugins/symbian/PluginViewSymbian.cpp:
+        * plugins/symbian/PluginPackageSymbian.cpp:
+
 2009-10-14  Chris Marrin  <cmarrin@apple.com>
 
         More changes to figure out why the webgl tests are crashing on the build bot.
