@@ -1,3 +1,16 @@
+2009-10-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Fix issue where clientX and clientY on MouseEvents were wrong when
+        the page was zoomed and scrolled.
+
+        Test: fast/events/clientXY-in-zoom-and-scroll.html
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsX): Take page zoom into account.
+        (WebCore::contentsY): Ditto.
+
 2009-10-13  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

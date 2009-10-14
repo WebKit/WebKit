@@ -1,3 +1,13 @@
+2009-10-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Test issue where clientX and clientY on MouseEvents were wrong when
+        the page was zoomed and scrolled.
+
+        * fast/events/clientXY-in-zoom-and-scroll-expected.txt: Added.
+        * fast/events/clientXY-in-zoom-and-scroll.html: Added.
+
 2009-10-13  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
