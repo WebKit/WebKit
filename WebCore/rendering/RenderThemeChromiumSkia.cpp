@@ -585,8 +585,9 @@ bool RenderThemeChromiumSkia::paintMenuList(RenderObject* o, const RenderObject:
     paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kFill_Style);
 
+    int arrowXPosition = (o->style()->direction() == RTL) ? rect.x() + 7 : right - 13;
     SkPath path;
-    path.moveTo(right - 13, middle - 3);
+    path.moveTo(arrowXPosition, middle - 3);
     path.rLineTo(6, 0);
     path.rLineTo(-3, 6);
     path.close();

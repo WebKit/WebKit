@@ -1,3 +1,17 @@
+2009-10-13  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Chrome's "Skia" theme paints select controls backwards in RTL.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30320
+
+        Test: fast/text/international/bidi-menulist.html
+        (The test is about something else, but it includes RTL selects.)
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMenuList): flip the arrow position in RTL case.
+
 2009-10-13  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
