@@ -1,3 +1,21 @@
+2009-10-13  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29106
+        [Qt] make CachedResourceHandle.h compile in winscw Symbian compiler.
+
+        Don't inline constructor CachedResourceHandle<T>(R*) to stop winscw
+        compiler aggressively resolve inheritance of class R.  
+        
+        The winscw compiler bug is reported at:
+        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812.
+        
+        The change should be reverted when the above bug is fixed in winscw compiler.
+
+        * loader/CachedResourceHandle.h:
+        (WebCore::::CachedResourceHandle):
+
 2009-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r49554, because it broke Win and Chromium builds.
