@@ -124,6 +124,7 @@ reviewers_list = [
     Reviewer("Sam Weinig", "sam@webkit.org"),
     Reviewer("Simon Fraser", "simon.fraser@apple.com"),
     Reviewer("Simon Hausmann", "hausmann@webkit.org"),
+    Reviewer("Stephanie Lewis", "slewis@apple.com"),
     Reviewer("Steve Falkenburg", "sfalken@apple.com"),
     Reviewer("Timothy Hatcher", "timothy@hatcher.name"),
     Reviewer(u'Tor Arne Vestb\xf8', "vestbo@webkit.org"),

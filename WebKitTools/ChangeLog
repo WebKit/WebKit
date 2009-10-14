@@ -1,5 +1,11 @@
 2009-10-13  Stephanie Lewis  <slewis@apple.com>
 
+        Unreviewed, adding myself to reviewers list.
+
+        * Scripts/modules/committers.py:
+
+2009-10-13  Stephanie Lewis  <slewis@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fix null assignment so root tests work again.
