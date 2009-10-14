@@ -1,3 +1,18 @@
+2009-10-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Don't collect call frame properties until they're needed for completion.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30334
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getCompletions): if call frame id is specified and the expression is empty collect frame properties.
+        (InjectedScript.CallFrameProxy.prototype._wrapScopeChain): don't send call frame properties until they're needed.
+        * inspector/front-end/ScriptsPanel.js:
+
 2009-10-13  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Ariya Hidayat.

@@ -388,22 +388,6 @@ WebInspector.ScriptsPanel.prototype = {
         InjectedScriptAccess.evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
-    variablesInSelectedCallFrame: function()
-    {
-        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
-        if (!this._paused || !selectedCallFrame)
-            return {};
-
-        var result = {};
-        var scopeChain = selectedCallFrame.scopeChain;
-        for (var i = 0; i < scopeChain.length; ++i) {
-            var scopeObjectProperties = scopeChain[i].properties;
-            for (var j = 0; j < scopeObjectProperties.length; ++j)
-                result[scopeObjectProperties[j]] = true;
-        }
-        return result;
-    },
-
     debuggerPaused: function(callFrames)
     {
         this._paused = true;

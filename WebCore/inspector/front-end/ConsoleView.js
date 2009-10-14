@@ -292,16 +292,6 @@ WebInspector.ConsoleView.prototype = {
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
         // Collect comma separated object properties for the completion.
 
-        if (!expressionString) {
-            if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-                // Evaluate into properties in scope of the selected call frame.
-                reportCompletions(WebInspector.panels.scripts.variablesInSelectedCallFrame());
-                return;
-            } else {
-                expressionString = "this";
-            }
-        }
-
         var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
             var callFrameId = WebInspector.panels.scripts.selectedCallFrameId();

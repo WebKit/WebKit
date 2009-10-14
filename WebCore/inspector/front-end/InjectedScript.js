@@ -517,12 +517,28 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
             var callFrame = InjectedScript._callFrameForId(callFrameId);
             if (!callFrame)
                 return props;
-            expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression);
+            if (expression)
+                expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression);
+            else {
+                // Evaluate into properties in scope of the selected call frame.
+                var scopeChain = callFrame.scopeChain;
+                for (var i = 0; i < scopeChain.length; ++i) {
+                    var scopeObject = scopeChain[i];
+                    try {
+                        for (var propertyName in scopeObject)
+                            props[propertyName] = true;
+                    } catch (e) {
+                    }
+                }
+            }
         } else {
+            if (!expression)
+                expression = "this";
             expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
         }
-        for (var prop in expressionResult)
-            props[prop] = true;
+        if (expressionResult)
+            for (var prop in expressionResult)
+                props[prop] = true;
         if (includeInspectorCommandLineAPI)
             for (var prop in InjectedScript._window()._inspectorCommandLineAPI)
                 if (prop.charAt(0) !== '_')
@@ -1032,12 +1048,6 @@ InjectedScript.CallFrameProxy.prototype = {
                 scopeObjectProxy.isDocument = true;
             else if (!foundLocalScope)
                 scopeObjectProxy.isWithBlock = true;
-            scopeObjectProxy.properties = [];
-            try {
-                for (var propertyName in scopeObject)
-                    scopeObjectProxy.properties.push(propertyName);
-            } catch (e) {
-            }
             scopeChainProxy.push(scopeObjectProxy);
         }
         return scopeChainProxy;
