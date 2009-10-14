@@ -1,3 +1,21 @@
+2009-10-13  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Float formatting changes affect three tests:
+        - large-number-round-trip now passes
+        - opacity-float now passes and has more test cases
+        - compound-2d-transforms output tweaked slightly
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        * fast/css/large-number-round-trip-expected.txt:
+        * fast/css/opacity-float-expected.txt:
+        * fast/css/opacity-float.html:
+        * platform/mac/fast/css/opacity-float-expected.txt: Removed.
+        * transforms/2d/compound-2d-transforms-expected.txt:
+        * transforms/2d/compound-2d-transforms.html:
+
 2009-10-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Holger Freyther.

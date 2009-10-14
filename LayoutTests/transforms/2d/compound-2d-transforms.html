@@ -43,17 +43,17 @@
       
       // two functions
       { 'transform' : 'translate(50px, 20px) rotate(12deg)',          'result' : 'matrix(0.978148, 0.207912, -0.207912, 0.978148, 50, 20)' },
-      { 'transform' : 'rotate(12deg) translate(50px, 20px)',          'result' : 'matrix(0.978148, 0.207912, -0.207912, 0.978148, 44.7491, 29.9585)' },
+      { 'transform' : 'rotate(12deg) translate(50px, 20px)',          'result' : 'matrix(0.978148, 0.207912, -0.207912, 0.978148, 44.749146, 29.958537)' },
 
       // three functions
-      { 'transform' : 'rotate(12deg) translate(50px, 20px) scale(1.4)',   'result' : 'matrix(1.36941, 0.291076, -0.291076, 1.36941, 44.7491, 29.9585)' },
-      { 'transform' : 'scale(1.4) rotate(12deg) translate(50px, 20px) ',  'result' : 'matrix(1.36941, 0.291076, -0.291076, 1.36941, 62.6488, 41.942)' },
-      { 'transform' : 'scale(1.4) translate(50px, 20px) rotate(12deg)',   'result' : 'matrix(1.36941, 0.291076, -0.291076, 1.36941, 70, 28)' },
-      { 'transform' : 'translate(50px, 20px) rotate(12deg) translateY(50px) scale(1.4)',   'result' : 'matrix(1.36941, 0.291076, -0.291076, 1.36941, 39.6044, 68.9074)' },
+      { 'transform' : 'rotate(12deg) translate(50px, 20px) scale(1.4)',   'result' : 'matrix(1.369407, 0.291076, -0.291076, 1.369407, 44.749146, 29.958537)' },
+      { 'transform' : 'scale(1.4) rotate(12deg) translate(50px, 20px) ',  'result' : 'matrix(1.369407, 0.291076, -0.291076, 1.369407, 62.648805, 41.941951)' },
+      { 'transform' : 'scale(1.4) translate(50px, 20px) rotate(12deg)',   'result' : 'matrix(1.369407, 0.291076, -0.291076, 1.369407, 70, 28)' },
+      { 'transform' : 'translate(50px, 20px) rotate(12deg) translateY(50px) scale(1.4)',   'result' : 'matrix(1.369407, 0.291076, -0.291076, 1.369407, 39.604415, 68.90738)' },
 
       // lots of functions
       { 'transform' : 'rotate(12deg) translate(50px, 20px) scale(1.4) translate(-80px, 40px) skew(34deg) translate(10px, 10px) scale(0.7) skewY(-25deg) rotate(21deg) translateX(50px) scale(1.4, 1.8)', 
-        'result' : 'matrix(1.20517, 0.148207, 0.258987, 2.04004, -13.3847, 85.31)' },
+        'result' : 'matrix(1.205166, 0.148207, 0.258987, 2.040044, -13.384723, 85.309967)' },
         
       // invalid compound functions
       { 'transform' : ',rotate(12deg) translate(50px, 20px)', 'result' : 'none' }, // has comma
