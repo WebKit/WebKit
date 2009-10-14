@@ -13,12 +13,12 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,187) size 48x20
             text run at (0,187) width 48: "iframe: "
           RenderPartObject {IFRAME} at (48,0) size 402x202 [border: (1px solid #000000)]
-            layer at (0,0) size 383x219
-              RenderView at (0,0) size 383x200
-            layer at (0,0) size 383x219
-              RenderBlock {HTML} at (0,0) size 383x219
-                RenderBody {BODY} at (8,8) size 367x203
-                  RenderBlock {P} at (0,0) size 367x100
+            layer at (0,0) size 386x219
+              RenderView at (0,0) size 386x200
+            layer at (0,0) size 386x219
+              RenderBlock {HTML} at (0,0) size 386x219
+                RenderBody {BODY} at (8,8) size 370x203
+                  RenderBlock {P} at (0,0) size 370x100
                     RenderText {#text} at (0,0) size 365x100
                       text run at (0,0) width 316: "This tests caret movement through an inline table. "
                       text run at (316,0) width 37: "There"
@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
                       text run at (142,40) width 216: "The caret shouldn't skip across the"
                       text run at (0,60) width 348: "table, but should enter it (unless we later decide that we"
                       text run at (0,80) width 160: "don't want this behavior)."
-                  RenderBlock {DIV} at (0,116) size 367x87
-                    RenderBlock {DIV} at (0,0) size 367x87
+                  RenderBlock {DIV} at (0,116) size 370x87
+                    RenderBlock {DIV} at (0,0) size 370x87
                       RenderText {#text} at (0,67) size 80x20
                         text run at (0,67) width 80: "Inline Table:"
                       RenderTable {TABLE} at (80,0) size 132x82 [border: (1px outset #808080)]

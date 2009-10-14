@@ -1,3 +1,15 @@
+2009-10-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        [LayoutTests][Gtk] Set a common Gtk theme as default and update the results
+        https://bugs.webkit.org/show_bug.cgi?id=30223
+
+        Update test results to reflect the usage of the default theme.
+
+        * platform/gtk/editing/selection/iframe-expected.txt:
+        * platform/gtk/editing/selection/select-box-expected.txt:
+
 2009-10-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
