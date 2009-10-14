@@ -1,5 +1,15 @@
 2009-10-13  Dave Hyatt  <hyatt@apple.com>
 
+        Fix more WebView bustage.
+
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::removeUserScriptsFromGroup):
+        (WebView::removeUserStyleSheetsFromGroup):
+
+2009-10-13  Dave Hyatt  <hyatt@apple.com>
+
         Fix build bustage on Windows.
 
         * WebView.cpp:

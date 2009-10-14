@@ -5453,8 +5453,8 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR sou
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserScriptToGroup(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                                    toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID,
+    pageGroup->addUserScriptToWorld(worldID, String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
+                                    toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
                                     injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 
     return S_OK;
@@ -5473,8 +5473,8 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserStyleSheetToGroup(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID);
+    pageGroup->addUserStyleSheetToWorld(worldID, String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
+                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist));
 
     return S_OK;
 }
@@ -5522,7 +5522,7 @@ HRESULT WebView::removeUserScriptsFromGroup(BSTR groupName, unsigned worldID)
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->removeUserScriptFromWorld(worldID);
+    pageGroup->removeUserScriptsFromWorld(worldID);
     return S_OK;
 }
 
@@ -5537,7 +5537,7 @@ HRESULT WebView::removeUserStyleSheetsFromGroup(BSTR groupName, unsigned worldID
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->removeUserStyleSheetFromWorld(worldID);
+    pageGroup->removeUserStyleSheetsFromWorld(worldID);
     return S_OK;
 }
 
