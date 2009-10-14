@@ -1,3 +1,10 @@
+2009-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        More changes to figure out why the webgl tests are crashing on the build bot.
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2009-10-14  Victor Wang  <victorw@chromium.org>
 
         Reviewed by David Hyatt.

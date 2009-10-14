@@ -68,26 +68,45 @@ GraphicsContext3D::GraphicsContext3D()
         (CGLPixelFormatAttribute) 0
     };
     
+    // Make sure to change these constants to match the above list
+    const int superSampleIndex = 5;
+    const int depthSizeIndex = 4;
+    
     CGLPixelFormatObj pixelFormatObj = 0;
     GLint numPixelFormats = 0;
     
-    CGLError err = CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
-    if (err != kCGLNoError) {
-        // FIXME: temporary change to get error.
-        fprintf(stderr, "CGLChoosePixelFormat failed, err %d\n", err);
-        return;
+    // We will try for the above format first. If that fails, we will
+    // try for one without supersample. If that fails, we will try for
+    // one that has a 16 bit depth buffer. If none of that works, we
+    // simply fail and set m_contextObj to 0.
+    CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+    if (numPixelFormats == 0) {
+        attribs[superSampleIndex] = static_cast<CGLPixelFormatAttribute>(0);
+        CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+        
+        if (numPixelFormats == 0) {
+            attribs[depthSizeIndex] = static_cast<CGLPixelFormatAttribute>(16);
+            CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+        
+            if (numPixelFormats == 0) {
+                // FIXME: temporary printf for diagnostics
+                fprintf(stderr, "CGLCreateContext failed, no pixel formats found\n");
+                m_contextObj = 0;
+                return;
+            }
+        }
     }
     
-    err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
+    CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
+    CGLDestroyPixelFormat(pixelFormatObj);
+    
     if (err != kCGLNoError || !m_contextObj) {
         // FIXME: temporary change to get error.
         fprintf(stderr, "CGLCreateContext failed, err %d (context %p)\n", err, m_contextObj);
         m_contextObj = 0;
         return;
     }
-    
-    CGLDestroyPixelFormat(pixelFormatObj);
-    
+
     // Set the current context to the one given to us.
     CGLSetCurrentContext(m_contextObj);
     
