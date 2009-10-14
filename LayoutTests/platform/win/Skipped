@@ -684,7 +684,6 @@ fast/inline/relative-positioned-overflow.html
 plugins/private-browsing-mode.html
 
 # Skip these two failures I introduced this morning while I explore them.
-fast/history/window-open.html
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
 # Disable inspector tests while fixing them in release mode

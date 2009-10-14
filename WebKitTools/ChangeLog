@@ -1,3 +1,14 @@
+2009-10-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't set the history delegate on new windows that are opened during a test, as the history delegate:
+        1 - Disables WebHistory
+        2 - Doesn't make sense in that context anyway.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (createWebViewAndOffscreenWindow):
+
 2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMac build fix. Ensure 10.4 compatibility for deps, and allow the user to specify
