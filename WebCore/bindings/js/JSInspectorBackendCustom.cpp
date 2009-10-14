@@ -66,7 +66,10 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
+#include "JavaScriptProfile.h"
 #include "JSJavaScriptCallFrame.h"
+#include <profiler/Profile.h>
+#include <profiler/Profiler.h>
 #endif
 
 using namespace JSC;
@@ -248,6 +251,21 @@ JSValue JSInspectorBackend::currentCallFrame(ExecState* exec, const ArgList&)
 
     JSLock lock(SilenceAssertionsOnly);
     return JSInspectedObjectWrapper::wrap(globalExec, toJS(exec, callFrame));
+}
+
+JSValue JSInspectorBackend::profiles(JSC::ExecState* exec, const JSC::ArgList&)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    MarkedArgumentBuffer result;
+    InspectorController* ic = impl()->inspectorController();
+    if (!ic)
+        return jsUndefined();
+    const Vector<RefPtr<Profile> >& profiles = ic->profiles();
+
+    for (size_t i = 0; i < profiles.size(); ++i)
+        result.append(toJS(exec, profiles[i].get()));
+
+    return constructArray(exec, result);
 }
 
 #endif

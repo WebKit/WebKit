@@ -78,22 +78,12 @@ WebInspector.ProfileView = function(profile)
 
     this.profile = profile;
 
-    var self = this;
-    function profileCallback(profile)
-    {
-        self.profile = profile;
-        self._assignParentsInProfile();
-      
-        self.profileDataGridTree = self.bottomUpProfileDataGridTree;
-        self.profileDataGridTree.sort(WebInspector.ProfileDataGridTree.propertyComparator("selfTime", false));
-     
-        self.refresh();
-     
-        self._updatePercentButton();
-    }
+    this.profileDataGridTree = this.bottomUpProfileDataGridTree;
+    this.profileDataGridTree.sort(WebInspector.ProfileDataGridTree.propertyComparator("selfTime", false));
 
-    var callId = WebInspector.Callback.wrap(profileCallback);
-    InspectorController.getProfile(callId, this.profile.uid);
+    this.refresh();
+
+    this._updatePercentButton();
 }
 
 WebInspector.ProfileView.prototype = {
@@ -543,26 +533,6 @@ WebInspector.ProfileView.prototype = {
 
         event.preventDefault();
         event.stopPropagation();
-    },
-
-    _assignParentsInProfile: function()
-    {
-        var head = this.profile.head;
-        head.parent = null;
-        head.head = null;
-        var nodesToTraverse = [ { parent: head, children: head.children } ];
-        while (nodesToTraverse.length > 0) {
-            var pair = nodesToTraverse.shift();
-            var parent = pair.parent;
-            var children = pair.children;
-            var length = children.length;
-            for (var i = 0; i < length; ++i) {
-                children[i].head = head;
-                children[i].parent = parent;
-                if (children[i].children.length > 0)
-                    nodesToTraverse.push({ parent: children[i], children: children[i].children });
-            }
-        }
     }
 }
 

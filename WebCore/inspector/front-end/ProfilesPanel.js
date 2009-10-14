@@ -161,7 +161,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.sidebarTree.handleKeyEvent(event);
     },
 
-    addProfileHeader: function(profile)
+    addProfile: function(profile)
     {
         this._profiles.push(profile);
         this._profilesIdMap[profile.uid] = profile;
@@ -401,17 +401,15 @@ WebInspector.ProfilesPanel.prototype = {
         if (cpuProfiles.children.length)
             return;
 
-        function populateCallback(profileHeaders) {
-            profileHeaders.sort(function(a, b) { return a.uid - b.uid; });
-            var profileHeadersLength = profileHeaders.length;
-            for (var i = 0; i < profileHeadersLength; ++i)
-                WebInspector.addProfileHeader(profileHeaders[i]);
-            if (cpuProfiles.children[0])
-                cpuProfiles.children[0].select();
+        var profiles = InspectorController.profiles();
+        var profilesLength = profiles.length;
+        for (var i = 0; i < profilesLength; ++i) {
+            var profile = profiles[i];
+            this.addProfile(profile);
         }
 
-        var callId = WebInspector.Callback.wrap(populateCallback);
-        InspectorController.getProfileHeaders(callId);
+        if (cpuProfiles.children[0])
+            cpuProfiles.children[0].select();
 
         delete this._shouldPopulateProfiles;
     },
@@ -537,6 +535,3 @@ WebInspector.ProfileGroupSidebarTreeElement.prototype = {
 }
 
 WebInspector.ProfileGroupSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
-
-WebInspector.didGetProfileHeaders = WebInspector.Callback.processCallback;
-WebInspector.didGetProfile = WebInspector.Callback.processCallback;

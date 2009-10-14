@@ -278,6 +278,13 @@ bool InspectorBackend::timelineEnabled() const
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+const ProfilesArray& InspectorBackend::profiles() const
+{
+    if (m_inspectorController)
+        return m_inspectorController->profiles();
+    return m_emptyProfiles;
+}
+
 void InspectorBackend::startProfiling()
 {
     if (m_inspectorController)
@@ -307,18 +314,6 @@ bool InspectorBackend::profilerEnabled()
     if (m_inspectorController)
         return m_inspectorController->profilerEnabled();
     return false;
-}
-
-void InspectorBackend::getProfileHeaders(long callId)
-{
-    if (m_inspectorController)
-        m_inspectorController->getProfileHeaders(callId);
-}
-
-void InspectorBackend::getProfile(long callId, unsigned uid)
-{
-    if (m_inspectorController)
-        m_inspectorController->getProfile(callId, uid);
 }
 
 void InspectorBackend::enableDebugger(bool always)

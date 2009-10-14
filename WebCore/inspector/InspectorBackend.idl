@@ -100,8 +100,7 @@ module core {
         void startProfiling();
         void stopProfiling();
 
-        void getProfileHeaders(in long callId);
-        void getProfile(in long callId, in unsigned long uid);
+        [Custom] Array profiles();
 #endif
         void dispatchOnInjectedScript(in long callId, in DOMString methodName, in DOMString arguments, in boolean async);
         void getChildNodes(in long callId, in long nodeId);
