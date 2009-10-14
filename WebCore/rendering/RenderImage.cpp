@@ -227,7 +227,7 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
         imageHeight = paddingHeight;
     }
   
-    if (newImage) {
+    if (newImage && newImage->image()) {
         // imageSize() returns 0 for the error image.  We need the true size of the
         // error image, so we have to get it by grabbing image() directly.
         imageWidth += newImage->image()->width() * style()->effectiveZoom();

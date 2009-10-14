@@ -1,3 +1,13 @@
+2009-10-01  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix crash when loading invalid image data
+        https://bugs.webkit.org/show_bug.cgi?id=29980
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+
 2009-10-09  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.

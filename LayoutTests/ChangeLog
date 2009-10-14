@@ -1,3 +1,15 @@
+2009-10-02  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by NOBODY Adele Peterson.
+
+        Added a test case that loads an invalid image to make sure
+        we don't crash in this situation.
+        https://bugs.webkit.org/show_bug.cgi?id=29980
+
+        * fast/images/image-invalid-data-expected.txt: Added.
+        * fast/images/image-invalid-data.html: Added.
+        * fast/images/resources/invalid.jpg: Added.
+
 2009-10-09  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.
