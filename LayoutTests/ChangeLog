@@ -3,7 +3,8 @@
         Rubber-stamped by Anders Carlsson.
 
         Add plugins/private-browsing-mode.html to the Windows Skipped
-        list because the feature is not implemented on Windows.
+        list because the feature is not implemented on Windows. This feature
+        is being tracked by <https://bugs.webkit.org/show_bug.cgi?id=30348>.
 
         * platform/win/Skipped:
 
