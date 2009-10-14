@@ -43,22 +43,13 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
     if (data.size() < 4)
         return 0;
 
-    QByteArray bytes = QByteArray::fromRawData(data.data(), data.size());
-    QBuffer buffer(&bytes);
-    if (!buffer.open(QBuffer::ReadOnly))
-        return 0;
-
-    QByteArray imageFormat = QImageReader::imageFormat(&buffer);
-    if (imageFormat.isEmpty())
-        return 0; // Image format not supported
-
-    return new ImageDecoderQt(imageFormat);
+    return new ImageDecoderQt;
 }
 
-ImageDecoderQt::ImageDecoderQt(const QByteArray& imageFormat)
-    : m_buffer(0)
+ImageDecoderQt::ImageDecoderQt()
+    :  m_buffer(0)
     , m_reader(0)
-    , m_repetitionCount(-1)
+    , m_repetitionCount(cAnimationNone)
 {
 }
 
@@ -73,12 +64,12 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     if (m_failed)
         return;
 
-    // Cache our own new data.
-    ImageDecoder::setData(data, allDataReceived);
-
     // No progressive loading possible
     if (!allDataReceived)
         return;
+
+    // Cache our own new data.
+    ImageDecoder::setData(data, allDataReceived);
 
     // We expect to be only called once with allDataReceived
     ASSERT(!m_buffer);
@@ -89,15 +80,12 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     m_buffer = new QBuffer;
     m_buffer->setData(imageData);
     m_buffer->open(QBuffer::ReadOnly);
-    m_reader = new QImageReader(m_buffer);
-
-    if (!m_reader->canRead())
-        failRead();
+    m_reader = new QImageReader(m_buffer, m_format);
 }
 
 bool ImageDecoderQt::isSizeAvailable()
 {
-    if (!m_failed && !ImageDecoder::isSizeAvailable() && m_reader)
+    if (!ImageDecoder::isSizeAvailable() && m_reader)
         internalDecodeSize();
 
     return ImageDecoder::isSizeAvailable();
@@ -134,14 +122,16 @@ int ImageDecoderQt::repetitionCount() const
 
 String ImageDecoderQt::filenameExtension() const
 {
-    return m_format;
+    return String(m_format.constData(), m_format.length());
 };
 
 RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
 {
-    // this information might not have been set
+    // In case the ImageDecoderQt got recreated we don't know
+    // yet how many images we are going to have and need to
+    // find that out now.
     int count = m_frameBufferCache.size();
-    if (count == 0) {
+    if (!m_failed && count == 0) {
         internalDecodeSize();
         count = frameCount();
     }
@@ -171,7 +161,12 @@ void ImageDecoderQt::internalDecodeSize()
 {
     ASSERT(m_reader);
 
+    // If we have a QSize() something failed
     QSize size = m_reader->size();
+    if (size.isEmpty())
+        return failRead();
+
+    m_format = m_reader->format();
     setSize(size.width(), size.height());
 }
 
@@ -213,9 +208,15 @@ void ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
     buffer->setDecodedImage(img);
 }
 
-// We will parse everything and we have no idea how
-// many images we have... We will have to find out the
-// hard way.
+// The QImageIOHandler is not able to tell us how many frames
+// we have and we need to parse every image. We do this by
+// increasing the m_frameBufferCache by one and try to parse
+// the image. We stop when QImage::read fails and then need
+// to resize the m_frameBufferCache to the final size and update
+// the m_failed. In case we failed to decode the first image
+// we want to keep m_failed set to true.
+
+// TODO: Do not increment the m_frameBufferCache.size() by one but more than one
 void ImageDecoderQt::forceLoadEverything()
 {
     int imageCount = 0;
@@ -225,9 +226,12 @@ void ImageDecoderQt::forceLoadEverything()
         internalHandleCurrentImage(imageCount - 1);
     } while(!m_failed);
 
-    // reset the failed state and resize the vector...
+    // If we failed decoding the first image we actually
+    // have no images and need to keep m_failed set to
+    // true otherwise we want to reset it and forget about
+    // the last attempt to decode a image.
     m_frameBufferCache.resize(imageCount - 1);
-    m_failed = false;
+    m_failed = imageCount == 1;
 }
 
 void ImageDecoderQt::failRead()

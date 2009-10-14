@@ -1,3 +1,30 @@
+2009-10-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        ImageDecoderQt: Minor tweaks to the decoder
+
+        - Only cache the data when we start to use it.
+        - Start with a repetition count of none for normal images.
+        - Do not use canRead as this will trigger parsing of the full image
+        - Cope with a GIF failing to decode the first frame, do not
+          set m_failed to true if decoding the first frame failed
+        - Inform the QImageReader about the format that was detected
+        - Always create a ImageDecoderQt when when we have more
+        than four byte.
+
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoder::create): Always create QImageReader for a significant speed up
+        (WebCore::ImageDecoderQt::ImageDecoderQt): Initialize m_repetitionCount to cAnimationNone
+        (WebCore::ImageDecoderQt::setData): Only call ImageDecoder::setData when everything has been received
+        (WebCore::ImageDecoderQt::isSizeAvailable): Do not check m_failed twice.
+        (WebCore::ImageDecoderQt::filenameExtension): Convert from QByteArray to String
+        (WebCore::ImageDecoderQt::frameBufferAtIndex): Check for m_failed before trying to decode
+        (WebCore::ImageDecoderQt::internalDecodeSize): Fail if the size is QSize()
+        (WebCore::ImageDecoderQt::forceLoadEverything): Handle the case were decoding the first frame fails
+        * platform/graphics/qt/ImageDecoderQt.h: Change the m_format type
+
 2009-10-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
