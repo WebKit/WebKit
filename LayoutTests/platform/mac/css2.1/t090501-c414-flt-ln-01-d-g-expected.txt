@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x484
-  RenderBlock {HTML} at (0,0) size 800x484
-    RenderBody {BODY} at (8,16) size 784x452
+layer at (0,0) size 800x503
+  RenderBlock {HTML} at (0,0) size 800x503
+    RenderBody {BODY} at (8,16) size 784x471
       RenderBlock {P} at (0,0) size 784x54 [color=#000080]
         RenderText {#text} at (0,0) size 769x54
           text run at (0,0) width 408: "The big coloured boxes should be level with the top of the small "
@@ -12,56 +12,56 @@ layer at (0,0) size 800x484
           text run at (479,18) width 290: "big box should be level with the bottom of the"
           text run at (0,36) width 104: "respective small "
           text run at (104,36) width 33: "box)."
-      RenderBlock {DIV} at (16,70) size 752x382 [color=#C0C0C0] [border: (5px solid #800080)]
-        RenderText {#text} at (133,22) size 474x18
-          text run at (133,22) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
+      RenderBlock {DIV} at (16,70) size 752x401 [color=#C0C0C0] [border: (5px solid #800080)]
+        RenderText {#text} at (133,23) size 474x18
+          text run at (133,23) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
         RenderInline {SPAN} at (0,0) size 22x24 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
-          RenderText {#text} at (610,22) size 16x18
-            text run at (610,22) width 16: "\x{21E6}"
-        RenderText {#text} at (629,22) size 4x18
-          text run at (629,22) width 4: " "
+          RenderText {#text} at (610,23) size 16x18
+            text run at (610,23) width 16: "\x{21E6}"
+        RenderText {#text} at (629,23) size 4x18
+          text run at (629,23) width 4: " "
         RenderImage {IMG} at (21,21) size 112x112 [color=#FF0000]
-        RenderText {#text} at (633,22) size 575x38
-          text run at (633,22) width 75: "dummy text"
-          text run at (133,42) width 395: "dummy text dummy text dummy text dummy text dummy text "
+        RenderText {#text} at (633,23) size 575x40
+          text run at (633,23) width 75: "dummy text"
+          text run at (133,45) width 395: "dummy text dummy text dummy text dummy text dummy text "
         RenderInline {SPAN} at (0,0) size 22x24 [color=#FFFFFF] [bgcolor=#800080] [border: (3px solid #FF00FF)]
-          RenderText {#text} at (531,42) size 16x18
-            text run at (531,42) width 16: "\x{21E8}"
-        RenderText {#text} at (550,42) size 4x18
-          text run at (550,42) width 4: " "
-        RenderImage {IMG} at (619,41) size 112x112 [color=#FF0000]
-        RenderText {#text} at (554,42) size 707x318
-          text run at (554,42) width 48: "dummy"
-          text run at (133,62) width 422: "text dummy text dummy text dummy text dummy text dummy text "
-          text run at (555,62) width 48: "dummy"
-          text run at (133,82) width 422: "text dummy text dummy text dummy text dummy text dummy text "
-          text run at (555,82) width 48: "dummy"
-          text run at (133,102) width 422: "text dummy text dummy text dummy text dummy text dummy text "
-          text run at (555,102) width 48: "dummy"
-          text run at (133,122) width 422: "text dummy text dummy text dummy text dummy text dummy text "
-          text run at (555,122) width 48: "dummy"
-          text run at (21,142) width 422: "text dummy text dummy text dummy text dummy text dummy text "
-          text run at (443,142) width 154: "dummy text dummy text"
-          text run at (21,162) width 316: "dummy text dummy text dummy text dummy text "
-          text run at (337,162) width 391: "dummy text dummy text dummy text dummy text dummy text"
-          text run at (21,182) width 79: "dummy text "
-          text run at (100,182) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-          text run at (574,182) width 154: "dummy text dummy text"
-          text run at (21,202) width 316: "dummy text dummy text dummy text dummy text "
-          text run at (337,202) width 391: "dummy text dummy text dummy text dummy text dummy text"
-          text run at (21,222) width 79: "dummy text "
-          text run at (100,222) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-          text run at (574,222) width 154: "dummy text dummy text"
-          text run at (21,242) width 316: "dummy text dummy text dummy text dummy text "
-          text run at (337,242) width 391: "dummy text dummy text dummy text dummy text dummy text"
-          text run at (21,262) width 79: "dummy text "
-          text run at (100,262) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-          text run at (574,262) width 154: "dummy text dummy text"
-          text run at (21,282) width 316: "dummy text dummy text dummy text dummy text "
-          text run at (337,282) width 391: "dummy text dummy text dummy text dummy text dummy text"
-          text run at (21,302) width 79: "dummy text "
-          text run at (100,302) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
-          text run at (574,302) width 154: "dummy text dummy text"
-          text run at (21,322) width 316: "dummy text dummy text dummy text dummy text "
-          text run at (337,322) width 391: "dummy text dummy text dummy text dummy text dummy text"
-          text run at (21,342) width 75: "dummy text"
+          RenderText {#text} at (531,45) size 16x18
+            text run at (531,45) width 16: "\x{21E8}"
+        RenderText {#text} at (550,45) size 4x18
+          text run at (550,45) width 4: " "
+        RenderImage {IMG} at (619,43) size 112x112 [color=#FF0000]
+        RenderText {#text} at (554,45) size 707x333
+          text run at (554,45) width 48: "dummy"
+          text run at (133,66) width 422: "text dummy text dummy text dummy text dummy text dummy text "
+          text run at (555,66) width 48: "dummy"
+          text run at (133,87) width 422: "text dummy text dummy text dummy text dummy text dummy text "
+          text run at (555,87) width 48: "dummy"
+          text run at (133,108) width 422: "text dummy text dummy text dummy text dummy text dummy text "
+          text run at (555,108) width 48: "dummy"
+          text run at (133,129) width 422: "text dummy text dummy text dummy text dummy text dummy text "
+          text run at (555,129) width 48: "dummy"
+          text run at (21,150) width 422: "text dummy text dummy text dummy text dummy text dummy text "
+          text run at (443,150) width 154: "dummy text dummy text"
+          text run at (21,171) width 316: "dummy text dummy text dummy text dummy text "
+          text run at (337,171) width 391: "dummy text dummy text dummy text dummy text dummy text"
+          text run at (21,192) width 79: "dummy text "
+          text run at (100,192) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
+          text run at (574,192) width 154: "dummy text dummy text"
+          text run at (21,213) width 316: "dummy text dummy text dummy text dummy text "
+          text run at (337,213) width 391: "dummy text dummy text dummy text dummy text dummy text"
+          text run at (21,234) width 79: "dummy text "
+          text run at (100,234) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
+          text run at (574,234) width 154: "dummy text dummy text"
+          text run at (21,255) width 316: "dummy text dummy text dummy text dummy text "
+          text run at (337,255) width 391: "dummy text dummy text dummy text dummy text dummy text"
+          text run at (21,276) width 79: "dummy text "
+          text run at (100,276) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
+          text run at (574,276) width 154: "dummy text dummy text"
+          text run at (21,297) width 316: "dummy text dummy text dummy text dummy text "
+          text run at (337,297) width 391: "dummy text dummy text dummy text dummy text dummy text"
+          text run at (21,318) width 79: "dummy text "
+          text run at (100,318) width 474: "dummy text dummy text dummy text dummy text dummy text dummy text "
+          text run at (574,318) width 154: "dummy text dummy text"
+          text run at (21,339) width 316: "dummy text dummy text dummy text dummy text "
+          text run at (337,339) width 391: "dummy text dummy text dummy text dummy text dummy text"
+          text run at (21,360) width 75: "dummy text"

@@ -19,12 +19,12 @@ layer at (173,32) size 453x453
       RenderInline {SPAN} at (0,0) size 0x0
     RenderBlock {DIV} at (0,0) size 453x0
       RenderInline {SPAN} at (0,0) size 0x0
-layer at (173,47) size 453x189
-  RenderBlock (positioned) {H1} at (0,15) size 453x188 [color=#DD9955]
-    RenderInline {SPAN} at (0,0) size 340x190
-      RenderText {#text} at (63,-1) size 340x190
-        text run at (63,-1) width 327: "CSS ZEN"
-        text run at (56,93) width 340: "GARDEN"
+layer at (173,47) size 453x191
+  RenderBlock (positioned) {H1} at (0,15) size 453x190 [color=#DD9955]
+    RenderInline {SPAN} at (0,0) size 340x191
+      RenderText {#text} at (63,0) size 340x191
+        text run at (63,0) width 327: "CSS ZEN"
+        text run at (56,95) width 340: "GARDEN"
 layer at (173,118) size 453x20
   RenderBlock (positioned) {H2} at (0,86) size 453x20 [color=#EEFF00]
     RenderInline {SPAN} at (0,0) size 149x19

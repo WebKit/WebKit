@@ -906,7 +906,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 // for how high to be in pixels does include things like minimum font size and the zoom factor.
                 // On the other hand, since font-size doesn't include the zoom factor, we really can't do
                 // that here either.
-                return CSSPrimitiveValue::create(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, CSSPrimitiveValue::CSS_PX);
+                // The line height returned is rounded to the nearest integer.
+                return CSSPrimitiveValue::create(length.calcMinValue(style->fontDescription().specifiedSize(), true), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(length.value(), CSSPrimitiveValue::CSS_PX);
         }
         case CSSPropertyListStyleImage:

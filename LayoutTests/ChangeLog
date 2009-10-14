@@ -1,3 +1,35 @@
+2009-10-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Round non-integer line height values and update layout tests affected.
+
+        -. Change webkit to rounding non-integer line height values
+           instead of truncating them. This fixes a layout test
+           failure on Windows and matches the calculation in IE and Firefox. 
+
+        -. Update layout tests affected by changing line height calculation.
+           Fix the font size in font.html. The font computed pixel size should
+           be 10px instead of 9.6px (computedPixelSize in FontDescription.h)
+           and line height should be 25, not 24.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24434
+
+        * css1/font_properties/font.html:
+        * fast/css/line-height-rounding-expected.txt: Added.
+        * fast/css/line-height-rounding.html: Added.
+        * platform/mac/css1/font_properties/font-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-00-d-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-02-d-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-03-d-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
@@ -6808,7 +6840,7 @@
 
         Reviewed by Dan Bernstein.
 
-        <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() + 436
+        <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() 436
 
         Test that changes the <select> from a popup to a list inside a mouse event handler.
 
@@ -12618,7 +12650,7 @@
 
 2009-08-05  Xan Lopez  <xlopez@igalia.com>
 
-        Skip new test using eventSender, since the GTK+ port does not have
+        Skip new test using eventSender, since the GTKport does not have
         it yet.
 
         * platform/gtk/Skipped:

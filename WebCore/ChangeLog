@@ -1,3 +1,27 @@
+2009-10-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Round non-integer line height values.
+
+        Change webkit to rounding non-integer line height values
+        instead of truncating them. This fixes a layout test
+        failure on Windows and matches the calculation in IE and Firefox. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=24434
+
+        Test: fast/css/line-height-rounding.html
+              fast/forms/textarea-scrollbar-height.htm
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::computedLineHeight):
+
 2009-10-13  Kelly Norton  <knorton@google.com>
 
         Reviewed by Pavel Feldman.
@@ -1069,7 +1093,7 @@
         worker process on OS X. This is because V8's default stack limit
         is 512K on ia32 or 1M on x64, but the worker process runs workers
         on a thread with the OS X default stack size--512K. Because there
-        are already some C++ frames on the stack when V8 establishes its
+        are already some C+frames on the stack when V8 establishes its
         512K default stack limit, and V8 doesn't precisely enforce the
         stack limit, runaway recursion in V8 workers overflows the OS
         stack and segfaults, killing the worker process. This is described
@@ -1077,7 +1101,7 @@
 
         This patch sets the V8 stack limit for worker JavaScript in
         Chromium to a more conservative 500K on all platforms. This allows
-        some "headroom" for the C++ stack in use when the limit is set up,
+        some "headroom" for the C+stack in use when the limit is set up,
         and some "legroom" for the V8 helper functions which in practice
         briefly flout the V8 stack limit.
 
@@ -1111,7 +1135,7 @@
         Test: svg/dom/id-reflect.html
 
         * bindings/scripts/CodeGenerator.pm: Add a function to determine the
-        appropriate C++ namespace for attribute name constants.
+        appropriate C+namespace for attribute name constants.
         * bindings/scripts/CodeGeneratorObjC.pm: Generate ExceptionCode handling
         code for [Reflect] on an attribute with a setter exception.
         * bindings/scripts/CodeGeneratorCOM.pm: Generate "SVGNames" instead of
@@ -2249,7 +2273,7 @@
 
 2009-10-07  Xan Lopez  <xlopez@igalia.com>
 
-        Fix more breakage in the GTK+ build.
+        Fix more breakage in the GTKbuild.
 
         * GNUmakefile.am:
 
@@ -2695,7 +2719,7 @@
 
         Reviewed by Adam Barth.
 
-        Fetch pointers to C++ DOM window immediately from holder
+        Fetch pointers to C+DOM window immediately from holder
         object (do not search prototype chain for proper JS wrapper).
         https://bugs.webkit.org/show_bug.cgi?id=29031
 
@@ -2885,7 +2909,7 @@
 
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
-        Try to fix the GTK+ build.
+        Try to fix the GTKbuild.
 
         * GNUmakefile.am:
 
@@ -5778,7 +5802,7 @@
         those values correspond to:
 
         auto = optimizeSpeed = what we normally when the value's not set
-        optimizeLegibility = geometricPrecision = ligatures + kerning
+        optimizeLegibility = geometricPrecision = ligatures kerning
 
         Add new file TextRenderingMode.h to the project files.
         * WebCore.vcproj/WebCore.vcproj:
@@ -5938,7 +5962,7 @@
          o All wrappers have hidden dependencies on their listeners to
            prevent listeners from being collected.
          o All variats of getEventListener function grouped in V8DOMWrapper.
-         o Pointers to C++ EventListener wrappers are stored in JS objects
+         o Pointers to C+EventListener wrappers are stored in JS objects
            instead of event listener lists.
         https://bugs.webkit.org/show_bug.cgi?id=29825
 
@@ -8195,7 +8219,7 @@
         can't happen when working with JavaScript since the Element will be kept
         alive due to the change above.
         (WebCore::NamedNodeMap::addAttribute): Fix function name in comment.
-        (WebCore::NamedNodeMap::removeAttribute): Removed unneeded "+ 1" and added
+        (WebCore::NamedNodeMap::removeAttribute): Removed unneeded "1" and added
         missing braces.
 
         * dom/NamedAttrMap.h: Made the element function public so it can be used by
@@ -8318,7 +8342,7 @@
         1. if the insertion node has a non opaque background color and one of the parent element did have
         a solid background color the new paragraph did not have the element with the solid color in the tree.
         2. in some circumstances it generated more markup than the original paragraph had (a span with bold, italic,
-        background color and some font attribute was being reproduced as span + bold + italic + font as separate tags.
+        background color and some font attribute was being reproduced as span bold italic font as separate tags.
         The new approach is to recreate in the new paragraph the same hierarchy of nodes found in the
         paragraph where the insertion point is.
 
@@ -8654,7 +8678,7 @@
 
         Reviewed by Oliver Hunt.
 
-        Implement correct horizontal scrollbar behavior for GTK+ also on
+        Implement correct horizontal scrollbar behavior for GTKalso on
         styled scrollbars.
 
         https://bugs.webkit.org/show_bug.cgi?id=29348
@@ -10528,7 +10552,7 @@
 
 2009-09-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
-        Unreviewed build fix for GTK+ and a blind one for Qt after r48566.
+        Unreviewed build fix for GTKand a blind one for Qt after r48566.
 
         * GNUmakefile.am:
         * WebCore.pro:
@@ -11282,7 +11306,7 @@
         Reviewed by Oliver Hunt.
 
         <rdar://problem/7007541> 
-        CrashTracer: 4800+ crashes in Safari at com.apple.WebKit • WTF::HashTableIterator...
+        CrashTracer: 4800crashes in Safari at com.apple.WebKit • WTF::HashTableIterator...
         
         Make RuntimeObjectImp more robust against m_instance being a null (which can happen if an OOP plug-in
         crashes while we're calling into it).
@@ -12564,7 +12588,7 @@
 
         Reviewed by Dan Bernstein.
 
-        <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() + 436
+        <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() 436
         
         Avoid a crash when a mouse event handler on a <select> changes the select from a popup
         to a list (by setting the 'size' property) inside the event handler.
@@ -13580,7 +13604,7 @@
 
         Reviewed by Gustavo Noronha.
 
-        Build fix for GTK+ after r48267.
+        Build fix for GTKafter r48267.
 
         * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
         (WebCore::MediaPlayerPrivate::buffered):
@@ -14621,7 +14645,7 @@
 
 2009-09-08  Xan Lopez  <xlopez@igalia.com>
 
-        Unreviewed attempt to fix the GTK+ build.
+        Unreviewed attempt to fix the GTKbuild.
 
         * GNUmakefile.am:
 
@@ -20287,7 +20311,7 @@
         do not set playbin's audio sink.
         * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
         * platform/graphics/gtk/VideoSinkGStreamer.cpp:
-        (webkit_video_sink_idle_func): Use C++ casts, decrease reference count of async
+        (webkit_video_sink_idle_func): Use C+casts, decrease reference count of async
         queue at the end of the idle function.
         (webkit_video_sink_render): Increase reference count of async queue.
         (webkit_video_sink_stop): Remove any idle functions with the sink as data.
@@ -22048,7 +22072,7 @@
 
         Reviewed by Eric Seidel.
 
-        Add 'icu::' qualifier when refering to ICU C++ names to the other
+        Add 'icu::' qualifier when refering to ICU C+names to the other
         file with this issue missed in the previous check-in.
 
         https://bugs.webkit.org/show_bug.cgi?id=28410
@@ -22331,7 +22355,7 @@
 
         Reviewed by Eric Seidel
 
-        Add 'icu::' qualifier when refering to ICU C++ names.
+        Add 'icu::' qualifier when refering to ICU C+names.
 
         https://bugs.webkit.org/show_bug.cgi?id=28410
 
@@ -26509,7 +26533,7 @@ form controls that have different validity states.
         Reviewed by Sam Weinig.
 
         <rdar://problem/6952336>
-        CrashTracer: [USER] 3 crashes in Safari at com.apple.WebCore • WebCore::SecurityOrigin::canAccess const + 27
+        CrashTracer: [USER] 3 crashes in Safari at com.apple.WebCore • WebCore::SecurityOrigin::canAccess const 27
 
         Make sure to set the security origin before calling dispatchWindowObjectAvailable.
         
@@ -26833,11 +26857,11 @@ form controls that have different validity states.
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=28204
-        Allow C++ exceptions to be disabled in WebCore's V8 Mac build.
+        Allow C+exceptions to be disabled in WebCore's V8 Mac build.
 
         * WebCorePrefix.h:
         Only undefine |try| and |catch| when building Objective-C[++],
-        leaving the C++ library definitions intact for C++.
+        leaving the C+library definitions intact for C++.
 
 2009-08-12  Nate Chapin  <japhet@chromium.org>
 
@@ -27887,7 +27911,7 @@ form controls that have different validity states.
 
         Reviewed by Darin Fisher.
 
-        Cleanup DOM Storage namespace shutdown code + usage of security origin.
+        Cleanup DOM Storage namespace shutdown code usage of security origin.
         https://bugs.webkit.org/show_bug.cgi?id=28094
 
         If a storage namespace is not explicitly closed, be sure to do so on
@@ -27994,7 +28018,7 @@ form controls that have different validity states.
 
 2009-08-10  Xan Lopez  <xlopez@igalia.com>
 
-        Fix GTK+ build.
+        Fix GTKbuild.
 
         * platform/network/soup/ResourceHandleSoup.cpp:
         (WebCore::):
@@ -28008,7 +28032,7 @@ form controls that have different validity states.
         * platform/graphics/GlyphBuffer.h: Removed advanceData().
         * platform/graphics/wince/GraphicsContextWince.cpp:
         (WebCore::GraphicsContext::drawText): Changed to use advances(from)
-            instead of advanceData() + from.
+            instead of advanceData() from.
 
 2009-08-10  Xan Lopez  <xlopez@igalia.com>
 
@@ -28321,7 +28345,7 @@ form controls that have different validity states.
 
         Modify FrameLoadType enum to match the order of WebFrameLoadType in WebFramePrivate.h / IWebFramePrivate.idl.
         The mac/win public API exposes the old 'FrameLoadTypeReloadAllowingStaleData' value, which resides between
-        'FrameLoadTypeReload' and 'FrameLoadTypeSame'. Work around this problem, by assigning 'FrameLoadTypeSame = FrameLoadTypeReload + 2'.
+        'FrameLoadTypeReload' and 'FrameLoadTypeSame'. Work around this problem, by assigning 'FrameLoadTypeSame = FrameLoadTypeReload 2'.
 
         Add a note to the FrameLoadType enum to keep it in sync with WebFramePrivate.h & IWebFramePrivate.idl.
 
@@ -35631,7 +35655,7 @@ form controls that have different validity states.
 
         I decided to change these to Base:: instead of DOMObjectWithGlobal::
         for future-proofing.  All autogenerated classes use a typedef Base
-        to avoid bugs like these.  Sadly C++ does not have a built-in super:: we could use.
+        to avoid bugs like these.  Sadly C+does not have a built-in super:: we could use.
 
         * WebCore.xcodeproj/project.pbxproj:
         * bindings/js/JSAbstractWorkerCustom.cpp:
@@ -36499,7 +36523,7 @@ form controls that have different validity states.
 
 2009-07-22  Xan Lopez  <xlopez@igalia.com>
 
-        Attempt to fix the GTK+ build.
+        Attempt to fix the GTKbuild.
 
         * GNUmakefile.am:
 
@@ -42560,7 +42584,7 @@ form controls that have different validity states.
 
         Crash in RenderMedia::styleDidChange.
         <rdar://problem/7044313> CrashTracer: quicklook crashed generating thumbnail for page with 
-        media element (RenderMedia::styleDidChange + 115)
+        media element (RenderMedia::styleDidChange 115)
 
         Speculative fix for crash in styleDidChange. Null check controller elements before tell
         them to update style.
@@ -43678,7 +43702,7 @@ form controls that have different validity states.
 
         Not reviewed, Chromium build fix.
 
-        Add in missing header + fix syntax issue that crept into last patch.
+        Add in missing header fix syntax issue that crept into last patch.
         https://bugs.webkit.org/show_bug.cgi?id=27027
 
         * rendering/RenderThemeChromiumMac.mm:
@@ -44509,7 +44533,7 @@ form controls that have different validity states.
 
         Report the caret offset from the end of the selection, otherwise
         we'll report the same offset when moving the caret while
-        modififying the selection (eg, with Shift + Right).
+        modififying the selection (eg, with Shift Right).
 
         * editing/gtk/SelectionControllerGtk.cpp:
         (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
@@ -45778,7 +45802,7 @@ form controls that have different validity states.
 
         Reviewed by Geoff Garen.
 
-        <rdar://problem/6960286> CrashTracer: [REGRESSION] 1120 crashes in Safari at com.apple.WebCore WebCore::JSLazyEventListener::parseCode const + 62
+        <rdar://problem/6960286> CrashTracer: [REGRESSION] 1120 crashes in Safari at com.apple.WebCore WebCore::JSLazyEventListener::parseCode const 62
 
         <select> elements and other elements the produce popups can keep their popups
         live across a page load.  If this occurs and the <select> element has an
@@ -46434,7 +46458,7 @@ form controls that have different validity states.
 
         Reviewed by Jan Alonzo.
 
-        [GTK] Don't use deprecated GTK+ symbols.
+        [GTK] Don't use deprecated GTKsymbols.
         https://bugs.webkit.org/show_bug.cgi?id=26583
 
         * plugins/gtk/gtk2xtbin.c:
@@ -51927,7 +51951,7 @@ form controls that have different validity states.
 
         Reviewed by Brady Eidson.
 
-        <rdar://problem/6660037> CrashTracer: [USER] 46 crashes in Safari at com.apple.WebCore • WebCore::CachedCSSStyleSheet::addClient + 53
+        <rdar://problem/6660037> CrashTracer: [USER] 46 crashes in Safari at com.apple.WebCore • WebCore::CachedCSSStyleSheet::addClient 53
         
         When revalidating a resource, calling addClient() on one client might cause another to get removed.
         
@@ -51989,7 +52013,7 @@ form controls that have different validity states.
         Update of https://bugs.webkit.org/show_bug.cgi?id=26353.
         Provide an assignment operator to avoid improper reference
         counts on the Cairo font objects.  This brings the Windows
-        Cairo port in line with the GTK+ port.
+        Cairo port in line with the GTKport.
 
         * platform/graphics/win/FontPlatformData.h:
         * platform/graphics/win/FontPlatformDataCairoWin.cpp:

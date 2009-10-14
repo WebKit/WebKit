@@ -1,0 +1,3 @@
+This tests non-integer line height is rounded to the nearest integer.
+
+Test passed.

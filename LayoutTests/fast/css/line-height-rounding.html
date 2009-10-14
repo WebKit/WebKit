@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<style type="text/css">
+</style>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function checkLineHeight(fontSize, lineHeightPercent, expectedLineHeight) {
+    var testElement = document.getElementById('testElement');
+    testElement.style.fontSize = fontSize;
+    testElement.style.lineHeight = lineHeightPercent;
+
+    var style = document.defaultView.getComputedStyle(testElement, null);
+    var actualLineHeight = style.getPropertyValue('line-height');
+    if (actualLineHeight != expectedLineHeight) {
+        return "FAIL: font size: " + fontSize +
+               "; line height percent: " + lineHeightPercent +
+               "; expected line height: " + expectedLineHeight +
+               "; actual line height: " + actualLineHeight + "<br>";
+    }
+
+    return "";
+}
+
+function test() {
+    var message = checkLineHeight("10px", 1.05, '11px');  // 10*1.05  = 10.50
+    message += checkLineHeight("10px", 1.049, '10px');    // 10*1.049 = 10.49
+    message += checkLineHeight("10px", 0, '0px');         // 10*0 = 0
+    message += checkLineHeight("10px", 1, '10px');        // 10*1.00 = 10.00
+
+    if (message != "")
+        document.getElementById("results").innerHTML = "Test failed:<br>" + message;
+    else
+        document.getElementById("results").innerHTML = "Test passed.";
+
+    document.getElementById('testElement').innerHTML = "";
+}
+
+</script>
+</head>
+<body onload="test()">
+    <p>This tests non-integer line height is rounded to the nearest integer.</p>
+    <p id='testElement'>test data</p> 
+    <div id='results'></div>
+</body>
+</html>
