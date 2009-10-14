@@ -1,3 +1,16 @@
+2009-10-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix failures seen on buildbot after landing the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        Somehow I had the mac/fast/css/opacity-float-expected.txt
+        removed locally, and Subversion didn't check that in!
+
+        * platform/mac/fast/css/opacity-float-expected.txt: Removed.
+        * platform/win/fast/css/opacity-float-expected.txt: Removed.
+
 2009-10-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
