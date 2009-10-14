@@ -140,9 +140,17 @@ void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scr
 
     if (rect.height() > 10 && rect.width() > 10) {
         paint.setARGB(0xff, 0x9d, 0x96, 0x8e);
-        drawHorizLine(canvas, midx - 1, midx + 3, midy, paint);
-        drawHorizLine(canvas, midx - 1, midx + 3, midy - 3, paint);
-        drawHorizLine(canvas, midx - 1, midx + 3, midy + 3, paint);
+        const int grippyHalfWidth = 2;
+        const int interGrippyOffset = 3;
+        if (vertical) {
+            drawHorizLine(canvas, midx - grippyHalfWidth, midx + grippyHalfWidth, midy - interGrippyOffset, paint);
+            drawHorizLine(canvas, midx - grippyHalfWidth, midx + grippyHalfWidth, midy,                     paint);
+            drawHorizLine(canvas, midx - grippyHalfWidth, midx + grippyHalfWidth, midy + interGrippyOffset, paint);
+        } else {
+            drawVertLine(canvas, midx - interGrippyOffset, midy - grippyHalfWidth, midy + grippyHalfWidth, paint);
+            drawVertLine(canvas, midx,                     midy - grippyHalfWidth, midy + grippyHalfWidth, paint);
+            drawVertLine(canvas, midx + interGrippyOffset, midy - grippyHalfWidth, midy + grippyHalfWidth, paint);
+        }
     }
 }
 

@@ -1,3 +1,18 @@
+2009-10-13  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Make grippy lines vertical on horizontal scrollbars in Linux Chrome.
+        While we're rebaselining scrollbars, fix an off by one in the vertical
+        scrollbar rendering too.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30319
+
+        Tests: this is covered by every pixel test involving scrollbars.
+
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+
 2009-10-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
