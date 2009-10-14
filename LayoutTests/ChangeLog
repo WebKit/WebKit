@@ -1,5 +1,13 @@
 2009-10-13  Brian Weinstein  <bweinstein@apple.com>
 
+        Rubber-stamped by Jon Honeycutt.
+
+        Add trailing newline to the Windows Skipped List.
+
+        * platform/win/Skipped:
+
+2009-10-13  Brian Weinstein  <bweinstein@apple.com>
+
         Rubber-stamped by Anders Carlsson.
 
         Add plugins/private-browsing-mode.html to the Windows Skipped
