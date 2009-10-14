@@ -41,3 +41,8 @@ media/controls-drag-timebar.html
 #<rdar://problem/7144583> - Intermittent failure
 svg/css/glyph-orientation-rounding-test.xhtml
 
+# Disable inspector tests while fixing them in release mode
+# https://bugs.webkit.org/show_bug.cgi?id=30014
+inspector/console-tests.html
+inspector/elements-panel-structure.html
+inspector/evaluate-in-frontend.html

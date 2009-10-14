@@ -4864,3 +4864,8 @@ fast/dom/Window/slow_unload_handler.html
 
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
+
+# Skip inspector tests
+inspector/console-tests.html
+inspector/elements-panel-structure.html
+inspector/evaluate-in-frontend.html

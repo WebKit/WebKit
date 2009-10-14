@@ -1,3 +1,20 @@
+2009-10-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: skip inspector tests that were recently added
+        until harness is fixed in release mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30014
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Skip my two new failures while I'm actively looking at them.
