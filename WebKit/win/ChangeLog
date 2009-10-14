@@ -1,3 +1,15 @@
+2009-10-13  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben..
+
+        Split removal functions for user scripts and stylehseets based on type.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::removeUserScriptFromGroup):
+        (WebView::removeUserStyleSheetFromGroup):
+        * WebView.h:
+
 2009-10-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

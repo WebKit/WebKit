@@ -1,3 +1,22 @@
+2009-10-13  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Change the order of arguments on some of the user stylesheet/script functions.  Split the removal functions
+        out into separate ones for scripts and stylesheets.
+
+        * WebCore.base.exp:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScriptToWorld):
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        (WebCore::PageGroup::removeUserScriptFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld):
+        (WebCore::PageGroup::removeUserScriptsFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld):
+        * page/PageGroup.h:
+        (WebCore::PageGroup::userScripts):
+        (WebCore::PageGroup::userStyleSheets):
+
 2009-10-13  Evan Martin  <evan@chromium.org>
 
         Reviewed by Dmitry Titov.

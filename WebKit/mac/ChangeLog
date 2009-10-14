@@ -1,3 +1,19 @@
+2009-10-13  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Change the order of arguments on some methods.  Split removal for user stylesheets and script into
+        separate functions based off the type of object being removed.
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserScriptToGroup:worldID:source:url:whitelist:blacklist:injectionTime:]):
+        (+[WebView _addUserStyleSheetToGroup:worldID:source:url:whitelist:blacklist:]):
+        (+[WebView _removeUserScriptFromGroup:worldID:url:]):
+        (+[WebView _removeUserStyleSheetFromGroup:worldID:url:]):
+        (+[WebView _removeUserScriptsFromGroup:worldID:]):
+        (+[WebView _removeUserStyleSheetsFromGroup:worldID:]):
+        * WebView/WebViewPrivate.h:
+
 2009-10-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

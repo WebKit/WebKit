@@ -747,8 +747,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url,
                                                                unsigned whitelistCount, BSTR* whitelist, 
                                                                unsigned blacklistCount, BSTR* blacklist);
-    virtual HRESULT STDMETHODCALLTYPE removeUserContentWithURLFromGroup(BSTR groupName, unsigned worldID, BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE removeUserContentFromGroup(BSTR groupName, unsigned worldID);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(BSTR groupName, unsigned worldID, BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(BSTR groupName, unsigned worldID, BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(BSTR groupName, unsigned worldID);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(BSTR groupName, unsigned worldID);
     virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
 
     virtual HRESULT STDMETHODCALLTYPE setPluginHalterDelegate(IWebPluginHalterDelegate*);

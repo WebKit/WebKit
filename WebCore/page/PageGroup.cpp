@@ -200,8 +200,8 @@ StorageNamespace* PageGroup::localStorage()
 }
 #endif
 
-void PageGroup::addUserScript(const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
-                              PassOwnPtr<Vector<String> > blacklist, unsigned worldID, UserScriptInjectionTime injectionTime)
+void PageGroup::addUserScriptToWorld(unsigned worldID, const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
+                                     PassOwnPtr<Vector<String> > blacklist, UserScriptInjectionTime injectionTime)
 {
     if (worldID == UINT_MAX)
         return;
@@ -214,8 +214,8 @@ void PageGroup::addUserScript(const String& source, const KURL& url,  PassOwnPtr
     scriptsInWorld->append(userScript.release());
 }
 
-void PageGroup::addUserStyleSheet(const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
-                                  PassOwnPtr<Vector<String> > blacklist, unsigned worldID)
+void PageGroup::addUserStyleSheetToWorld(unsigned worldID, const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
+                                         PassOwnPtr<Vector<String> > blacklist)
 {
     if (worldID == UINT_MAX)
         return;
@@ -235,80 +235,92 @@ void PageGroup::addUserStyleSheet(const String& source, const KURL& url, PassOwn
     }
 }
 
-void PageGroup::removeUserContentWithURLForWorld(const KURL& url, unsigned worldID)
+void PageGroup::removeUserScriptFromWorld(unsigned worldID, const KURL& url)
 {
-    if (m_userScripts) {
-        UserScriptMap::iterator it = m_userScripts->find(worldID);
-        if (it != m_userScripts->end()) {
-            UserScriptVector* scripts = it->second;
-            for (int i = scripts->size() - 1; i >= 0; --i) {
-                if (scripts->at(i)->url() == url)
-                    scripts->remove(i);
-            }
-            
-            if (scripts->isEmpty()) {
-                delete it->second;
-                m_userScripts->remove(it);
-            }
-        }
+    if (!m_userScripts)
+        return;
+
+    UserScriptMap::iterator it = m_userScripts->find(worldID);
+    if (it == m_userScripts->end())
+        return;
+    
+    UserScriptVector* scripts = it->second;
+    for (int i = scripts->size() - 1; i >= 0; --i) {
+        if (scripts->at(i)->url() == url)
+            scripts->remove(i);
     }
     
-    if (m_userStyleSheets) {
-        UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
-        bool sheetsChanged = false;
-        if (it != m_userStyleSheets->end()) {
-            UserStyleSheetVector* stylesheets = it->second;
-            for (int i = stylesheets->size() - 1; i >= 0; --i) {
-                if (stylesheets->at(i)->url() == url) {
-                    stylesheets->remove(i);
-                    sheetsChanged = true;
-                }
-            }
-            
-            if (stylesheets->isEmpty()) {
-                delete it->second;
-                m_userStyleSheets->remove(it);
-            }
+    if (!scripts->isEmpty())
+        return;
+    
+    delete it->second;
+    m_userScripts->remove(it);
+}
+
+void PageGroup::removeUserStyleSheetFromWorld(unsigned worldID, const KURL& url)
+{
+    if (!m_userStyleSheets)
+        return;
+
+    UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
+    bool sheetsChanged = false;
+    if (it == m_userStyleSheets->end())
+        return;
+    
+    UserStyleSheetVector* stylesheets = it->second;
+    for (int i = stylesheets->size() - 1; i >= 0; --i) {
+        if (stylesheets->at(i)->url() == url) {
+            stylesheets->remove(i);
+            sheetsChanged = true;
         }
+    }
         
-        // Clear our cached sheets and have them just reparse.
-        if (sheetsChanged) {
-            HashSet<Page*>::const_iterator end = m_pages.end();
-            for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
-                for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                    frame->document()->clearPageGroupUserSheets();
-            }
-        }
+    if (!sheetsChanged)
+        return;
+
+    if (!stylesheets->isEmpty()) {
+        delete it->second;
+        m_userStyleSheets->remove(it);
+    }
+    
+    // Clear our cached sheets and have them just reparse.
+    HashSet<Page*>::const_iterator end = m_pages.end();
+    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->clearPageGroupUserSheets();
     }
 }
 
-void PageGroup::removeUserContentForWorld(unsigned worldID)
+void PageGroup::removeUserScriptsFromWorld(unsigned worldID)
 {
-    if (m_userScripts) {
-        UserScriptMap::iterator it = m_userScripts->find(worldID);
-        if (it != m_userScripts->end()) {
-            delete it->second;
-            m_userScripts->remove(it);
-        }
-    }
+    if (!m_userScripts)
+        return;
+
+    UserScriptMap::iterator it = m_userScripts->find(worldID);
+    if (it == m_userScripts->end())
+        return;
+       
+    delete it->second;
+    m_userScripts->remove(it);
+}
+
+void PageGroup::removeUserStyleSheetsFromWorld(unsigned worldID)
+{
+    if (!m_userStyleSheets)
+        return;
     
-    if (m_userStyleSheets) {
-        bool sheetsChanged = false;
-        UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
-        if (it != m_userStyleSheets->end()) {
-            delete it->second;
-            m_userStyleSheets->remove(it);
-            sheetsChanged = true;
-        }
+    UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
+    if (it == m_userStyleSheets->end())
+        return;
     
-        if (sheetsChanged) {
-            // Clear our cached sheets and have them just reparse.
-            HashSet<Page*>::const_iterator end = m_pages.end();
-            for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
-                for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                    frame->document()->clearPageGroupUserSheets();
-            }
-        }
+    delete it->second;
+    m_userStyleSheets->remove(it);
+
+    // Clear our cached sheets and have them just reparse.
+    HashSet<Page*>::const_iterator end = m_pages.end();
+    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->clearPageGroupUserSheets();
     }
 }
 
