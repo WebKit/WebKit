@@ -50,10 +50,6 @@ void JSSVGElementInstance::markChildren(MarkStack& markStack)
 
 JSValue JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
 {
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
-    if (!globalObject)
-        return jsUndefined();
-
     JSValue listener = args.at(1);
     if (!listener.isObject())
         return jsUndefined();
@@ -64,10 +60,6 @@ JSValue JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& a
 
 JSValue JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
 {
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
-    if (!globalObject)
-        return jsUndefined();
-
     JSValue listener = args.at(1);
     if (!listener.isObject())
         return jsUndefined();

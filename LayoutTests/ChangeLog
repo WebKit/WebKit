@@ -1,3 +1,19 @@
+2009-10-13  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30318
+        ScriptExecutionContext is not anymore needed to create an EventListener - remove old code.
+        It's a followup to r48884. It removed the need to pass the ScritpExecutionContext
+        into EventListener constructor but did not remove the code pulling ScriptExecutionContext.
+
+        Test adds event listener to a DocumentType Node which is created without a document
+        and then dispatches the event after attaching a node to the tree. Event
+        should fire when node is attached to the tree.
+
+        * fast/events/add-event-without-document-expected.txt: Added.
+        * fast/events/add-event-without-document.html: Added.
+
 2009-10-13  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Jon Honeycutt.
