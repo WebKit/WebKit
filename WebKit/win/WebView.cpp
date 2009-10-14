@@ -5453,9 +5453,9 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR sou
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserScript(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                             toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID,
-                             injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
+    pageGroup->addUserScriptToGroup(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
+                                    toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID,
+                                    injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 
     return S_OK;
 }
@@ -5473,8 +5473,8 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserStyleSheet(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                                 toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID);
+    pageGroup->addUserStyleSheetToGroup(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
+                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID);
 
     return S_OK;
 }
@@ -5511,7 +5511,7 @@ HRESULT WebView::removeUserStyleSheetFromGroup(BSTR groupName, unsigned worldID,
     return S_OK;
 }
 
-HRESULT WebView::removeUserScriptFromGroup(BSTR groupName, unsigned worldID)
+HRESULT WebView::removeUserScriptsFromGroup(BSTR groupName, unsigned worldID)
 {
     String group(groupName, SysStringLen(groupName));
     if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
@@ -5526,7 +5526,7 @@ HRESULT WebView::removeUserScriptFromGroup(BSTR groupName, unsigned worldID)
     return S_OK;
 }
 
-HRESULT WebView::removeUserStyleSheetFromGroup(BSTR groupName, unsigned worldID)
+HRESULT WebView::removeUserStyleSheetsFromGroup(BSTR groupName, unsigned worldID)
 {
     String group(groupName, SysStringLen(groupName));
     if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
