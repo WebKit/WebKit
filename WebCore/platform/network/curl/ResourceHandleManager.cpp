@@ -678,7 +678,7 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
 
     d->m_handle = curl_easy_init();
 
-#if LIBCURL_VERSION_NUM > 0x071200
+#if LIBCURL_VERSION_NUM > 0x071800
     if (d->m_defersLoading) {
         CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
         // If we did not pause the handle, we would ASSERT in the

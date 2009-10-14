@@ -1,3 +1,12 @@
+2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        CURL build fix for versions < 7.18.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2009-10-14  Chris Marrin  <cmarrin@apple.com>
 
         One more round of changes to figure out why the webgl 

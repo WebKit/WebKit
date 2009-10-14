@@ -156,7 +156,7 @@ void ResourceHandle::setDefersLoading(bool defers)
     if (d->m_defersLoading == defers)
         return;
 
-#if LIBCURL_VERSION_NUM > 0x071200
+#if LIBCURL_VERSION_NUM > 0x071800
     if (!d->m_handle)
         d->m_defersLoading = defers;
     else if (defers) {
