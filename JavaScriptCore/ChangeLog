@@ -1,3 +1,9 @@
+2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Set ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH for plugins while we're still building stubs.
+
+        * wtf/Platform.h:
+
 2009-10-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
