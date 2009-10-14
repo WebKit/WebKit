@@ -86,7 +86,7 @@ const char* getValueName(unsigned short id);
 EOF
 close HEADER;
 
-system("gperf -L ANSI-C -E -C -n -o -t --key-positions=\"*\" -NfindValue -Hhash_val -Wwordlist_value -D CSSValueKeywords.gperf > CSSValueKeywords.c");
+system("gperf -L ANSI-C -E -C -n -o -t --key-positions=\"*\" -NfindValue -Hhash_val -Wwordlist_value -D CSSValueKeywords.gperf > CSSValueKeywords.c") == 0 || die "calling gperf failed: $?";
 
 open C, ">>CSSValueKeywords.c" || die "Could not open CSSValueKeywords.c for writing";
 print C  "static const char * const valueList[] = {\n";
