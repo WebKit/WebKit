@@ -1,3 +1,39 @@
+2009-10-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG wrong filterRegions for userSpaceOnUse and percentage values
+        [https://bugs.webkit.org/show_bug.cgi?id=30330]
+
+        Some clean-up of the SVG filter calculation code. This clean-up
+        also fixes the problem with percentage and userSpaceInUse mode.
+
+        Test: svg/filters/subRegion-in-userSpace.svg
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect):
+        * platform/graphics/filters/FilterEffect.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::buildFilter):
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::~SVGResourceFilter):
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        * svg/graphics/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::create):
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::SVGFilter):
+        (WebCore::SVGFilter::calculateEffectSubRegion):
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h:
+
 2009-10-14  Chris Marrin  <cmarrin@apple.com>
 
         The last change fixed the problem, removing diagnostic printfs.

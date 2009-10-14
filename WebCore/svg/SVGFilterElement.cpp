@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+    Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
 
     This file is part of the KDE project
 
@@ -102,39 +103,36 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-SVGResource* SVGFilterElement::canvasResource()
+void SVGFilterElement::buildFilter(const FloatRect& targetRect) const
 {
-    if (!attached())
-        return 0;
-
-    if (!m_filter)
-        m_filter = new SVGResourceFilter();
-
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool primitiveBBoxMode = primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+
+    FloatRect filterBBox;
+    if (filterBBoxMode)
+        filterBBox = FloatRect(x().valueAsPercentage(),
+                               y().valueAsPercentage(),
+                               width().valueAsPercentage(),
+                               height().valueAsPercentage());
+    else
+        filterBBox = FloatRect(x().value(this),
+                               y().value(this),
+                               width().value(this),
+                               height().value(this));
+
+    FloatRect filterRect = filterBBox;
+    if (filterBBoxMode)
+        filterRect = FloatRect(targetRect.x() + filterRect.x() * targetRect.width(),
+                               targetRect.y() + filterRect.y() * targetRect.height(),
+                               filterRect.width() * targetRect.width(),
+                               filterRect.height() * targetRect.height());
+
+    m_filter->setFilterBoundingBox(filterRect);
+    m_filter->setFilterRect(filterBBox);
+    m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
 
-    float _x, _y, _width, _height;
-
-    if (filterBBoxMode) {
-        _x = x().valueAsPercentage();
-        _y = y().valueAsPercentage();
-        _width = width().valueAsPercentage();
-        _height = height().valueAsPercentage();
-    } else {
-        m_filter->setXBoundingBoxMode(x().unitType() == LengthTypePercentage);
-        m_filter->setYBoundingBoxMode(y().unitType() == LengthTypePercentage);
-
-        _x = x().value(this);
-        _y = y().value(this);
-        _width = width().value(this);
-        _height = height().value(this);
-    } 
-
-    m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));
-
-    bool primitiveBBoxMode = primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-    m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
-
+    // Add effects to the filter
     m_filter->builder()->clearEffects();
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElement* element = 0;
@@ -149,12 +147,18 @@ SVGResource* SVGFilterElement::canvasResource()
             }
         }
     }
+}
 
+SVGResource* SVGFilterElement::canvasResource()
+{
+    if (!attached())
+        return 0;
+
+    if (!m_filter)
+        m_filter = SVGResourceFilter::create(this);
     return m_filter.get();
 }
 
 }
 
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

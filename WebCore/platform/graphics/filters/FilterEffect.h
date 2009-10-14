@@ -38,18 +38,6 @@ namespace WebCore {
     public:
         virtual ~FilterEffect();
 
-        bool xBoundingBoxMode() const { return m_xBBoxMode; }
-        void setXBoundingBoxMode(bool bboxMode) { m_xBBoxMode = bboxMode; }
-
-        bool yBoundingBoxMode() const { return m_yBBoxMode; }
-        void setYBoundingBoxMode(bool bboxMode) { m_yBBoxMode = bboxMode; }
-
-        bool widthBoundingBoxMode() const { return m_widthBBoxMode; }
-        void setWidthBoundingBoxMode(bool bboxMode) { m_widthBBoxMode = bboxMode; }
-
-        bool heightBoundingBoxMode() const { return m_heightBBoxMode; }
-        void setHeightBoundingBoxMode(bool bboxMode) { m_heightBBoxMode = bboxMode; }
-
         void setUnionOfChildEffectSubregions(const FloatRect& uniteRect) { m_unionOfChildEffectSubregions = uniteRect; }
         FloatRect unionOfChildEffectSubregions() const { return m_unionOfChildEffectSubregions; }
 

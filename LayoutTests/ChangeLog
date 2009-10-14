@@ -1,3 +1,15 @@
+2009-10-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Check if the percentage of effect values takes user space as reference and
+        not the FilterRect.
+
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.checksum: Added.
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.png: Added.
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.txt: Added.
+        * svg/filters/subRegion-in-userSpace.svg: Added.
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

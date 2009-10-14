@@ -31,20 +31,25 @@
 #include "PlatformString.h"
 #include "SVGFilter.h"
 #include "SVGFilterBuilder.h"
+#include "SVGFilterElement.h"
 #include "SVGRenderTreeAsText.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
 
-SVGResourceFilter::SVGResourceFilter()
-    : m_filterBBoxMode(false)
+SVGResourceFilter::SVGResourceFilter(const SVGFilterElement* ownerElement)
+    : SVGResource()
+    , m_ownerElement(ownerElement)
+    , m_filterBBoxMode(false)
     , m_effectBBoxMode(false)
-    , m_xBBoxMode(false)
-    , m_yBBoxMode(false)
     , m_savedContext(0)
     , m_sourceGraphicBuffer(0)
 {
     m_filterBuilder.set(new SVGFilterBuilder());
+}
+
+SVGResourceFilter::~SVGResourceFilter()
+{
 }
 
 void SVGResourceFilter::addFilterEffect(SVGFilterPrimitiveStandardAttributes* effectAttributes, PassRefPtr<FilterEffect> effect)
@@ -53,30 +58,17 @@ void SVGResourceFilter::addFilterEffect(SVGFilterPrimitiveStandardAttributes* ef
     builder()->add(effectAttributes->result(), effect);
 }
 
-FloatRect SVGResourceFilter::filterBBoxForItemBBox(const FloatRect& itemBBox) const
-{
-    FloatRect filterBBox = filterRect();
-
-    if (filterBoundingBoxMode())
-        filterBBox = FloatRect(itemBBox.x() + filterBBox.x() * itemBBox.width(),
-                               itemBBox.y() + filterBBox.y() * itemBBox.height(),
-                               filterBBox.width() * itemBBox.width(),
-                               filterBBox.height() * itemBBox.height());
-
-    return filterBBox;
-}
-
 void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObject* object)
 {
-    m_itemBBox = object->objectBoundingBox();
-    m_filterBBox = filterBBoxForItemBBox(m_itemBBox);
+    FloatRect targetRect = object->objectBoundingBox();
+    m_ownerElement->buildFilter(targetRect);
 
     // clip sourceImage to filterRegion
-    FloatRect clippedSourceRect = m_itemBBox;
+    FloatRect clippedSourceRect = targetRect;
     clippedSourceRect.intersect(m_filterBBox);
 
     // prepare Filters
-    m_filter = SVGFilter::create(m_itemBBox, m_filterBBox, m_effectBBoxMode, m_filterBBoxMode);
+    m_filter = SVGFilter::create(targetRect, m_filterBBox, m_effectBBoxMode);
 
     FilterEffect* lastEffect = m_filterBuilder->lastEffect();
     if (lastEffect)
@@ -91,8 +83,8 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
         return;
 
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
-    sourceGraphicContext->translate(-m_itemBBox.x(), -m_itemBBox.y());
-    sourceGraphicContext->clearRect(FloatRect(FloatPoint(), m_itemBBox.size()));
+    sourceGraphicContext->translate(-targetRect.x(), -targetRect.y());
+    sourceGraphicContext->clearRect(FloatRect(FloatPoint(), targetRect.size()));
     m_sourceGraphicBuffer.set(sourceGraphic.release());
     m_savedContext = context;
 

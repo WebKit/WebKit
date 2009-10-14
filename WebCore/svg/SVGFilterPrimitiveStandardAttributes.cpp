@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -77,8 +76,6 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilt
 
     ASSERT(resourceFilter);
 
-    float _x, _y, _width, _height;
-
     if (this->hasAttribute(SVGNames::xAttr))
         filterEffect->setHasX(true);
     if (this->hasAttribute(SVGNames::yAttr))
@@ -88,47 +85,19 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilt
     if (this->hasAttribute(SVGNames::heightAttr))
         filterEffect->setHasHeight(true);
 
-    if (resourceFilter->effectBoundingBoxMode()) {
-        _x = x().valueAsPercentage();
-        _y = y().valueAsPercentage();
-        _width = width().valueAsPercentage();
-        _height = height().valueAsPercentage();
-    } else {
-        // We need to resolve any percentages in filter rect space.
-        if (x().unitType() == LengthTypePercentage) {
-            filterEffect->setXBoundingBoxMode(true);
-            _x = x().valueAsPercentage();
-        } else {
-            filterEffect->setXBoundingBoxMode(false);
-            _x = x().value(this);
-        }
+    FloatRect effectBBox;
+    if (resourceFilter->effectBoundingBoxMode())
+        effectBBox = FloatRect(x().valueAsPercentage(),
+                               y().valueAsPercentage(),
+                               width().valueAsPercentage(),
+                               height().valueAsPercentage());
+    else
+        effectBBox = FloatRect(x().value(this),
+                               y().value(this),
+                               width().value(this),
+                               height().value(this));
 
-        if (y().unitType() == LengthTypePercentage) {
-            filterEffect->setYBoundingBoxMode(true);
-            _y = y().valueAsPercentage();
-        } else {
-            filterEffect->setYBoundingBoxMode(false);
-            _y = y().value(this);
-        }
-
-        if (width().unitType() == LengthTypePercentage) {
-            filterEffect->setWidthBoundingBoxMode(true);
-            _width = width().valueAsPercentage();
-        } else {
-            filterEffect->setWidthBoundingBoxMode(false);
-            _width = width().value(this);
-        }
-
-        if (height().unitType() == LengthTypePercentage) {
-            filterEffect->setHeightBoundingBoxMode(true);
-            _height = height().valueAsPercentage();
-        } else {
-            filterEffect->setHeightBoundingBoxMode(false);
-            _height = height().value(this);
-        }
-    }
-
-    filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
+    filterEffect->setSubRegion(effectBBox);
 }
 
 }

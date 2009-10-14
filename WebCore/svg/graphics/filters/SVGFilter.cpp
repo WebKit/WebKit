@@ -24,12 +24,11 @@
 
 namespace WebCore {
 
-SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode, bool filterBBoxMode)
+SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode)
     : Filter()
     , m_itemBox(itemBox)
     , m_filterRect(filterRect)
     , m_effectBBoxMode(effectBBoxMode)
-    , m_filterBBoxMode(filterBBoxMode)
 {
 }
 
@@ -37,7 +36,6 @@ void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
 {
     FloatRect subRegionBBox = effect->subRegion();
     FloatRect useBBox = effect->unionOfChildEffectSubregions();
-
     FloatRect newSubRegion = subRegionBBox;
 
     if (m_effectBBoxMode) {
@@ -55,17 +53,17 @@ void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
         if (effect->hasHeight())
             newSubRegion.setHeight(subRegionBBox.height() * m_itemBox.height());
     } else {
-        if (effect->xBoundingBoxMode())
-            newSubRegion.setX(useBBox.x() + subRegionBBox.x() * useBBox.width());
+        if (!effect->hasX())
+            newSubRegion.setX(useBBox.x());
 
-        if (effect->yBoundingBoxMode())
-            newSubRegion.setY(useBBox.y() + subRegionBBox.y() * useBBox.height());
+        if (!effect->hasY())
+            newSubRegion.setY(useBBox.y());
 
-        if (effect->widthBoundingBoxMode())
-            newSubRegion.setWidth(subRegionBBox.width() * useBBox.width());
+        if (!effect->hasWidth())
+            newSubRegion.setWidth(useBBox.width());
 
-        if (effect->heightBoundingBoxMode())
-            newSubRegion.setHeight(subRegionBBox.height() * useBBox.height());
+        if (!effect->hasHeight())
+            newSubRegion.setHeight(useBBox.height());
     }
 
     // clip every filter effect to the filter region
@@ -74,9 +72,9 @@ void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
     effect->setSubRegion(newSubRegion);
 }
 
-PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode, bool filterBBoxMode)
+PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode)
 {
-    return adoptRef(new SVGFilter(itemBox, filterRect, effectBBoxMode, filterBBoxMode));
+    return adoptRef(new SVGFilter(itemBox, filterRect, effectBBoxMode));
 }
 
 } // namespace WebCore
