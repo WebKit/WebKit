@@ -61,9 +61,9 @@ module core {
         DOMString localizedStringsURL();
         DOMString hiddenPanels();
         DOMString platform();
-        void enableTimeline(in boolean always);
-        void disableTimeline(in boolean always);
-        boolean timelineEnabled();
+        void startTimelineProfiler();
+        void stopTimelineProfiler();
+        boolean timelineProfilerEnabled();
         [ImplementationFunction=moveWindowBy] void moveByUnrestricted(in float x, in float y);
         void setAttachedWindowHeight(in unsigned long height);
         [Custom] DOMObject wrapCallback(in DOMObject callback);

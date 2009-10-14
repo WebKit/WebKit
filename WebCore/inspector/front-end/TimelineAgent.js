@@ -45,10 +45,10 @@ WebInspector.addItemToTimeline = function(record) {
     // Not implemented.
 }
 
-WebInspector.timelineWasEnabled = function() {
+WebInspector.timelineProfilerWasStarted = function() {
     // Not implemented.
 }
 
-WebInspector.timelineWasDisabled = function() {
+WebInspector.timelineProfilerWasStopped = function() {
     // Not implemented.
 }

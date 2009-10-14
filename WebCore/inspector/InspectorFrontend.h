@@ -122,8 +122,8 @@ namespace WebCore {
         void didGetEventListenersForNode(int callId, int nodeId, ScriptArray& listenersArray);
         void didRemoveNode(int callId, int nodeId);
 
-        void timelineWasEnabled();
-        void timelineWasDisabled();
+        void timelineProfilerWasStarted();
+        void timelineProfilerWasStopped();
         void addItemToTimeline(const ScriptObject& itemObj);
 
         void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);

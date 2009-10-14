@@ -258,22 +258,22 @@ const String& InspectorBackend::platform() const
     return platform;
 }
 
-void InspectorBackend::enableTimeline(bool always)
+void InspectorBackend::startTimelineProfiler()
 {
     if (m_inspectorController)
-        m_inspectorController->enableTimeline(always);
+        m_inspectorController->startTimelineProfiler();
 }
 
-void InspectorBackend::disableTimeline(bool always)
+void InspectorBackend::stopTimelineProfiler()
 {
     if (m_inspectorController)
-        m_inspectorController->disableTimeline(always);
+        m_inspectorController->stopTimelineProfiler();
 }
 
-bool InspectorBackend::timelineEnabled() const
+bool InspectorBackend::timelineProfilerEnabled() const
 {
     if (m_inspectorController)
-        return m_inspectorController->timelineEnabled();
+        return m_inspectorController->timelineProfilerEnabled();
     return false;
 }
 

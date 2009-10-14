@@ -113,7 +113,6 @@ static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 static const char* const lastActivePanelSettingName = "lastActivePanel";
-static const char* const timelineEnabledSettingName = "timelineEnabled";
 
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
@@ -554,10 +553,7 @@ void InspectorController::setFrontendProxyObject(ScriptState* scriptState, Scrip
     m_injectedScriptObj = injectedScriptObj;
     m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
     m_domAgent = new InspectorDOMAgent(m_frontend.get());
-
-    Setting timelineEnabled = setting(timelineEnabledSettingName);
-    if (m_timelineAgent.get() || (timelineEnabled.type() == Setting::BooleanType && timelineEnabled.booleanValue()))
-        m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
+    m_timelineAgent = 0;
 }
 
 void InspectorController::show()
@@ -1082,44 +1078,38 @@ void InspectorController::ensureResourceTrackingSettingsLoaded()
         m_resourceTrackingEnabled = true;
 }
 
-void InspectorController::enableTimeline(bool always)
+void InspectorController::startTimelineProfiler()
 {
     if (!enabled())
         return;
 
-    if (always)
-        setSetting(timelineEnabledSettingName, Setting(true));
-
-    if (m_timelineAgent.get())
+    if (m_timelineAgent)
         return;
 
     m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
     if (m_frontend)
-        m_frontend->timelineWasEnabled();
+        m_frontend->timelineProfilerWasStarted();
 }
 
-void InspectorController::disableTimeline(bool always)
+void InspectorController::stopTimelineProfiler()
 {
     if (!enabled())
         return;
 
-    if (always)
-        setSetting(timelineEnabledSettingName, Setting(false));
-
-    if (!m_timelineAgent.get())
+    if (!m_timelineAgent)
         return;
 
-    m_timelineAgent.set(0);
+    m_timelineAgent = 0;
     if (m_frontend)
-        m_frontend->timelineWasDisabled();
+        m_frontend->timelineProfilerWasStopped();
 }
 
-bool InspectorController::timelineEnabled() const
+bool InspectorController::timelineProfilerEnabled() const
 {
     if (!enabled())
         return false;
 
-    return m_timelineAgent.get();
+    return m_timelineAgent;
 }
 
 #if ENABLE(DATABASE)

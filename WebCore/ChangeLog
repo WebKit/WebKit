@@ -1,3 +1,30 @@
+2009-10-13  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Removes the persistent setting for InspectorTimelineAgent and renames timeline related
+        interfaces to be more consistent with the JavaScript profiler.
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::startTimelineProfiler):
+        (WebCore::InspectorBackend::stopTimelineProfiler):
+        (WebCore::InspectorBackend::timelineProfilerEnabled):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::timelineProfilerEnabled):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::timelineProfilerWasStarted):
+        (WebCore::InspectorFrontend::timelineProfilerWasStopped):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/TimelineAgent.js:
+        (WebInspector.timelineProfilerWasStarted):
+        (WebInspector.timelineProfilerWasStopped):
+
 2009-10-01  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adele Peterson.
