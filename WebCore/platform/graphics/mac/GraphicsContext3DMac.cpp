@@ -96,8 +96,7 @@ GraphicsContext3D::GraphicsContext3D()
                 CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
         
                 if (numPixelFormats == 0) {
-                    // FIXME: temporary printf for diagnostics
-                    fprintf(stderr, "CGLCreateContext failed, no pixel formats found\n");
+                    // Could not find an acceptable renderer - fail
                     m_contextObj = 0;
                     return;
                 }
@@ -105,25 +104,11 @@ GraphicsContext3D::GraphicsContext3D()
         }
     }
     
-    for (int i = 0; i < numPixelFormats; ++i) {
-        fprintf(stderr, "Pixel format %d:\n", i);
-        GLint value;
-        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAColorSize, &value);
-        fprintf(stderr, "    kCGLPFAColorSize: %d\n", value);
-        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFADepthSize, &value);
-        fprintf(stderr, "    kCGLPFADepthSize: %d\n", value);
-        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFASupersample, &value);
-        fprintf(stderr, "    kCGLPFASupersample: %d\n", value);
-        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFARendererID, &value);
-        fprintf(stderr, "    kCGLPFARendererID: %d\n", value);
-    }
-    
     CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
     CGLDestroyPixelFormat(pixelFormatObj);
     
     if (err != kCGLNoError || !m_contextObj) {
-        // FIXME: temporary change to get error.
-        fprintf(stderr, "CGLCreateContext failed, err %d (context %p)\n", err, m_contextObj);
+        // Could not create the context - fail
         m_contextObj = 0;
         return;
     }

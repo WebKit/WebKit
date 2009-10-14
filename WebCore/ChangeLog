@@ -1,3 +1,10 @@
+2009-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        The last change fixed the problem, removing diagnostic printfs.
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         CURL build fix for versions < 7.18.
