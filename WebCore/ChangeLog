@@ -1,3 +1,20 @@
+2009-10-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Masking with wrong offset
+        [https://bugs.webkit.org/show_bug.cgi?id=30325]
+
+        SVGMaskElement moves the mask image graphics context to the wrong location.
+        In objectBoundingBoxMode the maskDestRect gets translated. This transformation
+        is not used in the later calculation. Fix by consistenly calculating the translation
+        offsets from the final mask destination rect.
+
+        Test: svg/custom/mask-with-default-value.svg
+
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+
 2009-10-14  Kevin Decker  <kdecker@apple.com>
 
         Rubberstamped by Jon Honeycutt.

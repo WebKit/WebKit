@@ -130,37 +130,30 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
 PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect) const
 {    
     // Determine specified mask size
-    float xValue;
-    float yValue;
-    float widthValue;
-    float heightValue;
+    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        maskDestRect = FloatRect(x().valueAsPercentage() * targetRect.width(),
+                                 y().valueAsPercentage() * targetRect.height(),
+                                 width().valueAsPercentage() * targetRect.width(),
+                                 height().valueAsPercentage() * targetRect.height());
+    else
+        maskDestRect = FloatRect(x().value(this),
+                                 y().value(this),
+                                 width().value(this),
+                                 height().value(this));
 
-    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        xValue = x().valueAsPercentage() * targetRect.width();
-        yValue = y().valueAsPercentage() * targetRect.height();
-        widthValue = width().valueAsPercentage() * targetRect.width();
-        heightValue = height().valueAsPercentage() * targetRect.height();
-    } else {
-        xValue = x().value(this);
-        yValue = y().value(this);
-        widthValue = width().value(this);
-        heightValue = height().value(this);
-    } 
-
-    IntSize imageSize(lroundf(widthValue), lroundf(heightValue));
+    IntSize imageSize(lroundf(maskDestRect.width()), lroundf(maskDestRect.height()));
     clampImageBufferSizeToViewport(document()->view(), imageSize);
 
-    if (imageSize.width() < static_cast<int>(widthValue))
-        widthValue = imageSize.width();
+    if (imageSize.width() < static_cast<int>(maskDestRect.width()))
+        maskDestRect.setWidth(imageSize.width());
 
-    if (imageSize.height() < static_cast<int>(heightValue))
-        heightValue = imageSize.height();
+    if (imageSize.height() < static_cast<int>(maskDestRect.height()))
+        maskDestRect.setHeight(imageSize.height());
 
     OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(imageSize);
     if (!maskImage)
         return 0;
 
-    maskDestRect = FloatRect(xValue, yValue, widthValue, heightValue);
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         maskDestRect.move(targetRect.x(), targetRect.y());
 
@@ -168,7 +161,7 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
     ASSERT(maskImageContext);
 
     maskImageContext->save();
-    maskImageContext->translate(-xValue, -yValue);
+    maskImageContext->translate(-maskDestRect.x(), -maskDestRect.y());
 
     if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskImageContext->save();

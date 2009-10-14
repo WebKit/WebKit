@@ -1,0 +1,10 @@
+KCanvasResource {id="m1" [type=MASKER]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 120x120
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {mask} at (0,0) size 800x600
+        RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L800.00,0.00 L800.00,600.00 L0.00,600.00 Z"]
+    RenderPath {rect} at (0,0) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L120.00,0.00 L120.00,120.00 L0.00,120.00 Z"]
+    RenderPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]

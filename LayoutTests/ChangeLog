@@ -1,3 +1,14 @@
+2009-10-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Check if the offset of a SVG mask is correct on using default values.
+
+        * platform/mac/svg/custom/mask-with-default-value-expected.checksum: Added.
+        * platform/mac/svg/custom/mask-with-default-value-expected.png: Added.
+        * platform/mac/svg/custom/mask-with-default-value-expected.txt: Added.
+        * svg/custom/mask-with-default-value.svg: Added.
+
 2009-10-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
