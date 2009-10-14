@@ -487,14 +487,14 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
 {
     RetainPtr<CFStringRef> sourceCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (NSString *)sourceCF.get();
-    [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" source:sourceNS url:nil worldID:1 whitelist:nil blacklist:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd)];
+    [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" worldID:1 source:sourceNS url:nil whitelist:nil blacklist:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd)];
 }
 
 void LayoutTestController::addUserStyleSheet(JSStringRef source)
 {
     RetainPtr<CFStringRef> sourceCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (NSString *)sourceCF.get();
-    [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" source:sourceNS url:nil worldID:1 whitelist:nil blacklist:nil];
+    [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" worldID:1 source:sourceNS url:nil whitelist:nil blacklist:nil];
 }
 
 void LayoutTestController::showWebInspector()
