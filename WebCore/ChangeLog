@@ -1,3 +1,12 @@
+2009-10-14  Kevin Decker  <kdecker@apple.com>
+
+        Rubberstamped by Jon Honeycutt.
+        
+        Export a few more showSubstituteImage() related methods.
+        
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-10-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

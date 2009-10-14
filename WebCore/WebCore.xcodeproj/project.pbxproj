@@ -2786,7 +2786,7 @@
 		A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */ = {isa = PBXBuildFile; fileRef = A88DD4860B4629A300C02990 /* PathTraversalState.h */; };
 		A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A88DD4880B4629B000C02990 /* PathTraversalState.cpp */; };
 		A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A88FE3330E5EEE87008D8C0F /* GraphicsContextPrivate.h */; };
-		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; };
+		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
 		A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */; };
 		A89CCC530F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */; };
