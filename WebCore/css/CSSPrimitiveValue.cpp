@@ -684,71 +684,6 @@ int CSSPrimitiveValue::getIdent()
     return m_value.ident;
 }
 
-static void appendCSSDouble(Vector<UChar>& vector, double value)
-{
-    // From the CSS specification section titled "Integers and real numbers",
-    // real numbers are only formatted as [sign] [digits] "." [digits].
-    // This differs from printf-style formatting in that exponents (e.g. 1.3e06)
-    // are not allowed.  Since NaN/inf are also not valid CSS values this
-    // function doesn't handle them.
-
-    // For compatibility with what was returned by older versions of
-    // WebKit, we target 6 digits of precision.
-    const int digitsAfterDecimalPoint = 6;
-    long long rounded = llround(fabs(value) * 1000000.0);
-    if (rounded == 0) {
-        vector.append('0');
-        return;
-    }
-
-    char buf[24];
-    int length = snprintf(buf, sizeof(buf), "%lld", rounded);
-    int decimalPoint = length - digitsAfterDecimalPoint;
-
-    // We are matching printf("%g")'s behavior and must trim trailing zeros,
-    // regardless of whether they're significant.
-    while (length > 0 && length > decimalPoint && buf[length - 1] == '0')
-        length--;
-
-    // Reserve an estimate of space for the number of digits we anticipate
-    // along with a minus sign/initial zero/decimal point.
-    vector.reserveCapacity(vector.size() + 3 + length);
-
-    if (value < 0)
-        vector.append('-');
-
-    if (decimalPoint <= 0) {
-        // Only digits after the decimal point.
-        vector.append('0');
-        vector.append('.');
-        for (int i = decimalPoint; i < 0; i++)
-            vector.append('0');
-        for (int i = 0; i < length; i++)
-            vector.append(buf[i]);
-    } else if (length <= decimalPoint) {
-        // Only digits before the decimal point.
-        for (int i = 0; i < length; i++)
-            vector.append(buf[i]);
-    } else {
-        // Digits before and after the decimal point.
-        for (int i = 0; i < decimalPoint; i++)
-            vector.append(buf[i]);
-        vector.append('.');
-        for (int i = decimalPoint; i < length; i++)
-            vector.append(buf[i]);
-    }
-}
-
-static String formatWithUnits(double value, const char* units)
-{
-    Vector<UChar> result;
-    appendCSSDouble(result, value);
-    result.reserveCapacity(result.size() + strlen(units));
-    for (int i = 0; units[i]; i++)
-        result.append(units[i]);
-    return String::adopt(result);
-}
-
 String CSSPrimitiveValue::cssText() const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
@@ -760,61 +695,61 @@ String CSSPrimitiveValue::cssText() const
             break;
         case CSS_NUMBER:
         case CSS_PARSER_INTEGER:
-            text = formatWithUnits(m_value.num, "");
+            text = String::number(m_value.num);
             break;
         case CSS_PERCENTAGE:
-            text = formatWithUnits(m_value.num, "%");
+            text = String::format("%.6lg%%", m_value.num);
             break;
         case CSS_EMS:
-            text = formatWithUnits(m_value.num, "em");
+            text = String::format("%.6lgem", m_value.num);
             break;
         case CSS_EXS:
-            text = formatWithUnits(m_value.num, "ex");
+            text = String::format("%.6lgex", m_value.num);
             break;
         case CSS_REMS:
-            text = formatWithUnits(m_value.num, "rem");
+            text = String::format("%.6lgrem", m_value.num);
             break;
         case CSS_PX:
-            text = formatWithUnits(m_value.num, "px");
+            text = String::format("%.6lgpx", m_value.num);
             break;
         case CSS_CM:
-            text = formatWithUnits(m_value.num, "cm");
+            text = String::format("%.6lgcm", m_value.num);
             break;
         case CSS_MM:
-            text = formatWithUnits(m_value.num, "mm");
+            text = String::format("%.6lgmm", m_value.num);
             break;
         case CSS_IN:
-            text = formatWithUnits(m_value.num, "in");
+            text = String::format("%.6lgin", m_value.num);
             break;
         case CSS_PT:
-            text = formatWithUnits(m_value.num, "pt");
+            text = String::format("%.6lgpt", m_value.num);
             break;
         case CSS_PC:
-            text = formatWithUnits(m_value.num, "pc");
+            text = String::format("%.6lgpc", m_value.num);
             break;
         case CSS_DEG:
-            text = formatWithUnits(m_value.num, "deg");
+            text = String::format("%.6lgdeg", m_value.num);
             break;
         case CSS_RAD:
-            text = formatWithUnits(m_value.num, "rad");
+            text = String::format("%.6lgrad", m_value.num);
             break;
         case CSS_GRAD:
-            text = formatWithUnits(m_value.num, "grad");
+            text = String::format("%.6lggrad", m_value.num);
             break;
         case CSS_MS:
-            text = formatWithUnits(m_value.num, "ms");
+            text = String::format("%.6lgms", m_value.num);
             break;
         case CSS_S:
-            text = formatWithUnits(m_value.num, "s");
+            text = String::format("%.6lgs", m_value.num);
             break;
         case CSS_HZ:
-            text = formatWithUnits(m_value.num, "hz");
+            text = String::format("%.6lghz", m_value.num);
             break;
         case CSS_KHZ:
-            text = formatWithUnits(m_value.num, "khz");
+            text = String::format("%.6lgkhz", m_value.num);
             break;
         case CSS_TURN:
-            text = formatWithUnits(m_value.num, "turn");
+            text = String::format("%.6lgturn", m_value.num);
             break;
         case CSS_DIMENSION:
             // FIXME

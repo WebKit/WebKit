@@ -1,3 +1,15 @@
+2009-10-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        No review, rolling out r49554, because it broke Win and Chromium builds.
+        http://trac.webkit.org/changeset/49554
+
+        * fast/css/large-number-round-trip-expected.txt:
+        * fast/css/opacity-float-expected.txt:
+        * fast/css/opacity-float.html:
+        * platform/mac/fast/css/opacity-float-expected.txt: Added.
+        * transforms/2d/compound-2d-transforms-expected.txt:
+        * transforms/2d/compound-2d-transforms.html:
+
 2009-10-13  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Barth.
