@@ -1,3 +1,18 @@
+2009-10-14  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add paste-xml test back for Win.
+        The result difference between Mac and Win is due to the
+        platform dependent implementation. The diff is expected
+        with current implementation.
+        See bug for more deails:
+
+        https://bugs.webkit.org/show_bug.cgi?id=30267
+
+        * platform/win/Skipped:
+        * platform/win/editing/pasteboard/paste-xml-expected.txt: Added.
+
 2009-10-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

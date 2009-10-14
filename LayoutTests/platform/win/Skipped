@@ -95,9 +95,6 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
 
-# <rdar://problem/6794880> editing/pasteboard/paste-xml.xhtml results didn't change on Windows after r42549
-editing/pasteboard/paste-xml.xhtml
-
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/get-data-text-plain-drop.html
