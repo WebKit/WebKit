@@ -204,6 +204,7 @@ def common_set_options(opt):
     opt.add_option('--wxpython', action='store_true', default=False, help='Create the wxPython bindings.')
     opt.add_option('--wx-compiler-prefix', action='store', default='vc',
                    help='Specify a different compiler prefix (do this if you used COMPILER_PREFIX when building wx itself)')
+    opt.add_option('--macosx-version', action='store', default='', help="Version of OS X to build for.")
 
 def common_configure(conf):
     """
@@ -250,7 +251,7 @@ def common_configure(conf):
     
     for use in port_uses[build_port]:
        conf.env.append_value('CXXDEFINES', ['WTF_USE_%s' % use])
-    
+
     if build_port == "wx":
         update_wx_deps(conf, wk_root, msvc_version)
     
@@ -266,7 +267,7 @@ def common_configure(conf):
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
-    
+
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
         # Apple does not ship the ICU headers with Mac OS X, so WebKit includes a copy of 3.2 headers
@@ -275,15 +276,33 @@ def common_configure(conf):
         conf.env.append_value('CPPPATH', wklibs_dir)
         conf.env.append_value('LIBPATH', wklibs_dir)
         
-        # WebKit only supports 10.4+
-        mac_target = 'MACOSX_DEPLOYMENT_TARGET'
-        if mac_target in os.environ and os.environ[mac_target] == '10.3':
-            os.environ[mac_target] = '10.4'
+        min_version = None
         
-        if mac_target in conf.env and conf.env[mac_target] == '10.3':
-            conf.env[mac_target] = '10.4'
-    
-    #conf.env['PREFIX'] = output_dir
+        mac_target = 'MACOSX_DEPLOYMENT_TARGET'
+        if mac_target in conf.env:
+             min_version = conf.env[mac_target]
+
+        if Options.options.macosx_version != '':
+            min_version = Options.options.macosx_version
+
+        # WebKit only supports 10.4+, but ppc systems often set this to earlier systems
+        if not min_version or min_version in ['10.1','10.2','10.3']:
+            min_version = '10.4'
+            
+        os.environ[mac_target] = conf.env[mac_target] = min_version
+        
+        sdk_version = min_version
+        if min_version == "10.4":
+            sdk_version += "u"
+
+        conf.env.append_value('CPPPATH', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
+        conf.env.append_value('LIB', ['WebCoreSQLite3'])
+            
+        sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
+        sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
+        
+        conf.env.append_value('CPPFLAGS_SQLITE3', sdkflags)
+        conf.env.append_value('LINKFLAGS_SQLITE3', sdkflags)
     
     libprefix = ''
     if building_on_win32:
@@ -339,8 +358,6 @@ def common_configure(conf):
         conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
         conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)
         conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
-        if sys.platform.startswith('darwin'):
-            conf.env.append_value('LIB', ['WebCoreSQLite3'])
         
         if not sys.platform.startswith('darwin'):
             conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX', mandatory=True)

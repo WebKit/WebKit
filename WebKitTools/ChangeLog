@@ -1,3 +1,11 @@
+2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMac build fix. Ensure 10.4 compatibility for deps, and allow the user to specify
+        the SDK to use since Python overrides any user-set value of MACOSX_DEPLOYMENT_TARGET.
+
+        * wx/build/settings.py:
+        * wx/install-unix-extras:
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

@@ -74,6 +74,8 @@ LIBPNG_VERSION="1.2.33"
 LIBPNG_TARBALL="libpng-$LIBPNG_VERSION.tar.gz"
 LIBPNG_URL="http://wxwebkit.wxcommunity.com/downloads/deps/$LIBPNG_TARBALL"
 
+export MAC_OS_X_DEPLOYMENT_TARGET=10.4
+
 cd $DL_DIR
 # build ICU
 if [ `which icu-config >/dev/null 2>&1` ]; then
