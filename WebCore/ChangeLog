@@ -1,3 +1,13 @@
+2009-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        One more round of changes to figure out why the webgl 
+        tests are crashing on the build bot. Here I am trying
+        to see if we can create a software renderer. I am also
+        printing the found pixel formats.
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2009-10-14  Yael Aharon  <yael.aharon@nokia.com>
  
         Reviewed by 

@@ -61,15 +61,17 @@ GraphicsContext3D::GraphicsContext3D()
 {
     CGLPixelFormatAttribute attribs[] =
     {
-        (CGLPixelFormatAttribute) kCGLPFAAccelerated,
+        kCGLPFAClosestPolicy,
         (CGLPixelFormatAttribute) kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
         (CGLPixelFormatAttribute) kCGLPFADepthSize, (CGLPixelFormatAttribute) 32,
+        (CGLPixelFormatAttribute) kCGLPFAAccelerated,
         (CGLPixelFormatAttribute) kCGLPFASupersample,
         (CGLPixelFormatAttribute) 0
     };
     
     // Make sure to change these constants to match the above list
-    const int superSampleIndex = 5;
+    const int superSampleIndex = 6;
+    const int acceleratedIndex = 5;
     const int depthSizeIndex = 4;
     
     CGLPixelFormatObj pixelFormatObj = 0;
@@ -77,8 +79,9 @@ GraphicsContext3D::GraphicsContext3D()
     
     // We will try for the above format first. If that fails, we will
     // try for one without supersample. If that fails, we will try for
-    // one that has a 16 bit depth buffer. If none of that works, we
-    // simply fail and set m_contextObj to 0.
+    // one that has a 16 bit depth buffer. If that fails, we will try
+    // for a software renderer. If none of that works, we simply fail 
+    // and set m_contextObj to 0.
     CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
     if (numPixelFormats == 0) {
         attribs[superSampleIndex] = static_cast<CGLPixelFormatAttribute>(0);
@@ -89,12 +92,30 @@ GraphicsContext3D::GraphicsContext3D()
             CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
         
             if (numPixelFormats == 0) {
-                // FIXME: temporary printf for diagnostics
-                fprintf(stderr, "CGLCreateContext failed, no pixel formats found\n");
-                m_contextObj = 0;
-                return;
+                attribs[acceleratedIndex] = static_cast<CGLPixelFormatAttribute>(0);
+                CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+        
+                if (numPixelFormats == 0) {
+                    // FIXME: temporary printf for diagnostics
+                    fprintf(stderr, "CGLCreateContext failed, no pixel formats found\n");
+                    m_contextObj = 0;
+                    return;
+                }
             }
         }
+    }
+    
+    for (int i = 0; i < numPixelFormats; ++i) {
+        fprintf(stderr, "Pixel format %d:\n", i);
+        GLint value;
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAColorSize, &value);
+        fprintf(stderr, "    kCGLPFAColorSize: %d\n", value);
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFADepthSize, &value);
+        fprintf(stderr, "    kCGLPFADepthSize: %d\n", value);
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFASupersample, &value);
+        fprintf(stderr, "    kCGLPFASupersample: %d\n", value);
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFARendererID, &value);
+        fprintf(stderr, "    kCGLPFARendererID: %d\n", value);
     }
     
     CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
