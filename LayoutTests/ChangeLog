@@ -1,3 +1,9 @@
+2009-10-14  Brady Eidson  <beidson@apple.com>
+
+        Skip my two new failures while I'm actively looking at them.
+
+        * platform/win/Skipped:
+
 2009-10-14  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Adler.

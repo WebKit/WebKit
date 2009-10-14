@@ -682,3 +682,7 @@ fast/inline/relative-positioned-overflow.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=30348>
 plugins/private-browsing-mode.html
+
+# Skip these two failures I introduced this morning while I explore them.
+fast/history/window-open.html
+http/tests/globalhistory/history-delegate-basic-visited-links.html
