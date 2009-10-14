@@ -794,6 +794,14 @@
 					Name="VCMIDLTool"
 				/>
 			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCMIDLTool"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\Interfaces\IWebHistoryItem.idl"
@@ -1060,6 +1068,14 @@
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCMIDLTool"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool

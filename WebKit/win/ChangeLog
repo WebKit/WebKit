@@ -1,3 +1,10 @@
+2009-10-14  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebKit.vcproj/Interfaces.vcproj: Exclude IWebHistoryDelegate and
+        IWebNavigationData from the build (they get #imported via WebKit.idl).
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
