@@ -1,3 +1,12 @@
+2009-10-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Add plugins/private-browsing-mode.html to the Windows Skipped
+        list because the feature is not implemented on Windows.
+
+        * platform/win/Skipped:
+
 2009-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
