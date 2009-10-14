@@ -28,6 +28,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "IWebFormDelegate.idl";
 import "IWebFrameLoadDelegatePrivate.idl";
+import "IWebHistoryDelegate.idl";
 import "IWebInspector.idl";
 import "IWebInspectorPrivate.idl";
 #endif
@@ -38,6 +39,7 @@ cpp_quote("#define WebViewWillCloseNotification L\"WebViewWillCloseNotification\
 interface IEnumTextMatches;
 interface IWebFormDelegate;
 interface IWebFrameLoadDelegatePrivate;
+interface IWebHistoryDelegate;
 interface IWebInspector;
 interface IWebInspectorPrivate;
 interface IWebPluginHalterDelegate;
@@ -210,4 +212,8 @@ interface IWebViewPrivate : IUnknown
 
     // Removes all white list entries created with whiteListAccessFromOrigin.
     HRESULT resetOriginAccessWhiteLists();
+
+    HRESULT setHistoryDelegate([in] IWebHistoryDelegate* historyDelegate);
+    HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);
+    HRESULT addVisitedLinks([in] BSTR* visitedURLs, [in] unsigned visitedURLCount);
 }

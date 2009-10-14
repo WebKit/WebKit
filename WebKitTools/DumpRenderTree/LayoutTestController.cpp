@@ -48,6 +48,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_dumpDatabaseCallbacks(false)
     , m_dumpEditingCallbacks(false)
     , m_dumpFrameLoadCallbacks(false)
+    , m_dumpHistoryDelegateCallbacks(false)
     , m_dumpResourceLoadCallbacks(false)
     , m_dumpResourceResponseMIMETypes(false)
     , m_dumpSelectionRect(false)

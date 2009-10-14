@@ -116,6 +116,9 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE data(IStream**);
 
+    virtual HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnable);
+    virtual HRESULT STDMETHODCALLTYPE removeAllVisitedLinks();
+
     // WebHistory
     static WebHistory* sharedHistory();
     void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure, bool increaseVisitCount);

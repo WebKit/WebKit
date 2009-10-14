@@ -43,6 +43,7 @@
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
 #include "WebMutableURLRequest.h"
+#include "WebNavigationData.h"
 #include "WebNotificationCenter.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLAuthenticationChallenge.h"
@@ -493,34 +494,70 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 
 void WebFrameLoaderClient::updateGlobalHistory()
 {
+    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebHistoryDelegate> historyDelegate;
+    webView->historyDelegate(&historyDelegate);
+
+    if (historyDelegate) {
+        BString url(loader->urlForHistory());
+        BString title(loader->title());
+        BString redirectSource(loader->clientRedirectSourceForHistory());
+        COMPtr<IWebURLResponse> urlResponse(AdoptCOM, WebURLResponse::createInstance(loader->response()));
+        COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(loader->originalRequestCopy()));
+        
+        COMPtr<IWebNavigationData> navigationData(AdoptCOM, WebNavigationData::createInstance(
+            url, title, urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), redirectSource));
+
+        historyDelegate->didNavigateWithNavigationData(webView, navigationData.get(), m_webFrame);
+        return;
+    }
+
     WebHistory* history = WebHistory::sharedHistory();
     if (!history)
         return;
 
-    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
     history->visitedURL(loader->urlForHistory(), loader->title(), loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure(), !loader->clientRedirectSourceForHistory());
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebHistoryDelegate> historyDelegate;
+    webView->historyDelegate(&historyDelegate);
+
     WebHistory* history = WebHistory::sharedHistory();
-    if (!history)
-        return;
 
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
-        if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->clientRedirectSourceForHistory())) {
-            COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
-            webHistoryItem->historyItem()->addRedirectURL(loader->clientRedirectDestinationForHistory());
+        if (historyDelegate) {
+            BString sourceURL(loader->clientRedirectSourceForHistory());
+            BString destURL(loader->clientRedirectDestinationForHistory());
+            historyDelegate->didPerformClientRedirectFromURL(webView, sourceURL, destURL, m_webFrame);
+        } else {
+            if (history) {
+                if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->clientRedirectSourceForHistory())) {
+                    COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
+                    webHistoryItem->historyItem()->addRedirectURL(loader->clientRedirectDestinationForHistory());
+                }
+            }
         }
     }
 
     if (!loader->serverRedirectSourceForHistory().isNull()) {
-        if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->serverRedirectSourceForHistory())) {
-            COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
-            webHistoryItem->historyItem()->addRedirectURL(loader->serverRedirectDestinationForHistory());
+        if (historyDelegate) {
+            BString sourceURL(loader->serverRedirectSourceForHistory());
+            BString destURL(loader->serverRedirectDestinationForHistory());
+            historyDelegate->didPerformServerRedirectFromURL(webView, sourceURL, destURL, m_webFrame);
+        } else {
+            if (history) {
+                if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->serverRedirectSourceForHistory())) {
+                    COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
+                    webHistoryItem->historyItem()->addRedirectURL(loader->serverRedirectDestinationForHistory());
+                }
+            }
         }
     }
 }
@@ -572,6 +609,16 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 
 void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebHistoryDelegate> historyDelegate;
+    webView->historyDelegate(&historyDelegate);
+    if (historyDelegate) {
+        BString titleBSTR(title);
+        BString urlBSTR(url.string());
+        historyDelegate->updateHistoryTitle(webView, titleBSTR, urlBSTR);
+        return;
+    }
+
     BOOL privateBrowsingEnabled = FALSE;
     COMPtr<IWebPreferences> preferences;
     if (SUCCEEDED(m_webFrame->webView()->preferences(&preferences)))

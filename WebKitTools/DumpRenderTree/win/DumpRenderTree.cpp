@@ -31,6 +31,7 @@
 
 #include "EditingDelegate.h"
 #include "FrameLoadDelegate.h"
+#include "HistoryDelegate.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
 #include "PolicyDelegate.h"
@@ -97,6 +98,7 @@ COMPtr<FrameLoadDelegate> sharedFrameLoadDelegate;
 COMPtr<UIDelegate> sharedUIDelegate;
 COMPtr<EditingDelegate> sharedEditingDelegate;
 COMPtr<ResourceLoadDelegate> sharedResourceLoadDelegate;
+COMPtr<HistoryDelegate> sharedHistoryDelegate;
 
 IWebFrame* frame;
 HWND webViewWindow;
@@ -681,6 +683,11 @@ static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "/loading/") || strstr(pathOrURL, "\\loading\\");
 }
 
+static bool shouldLogHistoryDelegates(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "/globalhistory/") || strstr(pathOrURL, "\\globalhistory\\");
+}
+
 static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
 {
 #ifdef USE_MAC_FONTS
@@ -836,6 +843,17 @@ static void runTest(const string& testPathOrURL)
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
+    COMPtr<IWebView> webView;
+    if (SUCCEEDED(frame->webView(&webView))) {
+        COMPtr<IWebViewPrivate> viewPrivate;
+        if (SUCCEEDED(webView->QueryInterface(&viewPrivate))) {
+            if (shouldLogHistoryDelegates(pathOrURL.c_str())) {
+                gLayoutTestController->setDumpHistoryDelegateCallbacks(true);            
+                viewPrivate->setHistoryDelegate(sharedHistoryDelegate.get());
+            } else
+                viewPrivate->setHistoryDelegate(0);
+        }
+    }
     COMPtr<IWebHistory> history;
     if (SUCCEEDED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
         history->setOptionalSharedHistory(0);
@@ -843,8 +861,7 @@ static void runTest(const string& testPathOrURL)
     resetWebViewToConsistentStateBeforeTesting();
 
     prevTestBFItem = 0;
-    COMPtr<IWebView> webView;
-    if (SUCCEEDED(frame->webView(&webView))) {
+    if (webView) {
         COMPtr<IWebBackForwardList> bfList;
         if (SUCCEEDED(webView->backForwardList(&bfList)))
             bfList->currentItem(&prevTestBFItem);
@@ -1087,6 +1104,9 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     if (FAILED(webView->setResourceLoadDelegate(sharedResourceLoadDelegate.get())))
         return 0;
 
+    if (FAILED(viewPrivate->setHistoryDelegate(sharedHistoryDelegate.get())))
+        return 0;
+
     openWindows().append(hostWindow);
     windowToWebViewMap().set(hostWindow, webView);
     return webView;
@@ -1153,6 +1173,7 @@ int main(int argc, char* argv[])
     sharedUIDelegate.adoptRef(new UIDelegate);
     sharedEditingDelegate.adoptRef(new EditingDelegate);
     sharedResourceLoadDelegate.adoptRef(new ResourceLoadDelegate);
+    sharedHistoryDelegate.adoptRef(new HistoryDelegate);
 
     // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
     COMPtr<IWebPreferences> tmpPreferences;

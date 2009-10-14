@@ -577,6 +577,18 @@ HRESULT WebHistory::data(IStream** stream)
     return result.copyRefTo(stream);
 }
 
+HRESULT WebHistory::setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnabled)
+{
+    PageGroup::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
+    return S_OK;
+}
+
+HRESULT WebHistory::removeAllVisitedLinks()
+{
+    PageGroup::removeAllVisitedLinks();
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebHistory::setHistoryItemLimit( 
     /* [in] */ int limit)
 {

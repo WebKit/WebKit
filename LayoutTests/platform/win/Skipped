@@ -680,9 +680,6 @@ http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow_unload_handler.html
 
-# This port doesn't have a global history delegate yet
-http/tests/globalhistory
-
 # <https://bugs.webkit.org/show_bug.cgi?id=29966>
 fast/inline/relative-positioned-overflow.html
 

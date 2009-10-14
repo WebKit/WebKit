@@ -1,6 +1,15 @@
-2009-10-02  Yong Li  <yong.li@torchmobile.com>
+2009-10-14  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by NOBODY Adele Peterson.
+        Reviewed by Sam Weinig.
+
+        WebKit Win API should provide a delegate interface for global history.
+        https://bugs.webkit.org/show_bug.cgi?id=29905
+
+        * platform/win/Skipped: Enable globalhistory tests.
+
+2009-10-14  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adele Peterson.
 
         Added a test case that loads an invalid image to make sure
         we don't crash in this situation.

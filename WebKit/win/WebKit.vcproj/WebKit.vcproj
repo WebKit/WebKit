@@ -679,6 +679,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebNavigationData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebNodeHighlight.h"
 				>
 			</File>
@@ -992,6 +996,10 @@
 			</File>
 			<File
 				RelativePath="..\WebMutableURLRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebNavigationData.cpp"
 				>
 			</File>
 			<File

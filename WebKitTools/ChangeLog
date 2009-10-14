@@ -1,3 +1,41 @@
+2009-10-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit Win API should provide a delegate interface for global history.
+        https://bugs.webkit.org/show_bug.cgi?id=29905
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpHistoryDelegateCallbacks):
+        (LayoutTestController::setDumpHistoryDelegateCallbacks):
+                
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (shouldLogHistoryDelegates):
+        (runTest):
+        (createWebViewAndOffscreenWindow):
+        (main):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        
+        Add the IWebHistoryDelegate to DRT Windows:
+        * DumpRenderTree/win/HistoryDelegate.cpp: Added.
+        (wstringFromBSTR):
+        (HistoryDelegate::HistoryDelegate):
+        (HistoryDelegate::~HistoryDelegate):
+        (HistoryDelegate::QueryInterface):
+        (HistoryDelegate::AddRef):
+        (HistoryDelegate::Release):
+        (HistoryDelegate::didNavigateWithNavigationData):
+        (HistoryDelegate::didPerformClientRedirectFromURL):
+        (HistoryDelegate::didPerformServerRedirectFromURL):
+        (HistoryDelegate::updateHistoryTitle):
+        (HistoryDelegate::populateVisitedLinksForWebView):
+        * DumpRenderTree/win/HistoryDelegate.h: Added.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::removeAllVisitedLinks):
+
 2009-10-14  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Simon Hausmann.

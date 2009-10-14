@@ -456,6 +456,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HistoryDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HistoryDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PolicyDelegate.cpp"
 				>
 			</File>

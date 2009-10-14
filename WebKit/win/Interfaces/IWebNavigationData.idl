@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface IWebHistoryItem;
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
+import "IWebURLRequest.idl";
+import "IWebURLResponse.idl";
+#endif
+
+interface IWebURLRequest;
+interface IWebURLResponse;
 
 [
     object,
     oleautomation,
     hidden,
-    uuid(B811003B-3475-46ad-9697-91D0D181CC05),
+    uuid(1F162644-73D1-4de1-A20C-295FB68BF048),
     pointer_default(unique)
 ]
-interface IWebHistoryPrivate : IUnknown
+interface IWebNavigationData : IUnknown
 {
-    HRESULT allItems([in, out] int* count, [out, retval] IWebHistoryItem** items);
-    HRESULT data([out, retval] IStream**);
-    HRESULT setVisitedLinkTrackingEnabled([in] BOOL visitedLinkTrackingEnable);
-    HRESULT removeAllVisitedLinks();
+    HRESULT url([out, retval] BSTR*);
+    HRESULT title([out, retval] BSTR*);
+    HRESULT originalRequest([out, retval] IWebURLRequest**);
+    HRESULT response([out, retval] IWebURLResponse**);
+    HRESULT hasSubstituteData([out, retval] BOOL*);
+    HRESULT clientRedirectSource([out, retval] BSTR*);
 }

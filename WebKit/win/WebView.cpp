@@ -639,6 +639,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     setEditingDelegate(0);
     setFrameLoadDelegate(0);
     setFrameLoadDelegatePrivate(0);
+    setHistoryDelegate(0);
     setPolicyDelegate(0);
     setResourceLoadDelegate(0);
     setUIDelegate(0);
@@ -3360,10 +3361,34 @@ HRESULT STDMETHODCALLTYPE WebView::setMainFrameURL(
 }
     
 HRESULT STDMETHODCALLTYPE WebView::mainFrameURL( 
-        /* [retval][out] */ BSTR* /*urlString*/)
+        /* [retval][out] */ BSTR* urlString)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!urlString)
+        return E_POINTER;
+
+    if (!m_mainFrame)
+        return E_FAIL;
+
+    COMPtr<IWebDataSource> dataSource;
+
+    if (FAILED(m_mainFrame->provisionalDataSource(&dataSource))) {
+        if (FAILED(m_mainFrame->dataSource(&dataSource)))
+            return E_FAIL;
+    }
+
+    if (!dataSource) {
+        *urlString = 0;
+        return S_OK;
+    }
+    
+    COMPtr<IWebMutableURLRequest> request;
+    if (FAILED(dataSource->request(&request)) || !request)
+        return E_FAIL;
+
+    if (FAILED(request->URL(urlString)))
+        return E_FAIL;
+
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::mainFrameDocument( 
@@ -5584,6 +5609,33 @@ HRESULT WebView::whiteListAccessFromOrigin(BSTR sourceOrigin, BSTR destinationPr
 HRESULT WebView::resetOriginAccessWhiteLists()
 {
     SecurityOrigin::resetOriginAccessWhiteLists();
+    return S_OK;
+}
+ 
+HRESULT WebView::setHistoryDelegate(IWebHistoryDelegate* historyDelegate)
+{
+    m_historyDelegate = historyDelegate;
+    return S_OK;
+}
+
+HRESULT WebView::historyDelegate(IWebHistoryDelegate** historyDelegate)
+{
+    if (!historyDelegate)
+        return E_POINTER;
+
+    return m_historyDelegate.copyRefTo(historyDelegate);
+}
+
+HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
+{
+    PageGroup& group = core(this)->group();
+    
+    for (unsigned i = 0; i < visitedURLCount; ++i) {
+        BSTR url = visitedURLs[i];
+        unsigned length = SysStringLen(url);
+        group.addVisitedLink(url, length);
+    }
+
     return S_OK;
 }
 

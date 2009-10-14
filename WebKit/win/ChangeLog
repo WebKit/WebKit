@@ -1,3 +1,58 @@
+2009-10-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit Win API should provide a delegate interface for global history.
+        https://bugs.webkit.org/show_bug.cgi?id=29905
+
+        -Add IWebHistoryDelegate for clients to implement.
+        -Add (I)WebNavigationData for the history delegate's use.
+        -When it exists, call the history delegate instead of using WebHistory.
+        
+        * Interfaces/IWebHistoryDelegate.idl: Added.
+        * Interfaces/IWebHistoryPrivate.idl:
+        * Interfaces/IWebNavigationData.idl: Added.
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl:
+        
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::populateVisitedLinks):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebFrameLoaderClient::setTitle):
+ 
+         * WebView.cpp:
+        (WebView::close):
+        (WebView::mainFrameURL):
+        (WebView::setHistoryDelegate):
+        (WebView::historyDelegate):
+        (WebView::addVisitedLinks):
+        * WebView.h:
+        
+        * WebHistory.cpp:
+        (WebHistory::setVisitedLinkTrackingEnabled):
+        (WebHistory::removeAllVisitedLinks):
+        * WebHistory.h:
+
+        * WebNavigationData.cpp: Added.
+        (WebNavigationData::QueryInterface):
+        (WebNavigationData::AddRef):
+        (WebNavigationData::Release):
+        (WebNavigationData::WebNavigationData):
+        (WebNavigationData::~WebNavigationData):
+        (WebNavigationData::createInstance):
+        (WebNavigationData::url):
+        (WebNavigationData::title):
+        (WebNavigationData::originalRequest):
+        (WebNavigationData::response):
+        (WebNavigationData::hasSubstituteData):
+        (WebNavigationData::clientRedirectSource):
+        * WebNavigationData.h: Added.
+
 2009-10-13  Dave Hyatt  <hyatt@apple.com>
 
         Fix more WebView bustage.
