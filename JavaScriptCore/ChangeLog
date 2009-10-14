@@ -1,12 +1,5 @@
 2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
 
-        Mac build fix, use MIN_REQUIRED rather than MAX_ALLOWED to determine
-        compilation of code that requires 10.6.
-
-        * wtf/Platform.h:
-
-2009-10-14  Kevin Ollivier  <kevino@theolliviers.com>
-
         wx build fix. Set ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH for plugins while we're still building stubs.
 
         * wtf/Platform.h:
