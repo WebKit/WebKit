@@ -310,7 +310,7 @@ sub productDir
 
 sub jscProductDir
 {
-    my $productDir = determineConfigurationProductDir();
+    my $productDir = productDir();
     $productDir .= "/JavaScriptCore" if isQt();
     $productDir .= "/$configuration" if (isQt() && isWindows());
     $productDir .= "/Programs" if isGtk();

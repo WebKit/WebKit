@@ -1,3 +1,11 @@
+2009-10-13  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix null assignment so root tests work again.
+
+        * Scripts/webkitdirs.pm:
+
 2009-10-13  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
