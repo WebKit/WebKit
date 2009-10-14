@@ -5,6 +5,9 @@ plugins/netscape-throw-exception.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/open-and-close-window-with-plugin.html
 
+# This needs a newer version of Safari.
+plugins/private-browsing-mode.html
+
 # Radar bugs needed for these
 fast/canvas/set-colors.html
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg

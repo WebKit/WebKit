@@ -1,3 +1,11 @@
+2009-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Disable plugins/private-browsing-mode.html on Snow Leopard.
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-10-13  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Darin Adler.
