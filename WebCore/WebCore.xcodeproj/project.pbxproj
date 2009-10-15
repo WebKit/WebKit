@@ -10566,6 +10566,8 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */,
+				A7D20F3B107F373800A80392 /* CanvasActiveInfo.idl */,
 				49EECDC710503C2300099FAB /* CanvasArray.cpp */,
 				49EECDC810503C2300099FAB /* CanvasArray.h */,
 				49EECDC910503C2300099FAB /* CanvasArray.idl */,
@@ -10633,8 +10635,6 @@
 				49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */,
 				49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */,
 				49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */,
-				A7D20F3B107F373800A80392 /* CanvasActiveInfo.idl */,
-				A7D20F6B107F438B00A80392 /* CanvasActiveInfo.h */,
 			);
 			name = canvas;
 			sourceTree = "<group>";
@@ -15723,6 +15723,7 @@
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */,
+				A7D20F6D107F438B00A80392 /* CanvasActiveInfo.h in Headers */,
 				49EECDE010503C2400099FAB /* CanvasArray.h in Headers */,
 				49EECDE310503C2400099FAB /* CanvasArrayBuffer.h in Headers */,
 				49C7B9C91042D32F0009D447 /* CanvasBuffer.h in Headers */,
@@ -15889,6 +15890,7 @@
 				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
 				85D389B20A991A7F00282145 /* DOMAttr.h in Headers */,
 				85E7118D0AC5D5350053270F /* DOMAttrInternal.h in Headers */,
+				BC946EEF107FDBAC00857193 /* DOMBeforeLoadEvent.h in Headers */,
 				85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */,
 				85E7118E0AC5D5350053270F /* DOMCDATASectionInternal.h in Headers */,
 				85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */,
@@ -16724,6 +16726,7 @@
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
+				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
 				9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
@@ -16878,6 +16881,7 @@
 				BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
+				A7D20F63107F406900A80392 /* JSCanvasActiveInfo.h in Headers */,
 				49EECF1C105072F300099FAB /* JSCanvasArray.h in Headers */,
 				49EECF01105070C400099FAB /* JSCanvasArrayBuffer.h in Headers */,
 				49EECFAC1050938200099FAB /* JSCanvasArrayBufferConstructor.h in Headers */,
@@ -18030,10 +18034,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
-				BC946EEF107FDBAC00857193 /* DOMBeforeLoadEvent.h in Headers */,
-				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
-				A7D20F63107F406900A80392 /* JSCanvasActiveInfo.h in Headers */,
-				A7D20F6D107F438B00A80392 /* CanvasActiveInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18482,6 +18482,7 @@
 				BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
 				85D389B30A991A7F00282145 /* DOMAttr.mm in Sources */,
+				BC946EF0107FDBAC00857193 /* DOMBeforeLoadEvent.mm in Sources */,
 				85089CD80A98C42800A275AA /* DOMCDATASection.mm in Sources */,
 				85ACA9870A9B520300671E90 /* DOMCharacterData.mm in Sources */,
 				85089CDA0A98C42800A275AA /* DOMComment.mm in Sources */,
@@ -18855,6 +18856,7 @@
 				0F580B050F12A2550051D689 /* GraphicsLayerCA.mm in Sources */,
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
+				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,
 				5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */,
 				9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */,
@@ -19011,9 +19013,11 @@
 				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
+				A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */,
 				49EECF1B105072F300099FAB /* JSCanvasArray.cpp in Sources */,
 				49EECF00105070C400099FAB /* JSCanvasArrayBuffer.cpp in Sources */,
 				49EECFAB1050938200099FAB /* JSCanvasArrayBufferConstructor.cpp in Sources */,
+				492273A31083B3B100EE5C84 /* JSCanvasArrayCustom.cpp in Sources */,
 				49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */,
 				49C7B9951042D2D30009D447 /* JSCanvasByteArray.cpp in Sources */,
 				49EECFAD1050938200099FAB /* JSCanvasByteArrayConstructor.cpp in Sources */,
@@ -20161,10 +20165,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				BC946EF0107FDBAC00857193 /* DOMBeforeLoadEvent.mm in Sources */,
-				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
-				A7D20F62107F406900A80392 /* JSCanvasActiveInfo.cpp in Sources */,
-				492273A31083B3B100EE5C84 /* JSCanvasArrayCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
