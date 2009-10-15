@@ -1,3 +1,9 @@
+2009-10-15  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Fix Windows build.
+
+        * dom/Document.idl:
+
 2009-10-14  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Adam Barth.
