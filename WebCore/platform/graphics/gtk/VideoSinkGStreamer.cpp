@@ -68,6 +68,16 @@ struct _WebKitVideoSinkPrivate {
     guint timeout_id;
     GMutex* buffer_mutex;
     GCond* data_cond;
+
+    // If this is TRUE all processing should finish ASAP
+    // This is necessary because there could be a race between
+    // unlock() and render(), where unlock() wins, signals the
+    // GCond, then render() tries to render a frame although
+    // everything else isn't running anymore. This will lead
+    // to deadlocks because render() holds the stream lock.
+    //
+    // Protected by the buffer mutex
+    gboolean unlocked;
 };
 
 #define _do_init(bla) \
@@ -113,7 +123,7 @@ webkit_video_sink_timeout_func(gpointer data)
     priv->buffer = 0;
     priv->timeout_id = 0;
 
-    if (!buffer || G_UNLIKELY(!GST_IS_BUFFER(buffer))) {
+    if (!buffer || priv->unlocked || G_UNLIKELY(!GST_IS_BUFFER(buffer))) {
         g_cond_signal(priv->data_cond);
         g_mutex_unlock(priv->buffer_mutex);
         return FALSE;
@@ -139,6 +149,12 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     WebKitVideoSinkPrivate* priv = sink->priv;
 
     g_mutex_lock(priv->buffer_mutex);
+
+    if (priv->unlocked) {
+        g_mutex_unlock(priv->buffer_mutex);
+        return GST_FLOW_OK;
+    }
+
     priv->buffer = gst_buffer_ref(buffer);
 
     // Use HIGH_IDLE+20 priority, like Gtk+ for redrawing operations.
@@ -181,6 +197,8 @@ unlock_buffer_mutex(WebKitVideoSinkPrivate* priv)
         priv->buffer = 0;
     }
 
+    priv->unlocked = TRUE;
+
     g_cond_signal(priv->data_cond);
     g_mutex_unlock(priv->buffer_mutex);
 }
@@ -191,7 +209,22 @@ webkit_video_sink_unlock(GstBaseSink* object)
     WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(object);
 
     unlock_buffer_mutex(sink->priv);
+
     return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock,
+                                        (object), TRUE);
+}
+
+static gboolean
+webkit_video_sink_unlock_stop(GstBaseSink* object)
+{
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(object);
+    WebKitVideoSinkPrivate* priv = sink->priv;
+
+    g_mutex_lock(priv->buffer_mutex);
+    priv->unlocked = FALSE;
+    g_mutex_unlock(priv->buffer_mutex);
+
+    return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock_stop,
                                         (object), TRUE);
 }
 
@@ -199,7 +232,19 @@ static gboolean
 webkit_video_sink_stop(GstBaseSink* base_sink)
 {
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(base_sink)->priv;
+
     unlock_buffer_mutex(priv);
+    return TRUE;
+}
+
+static gboolean
+webkit_video_sink_start(GstBaseSink* base_sink)
+{
+    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(base_sink)->priv;
+
+    g_mutex_lock(priv->buffer_mutex);
+    priv->unlocked = FALSE;
+    g_mutex_unlock(priv->buffer_mutex);
     return TRUE;
 }
 
@@ -238,9 +283,11 @@ webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     gobject_class->dispose = webkit_video_sink_dispose;
 
     gstbase_sink_class->unlock = webkit_video_sink_unlock;
+    gstbase_sink_class->unlock_stop = webkit_video_sink_unlock_stop;
     gstbase_sink_class->render = webkit_video_sink_render;
     gstbase_sink_class->preroll = webkit_video_sink_render;
     gstbase_sink_class->stop = webkit_video_sink_stop;
+    gstbase_sink_class->start = webkit_video_sink_start;
 
     webkit_video_sink_signals[REPAINT_REQUESTED] = g_signal_new("repaint-requested",
             G_TYPE_FROM_CLASS(klass),
