@@ -3893,8 +3893,12 @@ WebKitWebResource* webkit_web_view_get_resource(WebKitWebView* webView, char* id
 
     gboolean resourceFound = g_hash_table_lookup_extended(priv->subResources, identifier, NULL, &webResource);
 
-    // The only resource we do not store in this hash table is the main!
-    g_return_val_if_fail(resourceFound || g_str_equal(identifier, priv->mainResourceIdentifier), NULL);
+    // The only resource we do not store in this hash table is the
+    // main!  If we did not find a request, it probably means the load
+    // has been interrupted while while a resource was still being
+    // loaded.
+    if (!resourceFound && !g_str_equal(identifier, priv->mainResourceIdentifier))
+        return NULL;
 
     if (!webResource)
         return webkit_web_view_get_main_resource(webView);
