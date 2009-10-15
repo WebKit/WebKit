@@ -6,6 +6,9 @@ use warnings;
 use File::Temp qw/tempfile/;
 use FindBin;
 
+use lib $FindBin::Bin;
+use webkitdirs;
+
 my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
 
 chomp(my $vcBin = `cygpath -w "$FindBin::Bin/../vcbin"`);
@@ -28,8 +31,15 @@ if ($ENV{'VS80COMNTOOLS'}) {
 print $fh "\@echo off\n\n";
 print $fh "call \"\%" . $vsToolsVar . "\%\\vsvars32.bat\"\n\n";
 print $fh "set PATH=$vcBin;$scriptsPath;\%PATH\%\n\n";
-print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com " . join(" ", @ARGV) . ") ELSE ";
-print $fh "VCExpress.exe " . join(" ", @ARGV) . "\n";
+
+my $useenv = "/useenv ";
+if (isChromium()) {
+    $useenv = "";
+}
+
+print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com " . $useenv . join(" ", @ARGV) . ") ELSE ";
+print $fh "VCExpress.exe " . $useenv . join(" ", @ARGV) . "\n";
+
 
 close $fh;
 

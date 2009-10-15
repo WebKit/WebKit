@@ -1,3 +1,15 @@
+2009-10-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes <http://webkit.org/b/30411>.
+        REGRESSION(49485): pdevenv doesn't compile in parallel for non-chromium builds on Windows.
+        
+        Added a check for isChromium() in pdevenv, and pass /useenv if we are not
+        building Chromium.
+
+        * Scripts/pdevenv:
+
 2009-10-15  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
