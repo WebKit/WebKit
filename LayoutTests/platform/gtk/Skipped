@@ -5346,15 +5346,20 @@ media/controls-styling.html
 svg/batik/filters/feTile.svg
 svg/custom/createImageElement.svg
 svg/custom/createImageElement2.xhtml
+svg/custom/gradient-userSpaceOnUse-with-percentage.svg
 svg/custom/js-update-image-and-display2.svg
 svg/custom/js-update-image-and-display3.svg
 svg/custom/js-update-image-and-display.svg
+svg/custom/mask-with-default-value.svg
 svg/custom/outer-svg-unknown-feature.svg
 svg/filters/feComposite.svg
+svg/filters/feGaussianBlur.svg
 svg/filters/feMerge.svg
+svg/filters/feMerge-wrong-input.svg
 svg/filters/feOffset.svg
 svg/filters/feTile.svg
 svg/filters/sourceAlpha.svg
+svg/filters/subRegion-in-userSpace.svg
 
 # Requires expected results - related changeset: http://trac.webkit.org/changeset/47678
 fast/block/margin-collapse/block-inside-inline

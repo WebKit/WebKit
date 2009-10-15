@@ -1,5 +1,11 @@
 2009-10-15  Xan Lopez  <xlopez@igalia.com>
 
+        Skip new SVG tests without expected results for GTK+.
+
+        * platform/gtk/Skipped:
+
+2009-10-15  Xan Lopez  <xlopez@igalia.com>
+
         Skip a couple of tests that need support for dumpEditingCallbacks.
 
         * platform/gtk/Skipped:
