@@ -174,8 +174,8 @@ bool PluginView::platformStart()
 
 #if PLATFORM(QT)
     if (QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient()) {
-        if (QWidget* window = QWidget::find(client->winId())) {
-            setPlatformPluginWidget(window);
+        if (QWidget* widget = client->ownerWidget()) {
+            setPlatformPluginWidget(widget);
         }
     }
 #endif
