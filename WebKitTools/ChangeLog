@@ -1,3 +1,10 @@
+2009-10-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. More SDK fixes for Mac, make sure we use the SDK corresponding to
+        the OS if none was explicitly set.
+
+        * wx/build/settings.py:
+
 2009-10-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

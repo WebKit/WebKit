@@ -279,30 +279,29 @@ def common_configure(conf):
         min_version = None
         
         mac_target = 'MACOSX_DEPLOYMENT_TARGET'
-        if mac_target in conf.env:
-             min_version = conf.env[mac_target]
-
         if Options.options.macosx_version != '':
             min_version = Options.options.macosx_version
-
-        # WebKit only supports 10.4+, but ppc systems often set this to earlier systems
-        if not min_version or min_version in ['10.1','10.2','10.3']:
-            min_version = '10.4'
-            
-        os.environ[mac_target] = conf.env[mac_target] = min_version
         
+        # WebKit only supports 10.4+, but ppc systems often set this to earlier systems
+        if not min_version:
+            min_version = commands.getoutput('sw_vers -productVersion')[:4]
+            if min_version in ['10.1','10.2','10.3']:
+                min_version = '10.4'
+
+        os.environ[mac_target] = conf.env[mac_target] = min_version        
+
         sdk_version = min_version
         if min_version == "10.4":
             sdk_version += "u"
-
-        conf.env.append_value('CPPPATH', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
-        conf.env.append_value('LIB', ['WebCoreSQLite3'])
-            
+        
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
         sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
         
-        conf.env.append_value('CPPFLAGS_SQLITE3', sdkflags)
-        conf.env.append_value('LINKFLAGS_SQLITE3', sdkflags)
+        conf.env.append_value('CPPFLAGS', sdkflags)
+        conf.env.append_value('LINKFLAGS', sdkflags)
+        
+        conf.env.append_value('CPPPATH_SQLITE3', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
+        conf.env.append_value('LIB_SQLITE3', ['WebCoreSQLite3'])
     
     libprefix = ''
     if building_on_win32:
