@@ -246,8 +246,6 @@ namespace WebCore {
         void setEncoding(const String& encoding, bool userChosen);
         String encoding() const;
 
-        void gotoAnchor();
-
         void tokenizerProcessedData();
 
         void handledOnloadEvents();
@@ -428,7 +426,6 @@ namespace WebCore {
 
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
-        bool gotoAnchor(const String& name); // returns true if the anchor was found
         void scrollToAnchor(const KURL&);
 
         void provisionalLoadStarted();

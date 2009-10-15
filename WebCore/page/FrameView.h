@@ -183,6 +183,8 @@ public:
 
     void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
+    bool scrollToFragment(const KURL&);
+    bool scrollToAnchor(const String&);
     void maintainScrollPositionAtAnchor(Node*);
 
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.

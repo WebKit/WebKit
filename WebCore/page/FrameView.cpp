@@ -52,11 +52,23 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "TextResourceDecoder.h"
 #include <wtf/CurrentTime.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
 #endif
+
+#if ENABLE(SVG)
+#include "SVGDocument.h"
+#include "SVGLocatable.h"
+#include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGSVGElement.h"
+#include "SVGViewElement.h"
+#include "SVGViewSpec.h"
+#endif
+
 
 namespace WebCore {
 
@@ -767,6 +779,72 @@ void FrameView::setContentIsOpaque(bool contentIsOpaque)
 void FrameView::restoreScrollbar()
 {
     setScrollbarsSuppressed(false);
+}
+
+bool FrameView::scrollToFragment(const KURL& url)
+{
+    // If our URL has no ref, then we have no place we need to jump to.
+    // OTOH If CSS target was set previously, we want to set it to 0, recalc
+    // and possibly repaint because :target pseudo class may have been
+    // set (see bug 11321).
+    if (!url.hasFragmentIdentifier() && !m_frame->document()->cssTarget())
+        return false;
+
+    String fragmentIdentifier = url.fragmentIdentifier();
+    if (scrollToAnchor(fragmentIdentifier))
+        return true;
+
+    // Try again after decoding the ref, based on the document's encoding.
+    if (TextResourceDecoder* decoder = m_frame->document()->decoder())
+        return scrollToAnchor(decodeURLEscapeSequences(fragmentIdentifier, decoder->encoding()));
+
+    return false;
+}
+
+bool FrameView::scrollToAnchor(const String& name)
+{
+    ASSERT(m_frame->document());
+
+    if (!m_frame->document()->haveStylesheetsLoaded()) {
+        m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(true);
+        return false;
+    }
+
+    m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
+
+    Element* anchorNode = m_frame->document()->findAnchor(name);
+
+#if ENABLE(SVG)
+    if (m_frame->document()->isSVGDocument()) {
+        if (name.startsWith("xpointer(")) {
+            // We need to parse the xpointer reference here
+        } else if (name.startsWith("svgView(")) {
+            RefPtr<SVGSVGElement> svg = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+            if (!svg->currentView()->parseViewSpec(name))
+                return false;
+            svg->setUseCurrentView(true);
+        } else {
+            if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
+                RefPtr<SVGViewElement> viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
+                if (viewElement.get()) {
+                    RefPtr<SVGSVGElement> svg = static_cast<SVGSVGElement*>(SVGLocatable::nearestViewportElement(viewElement.get()));
+                    svg->inheritViewAttributes(viewElement.get());
+                }
+            }
+        }
+        // FIXME: need to decide which <svg> to focus on, and zoom to that one
+        // FIXME: need to actually "highlight" the viewTarget(s)
+    }
+#endif
+
+    m_frame->document()->setCSSTarget(anchorNode); // Setting to null will clear the current target.
+  
+    // Implement the rule that "" and "top" both mean top of page as in other browsers.
+    if (!anchorNode && !(name.isEmpty() || equalIgnoringCase(name, "top")))
+        return false;
+
+    maintainScrollPositionAtAnchor(anchorNode ? static_cast<Node*>(anchorNode) : m_frame->document());
+    return true;
 }
 
 void FrameView::maintainScrollPositionAtAnchor(Node* anchorNode)

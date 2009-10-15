@@ -2354,8 +2354,8 @@ void Document::removePendingSheet()
     if (!m_pendingStylesheets && m_tokenizer)
         m_tokenizer->executeScriptsWaitingForStylesheets();
 
-    if (!m_pendingStylesheets && m_gotoAnchorNeededAfterStylesheetsLoad && m_frame)
-        m_frame->loader()->gotoAnchor();
+    if (!m_pendingStylesheets && m_gotoAnchorNeededAfterStylesheetsLoad && view())
+        view()->scrollToFragment(m_frame->loader()->url());
 }
 
 void Document::updateStyleSelector()

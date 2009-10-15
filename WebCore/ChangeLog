@@ -1,3 +1,21 @@
+2009-10-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Move scrolling code from FrameLoader to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=30370
+
+        This code is about controlling the Frame's view, not about loading
+        stuff into the frame.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedParsing):
+        (WebCore::FrameLoader::scrollToAnchor):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragment):
+        (WebCore::FrameView::scrollToAnchor):
+        * page/FrameView.h:
+
 2009-10-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
