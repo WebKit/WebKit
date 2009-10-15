@@ -405,9 +405,6 @@ Document* CSSParser::document() const
 
 bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
 {
-    if (unitflags & FNonNeg && value->fValue < 0)
-        return false;
-
     bool b = false;
     switch (value->unit) {
     case CSSPrimitiveValue::CSS_NUMBER:
@@ -451,6 +448,8 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
     default:
         break;
     }
+    if (b && unitflags & FNonNeg && value->fValue < 0)
+        b = false;
     return b;
 }
 
