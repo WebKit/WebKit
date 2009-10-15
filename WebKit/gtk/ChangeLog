@@ -1,3 +1,13 @@
+2009-10-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Protect WebSocket calls in case the feature is not compiled in.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2009-10-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
