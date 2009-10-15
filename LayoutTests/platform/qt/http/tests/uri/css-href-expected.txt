@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {A} at (0,0) size 76x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 76x21
+            text run at (57,0) width 76: "bug 11141"
+        RenderText {#text} at (133,0) size 377x21
+          text run at (133,0) width 8: ": "
+          text run at (141,0) width 369: "CSS '@import' doesn't respect HTML Base element."
+      RenderBlock {P} at (0,37) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 183x21
+          text run at (0,0) width 183: "This text should be green."
+      RenderBlock {P} at (0,74) size 784x63
+        RenderText {#text} at (0,0) size 771x63
+          text run at (0,0) width 425: "If it is red, the css has been loaded relative to the document. "
+          text run at (425,0) width 346: "If it is black, no stylesheet has been rendered, if it"
+          text run at (0,21) width 133: "is rendered green, "
+          text run at (133,21) width 518: "the stylesheet has been rendered correctly from the HREF attribute of the "
+          text run at (651,21) width 115: "Base element in"
+          text run at (0,42) width 251: "the HEAD section of this document."
+      RenderBlock {P} at (0,153) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 217x21
+          text run at (0,0) width 217: "This text should also be green."

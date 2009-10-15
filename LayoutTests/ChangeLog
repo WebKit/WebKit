@@ -2,6 +2,15 @@
 
         Reviewed by Adam Treat.
 
+        [Qt] Add expected files for passing http tests.
+
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.txt: Added.
+        * platform/qt/http/tests/uri/css-href-expected.txt: Added.
+
+2009-10-15  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Adam Treat.
+
         [Qt] Add expected files for passing svg tests.
 
         * platform/qt/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt: Added.
