@@ -1,3 +1,18 @@
+2009-10-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30006
+        [GStreamer] Unnecessary checks for Messages types in callbacks
+
+        refactored gst message callbacks into a single one
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::do_gst_init):
+        (WebCore::MediaPlayerPrivate::duration):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-10-15  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Adele Peterson.
