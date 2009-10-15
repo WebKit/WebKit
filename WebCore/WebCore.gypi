@@ -3630,6 +3630,7 @@
             'inspector/front-end/StoragePanel.js',
             'inspector/front-end/StylesSidebarPane.js',
             'inspector/front-end/SummaryBar.js',
+            'inspector/front-end/TestController.js',
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TimelineAgent.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',

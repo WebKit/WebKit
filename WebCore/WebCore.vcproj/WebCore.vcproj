@@ -31747,6 +31747,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TestController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TextPrompt.js"
 					>
 				</File>
