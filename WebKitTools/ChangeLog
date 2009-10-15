@@ -1,3 +1,14 @@
+2009-10-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Need to initialize event.button.button, since in most cases a
+        button number is not passed as an argument.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseDownCallback):
+        (mouseUpCallback):
+
 2009-10-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. More SDK fixes for Mac, make sure we use the SDK corresponding to
