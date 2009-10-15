@@ -1,3 +1,13 @@
+2009-10-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Rebaseline tests after changes made in r49405.
+
+        * platform/gtk/editing/execCommand/4916541-expected.txt: Rebaseline.
+        * platform/gtk/editing/execCommand/5138441-expected.txt: Ditto.
+        * platform/gtk/editing/execCommand/5481523-expected.txt: Ditto.
+
 2009-10-15  Xan Lopez  <xlopez@igalia.com>
 
         Remove obsolete test from Skipped list.

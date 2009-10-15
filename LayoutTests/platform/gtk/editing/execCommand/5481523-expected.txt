@@ -27,5 +27,7 @@ layer at (0,0) size 800x600
                   RenderTableCell {TD} at (45,28) size 34x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 30x20
                       text run at (2,2) width 30: "Four"
+            RenderBlock (anonymous) at (0,56) size 704x0
+        RenderBlock (anonymous) at (0,56) size 784x0
 selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
