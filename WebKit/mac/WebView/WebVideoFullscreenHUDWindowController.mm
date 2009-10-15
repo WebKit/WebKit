@@ -436,6 +436,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     if (![_delegate mediaElement])
         return;
     WebCore::ExceptionCode e;
+    if ([_delegate mediaElement]->muted())
+        [_delegate mediaElement]->setMuted(false);
     [_delegate mediaElement]->setVolume(volume / [self maxVolume], e);
 }
 

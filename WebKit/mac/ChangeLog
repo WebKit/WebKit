@@ -1,3 +1,12 @@
+2009-10-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7295738> No way to mute/unmute a movie in full screen video mode
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController setVolume:]): Unmute movie before changing volume.
+
 2009-10-14  Kevin Decker  <kdecker@apple.com>
 
         Unbreak the world.

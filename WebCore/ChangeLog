@@ -1,3 +1,11 @@
+2009-10-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7295738> No way to mute/unmute a movie in full screen video mode
+
+        * WebCore.Video.exp: Export muted and setMute.
+
 2009-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
