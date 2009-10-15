@@ -116,8 +116,8 @@ update-po: GNUmakefile
 	exit 1
 
 # clean rules
-stamp_files += \
-	stamp-po
+CLEANFILES += \
+	$(top_builddir)/stamp-po
 
 MAINTAINERCLEANFILES += \
 	$(MOFILES)

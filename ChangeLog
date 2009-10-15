@@ -1,3 +1,16 @@
+2009-10-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] marshal stamp files are not cleaned after a distclean
+        https://bugs.webkit.org/show_bug.cgi?id=30156
+
+        Add the stamp files directly to cleanfiles. Also rearrange the
+        variable declarations so we don't miss any files that need to be
+        cleaned up during the clean targets.
+
+        * GNUmakefile.am:
+
 2009-10-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Help text fix - Web Sockets default is no, not yes.
