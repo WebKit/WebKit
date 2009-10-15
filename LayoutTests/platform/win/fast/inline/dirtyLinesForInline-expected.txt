@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 772x36
+          text run at (0,0) width 598: "To reproduce this bug outside of DumpRenderTree, mouse over the links below several times. "
+          text run at (598,0) width 174: "The bug is fixed if we don't"
+          text run at (0,18) width 37: "crash."
+      RenderBlock {DIV} at (0,52) size 784x55
+        RenderTable {TABLE} at (0,0) size 132x55
+          RenderTableSection {TBODY} at (0,0) size 132x55
+            RenderTableRow {TR} at (0,2) size 132x51
+              RenderTableCell {TD} at (2,2) size 128x51 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 126x49
+                  RenderInline {A} at (0,0) size 98x36 [color=#0000EE]
+                    RenderInline {SPAN} at (0,0) size 98x36
+                      RenderText {#text} at (0,0) size 98x36
+                        text run at (0,0) width 98: "this is the home"
+                        text run at (0,18) width 30: "page"
+                    RenderText {#text} at (30,18) size 35x18
+                      text run at (30,18) width 35: "home"
+                  RenderBR {BR} at (65,32) size 0x0
+                  RenderInline {A} at (0,0) size 39x13 [color=#0000EE]
+                    RenderText {#text} at (0,36) size 39x13
+                      text run at (0,36) width 39: "about us"
+                  RenderBR {BR} at (39,46) size 0x0
+layer at (11,99) size 110x13
+  RenderBlock (positioned) {SPAN} at (11,99) size 110x13
+    RenderText {#text} at (0,0) size 110x13
+      text run at (0,0) width 110: "this is the about us page"

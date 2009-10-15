@@ -1,3 +1,12 @@
+2009-10-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        Update Windows expected results after http://trac.webkit.org/changeset/49619.
+
+        * platform/win/fast/inline: Added.
+        * platform/win/fast/inline/dirtyLinesForInline-expected.txt: Added.
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: skip inspector tests on windows until
