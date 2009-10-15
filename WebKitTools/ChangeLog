@@ -1,3 +1,12 @@
+2009-10-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Enable Web Sockets support when running layout tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-10-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

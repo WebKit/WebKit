@@ -319,6 +319,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-offline-web-application-cache", TRUE,
                  "enable-universal-access-from-file-uris", TRUE,
                  "enable-scripts", TRUE,
+                 "enable-web-sockets", TRUE,
                  "default-font-family", "Times",
                  "monospace-font-family", "Courier",
                  "serif-font-family", "Times",

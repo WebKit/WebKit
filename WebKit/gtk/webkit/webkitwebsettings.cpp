@@ -96,6 +96,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_offline_web_application_cache;
     WebKitEditingBehavior editing_behavior;
     gboolean enable_universal_access_from_file_uris;
+    gboolean enable_web_sockets;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -135,7 +136,8 @@ enum {
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
     PROP_EDITING_BEHAVIOR,
-    PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS
+    PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS,
+    PROP_ENABLE_WEB_SOCKETS
 };
 
 // Create a default user agent string
@@ -647,6 +649,24 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
 
+    /**
+     * WebKitWebSettings:enable-web-sockets
+     *
+     * Whether to enable support for Web Sockets.
+     *
+     * Implementation of Web Sockets is currently considered experimental.
+     * Name of this property and the behavior could change in the future.
+     *
+     * Since: 1.1.16
+     */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_WEB_SOCKETS,
+                                    g_param_spec_boolean("enable-web-sockets",
+                                                         _("Enable Web Sockets"),
+                                                         _("Whether to enable Web Sockets"),
+                                                         FALSE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -840,6 +860,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
         priv->enable_universal_access_from_file_uris = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_WEB_SOCKETS:
+        priv->enable_web_sockets = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -951,6 +974,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
    case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
         g_value_set_boolean(value, priv->enable_universal_access_from_file_uris);
         break;
+    case PROP_ENABLE_WEB_SOCKETS:
+        g_value_set_boolean(value, priv->enable_web_sockets);
+        break;
    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1015,6 +1041,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
                  "editing-behavior", priv->editing_behavior,
                  "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
+                 "enable-web-sockets", priv->enable_web_sockets,
                  NULL));
 
     return copy;
