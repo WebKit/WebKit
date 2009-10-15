@@ -477,7 +477,11 @@ unsigned MediaPlayerPrivate::totalBytes() const
 
 void MediaPlayerPrivate::cancelLoad()
 {
-    notImplemented();
+    if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
+        return;
+
+    if (m_playBin)
+        gst_element_set_state(m_playBin, GST_STATE_NULL);
 }
 
 void MediaPlayerPrivate::updateStates()
