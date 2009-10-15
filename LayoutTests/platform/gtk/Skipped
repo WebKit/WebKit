@@ -3369,7 +3369,6 @@ http/tests/misc/refresh-headers.php
 http/tests/misc/refresh-meta-with-newline.html
 http/tests/misc/single-character-pi-stylesheet.xhtml
 http/tests/misc/slow-preload-cancel.html
-http/tests/misc/submit-get-in-utf7.html
 http/tests/misc/text-refresh.html
 http/tests/misc/timer-vs-loading.html
 http/tests/misc/window-dot-stop.html

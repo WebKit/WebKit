@@ -1,3 +1,9 @@
+2009-10-15  Xan Lopez  <xlopez@igalia.com>
+
+        Remove obsolete test from Skipped list.
+
+        * platform/gtk/Skipped:
+
 2009-10-15  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
