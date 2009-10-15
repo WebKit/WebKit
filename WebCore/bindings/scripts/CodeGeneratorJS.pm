@@ -605,13 +605,13 @@ sub GenerateHeader
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
             "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
             "    }\n\n");
     } elsif ($hasGetter) {
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
             "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot));\n" .
             "    }\n\n");
     }
 
@@ -791,13 +791,13 @@ sub GenerateHeader
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
             "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType" . ($needsMarkChildren ? "" : ", JSC::HasDefaultMark") . "));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot" . ($needsMarkChildren ? "" : " | JSC::HasDefaultMark") . "));\n" .
             "    }\n");
     } elsif ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
             "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot));\n" .
             "    }\n");
     }
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
@@ -2253,7 +2253,7 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue proto) 
     { 
-        return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+        return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance)); 
     }
 EOF
 

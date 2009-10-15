@@ -44,7 +44,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, MasqueradesAsUndefined | HasDefaultMark)); 
+            return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | MasqueradesAsUndefined | HasDefaultMark)); 
         }
 
         virtual bool toBoolean(ExecState*) const { return false; }

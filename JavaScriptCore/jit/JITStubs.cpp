@@ -1418,7 +1418,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 
     // ECMA-262 15.3.5.3:
     // Throw an exception either if baseVal is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
-    TypeInfo typeInfo(UnspecifiedType, 0);
+    TypeInfo typeInfo(UnspecifiedType);
     if (!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance()) {
         CallFrame* callFrame = stackFrame.callFrame;
         CodeBlock* codeBlock = callFrame->codeBlock();

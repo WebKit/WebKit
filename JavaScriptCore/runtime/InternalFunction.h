@@ -42,7 +42,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | HasStandardGetOwnPropertySlot | HasDefaultMark)); 
+            return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | HasDefaultMark)); 
         }
 
     protected:
