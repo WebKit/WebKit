@@ -1,3 +1,11 @@
+2009-10-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Document what state the build tree is expected to be in after a patch.
+
+        * coding/contributing.html:
+
 2009-10-11  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
