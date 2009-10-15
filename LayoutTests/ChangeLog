@@ -1,3 +1,18 @@
+2009-10-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        [XSSAuditor] Add an exception for local files
+        https://bugs.webkit.org/show_bug.cgi?id=30352
+
+        Test that we allow sites to load scripts from their own domain as long
+        as they don't use query strings.
+
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host.html: Added.
+
 2009-10-14  Darin Adler  <darin@apple.com>
 
         Fix a failure seen on buildbot after landing the fix for

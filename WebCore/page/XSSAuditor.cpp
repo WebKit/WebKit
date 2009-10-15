@@ -144,6 +144,16 @@ bool XSSAuditor::canLoadExternalScriptFromSrc(const String& context, const Strin
     if (!isEnabled())
         return true;
 
+    // If the script is loaded from the same URL as the enclosing page, it's
+    // probably not an XSS attack, so we reduce false positives by allowing the
+    // script. If the script has a query string, we're more suspicious,
+    // however, because that's pretty rare and the attacker might be able to
+    // trick a server-side script into doing something dangerous with the query
+    // string.
+    KURL scriptURL(m_frame->document()->url(), url);
+    if (m_frame->document()->url().host() == scriptURL.host() && scriptURL.query().isEmpty())
+        return true;
+
     if (findInRequest(context + url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());

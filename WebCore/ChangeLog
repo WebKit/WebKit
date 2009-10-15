@@ -1,3 +1,25 @@
+2009-10-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        [XSSAuditor] Add an exception for local files
+        https://bugs.webkit.org/show_bug.cgi?id=30352
+
+        Reduce XSS auditor false positives by always letting pages load scripts
+        from their own host. We don't actually know of any false positives
+        that this prevents, but it seems like a good idea.
+
+        One subtly is that we don't add this exception for scripts that have a
+        query string because (1) URLs with query strings are more apt to
+        confuse servers and (2) it is much less common to load scripts with a
+        query string.
+
+        Tests: http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query.html
+               http/tests/security/xssAuditor/script-tag-with-source-same-host.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+
 2009-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by George Staikos.
