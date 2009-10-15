@@ -1,3 +1,15 @@
+2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed - build fix.
+
+        Web Inspector: add file missing in r49648
+
+        * inspector/front-end/TestController.js: Added.
+        (WebInspector.TestController):
+        (WebInspector.TestController.prototype.waitUntilDone):
+        (WebInspector.TestController.prototype.notifyDone):
+        (WebInspector.evaluateForTestInFrontend):
+
 2009-10-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
