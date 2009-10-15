@@ -686,9 +686,3 @@ plugins/private-browsing-mode.html
 # Skip these two failures I introduced this morning while I explore them.
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
-# Disable inspector tests while fixing them in release mode
-# https://bugs.webkit.org/show_bug.cgi?id=30014
-inspector/console-tests.html
-inspector/elements-panel-structure.html
-inspector/evaluate-in-frontend.html
-

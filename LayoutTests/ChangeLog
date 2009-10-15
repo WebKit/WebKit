@@ -1,3 +1,22 @@
+2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Enable inspector layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30014
+
+        * inspector/elements-panel-structure-expected.txt:
+        * inspector/elements-panel-structure.html:
+        * inspector/evaluate-in-frontend.js:
+        (evaluateInWebInspector):
+        (window.didEvaluateForTestInFrontend):
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2009-10-15  Xan Lopez  <xlopez@igalia.com>
 
         Skip new SVG tests without expected results for GTK+.

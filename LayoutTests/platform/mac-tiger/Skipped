@@ -60,9 +60,3 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # See <rdar://problem/5081884> and https://bugs.webkit.org/show_bug.cgi?id=29329
 http/tests/loading/redirect-with-no-location-crash.html
-
-# Disable inspector tests while fixing them in release mode
-# https://bugs.webkit.org/show_bug.cgi?id=30014
-inspector/console-tests.html
-inspector/elements-panel-structure.html
-inspector/evaluate-in-frontend.html

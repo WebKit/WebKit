@@ -1,44 +1,45 @@
 var lastCallId = 0;
 var callbacks = {};
 
-function evaluateInWebInspector(script, callback)
-{
-    callbacks[lastCallId] = callback;
-    setTimeout(function() {
-        if (window.layoutTestController) {
-            layoutTestController.evaluateInWebInspector(lastCallId++, script);
-        }
-    }, 0);
-
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
-function showWebInspector()
-{
+// We ignore initial load of the page, enable inspector and initiate reload. This allows inspector controller
+// to capture events that happen during the initial page load.
+var ignoreLoad = window.location.href.indexOf("?reload") === -1;
+if (ignoreLoad) {
     setTimeout(function() {
-        if (window.layoutTestController) {
-            layoutTestController.showWebInspector();
-        }
-    }, 0);
-}
-
-function closeWebInspector()
-{
-    setTimeout(function() {
-        if (window.layoutTestController) {
-            layoutTestController.closeWebInspector();
-        }
+        layoutTestController.showWebInspector();
+        window.location.href += "?reload";
     }, 0);
 }
 
 function onload()
 {
+    if (ignoreLoad)
+        return;
+    var callId = lastCallId++;
     setTimeout(function() {
         if (window.layoutTestController) {
-            layoutTestController.showWebInspector();
-            layoutTestController.evaluateInWebInspector(lastCallId++, document.getElementById("frontend-script").textContent);
+            // layoutTestController.showWebInspector();
+            layoutTestController.evaluateInWebInspector(callId, document.getElementById("frontend-script").textContent);
         }
         doit();
     }, 0);
+}
+
+function evaluateInWebInspector(script, callback)
+{
+    var callId = lastCallId++;
+    callbacks[callId] = callback;
+    setTimeout(function() {
+        if (window.layoutTestController) {
+            layoutTestController.evaluateInWebInspector(callId, script);
+        }
+    }, 0);
+
 }
 
 function notifyDone()
@@ -64,8 +65,3 @@ window.didEvaluateForTestInFrontend = function(callId, jsonResult)
         delete callbacks[callId];
     }
 };
-
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}

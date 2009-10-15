@@ -111,9 +111,3 @@ fast/loader/frames-with-unload-handlers-in-page-cache.html
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow_unload_handler.html
-
-# Disable inspector tests while fixing them in release mode
-# https://bugs.webkit.org/show_bug.cgi?id=30014
-inspector/console-tests.html
-inspector/elements-panel-structure.html
-inspector/evaluate-in-frontend.html

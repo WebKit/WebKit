@@ -1580,7 +1580,7 @@ void InspectorController::didContinue()
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
-    if (windowVisible())
+    if (m_frontend)
         m_frontend->evaluateForTestInFrontend(callId, script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));

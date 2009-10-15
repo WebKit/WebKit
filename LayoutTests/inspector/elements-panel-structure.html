@@ -8,7 +8,7 @@ function doit()
     function callback(result)
     {
         var output = document.getElementById("output");
-        output.textContent = result.replace(/\u200b/g, "").replace(/</g, "\n<");
+        output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/<p>.*<\/body>/g, "").replace(/</g, "\n<");
         notifyDone();
     }
     evaluateInWebInspector("WebInspector.panels.elements.treeOutline.element.textContent", callback);
