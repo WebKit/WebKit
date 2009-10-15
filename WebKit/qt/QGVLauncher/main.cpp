@@ -54,7 +54,7 @@ class WebPage : public QWebPage {
     Q_OBJECT
 
 public:
-    WebPage(QWidget* parent = 0) : QWebPage(parent)
+    WebPage(QObject* parent = 0) : QWebPage(parent)
     {
         applyProxy();
     }

@@ -1,5 +1,14 @@
 2009-10-15  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Rubberstamped by Tor Arne.
+
+        Make QGLauncher's WebPage class constructor to get a QObject* as parent (not QWidget*).
+
+        * QGVLauncher/main.cpp:
+        (WebPage::WebPage):
+
+2009-10-15  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Tor Arne.
 
         [Qt] QGLauncher crashes while closing a window
