@@ -172,6 +172,9 @@ public:
     GraphicsLayer* parent() const { return m_parent; };
     void setParent(GraphicsLayer* layer) { m_parent = layer; } // Internal use only.
     
+    // Returns true if the layer has the given layer as an ancestor (excluding self).
+    bool hasAncestor(GraphicsLayer*) const;
+    
     const Vector<GraphicsLayer*>& children() const { return m_children; }
 
     // Add child layers. If the child is already parented, it will be removed from its old parent.

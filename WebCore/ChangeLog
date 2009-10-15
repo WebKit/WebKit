@@ -1,3 +1,36 @@
+2009-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Transitions fail to run sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=26770
+
+        Fix an issue where we could attempt to start accelerated animations or transitions on
+        GraphicsLayer that were not rooted (because of visibility:hidden), which would leave
+        the AnimationController's m_waitingForResponse flag in a state that killed subsequent
+        software transitions.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::addToStartTimeResponseWaitList):
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        * page/animation/AnimationControllerPrivate.h:
+        Make some methods non-inline for ease of debugging (these are not hot methods).
+        Rename m_waitingForAResponse to m_waitingForResponse.
+        
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::hasAncestor):
+        New method to report whether the receiver has the given layer as an ancestor. Used for checking
+        whether a layer is rooted.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        Don't try to start accelerated animations or transitions on non-rooted GraphicsLayers.
+
 2009-10-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

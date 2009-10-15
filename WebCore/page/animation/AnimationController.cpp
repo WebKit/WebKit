@@ -55,7 +55,7 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
     , m_lastStyleAvailableWaiter(0)
     , m_responseWaiters(0)
     , m_lastResponseWaiter(0)
-    , m_waitingForAResponse(false)
+    , m_waitingForResponse(false)
 {
 }
 
@@ -279,6 +279,19 @@ double AnimationControllerPrivate::beginAnimationUpdateTime()
     return m_beginAnimationUpdateTime;
 }
 
+void AnimationControllerPrivate::endAnimationUpdate()
+{
+    styleAvailable();
+    if (!m_waitingForResponse)
+        startTimeResponse(beginAnimationUpdateTime());
+}
+
+void AnimationControllerPrivate::receivedStartTimeResponse(double time)
+{
+    m_waitingForResponse = false;
+    startTimeResponse(time);
+}
+
 PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(RenderObject* renderer)
 {
     if (!renderer)
@@ -378,7 +391,7 @@ void AnimationControllerPrivate::addToStartTimeResponseWaitList(AnimationBase* a
     ASSERT(!animation->next());
     
     if (willGetResponse)
-        m_waitingForAResponse = true;
+        m_waitingForResponse = true;
     
     if (m_responseWaiters)
         m_lastResponseWaiter->setNext(animation);
@@ -408,13 +421,13 @@ void AnimationControllerPrivate::removeFromStartTimeResponseWaitList(AnimationBa
     }
 }
 
-void AnimationControllerPrivate::startTimeResponse(double t)
+void AnimationControllerPrivate::startTimeResponse(double time)
 {
     // Go through list of waiters and send them on their way
     for (AnimationBase* animation = m_responseWaiters; animation; ) {
         AnimationBase* nextAnimation = animation->next();
         animation->setNext(0);
-        animation->onAnimationStartResponse(t);
+        animation->onAnimationStartResponse(time);
         animation = nextAnimation;
     }
     

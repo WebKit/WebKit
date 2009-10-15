@@ -1,0 +1,4 @@
+Tests that starting an animation on an element inside a visibility:hidden element does not block later transitions.
+
+PASS - "left" property for "transition-tester" element at 0.5s saw something close to: 10
+

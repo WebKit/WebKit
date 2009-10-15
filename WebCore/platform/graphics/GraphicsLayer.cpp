@@ -86,6 +86,16 @@ GraphicsLayer::~GraphicsLayer()
     removeFromParent();
 }
 
+bool GraphicsLayer::hasAncestor(GraphicsLayer* ancestor) const
+{
+    for (GraphicsLayer* curr = parent(); curr; curr = curr->parent()) {
+        if (curr == ancestor)
+            return true;
+    }
+    
+    return false;
+}
+
 void GraphicsLayer::addChild(GraphicsLayer* childLayer)
 {
     ASSERT(childLayer != this);

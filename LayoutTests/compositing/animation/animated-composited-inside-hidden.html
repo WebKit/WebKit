@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <title>Visibility nested</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border: 1px solid black;
+    }
+    
+    .middle {
+      visibility: hidden;
+    }
+
+    .inner {
+      width: 80px;
+      height: 80px;
+      -webkit-animation: spin 5s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    
+    #transition-tester {
+      position: relative;
+      left: 0;
+      background-color: blue;
+      -webkit-transition: left 1s linear;
+    }
+    
+    #container.animating #transition-tester {
+      left: 20px;
+    }
+    
+  </style>
+  <script src="../../transitions/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'transition-tester', 'left', 10, 2],
+    ];
+
+    function setupTest()
+    {
+      document.getElementById('container').className = 'animating';
+    }
+
+    runTransitionTest(expectedValues, setupTest, true /* use pause API */);
+  </script>
+</head>
+<body>
+
+<p>Tests that starting an animation on an element inside a visibility:hidden element does not block later transitions.</p>
+  <div id="container" class="container">
+    <div id="transition-tester" class="box"></div>
+
+    <div class="middle box">
+      <div class="inner box"></div>
+    </div>
+  </div>
+
+<div id="result"></div>
+
+</body>
+</html>

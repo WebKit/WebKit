@@ -1,3 +1,16 @@
+2009-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Transitions fail to run sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=26770
+        
+        Add a test for starting an accelerated animation on an element with a visibility:hidden ancestor,
+        to ensure that it does not block subsequent transitions.
+
+        * compositing/animation/animated-composited-inside-hidden-expected.txt: Added.
+        * compositing/animation/animated-composited-inside-hidden.html: Added.
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: remove timer-related logs from the previously
