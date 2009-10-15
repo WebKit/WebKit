@@ -22,12 +22,19 @@ function onload()
         return;
     var callId = lastCallId++;
     setTimeout(function() {
-        if (window.layoutTestController) {
-            // layoutTestController.showWebInspector();
+        if (window.layoutTestController)
             layoutTestController.evaluateInWebInspector(callId, document.getElementById("frontend-script").textContent);
-        }
         doit();
     }, 0);
+
+    // Make sure web inspector window is closed before the test is interrupted.
+    setTimeout(function() {
+        alert("Internal timeout exceeded.")
+        if (window.layoutTestController) {
+            layoutTestController.closeWebInspector();
+            layoutTestController.notifyDone();
+        }
+    }, 10000);
 }
 
 function evaluateInWebInspector(script, callback)
