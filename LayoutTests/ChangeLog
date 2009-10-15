@@ -1,3 +1,10 @@
+2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: skip inspector tests on windows until
+        incremental build catches frontend files.
+
+        * platform/win/Skipped:
+
 2009-10-15  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Darin Adler.

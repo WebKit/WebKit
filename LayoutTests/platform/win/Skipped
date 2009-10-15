@@ -686,3 +686,7 @@ plugins/private-browsing-mode.html
 # Skip these two failures I introduced this morning while I explore them.
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
+# Skip inspector tests until incremental windows build is fixed to catch frontend changes.
+inspector/console-tests.html
+inspector/elements-panel-structure.html
+inspector/evaluate-in-frontend.html
