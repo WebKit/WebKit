@@ -1,5 +1,12 @@
 2009-10-14  Kevin Decker  <kdecker@apple.com>
 
+        Unbreak the world.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::restart):
+
+2009-10-14  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Anders Carlsson and Jon Honeycutt
 
         <rdar://problem/7304295> snapshots of halted plug-ins are missing

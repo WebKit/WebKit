@@ -101,6 +101,7 @@ void WebHaltablePlugin::halt()
 
 void WebHaltablePlugin::restart()
 { 
+    Element* element = [m_view element];
     ASSERT(element->renderer());
     toRenderWidget(element->renderer())->showSubstituteImage(0);
     [m_view start];
