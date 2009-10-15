@@ -1,3 +1,9 @@
+2009-10-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Help text fix - Web Sockets default is no, not yes.
+
+        * configure.ac:
+
 2009-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubberstamped by Eric Seidel.
