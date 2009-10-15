@@ -19,7 +19,33 @@
 
 #include <QtTest/QtTest>
 
+#include <QGraphicsView>
 #include <qgraphicswebview.h>
+#include <qwebpage.h>
+#include <qwebframe.h>
+
+/**
+ * Starts an event loop that runs until the given signal is received.
+ * Optionally the event loop
+ * can return earlier on a timeout.
+ *
+ * \return \p true if the requested signal was received
+ *         \p false on timeout
+ */
+static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
+{
+    QEventLoop loop;
+    QObject::connect(obj, signal, &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
 
 class tst_QGraphicsWebView : public QObject
 {
@@ -27,6 +53,7 @@ class tst_QGraphicsWebView : public QObject
 
 private slots:
     void qgraphicswebview();
+    void crashOnViewlessWebPages();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -51,6 +78,55 @@ void tst_QGraphicsWebView::qgraphicswebview()
     item.load(QUrl());
     item.setHtml(QString());
     item.setContent(QByteArray());
+}
+
+class WebPage : public QWebPage
+{
+    Q_OBJECT
+
+public:
+    WebPage(QObject* parent = 0): QWebPage(parent)
+    {
+    }
+
+    QGraphicsWebView* webView;
+
+private slots:
+    // Force a webview deletion during the load.
+    // It should not cause WebPage to crash due to
+    // it accessing invalid pageClient pointer.
+    void aborting()
+    {
+        delete webView;
+    }
+};
+
+void tst_QGraphicsWebView::crashOnViewlessWebPages()
+{
+    QGraphicsScene scene;
+    QGraphicsView view(&scene);
+
+    QGraphicsWebView* webView = new QGraphicsWebView;
+    WebPage* page = new WebPage;
+    webView->setPage(page);
+    page->webView = webView;
+    connect(page->mainFrame(), SIGNAL(initialLayoutCompleted()), page, SLOT(aborting()));
+
+    scene.addItem(webView);
+
+    view.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    view.resize(600, 480);
+    webView->resize(view.geometry().size());
+    QTest::qWait(200);
+    view.show();
+
+    page->mainFrame()->setHtml(QString("data:text/html,"
+                                            "<frameset cols=\"25%,75%\">"
+                                                "<frame src=\"data:text/html,foo \">"
+                                                "<frame src=\"data:text/html,bar\">"
+                                            "</frameset>"));
+
+    QVERIFY(::waitForSignal(page, SIGNAL(loadFinished(bool))));
 }
 
 QTEST_MAIN(tst_QGraphicsWebView)

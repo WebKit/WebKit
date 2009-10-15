@@ -1,3 +1,19 @@
+2009-10-15  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Tor Arne.
+
+        [Qt] QGLauncher crashes while closing a window
+        https://bugs.webkit.org/show_bug.cgi?id=30385
+
+        Set page's pageClient reference to '0' at QGWV deletion.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::~QGraphicsWebView):
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (WebPage::WebPage):
+        (WebPage::aborting):
+        (tst_QGraphicsWebView::crashOnViewlessWebPages):
+
 2009-10-13  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann.
