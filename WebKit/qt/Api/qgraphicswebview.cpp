@@ -249,6 +249,20 @@ bool QGraphicsWebView::event(QEvent* event)
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
 
     if (d->page) {
+#ifndef QT_NO_CONTEXTMENU
+        if (event->type() == QEvent::GraphicsSceneContextMenu) {
+            if (!isEnabled())
+                return false;
+
+            QGraphicsSceneContextMenuEvent* ev = static_cast<QGraphicsSceneContextMenuEvent*>(event);
+            QContextMenuEvent fakeEvent(QContextMenuEvent::Reason(ev->reason()), ev->pos().toPoint());
+            if (d->page->swallowContextMenuEvent(&fakeEvent)) {
+                event->accept();
+                return true;
+            }
+            d->page->updatePositionDependentActions(fakeEvent.pos());
+        }
+#endif // QT_NO_CONTEXTMENU
 #ifndef QT_NO_CURSOR
 #if QT_VERSION >= 0x040400
         } else if (event->type() == QEvent::CursorChange) {

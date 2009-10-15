@@ -1,3 +1,13 @@
+2009-10-13  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make context menu to work in QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=30336
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::event):
+
 2009-10-13  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
