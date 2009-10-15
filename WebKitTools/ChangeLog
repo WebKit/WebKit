@@ -1,3 +1,18 @@
+2009-10-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: enable developers extras within inspector layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30014
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+
 2009-10-14  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Jan Alonzo.

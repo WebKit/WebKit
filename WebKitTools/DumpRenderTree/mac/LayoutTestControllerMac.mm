@@ -499,12 +499,14 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
 
 void LayoutTestController::showWebInspector()
 {
+    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:true];
     [[[mainFrame webView] inspector] show:nil];
 }
 
 void LayoutTestController::closeWebInspector()
 {
     [[[mainFrame webView] inspector] close:nil];
+    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:false];
 }
 
 void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
