@@ -1,3 +1,38 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24731
+        And
+        rdar://problem/5015961
+        
+        Implements support for DHTML drag-and-drop operations (i.e. ondragstart, ondragend)
+        in the Windows build so that it conforms to the Mac OS X build. Hence, dropEffect is
+        correctly set.
+        
+        The WebView and WebDropSource drag-and-drop functions, as called by function
+        DoDragDrop in its event loop, neither used the drop effect as specified by
+        event.dataTransfer.dropEffect nor respected event.dataTransfer.effectsAllowed.
+        Instead, these functions defaulted to some hardcoded drop effect and set of
+        allowed drop effects, respectively.
+
+        Tests: fast/events/drag-and-drop.html
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::startDrag):
+        * WebDropSource.cpp:
+        (WebDropSource::QueryContinueDrag): Moved call to EventHandler::dragSourceEndedAt
+        into method WebDragClient::startDrag.
+        * WebDropSource.h:
+        * WebView.cpp:
+        (WebView::keyStateToDragOperation): Fixes <rdar://problem/5015961>. Determines
+        appropriate drop effect from state of keyboard and allowed effects
+        m_page->dragController()->sourceDragOperation().
+        (WebView::DragEnter):
+        (WebView::DragOver):
+        (WebView::Drop):
+        * WebView.h:
+
 2009-10-14  Adam Roben  <aroben@apple.com>
 
         Windows build fix

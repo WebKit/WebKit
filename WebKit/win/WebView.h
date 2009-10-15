@@ -872,6 +872,14 @@ private:
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect, WindowsToPaint);
     void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false, WindowsToPaint = PaintWebViewOnly);
 
+    WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;
+
+    // FIXME: This variable is part of a workaround. The drop effect (pdwEffect) passed to Drop is incorrect. 
+    // We set this variable in DragEnter and DragOver so that it can be used in Drop to set the correct drop effect. 
+    // Thus, on return from DoDragDrop we have the correct pdwEffect for the drag-and-drop operation.
+    // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
+    DWORD m_lastDropEffect;
+
 protected:
     HIMC getIMMContext();
     void releaseIMMContext(HIMC);

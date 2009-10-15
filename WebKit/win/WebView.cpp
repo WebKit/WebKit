@@ -4644,11 +4644,25 @@ static DWORD dragOperationToDragCursor(DragOperation op) {
     return res;
 }
 
-static DragOperation keyStateToDragOperation(DWORD) {
-    //FIXME: This is currently very simple, it may need to actually
-    //work out an appropriate DragOperation in future -- however this
-    //behaviour appears to match FireFox
-    return (DragOperation)(DragOperationCopy | DragOperationLink);
+DragOperation WebView::keyStateToDragOperation(DWORD grfKeyState) const
+{
+    if (!m_page)
+        return DragOperationNone;
+
+    // Conforms to Microsoft's key combinations as documented for 
+    // IDropTarget::DragOver. Note, grfKeyState is the current 
+    // state of the keyboard modifier keys on the keyboard. See:
+    // <http://msdn.microsoft.com/en-us/library/ms680129(VS.85).aspx>.
+    DragOperation operation = m_page->dragController()->sourceDragOperation();
+
+    if ((grfKeyState & (MK_CONTROL | MK_SHIFT)) == (MK_CONTROL | MK_SHIFT))
+        operation = DragOperationLink;
+    else if ((grfKeyState & MK_CONTROL) == MK_CONTROL)
+        operation = DragOperationCopy;
+    else if ((grfKeyState & MK_SHIFT) == MK_SHIFT)
+        operation = DragOperationGeneric;
+
+    return operation;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::DragEnter(
@@ -4665,6 +4679,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragEnter(
         IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
     *pdwEffect = dragOperationToDragCursor(m_page->dragController()->dragEntered(&data));
 
+    m_lastDropEffect = *pdwEffect;
     m_dragData = pDataObject;
 
     return S_OK;
@@ -4685,6 +4700,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragOver(
     } else
         *pdwEffect = DROPEFFECT_NONE;
 
+    m_lastDropEffect = *pdwEffect;
     return S_OK;
 }
 
@@ -4709,7 +4725,7 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(
         m_dropTargetHelper->Drop(pDataObject, (POINT*)&pt, *pdwEffect);
 
     m_dragData = 0;
-    *pdwEffect = DROPEFFECT_NONE;
+    *pdwEffect = m_lastDropEffect;
     POINTL localpt = pt;
     ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), 

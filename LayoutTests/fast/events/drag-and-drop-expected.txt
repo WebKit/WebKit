@@ -1,0 +1,91 @@
+This test checks that drag-and-drop support works and conforms to the HTML 5 specification.
+For each effectAllowed, iterates through the possible dropEffects: none, copy, move, link, dummy.
+
+Note, this test fails when effectAllowed == "uninitialized" because this effect has not been implemented yet (see bug #30291).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+When effectAllowed == "uninitialized"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+FAIL event.dataTransfer.dropEffect should be copy. Was none.
+FAIL event.dataTransfer.dropEffect should be move. Was none.
+FAIL event.dataTransfer.dropEffect should be link. Was none.
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "none"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "all"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "copy"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "move"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "link"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "copyMove"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "copyLink"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "linkMove"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+
+When effectAllowed == "dummy"
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+TEST COMPLETE
+

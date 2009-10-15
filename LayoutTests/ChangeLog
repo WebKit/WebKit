@@ -1,3 +1,19 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24731
+        And
+        rdar://problem/5015961
+        
+        Tests that DHTML drag-and-drop works correctly.
+        
+        Note, this test fails when effectAllowed == "uninitialized" because 
+        this effect has not been implemented yet (see bug #30291).
+
+        * fast/events/drag-and-drop-expected.txt: Added.
+        * fast/events/drag-and-drop.html: Added.
+
 2009-10-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

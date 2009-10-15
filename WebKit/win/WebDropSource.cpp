@@ -106,10 +106,6 @@ STDMETHODIMP WebDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyS
 {
     if (fEscapePressed || !(grfKeyState & (MK_LBUTTON|MK_RBUTTON))) {
         m_dropped = !fEscapePressed;
-        if (Page* page = m_webView->page())
-            if (Frame* frame = page->mainFrame()) 
-                //FIXME: We need to figure out how to find out what actually happened in the drag <rdar://problem/5015961>
-                frame->eventHandler()->dragSourceEndedAt(generateMouseEvent(m_webView.get(), false), fEscapePressed ? DragOperationNone : DragOperationCopy);
         return fEscapePressed? DRAGDROP_S_CANCEL : DRAGDROP_S_DROP;
     } else if (Page* page = m_webView->page())
         if (Frame* frame = page->mainFrame()) 
