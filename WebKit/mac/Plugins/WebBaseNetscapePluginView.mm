@@ -43,6 +43,7 @@
 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/AuthenticationMac.h>
+#import <WebCore/BitmapImage.h>
 #import <WebCore/Credential.h>
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/CString.h>
@@ -55,6 +56,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RenderWidget.h>
 #import <WebKit/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
@@ -72,12 +74,42 @@ public:
     }
     
 private:
-    virtual void halt() { [m_view stop]; }
-    virtual void restart() { [m_view start]; }
-    virtual Node* node() const { return [m_view element]; }
+    virtual void halt();
+    virtual void restart();
+    virtual Node* node() const;
 
     WebBaseNetscapePluginView* m_view;
 };
+
+void WebHaltablePlugin::halt()
+{
+    Element* element = [m_view element];
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    CGImageRef cgImage = CGImageRetain([core([m_view webFrame])->nodeImage(element) CGImageForProposedRect:nil context:nil hints:nil]);
+#else
+    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([m_view webFrame])->nodeImage(element) TIFFRepresentation], 0));
+    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageRef.get(), 0, 0);
+#endif
+    ASSERT(cgImage);
+    
+    // BitmapImage will release the passed in CGImage on destruction.
+    RefPtr<Image> nodeImage = BitmapImage::create(cgImage);
+    ASSERT(element->renderer());
+    toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
+    [m_view stop];
+}
+
+void WebHaltablePlugin::restart()
+{ 
+    ASSERT(element->renderer());
+    toRenderWidget(element->renderer())->showSubstituteImage(0);
+    [m_view start];
+}
+    
+Node* WebHaltablePlugin::node() const
+{
+    return [m_view element];
+}
 
 @implementation WebBaseNetscapePluginView
 

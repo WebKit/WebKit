@@ -1,3 +1,13 @@
+2009-10-14  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson and Jon Honeycutt
+
+        <rdar://problem/7304295> snapshots of halted plug-ins are missing
+        
+        * Plugins/WebBaseNetscapePluginView.mm: Move bodies of WebHaltablePlugin virtual functions from WebHaltablePlugin class definition.
+        (WebHaltablePlugin::halt): Provide a substitute image to the RenderWidget for the plug-in view.
+        (WebHaltablePlugin::restart): Clear the substitute image.
+
 2009-10-13  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
