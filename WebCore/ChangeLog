@@ -1,3 +1,19 @@
+2009-10-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Return correct shorthand property name for 
+        background-repeat-x, background-repeat-y, background-position-x,
+        background-position-y, -webkit-mask-position-x, -webkit-mask-position-y,
+        -webkit-mask-repeat-x, -webkit-mask-repeat-y.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28972
+
+        Test: fast/backgrounds/repeat/background-repeat-shorthand.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2009-10-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

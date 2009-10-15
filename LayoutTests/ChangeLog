@@ -1,3 +1,20 @@
+2009-10-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Test that shorthand name is not null for
+        background-repeat-x, background-repeat-y, background-position-x,
+        background-position-y, -webkit-mask-position-x, -webkit-mask-position-y,
+        -webkit-mask-repeat-x, -webkit-mask-repeat-y.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28972
+
+        * fast/backgrounds/repeat/background-repeat-shorthand-expected.txt: Added.
+        * fast/backgrounds/repeat/background-repeat-shorthand.html: Added.
+        * fast/backgrounds/repeat/resources/background-repeat-shorthand.css: Added.
+        * fast/backgrounds/repeat/resources/background-repeat-shorthand.js: Added.
+        (getShorthand):
+
 2009-10-14  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Adam Barth.
