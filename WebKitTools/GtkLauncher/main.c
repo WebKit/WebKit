@@ -65,11 +65,11 @@ link_hover_cb (WebKitWebView* page, const gchar* title, const gchar* link, gpoin
 }
 
 static void
-title_change_cb (WebKitWebView* web_view, WebKitWebFrame* web_frame, const gchar* title, gpointer data)
+notify_title_cb (WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
     if (main_title)
         g_free (main_title);
-    main_title = g_strdup (title);
+    main_title = g_strdup (webkit_web_view_get_title(web_view));
     update_title (GTK_WINDOW (main_window));
 }
 
@@ -118,7 +118,7 @@ create_browser ()
     web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
     gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
 
-    g_signal_connect (web_view, "title-changed", G_CALLBACK (title_change_cb), web_view);
+    g_signal_connect (web_view, "notify::title", G_CALLBACK (notify_title_cb), web_view);
     g_signal_connect (web_view, "notify::load-status", G_CALLBACK (notify_load_status_cb), web_view);
     g_signal_connect (web_view, "notify::progress", G_CALLBACK (notify_progress_cb), web_view);
     g_signal_connect (web_view, "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);

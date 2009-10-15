@@ -1,3 +1,17 @@
+2009-10-14  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        GtkLauncher is using a deprecated signal
+        https://bugs.webkit.org/show_bug.cgi?id=30364
+
+        Modified GtkLauncher to use notify::title signal instead of
+        deprecated title-changed signal
+
+        * GtkLauncher/main.c:
+        (notify_title_cb):
+        (create_browser):
+
 2009-10-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
