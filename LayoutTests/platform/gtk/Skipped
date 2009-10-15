@@ -5297,7 +5297,9 @@ media/audio-delete-while-step-button-clicked.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 
 # Tests that require editing callbacks (and possibly Glib DOM bindings)
+editing/execCommand/indent-with-style.html
 editing/text-iterator/thai-cursor-movement.html
+editing/undo/undo-indent.html
 
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html

@@ -1,3 +1,9 @@
+2009-10-15  Xan Lopez  <xlopez@igalia.com>
+
+        Skip a couple of tests that need support for dumpEditingCallbacks.
+
+        * platform/gtk/Skipped:
+
 2009-10-15  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Adele Peterson.
