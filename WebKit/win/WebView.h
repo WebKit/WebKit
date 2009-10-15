@@ -766,6 +766,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE historyDelegate(IWebHistoryDelegate** historyDelegate);
     virtual HRESULT STDMETHODCALLTYPE addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount);
 
+    virtual HRESULT STDMETHODCALLTYPE isNodeHaltedPlugin(IDOMNode*, BOOL*);
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 

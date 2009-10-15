@@ -216,4 +216,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setHistoryDelegate([in] IWebHistoryDelegate* historyDelegate);
     HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);
     HRESULT addVisitedLinks([in] BSTR* visitedURLs, [in] unsigned visitedURLCount);
+
+    HRESULT isNodeHaltedPlugin([in] IDOMNode*, [retval, out] BOOL*);
 }

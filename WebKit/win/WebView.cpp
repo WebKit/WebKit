@@ -100,6 +100,7 @@
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ScriptValue.h>
@@ -5679,6 +5680,33 @@ HRESULT STDMETHODCALLTYPE WebView::pluginHalterDelegate(IWebPluginHalterDelegate
         return E_FAIL;
 
     return m_pluginHalterDelegate.copyRefTo(d);
+}
+
+HRESULT STDMETHODCALLTYPE WebView::isNodeHaltedPlugin(IDOMNode* domNode, BOOL* result)
+{
+    if (!domNode || !result)
+        return E_POINTER;
+
+    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
+    if (!webKitDOMNode)
+        return E_FAIL;
+
+    Node* node = webKitDOMNode->node();
+    if (!node)
+        return E_FAIL;
+
+    *result = FALSE;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer || !renderer->isWidget())
+        return S_OK;
+
+    Widget* widget = toRenderWidget(renderer)->widget();
+    if (!widget || !widget->isPluginView())
+        return S_OK;
+
+    *result = static_cast<PluginView*>(widget)->isHalted();
+    return S_OK;
 }
 
 class EnumTextMatches : public IEnumTextMatches

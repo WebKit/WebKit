@@ -1,3 +1,28 @@
+2009-10-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to determine whether a node is a halted plug-in.
+
+        Part of <rdar://problem/7273354> Halted plug-ins should restart on
+        mouseover
+
+        https://bugs.webkit.org/show_bug.cgi?id=30151
+
+        Reviewed by Darin Adler.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        Initialize m_isHalted.
+
+        * plugins/PluginView.h:
+        (WebCore::PluginView::isHalted):
+        Return m_isHalted.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::halt):
+        Set m_isHalted to true.
+        (WebCore::PluginView::restart):
+        clear m_isHalted.
+
 2009-10-15  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Oliver Hunt.

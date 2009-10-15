@@ -199,6 +199,8 @@ namespace WebCore {
         virtual void restart();
         virtual Node* node() const;
 
+        bool isHalted() const { return m_isHalted; }
+
         static bool isCallingPlugin();
 
         bool start();
@@ -341,6 +343,8 @@ private:
         RefPtr<PluginStream> m_manualStream;
 
         bool m_isJavaScriptPaused;
+
+        bool m_isHalted;
 
         static PluginView* s_currentPluginView;
     };
