@@ -511,14 +511,15 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
 
-        if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::HaveEnoughData;
-        } else if (state == GST_STATE_PAUSED)
+        if (state == GST_STATE_READY)
+            m_readyState = MediaPlayer::HaveNothing;
+        else if (state == GST_STATE_PAUSED)
             m_readyState = MediaPlayer::HaveEnoughData;
 
-        if (state == GST_STATE_PLAYING)
+        if (state == GST_STATE_PLAYING) {
+            m_readyState = MediaPlayer::HaveEnoughData;
             m_paused = false;
-        else
+        } else
             m_paused = true;
 
         if (m_seeking) {
@@ -549,9 +550,9 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
 
-        if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::HaveFutureData;
-        } else if (state == GST_STATE_PAUSED)
+        if (state == GST_STATE_READY)
+            m_readyState = MediaPlayer::HaveNothing;
+        else if (state == GST_STATE_PAUSED)
             m_readyState = MediaPlayer::HaveCurrentData;
 
         m_networkState = MediaPlayer::Loading;

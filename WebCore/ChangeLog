@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GStreamer] READY state doesn't mean "enough data"
+        https://bugs.webkit.org/show_bug.cgi?id=30003
+
+        STATE_READY means MediaPlayer::HaveNothing
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
+2009-10-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         https://bugs.webkit.org/show_bug.cgi?id=30002
 
         implement cancelLoad
