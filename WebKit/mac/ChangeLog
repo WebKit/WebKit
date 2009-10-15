@@ -1,5 +1,16 @@
 2009-10-15  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7306052> Fullscreen max/min volume buttons non-functional
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]): Set volume buttons target and action.
+        (-[WebVideoFullscreenHUDWindowController decrementVolume:]): New, decrement the volume by 10%.
+        (-[WebVideoFullscreenHUDWindowController incrementVolume:]): New, increment the volume by 10%.
+
+2009-10-15  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Simon Fraser.
 
         <rdar://problem/7295738> No way to mute/unmute a movie in full screen video mode

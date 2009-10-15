@@ -31,6 +31,9 @@
 #import "WebKitSystemInterface.h"
 #import "WebTypesInternal.h"
 #import <wtf/RetainPtr.h>
+#import <limits>
+
+using namespace std;
 
 #define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
@@ -324,6 +327,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     CGFloat left = kMargin;
     NSControl *volumeDownButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeDownButton, NSMakeRect(left, top - kButtonSize / 2 - kButtonMiniSize / 2, kButtonMiniSize, kButtonMiniSize));
     [contentView addSubview:volumeDownButton];
+    [volumeDownButton setTarget:self];
+    [volumeDownButton setAction:@selector(decrementVolume:)];
     [volumeDownButton release];
 
     static const int volumeSliderWidth = 50;
@@ -336,9 +341,11 @@ static NSTextField *createTimeTextField(NSRect frame)
     [contentView addSubview:_volumeSlider];
 
     left = kMargin + kButtonMiniSize + volumeSliderWidth + kButtonMiniSize / 2;
-    NSControl *button = createControlWithMediaUIControlType(WKMediaUIControlVolumeUpButton, NSMakeRect(left, top - kButtonSize / 2 - kButtonMiniSize / 2, kButtonMiniSize, kButtonMiniSize));
-    [contentView addSubview:button];
-    [button release];
+    NSControl *volumeUpButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeUpButton, NSMakeRect(left, top - kButtonSize / 2 - kButtonMiniSize / 2, kButtonMiniSize, kButtonMiniSize));
+    [volumeUpButton setTarget:self];
+    [volumeUpButton setAction:@selector(incrementVolume:)];
+    [contentView addSubview:volumeUpButton];
+    [volumeUpButton release];
     
     static const int timeTextWidth = 50;
     static const int sliderHeight = 13;
@@ -424,6 +431,24 @@ static NSTextField *createTimeTextField(NSRect frame)
 - (void)volumeChanged:(id)sender
 {
     [self setVolume:[_volumeSlider doubleValue]];
+}
+
+- (void)decrementVolume:(id)sender
+{
+    if (![_delegate mediaElement])
+        return;
+
+    double volume = [self volume] - 10;
+    [self setVolume:max(volume, 0.)];
+}
+
+- (void)incrementVolume:(id)sender
+{
+    if (![_delegate mediaElement])
+        return;
+
+    double volume = [self volume] + 10;
+    [self setVolume:min(volume, [self maxVolume])];
 }
 
 - (double)volume
