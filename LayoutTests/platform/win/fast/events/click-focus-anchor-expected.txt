@@ -1,0 +1,10 @@
+This test ensures that we can click to focus an a element. Click on the element below.
+
+Focusable anchor with tab index
+
+Focusable anchor
+
+Result
+
+PASS
+PASS

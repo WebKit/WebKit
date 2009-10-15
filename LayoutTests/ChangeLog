@@ -1,3 +1,12 @@
+2009-10-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        Add click-focus-anchor expected results on Windows, to make up for
+        the wonky way Windows finds its expected results.
+
+        * platform/win/fast/events/click-focus-anchor-expected.txt: Added.
+
 2009-10-15  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Adam Treat.
