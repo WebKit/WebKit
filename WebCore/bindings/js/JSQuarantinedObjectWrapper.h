@@ -47,7 +47,7 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue proto) 
         { 
-            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::OverridesHasInstance)); 
+            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::OverridesHasInstance | JSC::OverridesMarkChildren)); 
         }
 
     protected:

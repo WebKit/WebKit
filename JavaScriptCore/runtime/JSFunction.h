@@ -61,7 +61,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance)); 
+            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren)); 
         }
 
         NativeFunction nativeFunction()

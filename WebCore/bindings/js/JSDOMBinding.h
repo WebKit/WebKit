@@ -76,7 +76,7 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesMarkChildren));
         }
 
     protected:
@@ -106,7 +106,7 @@ namespace WebCore {
     public:
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance));
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::OverridesMarkChildren));
         }
 
     protected:

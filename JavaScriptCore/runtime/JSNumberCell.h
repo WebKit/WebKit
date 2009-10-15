@@ -76,7 +76,7 @@ namespace JSC {
             return globalData->heap.allocateNumber(size);
         }
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(NumberType, OverridesGetOwnPropertySlot | NeedsThisConversion | HasDefaultMark)); }
+        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(NumberType, OverridesGetOwnPropertySlot | NeedsThisConversion)); }
 
     private:
         JSNumberCell(JSGlobalData* globalData, double value)

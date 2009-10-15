@@ -1,3 +1,15 @@
+2009-10-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make typeinfo flags default to false
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        Part 2 -- Reverse the TypeInfo HasDefaultMark flag to OverridesMarkChildren, etc
+
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2009-10-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

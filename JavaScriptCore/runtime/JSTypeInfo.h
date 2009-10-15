@@ -41,7 +41,7 @@ namespace JSC {
     static const unsigned ImplementsDefaultHasInstance = 1 << 3;
     static const unsigned NeedsThisConversion = 1 << 4;
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
-    static const unsigned HasDefaultMark = 1 << 6;
+    static const unsigned OverridesMarkChildren = 1 << 6;
     static const unsigned HasDefaultGetPropertyNames = 1 << 7;
 
     class TypeInfo {
@@ -64,7 +64,7 @@ namespace JSC {
         bool overridesHasInstance() const { return m_flags & OverridesHasInstance; }
         bool needsThisConversion() const { return m_flags & NeedsThisConversion; }
         bool overridesGetOwnPropertySlot() const { return m_flags & OverridesGetOwnPropertySlot; }
-        bool hasDefaultMark() const { return m_flags & HasDefaultMark; }
+        bool overridesMarkChildren() const { return m_flags & OverridesMarkChildren; }
         bool hasDefaultGetPropertyNames() const { return m_flags & HasDefaultGetPropertyNames; }
         unsigned flags() const { return m_flags; }
 

@@ -66,7 +66,7 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | NeedsThisConversion)); }
+        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren)); }
 
     private:
         struct JSActivationData : public JSVariableObjectData {

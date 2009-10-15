@@ -50,7 +50,7 @@ namespace JSC {
         void setSetter(JSObject* setter) { m_setter = setter; }
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(GetterSetterType));
+            return Structure::create(prototype, TypeInfo(GetterSetterType, OverridesMarkChildren));
         }
     private:
         virtual bool isGetterSetter() const;

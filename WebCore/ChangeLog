@@ -1,3 +1,27 @@
+2009-10-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make typeinfo flags default to false
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        Part 2 -- Reverse the TypeInfo HasDefaultMark flag to OverridesMarkChildren, etc
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::createStructure):
+        (WebCore::DOMConstructorObject::createStructure):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::createStructure):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructure):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

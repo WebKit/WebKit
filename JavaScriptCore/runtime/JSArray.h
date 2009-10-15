@@ -87,7 +87,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot));
+            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren));
         }
         
         inline void markChildrenDirect(MarkStack& markStack);
@@ -157,7 +157,7 @@ namespace JSC {
     inline void MarkStack::markChildren(JSCell* cell)
     {
         ASSERT(Heap::isCellMarked(cell));
-        if (cell->structure()->typeInfo().hasDefaultMark()) {
+        if (!cell->structure()->typeInfo().overridesMarkChildren()) {
 #ifdef NDEBUG
             asObject(cell)->markChildrenDirect(*this);
 #else
