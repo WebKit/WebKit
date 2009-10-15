@@ -1,3 +1,14 @@
+2009-10-14  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [HTML5] Add document.head
+        https://bugs.webkit.org/show_bug.cgi?id=30232
+
+        * fast/dom/document-head-expected.txt: Added.
+        * fast/dom/document-head.html: Added.
+        * fast/dom/script-tests/document-head.js: Added.
+
 2009-10-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

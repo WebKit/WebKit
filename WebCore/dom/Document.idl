@@ -172,6 +172,8 @@ module core {
                  attribute HTMLElement body
                      setter raises (DOMException);
 
+        readonly attribute HTMLHeadElement head;
+
         readonly attribute HTMLCollection images;
         readonly attribute HTMLCollection applets;
         readonly attribute HTMLCollection links;
