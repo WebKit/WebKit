@@ -1,3 +1,13 @@
+2009-10-15  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Update the wxPython simple.py sample to match current wxWebKit API.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30406
+
+        * bindings/python/samples/simple.py:
+
 2009-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

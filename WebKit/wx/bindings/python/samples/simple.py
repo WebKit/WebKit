@@ -92,11 +92,11 @@ class TestPanel(wx.Panel):
     def OnStateChanged(self, event):
         statusbar = self.GetParent().GetStatusBar() 
         if statusbar:
-            if event.GetState() == wx.webview.WEBVIEW_STATE_NEGOTIATING:
+            if event.GetState() == wx.webview.WEBVIEW_LOAD_NEGOTIATING:
                 statusbar.SetStatusText("Contacting " + event.GetURL())
-            elif event.GetState() == wx.webview.WEBVIEW_STATE_TRANSFERRING:
+            elif event.GetState() == wx.webview.WEBVIEW_LOAD_TRANSFERRING:
                 statusbar.SetStatusText("Loading " + event.GetURL())
-            elif event.GetState() == wx.webview.WEBVIEW_STATE_STOP:
+            elif event.GetState() == wx.webview.WEBVIEW_LOAD_DOC_COMPLETED:
                 statusbar.SetStatusText("")
                 self.location.SetValue(event.GetURL())
                 self.GetParent().SetTitle("wxWebView - " + self.webview.GetPageTitle())
