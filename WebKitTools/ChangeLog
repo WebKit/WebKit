@@ -1,3 +1,15 @@
+2009-10-15  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add Mac package building scripts for wx.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30405
+
+        * wx/build/build_utils.py:
+        * wx/build/settings.py:
+        * wx/packaging/build-mac-installer.py: Added.
+
 2009-10-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

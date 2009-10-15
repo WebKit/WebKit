@@ -140,21 +140,8 @@ webcore_dirs = [
     'xml'
 ]
 
-config_file = os.path.join(wk_root, 'WebKitBuild', 'Configuration')
-config = 'Debug'
-
-if os.path.exists(config_file):
-    config = open(config_file).read()
-
-config_dir = config
-
-try:
-    branches = commands.getoutput("git branch --no-color")
-    match = re.search('^\* (.*)', branches, re.MULTILINE)
-    if match:
-        config_dir += ".%s" % match.group(1)
-except:
-    pass
+config = get_config(wk_root)
+config_dir = config + git_branch_name()
 
 output_dir = os.path.join(wk_root, 'WebKitBuild', config_dir)
 

@@ -27,12 +27,11 @@ import commands
 import glob
 import os
 import platform
+import re
 import shutil
 import sys
 import urllib
 import urlparse
-
-import Logs
 
 def get_output(command):
     """
@@ -110,6 +109,7 @@ def update_wx_deps(conf, wk_root, msvc_version='msvc2008'):
     """
     Download and update tools needed to build the wx port.
     """
+    import Logs
     Logs.info('Ensuring wxWebKit dependencies are up-to-date.')
     
     wklibs_dir = os.path.join(wk_root, 'WebKitLibraries')
@@ -154,3 +154,23 @@ def flattenSources(sources):
         flat_sources.extend(group)
         
     return flat_sources
+
+def git_branch_name():
+    try:
+        branches = commands.getoutput("git branch --no-color")
+        match = re.search('^\* (.*)', branches, re.MULTILINE)
+        if match:
+            return ".%s" % match.group(1)
+    except:
+        pass
+
+    return ""
+
+def get_config(wk_root):
+    config_file = os.path.join(wk_root, 'WebKitBuild', 'Configuration')
+    config = 'Debug'
+
+    if os.path.exists(config_file):
+        config = open(config_file).read()
+
+    return config
