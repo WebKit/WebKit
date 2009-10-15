@@ -377,7 +377,7 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
         m_consoleMessages.append(consoleMessage);
     }
 
-    if (m_frontend)
+    if (windowVisible())
         m_previousMessage->addToConsole(m_frontend.get());
 }
 
@@ -655,7 +655,7 @@ void InspectorController::populateScriptObjects()
         it->second->createScriptObject(m_frontend.get());
         m_frontend->addCookieDomain(it->second->frame()->document()->url().host());
     }
-        
+
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToConsole(m_frontend.get());
@@ -721,7 +721,7 @@ void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoad
 
         if (!loaderToKeep || !resource->isSameLoader(loaderToKeep)) {
             removeResource(resource);
-            if (m_frontend)
+            if (windowVisible())
                 resource->releaseScriptObject(m_frontend.get(), true);
         }
     }
@@ -762,7 +762,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // We don't add the main resource until its load is committed. This is
                 // needed to keep the load for a user-entered URL from showing up in the
                 // list of resources for the page they are navigating away from.
-                m_mainResource->createScriptObject(m_frontend.get());
+                if (windowVisible())
+                    m_mainResource->createScriptObject(m_frontend.get());
             } else {
                 // Pages loaded from the page cache are committed before
                 // m_mainResource is the right resource for this load, so we
@@ -856,7 +857,7 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     ensureResourceTrackingSettingsLoaded();
     if (!isMainResource && !m_resourceTrackingEnabled)
         return;
-    
+
     RefPtr<InspectorResource> resource = InspectorResource::createCached(m_nextIdentifier--, loader, cachedResource);
 
     if (isMainResource) {
@@ -866,7 +867,7 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
     addResource(resource.get());
 
-    if (m_frontend)
+    if (windowVisible())
         resource->createScriptObject(m_frontend.get());
 }
 
@@ -892,7 +893,7 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
 
     addResource(resource.get());
 
-    if (m_frontend && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
+    if (windowVisible() && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
         resource->createScriptObject(m_frontend.get());
 }
 
@@ -903,7 +904,7 @@ void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loade
 
     if (m_mainResource) {
         m_mainResource->markDOMContentEventTime();
-        if (m_frontend)
+        if (windowVisible())
             m_mainResource->updateScriptObject(m_frontend.get());
     }
 }
@@ -915,7 +916,7 @@ void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, con
 
     if (m_mainResource) {
         m_mainResource->markLoadEventTime();
-        if (m_frontend)
+        if (windowVisible())
             m_mainResource->updateScriptObject(m_frontend.get());
     }
 }
@@ -938,7 +939,7 @@ void InspectorController::willSendRequest(DocumentLoader*, unsigned long identif
         resource->updateResponse(redirectResponse);
     }
 
-    if (resource != m_mainResource && m_frontend)
+    if (resource != m_mainResource && windowVisible())
         resource->createScriptObject(m_frontend.get());
 }
 
@@ -951,7 +952,7 @@ void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long iden
     resource->updateResponse(response);
     resource->markResponseReceivedTime();
 
-    if (m_frontend)
+    if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -963,7 +964,7 @@ void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long
 
     resource->addLength(lengthReceived);
 
-    if (m_frontend)
+    if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -979,7 +980,7 @@ void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identi
 
     addResource(resource.get());
 
-    if (m_frontend) {
+    if (windowVisible()) {
         resource->updateScriptObject(m_frontend.get());
         m_frontend->addCookieDomain(resource->frame()->document()->url().host());
     }
@@ -998,7 +999,7 @@ void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifi
 
     addResource(resource.get());
 
-    if (m_frontend)
+    if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -1013,7 +1014,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
 
     resource->setXMLHttpResponseText(sourceString);
 
-    if (m_frontend)
+    if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -1030,7 +1031,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     // thing by the Inspector. They should be made into distinct types.
     resource->setXMLHttpResponseText(ScriptString(sourceString));
     
-    if (m_frontend)
+    if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -1144,7 +1145,7 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     m_databaseResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (m_frontend && windowVisible())
+    if (windowVisible())
         resource->bind(m_frontend.get());
 }
 #endif
@@ -1235,7 +1236,7 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     m_domStorageResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (m_frontend && windowVisible())
+    if (windowVisible())
         resource->bind(m_frontend.get());
 }
 
@@ -1550,7 +1551,7 @@ void InspectorController::didContinue()
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
-    if (m_frontend && windowVisible())
+    if (windowVisible())
         m_frontend->evaluateForTestInFrontend(callId, script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
