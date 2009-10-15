@@ -1,3 +1,12 @@
+2009-10-15  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Adele Peterson.
+
+        Change behavior so that <a> element is always mouse-focusable.
+
+        * fast/events/click-focus-anchor-expected.txt:
+        * fast/events/click-focus-anchor.html:
+
 2009-10-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Dave Hyatt.

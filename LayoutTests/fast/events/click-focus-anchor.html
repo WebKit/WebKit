@@ -4,20 +4,22 @@
 </head>
 <body>
 
-<p>This test ensures that we can click to focus an a element with a tab index.
+<p>This test ensures that we can click to focus an a element.
 Click on the element below.
 
-<p><a tabindex=0 onfocus="pass()" id=t>Focusable</a>
+<p><a tabindex=0 onfocus="pass('r1')" id=t1>Focusable anchor with tab index</a>
+<p><a onfocus="pass('r2')" id=t2 href="#">Focusable anchor</a>
 
 <p>Result
 
-<pre>FAIL</pre>
+<pre id=r1>FAIL</pre>
+<pre id=r2>FAIL</pre>
 
 <script>
 
-function pass()
+function pass(id)
 {
-    var el = document.querySelector('pre');
+    var el = document.getElementById(id);
     el.textContent = 'PASS';
 }
 
@@ -31,7 +33,11 @@ window.onload = function()
     if (!window.layoutTestController)
         return;
 
-    var aElement = document.getElementById('t');
+    var aElement = document.getElementById('t1');
+    eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+    eventSender.mouseDown();    
+
+    aElement = document.getElementById('t2');
     eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
     eventSender.mouseDown();    
 };

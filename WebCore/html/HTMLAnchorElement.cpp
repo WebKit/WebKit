@@ -67,7 +67,7 @@ bool HTMLAnchorElement::supportsFocus() const
 bool HTMLAnchorElement::isMouseFocusable() const
 {
     // Anchor elements should be mouse focusable, https://bugs.webkit.org/show_bug.cgi?id=26856
-#if !PLATFORM(GTK)
+#if PLATFORM(MAC)
     if (isLink())
         return false;
 #endif
