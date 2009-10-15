@@ -1,3 +1,14 @@
+2009-10-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        [Qt] Build fix for QtWebKit after r49649.
+
+        Change JSC::HasNonDefaultMark to OverridesMarkChildren in createStructure function.
+
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructure):
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed - build fix.
