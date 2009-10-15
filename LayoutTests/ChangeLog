@@ -1,3 +1,13 @@
+2009-10-15  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix media layout test file ordering so both branded and unbranded builds of Chromium will pass layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30369
+
+        * media/media-file.js: Fixed file ordering.
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

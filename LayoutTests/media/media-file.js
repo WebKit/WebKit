@@ -1,15 +1,17 @@
+// Ogg is placed first out of convenience for Chromium developers since
+// their baselines are computed using Ogg.
 var audioCodecs = [
+    ["audio/ogg", "oga"],
     ["audio/wav", "wav"],
     ["audio/aac", "m4a"],
     ["audio/mpeg", "mp3"],
-    ["audio/ogg", "oga"]
 ];
 
 var videoCodecs = [
+    ["video/ogg", "ogv"],
     ["video/mp4", "mp4"],
     ["video/mpeg", "mpg"],
     ["video/quicktime", "mov"],
-    ["video/ogg", "ogv"]
 ];
 
 function findMediaFile(tagName, name) {
