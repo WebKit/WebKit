@@ -323,7 +323,8 @@ IntSize MediaPlayerPrivate::naturalSize() const
         gfloat pixelAspectRatio;
         gint pixelAspectRatioNumerator, pixelAspectRatioDenominator;
 
-        if (!gst_video_format_parse_caps(caps, NULL, &width, &height) ||
+        if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps) ||
+            !gst_video_format_parse_caps(caps, NULL, &width, &height) ||
             !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
                                                            &pixelAspectRatioDenominator)) {
             gst_object_unref(GST_OBJECT(pad));
