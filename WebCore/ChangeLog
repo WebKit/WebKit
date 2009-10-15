@@ -1,3 +1,34 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27895
+        
+        Fixes an issue in which injecting an inline event handler whose value ends in a single-line
+        JavaScript comment can bypass the XSSAuditor. Similarly fixes this issue with respect to
+        the HTML Base element, HTML Object element, inline and external script tags, and
+        JavaScript multi-line variants of all of these attacks.
+
+        Tests: http/tests/security/xssAuditor/base-href-comment.html
+               http/tests/security/xssAuditor/iframe-javascript-url-comment.html
+               http/tests/security/xssAuditor/img-onerror-HTML-comment.html
+               http/tests/security/xssAuditor/img-onerror-comment.html
+               http/tests/security/xssAuditor/object-tag-comment.html
+               http/tests/security/xssAuditor/script-tag-comment-HTML-entity.html
+               http/tests/security/xssAuditor/script-tag-comment.html
+               http/tests/security/xssAuditor/script-tag-with-source-comment.html
+
+        * page/XSSAuditor.cpp: Added constant minAttackLength.
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canEvaluateJavaScriptURL):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        (WebCore::XSSAuditor::canSetBaseElementURL):
+        (WebCore::XSSAuditor::findInRequest): Added parameter context. Only looks at up 
+        to minAttackLength of script code plus context (if any).
+        * page/XSSAuditor.h:
+
 2009-10-08  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

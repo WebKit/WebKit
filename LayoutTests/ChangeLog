@@ -1,3 +1,33 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27895
+        
+        Tests that inline event handlers whose value ends in a single-line JavaScript
+        comment cannot bypass the XSSAuditor. Also tests that the XSSAuditor prevents
+        similar attack vectors with respect to the HTML Base element, HTML Object
+        element, and external JavaScripts.
+
+        * http/tests/security/xssAuditor/base-href-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/base-href-comment.html: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-comment.html: Added.
+        * http/tests/security/xssAuditor/img-onerror-HTML-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-HTML-comment.html: Added.
+        * http/tests/security/xssAuditor/img-onerror-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-comment.html: Added.
+        * http/tests/security/xssAuditor/object-tag-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-tag-comment.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-before-image.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-head-base-href-comment.pl: Added.
+        * http/tests/security/xssAuditor/script-tag-comment-HTML-entity-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-comment-HTML-entity.html: Added.
+        * http/tests/security/xssAuditor/script-tag-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-comment.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-comment.html: Added.
+
 2009-10-15  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adele Peterson.
