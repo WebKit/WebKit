@@ -1,5 +1,13 @@
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: remove timer-related logs from the previously
+        submitted test.
+
+        * inspector/console-tests-expected.txt:
+        * inspector/console-tests.html:
+
+2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Enable inspector layout tests.

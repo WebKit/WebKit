@@ -11,9 +11,9 @@ CONSOLE MESSAGE: line 17: repeated
 CONSOLE MESSAGE: line 17: repeated
 CONSOLE MESSAGE: line 17: repeated
 CONSOLE MESSAGE: line 17: repeated
-CONSOLE MESSAGE: line 24: 1
-CONSOLE MESSAGE: line 25: [object HTMLDocument]
-CONSOLE MESSAGE: line 26: [object HTMLHtmlElement]
+CONSOLE MESSAGE: line 22: 1
+CONSOLE MESSAGE: line 23: [object HTMLDocument]
+CONSOLE MESSAGE: line 24: [object HTMLHtmlElement]
 Tests that console logging dumps proper messages.
 
 console-tests.html:8log console-message console-js-source console-log-level
@@ -29,8 +29,7 @@ console-tests.html:19count: 1 console-message console-js-source console-log-leve
 console-tests.html:19count: 2 console-message console-js-source console-log-level
 console-tests.html:20group console-message console-js-source console-log-level console-group-title
 console-message console-js-source console-log-level
-console-tests.html:23timer: 0ms console-message console-js-source console-log-level
-console-tests.html:241 2 3 console-message console-js-source console-log-level
-console-tests.html:25HTMLDocument console-message console-js-source console-log-level
-console-tests.html:26 console-message console-js-source console-log-level
+console-tests.html:221 2 3 console-message console-js-source console-log-level
+console-tests.html:23HTMLDocument console-message console-js-source console-log-level
+console-tests.html:24 console-message console-js-source console-log-level
 
