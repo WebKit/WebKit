@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (50,11) size 85x51
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,11) size 85x51 [filter=filter]
+      RenderSVGText {text} at (50,50) size 85x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-39) size 85x51
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 85.00: "SVG"

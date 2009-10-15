@@ -1,3 +1,17 @@
+2009-10-15  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Adam Treat.
+
+        [Qt] Add expected files for passing svg tests.
+
+        * platform/qt/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt: Added.
+        * platform/qt/svg/custom/mask-with-default-value-expected.txt: Added.
+        * platform/qt/svg/filters/feComposite-expected.txt: Added.
+        * platform/qt/svg/filters/feGaussianBlur-expected.txt: Added.
+        * platform/qt/svg/filters/feMerge-wrong-input-expected.txt: Added.
+        * platform/qt/svg/filters/sourceAlpha-expected.txt: Added.
+        * platform/qt/svg/filters/subRegion-in-userSpace-expected.txt: Added.
+
 2009-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

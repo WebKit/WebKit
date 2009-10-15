@@ -1,0 +1,20 @@
+KRenderingPaintServer {id="gradient1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [start=(0,0)] [end=(150,0)]}
+KRenderingPaintServer {id="gradient2" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [start=(0,0)] [end=(150,0)]}
+KRenderingPaintServer {id="gradient3" [type=RADIAL-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#FF0000)]] [bounding box mode=0] [center=(150,264)] [focal=(150,264)] [radius=282.84]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 300x400
+  RenderSVGRoot {svg} at (0,0) size 300x400
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 300x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [start=(0,0)] [end=(150,0)]}] [data="M 0 0L 300 0L 300 50L 0 50L 0 0"]
+    RenderPath {rect} at (0,50) size 300x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [start=(0,0)] [end=(150,0)]}] [data="M 0 50L 300 50L 300 100L 0 100L 0 50"]
+    RenderPath {rect} at (0,100) size 300x300 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#FF0000)]] [bounding box mode=0] [center=(150,264)] [focal=(150,264)] [radius=282.84]}] [data="M 0 100L 300 100L 300 400L 0 400L 0 100"]

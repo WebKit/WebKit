@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (10,10) size 189x185
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=over] [data="M 10 10L 60 10L 60 60L 10 60L 10 10"]
+    RenderSVGText {text} at (10,90) size 31x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 31x21
+        chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 4 width 31.00: "over"
+    RenderPath {rect} at (70,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=in] [data="M 70 10L 120 10L 120 60L 70 60L 70 10"]
+    RenderSVGText {text} at (70,90) size 13x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 13x21
+        chunk 1 text run 1 at (70.00,90.00) startOffset 0 endOffset 2 width 13.00: "in"
+    RenderPath {rect} at (130,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=out] [data="M 130 10L 180 10L 180 60L 130 60L 130 10"]
+    RenderSVGText {text} at (130,90) size 22x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 22x21
+        chunk 1 text run 1 at (130.00,90.00) startOffset 0 endOffset 3 width 22.00: "out"
+    RenderPath {rect} at (10,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=atop] [data="M 10 110L 60 110L 60 160L 10 160L 10 110"]
+    RenderSVGText {text} at (10,190) size 31x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 31x21
+        chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 4 width 31.00: "atop"
+    RenderPath {rect} at (70,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=xor] [data="M 70 110L 120 110L 120 160L 70 160L 70 110"]
+    RenderSVGText {text} at (70,190) size 22x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 22x21
+        chunk 1 text run 1 at (70.00,190.00) startOffset 0 endOffset 3 width 22.00: "xor"
+    RenderPath {rect} at (130,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=arithmetic] [data="M 130 110L 180 110L 180 160L 130 160L 130 110"]
+    RenderSVGText {text} at (130,190) size 69x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-16) size 69x21
+        chunk 1 text run 1 at (130.00,190.00) startOffset 0 endOffset 10 width 69.00: "arithmetic"
