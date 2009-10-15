@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileView = function(profile)
+// FIXME: Rename the file.
+
+WebInspector.CPUProfileView = function(profile)
 {
     WebInspector.View.call(this);
 
@@ -81,7 +83,7 @@ WebInspector.ProfileView = function(profile)
     var self = this;
     function profileCallback(profile)
     {
-        self.profile = profile;
+        self.profile.representedObject = profile;
         self._assignParentsInProfile();
       
         self.profileDataGridTree = self.bottomUpProfileDataGridTree;
@@ -96,7 +98,7 @@ WebInspector.ProfileView = function(profile)
     InspectorController.getProfile(callId, this.profile.uid);
 }
 
-WebInspector.ProfileView.prototype = {
+WebInspector.CPUProfileView.prototype = {
     get statusBarItems()
     {
         return [this.viewSelectElement, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
@@ -168,7 +170,7 @@ WebInspector.ProfileView.prototype = {
         WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
     },
-    
+
     resize: function()
     {
         if (this.dataGrid)
@@ -503,7 +505,7 @@ WebInspector.ProfileView.prototype = {
 
     _sortData: function(event)
     {
-        this._sortProfile(this.profile);
+        this._sortProfile(this.profile.representedObject);
     },
 
     _sortProfile: function()
@@ -566,4 +568,77 @@ WebInspector.ProfileView.prototype = {
     }
 }
 
-WebInspector.ProfileView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.CPUProfileView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.CPUProfileType = function()
+{
+    WebInspector.ProfileType.call(this, WebInspector.CPUProfileType.TypeId, WebInspector.UIString("CPU PROFILES"));
+    this._recording = false;
+}
+
+WebInspector.CPUProfileType.TypeId = "CPU";
+
+WebInspector.CPUProfileType.prototype = {
+    get buttonTooltip()
+    {
+        return this._recording ? WebInspector.UIString("Stop profiling.") : WebInspector.UIString("Start profiling.");
+    },
+
+    get buttonStyle()
+    {
+        return this._recording ? "record-profile-status-bar-item status-bar-item toggled-on" : "record-profile-status-bar-item status-bar-item";
+    },
+
+    buttonClicked: function()
+    {
+        this._recording = !this._recording;
+
+        if (this._recording)
+            InspectorController.startProfiling();
+        else
+            InspectorController.stopProfiling();
+    },
+
+    setRecordingProfile: function(isProfiling)
+    {
+        this._recording = isProfiling;
+    }
+}
+
+WebInspector.CPUProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+
+WebInspector.CPUProfile = function(profile)
+{
+    this.representedObject = profile;
+    this.typeId = WebInspector.CPUProfileType.TypeId;
+}
+
+WebInspector.CPUProfile.prototype = {
+    get title()
+    {
+        return this.representedObject.title;
+    },
+
+    get uid()
+    {
+        return this.representedObject.uid;
+    },
+
+    get head()
+    {
+        return this.representedObject.head;
+    },
+
+    createView: function()
+    {
+        return new WebInspector.CPUProfileView(this);
+    },
+
+    // FIXME: Extract this into a superclass so that createView can be simply overridden by subclasses.
+    viewForProfile: function()
+    {
+        if (!this._profileView)
+            this._profileView = this.createView();
+        return this._profileView;
+    }
+}

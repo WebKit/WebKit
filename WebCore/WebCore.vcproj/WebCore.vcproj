@@ -31667,6 +31667,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ProfilesPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ProfileView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\PropertiesSection.js"
 					>
 				</File>
@@ -31696,6 +31704,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Script.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ScriptsPanel.js"
 					>
 				</File>
 				<File

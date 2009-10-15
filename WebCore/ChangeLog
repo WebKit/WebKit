@@ -1,3 +1,59 @@
+2009-10-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Refactor ProfilesPanel to support multiple profile types
+
+        Data describing different profile types are now stored in distinct objects.
+        https://bugs.webkit.org/show_bug.cgi?id=30332
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileView.prototype._sortData):
+        (WebInspector.CPUProfileType):
+        (WebInspector.CPUProfileType.prototype.get buttonTooltip):
+        (WebInspector.CPUProfileType.prototype.get buttonStyle):
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        (WebInspector.CPUProfileType.prototype.setRecordingProfile):
+        (WebInspector.CPUProfile):
+        (WebInspector.CPUProfile.prototype.get title):
+        (WebInspector.CPUProfile.prototype.get uid):
+        (WebInspector.CPUProfile.prototype.get head):
+        (WebInspector.CPUProfile.prototype.createView):
+        (WebInspector.CPUProfile.prototype.viewForProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType):
+        (WebInspector.ProfileType.prototype.get buttonTooltip):
+        (WebInspector.ProfileType.prototype.get buttonStyle):
+        (WebInspector.ProfileType.prototype.get buttonCaption):
+        (WebInspector.ProfileType.prototype.get id):
+        (WebInspector.ProfileType.prototype.get name):
+        (WebInspector.ProfileType.prototype.buttonClicked):
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems.clickHandler):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.reset):
+        (WebInspector.ProfilesPanel.prototype.registerProfileType):
+        (WebInspector.ProfilesPanel.prototype._makeKey):
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.showProfile):
+        (WebInspector.ProfilesPanel.prototype.getProfileType):
+        (WebInspector.ProfilesPanel.prototype.showProfileForURL):
+        (WebInspector.ProfilesPanel.prototype.updateProfileTypeButtons):
+        (WebInspector.ProfilesPanel.prototype.displayTitleForProfileLink):
+        (WebInspector.ProfilesPanel.prototype.get searchableViews):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector.addProfileHeader):
+        (WebInspector.setRecordingProfile):
+        (WebInspector.linkifyStringAsFragment):
+        (WebInspector.showProfileForURL):
+
 2009-10-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
