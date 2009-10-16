@@ -28,6 +28,9 @@
         localScriptElement.addEventListener("error", function() {
             var tag = document.getElementById("result");
             tag.innerHTML = "Test Failed: Local script not loaded.";
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         });
 
         document.body.appendChild(localScriptElement)
