@@ -1,3 +1,17 @@
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Chrome doesn't set Content-Type for file upload when the file extension
+        is not recognized
+        https://bugs.webkit.org/show_bug.cgi?id=30433
+
+        Apparently, getMIMETypeForPath is supposed to return
+        application/octet-stream when it doesn't have a better MIME type.
+
+        * platform/chromium/MimeTypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+
 2009-10-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Pull out r49676 as it caused build breakges on Symbian

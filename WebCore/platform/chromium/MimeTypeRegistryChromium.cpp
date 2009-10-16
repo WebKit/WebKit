@@ -78,6 +78,8 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
         // if a plugin can handle the extension.
         mimeType = getPluginMimeTypeFromExtension(extension);
     }
+    if (mimeType.isEmpty())
+        return "application/octet-stream";
     return mimeType;
 }
 
