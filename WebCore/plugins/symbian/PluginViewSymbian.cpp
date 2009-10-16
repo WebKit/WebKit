@@ -74,6 +74,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+typedef void (*_qt_page_plugin_created)(QWebFrame* frame, void* plugin);
+extern _qt_page_plugin_created qt_page_plugin_created;
+
+typedef void (*_qt_page_plugin_destroyed)(void* plugin);
+extern _qt_page_plugin_destroyed qt_page_plugin_destroyed;
+
 void PluginView::updatePluginWidget()
 {
     if (!parent())
@@ -442,12 +448,18 @@ bool PluginView::platformStart()
         m_npWindow.window = 0; // Not used?
     }    
     setNPWindowIfNeeded();
-    
+
+    if (qt_page_plugin_created)
+        qt_page_plugin_created(QWebFramePrivate::kit(m_parentFrame), m_instance->pdate);
+
     return true;
 }
 
 void PluginView::platformDestroy()
 {
+    if (qt_page_plugin_destroyed)
+        qt_page_plugin_destroyed(m_instance->pdate);
+
     delete platformPluginWidget();
 }
 

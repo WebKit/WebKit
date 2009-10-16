@@ -109,6 +109,12 @@
 
 using namespace WebCore;
 
+typedef void (*_qt_page_plugin_created)(QWebFrame* frame, void* plugin);
+QWEBKIT_EXPORT _qt_page_plugin_created qt_page_plugin_created = 0;
+
+typedef void (*_qt_page_plugin_destroyed)(void* plugin);
+QWEBKIT_EXPORT _qt_page_plugin_destroyed qt_page_plugin_destroyed = 0;
+
 void QWEBKIT_EXPORT qt_drt_overwritePluginDirectories()
 {
     PluginDatabase* db = PluginDatabase::installedPlugins(/* populate */ false);
