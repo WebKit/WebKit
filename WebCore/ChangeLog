@@ -1,3 +1,16 @@
+2009-10-16  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Default language translation should be determined by locale settings,
+        e.g., "en-US".
+        https://bugs.webkit.org/show_bug.cgi?id=29653
+
+        Test: fast/js/navigator-language.html
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::defaultLanguage):
+
 2009-10-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariya Hidayat.

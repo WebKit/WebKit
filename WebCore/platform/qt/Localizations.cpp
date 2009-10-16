@@ -33,6 +33,7 @@
 #include "PlatformString.h"
 
 #include <QCoreApplication>
+#include <QLocale>
 
 namespace WebCore {
 
@@ -53,7 +54,8 @@ String resetButtonDefaultLabel()
 
 String defaultLanguage()
 {
-    return "en";
+    QLocale locale;
+    return locale.name().replace("_", "-");
 }
 
 String searchableIndexIntroduction()

@@ -1,3 +1,25 @@
+2009-10-16  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Added test case for testing navigator.language.
+        https://bugs.webkit.org/show_bug.cgi?id=29653
+ 
+        Different browsers may not return the exact same result.
+        Some examples here:
+        Safari 4 WinXP: "en-US"
+        Safari 4 Mac: "en-us"
+        Firefox 3 Mac/WinXP: "en-US"
+        Opera 9.64: "en"
+        Epiphany 2 GTK: "en"
+        Chrome 3 WinXP: "en-US"
+
+        The test case checks if the first two letters are "en"
+        when system locale is set to "en_US.iso88591".
+
+        * fast/js/navigator-language-expected.txt: Added.
+        * fast/js/navigator-language.html: Added.
+
 2009-10-15  Daniel Bates  <dbates@webkit.org>
 
         No review, rolling out r49644.
