@@ -767,6 +767,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount);
 
     virtual HRESULT STDMETHODCALLTYPE isNodeHaltedPlugin(IDOMNode*, BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE restartHaltedPluginForNode(IDOMNode*);
 
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;

@@ -5709,6 +5709,31 @@ HRESULT STDMETHODCALLTYPE WebView::isNodeHaltedPlugin(IDOMNode* domNode, BOOL* r
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::restartHaltedPluginForNode(IDOMNode* domNode)
+{
+    if (!domNode)
+        return E_POINTER;
+
+    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
+    if (!webKitDOMNode)
+        return E_FAIL;
+
+    Node* node = webKitDOMNode->node();
+    if (!node)
+        return E_FAIL;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer || !renderer->isWidget())
+        return E_FAIL;
+
+    Widget* widget = toRenderWidget(renderer)->widget();
+    if (!widget || !widget->isPluginView())
+        return E_FAIL;
+
+    static_cast<PluginView*>(widget)->restart();
+    return S_OK;
+}
+
 class EnumTextMatches : public IEnumTextMatches
 {
     long m_ref;

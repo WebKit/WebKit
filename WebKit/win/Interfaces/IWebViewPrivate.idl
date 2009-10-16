@@ -218,4 +218,5 @@ interface IWebViewPrivate : IUnknown
     HRESULT addVisitedLinks([in] BSTR* visitedURLs, [in] unsigned visitedURLCount);
 
     HRESULT isNodeHaltedPlugin([in] IDOMNode*, [retval, out] BOOL*);
+    HRESULT restartHaltedPluginForNode([in] IDOMNode*);
 }

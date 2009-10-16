@@ -1,3 +1,27 @@
+2009-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to restart a halted plug-in.
+
+        Part of <rdar://problem/7273354> Halted plug-ins should restart on
+        mouseover
+
+        https://bugs.webkit.org/show_bug.cgi?id=30151
+
+        Reviewed by Kevin Decker.
+
+        * Interfaces/IWebViewPrivate.idl:
+        Add restartHaltedPluginForNode().
+
+        * WebView.cpp:
+        (WebView::restartHaltedPluginForNode):
+        From the IDOMNode, query for the DOMNode. From the DOMNode, get the
+        WebCore::Node. Get the node's renderer, and check whether it is a
+        RenderWidget. If so, get its Widget, and check whether it's a
+        PluginView. If so, call PluginView::restart().
+
+        * WebView.h:
+        Declare restartHaltedPluginForNode().
+
 2009-10-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to determine whether a node is a halted plug-in.
