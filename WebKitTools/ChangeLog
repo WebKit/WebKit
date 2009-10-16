@@ -1,3 +1,41 @@
+2009-10-15  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Levin.
+
+        Add mod_pywebsocket to test Web Sockets.
+        http://code.google.com/p/pywebsocket/
+        https://bugs.webkit.org/show_bug.cgi?id=27490
+
+        * pywebsocket/COPYING: Added.
+        * pywebsocket/MANIFEST.in: Added.
+        * pywebsocket/README: Added.
+        * pywebsocket/example/echo_client.py: Added.
+        * pywebsocket/example/echo_wsh.py: Added.
+        * pywebsocket/mod_pywebsocket/__init__.py: Added.
+        * pywebsocket/mod_pywebsocket/dispatch.py: Added.
+        * pywebsocket/mod_pywebsocket/handshake.py: Added.
+        * pywebsocket/mod_pywebsocket/headerparserhandler.py: Added.
+        * pywebsocket/mod_pywebsocket/msgutil.py: Added.
+        * pywebsocket/mod_pywebsocket/standalone.py: Added.
+        * pywebsocket/mod_pywebsocket/util.py: Added.
+        * pywebsocket/setup.py: Added.
+        * pywebsocket/test/config.py: Added.
+        * pywebsocket/test/mock.py: Added.
+        * pywebsocket/test/run_all.py: Added.
+        * pywebsocket/test/test_dispatch.py: Added.
+        * pywebsocket/test/test_handshake.py: Added.
+        * pywebsocket/test/test_mock.py: Added.
+        * pywebsocket/test/test_msgutil.py: Added.
+        * pywebsocket/test/test_util.py: Added.
+        * pywebsocket/test/testdata/handlers/blank_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/origin_check_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/exception_in_transfer_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/no_wsh_at_the_end.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/non_callable_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/plain_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/wrong_handshake_sig_wsh.py: Added.
+        * pywebsocket/test/testdata/handlers/sub/wrong_transfer_sig_wsh.py: Added.
+
 2009-10-15  James Robinson  <jamesr@google.com>
 
         Reviewed by David Levin.
