@@ -1192,6 +1192,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventToV8Object(Event* event)
     else if (event->isStorageEvent())
         type = V8ClassIndex::STORAGEEVENT;
 #endif
+    else if (event->isBeforeLoadEvent())
+        type = V8ClassIndex::BEFORELOADEVENT;
 
 
     v8::Handle<v8::Object> result = instantiateV8Object(type, V8ClassIndex::EVENT, event);

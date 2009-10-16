@@ -1,3 +1,16 @@
+2009-10-16  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add beforeload event support to V8DOMWrapper
+
+        https://bugs.webkit.org/show_bug.cgi?id=30413
+
+        LayoutTests/fast/dom/beforeload/frame-before-load.html
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventToV8Object):
+
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
