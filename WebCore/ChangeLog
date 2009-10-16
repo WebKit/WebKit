@@ -1,3 +1,21 @@
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Transform transitions that used to be accelerated are no longer so
+        https://bugs.webkit.org/show_bug.cgi?id=30453
+
+        The change in r49633, to not run accelerated animations/transitions on layers that
+        are not attached, broke accelerated transitions/animations in many cases where they start
+        as soon as the page loads. This change reverts the code that tests for the GraphicsLayer being
+        attached.
+        
+        No test, because it's not possible from a test to know whether a transition is accelerated or not.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+
 2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW build fix, build the MSW source to get methods that use the MSW version of
