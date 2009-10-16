@@ -137,7 +137,8 @@ SOURCES += \
     interpreter/RegisterFile.cpp
 
 symbian {
-    SOURCES += runtime/MarkStackSymbian.cpp
+    SOURCES += jit/ExecutableAllocatorSymbian.cpp \
+              runtime/MarkStackSymbian.cpp
 } else {
     win32-*|wince* {
         SOURCES += jit/ExecutableAllocatorWin.cpp \

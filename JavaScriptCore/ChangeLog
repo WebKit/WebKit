@@ -1,3 +1,20 @@
+2009-10-16  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement ExecutableAllocator for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=29946
+
+        Tested with YARR JIT enabled for Symbian; 
+        This patch does not (yet) enable YARR JIT by default.
+
+        * JavaScriptCore.pri:
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorSymbian.cpp: Added.
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+
 2009-10-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
