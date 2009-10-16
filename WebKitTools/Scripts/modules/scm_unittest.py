@@ -95,8 +95,6 @@ class SVNTestRepository:
 
     @classmethod
     def setup(cls, test_object):
-        test_object.original_path = os.path.abspath('.')
-
         # Create an test SVN repository
         test_object.svn_repo_path = tempfile.mkdtemp(suffix="svn_test_repo")
         test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path # Not sure this will work on windows
@@ -127,7 +125,7 @@ class SCMTest(unittest.TestCase):
         return patch
 
     def _setup_webkittools_scripts_symlink(self, local_scm):
-        webkit_scm = detect_scm_system(self.original_path)
+        webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
         webkit_scripts_directory = webkit_scm.scripts_directory()
         local_scripts_directory = local_scm.scripts_directory()
         os.mkdir(os.path.dirname(local_scripts_directory))
@@ -188,7 +186,6 @@ class SVNTest(SCMTest):
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
-        os.chdir(self.original_path)
 
     def test_create_patch_is_full_patch(self):
         test_dir_path = os.path.join(self.svn_checkout_path, 'test_dir')
@@ -284,7 +281,6 @@ class GitTest(SCMTest):
     def tearDown(self):
         SVNTestRepository.tear_down(self)
         self._tear_down_git_clone_of_svn_repository()
-        os.chdir(self.original_path)
 
     def test_detection(self):
         scm = detect_scm_system(self.git_checkout_path)

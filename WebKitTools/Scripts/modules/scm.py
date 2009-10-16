@@ -392,7 +392,7 @@ class Git(SCM):
 
     @classmethod
     def in_working_directory(cls, path):
-        return cls.run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path) == "true"
+        return cls.run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=ignore_error) == "true"
 
     @classmethod
     def find_checkout_root(cls, path):

@@ -1,3 +1,15 @@
+2009-10-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        run-webkit-tests fails when CWD is not inside a WebKit checkout
+        https://bugs.webkit.org/show_bug.cgi?id=30451
+
+        * Scripts/modules/scm.py: in_working_directory shouldn't throw exceptions on failure.
+        * Scripts/modules/scm_unittest.py:
+          - Remove use of original_path (we don't need to restore the CWD).
+          - Don't use '.' to find the webkit checkout, use __file__ instead.
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
