@@ -316,7 +316,7 @@ def common_configure(conf):
         conf.env.append_value('LIB', [
             'kernel32', 'user32','gdi32','comdlg32','winspool','winmm',
             'shell32', 'comctl32', 'ole32', 'oleaut32', 'uuid', 'advapi32', 
-            'wsock32', 'gdiplus'])
+            'wsock32', 'gdiplus', 'version'])
 
         conf.env['LIB_ICU'] = ['icudt', 'icule', 'iculx', 'icuuc', 'icuin', 'icuio', 'icutu']
         

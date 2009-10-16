@@ -1,3 +1,10 @@
+2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fix, build the MSW source to get methods that use the MSW version of
+        PlatformModuleVersion.
+
+        * wscript:
+
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed build fix.  Add back MIMETypeRegistryChromium with the right

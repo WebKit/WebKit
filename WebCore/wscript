@@ -31,7 +31,6 @@ webcore_sources = {}
 
 if build_port == "wx":
     webcore_sources['plugins'] = [  'plugins/PluginDataNone.cpp',
-                                    'plugins/PluginPackageNone.cpp',
                                     'plugins/PluginViewNone.cpp'
                                   ]
     
@@ -43,15 +42,17 @@ if build_port == "wx":
                # widely available (it was fixed in 2.8.10).
                'platform/win/SharedTimerWin.cpp',
                'page/win/PageWin.cpp',
-        
+               'plugins/win/PluginPackageWin.cpp',
         ]
     elif sys.platform.startswith('darwin'):
         webcore_dirs.append('platform/wx/wxcode/mac/carbon')
         webcore_sources['wx-mac'] = [
                'platform/mac/PurgeableBufferMac.cpp',
         ]
+        webcore_sources['plugins'].append('plugins/PluginPackageNone.cpp')
     else:
         webcore_dirs.append('platform/wx/wxcode/gtk')
+        webcore_sources['plugins'].append('plugins/PluginPackageNone.cpp')
         
 from TaskGen import taskgen, feature, after
 import Task, ccroot

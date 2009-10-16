@@ -1,3 +1,9 @@
+2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fix. Link to MSW library needed by PluginPackageWin.cpp.
+
+        * wx/build/settings.py:
+
 2009-10-15  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by David Levin.
