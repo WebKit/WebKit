@@ -1,3 +1,14 @@
+2009-10-15  James Robinson  <jamesr@google.com>
+
+        Reviewed by David Levin.
+
+        Updates check-webkit-style to reflect that code inside a namespace should not be indented, even in a header file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30426
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-10-15  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

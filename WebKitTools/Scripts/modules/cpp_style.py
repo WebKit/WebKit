@@ -1701,47 +1701,26 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
 
     namespace_indentation = namespace_match.group('namespace_indentation')
 
-    is_header_file = file_extension == 'h'
-    is_implementation_file = not is_header_file
     line_offset = 0
 
-    if is_header_file:
-        inner_indentation = namespace_indentation + ' ' * 4
+    for current_line in clean_lines.raw_lines[line_number + 1:]:
+        line_offset += 1
 
-        for current_line in clean_lines.raw_lines[line_number + 1:]:
-            line_offset += 1
+        # Skip not only empty lines but also those with (goto) labels.
+        # The goto label regexp accepts spaces or the beginning of a
+        # comment (if anything) after the initial colon.
+        if current_line.strip() == '' or match(r'\w+\s*:([\s\/].*)?$', current_line):
+            continue
 
-            # Skip not only empty lines but also those with preprocessor directives.
-            # Goto labels don't occur in header files, so no need to check for those.
-            if current_line.strip() == '' or current_line.startswith('#'):
-                continue
+        remaining_line = current_line[len(namespace_indentation):]
+        if not match(r'\S', remaining_line):
+            error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                  'Code inside a namespace should not be indented.')
 
-            if not current_line.startswith(inner_indentation):
-                # If something unindented was discovered, make sure it's a closing brace.
-                if not current_line.startswith(namespace_indentation + '}'):
-                    error(filename, line_number + line_offset, 'whitespace/indent', 4,
-                          'In a header, code inside a namespace should be indented.')
-                break
-
-    if is_implementation_file:
-        for current_line in clean_lines.raw_lines[line_number + 1:]:
-            line_offset += 1
-
-            # Skip not only empty lines but also those with (goto) labels.
-            # The goto label regexp accepts spaces or the beginning of a
-            # comment (if anything) after the initial colon.
-            if current_line.strip() == '' or match(r'\w+\s*:([\s\/].*)?$', current_line):
-                continue
-
-            remaining_line = current_line[len(namespace_indentation):]
-            if not match(r'\S', remaining_line):
-                error(filename, line_number + line_offset, 'whitespace/indent', 4,
-                      'In an implementation file, code inside a namespace should not be indented.')
-
-            # Just check the first non-empty line in any case, because
-            # otherwise we would need to count opened and closed braces,
-            # which is obviously a lot more complicated.
-            break
+        # Just check the first non-empty line in any case, because
+        # otherwise we would need to count opened and closed braces,
+        # which is obviously a lot more complicated.
+        break
 
 
 def check_using_std(filename, clean_lines, line_number, error):

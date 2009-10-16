@@ -2806,29 +2806,29 @@ class WebKitStyleTest(CppStyleTestBase):
             'Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]')
         # FIXME: No tests for 8-spaces.
 
-        # 3. In a header, code inside a namespace should be indented.
+        # 3. In a header, code inside a namespace should not be indented.
         self.assert_multi_line_lint(
             'namespace WebCore {\n\n'
-            '    class Document {\n'
-            '        int myVariable;\n'
-            '    };\n'
+            'class Document {\n'
+            '    int myVariable;\n'
+            '};\n'
             '}',
             '',
             'foo.h')
         self.assert_multi_line_lint(
             'namespace OuterNamespace {\n'
-            '    namespace InnerNamespace {\n'
-            '        class Document {\n'
-            '        };\n'
-            '    };\n'
+            'namespace InnerNamespace {\n'
+            'class Document {\n'
+            '};\n'
+            '};\n'
             '}',
             '',
             'foo.h')
         self.assert_multi_line_lint(
             'namespace WebCore {\n'
             '#if 0\n'
-            '    class Document {\n'
-            '    };\n'
+            'class Document {\n'
+            '};\n'
             '#endif\n'
             '}',
             '',
@@ -2838,8 +2838,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'class Document {\n'
             '};\n'
             '}',
-            'In a header, code inside a namespace should be indented.'
-            '  [whitespace/indent] [4]',
+            '',
             'foo.h')
 
         # 4. In an implementation file (files with the extension .cpp, .c
@@ -2881,7 +2880,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'namespace WebCore {\n'
             '    Document::Foo() { }\n'
             '}',
-            'In an implementation file, code inside a namespace should not be indented.'
+            'Code inside a namespace should not be indented.'
             '  [whitespace/indent] [4]',
             'foo.cpp')
 
@@ -3246,7 +3245,7 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_multi_line_lint(
             'namespace WebCore {\n'
-            '    int foo;\n'
+            'int foo;\n'
             '};\n',
             '')
         self.assert_multi_line_lint(
