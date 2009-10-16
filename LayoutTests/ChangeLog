@@ -1,3 +1,11 @@
+2009-10-16  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Update outdated platform dependent expected file.
+
+        * platform/qt/editing/execCommand/toggle-compound-styles-expected.txt:
+
 2009-10-16  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

@@ -7,7 +7,7 @@ PLATFORM-DEPENDNET TESTS
 one bold command converted <u><b>hello</b> world</u> to <u><b>hello world</b></u>
 one bold command converted <b>hello </b>world to <b>hello world</b>
 one bold command converted <u><b>hello </b></u>world to <u><b>hello </b></u><b>world</b>
-one italic command converted <i>hello</i> <img> to <i>hello </i><i><img></i>
+one italic command converted <i>hello</i> <img> to <i>hello <img></i>
 one italic command converted <s><b>hello<i> world</i></b></s> to <s><b><i>hello world</i></b></s>
 PLATFORM-INDEPENDNET TESTS
 PASS one bold command converted <u><span id='test'><b>hello</b></span><b>world</b></u> to <u><span id="test">hello</span>world</u>
