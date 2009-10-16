@@ -1,3 +1,13 @@
+2009-10-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Add empty skipped lists for the platform-specific results
+
+        * platform/qt-linux/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt-win/Skipped:
+
 2009-10-16  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
