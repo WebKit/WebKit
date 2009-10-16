@@ -1,3 +1,16 @@
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        MimeTypeRegistryChromium is mis-casen
+        https://bugs.webkit.org/show_bug.cgi?id=30441
+
+        Change the case of MimeTypeRegistryChromium to match other platforms.
+
+        * WebCore.gypi:
+        * platform/chromium/MIMETypeRegistryChromium.cpp: Copied from WebCore/platform/chromium/MimeTypeRegistryChromium.cpp.
+        * platform/chromium/MimeTypeRegistryChromium.cpp: Removed.
+
 2009-10-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

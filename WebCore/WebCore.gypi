@@ -1839,7 +1839,7 @@
             'platform/chromium/KeyboardCodesWin.h',
             'platform/chromium/Language.cpp',
             'platform/chromium/LinkHashChromium.cpp',
-            'platform/chromium/MimeTypeRegistryChromium.cpp',
+            'platform/chromium/MIMETypeRegistryChromium.cpp',
             'platform/chromium/PasteboardChromium.cpp',
             'platform/chromium/PasteboardPrivate.h',
             'platform/chromium/PlatformCursor.h',
