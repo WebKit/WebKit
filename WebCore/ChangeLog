@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Remove FIXME in RenderMediaControlsChromium as bug was fixed upstream.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30422
+
+        Covered by existing media layout tests.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider): Removed round() and FIXME.
+
+2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Fix Chromium media controls to render a disabled play button when the element is unintialized.
 
         https://bugs.webkit.org/show_bug.cgi?id=30410
