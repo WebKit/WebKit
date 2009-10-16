@@ -1,3 +1,24 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a Debug_All configuration to build entire stack as debug.
+        Change Debug_Internal to:
+        - stop using _debug suffix for all WebKit/Safari binaries
+        - not use _debug as a DLL naming suffix
+        - use non-debug C runtime lib.
+
+        * DumpRenderTree/DumpRenderTree.sln: Add Debug_All configuration.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Add Debug_All configuration.
+        * DumpRenderTree/win/ImageDiff.vcproj: Add Debug_All configuration.
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        Add missing debug.vsprops inherited property sheet.
+        Add Debug_All configuration.
+        * FindSafari/FindSafari.vcproj: Renamed single configuration from "Release" to "all".
+        * WinLauncher/WinLauncher.vcproj:
+        Removed extraneous definitions inherited from vsprops.
+        Add Debug_All configuration.
+
 2009-10-16  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Levin.

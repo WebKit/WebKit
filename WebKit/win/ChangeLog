@@ -1,3 +1,22 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a Debug_All configuration to build entire stack as debug.
+        Change Debug_Internal to:
+        - stop using _debug suffix for all WebKit/Safari binaries
+        - not use _debug as a DLL naming suffix
+        - use non-debug C runtime lib.
+
+        * WebKit.vcproj/InterfacesGenerated.vcproj: Renamed single configuration from "Release" to "all".
+        * WebKit.vcproj/WebKit.make: Debug build in makefile should build Debug_All.
+        * WebKit.vcproj/WebKit.sln: Add Debug_All configuration.
+        * WebKit.vcproj/WebKit.submit.sln: Add Debug_All configuration.
+        * WebKit.vcproj/WebKit.vcproj:
+        Remove extraneous OutputDirectory/IntermediateDirectory in Debug_Cairo.
+        Add Debug_All configuration.
+        * WebKit.vcproj/WebKitGUID.vcproj: Add Debug_All configuration.
+
 2009-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to restart a halted plug-in.

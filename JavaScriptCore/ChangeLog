@@ -1,3 +1,22 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a Debug_All configuration to build entire stack as debug.
+        Change Debug_Internal to:
+        - stop using _debug suffix for all WebKit/Safari binaries
+        - not use _debug as a DLL naming suffix
+        - use non-debug C runtime lib.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make: Debug build in makefile should build Debug_All.
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Add Debug_All configuration.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Add Debug_All configuration.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj: Renamed single configuration from "Release" to "all".
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Add Debug_All configuration.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Add Debug_All configuration.
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Add Debug_All configuration.
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj: Add Debug_All configuration.
+
 2009-10-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

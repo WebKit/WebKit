@@ -1,3 +1,20 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a Debug_All configuration to build entire stack as debug.
+        Change Debug_Internal to:
+        - stop using _debug suffix for all WebKit/Safari binaries
+        - not use _debug as a DLL naming suffix
+        - use non-debug C runtime lib.
+
+        * WebCore.vcproj/QTMovieWin.vcproj: Add Debug_All configuration.
+        * WebCore.vcproj/WebCore.make: Debug build in makefile should build Debug_All.
+        * WebCore.vcproj/WebCore.sln: Add Debug_All configuration.
+        * WebCore.vcproj/WebCore.submit.sln: Add Debug_All configuration.
+        * WebCore.vcproj/WebCore.vcproj: Add Debug_All configuration.
+        * WebCore.vcproj/WebCoreGenerated.vcproj: Renamed single configuration from "Release" to "all".
+
 2009-10-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r49693, because it broke Chromium build.

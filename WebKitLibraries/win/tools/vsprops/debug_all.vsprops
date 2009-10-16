@@ -2,24 +2,25 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="debug_internal"
+	Name="debug_all"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="DEBUG_INTERNAL"
+		PreprocessorDefinitions="USE_DEBUG_SAFARI_THEME;DEBUG_INTERNAL"
+		RuntimeLibrary="3"
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"
-		Value=""
+		Value="_debug"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
 		Name="LibraryConfigSuffix"
-		Value=""
+		Value="_debug"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
 		Name="WebKitDLLConfigSuffix"
-		Value=""
+		Value="_debug"
 	/>
 </VisualStudioPropertySheet>

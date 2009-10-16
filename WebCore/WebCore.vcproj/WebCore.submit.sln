@@ -15,23 +15,30 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QTMovieWin", "QTMovieWin.vc
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_All|Win32 = Debug_All|Win32
 		Debug_Internal|Win32 = Debug_Internal|Win32
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug_All|Win32.Build.0 = Debug_All|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug|Win32.Build.0 = Debug|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.ActiveCfg = Release|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.Build.0 = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_Internal|Win32.ActiveCfg = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_Internal|Win32.Build.0 = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug|Win32.ActiveCfg = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug|Win32.Build.0 = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.ActiveCfg = Release|Win32
-		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.Build.0 = Release|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_All|Win32.ActiveCfg = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_All|Win32.Build.0 = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_Internal|Win32.ActiveCfg = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_Internal|Win32.Build.0 = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug|Win32.ActiveCfg = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug|Win32.Build.0 = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.ActiveCfg = all|Win32
+		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.Build.0 = all|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_All|Win32.Build.0 = Debug_All|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug|Win32.ActiveCfg = Debug|Win32

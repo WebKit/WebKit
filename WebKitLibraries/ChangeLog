@@ -1,3 +1,20 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a Debug_All configuration to build entire stack as debug.
+        Change Debug_Internal to:
+        - stop using _debug suffix for all WebKit/Safari binaries
+        - not use _debug as a DLL naming suffix
+        - use non-debug C runtime lib.
+
+        * win/tools/vsprops/debug_all.vsprops: Added.
+        Use debug C runtime library in debug_all.
+        Specify USE_DEBUG_SAFARI_THEME to get "_debug" suffix for debug_all.
+        * win/tools/vsprops/debug_internal.vsprops:
+        Don't specify debug C runtime library in debug_internal.
+        Don't specify _debug suffix for standard debug_internal builds.
+
 2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
 
         Reviewed by Simon Fraser
