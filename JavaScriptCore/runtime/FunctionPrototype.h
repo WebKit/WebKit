@@ -34,7 +34,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto)
         {
-            return Structure::create(proto, TypeInfo(ObjectType, HasDefaultGetPropertyNames));
+            return Structure::create(proto, TypeInfo(ObjectType));
         }
 
     private:

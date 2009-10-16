@@ -33,12 +33,12 @@ namespace JSC {
 #if USE(JSVALUE32)
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, HasDefaultGetPropertyNames | OverridesMarkChildren));
+            return Structure::create(prototype, TypeInfo(ObjectType, OverridesMarkChildren));
         }
 #else
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, HasDefaultGetPropertyNames));
+            return Structure::create(prototype, TypeInfo(ObjectType));
         }
 #endif
     private:

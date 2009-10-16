@@ -1,3 +1,74 @@
+2009-10-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make typeinfo flags default to false
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        Last part -- replace HasDefaultGetPropertyNames with OverridesGetPropertyNames
+        flag.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GlobalEvalFunction.h:
+        (JSC::GlobalEvalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::createStructure):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetPropertyNames):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::isCacheable):
+
 2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW build fix, we can't use the simple hash there because the PlatformModuleVersion 

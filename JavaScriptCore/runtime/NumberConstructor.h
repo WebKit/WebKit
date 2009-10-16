@@ -39,7 +39,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance | HasDefaultGetPropertyNames)); 
+            return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance)); 
         }
 
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };

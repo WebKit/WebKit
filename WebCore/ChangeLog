@@ -1,3 +1,25 @@
+2009-10-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make typeinfo flags default to false
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        Last part -- replace HasDefaultGetPropertyNames with OverridesGetPropertyNames
+        flag.
+
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::createStructure):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructure):
+
 2009-10-16  Steven Knight  <sgk@chromium.org>
 
         Reviewed by David Levin.

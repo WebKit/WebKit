@@ -1,3 +1,16 @@
+2009-10-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make typeinfo flags default to false
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        Last part -- replace HasDefaultGetPropertyNames with OverridesGetPropertyNames
+        flag.
+
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2009-10-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

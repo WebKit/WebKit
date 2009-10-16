@@ -51,7 +51,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | HasDefaultGetPropertyNames | OverridesMarkChildren)); 
+            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren)); 
         }
 
     private:

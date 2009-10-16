@@ -87,7 +87,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren));
+            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames));
         }
         
         inline void markChildrenDirect(MarkStack& markStack);

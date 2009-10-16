@@ -54,7 +54,7 @@ bool StructureChain::isCacheable() const
         // Both classes of dictionary structure may change arbitrarily so we can't cache them
         if (m_vector[i]->isDictionary())
             return false;
-        if (!m_vector[i++]->typeInfo().hasDefaultGetPropertyNames())
+        if (m_vector[i++]->typeInfo().overridesGetPropertyNames())
             return false;
     }
     return true;
