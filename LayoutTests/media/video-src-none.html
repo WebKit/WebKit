@@ -1,0 +1,16 @@
+<html>
+    <body onload="setTimeout(test, 250)">
+        <p>No src attribute defined.  Video should remain in NETWORK_EMPTY.</p>
+        <video controls></video>
+
+        <script src=video-test.js></script>
+        <script>
+            function test()
+            {
+                testExpected("video.error", null);
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+                endTest();
+            }
+        </script>
+    </body>
+</html>

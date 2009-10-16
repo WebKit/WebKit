@@ -5,6 +5,6 @@ RUN(video.pause())
 EVENT(waiting)
 EVENT(timeupdate)
 EVENT(pause)
-EXPECTED (video.networkState == '4') OK
+EXPECTED (video.networkState == '0') OK
 END OF TEST
 

@@ -1,0 +1,6 @@
+No src attribute defined. Video should remain in NETWORK_EMPTY.
+
+EXPECTED (video.error == 'null') OK
+EXPECTED (video.networkState == '0') OK
+END OF TEST
+

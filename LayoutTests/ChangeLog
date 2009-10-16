@@ -1,3 +1,18 @@
+2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Updated media resource selection algorithm to reflect latest HTML 5 specification.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30407
+
+        * media/video-play-pause-exception-expected.txt:
+        * media/video-play-pause-exception.html:
+        * media/video-src-empty-expected.txt: Added.
+        * media/video-src-empty.html: Added.
+        * media/video-src-none-expected.txt: Added.
+        * media/video-src-none.html: Added.
+
 2009-10-16  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

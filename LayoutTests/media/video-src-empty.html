@@ -1,0 +1,16 @@
+<html>
+    <body>
+        <p>Empty src attribute defined.  Invalid URL and video should error.</p>
+        <video src="" onerror="errorEvent()" controls></video>
+
+        <script src=video-test.js></script>
+        <script>
+            function errorEvent()
+            {
+                testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                endTest();
+            }
+        </script>
+    </body>
+</html>

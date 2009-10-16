@@ -510,33 +510,32 @@ void HTMLMediaElement::loadInternal()
 
 void HTMLMediaElement::selectMediaResource()
 {
-    // 1 - If the media element has neither a src attribute nor any source element children, run these substeps
+    // 1 - Set the networkState to NETWORK_NO_SOURCE
+    m_networkState = NETWORK_NO_SOURCE;
+
+    // 2 - Asynchronously await a stable state.
+
+    // 3 - If the media element has neither a src attribute nor any source element children, run these substeps
     String mediaSrc = getAttribute(srcAttr);
     if (!mediaSrc && !havePotentialSourceChild()) {
         m_loadState = WaitingForSource;
 
-        // 1 -  Set the networkState to NETWORK_NO_SOURCE
-        m_networkState = NETWORK_NO_SOURCE;
-        
-        // 2 - While the media element has neither a src attribute nor any source element children, 
-        // wait. (This steps might wait forever.)
-
-        m_delayingTheLoadEvent = false;
+        // 1 - Set the networkState to NETWORK_EMPTY and abort these steps
+        m_networkState = NETWORK_EMPTY;
+        ASSERT(!m_delayingTheLoadEvent);
         return;
     }
 
-    // 2
+    // 4
     m_delayingTheLoadEvent = true;
-
-    // 3
     m_networkState = NETWORK_LOADING;
 
-    // 4
+    // 5
     scheduleProgressEvent(eventNames().loadstartEvent);
 
-    // 5 - If the media element has a src attribute, then run these substeps
+    // 6 - If the media element has a src attribute, then run these substeps
     ContentType contentType("");
-    if (!mediaSrc.isEmpty()) {
+    if (!mediaSrc.isNull()) {
         KURL mediaURL = document()->completeURL(mediaSrc);
         if (isSafeToLoadURL(mediaURL, Complain) && dispatchBeforeLoadEvent(mediaURL.string())) {
             m_loadState = LoadingFromSrcAttr;

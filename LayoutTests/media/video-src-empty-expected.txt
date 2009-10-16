@@ -1,0 +1,6 @@
+Empty src attribute defined. Invalid URL and video should error.
+
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '4') OK
+END OF TEST
+
