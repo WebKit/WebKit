@@ -56,63 +56,6 @@ namespace WebCore {
         void clear();
         bool hasData() const;
 
-        bool containsMainURL() const { return !url.isEmpty(); }
-        bool containsValidMainURL() const { return url.isValid(); }
-        KURL mainURL() const { return url; }
-        void setMainURL(const KURL& newURL) { url = newURL; }
-
-        bool containsMainURLTitle() const { return !urlTitle.isEmpty(); }
-        String mainURLTitle() const { return urlTitle; }
-        void setMainURLTitle(const String& newURLTitle) { urlTitle = newURLTitle; }
-
-        bool containsTextPlain() const { return !plainText.isEmpty(); }
-        String textPlain() const { return plainText; }
-        void setTextPlain(const String& newText) { plainText = newText; }
-
-        bool containsTextHTML() const { return !textHtml.isEmpty(); }
-        String textHTML() const { return textHtml; }
-        void setTextHTML(const String& newText) { textHtml = newText; }
-
-        bool containsHTMLBaseURL() const { return !htmlBaseUrl.isEmpty(); }
-        bool containsValidHTMLBaseURL() const { return htmlBaseUrl.isValid(); }
-        KURL htmlBaseURL() const { return htmlBaseUrl; }
-        void setHTMLBaseURL(const KURL& newURL) { htmlBaseUrl = newURL; }
-
-        bool containsContent() const { return fileContent; }
-        SharedBuffer* content() const { return fileContent.get(); }
-        PassRefPtr<SharedBuffer> releaseContent() { return fileContent.release(); }
-        void setContent(PassRefPtr<SharedBuffer> newContent) { fileContent = newContent; }
-
-        bool containsContentFileExtension() const { return !fileExtension.isEmpty(); }
-        String contentFileExtension() const { return fileExtension; }
-        void setContentFileExtension(const String& newFileExtension) { fileExtension = newFileExtension; }
-
-        bool containsContentFileName() const { return !fileContentFilename.isEmpty(); }
-        String contentFileName() const { return fileContentFilename; }
-        void setContentFileName(const String& newFileName) { fileContentFilename = newFileName; }
-
-        bool containsFileNames() const { return !filenames.isEmpty(); }
-        Vector<String> fileNames() const { return filenames; }
-        void clearFileNames() { filenames.clear(); }
-        size_t countFileNames() const { return filenames.size(); }
-        String fileNameAt(size_t index) { return filenames.at(index); }
-        void setFileNames(const Vector<String>& newFileNames) { filenames = newFileNames; }
-        void appendToFileNames(const String& newFileName)
-        {
-            ASSERT(!newFileName.isEmpty());
-            filenames.append(newFileName);
-        }
-        String popFileName() {
-            if (filenames.isEmpty())
-                return String();
-            String fileName;
-            fileName = filenames.at(0);
-            filenames.remove(0);
-            return fileName;
-        }
-
-        // Interim state: All members will become private, do NOT access them directly! 
-        // Rather use the above accessor methods (or devise new ones if necessary).
         KURL url;
         String urlTitle;
 
