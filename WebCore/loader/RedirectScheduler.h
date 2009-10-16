@@ -39,42 +39,42 @@
 
 namespace WebCore {
 
-    class FormState;
-    class Frame;
-    class String;
+class FormState;
+class Frame;
+class String;
 
-    struct FrameLoadRequest;
-    struct ScheduledRedirection;
+struct FrameLoadRequest;
+struct ScheduledRedirection;
 
-    class RedirectScheduler : public Noncopyable {
-    public:
-        RedirectScheduler(Frame*);
-        ~RedirectScheduler();
+class RedirectScheduler : public Noncopyable {
+public:
+    RedirectScheduler(Frame*);
+    ~RedirectScheduler();
 
-        bool redirectScheduledDuringLoad();
-        bool locationChangePending();
+    bool redirectScheduledDuringLoad();
+    bool locationChangePending();
 
-        void scheduleRedirect(double delay, const String& url);
-        void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool userGesture = false);
-        void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
-        void scheduleRefresh(bool userGesture = false);
-        void scheduleHistoryNavigation(int steps);
+    void scheduleRedirect(double delay, const String& url);
+    void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool userGesture = false);
+    void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
+    void scheduleRefresh(bool userGesture = false);
+    void scheduleHistoryNavigation(int steps);
 
-        void startTimer();
+    void startTimer();
 
-        void cancel(bool newLoadInProgress = false);
-        void clear();
+    void cancel(bool newLoadInProgress = false);
+    void clear();
 
-    private:
-        void timerFired(Timer<RedirectScheduler>*);
-        void schedule(PassOwnPtr<ScheduledRedirection>);
+private:
+    void timerFired(Timer<RedirectScheduler>*);
+    void schedule(PassOwnPtr<ScheduledRedirection>);
 
-        static bool mustLockBackForwardList(Frame* targetFrame);
+    static bool mustLockBackForwardList(Frame* targetFrame);
 
-        Frame* m_frame;
-        Timer<RedirectScheduler> m_timer;
-        OwnPtr<ScheduledRedirection> m_scheduledRedirection;
-    };
+    Frame* m_frame;
+    Timer<RedirectScheduler> m_timer;
+    OwnPtr<ScheduledRedirection> m_scheduledRedirection;
+};
 
 } // namespace WebCore
 

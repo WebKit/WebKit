@@ -34,41 +34,41 @@
 
 namespace WebCore {
 
-    class AuthenticationChallenge;
-    class DocumentLoader;
-    class Frame;
-    class ResourceError;
-    class ResourceLoader;
-    class ResourceResponse;
-    class ResourceRequest;
-    class ScriptString;
+class AuthenticationChallenge;
+class DocumentLoader;
+class Frame;
+class ResourceError;
+class ResourceLoader;
+class ResourceResponse;
+class ResourceRequest;
+class ScriptString;
 
-    class ResourceLoadNotifier : public Noncopyable {
-    public:
-        ResourceLoadNotifier(Frame*);
+class ResourceLoadNotifier : public Noncopyable {
+public:
+    ResourceLoadNotifier(Frame*);
 
-        void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
-        void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
+    void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
+    void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
 
-        void assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest&);
-        void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
-        void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-        void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
-        void didFinishLoad(ResourceLoader*);
-        void didFailToLoad(ResourceLoader*, const ResourceError&);
-        void didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
+    void assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest&);
+    void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
+    void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
+    void didFinishLoad(ResourceLoader*);
+    void didFailToLoad(ResourceLoader*, const ResourceError&);
+    void didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
 
-        void dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-        void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
-        void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
-        void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
-        void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
+    void dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
+    void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
+    void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
+    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
 
-    private:
-        inline DocumentLoader* activeDocumentLoader() const;
+private:
+    inline DocumentLoader* activeDocumentLoader() const;
 
-        Frame* m_frame;
-    };
+    Frame* m_frame;
+};
 
 } // namespace WebCore
 

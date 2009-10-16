@@ -37,58 +37,58 @@
 
 namespace WebCore {
 
-    class Frame;
-    class HistoryItem;
+class Frame;
+class HistoryItem;
 
-    class HistoryController : public Noncopyable {
-    public:
-        HistoryController(Frame*);
-        ~HistoryController();
+class HistoryController : public Noncopyable {
+public:
+    HistoryController(Frame*);
+    ~HistoryController();
 
-        void saveScrollPositionAndViewStateToItem(HistoryItem*);
-        void restoreScrollPositionAndViewState();
+    void saveScrollPositionAndViewStateToItem(HistoryItem*);
+    void restoreScrollPositionAndViewState();
 
-        void updateBackForwardListForFragmentScroll();
+    void updateBackForwardListForFragmentScroll();
 
-        void saveDocumentState();
-        void saveDocumentAndScrollState();
-        void restoreDocumentState();
+    void saveDocumentState();
+    void saveDocumentAndScrollState();
+    void restoreDocumentState();
 
-        void invalidateCurrentItemCachedPage();
+    void invalidateCurrentItemCachedPage();
 
-        void goToItem(HistoryItem*, FrameLoadType);
-        bool urlsMatchItem(HistoryItem*) const;
+    void goToItem(HistoryItem*, FrameLoadType);
+    bool urlsMatchItem(HistoryItem*) const;
 
-        void updateForBackForwardNavigation();
-        void updateForReload();
-        void updateForStandardLoad();
-        void updateForRedirectWithLockedBackForwardList();
-        void updateForClientRedirect();
-        void updateForCommit();
-        void updateForAnchorScroll();
-        void updateForFrameLoadCompleted();
+    void updateForBackForwardNavigation();
+    void updateForReload();
+    void updateForStandardLoad();
+    void updateForRedirectWithLockedBackForwardList();
+    void updateForClientRedirect();
+    void updateForCommit();
+    void updateForAnchorScroll();
+    void updateForFrameLoadCompleted();
 
-        HistoryItem* currentItem() const { return m_currentItem.get(); }
-        void setCurrentItem(HistoryItem*);
-        void setCurrentItemTitle(const String&);
+    HistoryItem* currentItem() const { return m_currentItem.get(); }
+    void setCurrentItem(HistoryItem*);
+    void setCurrentItemTitle(const String&);
 
-        HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
-        void setProvisionalItem(HistoryItem*);
+    HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
+    void setProvisionalItem(HistoryItem*);
 
-    private:
-        PassRefPtr<HistoryItem> createItem(bool useOriginal);
-        PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
+private:
+    PassRefPtr<HistoryItem> createItem(bool useOriginal);
+    PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
 
-        void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
-        bool childFramesMatchItem(HistoryItem*) const;
-        void updateBackForwardListClippedAtTarget(bool doClip);
+    void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
+    bool childFramesMatchItem(HistoryItem*) const;
+    void updateBackForwardListClippedAtTarget(bool doClip);
 
-        Frame* m_frame;
+    Frame* m_frame;
 
-        RefPtr<HistoryItem> m_currentItem;
-        RefPtr<HistoryItem> m_previousItem;
-        RefPtr<HistoryItem> m_provisionalItem;
-    };
+    RefPtr<HistoryItem> m_currentItem;
+    RefPtr<HistoryItem> m_previousItem;
+    RefPtr<HistoryItem> m_provisionalItem;
+};
 
 } // namespace WebCore
 

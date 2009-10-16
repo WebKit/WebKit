@@ -1,3 +1,39 @@
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix header indent style for FrameLoader and friends
+        https://bugs.webkit.org/show_bug.cgi?id=30430
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::frame):
+        (WebCore::FrameLoader::policyChecker):
+        (WebCore::FrameLoader::history):
+        (WebCore::FrameLoader::notifier):
+        (WebCore::FrameLoader::isLoadingMainResource):
+        (WebCore::FrameLoader::documentLoader):
+        (WebCore::FrameLoader::policyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        (WebCore::FrameLoader::state):
+        (WebCore::FrameLoader::client):
+        (WebCore::FrameLoader::url):
+        (WebCore::FrameLoader::isLoadingFromCachedPage):
+        (WebCore::FrameLoader::committingFirstRealLoad):
+        (WebCore::FrameLoader::committedFirstRealDocumentLoad):
+        (WebCore::FrameLoader::creatingInitialEmptyDocument):
+        * loader/HistoryController.h:
+        (WebCore::HistoryController::currentItem):
+        (WebCore::HistoryController::provisionalItem):
+        * loader/PolicyCallback.h:
+        (WebCore::PolicyCallback::request):
+        * loader/PolicyChecker.h:
+        (WebCore::PolicyChecker::loadType):
+        (WebCore::PolicyChecker::setLoadType):
+        (WebCore::PolicyChecker::delegateIsDecidingNavigationPolicy):
+        (WebCore::PolicyChecker::delegateIsHandlingUnimplementablePolicy):
+        * loader/RedirectScheduler.h:
+        * loader/ResourceLoadNotifier.h:
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
