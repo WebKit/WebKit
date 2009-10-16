@@ -1,5 +1,29 @@
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed build fix.  Add back MIMETypeRegistryChromium with the right
+        casing.
+
+        * platform/chromium/MIMETypeRegistryChromium.cpp: Added.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedMediaMIMEType):
+        (WebCore::MIMETypeRegistry::isJavaAppletMIMEType):
+        (WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension):
+        (WebCore::dummyHashSet):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding):
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes):
+
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         MimeTypeRegistryChromium is mis-casen
