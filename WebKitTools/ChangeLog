@@ -1,3 +1,26 @@
+2009-10-16  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style is wrong about indent checking in namespaces
+        in header files and a few other things
+        https://bugs.webkit.org/show_bug.cgi?id=30362
+
+        The few other things include:
+        + check-webkit-style does not require spaces around the equal sign
+          inside 'if' statements and around binary operators that take 
+          numeric literals.
+        + check-webkit-style reports false errors for the / operator
+          when part of a filename in the #include directive.
+
+        * Scripts/modules/cpp_style.py:
+        Improved indentation checking and space checking around
+        binary operators. While the checks are still not perfect,
+        they are clearly better than before.
+        * Scripts/modules/cpp_style_unittest.py:
+        Added test cases for the newly supported checks and modified old
+        test cases to match the new guidelines
+
 2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW build fix. Link to MSW library needed by PluginPackageWin.cpp.

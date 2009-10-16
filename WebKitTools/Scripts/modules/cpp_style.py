@@ -1533,16 +1533,15 @@ def check_spacing(filename, clean_lines, line_number, error):
 
     # Don't try to do spacing checks for operator methods
     line = re.sub(r'operator(==|!=|<|<<|<=|>=|>>|>)\(', 'operator\(', line)
-
-    # We allow no-spaces around = within an if: "if ( (a=Foo()) == 0 )".
-    # Otherwise not.  Note we only check for non-spaces on *both* sides;
-    # sometimes people put non-spaces on one side when aligning ='s among
-    # many lines (not that this is behavior that I approve of...)
-    if search(r'[\w.]=[\w.]', line) and not search(r'\b(if|while) ', line):
+    # Don't try to do spacing checks for #include statements at minimum it
+    # messes up checks for spacing around /
+    if match(r'\s*#\s*include', line):
+        return
+    if search(r'[\w.]=[\w.]', line):
         error(filename, line_number, 'whitespace/operators', 4,
               'Missing spaces around =')
 
-    # FIXME: It's not ok to have spaces around binary operators like + - * / .
+    # FIXME: It's not ok to have spaces around binary operators like .
 
     # You should always have whitespace around binary operators.
     # Alas, we can't test < or > because they're legitimately used sans spaces
@@ -1556,12 +1555,6 @@ def check_spacing(filename, clean_lines, line_number, error):
         # regexp takes linear rather than quadratic time.
         if not search(r'<[^<]*,\s*$', line):  # template params spill
             matched = search(r'[^<>=!\s](<)[^<>=!\s]([^>]|->)*$', line)
-    if matched:
-        error(filename, line_number, 'whitespace/operators', 3,
-              'Missing spaces around %s' % matched.group(1))
-    # We allow no-spaces around << and >> when used like this: 10<<20, but
-    # not otherwise (particularly, not when used as streams)
-    matched = search(r'[^0-9\s](<<|>>)[^0-9\s=]', line)
     if matched:
         error(filename, line_number, 'whitespace/operators', 3,
               'Missing spaces around %s' % matched.group(1))
@@ -1699,29 +1692,32 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
     if not namespace_match:
         return
 
-    namespace_indentation = namespace_match.group('namespace_indentation')
-
+    current_indentation_level = len(namespace_match.group('namespace_indentation'))
+    if current_indentation_level > 0:
+        error(filename, line_number, 'whitespace/indent', 4,
+              'namespace should never be indented.')
+        return
+    looking_for_semicolon = False;
     line_offset = 0
-
-    for current_line in clean_lines.raw_lines[line_number + 1:]:
+    in_preprocessor_directive = False;
+    for current_line in clean_lines.elided[line_number + 1:]:
         line_offset += 1
-
-        # Skip not only empty lines but also those with (goto) labels.
-        # The goto label regexp accepts spaces or the beginning of a
-        # comment (if anything) after the initial colon.
-        if current_line.strip() == '' or match(r'\w+\s*:([\s\/].*)?$', current_line):
+        if not current_line.strip():
             continue
-
-        remaining_line = current_line[len(namespace_indentation):]
-        if not match(r'\S', remaining_line):
-            error(filename, line_number + line_offset, 'whitespace/indent', 4,
-                  'Code inside a namespace should not be indented.')
-
-        # Just check the first non-empty line in any case, because
-        # otherwise we would need to count opened and closed braces,
-        # which is obviously a lot more complicated.
-        break
-
+        if not current_indentation_level:
+            if not (in_preprocessor_directive or looking_for_semicolon):
+                if not match(r'\S', current_line):
+                    error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                          'Code inside a namespace should not be indented.')
+            if in_preprocessor_directive or (current_line.strip()[0] == '#'): # This takes care of preprocessor directive syntax.
+                in_preprocessor_directive = current_line[-1] == '\\'
+            else:
+                looking_for_semicolon = ((current_line.find(';') == -1) and (current_line.strip()[-1] != '}')) or (current_line[-1] == '\\')
+        else:
+            looking_for_semicolon = False; # If we have a brace we may not need a semicolon.
+        current_indentation_level += current_line.count('{') - current_line.count('}')
+        if current_indentation_level < 0:
+            break;
 
 def check_using_std(filename, clean_lines, line_number, error):
     """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
