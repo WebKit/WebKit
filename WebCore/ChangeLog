@@ -1,3 +1,14 @@
+2009-10-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Crash fix when loading NPAPI plugins on Qt/Mac
+
+        There's no guarantee that the plist will be valid even if we
+        ask the plugin to create it. Crash obverved with iGetter.
+
+        * plugins/mac/PluginPackageMac.cpp:
+
 2009-10-15  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

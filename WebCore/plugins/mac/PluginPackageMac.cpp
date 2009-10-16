@@ -159,7 +159,8 @@ bool PluginPackage::fetchInfo()
             plist = readPListFile(path.get(), /*createFile*/ true, m_module);
         }
 
-        mimeDict = (CFDictionaryRef)CFDictionaryGetValue(plist.get(), CFSTR("WebPluginMIMETypes"));
+        if (plist)
+            mimeDict = (CFDictionaryRef)CFDictionaryGetValue(plist.get(), CFSTR("WebPluginMIMETypes"));
     }
 
     if (!mimeDict)
