@@ -2116,28 +2116,41 @@ static inline IMP getMethod(id o, SEL s)
 #endif
 }
 
-- (BOOL)_isNodeHaltedPlugin:(DOMNode *)node
+static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)
 {
     if (!node)
-        return NO;
-        
+        return nil;
+    
     Node* coreNode = core(node);
     if (!coreNode)
-        return NO;
+        return nil;
     
     RenderObject* renderer = coreNode->renderer();
     if (!renderer)
-        return NO;
+        return nil;
     
     Widget* widget = toRenderWidget(renderer)->widget();
     if (!widget || !widget->platformWidget())
-        return NO;
-
+        return nil;
+    
     NSView *view = widget->platformWidget();
     if (![view isKindOfClass:[WebBaseNetscapePluginView class]])
-        return NO;
+        return nil;
     
-    return [(WebBaseNetscapePluginView *)view isHalted];
+    return (WebBaseNetscapePluginView *)view;
+}
+
++ (BOOL)_isNodeHaltedPlugin:(DOMNode *)node
+{
+    return [_pluginViewForNode(node) isHalted];
+}
+
++ (void)_restartHaltedPluginForNode:(DOMNode *)node
+{
+    if (!node)
+        return;
+    
+    [_pluginViewForNode(node) resumeFromHalt];
 }
 
 - (NSPasteboard *)_insertionPasteboard

@@ -463,7 +463,8 @@ Could be worth adding to the API.
 - (BOOL)_isUsingAcceleratedCompositing;
 
 // SPI for PluginHalter
-- (BOOL)_isNodeHaltedPlugin:(DOMNode *)node;
++ (BOOL)_isNodeHaltedPlugin:(DOMNode *)node;
++ (void)_restartHaltedPluginForNode:(DOMNode *)node;
 
 // Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.
 - (NSPasteboard *)_insertionPasteboard;

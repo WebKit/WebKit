@@ -1,5 +1,18 @@
 2009-10-16  Kevin Decker  <kdecker@apple.com>
 
+        Reviewed by Anders Carlson.
+
+        Last part of:
+        <rdar://problem/7273354>
+
+        * WebView/WebView.mm: 
+        (_pluginViewForNode): Added with code extracted from _isNodeHaltedPlugin
+        (+[WebView _isNodeHaltedPlugin:]): Made this a class method.
+        (+[WebView _restartHaltedPluginForNode:]): Added. Restarts a plug-in
+        * WebView/WebViewPrivate.h: Added +_restartHaltedPluginForNode to header.
+
+2009-10-16  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Anders.
 
         <rdar://problem/7273354> 
