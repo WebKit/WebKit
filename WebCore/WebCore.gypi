@@ -1,6 +1,6 @@
 {
     'variables': {
-        'webcore_bindings_idl_files': [
+        'webcore_files': [
 
             #IDL files
             'css/CSSCharsetRule.idl',
@@ -374,8 +374,6 @@
             'xml/XPathNSResolver.idl',
             'xml/XPathResult.idl',
             'xml/XSLTProcessor.idl',
-        ],
-        'webcore_files': [
 
             # Source/Header Files
             'accessibility/AXObjectCache.cpp',

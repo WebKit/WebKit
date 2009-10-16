@@ -142,9 +142,221 @@
   },
   'targets': [
     {
-      'target_name': 'webcore_bindings_sources',
-      'type': 'none',
-      'hard_dependency': 1,
+      'target_name': 'webcore',
+      'type': '<(library)',
+      'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
+      'dependencies': [
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(chromium_src_dir)/skia/skia.gyp:skia',
+        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
+        '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
+        '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
+        '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
+        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+        '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
+      ],
+      'defines': [
+        'WEBCORE_NAVIGATOR_VENDOR="Google Inc."', 
+      ],
+      'actions': [
+        # Actions to build derived sources.
+        {
+          'action_name': 'CSSPropertyNames',
+          'inputs': [
+            '../css/makeprop.pl',
+            '../css/CSSPropertyNames.in',
+            '../css/SVGCSSPropertyNames.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/CSSPropertyNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_csspropertynames.py', '<@(_outputs)', '--', '<@(_inputs)'],
+        },
+        {
+          'action_name': 'CSSValueKeywords',
+          'inputs': [
+            '../css/makevalues.pl',
+            '../css/CSSValueKeywords.in',
+            '../css/SVGCSSValueKeywords.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/CSSValueKeywords.c',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_cssvaluekeywords.py', '<@(_outputs)', '--', '<@(_inputs)'],
+        },
+        {
+          'action_name': 'HTMLNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../html/HTMLTagNames.in',
+            '../html/HTMLAttributeNames.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/HTMLNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.h',
+            '<(INTERMEDIATE_DIR)/HTMLElementFactory.cpp',
+            # Pass --wrapperFactory to make_names to get these (JSC build?)
+            #'<(INTERMEDIATE_DIR)/JSHTMLElementWrapperFactory.cpp',
+            #'<(INTERMEDIATE_DIR)/JSHTMLElementWrapperFactory.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_makenames.py', '<@(_outputs)', '--', '<@(_inputs)', '--', '--factory', '--extraDefines', '<(feature_defines)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'action_name': 'SVGNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../svg/svgtags.in',
+            '../svg/svgattrs.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/SVGNames.cpp',
+            '<(INTERMEDIATE_DIR)/SVGNames.h',
+            '<(INTERMEDIATE_DIR)/SVGElementFactory.cpp',
+            '<(INTERMEDIATE_DIR)/SVGElementFactory.h',
+            # Pass --wrapperFactory to make_names to get these (JSC build?)
+            #'<(INTERMEDIATE_DIR)/JSSVGElementWrapperFactory.cpp',
+            #'<(INTERMEDIATE_DIR)/JSSVGElementWrapperFactory.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_makenames.py', '<@(_outputs)', '--', '<@(_inputs)', '--', '--factory', '--extraDefines', '<(feature_defines)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'action_name': 'UserAgentStyleSheets',
+          'inputs': [
+            '../css/make-css-file-arrays.pl',
+            '../css/html.css',
+            '../css/quirks.css',
+            '../css/view-source.css',
+            '../css/themeChromiumLinux.css',
+            '../css/themeWin.css',
+            '../css/themeWinQuirks.css',
+            '../css/svg.css',
+            '../css/mediaControls.css',
+            '../css/mediaControlsChromium.css',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/UserAgentStyleSheets.h',
+            '<(INTERMEDIATE_DIR)/UserAgentStyleSheetsData.cpp',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_useragentstylesheets.py', '<@(_outputs)', '--', '<@(_inputs)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'action_name': 'XLinkNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../svg/xlinkattrs.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/XLinkNames.cpp',
+            '<(INTERMEDIATE_DIR)/XLinkNames.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_makenames.py', '<@(_outputs)', '--', '<@(_inputs)', '--', '--extraDefines', '<(feature_defines)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'action_name': 'XMLNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../xml/xmlattrs.in',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/XMLNames.cpp',
+            '<(INTERMEDIATE_DIR)/XMLNames.h',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_makenames.py', '<@(_outputs)', '--', '<@(_inputs)', '--', '--extraDefines', '<(feature_defines)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'action_name': 'tokenizer',
+          'inputs': [
+            '../css/maketokenizer',
+            '../css/tokenizer.flex',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/tokenizer.cpp',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/action_maketokenizer.py', '<@(_outputs)', '--', '<@(_inputs)'],
+        },
+      ],
+      'rules': [
+        # Rules to build derived sources.
+        {
+          'rule_name': 'bison',
+          'extension': 'y',
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).cpp',
+            '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).h'
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/rule_bison.py', '<(RULE_INPUT_PATH)', '<(INTERMEDIATE_DIR)'],
+          'process_outputs_as_sources': 1,
+        },
+        {
+          'rule_name': 'gperf',
+          'extension': 'gperf',
+          # gperf output is only ever #included by other source files.  As
+          # such, process_outputs_as_sources is off.  Some gperf output is
+          # #included as *.c and some as *.cpp.  Since there's no way to tell
+          # which one will be needed in a rule definition, declare both as
+          # outputs.  The harness script will generate one file and copy it to
+          # the other.
+          #
+          # This rule places outputs in SHARED_INTERMEDIATE_DIR because glue
+          # needs access to HTMLEntityNames.c.
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).c',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).cpp',
+          ],
+          'action': ['python', '<(chromium_src_dir)/webkit/build/rule_gperf.py', '<(RULE_INPUT_PATH)', '<(SHARED_INTERMEDIATE_DIR)/webkit'],
+          'process_outputs_as_sources': 0,
+        },
+        # Rule to build generated JavaScript (V8) bindings from .idl source.
+        {
+          'rule_name': 'binding',
+          'extension': 'idl',
+          'msvs_external_rule': 1,
+          'inputs': [
+            '../bindings/scripts/generate-bindings.pl',
+            '../bindings/scripts/CodeGenerator.pm',
+            '../bindings/scripts/CodeGeneratorV8.pm',
+            '../bindings/scripts/IDLParser.pm',
+            '../bindings/scripts/IDLStructure.pm',
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/bindings/V8<(RULE_INPUT_ROOT).cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8<(RULE_INPUT_ROOT).h',
+          ],
+          'variables': {
+            'generator_include_dirs': [
+              '--include', '../css',
+              '--include', '../dom',
+              '--include', '../html',
+              '--include', '../notifications',
+              '--include', '../page',
+              '--include', '../plugins',
+              '--include', '../svg',
+              '--include', '../websockets',
+              '--include', '../workers',
+              '--include', '../xml',
+            ],
+          },
+          'action': ['python', '<(chromium_src_dir)/webkit/build/rule_binding.py', '<(RULE_INPUT_PATH)', '<(INTERMEDIATE_DIR)/bindings', '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings', '--', '<@(_inputs)', '--', '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT V8_BINDING', '--generator', 'V8', '<@(generator_include_dirs)'],
+          # They are included by DerivedSourcesAllInOne.cpp instead.
+          'process_outputs_as_sources': 0,
+          'message': 'Generating binding from <(RULE_INPUT_PATH)',
+        },
+      ],
+      'include_dirs': [
+        '<(INTERMEDIATE_DIR)',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
+        '<@(webcore_include_dirs)',
+      ],
       'sources': [
         # bison rule
         '../css/CSSGrammar.y',
@@ -155,13 +367,45 @@
         '../html/HTMLEntityNames.gperf',
         '../platform/ColorData.gperf',
 
-        # idl rule
-        '<@(webcore_bindings_idl_files)',
+        # This file includes all the .cpp files generated from the .idl files
+        # in webcore_files.
+        '../bindings/v8/DerivedSourcesAllInOne.cpp',
+
+        '<@(webcore_files)',
+
+        # For WebCoreSystemInterface, Mac-only.
+        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.m',
       ],
       'sources/': [
+        # Exclude JSC custom bindings.
+        ['exclude', 'bindings/js'],
+
         # SVG_FILTERS only.
         ['exclude', 'svg/SVG(FE|Filter)[^/]*\\.idl$'],
 
+        # Fortunately, many things can be excluded by using broad patterns.
+
+        # Exclude things that don't apply to the Chromium platform on the basis
+        # of their enclosing directories and tags at the ends of their
+        # filenames.
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
+        ['exclude', '(?<!Chromium)(SVGAllInOne|Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+
+        # JSC-only.
+        ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
+
+        # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
+        ['exclude', 'loader/appcache/'],
+        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
+        ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp|idl)$'],
+
+        # SVG_FILTERS only.
+        ['exclude', '(platform|svg)/graphics/filters/'],
+        ['exclude', 'svg/Filter[^/]*\\.cpp$'],
+        ['exclude', 'svg/SVG(FE|Filter)[^/]*\\.cpp$'],
+
+        # Exclude some DB-related files.
+        ['exclude', 'platform/sql/SQLiteFileSystem.cpp'],
       ],
       'sources!': [
         # Custom bindings in bindings/v8/custom exist for these.
@@ -202,423 +446,6 @@
         # Someone (me?) should figure it out and add appropriate comments.
         '../css/CSSUnknownRule.idl',
 
-      ],
-      'actions': [
-        # Actions to build derived sources.
-        {
-          'action_name': 'CSSPropertyNames',
-          'inputs': [
-            '../css/makeprop.pl',
-            '../css/CSSPropertyNames.in',
-            '../css/SVGCSSPropertyNames.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_csspropertynames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)'
-          ],
-        },
-        {
-          'action_name': 'CSSValueKeywords',
-          'inputs': [
-            '../css/makevalues.pl',
-            '../css/CSSValueKeywords.in',
-            '../css/SVGCSSValueKeywords.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.c',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_cssvaluekeywords.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)'
-          ],
-        },
-        {
-          'action_name': 'HTMLNames',
-          'inputs': [
-            '../dom/make_names.pl',
-            '../html/HTMLTagNames.in',
-            '../html/HTMLAttributeNames.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
-            # Pass --wrapperFactory to make_names to get these (JSC build?)
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSHTMLElementWrapperFactory.cpp',
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSHTMLElementWrapperFactory.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--factory',
-            '--extraDefines', '<(feature_defines)'
-          ],
-        },
-        {
-          'action_name': 'SVGNames',
-          'inputs': [
-            '../dom/make_names.pl',
-            '../svg/svgtags.in',
-            '../svg/svgattrs.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.h',
-            # Pass --wrapperFactory to make_names to get these (JSC build?)
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSSVGElementWrapperFactory.cpp',
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSSVGElementWrapperFactory.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--factory',
-            '--extraDefines', '<(feature_defines)'
-          ],
-        },
-        {
-          'action_name': 'UserAgentStyleSheets',
-          'inputs': [
-            '../css/make-css-file-arrays.pl',
-            '../css/html.css',
-            '../css/quirks.css',
-            '../css/view-source.css',
-            '../css/themeChromiumLinux.css',
-            '../css/themeWin.css',
-            '../css/themeWinQuirks.css',
-            '../css/svg.css',
-            '../css/mediaControls.css',
-            '../css/mediaControlsChromium.css',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheets.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_useragentstylesheets.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)'
-          ],
-        },
-        {
-          'action_name': 'XLinkNames',
-          'inputs': [
-            '../dom/make_names.pl',
-            '../svg/xlinkattrs.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--extraDefines', '<(feature_defines)'
-          ],
-        },
-        {
-          'action_name': 'XMLNames',
-          'inputs': [
-            '../dom/make_names.pl',
-            '../xml/xmlattrs.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.h',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--extraDefines', '<(feature_defines)'
-          ],
-        },
-        {
-          'action_name': 'tokenizer',
-          'inputs': [
-            '../css/maketokenizer',
-            '../css/tokenizer.flex',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/tokenizer.cpp',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/action_maketokenizer.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)'
-          ],
-        },
-      ],
-      'rules': [
-        # Rules to build derived sources.
-        {
-          'rule_name': 'bison',
-          'extension': 'y',
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).h'
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/rule_bison.py',
-            '<(RULE_INPUT_PATH)',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit'
-          ],
-        },
-        {
-          'rule_name': 'gperf',
-          'extension': 'gperf',
-          # gperf output is only ever #included by other source files.  As
-          # such, process_outputs_as_sources is off.  Some gperf output is
-          # #included as *.c and some as *.cpp.  Since there's no way to tell
-          # which one will be needed in a rule definition, declare both as
-          # outputs.  The harness script will generate one file and copy it to
-          # the other.
-          #
-          # This rule places outputs in SHARED_INTERMEDIATE_DIR because glue
-          # needs access to HTMLEntityNames.c.
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).c',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/<(RULE_INPUT_ROOT).cpp',
-          ],
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/rule_gperf.py',
-            '<(RULE_INPUT_PATH)',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit'
-          ],
-          'process_outputs_as_sources': 0,
-        },
-        # Rule to build generated JavaScript (V8) bindings from .idl source.
-        {
-          'rule_name': 'binding',
-          'extension': 'idl',
-          'msvs_external_rule': 1,
-          'inputs': [
-            '../bindings/scripts/generate-bindings.pl',
-            '../bindings/scripts/CodeGenerator.pm',
-            '../bindings/scripts/CodeGeneratorV8.pm',
-            '../bindings/scripts/IDLParser.pm',
-            '../bindings/scripts/IDLStructure.pm',
-          ],
-          'outputs': [
-            # FIXME:  The .cpp file should be in webkit/bindings once
-            # we coax GYP into supporting it (see 'action' below).
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8<(RULE_INPUT_ROOT).cpp',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8<(RULE_INPUT_ROOT).h',
-          ],
-          'variables': {
-            'generator_include_dirs': [
-              '--include', '../css',
-              '--include', '../dom',
-              '--include', '../html',
-              '--include', '../notifications',
-              '--include', '../page',
-              '--include', '../plugins',
-              '--include', '../svg',
-              '--include', '../websockets',
-              '--include', '../workers',
-              '--include', '../xml',
-            ],
-          },
-          # FIXME:  Note that we put the .cpp files in webcore/bindings
-          # but the .h files in webkit/bindings.  This is to work around
-          # the unfortunate fact that GYP strips duplicate arguments
-          # from lists.  When we have a better GYP way to suppress that
-          # behavior, change the output location.
-          'action': [
-            'python',
-            '<(chromium_src_dir)/webkit/build/rule_binding.py',
-            '<(RULE_INPUT_PATH)',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
-            '--',
-            '<@(_inputs)',
-            '--',
-            '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT V8_BINDING',
-            '--generator', 'V8',
-            '<@(generator_include_dirs)'
-          ],
-          'message': 'Generating binding from <(RULE_INPUT_PATH)',
-        },
-      ],
-    },
-    {
-      'target_name': 'webcore_bindings',
-      'type': '<(library)',
-      'hard_dependency': 1,
-      'dependencies': [
-        'webcore_bindings_sources',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-        '<(chromium_src_dir)/skia/skia.gyp:skia',
-        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
-        '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
-        '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
-        '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
-        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
-        '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
-      ],
-      'include_dirs': [
-        '<(INTERMEDIATE_DIR)',
-        # FIXME:  Remove <(SHARED_INTERMEDIATE_DIR)/webcore when we
-        # can entice gyp into letting us put both the .cpp and .h
-        # files in the same output directory.
-        '<(SHARED_INTERMEDIATE_DIR)/webcore',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
-        '<@(webcore_include_dirs)',
-      ],
-      'direct_dependent_settings': {
-        'include_dirs': [
-          '<(SHARED_INTERMEDIATE_DIR)/webkit',
-          '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
-        ],
-      },
-      'sources': [
-        # This file includes all the .cpp files generated from the .idl files
-        # in webcore_files.
-        '../bindings/v8/DerivedSourcesAllInOne.cpp',
-
-        # Additional .cpp files from webcore_bindings_sources actions.
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
-
-        # Additional .cpp files from the webcore_bindings_sources rules.
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/XPathGrammar.cpp',
-      ],
-      'conditions': [
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-        }],
-        ['OS=="mac"', {
-          'include_dirs': [
-            '../../WebKitLibraries',
-          ],
-        }],
-        ['OS=="win"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
-          'defines': [
-            'WEBCORE_NAVIGATOR_PLATFORM="Win32"',
-            '__PRETTY_FUNCTION__=__FUNCTION__',
-          ],
-          # This is needed because Event.h in this directory is blocked
-          # by a system header on windows.
-          'include_dirs++': ['../dom'],
-          'direct_dependent_settings': {
-            'include_dirs+++': ['../dom'],
-          },
-        }],
-        ['OS!="win" and remove_webcore_debug_symbols==1', {
-          'configurations': {
-            'Debug': {
-              'cflags!': ['-g'],
-            }
-          },
-        }],
-      ],
-    },
-    {
-      'target_name': 'webcore',
-      'type': '<(library)',
-      'msvs_guid': '1C16337B-ACF3-4D03-AA90-851C5B5EADA6',
-      'dependencies': [
-        'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-        '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-        '<(chromium_src_dir)/skia/skia.gyp:skia',
-        '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
-        '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
-        '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
-        '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
-        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
-        '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
-      ],
-      'defines': [
-        'WEBCORE_NAVIGATOR_VENDOR="Google Inc."', 
-      ],
-      'include_dirs': [
-        '<(INTERMEDIATE_DIR)',
-        '<@(webcore_include_dirs)',
-      ],
-      'sources': [
-        '<@(webcore_files)',
-
-        # For WebCoreSystemInterface, Mac-only.
-        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.m',
-      ],
-      'sources/': [
-        # Exclude JSC custom bindings.
-        ['exclude', 'bindings/js'],
-
-        # Fortunately, many things can be excluded by using broad patterns.
-
-        # Exclude things that don't apply to the Chromium platform on the basis
-        # of their enclosing directories and tags at the ends of their
-        # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
-        ['exclude', '(?<!Chromium)(SVGAllInOne|Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
-
-        # JSC-only.
-        ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
-
-        # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
-        ['exclude', 'loader/appcache/'],
-        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
-        ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp)$'],
-
-        # SVG_FILTERS only.
-        ['exclude', '(platform|svg)/graphics/filters/'],
-        ['exclude', 'svg/Filter[^/]*\\.cpp$'],
-        ['exclude', 'svg/SVG(FE|Filter)[^/]*\\.cpp$'],
-
-        # Exclude some DB-related files.
-        ['exclude', 'platform/sql/SQLiteFileSystem.cpp'],
-      ],
-      'sources!': [
         # A few things can't be excluded by patterns.  List them individually.
 
         # Don't build StorageNamespace.  We have our own implementation.
@@ -673,6 +500,8 @@
       ],
       'direct_dependent_settings': {
         'include_dirs': [
+          '<(SHARED_INTERMEDIATE_DIR)/webkit',
+          '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
           '<@(webcore_include_dirs)',
         ],
         'mac_framework_dirs': [
@@ -680,7 +509,6 @@
         ],
       },
       'export_dependent_settings': [
-        'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -925,9 +753,7 @@
           },
         }],
         ['OS=="win"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
+          'dependencies': ['<(chromium_src_dir)/build/win/system.gyp:cygwin'],
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
             ['include', '/opentype/'],
@@ -946,12 +772,8 @@
             'include_dirs+++': ['../dom'],
           },
         }],
-        ['OS!="linux" and OS!="freebsd"', {
-          'sources/': [['exclude', '(Gtk|Linux)\\.cpp$']]
-        }],
-        ['OS!="mac"', {
-          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
-        }],
+        ['OS!="linux" and OS!="freebsd"', {'sources/': [['exclude', '(Gtk|Linux)\\.cpp$']]}],
+        ['OS!="mac"', {'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]}],
         ['OS!="win"', {
           'sources/': [
             ['exclude', 'Win\\.cpp$'],

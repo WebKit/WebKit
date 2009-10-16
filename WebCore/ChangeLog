@@ -1,3 +1,11 @@
+2009-10-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        No review, rolling out r49693, because it broke Chromium build.
+        http://trac.webkit.org/changeset/49693
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.
