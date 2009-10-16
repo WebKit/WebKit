@@ -96,7 +96,7 @@ void WebHaltablePlugin::halt()
     RefPtr<Image> nodeImage = BitmapImage::create(cgImage);
     ASSERT(element->renderer());
     toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
-    [m_view stop];
+    [m_view halt];
 }
 
 void WebHaltablePlugin::restart()
@@ -104,7 +104,7 @@ void WebHaltablePlugin::restart()
     Element* element = [m_view element];
     ASSERT(element->renderer());
     toRenderWidget(element->renderer())->showSubstituteImage(0);
-    [m_view start];
+    [m_view resumeFromHalt];
 }
     
 Node* WebHaltablePlugin::node() const
@@ -490,6 +490,27 @@ Node* WebHaltablePlugin::node() const
     [self removeWindowObservers];
     
     [self destroyPlugin];
+}
+
+- (void)halt
+{
+    ASSERT(!_isHalted && _isStarted);
+    [self stop];
+    _isHalted = YES;
+}
+
+- (void)resumeFromHalt
+{
+    ASSERT(_isHalted && !_isStarted);
+    [self start];
+    
+    if (_isStarted)
+        _isHalted = NO;
+}
+
+- (BOOL)isHalted
+{
+    return _isHalted;
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow

@@ -1,3 +1,20 @@
+2009-10-16  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/7273354> 
+
+        * Plugins/WebBaseNetscapePluginView.h: Added _isHalted ivar and three new methods: -halt, -resumeFromHalt, and -isHalted
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::halt): Call -halt instead of -stop.  
+        (WebHaltablePlugin::restart):Call -resumeFromHalt instead of -start. 
+        (-[WebBaseNetscapePluginView halt]): Added. Stop the plug-in, update _isHalted.
+        (-[WebBaseNetscapePluginView resumeFromHalt]): Added. Start the plug-in, update _isHalted.
+        (-[WebBaseNetscapePluginView isHalted]): Added.
+        * WebView/WebView.mm:
+        (-[WebView _isNodeHaltedPlugin:]): Added. Queries a DOMNode to determine if it's a halted plug-in.
+        * WebView/WebViewPrivate.h: Added _isNodeHaltedPlugin.
+
 2009-10-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
