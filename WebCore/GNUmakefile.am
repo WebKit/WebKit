@@ -1261,6 +1261,8 @@ webcore_sources += \
 	WebCore/loader/Request.h \
 	WebCore/loader/ResourceLoader.cpp \
 	WebCore/loader/ResourceLoader.h \
+	WebCore/loader/ResourceLoadNotifier.cpp \
+	WebCore/loader/ResourceLoadNotifier.h \
 	WebCore/loader/SubresourceLoader.cpp \
 	WebCore/loader/SubresourceLoader.h \
 	WebCore/loader/SubresourceLoaderClient.h \

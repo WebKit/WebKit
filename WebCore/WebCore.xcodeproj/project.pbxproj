@@ -2357,6 +2357,8 @@
 		97059978107D975200A50A7C /* PolicyCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059974107D975200A50A7C /* PolicyCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059975107D975200A50A7C /* PolicyChecker.cpp */; };
 		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */; };
+		973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 973E325510883B7C005BC493 /* ResourceLoadNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		979F43D31075E44A0000F83B /* RedirectScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* RedirectScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* RedirectScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* RedirectScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DCE20110807C750057D394 /* HistoryController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DCE1FF10807C750057D394 /* HistoryController.cpp */; };
@@ -7567,6 +7569,8 @@
 		97059974107D975200A50A7C /* PolicyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCallback.h; sourceTree = "<group>"; };
 		97059975107D975200A50A7C /* PolicyChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyChecker.cpp; sourceTree = "<group>"; };
 		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
+		973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadNotifier.cpp; sourceTree = "<group>"; };
+		973E325510883B7C005BC493 /* ResourceLoadNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadNotifier.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* RedirectScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RedirectScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* RedirectScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedirectScheduler.h; sourceTree = "<group>"; };
 		97DCE1FF10807C750057D394 /* HistoryController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryController.cpp; sourceTree = "<group>"; };
@@ -14656,6 +14660,8 @@
 				BCB16C160979C3BD00467741 /* Request.h */,
 				93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */,
 				656D37270ADBA5DE00A4554D /* ResourceLoader.h */,
+				973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */,
+				973E325510883B7C005BC493 /* ResourceLoadNotifier.h */,
 				93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */,
 				656D37300ADBA5DE00A4554D /* SubresourceLoader.h */,
 				1A3178920B20A81600316987 /* SubresourceLoaderClient.h */,
@@ -18034,6 +18040,7 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20165,6 +20172,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

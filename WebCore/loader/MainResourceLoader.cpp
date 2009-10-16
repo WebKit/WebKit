@@ -77,7 +77,7 @@ void MainResourceLoader::receivedError(const ResourceError& error)
 
     if (!cancelled()) {
         ASSERT(!reachedTerminalState());
-        frameLoader()->didFailToLoad(this, error);
+        frameLoader()->notifier()->didFailToLoad(this, error);
         
         releaseResources();
     }

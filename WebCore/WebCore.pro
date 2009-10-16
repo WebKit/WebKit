@@ -1122,6 +1122,7 @@ SOURCES += \
     loader/RedirectScheduler.cpp \
     loader/Request.cpp \
     loader/ResourceLoader.cpp \
+    loader/ResourceLoadNotifier.cpp \
     loader/SubresourceLoader.cpp \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \

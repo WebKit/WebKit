@@ -36,6 +36,7 @@
 #include "PolicyCallback.h"
 #include "PolicyChecker.h"
 #include "RedirectScheduler.h"
+#include "ResourceLoadNotifier.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "Timer.h"
@@ -91,6 +92,7 @@ namespace WebCore {
 
         PolicyChecker* policyChecker() const { return &m_policyChecker; }
         HistoryController* history() const { return &m_history; }
+        ResourceLoadNotifier* notifier() const { return &m_notifer; }
 
         // FIXME: This is not cool, people. There are too many different functions that all start loads.
         // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
@@ -141,16 +143,6 @@ namespace WebCore {
         static double timeOfLastCompletedLoad();
 
         bool shouldUseCredentialStorage(ResourceLoader*);
-        void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
-        void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
-        
-        void assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest&);
-        void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
-        void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-        void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
-        void didFinishLoad(ResourceLoader*);
-        void didFailToLoad(ResourceLoader*, const ResourceError&);
-        void didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& initialRequest() const;
         void receivedMainResourceError(const ResourceError&, bool isComplete);
@@ -397,11 +389,6 @@ namespace WebCore {
         bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
         void dispatchDidCommitLoad();
-        void dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-        void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
-        void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
-        void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
-        void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
 
         void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>); // Calls continueLoadAfterNavigationPolicy
         void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   
@@ -447,6 +434,7 @@ namespace WebCore {
 
         mutable PolicyChecker m_policyChecker;
         mutable HistoryController m_history;
+        mutable ResourceLoadNotifier m_notifer;
 
         FrameState m_state;
         FrameLoadType m_loadType;

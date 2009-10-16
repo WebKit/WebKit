@@ -4502,7 +4502,7 @@ void Document::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const
     Frame* frame = this->frame();
     if (frame) {
         FrameLoader* frameLoader = frame->loader();
-        frameLoader->didLoadResourceByXMLHttpRequest(identifier, sourceString);
+        frameLoader->notifier()->didLoadResourceByXMLHttpRequest(identifier, sourceString);
     }
 }
 

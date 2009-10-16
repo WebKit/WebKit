@@ -1647,6 +1647,8 @@
             'loader/Request.h',
             'loader/ResourceLoader.cpp',
             'loader/ResourceLoader.h',
+            'loader/ResourceLoadNotifier.cpp',
+            'loader/ResourceLoadNotifier.h',
             'loader/SubresourceLoader.cpp',
             'loader/SubresourceLoader.h',
             'loader/SubresourceLoaderClient.h',

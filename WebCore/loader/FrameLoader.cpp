@@ -168,6 +168,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_client(client)
     , m_policyChecker(frame)
     , m_history(frame)
+    , m_notifer(frame)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
@@ -2936,7 +2937,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
 
     if (Page* page = m_frame->page()) {
         identifier = page->progress()->createUniqueIdentifier();
-        dispatchAssignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
+        notifier()->dispatchAssignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
     }
 
     if (!m_provisionalDocumentLoader->startLoadingMainResource(identifier))
@@ -3256,46 +3257,6 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     return identifier;
 }
 
-void FrameLoader::assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest& clientRequest)
-{
-    return dispatchAssignIdentifierToInitialRequest(identifier, activeDocumentLoader(), clientRequest);
-}
-
-void FrameLoader::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
-{
-    applyUserAgent(clientRequest);
-    dispatchWillSendRequest(loader->documentLoader(), loader->identifier(), clientRequest, redirectResponse);
-}
-
-void FrameLoader::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
-{
-    activeDocumentLoader()->addResponse(r);
-    
-    if (Page* page = m_frame->page())
-        page->progress()->incrementProgress(loader->identifier(), r);
-    dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
-}
-
-void FrameLoader::didReceiveData(ResourceLoader* loader, const char* data, int length, int lengthReceived)
-{
-    if (Page* page = m_frame->page())
-        page->progress()->incrementProgress(loader->identifier(), data, length);
-    dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), lengthReceived);
-}
-
-void FrameLoader::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
-{
-    if (Page* page = m_frame->page())
-        page->progress()->completeProgress(loader->identifier());
-    if (!error.isNull())
-        m_client->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
-}
-
-void FrameLoader::didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
-{
-    m_client->dispatchDidLoadResourceByXMLHttpRequest(identifier, sourceString);
-}
-
 const ResourceRequest& FrameLoader::originalRequest() const
 {
     return activeDocumentLoader()->originalRequestCopy();
@@ -3508,13 +3469,13 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
 void FrameLoader::sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse& response, int length, const ResourceError& error)
 {    
     if (!response.isNull())
-        dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);
+        notifier()->dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);
     
     if (length > 0)
-        dispatchDidReceiveContentLength(m_documentLoader.get(), identifier, length);
+        notifier()->dispatchDidReceiveContentLength(m_documentLoader.get(), identifier, length);
     
     if (error.isNull())
-        dispatchDidFinishLoading(m_documentLoader.get(), identifier);
+        notifier()->dispatchDidFinishLoading(m_documentLoader.get(), identifier);
     else
         m_client->dispatchDidFailLoading(m_documentLoader.get(), identifier, error);
 }
@@ -3526,11 +3487,11 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     identifier = 0;
     if (Page* page = m_frame->page()) {
         identifier = page->progress()->createUniqueIdentifier();
-        dispatchAssignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
+        notifier()->dispatchAssignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
     }
 
     ResourceRequest newRequest(request);
-    dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
+    notifier()->dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
 
     if (newRequest.isNull())
         error = cancelledError(request);
@@ -3858,26 +3819,9 @@ ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& respons
     return m_client->fileDoesNotExistError(response);    
 }
 
-void FrameLoader::didFinishLoad(ResourceLoader* loader)
-{    
-    if (Page* page = m_frame->page())
-        page->progress()->completeProgress(loader->identifier());
-    dispatchDidFinishLoading(loader->documentLoader(), loader->identifier());
-}
-
 bool FrameLoader::shouldUseCredentialStorage(ResourceLoader* loader)
 {
     return m_client->shouldUseCredentialStorage(loader->documentLoader(), loader->identifier());
-}
-
-void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
-{
-    m_client->dispatchDidReceiveAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
-}
-
-void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
-{
-    m_client->dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
 void FrameLoader::setTitle(const String& title)
@@ -3982,63 +3926,6 @@ void FrameLoader::dispatchDidCommitLoad()
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
         page->inspectorController()->didCommitLoad(m_documentLoader.get());
-#endif
-}
-
-void FrameLoader::dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
-{
-    m_client->assignIdentifierToInitialRequest(identifier, loader, request);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->identifierForInitialRequest(identifier, loader, request);
-#endif
-}
-
-void FrameLoader::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    StringImpl* oldRequestURL = request.url().string().impl();
-    m_documentLoader->didTellClientAboutLoad(request.url());
-
-    m_client->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
-
-    // If the URL changed, then we want to put that new URL in the "did tell client" set too.
-    if (!request.isNull() && oldRequestURL != request.url().string().impl())
-        m_documentLoader->didTellClientAboutLoad(request.url());
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->willSendRequest(loader, identifier, request, redirectResponse);
-#endif
-}
-
-void FrameLoader::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
-{
-    m_client->dispatchDidReceiveResponse(loader, identifier, r);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveResponse(loader, identifier, r);
-#endif
-}
-
-void FrameLoader::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
-{
-    m_client->dispatchDidReceiveContentLength(loader, identifier, length);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveContentLength(loader, identifier, length);
-#endif
-}
-
-void FrameLoader::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
-{
-    m_client->dispatchDidFinishLoading(loader, identifier);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didFinishLoading(loader, identifier);
 #endif
 }
 
