@@ -1,3 +1,110 @@
+2009-10-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Crash fix when loading NPAPI plugins on Qt/Mac
+
+        There's no guarantee that the plist will be valid even if we
+        ask the plugin to create it. Crash obverved with iGetter.
+
+        * plugins/mac/PluginPackageMac.cpp:
+
+2009-10-15  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix for Chromium/skia's implementation of canvas's isPointInPath().
+        https://bugs.webkit.org/show_bug.cgi?id=30402
+
+        Covered by LayoutTests/fast/canvas/pointInPath.html.
+
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::SkPathContainsPoint):
+
+2009-10-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor ResourceLoadNotifier out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30379
+
+        These methods have virtually no interaction with the rest of
+        FrameLoader.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/Document.cpp:
+        (WebCore::Document::resourceRetrievedByXMLHttpRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::ResourceLoadNotifier::ResourceLoadNotifier):
+        (WebCore::ResourceLoadNotifier::activeDocumentLoader):
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::willSendRequest):
+        (WebCore::ResourceLoadNotifier::didReceiveResponse):
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+        (WebCore::ResourceLoadNotifier::didFailToLoad):
+        (WebCore::ResourceLoadNotifier::didLoadResourceByXMLHttpRequest):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::ResourceLoadNotifier::didFinishLoad):
+        (WebCore::ResourceLoadNotifier::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::dispatchAssignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::notifier):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::receivedError):
+        * loader/ResourceLoadNotifier.cpp: Added.
+        (WebCore::ResourceLoadNotifier::ResourceLoadNotifier):
+        (WebCore::ResourceLoadNotifier::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::willSendRequest):
+        (WebCore::ResourceLoadNotifier::didReceiveResponse):
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+        (WebCore::ResourceLoadNotifier::didFinishLoad):
+        (WebCore::ResourceLoadNotifier::didFailToLoad):
+        (WebCore::ResourceLoadNotifier::didLoadResourceByXMLHttpRequest):
+        (WebCore::ResourceLoadNotifier::dispatchAssignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::activeDocumentLoader):
+        * loader/ResourceLoadNotifier.h: Added.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+
+2009-10-15  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Bug 30427 -  Remove unneeded methods in ChromiumDataObject
+        (https://bugs.webkit.org/show_bug.cgi?id=30427)
+        
+        Remove no longer needed methods from ChromiumDataObject.
+
+        No new tests (no functional change)
+
+        * platform/chromium/ChromiumDataObject.h:
+
 2009-10-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
