@@ -1,3 +1,15 @@
+2009-10-15  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix for Chromium/skia's implementation of canvas's isPointInPath().
+        https://bugs.webkit.org/show_bug.cgi?id=30402
+
+        Covered by LayoutTests/fast/canvas/pointInPath.html.
+
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::SkPathContainsPoint):
+
 2009-10-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
