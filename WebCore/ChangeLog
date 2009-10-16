@@ -1,3 +1,21 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        No review, rolling out r49644.
+        http://trac.webkit.org/changeset/49644
+        
+        We need to think about this change some more. See bug #30418 
+        for more details.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canEvaluateJavaScriptURL):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        (WebCore::XSSAuditor::canSetBaseElementURL):
+        (WebCore::XSSAuditor::findInRequest):
+        * page/XSSAuditor.h:
+
 2009-10-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to determine whether a node is a halted plug-in.

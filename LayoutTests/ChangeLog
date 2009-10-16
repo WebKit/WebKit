@@ -1,3 +1,27 @@
+2009-10-15  Daniel Bates  <dbates@webkit.org>
+
+        No review, rolling out r49644.
+        http://trac.webkit.org/changeset/49644
+
+        * http/tests/security/xssAuditor/base-href-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/base-href-comment.html: Removed.
+        * http/tests/security/xssAuditor/iframe-javascript-url-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/iframe-javascript-url-comment.html: Removed.
+        * http/tests/security/xssAuditor/img-onerror-HTML-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/img-onerror-HTML-comment.html: Removed.
+        * http/tests/security/xssAuditor/img-onerror-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/img-onerror-comment.html: Removed.
+        * http/tests/security/xssAuditor/object-tag-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/object-tag-comment.html: Removed.
+        * http/tests/security/xssAuditor/resources/echo-before-image.pl: Removed.
+        * http/tests/security/xssAuditor/resources/echo-head-base-href-comment.pl: Removed.
+        * http/tests/security/xssAuditor/script-tag-comment-HTML-entity-expected.txt: Removed.
+        * http/tests/security/xssAuditor/script-tag-comment-HTML-entity.html: Removed.
+        * http/tests/security/xssAuditor/script-tag-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/script-tag-comment.html: Removed.
+        * http/tests/security/xssAuditor/script-tag-with-source-comment-expected.txt: Removed.
+        * http/tests/security/xssAuditor/script-tag-with-source-comment.html: Removed.
+
 2009-10-15  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adele Peterson.
