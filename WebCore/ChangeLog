@@ -1,3 +1,29 @@
+2009-10-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change EmptyPluginHalterClient in SVGImage to be non-static, to
+        match changes made http://trac.webkit.org/changeset/49385.
+        https://bugs.webkit.org/show_bug.cgi?id=30403
+
+        Run the following layout test sequence:
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-01-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-03-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-04-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-05-b.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-06-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-07-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-08-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-09-t.svg
+          LayoutTests/svg/W3C-SVG-1.1/struct-image-10-t.svg
+          LayoutTests/svg/carto.net/scrollbar.svg
+          LayoutTests/svg/carto.net/selectionlist.svg
+
+        selectionlist.svg should not crash.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Made EmptyPluginHalterClient non-static.
+
 2009-10-16  Victor Wang  <victorw@chromium.org>
 
         Reviewed by David Levin.
