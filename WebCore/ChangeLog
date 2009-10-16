@@ -1,5 +1,18 @@
 2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Reviewed by Eric Carlson.
+
+        Set autobuffer to true and schedule load in V8 audio element constructor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30448
+
+        Covered by existing tests.
+
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Set autobuffer to true and schedule load.
+
+2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Remove FIXME in RenderMediaControlsChromium as bug was fixed upstream.

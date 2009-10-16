@@ -81,8 +81,11 @@ CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
     V8DOMWrapper::convertNodeToV8Object(document);
 
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, document);
-    if (args.Length() > 0)
+    audio->setAutobuffer(true);
+    if (args.Length() > 0) {
         audio->setSrc(toWebCoreString(args[0]));
+        audio->scheduleLoad();
+    }
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), audio.get());
     audio->ref();
