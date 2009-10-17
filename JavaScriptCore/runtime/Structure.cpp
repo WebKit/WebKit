@@ -28,10 +28,9 @@
 
 #include "Identifier.h"
 #include "JSObject.h"
-#include "JSPropertyNameIterator.h"
-#include "Lookup.h"
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
+#include "Lookup.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 
@@ -160,9 +159,9 @@ Structure::~Structure()
             m_previous->table.removeAnonymousSlotTransition(m_anonymousSlotsInPrevious);
 
     }
-    
-    if (m_enumerationCache)
-        m_enumerationCache->setCachedStructure(0);
+
+    if (m_cachedPropertyNameArrayData)
+        m_cachedPropertyNameArrayData->setCachedStructure(0);
 
     if (m_propertyTable) {
         unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
@@ -281,6 +280,13 @@ void Structure::materializePropertyMap()
         PropertyMapEntry entry(structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious, ++m_propertyTable->lastIndexUsed);
         insertIntoPropertyMapHashTable(entry);
     }
+}
+
+void Structure::clearEnumerationCache()
+{
+    if (m_cachedPropertyNameArrayData)
+        m_cachedPropertyNameArrayData->setCachedStructure(0);
+    m_cachedPropertyNameArrayData.clear();
 }
 
 void Structure::growPropertyStorageCapacity()
@@ -546,25 +552,25 @@ PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
 
 size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
 {
-    ASSERT(!m_enumerationCache);
     materializePropertyMapIfNecessary();
 
     m_isPinnedPropertyTable = true;
     size_t offset = put(propertyName, attributes, specificValue);
     if (propertyStorageSize() > propertyStorageCapacity())
         growPropertyStorageCapacity();
+    clearEnumerationCache();
     return offset;
 }
 
 size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName)
 {
     ASSERT(isUncacheableDictionary());
-    ASSERT(!m_enumerationCache);
 
     materializePropertyMapIfNecessary();
 
     m_isPinnedPropertyTable = true;
     size_t offset = remove(propertyName);
+    clearEnumerationCache();
     return offset;
 }
 

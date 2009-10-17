@@ -1015,18 +1015,16 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_get_pnames: {
-            int r0 = it[0].u.operand;
-            int r1 = it[1].u.operand;
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
             printf("[%4d] get_pnames\t %s, %s\n", location, registerName(r0).c_str(), registerName(r1).c_str());
-            it += OPCODE_LENGTH(op_get_pnames) - 1;
             break;
         }
         case op_next_pname: {
-            int dest = it[0].u.operand;
-            int iter = it[4].u.operand;
-            int offset = it[5].u.operand;
+            int dest = (++it)->u.operand;
+            int iter = (++it)->u.operand;
+            int offset = (++it)->u.operand;
             printf("[%4d] next_pname\t %s, %s, %d(->%d)\n", location, registerName(dest).c_str(), registerName(iter).c_str(), offset, location + offset);
-            it += OPCODE_LENGTH(op_next_pname) - 1;
             break;
         }
         case op_push_scope: {

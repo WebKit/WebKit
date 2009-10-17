@@ -47,7 +47,7 @@ void PropertyNameArray::add(UString::Rep* identifier)
             return;
     }
 
-    addKnownUnique(identifier);
+    m_data->propertyNameVector().append(Identifier(m_globalData, identifier));
 }
 
 } // namespace JSC

@@ -33,7 +33,6 @@
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSFunction.h"
-#include "JSPropertyNameIterator.h"
 #include "LinkBuffer.h"
 
 namespace JSC {
@@ -1196,109 +1195,23 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_get_pnames(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int i = currentInstruction[3].u.operand;
-    int size = currentInstruction[4].u.operand;
-    int breakTarget = currentInstruction[5].u.operand;
-
-    JumpList isNotObject;
-
-    emitLoad(base, regT1, regT0);
-    if (!m_codeBlock->isKnownNotImmediate(base))
-        isNotObject.append(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
-    if (base != m_codeBlock->thisRegister()) {
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        isNotObject.append(branch32(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
-    }
-
-    // We could inline the case where you have a valid cache, but
-    // this call doesn't seem to be hot.
-    Label isObject(this);
-    JITStubCall getPnamesStubCall(this, cti_op_get_pnames);
-    getPnamesStubCall.addArgument(regT0);
-    getPnamesStubCall.call(dst);
-    load32(Address(regT0, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStringsSize)), regT3);
-    store32(Imm32(0), addressFor(i));
-    store32(regT3, addressFor(size));
-    Jump end = jump();
-
-    isNotObject.link(this);
-    addJump(branch32(Equal, regT1, Imm32(JSValue::NullTag)), breakTarget);
-    addJump(branch32(Equal, regT1, Imm32(JSValue::UndefinedTag)), breakTarget);
-    JITStubCall toObjectStubCall(this, cti_to_object);
-    toObjectStubCall.addArgument(regT1, regT0);
-    toObjectStubCall.call(base);
-    jump().linkTo(isObject, this);
-    
-    end.link(this);
-}
-
 void JIT::emit_op_next_pname(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int i = currentInstruction[3].u.operand;
-    int size = currentInstruction[4].u.operand;
-    int it = currentInstruction[5].u.operand;
-    int target = currentInstruction[6].u.operand;
-    
-    JumpList callHasProperty;
+    int iter = currentInstruction[2].u.operand;
+    int target = currentInstruction[3].u.operand;
 
-    Label begin(this);
-    load32(addressFor(i), regT0);
-    Jump end = branch32(Equal, regT0, addressFor(size));
+    load32(Address(callFrameRegister, (iter * sizeof(Register))), regT0);
 
-    // Grab key @ i
-    loadPtr(addressFor(it), regT1);
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStrings)), regT2);
-    load32(BaseIndex(regT2, regT0, TimesEight), regT2);
-    store32(Imm32(JSValue::CellTag), tagFor(dst));
-    store32(regT2, payloadFor(dst));
-
-    // Increment i
-    add32(Imm32(1), regT0);
-    store32(regT0, addressFor(i));
-
-    // Verify that i is valid:
-    loadPtr(addressFor(base), regT0);
-
-    // Test base's structure
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    callHasProperty.append(branchPtr(NotEqual, regT2, Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure)))));
-
-    // Test base's prototype chain
-    loadPtr(Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedPrototypeChain))), regT3);
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(StructureChain, m_vector)), regT3);
-    addJump(branchTestPtr(Zero, Address(regT3)), target);
-
-    Label checkPrototype(this);
-    callHasProperty.append(branch32(Equal, Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), Imm32(JSValue::NullTag)));
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    callHasProperty.append(branchPtr(NotEqual, regT2, Address(regT3)));
-    addPtr(Imm32(sizeof(Structure*)), regT3);
-    branchTestPtr(NonZero, Address(regT3)).linkTo(checkPrototype, this);
-
-    // Continue loop.
-    addJump(jump(), target);
-
-    // Slow case: Ask the object if i is valid.
-    callHasProperty.link(this);
-    loadPtr(addressFor(dst), regT1);
-    JITStubCall stubCall(this, cti_has_property);
+    JITStubCall stubCall(this, cti_op_next_pname);
     stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
     stubCall.call();
 
-    // Test for valid key.
-    addJump(branchTest32(NonZero, regT0), target);
-    jump().linkTo(begin, this);
-
-    // End of loop.
-    end.link(this);
+    Jump endOfIter = branchTestPtr(Zero, regT0);
+    emitStore(dst, regT1, regT0);
+    map(m_bytecodeIndex + OPCODE_LENGTH(op_next_pname), dst, regT1, regT0);
+    addJump(jump(), target);
+    endOfIter.link(this);
 }
 
 void JIT::emit_op_push_scope(Instruction* currentInstruction)
@@ -2459,110 +2372,15 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_get_pnames(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int i = currentInstruction[3].u.operand;
-    int size = currentInstruction[4].u.operand;
-    int breakTarget = currentInstruction[5].u.operand;
-
-    JumpList isNotObject;
-
-    emitGetVirtualRegister(base, regT0);
-    if (!m_codeBlock->isKnownNotImmediate(base))
-        isNotObject.append(emitJumpIfNotJSCell(regT0));
-    if (base != m_codeBlock->thisRegister()) {
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        isNotObject.append(branch32(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
-    }
-
-    // We could inline the case where you have a valid cache, but
-    // this call doesn't seem to be hot.
-    Label isObject(this);
-    JITStubCall getPnamesStubCall(this, cti_op_get_pnames);
-    getPnamesStubCall.addArgument(regT0);
-    getPnamesStubCall.call(dst);
-    load32(Address(regT0, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStringsSize)), regT3);
-    store32(Imm32(0), addressFor(i));
-    store32(regT3, addressFor(size));
-    Jump end = jump();
-
-    isNotObject.link(this);
-    move(regT0, regT1);
-    and32(Imm32(~JSImmediate::ExtendedTagBitUndefined), regT1);
-    addJump(branch32(Equal, regT1, Imm32(JSImmediate::FullTagTypeNull)), breakTarget);
-
-    JITStubCall toObjectStubCall(this, cti_to_object);
-    toObjectStubCall.addArgument(regT0);
-    toObjectStubCall.call(base);
-    jump().linkTo(isObject, this);
-    
-    end.link(this);
-}
-
 void JIT::emit_op_next_pname(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int i = currentInstruction[3].u.operand;
-    int size = currentInstruction[4].u.operand;
-    int it = currentInstruction[5].u.operand;
-    int target = currentInstruction[6].u.operand;
-    
-    JumpList callHasProperty;
-
-    Label begin(this);
-    load32(addressFor(i), regT0);
-    Jump end = branch32(Equal, regT0, addressFor(size));
-
-    // Grab key @ i
-    loadPtr(addressFor(it), regT1);
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStrings)), regT2);
-    loadPtr(BaseIndex(regT2, regT0, TimesEight), regT2);
-    emitPutVirtualRegister(dst, regT2);
-
-    // Increment i
-    add32(Imm32(1), regT0);
-    store32(regT0, addressFor(i));
-
-    // Verify that i is valid:
-    emitGetVirtualRegister(base, regT0);
-
-    // Test base's structure
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    callHasProperty.append(branchPtr(NotEqual, regT2, Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure)))));
-
-    // Test base's prototype chain
-    loadPtr(Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedPrototypeChain))), regT3);
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(StructureChain, m_vector)), regT3);
-    addJump(branchTestPtr(Zero, Address(regT3)), target);
-
-    Label checkPrototype(this);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
-    callHasProperty.append(emitJumpIfNotJSCell(regT2));
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    callHasProperty.append(branchPtr(NotEqual, regT2, Address(regT3)));
-    addPtr(Imm32(sizeof(Structure*)), regT3);
-    branchTestPtr(NonZero, Address(regT3)).linkTo(checkPrototype, this);
-
-    // Continue loop.
-    addJump(jump(), target);
-
-    // Slow case: Ask the object if i is valid.
-    callHasProperty.link(this);
-    emitGetVirtualRegister(dst, regT1);
-    JITStubCall stubCall(this, cti_has_property);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
+    JITStubCall stubCall(this, cti_op_next_pname);
+    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
     stubCall.call();
-
-    // Test for valid key.
-    addJump(branchTest32(NonZero, regT0), target);
-    jump().linkTo(begin, this);
-
-    // End of loop.
-    end.link(this);
+    Jump endOfIter = branchTestPtr(Zero, regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    addJump(jump(), currentInstruction[3].u.operand);
+    endOfIter.link(this);
 }
 
 void JIT::emit_op_push_scope(Instruction* currentInstruction)

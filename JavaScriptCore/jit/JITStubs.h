@@ -63,7 +63,6 @@ namespace JSC {
         int32_t asInt32;
 
         JSValue jsValue() { return JSValue::decode(asEncodedJSValue); }
-        JSObject* jsObject() { return static_cast<JSObject*>(asPointer); }
         Identifier& identifier() { return *static_cast<Identifier*>(asPointer); }
         int32_t int32() { return asInt32; }
         CodeBlock* codeBlock() { return static_cast<CodeBlock*>(asPointer); }
@@ -286,6 +285,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_negate(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_next_pname(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_not(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_nstricteq(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_post_dec(STUB_ARGS_DECLARATION);
@@ -307,7 +307,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_typeof(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_to_object(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_error(STUB_ARGS_DECLARATION);
@@ -333,7 +332,6 @@ extern "C" {
     int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_loop_if_true(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION);

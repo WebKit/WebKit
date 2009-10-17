@@ -1794,28 +1794,12 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpScopes(Label* target, int targetSco
     return target;
 }
 
-RegisterID* BytecodeGenerator::emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget)
-{
-    size_t begin = instructions().size();
-
-    emitOpcode(op_get_pnames);
-    instructions().append(dst->index());
-    instructions().append(base->index());
-    instructions().append(i->index());
-    instructions().append(size->index());
-    instructions().append(breakTarget->bind(begin, instructions().size()));
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target)
+RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID* iter, Label* target)
 {
     size_t begin = instructions().size();
 
     emitOpcode(op_next_pname);
     instructions().append(dst->index());
-    instructions().append(base->index());
-    instructions().append(i->index());
-    instructions().append(size->index());
     instructions().append(iter->index());
     instructions().append(target->bind(begin, instructions().size()));
     return dst;

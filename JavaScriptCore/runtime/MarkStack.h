@@ -47,7 +47,7 @@ namespace JSC {
         }
 
         ALWAYS_INLINE void append(JSValue);
-        void append(JSCell*);
+        ALWAYS_INLINE void append(JSCell*);
         
         ALWAYS_INLINE void appendValues(Register* values, size_t count, MarkSetProperties properties = NoNullValues)
         {

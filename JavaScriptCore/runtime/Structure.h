@@ -31,7 +31,6 @@
 #include "JSValue.h"
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
-#include "Protect.h"
 #include "StructureChain.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
@@ -124,8 +123,9 @@ namespace JSC {
         JSCell* specificValue() { return m_specificValueInPrevious; }
         void despecifyDictionaryFunction(const Identifier& propertyName);
 
-        void setEnumerationCache(JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
-        JSPropertyNameIterator* enumerationCache() { return m_enumerationCache.get(); }
+        void setEnumerationCache(PassRefPtr<PropertyNameArrayData> data) { m_cachedPropertyNameArrayData = data; }
+        PropertyNameArrayData* enumerationCache() { return m_cachedPropertyNameArrayData.get(); }
+        void clearEnumerationCache();
         void getEnumerablePropertyNames(PropertyNameArray&);
 
     private:
@@ -186,7 +186,7 @@ namespace JSC {
 
         StructureTransitionTable table;
 
-        ProtectedPtr<JSPropertyNameIterator> m_enumerationCache;
+        RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;
 
         PropertyMapHashTable* m_propertyTable;
 
