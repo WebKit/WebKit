@@ -1,3 +1,11 @@
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip this test:
+            compositing/animation/animated-composited-inside-hidden.html
+        because the fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was backed out.
+
+        * platform/mac/Skipped:
+
 2009-10-16  Brian Weinstein  <bweinstein@apple.com>
 
         Updated expected results of tests that give CONSOLE messages for

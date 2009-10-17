@@ -38,6 +38,9 @@ svg/batik/text/smallFonts.svg
 # see bug https://bugs.webkit.org/show_bug.cgi?id=20011 -- Printing tests should use ImageDiff
 printing
 
+# Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
+compositing/animation/animated-composited-inside-hidden.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=20342 REGRESSION: fast/dom/cssTarget-crash.html fails
 fast/dom/cssTarget-crash.html
 
