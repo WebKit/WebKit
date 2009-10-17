@@ -1,3 +1,12 @@
+2009-10-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Updated expected results of tests that give CONSOLE messages for
+        new verbose output.
+
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt:
+        * platform/mac/fast/dynamic/015-expected.txt:
+
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

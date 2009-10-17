@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 7: Error: NOT_FOUND_ERR: DOM Exception 8
+CONSOLE MESSAGE: line 7: NOT_FOUND_ERR: DOM Exception 8: An attempt was made to reference a Node in a context where it does not exist.
 This passes if it does not crash. (see https://bugs.webkit.org/show_bug.cgi?id=18958)

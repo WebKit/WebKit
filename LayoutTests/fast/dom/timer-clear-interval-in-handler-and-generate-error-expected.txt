@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 10: Error: NOT_FOUND_ERR: DOM Exception 8
+CONSOLE MESSAGE: line 10: NOT_FOUND_ERR: DOM Exception 8: An attempt was made to reference a Node in a context where it does not exist.
 
