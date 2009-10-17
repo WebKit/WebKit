@@ -1,3 +1,15 @@
+2009-10-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        EventHandler::eventLoopHandleMouseDragged needs ENABLE(DRAG_SUPPORT) guards
+        https://bugs.webkit.org/show_bug.cgi?id=30472
+
+        Put ENABLE(DRAG_SUPPORT) guards around EventHandler::eventLoopHandleMouseDragged
+        in EventHandler.cpp. MSVC fails to compile when DRAG_SUPPORT not enabled.
+
+        * page/EventHandler.cpp:
+
 2009-10-17  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Seidel.
