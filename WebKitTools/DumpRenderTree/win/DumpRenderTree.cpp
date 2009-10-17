@@ -201,7 +201,7 @@ static const wstring& fontsPath()
     return path;
 }
 
-#ifdef DEBUG_WEBKIT_HAS_SUFFIX
+#ifdef DEBUG_ALL
 #define WEBKITDLL TEXT("WebKit_debug.dll")
 #else
 #define WEBKITDLL TEXT("WebKit.dll")
@@ -1112,9 +1112,11 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 #if USE(CFNETWORK)
 RetainPtr<CFURLCacheRef> sharedCFURLCache()
 {
+#ifndef DEBUG_ALL
+    HMODULE module = GetModuleHandle(TEXT("CFNetwork.dll"));
+#else
     HMODULE module = GetModuleHandle(TEXT("CFNetwork_debug.dll"));
-    if (!module)
-        module = GetModuleHandle(TEXT("CFNetwork.dll"));
+#endif
     if (!module)
         return 0;
 

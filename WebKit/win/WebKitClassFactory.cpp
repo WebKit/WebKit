@@ -61,7 +61,7 @@
 
 // WebKitClassFactory ---------------------------------------------------------
 #if USE(SAFARI_THEME)
-#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+#ifdef DEBUG_ALL
 SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
 #else
 SOFT_LINK_LIBRARY(SafariTheme)

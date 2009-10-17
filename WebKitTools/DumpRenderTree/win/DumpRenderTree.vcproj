@@ -185,7 +185,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="_CONSOLE;DEBUG_WEBKIT_HAS_SUFFIX"
+				PreprocessorDefinitions="_CONSOLE"
 				DisableSpecificWarnings="4146"
 				ForcedIncludeFiles="DumpRenderTreePrefix.h"
 			/>
@@ -401,7 +401,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="_CONSOLE;DEBUG_WEBKIT_HAS_SUFFIX"
+				PreprocessorDefinitions="_CONSOLE"
 				DisableSpecificWarnings="4146"
 				ForcedIncludeFiles="DumpRenderTreePrefix.h"
 			/>

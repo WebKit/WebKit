@@ -39,9 +39,11 @@ typedef CFArrayRef (*CFURLRequestCopyContentDispositionEncodingFallbackArrayFunc
 
 static HMODULE findCFNetworkModule()
 {
-    if (HMODULE module = GetModuleHandleA("CFNetwork"))
-        return module;
+#ifndef DEBUG_ALL
+    return GetModuleHandleA("CFNetwork");
+#else
     return GetModuleHandleA("CFNetwork_debug");
+#endif
 }
 
 static CFURLRequestSetContentDispositionEncodingFallbackArrayFunction findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction()

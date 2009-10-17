@@ -73,7 +73,7 @@ static int cButtonHitInset[] = { 3, 2 };
 static int cButtonLength[] = { 14, 10 };
 static int cThumbMinLength[] = { 26, 20 };
 
-#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+#ifdef DEBUG_ALL
 SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
 #else
 SOFT_LINK_LIBRARY(SafariTheme)

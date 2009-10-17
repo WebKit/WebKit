@@ -1,3 +1,16 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30456
+        Fixes for new Debug_All Windows build configuration.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::findCFNetworkModule): Ask for the correct library instead of guessing.
+        * platform/win/ScrollbarThemeSafari.cpp: Use new DEBUG_ALL preprocessor define for library naming.
+        * rendering/RenderMediaControls.cpp: Use new DEBUG_ALL preprocessor define for library naming.
+        * rendering/RenderThemeSafari.cpp: Use new DEBUG_ALL preprocessor define for library naming.
+
 2009-10-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to determine whether a plug-in has ever been halted.

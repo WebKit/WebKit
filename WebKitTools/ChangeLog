@@ -1,3 +1,14 @@
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30456
+        Fixes for new Debug_All Windows build configuration.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sharedCFURLCache): Use new DEBUG_ALL preprocessor define for library naming.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Remove unused DEBUG_WEBKIT_HAS_SUFFIX.
+
 2009-10-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -1,5 +1,16 @@
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30456
+        Fixes for new Debug_All Windows build configuration.
+
+        * win/tools/vsprops/debug_all.vsprops:
+        Define DEBUG_ALL in Debug_All configuration.
+        Continue to define USE_DEBUG_SAFARI_THEME for open source SafariTheme header usage.
+
+2009-10-16  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Adam Roben.
 
         Add a Debug_All configuration to build entire stack as debug.
