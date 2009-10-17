@@ -1,3 +1,22 @@
+2009-10-17  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Video controls not zoomed / transformed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=30461
+
+        Draw the images in the controls scaled.
+
+        No new tests. With this change Chromium will pass the following tests:
+        LayoutTests/media/video-controls-zoomed.html
+        LayoutTests/media/video-controls-transformed.html
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaButton):
+        Pass along the target rect directly.
+        (WebCore::RenderMediaControlsChromium::adjustMediaSliderThumbSize):
+        Adjust the thumb slide applied with the scale factor.
+
 2009-10-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.
