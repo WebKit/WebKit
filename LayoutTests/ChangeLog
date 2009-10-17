@@ -1,5 +1,14 @@
 2009-10-16  Brian Weinstein  <bweinstein@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        Remove inspector tests from Windows Skipped list, because they pass locally
+        and the front-end changes are picked up by the bots.
+
+        * platform/win/Skipped:
+
+2009-10-16  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Darin Adler.
 
         Fixes part of <http://webkit.org/b/30412>.
