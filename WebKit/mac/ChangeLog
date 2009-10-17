@@ -1,5 +1,19 @@
 2009-10-16  Kevin Decker  <kdecker@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        <rdar://problem/7304575>
+        
+        * Plugins/WebBaseNetscapePluginView.h: Added new boolean ivar and -hasBeenHalted instance method.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView halt]):Update _hasBeenHalted.
+        (-[WebBaseNetscapePluginView hasBeenHalted]): Added.
+        * WebView/WebView.mm:
+        (+[WebView _hasPluginForNodeBeenHalted:]): Checks to see if a plug-in node's been halted.
+        * WebView/WebViewPrivate.h: Added -_hasPluginForNodeBeenHalted method.
+
+2009-10-16  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Anders Carlson.
 
         Small code cleanup

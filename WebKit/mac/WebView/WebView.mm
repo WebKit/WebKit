@@ -2145,6 +2145,10 @@ static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)
     return [_pluginViewForNode(node) isHalted];
 }
 
++ (BOOL)_hasPluginForNodeBeenHalted:(DOMNode *)node
+{
+    return [_pluginViewForNode(node) hasBeenHalted];
+}
 + (void)_restartHaltedPluginForNode:(DOMNode *)node
 {
     if (!node)

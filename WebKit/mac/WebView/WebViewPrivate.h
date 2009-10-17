@@ -464,6 +464,7 @@ Could be worth adding to the API.
 
 // SPI for PluginHalter
 + (BOOL)_isNodeHaltedPlugin:(DOMNode *)node;
++ (BOOL)_hasPluginForNodeBeenHalted:(DOMNode *)node;
 + (void)_restartHaltedPluginForNode:(DOMNode *)node;
 
 // Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.

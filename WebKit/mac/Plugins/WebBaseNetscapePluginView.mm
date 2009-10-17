@@ -493,7 +493,8 @@ Node* WebHaltablePlugin::node() const
     ASSERT(element->renderer());
     toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
     [self stop];
-    _isHalted = YES;    
+    _isHalted = YES;  
+    _hasBeenHalted = YES;
 }
 
 - (void)resumeFromHalt
@@ -511,6 +512,11 @@ Node* WebHaltablePlugin::node() const
 - (BOOL)isHalted
 {
     return _isHalted;
+}
+
+- (BOOL)hasBeenHalted
+{
+    return _hasBeenHalted;
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
