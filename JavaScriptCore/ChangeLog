@@ -1,5 +1,11 @@
 2009-10-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: apparently we shouldn't export those symbols?
+
+        * JavaScriptCore.exp:
+
+2009-10-16  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: export some symbols.
 
         * JavaScriptCore.exp:
