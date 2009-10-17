@@ -1,3 +1,10 @@
+2009-10-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: reduce inspector console test size - it times out.
+
+        * inspector/console-tests-expected.txt:
+        * inspector/console-tests.html:
+
 2009-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Skip this test:
