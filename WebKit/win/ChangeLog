@@ -1,3 +1,29 @@
+2009-10-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to determine whether a plug-in has ever been halted.
+
+        Part of <rdar://problem/7312158>.
+
+        Reviewed by Dan Bernstein.
+
+        * Interfaces/IWebViewPrivate.idl:
+        Add hasPluginForNodeBeenHalted().
+
+        * WebView.cpp:
+        (pluginViewForNode):
+        Code factored out of isNodeHaltedPlugin().
+        (WebView::isNodeHaltedPlugin):
+        Remove STDMETHODCALLTYPE, as it has no use at the definition. Use
+        pluginViewForNode().
+        (WebView::restartHaltedPluginForNode):
+        Ditto.
+        (WebView::hasPluginForNodeBeenHalted):
+        Get the PluginView for the given node. Return the result of
+        PluginView::hasBeenHalted().
+
+        * WebView.h:
+        Declare hasPluginForNodeBeenHalted().
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

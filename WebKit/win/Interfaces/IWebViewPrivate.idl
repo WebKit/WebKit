@@ -219,4 +219,5 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT isNodeHaltedPlugin([in] IDOMNode*, [retval, out] BOOL*);
     HRESULT restartHaltedPluginForNode([in] IDOMNode*);
+    HRESULT hasPluginForNodeBeenHalted([in] IDOMNode*, [retval, out] BOOL*);
 }

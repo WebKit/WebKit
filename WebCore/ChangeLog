@@ -1,3 +1,23 @@
+2009-10-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to determine whether a plug-in has ever been halted.
+
+        Part of <rdar://problem/7312158>.
+
+        Reviewed by Dan Bernstein.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        Initialize m_hasBeenHalted.
+
+        * plugins/PluginView.h:
+        (WebCore::PluginView::hasBeenHalted):
+        Return m_hasBeenHalted.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::halt):
+        Set m_hasBeenHalted.
+
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

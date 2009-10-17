@@ -200,6 +200,7 @@ namespace WebCore {
         virtual Node* node() const;
 
         bool isHalted() const { return m_isHalted; }
+        bool hasBeenHalted() const { return m_hasBeenHalted; }
 
         static bool isCallingPlugin();
 
@@ -345,6 +346,7 @@ private:
         bool m_isJavaScriptPaused;
 
         bool m_isHalted;
+        bool m_hasBeenHalted;
 
         static PluginView* s_currentPluginView;
     };

@@ -5682,55 +5682,67 @@ HRESULT STDMETHODCALLTYPE WebView::pluginHalterDelegate(IWebPluginHalterDelegate
     return m_pluginHalterDelegate.copyRefTo(d);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::isNodeHaltedPlugin(IDOMNode* domNode, BOOL* result)
+static PluginView* pluginViewForNode(IDOMNode* domNode)
+{
+    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
+    if (!webKitDOMNode)
+        return 0;
+
+    Node* node = webKitDOMNode->node();
+    if (!node)
+        return 0;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer || !renderer->isWidget())
+        return 0;
+
+    Widget* widget = toRenderWidget(renderer)->widget();
+    if (!widget || !widget->isPluginView())
+        return 0;
+
+    return static_cast<PluginView*>(widget);
+}
+
+HRESULT WebView::isNodeHaltedPlugin(IDOMNode* domNode, BOOL* result)
 {
     if (!domNode || !result)
         return E_POINTER;
 
-    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
-    if (!webKitDOMNode)
-        return E_FAIL;
-
-    Node* node = webKitDOMNode->node();
-    if (!node)
-        return E_FAIL;
-
     *result = FALSE;
 
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isWidget())
-        return S_OK;
+    PluginView* view = pluginViewForNode(domNode);
+    if (!view)
+        return E_FAIL;
 
-    Widget* widget = toRenderWidget(renderer)->widget();
-    if (!widget || !widget->isPluginView())
-        return S_OK;
-
-    *result = static_cast<PluginView*>(widget)->isHalted();
+    *result = view->isHalted();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::restartHaltedPluginForNode(IDOMNode* domNode)
+HRESULT WebView::restartHaltedPluginForNode(IDOMNode* domNode)
 {
     if (!domNode)
         return E_POINTER;
 
-    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
-    if (!webKitDOMNode)
+    PluginView* view = pluginViewForNode(domNode);
+    if (!view)
         return E_FAIL;
 
-    Node* node = webKitDOMNode->node();
-    if (!node)
+    view->restart();
+    return S_OK;
+}
+
+HRESULT WebView::hasPluginForNodeBeenHalted(IDOMNode* domNode, BOOL* result)
+{
+    if (!domNode || !result)
+        return E_POINTER;
+
+    *result = FALSE;
+
+    PluginView* view = pluginViewForNode(domNode);
+    if (!view)
         return E_FAIL;
 
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isWidget())
-        return E_FAIL;
-
-    Widget* widget = toRenderWidget(renderer)->widget();
-    if (!widget || !widget->isPluginView())
-        return E_FAIL;
-
-    static_cast<PluginView*>(widget)->restart();
+    *result = view->hasBeenHalted();
     return S_OK;
 }
 
