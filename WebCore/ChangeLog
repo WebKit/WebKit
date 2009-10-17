@@ -1,3 +1,17 @@
+2009-10-17  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25413
+        [GTK] Please expose the level of headings
+
+        Exposes the heading level as an attribute of the AtkObject.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (addAttributeToSet):
+        (webkit_accessible_get_attributes):
+        (webkit_accessible_class_init):
+
 2009-10-17  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

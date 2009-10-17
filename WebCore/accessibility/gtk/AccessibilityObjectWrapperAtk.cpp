@@ -174,6 +174,28 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
     return 0;
 }
 
+static AtkAttributeSet* addAttributeToSet(AtkAttributeSet* attributeSet, const char* name, const char* value)
+{
+    AtkAttribute* attribute = static_cast<AtkAttribute*>(g_malloc(sizeof(AtkAttribute)));
+    attribute->name = g_strdup(name);
+    attribute->value = g_strdup(value);
+    attributeSet = g_slist_prepend(attributeSet, attribute);
+
+    return attributeSet;
+}
+
+static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
+{
+    AtkAttributeSet* attributeSet = NULL;
+
+    int headingLevel = core(object)->headingLevel();
+    if (headingLevel) {
+        String value = String::number(headingLevel);
+        attributeSet = addAttributeToSet(attributeSet, "level", value.utf8().data());
+    }
+    return attributeSet;
+}
+
 static AtkRole atkRole(AccessibilityRole role)
 {
     switch (role) {
@@ -408,6 +430,7 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->get_role = webkit_accessible_get_role;
     klass->ref_state_set = webkit_accessible_ref_state_set;
     klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
+    klass->get_attributes = webkit_accessible_get_attributes;
 }
 
 GType
