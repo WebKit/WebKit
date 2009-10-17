@@ -85,8 +85,11 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames)); 
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags)); 
         }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);

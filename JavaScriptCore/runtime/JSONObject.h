@@ -41,10 +41,13 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot));
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
         }
 
         static void markStringifiers(MarkStack&, Stringifier*);
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
     private:
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

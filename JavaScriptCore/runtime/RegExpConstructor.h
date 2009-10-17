@@ -59,7 +59,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance));
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
         }
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
@@ -81,6 +81,9 @@ namespace JSC {
         JSValue getLastParen(ExecState*) const;
         JSValue getLeftContext(ExecState*) const;
         JSValue getRightContext(ExecState*) const;
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

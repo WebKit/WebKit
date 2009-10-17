@@ -91,6 +91,9 @@ namespace JSC {
 
         WTF::ByteArray* storage() const { return m_storage.get(); }
 
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
+
     private:
         enum VPtrStealingHackType { VPtrStealingHack };
         JSByteArray(VPtrStealingHackType) 

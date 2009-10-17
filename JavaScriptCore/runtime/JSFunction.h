@@ -61,7 +61,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames)); 
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags)); 
         }
 
         NativeFunction nativeFunction()
@@ -71,6 +71,9 @@ namespace JSC {
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+
+    protected:
+        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | InternalFunction::StructureFlags;
 
     private:
         JSFunction(NonNullPassRefPtr<Structure>);

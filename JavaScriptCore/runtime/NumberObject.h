@@ -30,17 +30,19 @@ namespace JSC {
         explicit NumberObject(NonNullPassRefPtr<Structure>);
 
         static const ClassInfo info;
+
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
+        }
+
+    protected:
 #if USE(JSVALUE32)
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
-        {
-            return Structure::create(prototype, TypeInfo(ObjectType, OverridesMarkChildren));
-        }
+        static const unsigned StructureFlags = OverridesMarkChildren | JSWrapperObject::StructureFlags;
 #else
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
-        {
-            return Structure::create(prototype, TypeInfo(ObjectType));
-        }
+        static const unsigned StructureFlags = JSWrapperObject::StructureFlags;
 #endif
+
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 
