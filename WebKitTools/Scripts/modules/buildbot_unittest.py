@@ -91,6 +91,22 @@ class BuildBotTest(unittest.TestCase):
             for key, expected_value in expected_parsing.items():
                 self.assertEquals(builder[key], expected_value, ("Builder %d parse failure for key: %s: Actual='%s' Expected='%s'" % (x, key, builder[key], expected_value)))
 
+    def test_core_builder_methods(self):
+        buildbot = BuildBot()
+
+        # Override builder_statuses function to not touch the network.
+        def example_builder_statuses(): # We could use instancemethod() to bind 'self' but we don't need to.
+            return BuildBotTest._expected_example_one_box_parsings
+        buildbot.builder_statuses = example_builder_statuses
+
+        buildbot.core_builder_names_regexps = [ 'Leopard', "Windows.*Build" ]
+        self.assertEquals(buildbot.red_core_builders_names(), [])
+        self.assertTrue(buildbot.core_builders_are_green())
+
+        buildbot.core_builder_names_regexps = [ 'SnowLeopard', 'Qt' ]
+        self.assertEquals(buildbot.red_core_builders_names(), [ u'SnowLeopard Intel Release', u'Qt Linux Release' ])
+        self.assertFalse(buildbot.core_builders_are_green())
+
     def test_builder_name_regexps(self):
         buildbot = BuildBot()
 

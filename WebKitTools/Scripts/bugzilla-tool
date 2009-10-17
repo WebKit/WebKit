@@ -729,8 +729,10 @@ class LandPatchesFromCommitQueue(Command):
                 first_bug_id = patches[0]['bug_id']
                 log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
 
-                if not tool.buildbot.core_builders_are_green():
-                    self._update_status_and_sleep("Builders (http://build.webkit.org) are red.")
+                red_builders_names = tool.buildbot.red_core_builders_names()
+                if red_builders_names:
+                    red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
+                    self._update_status_and_sleep("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names))
                     continue
 
                 self.status_bot.update_status("Landing patches from bug %s." % first_bug_id, bug_id=first_bug_id)

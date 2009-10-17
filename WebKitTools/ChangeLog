@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        commit-queue status bot should list which buildbot is blocking the queue
+        https://bugs.webkit.org/show_bug.cgi?id=30452
+
+        Add new methods and testing.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/buildbot.py:
+        * Scripts/modules/buildbot_unittest.py:
+
+2009-10-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         run-webkit-tests fails when CWD is not inside a WebKit checkout
         https://bugs.webkit.org/show_bug.cgi?id=30451
 

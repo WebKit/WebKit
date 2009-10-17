@@ -83,11 +83,19 @@ class BuildBot:
                     builders.append(builder)
         return builders
 
-    def core_builders_are_green(self):
+    def red_core_builders(self):
+        red_builders = []
         for builder in self._builder_statuses_with_names_matching_regexps(self.builder_statuses(), self.core_builder_names_regexps):
             if not builder['is_green']:
-                return False
-        return True
+                red_builders.append(builder)
+        return red_builders
+
+    def red_core_builders_names(self):
+        red_builders = self.red_core_builders()
+        return map(lambda builder: builder['name'], red_builders)
+
+    def core_builders_are_green(self):
+        return not self.red_core_builders()
 
     def builder_statuses(self):
         build_status_url = self.buildbot_server_url + 'one_box_per_builder'
