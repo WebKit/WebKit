@@ -701,6 +701,7 @@ SOURCES += \
     bindings/js/JSEventSourceConstructor.cpp \
     bindings/js/JSEventSourceCustom.cpp \
     bindings/js/JSEventTarget.cpp \
+    bindings/js/JSExceptionBase.cpp \
     bindings/js/JSGeolocationCustom.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \

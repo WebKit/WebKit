@@ -1,3 +1,13 @@
+2009-10-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Build fix for QtWebKit after r49723.
+
+        Add bindings/js/JSExceptionBase.cpp to the build.
+
+        * WebCore.pro:
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.
