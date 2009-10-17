@@ -18,7 +18,7 @@
 
 <h1><span class="class">RefPtr</span> and <span class="class">PassRefPtr</span> Basics</h1>
 <div>Darin Adler</div>
-<div>second draft, 2008-10-07</div>
+<div>Version 3, 2009-10-16</div>
 
 <h2>History</h2>
 
@@ -26,21 +26,23 @@
 member functions <span class="function">ref</span> and <span class="function">deref</span>
 that increment and decrement the reference count. Each call to <span class="function">ref</span>
 has to be matched by a call to <span class="function">deref</span>. When the reference count hits 0,
-the object is deleted. Many of these classes create new objects with a reference count of 0; this
+the object is deleted. Some of these classes create new objects with a reference count of 0; this
 is referred to as the floating state. An object in floating state must have <span class="function">ref</span> and then
-<span class="function">deref</span> called on it before it will be deleted. Many classes in WebCore implement this by
-inheriting from the <span class="class">RefCounted</span> class template.</p>
+<span class="function">deref</span> called on it before it will be deleted.</p>
 
-<p>Back in 2005, we discovered that there were many memory leaks, especially in WebCore
-editor code, caused either by mismatches of <span class="function">ref</span> and
+<p>Many classes in WebKit implement this pattern by deriving from the
+<span class="class">RefCounted</span> class template.</p>
+
+<p>Back in 2005, we discovered that there were many memory leaks, especially in HTML
+editing code, caused either by mismatches of <span class="function">ref</span> and
 <span class="function">deref</span> calls or by objects that were created with
 <span class="function">new</span> that never got a <span class="function">ref</span>
 call at all and remained in the floating state.</p>
 
-<p>We decided that we’d like
+<p>We wanted
 to use smart pointers to mitigate the problem. However, some early experiments showed that
 smart pointers led to additional manipulation of reference counts that hurt performance.
-For example, if a function took a smart pointer as a parameter and returned that same smart
+For example, for a function that took a smart pointer as a parameter and returned that same smart
 pointer as a return value, just passing the parameter and returning the value would increment
 and then decrement the reference count two to four times
 as the object moved from one smart pointer to another. So we looked for an
@@ -78,13 +80,13 @@ Document::~Document()
         m_title-&gt;deref();
 }
 
-void Document::setTitle(Title* t)
+void Document::setTitle(Title* title)
 {
-    if (t)
-        t-&gt;ref();
+    if (title)
+        title-&gt;ref();
     if (m_title)
         m_title-&gt;deref();
-    m_title = t;
+    m_title = title;
 }</pre>
 
 <h2><span class="class">RefPtr</span></h2>
@@ -103,9 +105,9 @@ class Document {
     RefPtr&lt;Title&gt; m_title;
 }
 
-void Document::setTitle(Title* t)
+void Document::setTitle(Title* title)
 {
-    m_title = t;
+    m_title = title;
 }</pre>
 
 <p>Use of <span class="class">RefPtr</span> alone can lead to reference count churn.</p>
@@ -129,7 +131,7 @@ Then the reference count is incremented to 2 to create <span class="variable">b<
 to 1 when the return value of <span class="function">createSpecialNode</span> is destroyed.</p>
 
 <p>(This analysis ignores the possibility that the compiler might implement the
-<a href="http://www.informit.com/articles/article.aspx?p=25033">return value optimization</a>.
+<a href="http://en.wikipedia.org/wiki/Return_value_optimization">return value optimization</a>.
 If the compiler does, some of the reference count churn may be mitigated.)</p>
 
 <p>The overhead of reference count churn is even greater when both function arguments and return
@@ -195,7 +197,7 @@ void finish(PassRefPtr&lt;Ring&gt; prpRing)
 returning values from a function, there will be times when you have a <span class="class">RefPtr</span>
 and wish to transfer ownership as <span class="class">PassRefPtr</span> does.
 <span class="class">RefPtr</span> has a member function named
-<span class="function">release</span> which does the trick. It sets the value of the original
+<span class="function">release</span> that does the trick. It sets the value of the original
 <span class="class">RefPtr</span> to 0 and constructs a <span class="class">PassRefPtr</span>, without
 changing reference counts.</p>
 
@@ -216,11 +218,11 @@ that its relatively tricky semantics will cause problems.</p>
 <h2>Mixing with raw pointers</h2>
 
 <p>When using a <span class="class">RefPtr</span> to call a function that takes a raw pointer,
-use <span class="function">get</span>.</p>
+use the <span class="function">get</span> function.</p>
 
 <pre class="code">printNode(stderr, a.get());</pre>
 
-<p>However, there are operations that can be done on a <span class="class">RefPtr</span>
+<p>However, many operations can be done on a <span class="class">RefPtr</span>
 or <span class="class">PassRefPtr</span> directly, without resorting to an explicit <span class="function">get</span> call.</p>
 
 <pre class="code">RefPtr&lt;Node&gt; a = createSpecialNode();
@@ -270,7 +272,11 @@ Node* rawNodePointer = node.release().releaseRef();</pre>
 <p>Since <span class="function">releaseRef</span> is rarely used, it’s provided only in the
 <span class="class">PassRefPtr</span> class, hence the need to call <span class="function">release</span>,
 then <span class="function">releaseRef</span>. If we find this is used often we could
-provide <span class="function">releaseRef</span> for <span class="class">RefPtr</span> too.</p>
+provide <span class="function">releaseRef</span> for <span class="class">RefPtr</span> too.
+Also, we are considering changing the name of <span class="function">releaseRef</span>
+to <span class="function">leakRef</span> to make it harder to confuse with
+<span class="function">release</span>, and to allude to the a risk of a storage leak
+if the function is used incorrectly.</p>
 
 <h2>RefPtr and new objects</h2>
 
@@ -278,8 +284,8 @@ provide <span class="function">releaseRef</span> for <span class="class">RefPtr<
 count of 0. However, for efficiency and simplicity, the <span class="class">RefCounted</span> class doesn't
 use a reference count of 0 at all. Objects are created with a reference count
 of 1. The best programming idiom to use is to put such objects right into a
-<span class="class">RefPtr</span>, to make it impossible to forget to deref the object when we're done with
-it. This means that any one calling new on such an object should immediately
+<span class="class">RefPtr</span> to make it impossible to forget to deref the object when done with
+it. This means that anyone calling new on such an object should immediately
 call adoptRef. In WebCore we use functions named create instead of direct calls
 to new.</p>
 
@@ -358,7 +364,7 @@ Since local variables are typically <span class="class">RefPtr</span>, it’s co
 <h3>New objects</h3>
 <ul>
 <li>New objects should be put into a <span class="class">RefPtr</span> as soon as possible
-after creation to avoid possibly leaking an object while it’s in a floating state.</li>
+after creation to allow the smart pointers to do all reference counting automatically.</li>
 <li>Best idiom is to use a private constructor and a public
 <span class="function">create</span> function that
 returns a <span class="class">PassRefPtr</span>.</li>
@@ -366,19 +372,17 @@ returns a <span class="class">PassRefPtr</span>.</li>
 
 <h2>Improving this document</h2>
 
-<p>What frequently asked questions are not covered by this document?</p>
+<p>There may be frequently asked questions are not covered by this document.
+If so, we would like to add discussion of those.</p>
 
-<p>Is there a better link for discussion of the return value optimization?</p>
-
-<p>Which of the following topics should also be covered by this document?</p>
+<p>One or more of the following topics could also be covered by this document.</p>
 
 <ul>
 
 <li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
 
-<li>Perils of programming with “floating objects”, which are a thing of the
-past for <span class="class">RefCounted</span> but still may exist for
-<span class="class">TreeShared</span> and other cases.</li>
+<li>Perils of programming with “floating objects”. A thing of the
+past for <span class="class">RefCounted</span> but still used in some other cases.</li>
 
 <li>Perils of programming with <span class="class">TreeShared</span>.</li>
 
@@ -392,16 +396,14 @@ and the JavaScript and Objective-C DOM bindings.</li>
 <li>Comparison of our intrusive reference counting with other schemes such as the
 external reference counting in Boost <span class="class">shared_ptr</class>.</li>
 
-<li>The <span class="class">OwnPtr</span> class template, and how
-<span class="class">auto_ptr</span> functions as a <span class="class">PassOwnPtr</span>.</li>
+<li>The <span class="class">OwnPtr</span> class template, and how it can be used
+with <span class="class">PassOwnPtr</span> and <span class="class">auto_ptr</span>.</li>
 
 <li>The <span class="class">OwnArrayPtr</span> class template,
 and the lack of a <span class="class">PassOwnArrayPtr</span>.</li>
 
 <li>The <span class="class">RetainPtr</span> class template,
 and the lack of a <span class="class">PassRetainPtr</span>.</li>
-
-<li>The <span class="class">DocPtr</span> class template.</li>
 
 <li>The <span class="class">ListRefPtr</span> class template.</li>
 

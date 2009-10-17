@@ -1,3 +1,8 @@
+2009-10-16  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Minor revision, updating a link and tweaking
+        wording a bit in few places.
+
 2009-10-14  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.
