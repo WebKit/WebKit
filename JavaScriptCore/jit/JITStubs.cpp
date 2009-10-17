@@ -700,11 +700,15 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
 
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
-        StructureChain* prototypeChain = structure->prototypeChain(callFrame);
-        if (!prototypeChain->isCacheable() || structure->isDictionary()) {
+        if (structure->isDictionary()) {
             ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
             return;
         }
+
+        // put_by_id_transition checks the prototype chain for setters.
+        normalizePrototypeChain(callFrame, baseCell);
+
+        StructureChain* prototypeChain = structure->prototypeChain(callFrame);
         stubInfo->initPutByIdTransition(structure->previousID(), structure, prototypeChain);
         JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress);
         return;
@@ -780,17 +784,13 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
 
-    size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot);
+    size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase());
     if (!count) {
         stubInfo->accessType = access_get_by_id_generic;
         return;
     }
 
     StructureChain* prototypeChain = structure->prototypeChain(callFrame);
-    if (!prototypeChain->isCacheable()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
-        return;
-    }
     stubInfo->initGetByIdChain(structure, prototypeChain);
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, slot.cachedOffset(), returnAddress);
 }
@@ -1332,15 +1332,11 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
-    } else if (size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot)) {
-        StructureChain* protoChain = structure->prototypeChain(callFrame);
-        if (!protoChain->isCacheable()) {
-            ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
-            return JSValue::encode(result);
-        }
-        
+    } else if (size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase())) {
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
+
+        StructureChain* protoChain = structure->prototypeChain(callFrame);
         JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, protoChain, count, slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
@@ -2671,18 +2667,22 @@ DEFINE_STUB_FUNCTION(JSPropertyNameIterator*, op_get_pnames)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return JSPropertyNameIterator::create(stackFrame.callFrame, stackFrame.args[0].jsValue());
+    CallFrame* callFrame = stackFrame.callFrame;
+    JSObject* o = stackFrame.args[0].jsObject();
+    Structure* structure = o->structure();
+    JSPropertyNameIterator* jsPropertyNameIterator = structure->enumerationCache();
+    if (!jsPropertyNameIterator || jsPropertyNameIterator->cachedPrototypeChain() != structure->prototypeChain(callFrame))
+        jsPropertyNameIterator = JSPropertyNameIterator::create(callFrame, o);
+    return jsPropertyNameIterator;
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_next_pname)
+DEFINE_STUB_FUNCTION(int, has_property)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSPropertyNameIterator* it = stackFrame.args[0].propertyNameIterator();
-    JSValue temp = it->next(stackFrame.callFrame);
-    if (!temp)
-        it->invalidate();
-    return JSValue::encode(temp);
+    JSObject* base = stackFrame.args[0].jsObject();
+    JSString* property = stackFrame.args[1].jsString();
+    return base->hasProperty(stackFrame.callFrame, Identifier(stackFrame.callFrame, property->value()));
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_push_scope)
@@ -3021,6 +3021,14 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, vm_throw)
     ASSERT(catchRoutine);
     STUB_SET_RETURN_ADDRESS(catchRoutine);
     return JSValue::encode(exceptionValue);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
 }
 
 } // namespace JSC

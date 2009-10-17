@@ -125,6 +125,7 @@ JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec,
     return description;
 }
 
+// FIXME: Use the enumeration cache.
 JSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     if (!args.at(0).isObject())

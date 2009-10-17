@@ -78,6 +78,12 @@
         (WebCore::getExceptionCodeDescription):
         * dom/ExceptionCode.h:
 
+2009-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: forgot to check in this #include.
+
+        * bridge/runtime_root.h:
+
 2009-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
