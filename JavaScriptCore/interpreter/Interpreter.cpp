@@ -938,22 +938,20 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
-    StructureChain* protoChain = structure->prototypeChain(callFrame);
-    if (!protoChain->isCacheable()) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
-        return;
-    }
-
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
         if (structure->isDictionary()) {
             vPC[0] = getOpcode(op_put_by_id_generic);
             return;
         }
+
+        // put_by_id_transition checks the prototype chain for setters.
+        normalizePrototypeChain(callFrame, baseCell);
+
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4] = structure->previousID();
         vPC[5] = structure;
-        vPC[6] = protoChain;
+        vPC[6] = structure->prototypeChain(callFrame);
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
         return;
@@ -1049,21 +1047,15 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
-    size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot);
+    size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase());
     if (!count) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
-        return;
-    }
-
-    StructureChain* protoChain = structure->prototypeChain(callFrame);
-    if (!protoChain->isCacheable()) {
         vPC[0] = getOpcode(op_get_by_id_generic);
         return;
     }
 
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structure;
-    vPC[5] = protoChain;
+    vPC[5] = structure->prototypeChain(callFrame);
     vPC[6] = count;
     vPC[7] = slot.cachedOffset();
     codeBlock->refStructures(vPC);
@@ -3502,41 +3494,63 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_pnames) {
-        /* get_pnames dst(r) base(r)
+        /* get_pnames dst(r) base(r) i(n) size(n) breakTarget(offset)
 
            Creates a property name list for register base and puts it
-           in register dst. This is not a true JavaScript value, just
-           a synthetic value used to keep the iteration state in a
-           register.
+           in register dst, initializing i and size for iteration. If
+           base is undefined or null, jumps to breakTarget.
         */
         int dst = vPC[1].u.operand;
         int base = vPC[2].u.operand;
+        int i = vPC[3].u.operand;
+        int size = vPC[4].u.operand;
+        int breakTarget = vPC[5].u.operand;
 
-        callFrame->r(dst) = JSPropertyNameIterator::create(callFrame, callFrame->r(base).jsValue());
+        JSValue v = callFrame->r(base).jsValue();
+        if (v.isUndefinedOrNull()) {
+            vPC += breakTarget;
+            NEXT_INSTRUCTION();
+        }
+
+        JSObject* o = v.toObject(callFrame);
+        Structure* structure = o->structure();
+        JSPropertyNameIterator* jsPropertyNameIterator = structure->enumerationCache();
+        if (!jsPropertyNameIterator || jsPropertyNameIterator->cachedPrototypeChain() != structure->prototypeChain(callFrame))
+            jsPropertyNameIterator = JSPropertyNameIterator::create(callFrame, o);
+
+        callFrame->r(dst) = jsPropertyNameIterator;
+        callFrame->r(base) = JSValue(o);
+        callFrame->r(i) = Register::withInt(0);
+        callFrame->r(size) = Register::withInt(jsPropertyNameIterator->size());
         vPC += OPCODE_LENGTH(op_get_pnames);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_next_pname) {
-        /* next_pname dst(r) iter(r) target(offset)
+        /* next_pname dst(r) base(r) i(n) size(n) iter(r) target(offset)
 
-           Tries to copies the next name from property name list in
-           register iter. If there are names left, then copies one to
-           register dst, and jumps to offset target. If there are none
-           left, invalidates the iterator and continues to the next
+           Copies the next name from the property name list in
+           register iter to dst, then jumps to offset target. If there are no
+           names left, invalidates the iterator and continues to the next
            instruction.
         */
         int dst = vPC[1].u.operand;
-        int iter = vPC[2].u.operand;
-        int target = vPC[3].u.operand;
+        int base = vPC[2].u.operand;
+        int i = vPC[3].u.operand;
+        int size = vPC[4].u.operand;
+        int iter = vPC[5].u.operand;
+        int target = vPC[6].u.operand;
 
         JSPropertyNameIterator* it = callFrame->r(iter).propertyNameIterator();
-        if (JSValue temp = it->next(callFrame)) {
-            CHECK_FOR_TIMEOUT();
-            callFrame->r(dst) = JSValue(temp);
-            vPC += target;
-            NEXT_INSTRUCTION();
+        while (callFrame->r(i).i() != callFrame->r(size).i()) {
+            JSValue key = it->get(callFrame, asObject(callFrame->r(base).jsValue()), callFrame->r(i).i());
+            callFrame->r(i) = Register::withInt(callFrame->r(i).i() + 1);
+            if (key) {
+                CHECK_FOR_TIMEOUT();
+                callFrame->r(dst) = key;
+                vPC += target;
+                NEXT_INSTRUCTION();
+            }
         }
-        it->invalidate();
 
         vPC += OPCODE_LENGTH(op_next_pname);
         NEXT_INSTRUCTION();

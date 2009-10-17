@@ -224,15 +224,15 @@ namespace JSC {
         return jsAddSlowCase(callFrame, v1, v2);
     }
 
-    inline size_t countPrototypeChainEntriesAndCheckForProxies(CallFrame* callFrame, JSValue baseValue, const PropertySlot& slot)
+    inline size_t normalizePrototypeChain(CallFrame* callFrame, JSValue base, JSValue slotBase)
     {
-        JSCell* cell = asCell(baseValue);
+        JSCell* cell = asCell(base);
         size_t count = 0;
 
-        while (slot.slotBase() != cell) {
+        while (slotBase != cell) {
             JSValue v = cell->structure()->prototypeForLookup(callFrame);
 
-            // If we didn't find slotBase in baseValue's prototype chain, then baseValue
+            // If we didn't find slotBase in base's prototype chain, then base
             // must be a proxy for another object.
 
             if (v.isNull())
@@ -250,6 +250,25 @@ namespace JSC {
         
         ASSERT(count);
         return count;
+    }
+
+    inline size_t normalizePrototypeChain(CallFrame* callFrame, JSCell* base)
+    {
+        size_t count = 0;
+        while (1) {
+            JSValue v = base->structure()->prototypeForLookup(callFrame);
+            if (v.isNull())
+                return count;
+
+            base = asCell(v);
+
+            // Since we're accessing a prototype in a loop, it's a good bet that it
+            // should not be treated as a dictionary.
+            if (base->structure()->isDictionary())
+                asObject(base)->setStructure(Structure::fromDictionaryTransition(base->structure()));
+
+            ++count;
+        }
     }
 
     ALWAYS_INLINE JSValue resolveBase(CallFrame* callFrame, Identifier& property, ScopeChainNode* scopeChain)

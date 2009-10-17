@@ -443,45 +443,22 @@ bool JSObject::getPropertySpecificValue(ExecState*, const Identifier& propertyNa
 
 void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    bool shouldCache = propertyNames.shouldCache() && !(propertyNames.size() || m_structure->isDictionary());
-
-    if (shouldCache) {
-        if (PropertyNameArrayData* data = m_structure->enumerationCache()) {
-            if (data->cachedPrototypeChain() == m_structure->prototypeChain(exec)) {
-                propertyNames.setData(data);
-                return;
-            }
-
-            m_structure->clearEnumerationCache();
-        }
-    }
-
     getOwnPropertyNames(exec, propertyNames);
 
-    if (prototype().isObject()) {
-        propertyNames.setShouldCache(false); // No need for our prototypes to waste memory on caching, since they're not being enumerated directly.
-        JSObject* prototype = asObject(this->prototype());
-        while(1) {
-            if (prototype->structure()->typeInfo().overridesGetPropertyNames()) {
-                prototype->getPropertyNames(exec, propertyNames);
-                break;
-            }
-            prototype->getOwnPropertyNames(exec, propertyNames);
-            JSValue nextProto = prototype->prototype();
-            if (!nextProto.isObject())
-                break;
-            prototype = asObject(nextProto);
-        }
-    }
+    if (prototype().isNull())
+        return;
 
-    if (shouldCache) {
-        StructureChain* protoChain = m_structure->prototypeChain(exec);
-        if (!protoChain->isCacheable())
-            return;
-        RefPtr<PropertyNameArrayData> data = propertyNames.data();
-        data->setCachedPrototypeChain(protoChain);
-        data->setCachedStructure(m_structure);
-        m_structure->setEnumerationCache(data.release());
+    JSObject* prototype = asObject(this->prototype());
+    while(1) {
+        if (prototype->structure()->typeInfo().overridesGetPropertyNames()) {
+            prototype->getPropertyNames(exec, propertyNames);
+            break;
+        }
+        prototype->getOwnPropertyNames(exec, propertyNames);
+        JSValue nextProto = prototype->prototype();
+        if (nextProto.isNull())
+            break;
+        prototype = asObject(nextProto);
     }
 }
 

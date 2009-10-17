@@ -152,8 +152,8 @@ namespace JSC {
         macro(op_strcat, 4) \
         macro(op_to_primitive, 3) \
         \
-        macro(op_get_pnames, 3) \
-        macro(op_next_pname, 4) \
+        macro(op_get_pnames, 6) \
+        macro(op_next_pname, 7) \
         \
         macro(op_push_scope, 2) \
         macro(op_pop_scope, 1) \

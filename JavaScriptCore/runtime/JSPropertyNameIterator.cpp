@@ -29,26 +29,56 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
+#include "JSGlobalObject.h"
+
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
-JSPropertyNameIterator::~JSPropertyNameIterator()
+JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)
 {
+    ASSERT(!o->structure()->enumerationCache() ||
+            o->structure()->enumerationCache()->cachedStructure() != o->structure() ||
+            o->structure()->enumerationCache()->cachedPrototypeChain() != o->structure()->prototypeChain(exec));
+
+    PropertyNameArray propertyNames(exec);
+    o->getPropertyNames(exec, propertyNames);
+    JSPropertyNameIterator* jsPropertyNameIterator = new (exec) JSPropertyNameIterator(exec, propertyNames.data());
+
+    if (o->structure()->isDictionary())
+        return jsPropertyNameIterator;
+
+    if (o->structure()->typeInfo().overridesGetPropertyNames())
+        return jsPropertyNameIterator;
+    
+    size_t count = normalizePrototypeChain(exec, o);
+    StructureChain* structureChain = o->structure()->prototypeChain(exec);
+    RefPtr<Structure>* structure = structureChain->head();
+    for (size_t i = 0; i < count; ++i) {
+        if (structure[i]->typeInfo().overridesGetPropertyNames())
+            return jsPropertyNameIterator;
+    }
+
+    jsPropertyNameIterator->setCachedPrototypeChain(structureChain);
+    jsPropertyNameIterator->setCachedStructure(o->structure());
+    o->structure()->setEnumerationCache(jsPropertyNameIterator);
+    return jsPropertyNameIterator;
+}
+
+JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
+{
+    JSValue& identifier = m_jsStrings[i];
+    if (m_cachedStructure == base->structure() && m_cachedPrototypeChain == base->structure()->prototypeChain(exec))
+        return identifier;
+
+    if (!base->hasProperty(exec, Identifier(exec, asString(identifier)->value())))
+        return JSValue();
+    return identifier;
 }
 
 void JSPropertyNameIterator::markChildren(MarkStack& markStack)
 {
-    JSCell::markChildren(markStack);
-    if (m_object)
-        markStack.append(m_object);
-}
-
-void JSPropertyNameIterator::invalidate()
-{
-    ASSERT(m_position == m_end);
-    m_object = 0;
-    m_data.clear();
+    markStack.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
 }
 
 } // namespace JSC

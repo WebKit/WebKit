@@ -713,6 +713,7 @@ namespace JSC {
         void emit_op_new_func_exp(Instruction*);
         void emit_op_new_object(Instruction*);
         void emit_op_new_regexp(Instruction*);
+        void emit_op_get_pnames(Instruction*);
         void emit_op_next_pname(Instruction*);
         void emit_op_not(Instruction*);
         void emit_op_nstricteq(Instruction*);
