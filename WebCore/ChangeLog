@@ -1,3 +1,23 @@
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        After running a transition with an end event listener, can't change the transform
+        https://bugs.webkit.org/show_bug.cgi?id=30454
+        
+        Fix an issue where, if a document had any listener for webkitTransitionEnd or webkitAnimationEnd,
+        the animations would not get cleaned up correctly, which broke subsequent changes of transform.
+        
+        Now, we always clean up the animations right after queuing up the end events.
+
+        Tests: animations/state-at-end-event.html
+               transitions/move-after-transition.html
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+
 2009-10-15  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

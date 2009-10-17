@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+    body {
+      margin: 0;
+    }
+    
+    #container {
+      position: relative;
+      width: 400px;
+      height: 230px;
+      border: 1px solid  black;
+    }
+    
+    .box {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 10px 0;
+      background-color: green;
+    }
+    
+    #container.moved .software {
+      left: 300px;
+    }
+
+    #container.moved .hardware {
+      -webkit-transform: translateX(300px);
+    }
+
+    .software {
+      -webkit-transition: left 300ms linear;
+    }
+
+    .hardware {
+      -webkit-transition: -webkit-transform 1s linear;
+      -webkit-transform: translateX(0);
+    }
+
+   </style>
+   <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+   <script type="text/javascript" charset="utf-8">
+
+    function testEnded()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+    
+    function startTest()
+    {
+      if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+      document.getElementById('tester').addEventListener('webkitTransitionEnd', testEnded, false);
+      document.getElementById('container').className = 'moved';
+    }
+    
+    window.addEventListener('load', startTest, false);
+   </script>
+</head>
+<body>
+
+  <div id="container">
+    <!-- <div class="software box"></div> -->
+    <div id="tester" class="hardware box"></div>
+  </div>
+
+  <div id="result">
+  </div>
+
+</body>
+</html>

@@ -1,3 +1,31 @@
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        After running a transition with an end event listener, can't change the transform
+        https://bugs.webkit.org/show_bug.cgi?id=30454
+
+        Test the state of rendering when the webkitAnimationEnd event fires for a 'left' animation, via pixel test.
+        
+        * animations/state-at-end-event.html: Added.
+        * platform/mac/animations/state-at-end-event-expected.checksum: Added.
+        * platform/mac/animations/state-at-end-event-expected.png: Added.
+        * platform/mac/animations/state-at-end-event-expected.txt: Added.
+
+        Test the state of rendering when the webkitAnimationEnd event fires for a '-webkit-transform' animation, via pixel test.
+
+        * platform/mac/animations/state-at-end-event-transform-expected.checksum: Added.
+        * platform/mac/animations/state-at-end-event-transform-expected.png: Added.
+        * platform/mac/animations/state-at-end-event-transform-expected.txt: Added.
+        
+        Tests that if you change the transform  after a transition finishes, that the transform
+        does update.
+
+        * transitions/move-after-transition.html: Added.
+        * platform/mac/transitions/move-after-transition-expected.checksum: Added.
+        * platform/mac/transitions/move-after-transition-expected.png: Added.
+        * platform/mac/transitions/move-after-transition-expected.txt: Added.
+
 2009-10-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.

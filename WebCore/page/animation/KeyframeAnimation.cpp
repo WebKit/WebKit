@@ -244,10 +244,8 @@ void KeyframeAnimation::onAnimationIteration(double elapsedTime)
 
 void KeyframeAnimation::onAnimationEnd(double elapsedTime)
 {
-    if (!sendAnimationEvent(eventNames().webkitAnimationEndEvent, elapsedTime)) {
-        // We didn't dispatch an event, which would call endAnimation(), so we'll just call it here.
-        endAnimation(true);
-    }
+    sendAnimationEvent(eventNames().webkitAnimationEndEvent, elapsedTime);
+    endAnimation(true);
 }
 
 bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)

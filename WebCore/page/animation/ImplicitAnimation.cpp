@@ -142,10 +142,8 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
     if (keyframeAnim)
         keyframeAnim->setUnanimatedStyle(m_toStyle);
     
-    if (!sendTransitionEvent(eventNames().webkitTransitionEndEvent, elapsedTime)) {
-        // We didn't dispatch an event, which would call endAnimation(), so we'll just call it here.
-        endAnimation(true);
-    }
+    sendTransitionEvent(eventNames().webkitTransitionEndEvent, elapsedTime);
+    endAnimation(true);
 }
 
 bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, double elapsedTime)
