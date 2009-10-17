@@ -1245,6 +1245,21 @@ void GraphicsLayerCA::setAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedP
     [layer addAnimation:caAnim forKey:animationName];
 }
 
+// Workaround for <rdar://problem/7311367>
+static void bug7311367Workaround(CALayer* transformLayer, const TransformationMatrix& transform)
+{
+    if (!transformLayer)
+        return;
+
+    CATransform3D caTransform;
+    copyTransform(caTransform, transform);
+    caTransform.m41 += 1;
+    [transformLayer setTransform:caTransform];
+
+    caTransform.m41 -= 1;
+    [transformLayer setTransform:caTransform];
+}
+
 bool GraphicsLayerCA::removeAnimationFromLayer(AnimatedPropertyID property, int index)
 {
     PlatformLayer* layer = animatedLayer(property);
@@ -1255,9 +1270,10 @@ bool GraphicsLayerCA::removeAnimationFromLayer(AnimatedPropertyID property, int 
         return false;
     
     [layer removeAnimationForKey:animationName];
+    
+    bug7311367Workaround(m_transformLayer.get(), m_transform);
     return true;
 }
-
 
 static void copyAnimationProperties(CAPropertyAnimation* from, CAPropertyAnimation* to)
 {

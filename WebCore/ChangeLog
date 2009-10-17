@@ -2,6 +2,22 @@
 
         Reviewed by Dan Bernstein.
 
+        Transform layer gets stuck with the wrong transform after an animation ends
+        <rdar://problem/7311662>
+
+        Work around a CoreAnimation bug which causes an animated transform layer to
+        end up with a stale transform.
+        
+        Test: compositing/animation/state-at-end-event-transform-layer.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::bug7311367Workaround):
+        (WebCore::GraphicsLayerCA::removeAnimationFromLayer):
+
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         After running a transition with an end event listener, can't change the transform
         https://bugs.webkit.org/show_bug.cgi?id=30454
         

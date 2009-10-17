@@ -2,6 +2,21 @@
 
         Reviewed by Dan Bernstein.
 
+        Transform layer gets stuck with the wrong transform after an animation ends
+        <rdar://problem/7311662>
+        
+        Testcase that runs a -webkit-transform animation on a preserve-3d element, and tests that the final
+        state is correct.
+
+        * compositing/animation/state-at-end-event-transform-layer.html: Added.
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.checksum: Added.
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.png: Added.
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.txt: Added.
+
+2009-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         After running a transition with an end event listener, can't change the transform
         https://bugs.webkit.org/show_bug.cgi?id=30454
 
