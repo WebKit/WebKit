@@ -1,3 +1,27 @@
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        @charset rule after the first byte causes the rest of css to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=18265
+
+        Apparently we're supposed to tolerate whitespace before the charset
+        rule so folks can write code like this:
+
+        <style>
+        @charset "utf-8"
+        ...
+        </style>
+
+        I'm told this is one of the top compatability problems in China.
+        Tests: fast/css/comment-before-charset-external.html
+               fast/css/comment-before-charset.html
+               fast/css/many-spaces-before-charset.html
+               fast/css/space-before-charset-external.html
+               fast/css/space-before-charset.html
+
+        * css/CSSGrammar.y:
+
 2009-10-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

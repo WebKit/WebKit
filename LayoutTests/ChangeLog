@@ -1,3 +1,26 @@
+2009-10-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        @charset rule after the first byte causes the rest of css to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=18265
+
+        Test that we allow whitespace and comments before the charset rule.
+        These test results all match Firefox.
+
+        * fast/css/comment-before-charset-expected.txt: Added.
+        * fast/css/comment-before-charset-external-expected.txt: Added.
+        * fast/css/comment-before-charset-external.html: Added.
+        * fast/css/comment-before-charset.html: Added.
+        * fast/css/many-spaces-before-charset-expected.txt: Added.
+        * fast/css/many-spaces-before-charset.html: Added.
+        * fast/css/resources/comment-before-charset.css: Added.
+        * fast/css/resources/space-before-charset.css: Added.
+        * fast/css/space-before-charset-expected.txt: Added.
+        * fast/css/space-before-charset-external-expected.txt: Added.
+        * fast/css/space-before-charset-external.html: Added.
+        * fast/css/space-before-charset.html: Added.
+
 2009-10-16  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.

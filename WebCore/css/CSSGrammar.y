@@ -97,7 +97,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 50
+%expect 51
 
 %nonassoc LOWEST_PREC
 
@@ -268,7 +268,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %%
 
 stylesheet:
-    maybe_charset maybe_sgml import_list variables_list namespace_list rule_list
+    maybe_space maybe_charset maybe_sgml import_list variables_list namespace_list rule_list
   | webkit_rule maybe_space
   | webkit_decls maybe_space
   | webkit_value maybe_space
