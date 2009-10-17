@@ -1,3 +1,39 @@
+2009-10-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes part of <http://webkit.org/b/30412>.
+        Web Inspector should get human readable DOM Exceptions.
+
+        Add a description field to ExceptionBase, and call it through 
+        reportException which allows the user/developer to get a more detailed
+        and coherent error explanation through the Web Inspector.
+
+        This only applies to exceptions that come from a script on the page when
+        it is run. DOM Exceptions that come from the code run in the console, or DOM
+        exceptions that are caught and logged will come in a future patch.
+
+        Tests: inspector/uncaught-dom1-exception.html
+               inspector/uncaught-dom3-exception.html
+               inspector/uncaught-dom8-exception.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSExceptionBase.cpp: Added.
+        (WebCore::toExceptionBase):
+        * bindings/js/JSExceptionBase.h: Added.
+        * dom/ExceptionBase.cpp:
+        (WebCore::ExceptionBase::ExceptionBase):
+        * dom/ExceptionBase.h:
+        (WebCore::ExceptionBase::description):
+        * dom/ExceptionCode.cpp:
+        (WebCore::):
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+
 2009-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: forgot to check in this #include.

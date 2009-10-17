@@ -25,6 +25,7 @@
 #include "DOMCoreException.h"
 #include "Document.h"
 #include "EventException.h"
+#include "ExceptionBase.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLAudioElement.h"
@@ -35,6 +36,7 @@
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSEventException.h"
+#include "JSExceptionBase.h"
 #include "JSNode.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
@@ -467,6 +469,9 @@ void reportException(ExecState* exec, JSValue exception)
     int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
     UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec);
     exec->clearException();
+
+    if (ExceptionBase* exceptionBase = toExceptionBase(exception))
+        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
 
     ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     ASSERT(scriptExecutionContext);

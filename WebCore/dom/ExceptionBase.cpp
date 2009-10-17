@@ -34,6 +34,7 @@ namespace WebCore {
 ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
     : m_code(description.code)
     , m_name(description.name)
+    , m_description(description.description)
 {
     if (description.name)
         m_message = String::format("%s: %s Exception %d", description.name, description.typeName, description.code);

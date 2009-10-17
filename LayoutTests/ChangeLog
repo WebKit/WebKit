@@ -1,3 +1,21 @@
+2009-10-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes part of <http://webkit.org/b/30412>.
+        Web Inspector should get human readable DOM Exceptions.
+        
+        Adds tests for output of uncaught exceptions to the Web Inspector
+        Console. Tests DOM exceptions 1, 3, and 8 (INDEX_SIZE_ERR, NOT_FOUND_ERR, and
+        HIERARCHY_REQUEST_ERR).
+
+        * inspector/uncaught-dom1-exception-expected.txt: Added.
+        * inspector/uncaught-dom1-exception.html: Added.
+        * inspector/uncaught-dom3-exception-expected.txt: Added.
+        * inspector/uncaught-dom3-exception.html: Added.
+        * inspector/uncaught-dom8-exception-expected.txt: Added.
+        * inspector/uncaught-dom8-exception.html: Added.
+
 2009-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

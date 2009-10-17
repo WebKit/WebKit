@@ -486,6 +486,8 @@
             'bindings/js/JSEventListener.h',
             'bindings/js/JSEventTarget.cpp',
             'bindings/js/JSEventTarget.h',
+            'bindings/js/JSExceptionBase.cpp',
+            'bindings/js/JSExceptionBase.h',
             'bindings/js/JSGeolocationCustom.cpp',
             'bindings/js/JSHistoryCustom.cpp',
             'bindings/js/JSHistoryCustom.h',

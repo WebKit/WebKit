@@ -33021,6 +33021,14 @@
 					RelativePath="..\bindings\js\JSEventTarget.h"
 					>
 				</File>
+                <File
+					RelativePath="..\bindings\js\JSExceptionBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSExceptionBase.h"
+					>
+				</File>
 				<File
 					RelativePath="..\bindings\js\JSGeolocationCustom.cpp"
 					>
