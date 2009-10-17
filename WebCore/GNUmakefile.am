@@ -367,6 +367,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventSourceCustom.cpp \
 	WebCore/bindings/js/JSEventTarget.cpp \
 	WebCore/bindings/js/JSEventTarget.h \
+	WebCore/bindings/js/JSExceptionBase.cpp \
+	WebCore/bindings/js/JSExceptionBase.h \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.h \

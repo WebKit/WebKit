@@ -2,6 +2,16 @@
 
         Unreviewed.
 
+        [Gtk] Build fix for WebKitGtk after r49723.
+
+        Add bindings/js/JSExceptionBase.* to the build.
+
+        * GNUmakefile.am:
+
+2009-10-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
         [Qt] Build fix for QtWebKit after r49723.
 
         Add bindings/js/JSExceptionBase.cpp to the build.
