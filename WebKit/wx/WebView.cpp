@@ -269,6 +269,7 @@ wxWebView::wxWebView() :
     m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false),
+    m_mouseWheelZooms(false),
     m_title(wxEmptyString)
 {
 }
@@ -279,6 +280,7 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false),
+    m_mouseWheelZooms(false),
     m_title(wxEmptyString)
 {
     Create(parent, id, position, size, style, name);
@@ -592,8 +594,16 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
     wxEventType type = event.GetEventType();
     
     if (type == wxEVT_MOUSEWHEEL) {
-        WebCore::PlatformWheelEvent wkEvent(event, globalPoint);
-        frame->eventHandler()->handleWheelEvent(wkEvent);
+        if (m_mouseWheelZooms && event.ControlDown() && !event.AltDown() && !event.ShiftDown()) {
+            if (event.GetWheelRotation() < 0)
+                DecreaseTextSize();
+            else if (event.GetWheelRotation() > 0)
+                IncreaseTextSize();
+        } else {
+            WebCore::PlatformWheelEvent wkEvent(event, globalPoint);
+            frame->eventHandler()->handleWheelEvent(wkEvent);
+        }
+
         return;
     }
     

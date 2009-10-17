@@ -194,6 +194,9 @@ public:
     static void SetCachePolicy(const wxWebViewCachePolicy& cachePolicy);
     static wxWebViewCachePolicy GetCachePolicy();
 
+    void SetMouseWheelZooms(bool mouseWheelZooms) { m_mouseWheelZooms = mouseWheelZooms; }
+    bool GetMouseWheelZooms() const { return m_mouseWheelZooms; }
+
 protected:
 
     // event handlers (these functions should _not_ be virtual)
@@ -216,6 +219,7 @@ private:
     bool m_isEditable;
     bool m_isInitialized;
     bool m_beingDestroyed;
+    bool m_mouseWheelZooms;
     WebViewPrivate* m_impl;
     wxWebFrame* m_mainFrame;
     wxString m_title;

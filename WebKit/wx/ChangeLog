@@ -1,3 +1,16 @@
+2009-10-16  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Optionally allow the user to zoom text using the mouse wheel.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30444
+
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::OnMouseEvents):
+        * WebView.h:
+
 2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW non-precomp headers build fix.
