@@ -51,15 +51,16 @@ namespace WebCore {
         String viewTargetString() const { return m_viewTargetString; }
         SVGElement* viewTarget() const;
 
-        const SVGElement* contextElement() const;
+        const SVGSVGElement* contextElement() const { return m_contextElement; }
 
     private:
+        const SVGSVGElement* m_contextElement;
+
         // SVGFitToViewBox
         ANIMATED_PROPERTY_DECLARATIONS(SVGViewSpec, SVGFitToViewBoxIdentifier, SVGNames::viewBoxAttrString, FloatRect, ViewBox, viewBox)
         ANIMATED_PROPERTY_DECLARATIONS(SVGViewSpec, SVGFitToViewBoxIdentifier, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         mutable RefPtr<SVGTransformList> m_transform;
-        const SVGSVGElement* m_contextElement;
         String m_viewTargetString;
     };
 

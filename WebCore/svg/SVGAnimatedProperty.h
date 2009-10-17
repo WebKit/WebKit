@@ -71,6 +71,8 @@ namespace WebCore {
     public:
         virtual ~SVGAnimatedPropertyBase() { }
         virtual void synchronize() const = 0;
+        virtual void startAnimation() const = 0;
+        virtual void stopAnimation() = 0;
     };
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -125,6 +127,7 @@ namespace WebCore {
         // Tear offs only used by bindings, never in internal code
         PassRefPtr<TearOff> animatedTearOff() const;
 
+        void registerProperty();
         virtual void synchronize() const;
 
         void startAnimation() const;
@@ -141,6 +144,10 @@ namespace WebCore {
         const AtomicString& m_attributeIdentifier;
 
         mutable SynchronizableTypeWrapper<StorableType> m_value;
+
+#ifndef NDEBUG
+        bool m_registered;
+#endif
     };
 
     // SVGAnimatedPropertyTearOff implementation
@@ -187,8 +194,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeName.localName())
         , m_value()
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -199,8 +210,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeIdentifier)
         , m_value()
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -212,8 +227,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeName.localName())
         , m_value(arg1)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -226,8 +245,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeIdentifier)
         , m_value(arg1)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -240,8 +263,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeName.localName())
         , m_value(arg1, arg2)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -255,8 +282,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeIdentifier)
         , m_value(arg1, arg2)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -270,8 +301,12 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeName.localName())
         , m_value(arg1, arg2, arg3)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
@@ -286,20 +321,26 @@ namespace WebCore {
         , m_attributeName(attributeName)
         , m_attributeIdentifier(attributeIdentifier)
         , m_value(arg1, arg2, arg3)
+#ifndef NDEBUG
+        , m_registered(false)
+#endif
     {
         ASSERT(m_ownerType);
+        registerProperty();
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     typename SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::DecoratedType
     SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::value() const
     {
+        ASSERT(m_registered);
         return m_value;
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::setValue(typename SVGAnimatedProperty::DecoratedType newValue)
     {
+        ASSERT(m_registered);
         m_value = newValue;
         ownerElement()->setSynchronizedSVGAttributes(false);
     }
@@ -308,6 +349,7 @@ namespace WebCore {
     typename SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::DecoratedType
     SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::baseValue() const
     {
+        ASSERT(m_registered);
         const OwnerElement* ownerElement = this->ownerElement();
         SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions && extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier))
@@ -319,6 +361,7 @@ namespace WebCore {
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::setBaseValue(typename SVGAnimatedProperty::DecoratedType newValue)
     {
+        ASSERT(m_registered);
         const OwnerElement* ownerElement = this->ownerElement();
         SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions && extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier)) {
@@ -335,12 +378,25 @@ namespace WebCore {
     PassRefPtr<typename SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::TearOff>
     SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::animatedTearOff() const
     {
+        ASSERT(m_registered);
         return lookupOrCreateWrapper<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName, TearOff, OwnerElement>(*this, ownerElement(), m_attributeName, m_attributeIdentifier);
+    }
+
+    template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
+    void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::registerProperty()
+    {
+        ASSERT(!m_registered);
+        ownerElement()->propertyController().registerProperty(m_attributeName, this);
+
+#ifndef NDEBUG
+        m_registered = true;
+#endif
     }
 
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::synchronize() const
     {
+        ASSERT(m_registered);
         if (!m_value.needsSynchronization()) 
             return; 
 
@@ -351,6 +407,7 @@ namespace WebCore {
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::startAnimation() const
     {
+        ASSERT(m_registered);
         const OwnerElement* ownerElement = this->ownerElement();
         if (SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions()) {
             ASSERT(!extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
@@ -361,11 +418,12 @@ namespace WebCore {
     template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::stopAnimation()
     {
+        ASSERT(m_registered);
         const OwnerElement* ownerElement = this->ownerElement();
         if (SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions()) {
             ASSERT(extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             setValue(extensions->baseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
-            extensions->removeBaseValue<AnimatedType>(ownerElement, m_attributeIdentifier);
+            extensions->removeBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier);
         }
     }
 

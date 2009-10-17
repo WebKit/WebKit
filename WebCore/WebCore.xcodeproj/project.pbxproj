@@ -90,6 +90,10 @@
 		087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281540F26B9B600AFC596 /* OptionGroupElement.h */; };
 		08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */; };
 		08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */; };
+		0878B1FD10874E3F00A55097 /* SVGAnimatedProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 0878B1F910874E3F00A55097 /* SVGAnimatedProperty.h */; };
+		0878B1FE10874E3F00A55097 /* SynchronizablePropertyController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0878B1FA10874E3F00A55097 /* SynchronizablePropertyController.cpp */; };
+		0878B1FF10874E3F00A55097 /* SynchronizablePropertyController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0878B1FB10874E3F00A55097 /* SynchronizablePropertyController.h */; };
+		0878B20010874E3F00A55097 /* SynchronizableTypeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0878B1FC10874E3F00A55097 /* SynchronizableTypeWrapper.h */; };
 		087FFA0F0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087FFA0D0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp */; };
 		087FFA100EFF3ED3009DBD88 /* WMLInsertedLegendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087FFA0E0EFF3ED3009DBD88 /* WMLInsertedLegendElement.h */; };
 		08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */; };
@@ -5250,6 +5254,10 @@
 		087281540F26B9B600AFC596 /* OptionGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionGroupElement.h; sourceTree = "<group>"; };
 		08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOnEventElement.cpp; sourceTree = "<group>"; };
 		08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOnEventElement.h; sourceTree = "<group>"; };
+		0878B1F910874E3F00A55097 /* SVGAnimatedProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedProperty.h; sourceTree = "<group>"; };
+		0878B1FA10874E3F00A55097 /* SynchronizablePropertyController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronizablePropertyController.cpp; sourceTree = "<group>"; };
+		0878B1FB10874E3F00A55097 /* SynchronizablePropertyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizablePropertyController.h; sourceTree = "<group>"; };
+		0878B1FC10874E3F00A55097 /* SynchronizableTypeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizableTypeWrapper.h; sourceTree = "<group>"; };
 		087FFA0D0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLInsertedLegendElement.cpp; sourceTree = "<group>"; };
 		087FFA0E0EFF3ED3009DBD88 /* WMLInsertedLegendElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInsertedLegendElement.h; sourceTree = "<group>"; };
 		08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLGoElement.cpp; sourceTree = "<group>"; };
@@ -13484,6 +13492,7 @@
 				B22277F20D00BF1F0071B782 /* SVGAnimatedPoints.h */,
 				B22277F30D00BF1F0071B782 /* SVGAnimatedPoints.idl */,
 				B22277F40D00BF1F0071B782 /* SVGAnimatedPreserveAspectRatio.idl */,
+				0878B1F910874E3F00A55097 /* SVGAnimatedProperty.h */,
 				B22277F50D00BF1F0071B782 /* SVGAnimatedRect.idl */,
 				B22277F60D00BF1F0071B782 /* SVGAnimatedString.idl */,
 				B22277F70D00BF1F0071B782 /* SVGAnimatedTemplate.h */,
@@ -13872,6 +13881,9 @@
 				B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */,
 				B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */,
 				B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */,
+				0878B1FA10874E3F00A55097 /* SynchronizablePropertyController.cpp */,
+				0878B1FB10874E3F00A55097 /* SynchronizablePropertyController.h */,
+				0878B1FC10874E3F00A55097 /* SynchronizableTypeWrapper.h */,
 				B28C6A260D00C44800334AA4 /* xlinkattrs.in */,
 			);
 			path = svg;
@@ -17687,6 +17699,7 @@
 				B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */,
 				B22279850D00BF220071B782 /* SVGAnimatedPathData.h in Headers */,
 				B22279880D00BF220071B782 /* SVGAnimatedPoints.h in Headers */,
+				0878B1FD10874E3F00A55097 /* SVGAnimatedProperty.h in Headers */,
 				B222798D0D00BF220071B782 /* SVGAnimatedTemplate.h in Headers */,
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
@@ -17860,6 +17873,8 @@
 				B2227AF30D00BF220071B782 /* SVGViewSpec.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
+				0878B1FF10874E3F00A55097 /* SynchronizablePropertyController.h in Headers */,
+				0878B20010874E3F00A55097 /* SynchronizableTypeWrapper.h in Headers */,
 				93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */,
@@ -20023,6 +20038,7 @@
 				B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
+				0878B1FE10874E3F00A55097 /* SynchronizablePropertyController.cpp in Sources */,
 				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,
 				BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */,
 				6550B6A5099DF0270090D781 /* Text.cpp in Sources */,

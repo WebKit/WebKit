@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "StyledElement.h"
 #include "SVGAnimatedProperty.h"
+#include "SynchronizablePropertyController.h"
 
 namespace WebCore {
 
@@ -77,13 +78,10 @@ namespace WebCore {
 
         HashSet<SVGElementInstance*> instancesForElement() const;
 
-        void addSVGPropertySynchronizer(const QualifiedName& attrName, const SVGAnimatedPropertyBase& base) const
-        {
-            m_svgPropertyMap.set(attrName.localName(), &base);
-        }
-
         void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
         void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
+
+        SynchronizablePropertyController& propertyController() const { return m_propertyController; }
 
     protected:
         SVGElement(const QualifiedName&, Document*);
@@ -106,36 +104,13 @@ namespace WebCore {
 
         virtual void buildPendingResource() { }
 
-        // Inlined methods handling SVG property synchronization
-        void invokeSVGPropertySynchronizer(const String& name) const
-        {
-            if (m_svgPropertyMap.contains(name)) {
-                const SVGAnimatedPropertyBase* property = m_svgPropertyMap.get(name);
-                ASSERT(property);
-
-                property->synchronize();
-            }
-        }
-
-        void invokeAllSVGPropertySynchronizers() const
-        {
-            HashMap<String, const SVGAnimatedPropertyBase*>::const_iterator it = m_svgPropertyMap.begin();
-            const HashMap<String, const SVGAnimatedPropertyBase*>::const_iterator end = m_svgPropertyMap.end();
-            for (; it != end; ++it) {
-                const SVGAnimatedPropertyBase* property = it->second;
-                ASSERT(property);
-
-                property->synchronize();
-            }
-        }
-
         void mapInstanceToElement(SVGElementInstance*);
         void removeInstanceMapping(SVGElementInstance*);
 
         virtual bool haveLoadedRequiredResources();
 
         ContainerNode* m_shadowParent;
-        mutable HashMap<String, const SVGAnimatedPropertyBase*> m_svgPropertyMap;
+        mutable SynchronizablePropertyController m_propertyController;
 
         SVGCursorElement* m_cursorElement;
         CSSCursorImageValue* m_cursorImageValue;

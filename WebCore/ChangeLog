@@ -1,3 +1,57 @@
+2009-10-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by George Staikos.
+
+        Cleanup SVGElement code, preparing for animVal support
+        https://bugs.webkit.org/show_bug.cgi?id=30466
+
+        Add new SynchronizablePropertyController and move the code for SVG property <-> XML attribute synchronization
+        from SVGElement. This is a further preparation for animVal support, where SynchronizablePropertyController will
+        be used to control the start/end state of an animated property.
+
+        We're currently tracking animated properties that need synchronization, generalize this concept and use
+        it to track their creation (bound to certain SVG*Element classes) as well as a flag determing the need
+        of synchronization (no SVG DOM object wrappers, no synchronization needed).
+
+        No change in functionality, thus no tests.
+
+        * GNUmakefile.am: Add 'SynchronizablePropertyController.cpp/h' to build
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimatedProperty.h: Add registerProperty() function 
+        (WebCore::::SVGAnimatedProperty): Call registerProperty() function  
+        (WebCore::::registerProperty): Add new registerProperty() function, announcing new properties to SynchronizablePropertyController.
+        * svg/SVGAnimatedTemplate.h: Use propertyController() method, to access the new functions moved from SVGElement.
+        (WebCore::lookupOrCreateWrapper):
+        * svg/SVGElement.cpp: Adapt to code moving to SynchronizablePropertyController.
+        (WebCore::SVGElement::updateAnimatedSVGAttribute):
+        * svg/SVGElement.h: Move handling SVG property synchronization to SynchronizablePropertyController.
+        (WebCore::SVGElement::propertyController): Expose reference to SynchronizablePropertyController object.
+        * svg/SVGViewSpec.cpp: Reorder initialization order of contextElement, leading to possible crashes.
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::viewTarget):
+        * svg/SVGViewSpec.h: Ditto.
+        (WebCore::SVGViewSpec::contextElement):
+        * svg/SynchronizablePropertyController.cpp: Added.
+        (WebCore::SynchronizablePropertyController::SynchronizablePropertyController):
+        (WebCore::SynchronizablePropertyController::registerProperty):
+        (WebCore::SynchronizablePropertyController::setPropertyNeedsSynchronization):
+        (WebCore::SynchronizablePropertyController::synchronizeProperty):
+        (WebCore::SynchronizablePropertyController::synchronizeAllProperties):
+        (WebCore::SynchronizablePropertyController::startAnimation):
+        (WebCore::SynchronizablePropertyController::stopAnimation):
+        * svg/SynchronizablePropertyController.h: Added.
+        (WebCore::SynchronizableProperty::SynchronizableProperty):
+        (WebCore::SynchronizableProperty::isHashTableDeletedValue):
+        (WebCore::SynchronizableProperty::operator==):
+        (WebCore::SynchronizablePropertyHash::hash):
+        (WebCore::SynchronizablePropertyHash::equal):
+        (WebCore::SynchronizablePropertyHashTraits::constructDeletedValue):
+        (WebCore::SynchronizablePropertyHashTraits::isDeletedValue):
+
 2009-10-17  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

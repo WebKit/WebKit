@@ -3154,6 +3154,8 @@ webcore_sources += \
 	WebCore/svg/SVGZoomAndPan.h \
 	WebCore/svg/SVGZoomEvent.cpp \
 	WebCore/svg/SVGZoomEvent.h \
+	WebCore/svg/SynchronizablePropertyController.cpp \
+	WebCore/svg/SynchronizablePropertyController.h \
 	WebCore/svg/SynchronizableTypeWrapper.h \
 	WebCore/svg/animation/SMILTime.cpp \
 	WebCore/svg/animation/SMILTime.h \

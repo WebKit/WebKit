@@ -34,10 +34,10 @@ namespace WebCore {
 SVGViewSpec::SVGViewSpec(const SVGSVGElement* contextElement)
     : SVGFitToViewBox()
     , SVGZoomAndPan()
+    , m_contextElement(contextElement)
     , m_viewBox(this, SVGNames::viewBoxAttr)
     , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
     , m_transform(SVGTransformList::create(SVGNames::transformAttr))
-    , m_contextElement(contextElement)
 {
 }
 
@@ -74,12 +74,7 @@ void SVGViewSpec::setViewTargetString(const String& viewTargetString)
 
 SVGElement* SVGViewSpec::viewTarget() const
 {
-    return static_cast<SVGElement*>(m_contextElement->ownerDocument()->getElementById(m_viewTargetString));
-}
-
-const SVGElement* SVGViewSpec::contextElement() const
-{
-    return m_contextElement;
+    return static_cast<SVGElement*>(m_contextElement->document()->getElementById(m_viewTargetString));
 }
 
 static const UChar svgViewSpec[] = {'s', 'v', 'g', 'V', 'i', 'e', 'w'};

@@ -2253,6 +2253,7 @@ HEADERS += \
     svg/SVGViewSpec.h \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
+    svg/SynchronizablePropertyController.h \
     wml/WMLAccessElement.h \
     wml/WMLAElement.h \
     wml/WMLAnchorElement.h \
@@ -3008,6 +3009,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGViewElement.cpp \
         svg/SVGViewSpec.cpp \
         svg/SVGZoomAndPan.cpp \
+        svg/SynchronizablePropertyController.cpp \
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \

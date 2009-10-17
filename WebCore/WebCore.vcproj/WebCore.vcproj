@@ -34270,6 +34270,10 @@
 				RelativePath="..\svg\SVGZoomEvent.h"
 				>
 			</File>
+			<File
+				RelativePath="..\svg\SynchronizablePropertyController.h"
+				>
+			</File>
 			<Filter
 				Name="animation"
 				>

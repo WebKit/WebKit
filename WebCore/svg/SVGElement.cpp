@@ -270,10 +270,10 @@ void SVGElement::updateAnimatedSVGAttribute(const String& name) const
     m_synchronizingSVGAttributes = true;
 
     if (name.isEmpty()) {
-        invokeAllSVGPropertySynchronizers();
+        m_propertyController.synchronizeAllProperties();
         setSynchronizedSVGAttributes(true);
     } else
-        invokeSVGPropertySynchronizer(name);
+        m_propertyController.synchronizeProperty(name);
 
     m_synchronizingSVGAttributes = false;
 }

@@ -3479,6 +3479,8 @@
             'svg/SVGZoomAndPan.h',
             'svg/SVGZoomEvent.cpp',
             'svg/SVGZoomEvent.h',
+            'svg/SynchronizablePropertyController.cpp',
+            'svg/SynchronizablePropertyController.h',
             'svg/SynchronizableTypeWrapper.h',
             'websockets/WebSocket.cpp',
             'websockets/WebSocket.h',
