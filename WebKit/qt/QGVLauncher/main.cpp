@@ -125,9 +125,8 @@ public:
     SharedScene()
     {
         m_scene = new QGraphicsScene;
-
         m_item = new QGraphicsWebView;
-        m_item->setPage(new WebPage());
+        m_item->setPage((m_page = new WebPage));
 
         m_scene->addItem(m_item);
         m_scene->setActiveWindow(m_item);
@@ -137,6 +136,7 @@ public:
     {
         delete m_item;
         delete m_scene;
+        delete m_page;
     }
 
     QGraphicsScene* scene() const { return m_scene; }
@@ -145,6 +145,7 @@ public:
 private:
     QGraphicsScene* m_scene;
     QGraphicsWebView* m_item;
+    WebPage* m_page;
 };
 
 

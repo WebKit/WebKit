@@ -2,6 +2,22 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] QGLauncher leaks WebPage object
+        https://bugs.webkit.org/show_bug.cgi?id=30465
+
+        Make 'SharedScene' to own 'WebPage' reference and delete it at its destructor.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::view):
+        * Api/qwebpage_p.h:
+        * QGVLauncher/main.cpp:
+        (SharedScene::SharedScene):
+        (SharedScene::~SharedScene):
+
+2009-10-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] "dangling" pointer to qwebpage's view object can leads QGLauncher to crash
         https://bugs.webkit.org/show_bug.cgi?id=30459
 
