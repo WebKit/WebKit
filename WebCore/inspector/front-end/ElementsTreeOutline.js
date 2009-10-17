@@ -188,16 +188,28 @@ WebInspector.ElementsTreeOutline.prototype = {
     handleKeyEvent: function(event)
     {
         var selectedElement = this.selectedTreeElement;
-
         if (!selectedElement)
             return;
-        
-        if (event.keyCode == 8 || event.keyCode == 46) {
-            // Delete or backspace pressed, delete the node.
+
+        // Delete or backspace pressed, delete the node.
+        if (event.keyCode === 8 || event.keyCode === 46) {
             selectedElement.remove();
             return;
         }
-        
+
+        // On Enter or Return start editing the first attribute
+        // or create a new attribute on the selected element.
+        if (event.keyIdentifier === "Enter") {
+            if (this._editing)
+                return;
+
+            selectedElement._startEditing();
+
+            // prevent a newline from being immediately inserted
+            event.preventDefault();
+            return;
+        }
+
         TreeOutline.prototype.handleKeyEvent.call(this, event);
     },
 
@@ -295,7 +307,8 @@ WebInspector.ElementsTreeElement.prototype = {
             if (x) {
                 this.updateSelection();
                 this.listItemElement.addStyleClass("hovered");
-                this._pendingToggleNewAttribute = setTimeout(this.toggleNewAttributeButton.bind(this, true), 500);
+                if (this._canAddAttributes)
+                    this._pendingToggleNewAttribute = setTimeout(this.toggleNewAttributeButton.bind(this, true), 500);
             } else {
                 this.listItemElement.removeStyleClass("hovered");
                 if (this._pendingToggleNewAttribute) {
@@ -506,7 +519,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
-        if (this._startEditing(event, treeElement))
+        if (this._startEditingFromEvent(event, treeElement))
             return;
 
         if (this.treeOutline.panel) {
@@ -531,7 +544,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
     },
 
-    _startEditing: function(event, treeElement)
+    _startEditingFromEvent: function(event, treeElement)
     {
         if (this.treeOutline.focusedDOMNode != this.representedObject)
             return;
@@ -552,6 +565,30 @@ WebInspector.ElementsTreeElement.prototype = {
             return this._addNewAttribute(treeElement.listItemElement);
 
         return false;
+    },
+
+    _startEditing: function()
+    {
+        if (this.treeOutline.focusedDOMNode !== this.representedObject)
+            return;
+
+        var listItem = this._listItemNode;
+
+        if (this._canAddAttributes) {
+            this.toggleNewAttributeButton(false);
+            var attribute = listItem.getElementsByClassName("webkit-html-attribute")[0];
+            if (attribute)
+                return this._startEditingAttribute(attribute, attribute.getElementsByClassName("webkit-html-attribute-name")[0]);
+
+            return this._addNewAttribute(listItem);
+        }
+
+        if (this.representedObject.nodeType === Node.TEXT_NODE) {
+            var textNode = listItem.getElementsByClassName("webkit-html-text-node")[0];
+            if (textNode)
+                return this._startEditingTextNode(textNode);
+            return;
+        }
     },
 
     _addNewAttribute: function(listItemElement)
@@ -661,7 +698,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 }
             }
 
-            if (!found && moveDirection === "backward")
+            if (!found && moveDirection === "backward" && attributes.length > 0)
                 moveToAttribute = attributes[attributes.length - 1].name;
             else if (!found && moveDirection === "forward" && !/^\s*$/.test(newText))
                 newAttribute = true;

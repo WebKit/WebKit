@@ -1,3 +1,21 @@
+2009-10-15  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Handle the Enter Key in the Elements Tree Hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=30428
+
+        TextNode => Edit Text Node
+        Has Attributes => Edit First Attribute
+        No Attributes => Start Editing New Attribute
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.handleKeyEvent): handle the "Enter" key
+        (WebInspector.ElementsTreeElement.prototype.set hovered): only add new attribute button on nodes with attributes
+        (WebInspector.ElementsTreeElement.prototype._addNewAttribute): prevent moving backwards where there are no attributes
+        (WebInspector.ElementsTreeElement.prototype._startEditingFromEvent): renamed to be clearer
+        (WebInspector.ElementsTreeElement.prototype._startEditing): transition to the appropriate edit state for a tree element
+
 2009-10-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
