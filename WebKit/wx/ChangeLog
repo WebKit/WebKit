@@ -1,3 +1,9 @@
+2009-10-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW non-precomp headers build fix.
+
+        * WebView.cpp:
+
 2009-10-15  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

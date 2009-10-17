@@ -39,6 +39,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLFormElement.h"
 #include "Logging.h"
 #include "markup.h"
 #include "Page.h"
