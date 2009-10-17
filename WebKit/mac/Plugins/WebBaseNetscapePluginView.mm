@@ -83,27 +83,11 @@ private:
 
 void WebHaltablePlugin::halt()
 {
-    Element* element = [m_view element];
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    CGImageRef cgImage = CGImageRetain([core([m_view webFrame])->nodeImage(element) CGImageForProposedRect:nil context:nil hints:nil]);
-#else
-    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([m_view webFrame])->nodeImage(element) TIFFRepresentation], 0));
-    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageRef.get(), 0, 0);
-#endif
-    ASSERT(cgImage);
-    
-    // BitmapImage will release the passed in CGImage on destruction.
-    RefPtr<Image> nodeImage = BitmapImage::create(cgImage);
-    ASSERT(element->renderer());
-    toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
     [m_view halt];
 }
 
 void WebHaltablePlugin::restart()
 { 
-    Element* element = [m_view element];
-    ASSERT(element->renderer());
-    toRenderWidget(element->renderer())->showSubstituteImage(0);
     [m_view resumeFromHalt];
 }
     
@@ -495,8 +479,21 @@ Node* WebHaltablePlugin::node() const
 - (void)halt
 {
     ASSERT(!_isHalted && _isStarted);
+    Element *element = [self element];
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element) CGImageForProposedRect:nil context:nil hints:nil]);
+#else
+    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([self webFrame])->nodeImage(element) TIFFRepresentation], 0));
+    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageRef.get(), 0, 0);
+#endif
+    ASSERT(cgImage);
+    
+    // BitmapImage will release the passed in CGImage on destruction.
+    RefPtr<Image> nodeImage = BitmapImage::create(cgImage);
+    ASSERT(element->renderer());
+    toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
     [self stop];
-    _isHalted = YES;
+    _isHalted = YES;    
 }
 
 - (void)resumeFromHalt
@@ -506,6 +503,9 @@ Node* WebHaltablePlugin::node() const
     
     if (_isStarted)
         _isHalted = NO;
+    
+    ASSERT([self element]->renderer());
+    toRenderWidget([self element]->renderer())->showSubstituteImage(0);
 }
 
 - (BOOL)isHalted

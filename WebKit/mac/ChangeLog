@@ -2,6 +2,20 @@
 
         Reviewed by Anders Carlson.
 
+        Small code cleanup
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::halt): Just call -[WebBaseNetscapePluginView halt].
+        (WebHaltablePlugin::restart): Just call -[WebBaseNetscapePluginView resumeFromHalt]
+        (-[WebBaseNetscapePluginView halt]): 
+        (-[WebBaseNetscapePluginView resumeFromHalt]):
+        * WebView/WebView.mm:
+        (_pluginViewForNode): Added a check if a render is a widget. This prevents a later assertion.
+
+2009-10-16  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlson.
+
         Last part of:
         <rdar://problem/7273354>
 

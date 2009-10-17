@@ -2126,7 +2126,7 @@ static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)
         return nil;
     
     RenderObject* renderer = coreNode->renderer();
-    if (!renderer)
+    if (!renderer || !renderer->isWidget())
         return nil;
     
     Widget* widget = toRenderWidget(renderer)->widget();
