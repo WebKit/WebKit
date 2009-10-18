@@ -1142,9 +1142,8 @@ Object.describe = function(obj, abbreviated)
     switch (type1) {
     case "object":
     case "node":
-        return type2;
     case "array":
-        return "[" + obj.toString() + "]";
+        return type2;
     case "string":
         if (!abbreviated)
             return obj;

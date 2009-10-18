@@ -1,3 +1,15 @@
+2009-10-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Title of dir(["test", "test2"]) should be Array
+
+        https://bugs.webkit.org/show_bug.cgi?id=30486
+
+        Test: inspector/console-tests.html
+
+        * inspector/front-end/InjectedScript.js:
+
 2009-10-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

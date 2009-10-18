@@ -13,6 +13,8 @@ CONSOLE MESSAGE: line 17: repeated
 CONSOLE MESSAGE: line 17: repeated
 CONSOLE MESSAGE: line 22: 1
 CONSOLE MESSAGE: line 23: [object HTMLDocument]
+CONSOLE MESSAGE: line 24: test1,test2
+CONSOLE MESSAGE: line 25: [object NodeList]
 Tests that console logging dumps proper messages.
 
 console-tests.html:8log console-message console-js-source console-log-level
@@ -30,4 +32,6 @@ console-tests.html:20group console-message console-js-source console-log-level c
 console-message console-js-source console-log-level
 console-tests.html:221 2 3 console-message console-js-source console-log-level
 console-tests.html:23HTMLDocument console-message console-js-source console-log-level
+console-tests.html:24Array console-message console-js-source console-log-level
+console-tests.html:25NodeList console-message console-js-source console-log-level
 
