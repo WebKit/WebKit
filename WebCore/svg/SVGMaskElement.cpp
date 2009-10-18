@@ -150,18 +150,25 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
     if (imageSize.height() < static_cast<int>(maskDestRect.height()))
         maskDestRect.setHeight(imageSize.height());
 
-    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(imageSize);
+    // FIXME: This changes color space to linearRGB, the default color space
+    // for masking operations in SVG. We need a switch for the other color-space
+    // attribute values sRGB, inherit and auto.
+    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(imageSize, LinearRGB);
     if (!maskImage)
         return 0;
 
+    FloatPoint maskContextLocation = maskDestRect.location();
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         maskDestRect.move(targetRect.x(), targetRect.y());
+
+    if (maskContentUnits() != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        maskContextLocation.move(targetRect.x(), targetRect.y());
 
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);
 
     maskImageContext->save();
-    maskImageContext->translate(-maskDestRect.x(), -maskDestRect.y());
+    maskImageContext->translate(-maskContextLocation.x(), -maskContextLocation.y());
 
     if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskImageContext->save();

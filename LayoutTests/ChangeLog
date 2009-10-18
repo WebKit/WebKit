@@ -1,3 +1,17 @@
+2009-10-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        The color space of masking operations in SVG changed to linearSVG.
+        This needs an update of some masking pixel tests.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac/svg/batik/masking/maskRegions-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+
 2009-10-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
