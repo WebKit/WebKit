@@ -28,8 +28,12 @@
 #include "config.h"
 #include "ChromeClientWx.h"
 #include "Console.h"
+#if ENABLE(DATABASE)
+#include "DatabaseTracker.h"
+#endif
 #include "FileChooser.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -381,7 +385,13 @@ void ChromeClientWx::print(Frame*)
 #if ENABLE(DATABASE)
 void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
 {
-    notImplemented();
+    unsigned long long quota = 5 * 1024 * 1024;
+
+    if (wxWebFrame* webFrame = m_webView->GetMainFrame())
+        if (Frame* frame = webFrame->GetFrame())
+            if (Document* document = frame->document())
+                if (!DatabaseTracker::tracker().hasEntryForOrigin(document->securityOrigin()))
+                    DatabaseTracker::tracker().setQuota(document->securityOrigin(), quota);
 }
 #endif
 

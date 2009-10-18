@@ -2,6 +2,22 @@
 
         Reviewed by Kevin Ollivier.
 
+        Add basic database support to wx API
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30445
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::exceededDatabaseQuota):
+        * WebView.cpp:
+        (wxWebView::Create):
+        (wxWebView::SetDatabaseDirectory):
+        (wxWebView::GetDatabaseDirectory):
+        * WebView.h:
+
+2009-10-16  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
         Optionally allow the user to zoom text using the mouse wheel.
         
         https://bugs.webkit.org/show_bug.cgi?id=30444
