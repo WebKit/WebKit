@@ -2122,7 +2122,9 @@ sub ReturnNativeToJSValue
 
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.
-    return "return v8::Integer::New($value)" if GetNativeType($type) eq "int";
+    my $nativeType = GetNativeType($type);
+    return "return v8::Integer::New($value)" if $nativeType eq "int";
+    return "return v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
 
     return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
 
