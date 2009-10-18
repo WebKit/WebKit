@@ -1,3 +1,19 @@
+2009-10-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix inefficient string concatenation.
+        
+        LayoutTests/fast/css/large-list-of-rules-crash.html contains code that
+        concatenate strings in an inefficient way. Concatenation of strings should be
+        done with Array.join method. This patch fixes this issue, and also fixes typos
+        in the test.
+
+        fast/css/large-list-of-rules-crash.html concatenates strings in an inefficient way
+        https://bugs.webkit.org/show_bug.cgi?id=30436
+
+        * fast/css/large-list-of-rules-crash.html:
+
 2009-10-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: reduce inspector console test size - it times out.
