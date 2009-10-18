@@ -409,6 +409,25 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
+void ResourceHandleManager::setProxyInfo(const String& host,
+                                         unsigned long port,
+                                         ProxyType type,
+                                         const String& username,
+                                         const String& password)
+{
+    m_proxyType = type;
+
+    if (!host.length()) {
+        m_proxy = String("");
+    } else {
+        String userPass;
+        if (username.length() || password.length())
+            userPass = username + ":" + password + "@";
+
+        m_proxy = String("http://") + userPass + host + ":" + String::number(port);
+    }
+}
+
 void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
 {
     ResourceHandleInternal* d = job->getInternal();
@@ -752,6 +771,17 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     if (headers) {
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
         d->m_customHeaders = headers;
+    }
+    // curl CURLOPT_USERPWD expects username:password
+    if (d->m_user.length() || d->m_pass.length()) {
+        String userpass = d->m_user + ":" + d->m_pass;
+        curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+    }
+
+    // Set proxy options if we have them.
+    if (m_proxy.length()) {
+        curl_easy_setopt(d->m_handle, CURLOPT_PROXY, m_proxy.utf8().data());
+        curl_easy_setopt(d->m_handle, CURLOPT_PROXYTYPE, m_proxyType);
     }
 }
 

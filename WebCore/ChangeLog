@@ -1,3 +1,17 @@
+2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add support for proxies in CURL.
+ 
+        https://bugs.webkit.org/show_bug.cgi?id=30446
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setProxyInfo):
+        (WebCore::ResourceHandleManager::initializeHandle):
+        * platform/network/curl/ResourceHandleManager.h:
+        (WebCore::ResourceHandleManager::):
+
 2009-10-18  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez

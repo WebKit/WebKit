@@ -50,6 +50,7 @@
 #include "PluginHalterClient.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "ResourceHandleManager.h"
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -923,4 +924,30 @@ wxString wxWebView::GetDatabaseDirectory()
 #else
     return wxEmptyString;
 #endif
+}
+
+static WebCore::ResourceHandleManager::ProxyType curlProxyType(wxProxyType type)
+{
+    switch (type) {
+        case HTTP: return WebCore::ResourceHandleManager::HTTP;
+        case Socks4: return WebCore::ResourceHandleManager::Socks4;
+        case Socks4A: return WebCore::ResourceHandleManager::Socks4A;
+        case Socks5: return WebCore::ResourceHandleManager::Socks5;
+        case Socks5Hostname: return WebCore::ResourceHandleManager::Socks5Hostname;
+        default:
+            ASSERT_NOT_REACHED();
+            return WebCore::ResourceHandleManager::HTTP;
+    }
+}
+
+/* static */
+void wxWebView::SetProxyInfo(const wxString& host,
+                             unsigned long port,
+                             wxProxyType type,
+                             const wxString& username,
+                             const wxString& password)
+{
+    using WebCore::ResourceHandleManager;
+    if (ResourceHandleManager* mgr = ResourceHandleManager::sharedInstance())
+        mgr->setProxyInfo(host, port, curlProxyType(type), username, password);
 }

@@ -1,4 +1,17 @@
-2009-10-16  Kevin Watters  <kevinwatters@gmail.com>
+2009-10-18  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add the ability to specify a proxy for wxWebKit.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30446
+
+        * WebView.cpp:
+        (curlProxyType):
+        (wxWebView::SetProxyInfo):
+        * WebView.h:
+
+2009-10-18  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
 
