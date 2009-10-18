@@ -1,3 +1,9 @@
+2009-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Skip media/video-empty-source.html until <rdar://problem/6563117> has been fixed.
+
+        * platform/mac/Skipped:
+
 2009-10-17  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.
