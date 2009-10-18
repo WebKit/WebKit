@@ -1,3 +1,15 @@
+2009-10-18  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez
+
+        https://bugs.webkit.org/show_bug.cgi?id=25901
+        Use ATK_ROLE_SECTION for divTag and ATK_ROLE_LABEL for labelTag
+
+        Replaces the use of ATK_ROLE_PANEL with the expected accessible roles.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_role):
+
 2009-10-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by George Staikos.

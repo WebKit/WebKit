@@ -256,8 +256,6 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_TABLE;
     case ApplicationRole:
         return ATK_ROLE_APPLICATION;
-    //case LabelRole: // TODO: should this be covered in the switch?
-    //    return ATK_ROLE_LABEL;
     case GroupRole:
     case RadioGroupRole:
         return ATK_ROLE_PANEL;
@@ -300,11 +298,17 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
             return ATK_ROLE_LIST_ITEM;
     }
 
-    // WebCore does not know about paragraph role
+    // WebCore does not know about paragraph role, label role, or section role
     if (AXObject->isAccessibilityRenderObject()) {
         Node* node = static_cast<AccessibilityRenderObject*>(AXObject)->renderer()->node();
-        if (node && node->hasTagName(HTMLNames::pTag))
-            return ATK_ROLE_PARAGRAPH;
+        if (node) {
+            if (node->hasTagName(HTMLNames::pTag))
+                return ATK_ROLE_PARAGRAPH;
+            if (node->hasTagName(HTMLNames::labelTag))
+                return ATK_ROLE_LABEL;
+            if (node->hasTagName(HTMLNames::divTag))
+                return ATK_ROLE_SECTION;
+        }
     }
 
     // Note: Why doesn't WebCore have a password field for this
