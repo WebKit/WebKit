@@ -1,3 +1,9 @@
+2009-10-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Non-PCH build fix. Added missing header.
+
+        * bridge/runtime_root.h:
+
 2009-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
