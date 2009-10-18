@@ -2628,6 +2628,47 @@ webcoregtk_sources += \
 endif # END ENABLE_GEOLOCATION
 
 # ----
+# MathML support
+# ----
+if ENABLE_MATHML
+
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_MATHML=1
+
+webcore_cppflags += \
+	-I$(srcdir)/WebCore/mathml \
+	-DENABLE_MATHML=1
+
+webcore_sources += \
+	WebCore/mathml/MathMLElement.cpp \
+	WebCore/mathml/MathMLElement.h \
+	WebCore/mathml/MathMLInlineContainerElement.cpp \
+	WebCore/mathml/MathMLInlineContainerElement.h  \
+	WebCore/mathml/MathMLMathElement.cpp \
+	WebCore/mathml/MathMLMathElement.h
+
+webcore_built_sources += \
+	DerivedSources/MathMLElementFactory.cpp \
+	DerivedSources/MathMLElementFactory.h \
+	DerivedSources/MathMLNames.cpp \
+	DerivedSources/MathMLNames.h
+
+# MathML tag and attribute names, and element factory 
+DerivedSources/MathMLElementFactory.h: DerivedSources/MathMLElementFactory.cpp
+
+DerivedSources/MathMLNames.h: DerivedSources/MathMLNames.cpp
+
+DerivedSources/MathMLElementFactory.cpp DerivedSources/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+else 
+DerivedSources/MathMLElementFactory.cpp:
+	echo > $@
+
+DerivedSources/MathMLNames.cpp:
+	echo > $@
+
+endif # END ENABLE_MATHML
+
+# ----
 # Notifications support
 # ----
 if ENABLE_NOTIFICATIONS
@@ -3363,6 +3404,7 @@ DerivedSources/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/html.css \
+	$(WebCore)/css/mathml.css \
 	$(WebCore)/css/quirks.css \
 	$(WebCore)/css/view-source.css \
 	$(WebCore)/css/svg.css \

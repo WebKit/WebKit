@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,16) size 784x20
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 76x20
+          text run at (0,0) width 76: "superscript: "
+        RenderInline {math} at (0,0) size 16x20
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {msup} at (0,0) size 16x20
+            RenderInline {mi} at (0,0) size 8x20
+              RenderText {#text} at (76,0) size 8x20
+                text run at (76,0) width 8: "x"
+            RenderInline {mn} at (0,0) size 8x20
+              RenderText {#text} at (84,0) size 8x20
+                text run at (84,0) width 8: "2"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

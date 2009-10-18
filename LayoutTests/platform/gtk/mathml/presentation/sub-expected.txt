@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,16) size 784x20
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 64x20
+          text run at (0,0) width 64: "subscript: "
+        RenderInline {math} at (0,0) size 16x20
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {msub} at (0,0) size 16x20
+            RenderInline {mi} at (0,0) size 8x20
+              RenderText {#text} at (64,0) size 8x20
+                text run at (64,0) width 8: "x"
+            RenderInline {mn} at (0,0) size 8x20
+              RenderText {#text} at (72,0) size 8x20
+                text run at (72,0) width 8: "1"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

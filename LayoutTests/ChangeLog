@@ -1,3 +1,16 @@
+2009-10-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Add MathML to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=30487
+
+        Include layout test baseline for Gtk.
+
+        * platform/gtk/mathml/presentation/sub-expected.txt: Added.
+        * platform/gtk/mathml/presentation/sup-expected.txt: Added.
+        * platform/gtk/mathml/presentation/tables-expected.txt: Added.
+
 2009-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

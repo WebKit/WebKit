@@ -1,3 +1,14 @@
+2009-10-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Add MathML to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=30487
+
+        Add MathML sources if MathML support is enabled.
+
+        * GNUmakefile.am:
+
 2009-10-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         Non-PCH build fix. Added missing header.
