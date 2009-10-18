@@ -1,3 +1,18 @@
+2009-10-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Compositing layers not correctly updated after partial layout
+        https://bugs.webkit.org/show_bug.cgi?id=30425
+        
+        Testcase that hits the "position change only" layout path, thus doing a subtree layout,
+        to ensure that compositing layers are correctly positioned.
+
+        * compositing/geometry/partial-layout-update.html: Added.
+        * platform/mac/compositing/geometry/partial-layout-update-expected.checksum: Added.
+        * platform/mac/compositing/geometry/partial-layout-update-expected.png: Added.
+        * platform/mac/compositing/geometry/partial-layout-update-expected.txt: Added.
+
 2009-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         Skip media/video-empty-source.html until <rdar://problem/6563117> has been fixed.

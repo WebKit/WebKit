@@ -1,3 +1,31 @@
+2009-10-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Compositing layers not correctly updated after partial layout
+        https://bugs.webkit.org/show_bug.cgi?id=30425
+        
+        When a partial layout happened, for example as the result of a postion-change-only
+        layout, then some compositing layer positions were not correctly updated. To fix
+        this, updateLayerPositions() now carries along a flag that is set at the rootmost
+        layer being updated, and used to determine when we hit the first compositing layer
+        in this update. RenderLayerBacking::updateAfterLayout() makes use of this information
+        to do a full geometry update on that layer, which is thus the rootmost compositing
+        layer that is being updated.
+
+        Test: compositing/geometry/partial-layout-update.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        * rendering/RenderLayerBacking.h:
+
 2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

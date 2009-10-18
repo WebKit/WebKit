@@ -54,7 +54,7 @@ public:
     RenderLayer* owningLayer() const { return m_owningLayer; }
 
     enum UpdateDepth { CompositingChildren, AllDescendants };
-    void updateAfterLayout(UpdateDepth);
+    void updateAfterLayout(UpdateDepth, bool isUpdateRoot);
     
     // Returns true if layer configuration changed.
     bool updateGraphicsLayerConfiguration();
