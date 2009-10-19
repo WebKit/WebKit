@@ -90,7 +90,8 @@ extern "C" {
 
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
 {
-    ASSERT(!_attributeKeys && !_attributeValues);
+    ASSERT(!_attributeKeys);
+    ASSERT(!_attributeValues);
     
     _attributeKeys.adoptNS([keys copy]);
     _attributeValues.adoptNS([values copy]);
@@ -421,7 +422,7 @@ extern "C" {
     ASSERT([webPluginContainerCheck isKindOfClass:[WebPluginContainerCheck class]]);
     
     id contextInfo = [webPluginContainerCheck contextInfo];
-    ASSERT(contextInfo && [contextInfo isKindOfClass:[NSNumber class]]);
+    ASSERT([contextInfo isKindOfClass:[NSNumber class]]);
 
     if (!_proxy)
         return;

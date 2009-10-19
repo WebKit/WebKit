@@ -402,7 +402,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                     QDErr err = NewGWorldFromPtr(&newOffscreenGWorld,
                         getQDPixelFormatForBitmapContext(currentContext), &offscreenBounds, 0, 0, 0,
                         static_cast<char*>(offscreenData), CGBitmapContextGetBytesPerRow(currentContext));
-                    ASSERT(newOffscreenGWorld && !err);
+                    ASSERT(newOffscreenGWorld)
+                    ASSERT(!err);
                     if (!err) {
                         if (offscreenGWorld)
                             DisposeGWorld(offscreenGWorld);
@@ -1286,7 +1287,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT([webPluginContainerCheck isKindOfClass:[WebPluginContainerCheck class]]);
     WebPluginContainerCheck *check = (WebPluginContainerCheck *)webPluginContainerCheck;
-    ASSERT([check contextInfo] && [[check contextInfo] isKindOfClass:[WebNetscapeContainerCheckContextInfo class]]);
+    ASSERT([[check contextInfo] isKindOfClass:[WebNetscapeContainerCheckContextInfo class]]);
     
     [self cancelCheckIfAllowedToLoadURL:[[check contextInfo] checkRequestID]];
 }

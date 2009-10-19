@@ -187,7 +187,8 @@ NetscapePluginInstanceProxy* NetscapePluginHostProxy::pluginInstance(uint32_t pl
 
 void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info)
 {
-    ASSERT(msg && static_cast<mach_msg_header_t*>(msg)->msgh_id == MACH_NOTIFY_DEAD_NAME);
+    ASSERT(msg);
+    ASSERT(static_cast<mach_msg_header_t*>(msg)->msgh_id == MACH_NOTIFY_DEAD_NAME);
     
     static_cast<NetscapePluginHostProxy*>(info)->pluginHostDied();
 }

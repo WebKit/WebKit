@@ -298,7 +298,8 @@ using namespace std;
 - (void)_reflectSelection
 {
     int selectedRow = [_tableView selectedRow];
-    ASSERT(selectedRow >= 0 && selectedRow < (int)[_completions count]);
+    ASSERT(selectedRow >= 0);
+    ASSERT(selectedRow < (int)[_completions count]);
     [self _insertMatch:[_completions objectAtIndex:selectedRow]];
 }
 

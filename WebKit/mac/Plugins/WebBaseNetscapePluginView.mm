@@ -478,7 +478,8 @@ Node* WebHaltablePlugin::node() const
 
 - (void)halt
 {
-    ASSERT(!_isHalted && _isStarted);
+    ASSERT(!_isHalted);
+    ASSERT(_isStarted);
     Element *element = [self element];
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element) CGImageForProposedRect:nil context:nil hints:nil]);
@@ -499,7 +500,8 @@ Node* WebHaltablePlugin::node() const
 
 - (void)resumeFromHalt
 {
-    ASSERT(_isHalted && !_isStarted);
+    ASSERT(_isHalted);
+    ASSERT(!_isStarted);
     [self start];
     
     if (_isStarted)
