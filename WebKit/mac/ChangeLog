@@ -1,3 +1,10 @@
+2009-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+
 2009-10-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

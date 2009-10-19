@@ -402,7 +402,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                     QDErr err = NewGWorldFromPtr(&newOffscreenGWorld,
                         getQDPixelFormatForBitmapContext(currentContext), &offscreenBounds, 0, 0, 0,
                         static_cast<char*>(offscreenData), CGBitmapContextGetBytesPerRow(currentContext));
-                    ASSERT(newOffscreenGWorld)
+                    ASSERT(newOffscreenGWorld);
                     ASSERT(!err);
                     if (!err) {
                         if (offscreenGWorld)
