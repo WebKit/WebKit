@@ -458,30 +458,20 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     unsigned baseVal = currentInstruction[3].u.operand;
     unsigned proto = currentInstruction[4].u.operand;
 
-    // Load the operands (baseVal, proto, and value respectively) into registers.
+    // Load the operands into registers.
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
-    emitLoadPayload(proto, regT1);
-    emitLoadPayload(baseVal, regT0);
     emitLoadPayload(value, regT2);
+    emitLoadPayload(baseVal, regT0);
+    emitLoadPayload(proto, regT1);
 
-    // Check that baseVal & proto are cells.
-    emitJumpSlowCaseIfNotJSCell(proto);
+    // Check that value, baseVal, and proto are cells.
+    emitJumpSlowCaseIfNotJSCell(value);
     emitJumpSlowCaseIfNotJSCell(baseVal);
+    emitJumpSlowCaseIfNotJSCell(proto);
 
-    // Check that baseVal is an object, that it 'ImplementsHasInstance' but that it does not 'OverridesHasInstance'.
+    // Check that baseVal 'ImplementsDefaultHasInstance'.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType))); // FIXME: Maybe remove this test.
-    addSlowCase(branchTest32(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsHasInstance))); // FIXME: TOT checks ImplementsDefaultHasInstance.
-
-    // If value is not an Object, return false.
-    emitLoadTag(value, regT0);
-    Jump valueIsImmediate = branch32(NotEqual, regT0, Imm32(JSValue::CellTag));
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    Jump valueIsNotObject = branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)); // FIXME: Maybe remove this test.
-
-    // Check proto is object.
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+    addSlowCase(branchTest32(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
 
     // Optimistically load the result true, and start looping.
     // Initially, regT1 still contains proto and regT2 still contains value.
@@ -489,16 +479,14 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     move(Imm32(JSValue::TrueTag), regT0);
     Label loop(this);
 
-    // Load the prototype of the object in regT2.  If this is equal to regT1 - WIN!
+    // Load the prototype of the cell in regT2.  If this is equal to regT1 - WIN!
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
     load32(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
-    branch32(NotEqual, regT2, Imm32(0), loop);
+    branchTest32(NonZero, regT2).linkTo(loop, this);
 
     // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
-    valueIsImmediate.link(this);
-    valueIsNotObject.link(this);
     move(Imm32(JSValue::FalseTag), regT0);
 
     // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
@@ -513,10 +501,9 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     unsigned baseVal = currentInstruction[3].u.operand;
     unsigned proto = currentInstruction[4].u.operand;
 
+    linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, baseVal);
     linkSlowCaseIfNotJSCell(iter, proto);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
     linkSlowCase(iter);
 
     JITStubCall stubCall(this, cti_op_instanceof);
@@ -1988,29 +1975,25 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    unsigned baseVal = currentInstruction[3].u.operand;
+    unsigned proto = currentInstruction[4].u.operand;
+
     // Load the operands (baseVal, proto, and value respectively) into registers.
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
-    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT2);
+    emitGetVirtualRegister(value, regT2);
+    emitGetVirtualRegister(baseVal, regT0);
+    emitGetVirtualRegister(proto, regT1);
 
     // Check that baseVal & proto are cells.
-    emitJumpSlowCaseIfNotJSCell(regT0);
-    emitJumpSlowCaseIfNotJSCell(regT1);
+    emitJumpSlowCaseIfNotJSCell(regT2, value);
+    emitJumpSlowCaseIfNotJSCell(regT0, baseVal);
+    emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
-    // Check that baseVal is an object, that it 'ImplementsHasInstance' but that it does not 'OverridesHasInstance'.
+    // Check that baseVal 'ImplementsDefaultHasInstance'.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
     addSlowCase(branchTest32(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
-
-    // If value is not an Object, return false.
-    Jump valueIsImmediate = emitJumpIfNotJSCell(regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    Jump valueIsNotObject = branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
-
-    // Check proto is object.
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branch32(NotEqual, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
 
     // Optimistically load the result true, and start looping.
     // Initially, regT1 still contains proto and regT2 still contains value.
@@ -2023,16 +2006,14 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
-    branchPtr(NotEqual, regT2, ImmPtr(JSValue::encode(jsNull())), loop);
+    emitJumpIfJSCell(regT2).linkTo(loop, this);
 
     // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
-    valueIsImmediate.link(this);
-    valueIsNotObject.link(this);
     move(ImmPtr(JSValue::encode(jsBoolean(false))), regT0);
 
     // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
     isInstance.link(this);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    emitPutVirtualRegister(dst);
 }
 
 void JIT::emit_op_new_func(Instruction* currentInstruction)
@@ -3066,16 +3047,20 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[2].u.operand;
+    unsigned baseVal = currentInstruction[3].u.operand;
+    unsigned proto = currentInstruction[4].u.operand;
+
+    linkSlowCaseIfNotJSCell(iter, value);
+    linkSlowCaseIfNotJSCell(iter, baseVal);
+    linkSlowCaseIfNotJSCell(iter, proto);
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_instanceof);
-    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
-    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-    stubCall.addArgument(currentInstruction[4].u.operand, regT2);
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.addArgument(value, regT2);
+    stubCall.addArgument(baseVal, regT2);
+    stubCall.addArgument(proto, regT2);
+    stubCall.call(dst);
 }
 
 void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
