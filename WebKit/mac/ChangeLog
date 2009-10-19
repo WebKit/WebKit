@@ -1,3 +1,12 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update call to loadFrameRequest to match new parameters.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]): Update call to loadFrameRequest.
+
 2009-10-19  David Kilzer  <ddkilzer@apple.com>
 
         Documentation fix for -[NSObject(WebResourceLoadDelegate) webView:resource:willSendRequest:redirectResponse:fromDataSource:]

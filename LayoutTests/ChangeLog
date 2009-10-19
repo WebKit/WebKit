@@ -1,5 +1,25 @@
 2009-10-19  Nate Chapin  <japhet@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests for noreferrer link relation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28986
+
+        * http/tests/navigation/no-referrer-reset-expected.txt: Added.
+        * http/tests/navigation/no-referrer-reset.html: Added.
+        * http/tests/navigation/no-referrer-same-window-expected.txt: Added.
+        * http/tests/navigation/no-referrer-same-window.html: Added.
+        * http/tests/navigation/no-referrer-subframe-expected.txt: Added.
+        * http/tests/navigation/no-referrer-subframe.html: Added.
+        * http/tests/navigation/no-referrer-target-blank-expected.txt: Added.
+        * http/tests/navigation/no-referrer-target-blank.html: Added.
+        * http/tests/navigation/resources/no-referrer-helper.php: Added.
+        * http/tests/navigation/resources/no-referrer-reset-helper.php: Added.
+        * http/tests/navigation/resources/no-referrer-same-window-helper.php: Added.
+
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Geoffrey Garen.
 
         Add plugins/netscape-invoke-failures.html to Snow Leopard skipped list.

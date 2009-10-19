@@ -1,3 +1,41 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for link relations in HTMLAnchorElement and implement rel="noreferrer".
+
+        https://bugs.webkit.org/show_bug.cgi?id=28986
+
+        Tests: http/tests/navigation/no-referrer-reset.html
+               http/tests/navigation/no-referrer-same-window.html
+               http/tests/navigation/no-referrer-subframe.html
+               http/tests/navigation/no-referrer-target-blank.html
+
+        * WebCore.base.exp: Update FrameLoader::loadFrameRequest export symbol
+        * html/HTMLAnchorElement.cpp: Add support for link relations and implement noreferrer
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        (WebCore::HTMLAnchorElement::hasRel):
+        (WebCore::HTMLAnchorElement::setRel):
+        * html/HTMLAnchorElement.h: Add support for link relations and implement noreferrer
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected): Add parameter for referrer policy
+        (WebCore::FrameLoader::loadFrameRequest): Add parameter for referrer policy
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Suppress opener if requested by ReferrerPolicy
+        * loader/FrameLoader.h: Update urlSelected and loadFrameRequest prototypes
+        * loader/FrameLoaderTypes.h: Add enum for referrer policy
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::timerFired):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Update call to urlSelected()
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): Update call to urlSelected()
+
+
 2009-10-19  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Dimitri Glazkov (dglazkov@chromium.org).

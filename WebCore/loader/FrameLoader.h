@@ -105,7 +105,7 @@ public:
     void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
 
     void loadFrameRequest(const FrameLoadRequest&, bool lockHistory, bool lockBackForwardList,  // Called by submitForm, calls loadPostRequest and loadURL.
-        PassRefPtr<Event>, PassRefPtr<FormState>);
+        PassRefPtr<Event>, PassRefPtr<FormState>, ReferrerPolicy);
 
     void load(const ResourceRequest&, bool lockHistory);                                        // Called by WebFrame, calls load(ResourceRequest, SubstituteData).
     void load(const ResourceRequest&, const SubstituteData&, bool lockHistory);                 // Called both by WebFrame and internally, calls load(DocumentLoader*).
@@ -207,7 +207,7 @@ public:
     void setDefersLoading(bool);
 
     void changeLocation(const KURL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool userGesture = false, bool refresh = false);
-    void urlSelected(const ResourceRequest&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, bool userGesture);
+    void urlSelected(const ResourceRequest&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy);
     bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName);
 
     void submitForm(const char* action, const String& url,
@@ -498,6 +498,7 @@ private:
 
     bool m_didPerformFirstNavigation;
     bool m_loadingFromCachedPage;
+    bool m_suppressOpenerInNewFrame;
     
 #ifndef NDEBUG
     bool m_didDispatchDidCommitLoad;

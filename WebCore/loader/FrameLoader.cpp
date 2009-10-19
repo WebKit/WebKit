@@ -55,6 +55,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
@@ -195,6 +196,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
+    , m_suppressOpenerInNewFrame(false)
 #ifndef NDEBUG
     , m_didDispatchDidCommitLoad(false)
 #endif
@@ -252,7 +254,7 @@ Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const F
         Frame* frame = frameLoaderForFrameLookup->frame()->tree()->find(request.frameName());
         if (frame && shouldAllowNavigation(frame)) {
             if (!request.resourceRequest().url().isEmpty())
-                frame->loader()->loadFrameRequest(request, false, false, 0, 0);
+                frame->loader()->loadFrameRequest(request, false, false, 0, 0, SendReferrer);
             if (Page* page = frame->page())
                 page->chrome()->focus();
             created = false;
@@ -319,11 +321,13 @@ void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool l
     if (m_frame->script()->executeIfJavaScriptURL(request.url(), userGesture))
         return;
 
-    urlSelected(request, "_self", 0, lockHistory, lockBackForwardList, userGesture);
+    urlSelected(request, "_self", 0, lockHistory, lockBackForwardList, userGesture, SendReferrer);
 }
 
-void FrameLoader::urlSelected(const ResourceRequest& request, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture)
+void FrameLoader::urlSelected(const ResourceRequest& request, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy referrerPolicy)
 {
+    ASSERT(!m_suppressOpenerInNewFrame);
+
     if (m_frame->script()->executeIfJavaScriptURL(request.url(), userGesture, false))
         return;
 
@@ -333,11 +337,16 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& pass
 
     FrameLoadRequest frameRequest(request, target);
 
-    if (frameRequest.resourceRequest().httpReferrer().isEmpty())
+    if (referrerPolicy == NoReferrer) {
+        m_suppressOpenerInNewFrame = true;
+        setOpener(0);
+    } else if (frameRequest.resourceRequest().httpReferrer().isEmpty())
         frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
-    loadFrameRequest(frameRequest, lockHistory, lockBackForwardList, triggeringEvent, 0);
+    loadFrameRequest(frameRequest, lockHistory, lockBackForwardList, triggeringEvent, 0, referrerPolicy);
+
+    m_suppressOpenerInNewFrame = false;
 }
 
 bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName)
@@ -1774,7 +1783,7 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const KURL& url)
 }
 
 void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList,
-    PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+    PassRefPtr<Event> event, PassRefPtr<FormState> formState, ReferrerPolicy referrerPolicy)
 {    
     KURL url = request.resourceRequest().url();
 
@@ -1793,7 +1802,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
         }
     }
 
-    if (SecurityOrigin::shouldHideReferrer(url, referrer))
+    if (SecurityOrigin::shouldHideReferrer(url, referrer) || referrerPolicy == NoReferrer)
         referrer = String();
     
     FrameLoadType loadType;
@@ -3464,7 +3473,8 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
 
     mainFrame->page()->setOpenedByDOM();
     mainFrame->loader()->m_client->dispatchShow();
-    mainFrame->loader()->setOpener(frame.get());
+    if (!m_suppressOpenerInNewFrame)
+        mainFrame->loader()->setOpener(frame.get());
     mainFrame->loader()->loadWithNavigationAction(request, NavigationAction(), false, FrameLoadTypeStandard, formState);
 }
 

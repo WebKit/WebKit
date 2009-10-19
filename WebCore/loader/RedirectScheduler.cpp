@@ -277,7 +277,7 @@ void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
         case ScheduledRedirection::historyNavigation:
             if (redirection->historySteps == 0) {
                 // Special case for go(0) from a frame -> reload only the frame
-                loader->urlSelected(loader->url(), "", 0, redirection->lockHistory, redirection->lockBackForwardList, redirection->wasUserGesture);
+                loader->urlSelected(loader->url(), "", 0, redirection->lockHistory, redirection->lockBackForwardList, redirection->wasUserGesture, SendReferrer);
                 return;
             }
             // go(i!=0) from a frame navigates into the history of the frame only,
@@ -293,7 +293,7 @@ void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
             if (!redirection->formState->sourceFrame()->loader()->shouldAllowNavigation(m_frame))
                 return;
             loader->loadFrameRequest(redirection->frameRequest, redirection->lockHistory, redirection->lockBackForwardList,
-                redirection->event, redirection->formState);
+                redirection->event, redirection->formState, SendReferrer);
             return;
     }
 

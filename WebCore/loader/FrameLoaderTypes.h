@@ -87,6 +87,11 @@ namespace WebCore {
         UnloadEventPolicyUnloadOnly,
         UnloadEventPolicyUnloadAndPageHide
     };
+
+    enum ReferrerPolicy {
+        SendReferrer,
+        NoReferrer
+    };
 }
 
 #endif

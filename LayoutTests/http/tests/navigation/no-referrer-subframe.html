@@ -1,0 +1,25 @@
+<html><body>
+This tests behavior of "noreferrer" links in subframes. A referrer should not be sent and window.opener should remain null.<br/>
+<a id="link" href="resources/no-referrer-helper.php" rel="noreferrer" target="subframe">Load subframe</a>
+<iframe id="subframe" src="about:blank"></iframe>
+<script>
+    window.name = "consoleWindow";
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var target = document.getElementById("link");
+    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+function log(msg)
+{
+    var line = document.createElement('div');
+    line.appendChild(document.createTextNode(msg));
+    document.getElementById('console').appendChild(line);
+}
+</script>
+<div id="console"></div>
+</body></html>

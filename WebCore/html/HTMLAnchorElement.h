@@ -28,6 +28,29 @@
 
 namespace WebCore {
 
+// Link relation bitmask values.
+// FIXME: Uncomment as the various link relations are implemented.
+enum {
+//     RelationAlternate   = 0x00000001,
+//     RelationArchives    = 0x00000002,
+//     RelationAuthor      = 0x00000004,
+//     RelationBoomark     = 0x00000008,
+//     RelationExternal    = 0x00000010,
+//     RelationFirst       = 0x00000020,
+//     RelationHelp        = 0x00000040,
+//     RelationIndex       = 0x00000080,
+//     RelationLast        = 0x00000100,
+//     RelationLicense     = 0x00000200,
+//     RelationNext        = 0x00000400,
+//     RelationNoFolow    = 0x00000800,
+    RelationNoReferrer     = 0x00001000,
+//     RelationPrev        = 0x00002000,
+//     RelationSearch      = 0x00004000,
+//     RelationSidebar     = 0x00008000,
+//     RelationTag         = 0x00010000,
+//     RelationUp          = 0x00020000,
+};
+
 class HTMLAnchorElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLAnchorElement> create(Document*);
@@ -51,6 +74,9 @@ public:
 
     bool isLiveLink() const;
 
+    bool hasRel(uint32_t relation) const;
+    void setRel(const String&);
+
 protected:
     HTMLAnchorElement(const QualifiedName&, Document*);
 
@@ -73,6 +99,7 @@ private:
 
     RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown;
+    uint32_t m_linkRelations;
 };
 
 } // namespace WebCore
