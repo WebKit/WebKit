@@ -10,10 +10,12 @@
 		MinimalRebuild="true"
 		BasicRuntimeChecks="3"
 		RuntimeLibrary="2"
+		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;"
 	/>
 	<Tool
 		Name="VCLinkerTool"
 		LinkIncremental="2"
+		AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\lib&quot;"
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"
