@@ -1,3 +1,14 @@
+2009-10-19  Jason Yan  <tailofthesun@gmail.com>
+ 
+         Reviewed by Eric Seidel.
+ 
+         Fixed issue with LayoutTests/fast/cookies/local-file-can-set-cookies.html
+         which can fail when the system under test has local file cookies set already.
+         https://bugs.webkit.org/show_bug.cgi?id=30281
+ 
+         * fast/cookies/local-file-can-set-cookies-expected.txt: Modified. Updated expected results.
+         * fast/cookies/local-file-can-set-cookies.html: Modified. Check for existing cookie and set non-persistent cookie.
+
 2009-10-19  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.
