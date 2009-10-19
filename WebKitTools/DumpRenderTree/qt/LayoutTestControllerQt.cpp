@@ -211,7 +211,7 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
 
 void LayoutTestController::setFixedContentsSize(int width, int height)
 {
-    m_topLoadingFrame->page()->setFixedContentsSize(QSize(width, height));
+    m_topLoadingFrame->page()->setPreferredContentsSize(QSize(width, height));
 }
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool enable)

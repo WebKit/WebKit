@@ -1,3 +1,17 @@
+2009-10-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Rename fixedContentsSize property to preferredContentsSize as
+        agreed upon with Siman Hausmann and Matthias Ettrich.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::preferredContentsSize):
+        (QWebPage::setPreferredContentsSize):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2009-10-16  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann.

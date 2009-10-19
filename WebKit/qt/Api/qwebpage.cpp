@@ -1956,7 +1956,7 @@ void QWebPage::setViewportSize(const QSize &size) const
     }
 }
 
-QSize QWebPage::fixedContentsSize() const
+QSize QWebPage::preferredContentsSize() const
 {
     QWebFrame* frame = d->mainFrame;
     if (frame) {
@@ -1969,7 +1969,7 @@ QSize QWebPage::fixedContentsSize() const
 }
 
 /*!
-    \property QWebPage::fixedContentsSize
+    \property QWebPage::preferredContentsSize
     \since 4.6
     \brief the size of the fixed layout
 
@@ -1977,7 +1977,7 @@ QSize QWebPage::fixedContentsSize() const
     1024x768 for example then webkit will layout the page as if the viewport were that size
     rather than something different.
 */
-void QWebPage::setFixedContentsSize(const QSize &size) const
+void QWebPage::setPreferredContentsSize(const QSize &size) const
 {
     d->fixedLayoutSize = size;
 

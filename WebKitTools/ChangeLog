@@ -1,3 +1,15 @@
+2009-10-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Use the setPreferredContentsSize method instead
+        of setFixedContentsSize, as the method has been renamed.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setFixedContentsSize):
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.
