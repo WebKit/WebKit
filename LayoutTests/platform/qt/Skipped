@@ -88,6 +88,9 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 # Failing test
 fast/canvas/quadraticCurveTo.xml
 
+# Failing http multipart test
+http/tests/multipart/invalid-image-data-standalone.html
+
 # ------- missing features
 accessibility
 media
@@ -121,14 +124,17 @@ fast/text/find-hidden-text.html
 #            Missing features in our DumpRenderTree implementation              #
 # ============================================================================= #
 
+# Missing layoutTestController.showWebInspector()
+inspector/uncaught-dom1-exception.html
+inspector/uncaught-dom3-exception.html
+inspector/uncaught-dom8-exception.html
+
 # Missing textInputController.setMarkedText()
 fast/forms/input-maxlength-ime-preedit.html
 fast/forms/input-maxlength-ime-completed.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
-
-# Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 
@@ -146,6 +152,35 @@ fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/get-file-upload.html
 fast/events/drag-file-crash.html
+
+# ------- missing eventSender.zoomPageIn
+fast/events/clientXY-in-zoom-and-scroll.html
+
+# ------- missing eventSender.zoomPageOut
+fast/dom/elementFromPoint-relative-to-viewport.html
+
+# ------- missing WebSoket support in DRT
+fast/dom/Window/window-properties.html
+fast/dom/prototype-inheritance.html
+fast/websockets/websocket-event-target.html
+
+# ------- missing drag-and-drop support
+fast/events/drag-and-drop-none.html
+fast/events/drag-parent-node.html
+fast/events/drag-and-drop.html
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+
+# ------- broken backgroundOf(el)
+fast/forms/input-live-pseudo-selectors.html
+fast/forms/textarea-live-pseudo-selectors.html
+
+# ------- broken ICO file decoding
+fast/images/favicon-as-image.html
+fast/images/icon-0colors.html
+fast/images/icon-decoding.html
+
+# ------- missing private browsing support?
+plugins/private-browsing-mode.html
 
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
@@ -349,7 +384,6 @@ fast/frames/iframe-window-focus.html
 fast/history/clicked-link-is-visited.html
 fast/history/go-back-to-changed-name.html
 fast/html/keygen.html
-fast/images/icon-decoding.html
 fast/inline/dirtyLinesForInline.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
@@ -968,6 +1002,9 @@ svg/custom/image-with-prefix-in-webarchive.svg
 # Missing LayoutTestController implementations and database related delegate callback
 storage/domstorage/localstorage/iframe-events.html
 storage/domstorage/sessionstorage/iframe-events.html
+
+# ------- layoutTestController.notifyDone() does not work correctly
+storage/change-version.html
 
 # Tests that currently fail but perhaps used to work at some point.
 fast/dom/css-cached-import-rule.html

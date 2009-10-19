@@ -2,6 +2,14 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Skip failing tests for now and add test-specific information about the cause to the Skipped list.
+
+        * platform/qt/Skipped:
+
+2009-10-19  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Add platform expected file for canvas test.
 
         * platform/qt/fast/canvas/canvas-empty-image-pattern-expected.txt: Added.
