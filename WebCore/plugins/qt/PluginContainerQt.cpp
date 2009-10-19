@@ -73,6 +73,7 @@ PluginContainerQt::PluginContainerQt(PluginView* view, QWidget* parent)
 PluginContainerQt::~PluginContainerQt()
 {
     delete m_clientWrapper;
+    m_pluginView->setPlatformPluginWidget(0);
 }
 
 void PluginContainerQt::on_clientClosed()

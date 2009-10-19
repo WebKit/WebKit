@@ -462,12 +462,15 @@ void PluginView::setNPWindowIfNeeded()
     if (m_mode != NP_FULL && m_mode != NP_EMBED)
         return;
 
+    // Check if the platformPluginWidget still exists
+    if (m_isWindowed && !platformPluginWidget())
+        return;
+
     if (!m_hasPendingGeometryChange)
         return;
     m_hasPendingGeometryChange = false;
 
     if (m_isWindowed) {
-        ASSERT(platformPluginWidget());
         platformPluginWidget()->setGeometry(m_windowRect);
         // if setMask is set with an empty QRegion, no clipping will
         // be performed, so in that case we hide the plugin view

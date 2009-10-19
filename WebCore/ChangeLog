@@ -1,3 +1,23 @@
+2009-10-19  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Windowed Plugins: Fix crash when QWebPage is deleted after QWebView.
+        
+        Fixes various sources of crashes:
+        1. The PluginContainer is a child of QWebView. When the view gets deleted,
+        the PluginView is not notified about the deletion of PluginContainer.
+        2. QWebView destructor does not set client to 0.
+        3. Sometimes pending paint events are sent after the plugin has died, so add
+        a check in PluginView::setNPWindowIfNeeded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30354
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginContainerQt::~PluginContainerQt):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2009-10-19  Jakob Truelsen  <antialize@gmail.com>
 
         Reviewed by Adam Barth.

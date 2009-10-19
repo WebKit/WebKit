@@ -245,8 +245,10 @@ QWebView::QWebView(QWidget *parent)
 */
 QWebView::~QWebView()
 {
-    if (d->page)
+    if (d->page) {
         d->page->d->view = 0;
+        d->page->d->client = 0;
+    }
 
     if (d->page && d->page->parent() == this)
         delete d->page;
