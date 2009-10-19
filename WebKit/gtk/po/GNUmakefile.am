@@ -73,7 +73,7 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/WebKit/gtk/po/POTFILES
 	      --files-from=$(srcdir)/WebKit/gtk/po/POTFILES \
 	      --copyright-holder='$(COPYRIGHT_HOLDER)' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
-	      --keyword=_ --keyword=N_ -o $(srcdir)/WebKit/gtk/po/webkit.pot \
+	      --keyword=_ --keyword=N_ -o $(srcdir)/WebKit/gtk/po/$(DOMAIN).pot \
 	    ;; \
 	  *) \
 	    $(XGETTEXT) --default-domain=$(DOMAIN) --directory=$(srcdir) \
@@ -83,7 +83,7 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/WebKit/gtk/po/POTFILES
 	      --package-name="$${package_gnu}@PACKAGE@" \
 	      --package-version='@VERSION@' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
-	      --keyword=_ --keyword=N_ -o $(srcdir)/WebKit/gtk/po/webkit.pot \
+	      --keyword=_ --keyword=N_ -o $(srcdir)/WebKit/gtk/po/$(DOMAIN).pot \
 	    ;; \
 	esac
 
