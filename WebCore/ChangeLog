@@ -1,3 +1,19 @@
+2009-10-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30463
+        Remove HTML5 media element 'loadend' event
+
+        * dom/EventNames.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseMappedAttribute): Remove 'loadend'.
+        (WebCore::HTMLMediaElement::loadInternal): Ditto.
+        (WebCore::HTMLMediaElement::noneSupported): Ditto.
+        (WebCore::HTMLMediaElement::mediaEngineError): Ditto.
+        (WebCore::HTMLMediaElement::setNetworkState): Ditto.
+        (WebCore::HTMLMediaElement::userCancelledLoad): Ditto.
+
 2009-10-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Adam Barth.

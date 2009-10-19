@@ -4,8 +4,6 @@ EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
-EVENT(load)
-EVENT(loadend)
 
 *** starting playback
 RUN(video.play())

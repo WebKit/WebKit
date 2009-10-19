@@ -16,7 +16,7 @@
                     consoleWrite("EVENT(" + event.type + ")");
                 switch (event.type)
                 {
-                    case "loadend":
+                    case "canplaythrough":
                         consoleWrite("<br>*** starting playback");
                         run("video.play()"); 
                         break;
@@ -81,11 +81,9 @@
             onemptied="eventHandler()"
             onended="eventHandler()"
             onerror="eventHandler()"
-            onload="eventHandler()"
             onloadeddata="eventHandler()"
             onloadedmetadata="eventHandler()"
             onloadstart="eventHandler()"
-            onloadend="eventHandler()"
             onpause="eventHandler()"
             onplay="eventHandler()"
             onplaying="eventHandler()"

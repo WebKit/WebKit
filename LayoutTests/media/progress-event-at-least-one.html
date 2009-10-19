@@ -18,9 +18,9 @@
                     return;
             }
 
-            function loadend()
+            function canplaythrough()
             {
-                consoleWrite("EVENT(loadend)");
+                consoleWrite("EVENT(canplaythrough)");
                 
                 testExpected('progressEventCount', 1, '>=');
                 endTest();
@@ -30,11 +30,10 @@
             {
                 run("mediaElement = document.createElement('audio')");
 
-                mediaElement.setAttribute('onloadend', "loadend()");
+                mediaElement.setAttribute('oncanplaythrough', "canplaythrough()");
                 mediaElement.setAttribute('onprogress', "progress()");
 
                 waitForEvent("loadstart");
-                waitForEvent("loadend");
                 waitForEvent("loaded");
                 waitForEvent("waiting");
                 waitForEvent("ratechange");

@@ -7,12 +7,12 @@ RUN(mediaElement.load())
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadeddata)
-EVENT(load)
-EVENT(loadend)
+EVENT(canplaythrough)
 
 RUN(document.getElementById('parent').appendChild(mediaElement))
 RUN(mediaElement.play())
 
+EVENT(load)
 EVENT(play)
 EVENT(playing)
 

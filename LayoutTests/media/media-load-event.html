@@ -11,9 +11,9 @@
                 endTest();
             }
 
-            function loadend()
+            function canplaythrough()
             {
-                consoleWrite("EVENT(loadend)");
+                consoleWrite("EVENT(canplaythrough)");
                 consoleWrite("");
                 run("document.getElementById('parent').appendChild(mediaElement)");
                 run("mediaElement.play()");
@@ -24,7 +24,7 @@
             {
                 run("mediaElement = document.createElement('audio')");
 
-                mediaElement.setAttribute('onloadend', "loadend()");
+                mediaElement.setAttribute('oncanplaythrough', "canplaythrough()");
                 mediaElement.setAttribute('onplaying', "playing()");
 
                 waitForEvent("loadstart");

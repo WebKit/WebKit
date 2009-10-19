@@ -1,3 +1,17 @@
+2009-10-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30463
+        Remove HTML5 media element 'loadend' event
+
+        * media/event-attributes-expected.txt:
+        * media/event-attributes.html: Switch from 'loadend' to 'canplaythrough'.
+        * media/media-load-event-expected.txt:
+        * media/media-load-event.html: Ditto.
+        * media/progress-event-at-least-one-expected.txt:
+        * media/progress-event-at-least-one.html: Ditto.
+
 2009-10-19  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

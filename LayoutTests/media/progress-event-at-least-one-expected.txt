@@ -8,7 +8,7 @@ EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)
 EVENT(loadeddata)
-EVENT(loadend)
+EVENT(canplaythrough)
 EXPECTED (progressEventCount >= '1') OK
 END OF TEST
 
