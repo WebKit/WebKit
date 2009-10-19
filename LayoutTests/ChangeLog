@@ -1,3 +1,13 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add plugins/netscape-invoke-failures.html to Snow Leopard skipped list.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30528
+
+        * platform/mac-snowleopard/Skipped: Add plugins/netscape-invoke-failures.html.
+
 2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

@@ -44,3 +44,8 @@ media/controls-drag-timebar.html
 #<rdar://problem/7144583> - Intermittent failure
 svg/css/glyph-orientation-rounding-test.xhtml
 
+# https://bugs.webkit.org/show_bug.cgi?id=30528 - test started failing
+# immediately on Snow Leopard due to the expected exception not being
+# thrown
+plugins/netscape-invoke-failure.html
+
