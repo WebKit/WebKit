@@ -1,3 +1,19 @@
+2009-10-19  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30489
+        [Gtk] The document frame/html container claims to be parentless
+
+        Work around for the parentless claim made by the accessible associated
+        with the embedded WebView. When we identify this condition, get the
+        widget's parent, and then get the AtkObject from that. Admittedly an ugly
+        hack, but we'll need it for Yelp and other Gtk+/GNOME applications which
+        plan to switch over to WebKit.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_parent):
+
 2009-10-19  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Jan Alonzo.

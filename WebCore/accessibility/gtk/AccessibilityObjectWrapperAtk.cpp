@@ -136,6 +136,21 @@ static AtkObject* webkit_accessible_get_parent(AtkObject* object)
 {
     AccessibilityObject* coreParent = core(object)->parentObject();
 
+    // The top level web view claims to not have a parent. This makes it
+    // impossible for assistive technologies to ascend the accessible
+    // hierarchy all the way to the application. (Bug 30489)
+    if (!coreParent && core(object)->isWebArea()) {
+        HostWindow* hostWindow = core(object)->document()->view()->hostWindow();
+        if (hostWindow) {
+            PlatformPageClient webView = hostWindow->platformPageClient();
+            if (webView) {
+                GtkWidget* webViewParent = gtk_widget_get_parent(webView);
+                if (webViewParent)
+                    return gtk_widget_get_accessible(webViewParent);
+            }
+        }
+    }
+
     if (!coreParent)
         return NULL;
 
