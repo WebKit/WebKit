@@ -205,24 +205,14 @@ float MediaPlayerPrivate::duration() const
     GstFormat timeFormat = GST_FORMAT_TIME;
     gint64 timeLength = 0;
 
-#if !GST_CHECK_VERSION(0, 10, 23)
-    // We try to get the duration, but we do not trust the
-    // return value of the query function only; the problem we are
-    // trying to work-around here is that pipelines in stream mode may
-    // not be able to figure out the duration, but still return true!
-    // See https://bugs.webkit.org/show_bug.cgi?id=24639 which has been
-    // fixed in gst-plugins-base 0.10.23
-    if (!gst_element_query_duration(m_playBin, &timeFormat, &timeLength) || timeLength <= 0) {
-#else
-    if (!gst_element_query_duration(m_playBin, &timeFormat, &timeLength)) {
-#endif
+    if (!gst_element_query_duration(m_playBin, &timeFormat, &timeLength) || timeFormat != GST_FORMAT_TIME || timeLength == GST_CLOCK_TIME_NONE) {
         LOG_VERBOSE(Media, "Time duration query failed.");
         return numeric_limits<float>::infinity();
     }
 
     LOG_VERBOSE(Media, "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timeLength));
 
-    return (float) (timeLength / 1000000000.0);
+    return (float) ((guint64) timeLength / 1000000000.0);
     // FIXME: handle 3.14.9.5 properly
 }
 
