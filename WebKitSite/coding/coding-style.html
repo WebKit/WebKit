@@ -120,16 +120,18 @@ have their operators on the left side of the line instead of the right side.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-return attr->name() == srcAttr
+if (attr->name() == srcAttr
     || attr->name() == lowsrcAttr
-    || (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+    || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'))
+    return;
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-return attr->name() == srcAttr ||
+if (attr->name() == srcAttr ||
     attr->name() == lowsrcAttr ||
-    (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+    (attr->name() == usemapAttr && attr->value().domString()[0] != '#'))
+    return;
 </pre>
 </li>
 
