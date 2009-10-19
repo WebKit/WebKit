@@ -1,3 +1,14 @@
+2009-10-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Gtk] ApplicationCacheStorage error while compiling WebKit/gtk/webkit/webkitapplicationcache.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=30358
+
+        Guard calls to cacheStorage() with ENABLE(OFFLINE_WEB_APPLICATIONS).
+
+        * webkit/webkitapplicationcache.cpp:
+
 2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
@@ -2100,7 +2111,7 @@
 
         Refactor how SoupMessage is handled, so that our ResourceRequest
         object doesn't have to store it as a member, which complicates
-        managing ResourceRequest's lifetime.
+        managing ResourceRequest's lifetvime.
 
         * tests/testhttpbackend.c:
         (navigation_policy_decision_requested_cb):
