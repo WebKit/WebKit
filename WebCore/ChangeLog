@@ -1,3 +1,9 @@
+2009-10-19  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
+        Added reviewer name to r49574.
+
 2009-10-19  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
@@ -1821,7 +1827,7 @@
 
 2009-10-14  Yael Aharon  <yael.aharon@nokia.com>
  
-        Reviewed by 
+        Reviewed by Simon Hausmann.
  
         Enabling NPAPI plugin support on Qt Webkit for S60 platform
         https://bugs.webkit.org/show_bug.cgi?id=29302
