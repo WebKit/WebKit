@@ -93,25 +93,29 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     NPVariant result;
     VOID_TO_NPVARIANT(result);
 
+    bool retval = true;
     switch (functionId) {
     case InvokeMethod:
         if (npObject->_class->invoke) {
             v8::Handle<v8::String> functionName(v8::String::Cast(*args.Data()));
             NPIdentifier identifier = getStringIdentifier(functionName);
-            npObject->_class->invoke(npObject, identifier, npArgs.get(), numArgs, &result);
+            retval = npObject->_class->invoke(npObject, identifier, npArgs.get(), numArgs, &result);
         }
         break;
     case InvokeConstruct:
         if (npObject->_class->construct)
-            npObject->_class->construct(npObject, npArgs.get(), numArgs, &result);
+            retval = npObject->_class->construct(npObject, npArgs.get(), numArgs, &result);
         break;
     case InvokeDefault:
         if (npObject->_class->invokeDefault)
-            npObject->_class->invokeDefault(npObject, npArgs.get(), numArgs, &result);
+            retval = npObject->_class->invokeDefault(npObject, npArgs.get(), numArgs, &result);
         break;
     default:
         break;
     }
+
+    if (!retval)
+        throwError("Error calling method on NPObject!", V8Proxy::GeneralError);
 
     for (int i=0; i < numArgs; i++)
         _NPN_ReleaseVariantValue(&npArgs[i]);

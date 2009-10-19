@@ -1,3 +1,16 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add testFail() to test plugin so we can test our handling of a
+        plugin invoke call returning false.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30239
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp: Add testFail().
+        (pluginInvoke):
+        (testIdentifierToString): Always return true, since returning false will now cause an exception to be thrown.
+
 2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

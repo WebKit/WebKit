@@ -150,6 +150,7 @@ enum {
     ID_TEST_POSTURL_FILE,
     ID_TEST_CONSTRUCT,
     ID_TEST_THROW_EXCEPTION_METHOD,
+    ID_TEST_FAIL_METHOD,
     ID_DESTROY_NULL_STREAM,
     NUM_METHOD_IDENTIFIERS
 };
@@ -175,6 +176,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testPostURLFile",
     "testConstruct",
     "testThrowException",
+    "testFail",
     "destroyNullStream"
 };
 
@@ -323,13 +325,13 @@ static NPIdentifier variantToIdentifier(NPVariant variant)
 static bool testIdentifierToString(PluginObject*, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (argCount != 1)
-        return false;
+        return true;
     NPIdentifier identifier = variantToIdentifier(args[0]);
     if (!identifier)
-        return false;
+        return true;
     NPUTF8* utf8String = browser->utf8fromidentifier(identifier);
     if (!utf8String)
-        return false;
+        return true;
     STRINGZ_TO_NPVARIANT(utf8String, *result);
     return true;
 }
@@ -683,6 +685,10 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
     else if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
         browser->setexception(header, "plugin object testThrowException SUCCESS");
         return true;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_FAIL_METHOD]) {
+        NPObject* windowScriptObject;
+        browser->getvalue(plugin->npp, NPNVWindowNPObject, &windowScriptObject);
+        browser->invoke(plugin->npp, windowScriptObject, name, args, argCount, result);
     } else if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM]) 
         return destroyNullStream(plugin, args, argCount, result);
     

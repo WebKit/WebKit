@@ -1,0 +1,13 @@
+<html><body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<div id="console">FAILURE: No exception caught.</div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    try {
+        plg.testFail();
+    } catch (e) {
+        document.getElementById('console').innerHTML = 'SUCCESS: Exception caught: ' + e;
+    }
+</script></body></html>
