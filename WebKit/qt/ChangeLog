@@ -1,3 +1,12 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, build fix.
+
+        Update call to FrameLoader::loadFrameRequest().
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2009-10-19  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Ariya Hidayat.

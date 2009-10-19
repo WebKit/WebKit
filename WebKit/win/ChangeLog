@@ -1,3 +1,12 @@
+2009-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, build fix.
+
+        Update call to FrameLoader::urlSelected().
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+
 2009-10-16  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.
