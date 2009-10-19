@@ -1,3 +1,18 @@
+2009-10-18  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fixes issue where doubleclicking a word could select following adjacent newlines.
+        https://bugs.webkit.org/show_bug.cgi?id=30234
+
+        Tests: platform/mac/editing/selection/doubleclick-should-not-expand-across-lines.html
+               platform/mac/editing/selection/script-tests/TEMPLATE.html
+               platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
+               platform/win/editing/selection/script-tests/TEMPLATE.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace):
+
 2009-10-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         CURL build fix, use proper header name.
