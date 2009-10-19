@@ -1,3 +1,12 @@
+2009-10-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+        
+        Add tests that have never passed on Windows to the Skipped list, and reopen
+        bugs.
+
+        * platform/win/Skipped:
+
 2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

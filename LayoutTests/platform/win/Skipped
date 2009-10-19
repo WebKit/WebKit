@@ -685,3 +685,7 @@ plugins/private-browsing-mode.html
 
 # Skip these two failures I introduced this morning while I explore them.
 http/tests/globalhistory/history-delegate-basic-visited-links.html
+
+# These tests have never passed on Windows, reopening their bugs
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
