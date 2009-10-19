@@ -1,3 +1,18 @@
+2009-10-19  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Add QWebElement::render API which allows rendering of single
+        element.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::render):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::render):
+        * tests/qwebelement/qwebelement.qrc:
+        * tests/qwebelement/image.png: Added.
+
 2009-10-19  Markus Goetz <Markus.Goetz@nokia.com>
 
         Reviewed by Ariya Hidayat.

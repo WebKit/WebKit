@@ -30,12 +30,14 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "JSGlobalObject.h"
 #include "JSHTMLElement.h"
 #include "JSObject.h"
 #include "NodeList.h"
 #include "PropertyNameArray.h"
+#include "RenderImage.h"
 #include "ScriptFunctionCall.h"
 #include "StaticNodeList.h"
 #include "qt_runtime.h"
@@ -44,6 +46,8 @@
 #include "runtime_root.h"
 #include <parser/SourceCode.h>
 #include <wtf/Vector.h>
+
+#include <QPainter>
 
 using namespace WebCore;
 
@@ -1411,3 +1415,38 @@ QWebElement QWebElement::enclosingElement(WebCore::Node* node)
     Returns true if this element points to a different underlying DOM object
     than \a o; otherwise returns false.
 */
+
+
+/*! 
+  Render the element into \a painter .
+*/
+void QWebElement::render(QPainter* painter)
+{
+    WebCore::Element* e = m_element;
+    Document* doc = e ? e->document() : 0;
+    if (!doc)
+        return;
+
+    Frame* frame = doc->frame();
+    if (!frame || !frame->view() || !frame->contentRenderer())
+        return;
+
+    FrameView* view = frame->view();
+
+    view->layoutIfNeededRecursive();
+
+    IntRect rect = e->getRect();
+
+    if (rect.size().isEmpty())
+        return;
+
+    GraphicsContext context(painter);
+
+    context.save();
+    context.translate(-rect.x(), -rect.y());
+    view->setNodeToDraw(e);
+    view->paintContents(&context, rect);
+    view->setNodeToDraw(0);
+    context.restore();
+}
+

@@ -87,6 +87,7 @@ private slots:
     void firstChildNextSibling();
     void lastChildPreviousSibling();
     void hasSetFocus();
+    void render();
 
 private:
     QWebView* m_view;
@@ -823,6 +824,80 @@ void tst_QWebElement::hasSetFocus()
     input2.setFocus();
     QVERIFY(!input1.hasFocus());
     QVERIFY(input2.hasFocus());
+}
+
+void tst_QWebElement::render()
+{
+    QString html( "<html>"
+                    "<head><style>"
+                       "body, iframe { margin: 0px; border: none; }"
+                    "</style></head>"
+                    "<body><table width='300px' height='300px' border='1'>"
+                           "<tr>"
+                               "<td>test"
+                               "</td>"
+                               "<td><img src='qrc:///image.png'>"
+                               "</td>"
+                           "</tr>"
+                          "</table>"
+                    "</body>"
+                 "</html>"
+                );
+
+    QWebPage page;
+    QSignalSpy loadSpy(&page, SIGNAL(loadFinished(bool)));
+    page.mainFrame()->setHtml(html);
+
+    waitForSignal(&page, SIGNAL(loadFinished(bool)));
+    QCOMPARE(loadSpy.count(), 1);
+
+    QList<QWebElement> imgs = page.mainFrame()->findAllElements("img");
+    QCOMPARE(imgs.count(), 1);
+
+    QImage resource(":/image.png");
+    QRect imageRect(0, 0, resource.width(), resource.height());
+
+    QImage testImage(resource.width(), resource.height(), QImage::Format_ARGB32);
+    QPainter painter0(&testImage);
+    painter0.fillRect(imageRect, Qt::white);
+    painter0.drawImage(0, 0, resource);
+    painter0.end();
+
+    QImage image1(resource.width(), resource.height(), QImage::Format_ARGB32);
+    QPainter painter1(&image1);
+    painter1.fillRect(imageRect, Qt::white);
+    imgs[0].render(&painter1);
+    painter1.end();
+
+    QVERIFY(image1 == testImage);
+
+    // render image 2nd time to make sure that cached rendering works fine
+    QImage image2(resource.width(), resource.height(), QImage::Format_ARGB32);
+    QPainter painter2(&image2);
+    painter2.fillRect(imageRect, Qt::white);
+    imgs[0].render(&painter2);
+    painter2.end();
+
+    QVERIFY(image2 == testImage);
+
+    // compare table rendered through QWebElement::render to whole page table rendering
+    QRect tableRect(0, 0, 300, 300);
+    QList<QWebElement> tables = page.mainFrame()->findAllElements("table");
+    QCOMPARE(tables.count(), 1);
+
+    QImage image3(300, 300, QImage::Format_ARGB32);
+    QPainter painter3(&image3);
+    painter3.fillRect(tableRect, Qt::white);
+    tables[0].render(&painter3);
+    painter3.end();
+
+    QImage image4(300, 300, QImage::Format_ARGB32);
+    QPainter painter4(&image4);
+    page.mainFrame()->setClipRenderToViewport(false);
+    page.mainFrame()->render(&painter4, tableRect);
+    painter4.end();
+
+    QVERIFY(image3 == image4);
 }
 
 QTEST_MAIN(tst_QWebElement)
