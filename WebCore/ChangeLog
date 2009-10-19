@@ -1,3 +1,9 @@
+2009-10-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        CURL build fix, use proper header name.
+
+        * platform/network/curl/ResourceHandleManager.h:
+
 2009-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

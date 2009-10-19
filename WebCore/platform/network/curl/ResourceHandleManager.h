@@ -30,7 +30,7 @@
 
 #include "CString.h"
 #include "Frame.h"
-#include "String.h"
+#include "PlatformString.h"
 #include "Timer.h"
 #include "ResourceHandleClient.h"
 
