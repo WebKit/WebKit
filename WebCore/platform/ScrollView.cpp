@@ -796,8 +796,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     // Paint the panScroll Icon
     if (m_drawPanScrollIcon) {
-        DEFINE_STATIC_LOCAL(RefPtr<Image>, panScrollIcon, (Image::loadPlatformResource("panIcon")));
-        context->drawImage(panScrollIcon.get(), m_panScrollIconPoint);
+        DEFINE_STATIC_LOCAL(Image*, panScrollIcon, (Image::loadPlatformResource("panIcon").releaseRef()));
+        context->drawImage(panScrollIcon, m_panScrollIconPoint);
     }
 }
 

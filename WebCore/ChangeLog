@@ -1,3 +1,13 @@
+2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make the local static panScrollIcon into a Image* instead
+        of a RefPtr<Image>.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+
 2009-10-19  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by David Levin.
