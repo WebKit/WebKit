@@ -1986,6 +1986,14 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
         CRASH();
 
     int newSize = m_scriptCodeCapacity + delta;
+    // If we allow fastRealloc(ptr, 0), it will call CRASH(). We run into this
+    // case if the HTML being parsed begins with "<!--" and there's more data
+    // coming.
+    if (!newSize) {
+        ASSERT(!m_scriptCode);
+        return;
+    }
+
     m_scriptCode = static_cast<UChar*>(fastRealloc(m_scriptCode, newSize * sizeof(UChar)));
     m_scriptCodeCapacity = newSize;
 }

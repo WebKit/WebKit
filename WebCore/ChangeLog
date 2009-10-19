@@ -1,3 +1,18 @@
+2009-10-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix hard-to-reproduce crash in HTMLTokenizer by avoiding a rare
+        fastRealloc edge case.
+        https://bugs.webkit.org/show_bug.cgi?id=29313
+
+        No test, the crash shows up occasionally in crash dumps, we weren't able
+        to reproduce it locally.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::enlargeScriptBuffer): Added an early exit to
+            avoid calling fastRealloc with the size of 0.
+
 2009-10-19  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Seidel.
