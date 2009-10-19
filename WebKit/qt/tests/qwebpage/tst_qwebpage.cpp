@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 #include <qwebsecurityorigin.h>
 #include <qwebdatabase.h>
 #include <QPushButton>
+#include <QDir>
 
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
@@ -123,6 +125,9 @@ private slots:
     void errorPageExtension();
 
     void crashTests_LazyInitializationOfMainFrame();
+
+    void screenshot_data();
+    void screenshot();
 
 private:
     QWebView* m_view;
@@ -1557,6 +1562,52 @@ void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()
     }
 }
 
+static void takeScreenshot(QWebPage* page)
+{
+    QWebFrame* mainFrame = page->mainFrame();
+    page->setViewportSize(mainFrame->contentsSize());
+    QImage image(page->viewportSize(), QImage::Format_ARGB32);
+    QPainter painter(&image);
+    mainFrame->render(&painter);
+    painter.end();
+}
+
+void tst_QWebPage::screenshot_data()
+{
+    QTest::addColumn<QString>("html");
+    QTest::newRow("WithoutPlugin") << "<html><body id='b'>text</body></html>";
+    QTest::newRow("WindowedPlugin") << QString("<html><body id='b'>text<embed src='resources/test.swf'></embed></body></html>");
+    QTest::newRow("WindowlessPlugin") << QString("<html><body id='b'>text<embed src='resources/test.swf' wmode='transparent'></embed></body></html>");
+}
+
+void tst_QWebPage::screenshot()
+{
+    QDir::setCurrent(SRCDIR);
+
+    QFETCH(QString, html);
+    QWebPage* page = new QWebPage;
+    page->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    QWebFrame* mainFrame = page->mainFrame();
+    mainFrame->setHtml(html, QUrl::fromLocalFile(QDir::currentPath()));
+    if (html.contains("</embed>")) {
+        // some reasonable time for the PluginStream to feed test.swf to flash and start painting
+        QTest::qWait(2000);
+    }
+
+    // take screenshot without a view
+    takeScreenshot(page);
+
+    QWebView* view = new QWebView;
+    view->setPage(page);
+
+    // take screenshot when attached to a view
+    takeScreenshot(page);
+
+    delete page;
+    delete view;
+
+    QDir::setCurrent(QApplication::applicationDirPath());
+}
 
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"

@@ -458,6 +458,10 @@ void PluginView::setNPWindowIfNeeded()
     if (!m_isStarted || !parent() || !m_plugin->pluginFuncs()->setwindow)
         return;
 
+    // If the plugin didn't load sucessfully, no point in calling setwindow
+    if (m_status != PluginStatusLoadedSuccessfully)
+        return;
+
     // On Unix, only call plugin if it's full-page or windowed
     if (m_mode != NP_FULL && m_mode != NP_EMBED)
         return;
@@ -752,8 +756,8 @@ bool PluginView::platformStart()
     }
 
     if (m_isWindowed) {
-        if (m_needsXEmbed) {
-            QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+        QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+        if (m_needsXEmbed && client) {
             setPlatformWidget(new PluginContainerQt(this, client->ownerWidget()));
             // sync our XEmbed container window creation before sending the xid to plugins.
             QApplication::syncX();
