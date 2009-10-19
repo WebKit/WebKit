@@ -3,7 +3,7 @@
         Reviewed by Simon Hausmann.
 
         Rename fixedContentsSize property to preferredContentsSize as
-        agreed upon with Siman Hausmann and Matthias Ettrich.
+        agreed upon with Simon Hausmann and Matthias Ettrich.
 
         * Api/qwebpage.cpp:
         (QWebPage::preferredContentsSize):
