@@ -67,7 +67,7 @@
 - (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method resource:willSendRequest:redirectResponse:fromDataSource:
+    @method webView:resource:willSendRequest:redirectResponse:fromDataSource:
     @discussion This message is sent before a load is initiated.  The request may be modified
     as necessary by the receiver.
     @param webView The WebView sending the message.

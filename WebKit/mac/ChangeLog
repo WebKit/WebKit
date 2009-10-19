@@ -1,3 +1,15 @@
+2009-10-19  David Kilzer  <ddkilzer@apple.com>
+
+        Documentation fix for -[NSObject(WebResourceLoadDelegate) webView:resource:willSendRequest:redirectResponse:fromDataSource:]
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebResourceLoadDelegate.h: Prepended "webView:" to the
+        @method declaration of
+        -webView:resource:willSendRequest:redirectResponse:fromDataSource:
+        which was absent before r3953 and was missed during the great
+        documentation clean up of r4269.
+
 2009-10-19  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
