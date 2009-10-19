@@ -18,6 +18,7 @@
             'API/JSClassRef.h',
             'API/JSContextRef.cpp',
             'API/JSContextRef.h',
+            'API/JSContextRefPrivate.h',
             'API/JSObjectRef.cpp',
             'API/JSObjectRef.h',
             'API/JSProfilerPrivate.cpp',

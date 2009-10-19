@@ -25,6 +25,7 @@
 
 #include "JavaScriptCore.h"
 #include "JSBasePrivate.h"
+#include "JSContextRefPrivate.h"
 #include <math.h>
 #define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
@@ -41,8 +42,8 @@ static double nan(const char*)
 
 #endif
 
-static JSGlobalContextRef context = 0;
-static int failed = 0;
+static JSGlobalContextRef context;
+static int failed;
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
     if (JSValueToBoolean(context, value) != expectedValue) {
@@ -618,14 +619,16 @@ static JSClassRef Derived_class(JSContextRef context)
     return jsClass;
 }
 
-static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef print_callAsFunction(JSContextRef ctx, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(functionObject);
     UNUSED_PARAM(thisObject);
     UNUSED_PARAM(exception);
+
+    ASSERT(JSContextGetGlobalContext(ctx) == context);
     
     if (argumentCount > 0) {
-        JSStringRef string = JSValueToStringCopy(context, arguments[0], NULL);
+        JSStringRef string = JSValueToStringCopy(ctx, arguments[0], NULL);
         size_t sizeUTF8 = JSStringGetMaximumUTF8CStringSize(string);
         char* stringUTF8 = (char*)malloc(sizeUTF8);
         JSStringGetUTF8CString(string, stringUTF8, sizeUTF8);
@@ -634,7 +637,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
         JSStringRelease(string);
     }
     
-    return JSValueMakeUndefined(context);
+    return JSValueMakeUndefined(ctx);
 }
 
 static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -760,6 +763,7 @@ int main(int argc, char* argv[])
 
     JSGlobalContextRetain(context);
     JSGlobalContextRelease(context);
+    ASSERT(JSContextGetGlobalContext(context) == context);
     
     JSReportExtraMemoryCost(context, 0);
     JSReportExtraMemoryCost(context, 1);

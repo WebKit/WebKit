@@ -1409,6 +1409,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSContextRefPrivate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSObjectRef.cpp"
 				>
 			</File>

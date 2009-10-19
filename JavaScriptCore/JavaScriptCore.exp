@@ -2,6 +2,7 @@ _JSCheckScriptSyntax
 _JSClassCreate
 _JSClassRelease
 _JSClassRetain
+_JSContextGetGlobalContext
 _JSContextGetGlobalObject
 _JSContextGetGroup
 _JSContextGroupCreate

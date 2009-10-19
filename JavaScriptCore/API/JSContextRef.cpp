@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JSContextRef.h"
+#include "JSContextRefPrivate.h"
 
 #include "APICast.h"
 #include "InitializeThreading.h"
@@ -151,4 +152,13 @@ JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
     return toRef(&exec->globalData());
+}
+
+JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
+{
+    ExecState* exec = toJS(ctx);
+    exec->globalData().heap.registerThread();
+    JSLock lock(exec);
+
+    return toGlobalRef(exec->lexicalGlobalObject()->globalExec());
 }

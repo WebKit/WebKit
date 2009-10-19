@@ -57,6 +57,7 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSClassRef.cpp \
 	JavaScriptCore/API/JSClassRef.h \
 	JavaScriptCore/API/JSContextRef.cpp \
+	JavaScriptCore/API/JSContextRefPrivate.h \
 	JavaScriptCore/API/JSObjectRef.cpp \
 	JavaScriptCore/API/JSRetainPtr.h \
 	JavaScriptCore/API/JSStringRef.cpp \

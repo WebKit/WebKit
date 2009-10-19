@@ -27,6 +27,7 @@
 #define APICast_h
 
 #include "JSAPIValueWrapper.h"
+#include "JSGlobalObject.h"
 #include "JSValue.h"
 #include <wtf/Platform.h>
 #include <wtf/UnusedParam.h>
@@ -118,6 +119,7 @@ inline JSContextRef toRef(JSC::ExecState* e)
 
 inline JSGlobalContextRef toGlobalRef(JSC::ExecState* e)
 {
+    ASSERT(e == e->lexicalGlobalObject()->globalExec());
     return reinterpret_cast<JSGlobalContextRef>(e);
 }
 
