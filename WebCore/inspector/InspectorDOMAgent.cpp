@@ -224,7 +224,6 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     int id = nodesMap->get(node);
     if (!id)
         return;
-
     m_idToNode.remove(id);
     nodesMap->remove(node);
     bool childrenRequested = m_childrenRequested.contains(id);

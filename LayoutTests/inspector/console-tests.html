@@ -41,7 +41,7 @@ function dumpMessages()
 {
     var result = [];
     var messages = WebInspector.console.messages;
-    for (var i = 0; i &lt; messages.length; ++i) {
+    for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         result.push({ text: element.textContent.replace(/\u200b/g, ""), clazz: element.getAttribute("class")});
     }

@@ -504,21 +504,31 @@ WebInspector.ConsoleView.prototype = {
 
     _formatarray: function(arr, elem)
     {
-        var self = this;
-        function printResult(properties)
-        {
-            if (!properties)
-                return;
-            elem.appendChild(document.createTextNode("["));
-            for (var i = 0; i < properties.length; ++i) {
-                var property = properties[i].value;
-                elem.appendChild(self._format(property));
-                if (i < properties.length - 1)
-                    elem.appendChild(document.createTextNode(", "));
-            }
-            elem.appendChild(document.createTextNode("]"));
+        InjectedScriptAccess.getProperties(arr, false, this._printArray.bind(this, elem));
+    },
+
+    _printArray: function(elem, properties)
+    {
+        if (!properties)
+            return;
+        var elements = [];
+        for (var i = 0; i < properties.length; ++i) {
+            var name = properties[i].name;
+            if (name == parseInt(name))
+                elements[name] = this._format(properties[i].value);
         }
-        InjectedScriptAccess.getProperties(arr, false, printResult);
+
+        elem.appendChild(document.createTextNode("["));
+        for (var i = 0; i < elements.length; ++i) {
+            var element = elements[i];
+            if (element)
+                elem.appendChild(element);
+            else
+                elem.appendChild(document.createTextNode("undefined"))
+            if (i < elements.length - 1)
+                elem.appendChild(document.createTextNode(", "));
+        }
+        elem.appendChild(document.createTextNode("]"));
     },
 
     _formatnode: function(object, elem)
