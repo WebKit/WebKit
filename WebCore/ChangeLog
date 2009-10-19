@@ -1,3 +1,18 @@
+2009-10-19  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by David Levin.
+
+        Forcefully set antialiasing for Chromium media controls.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30521
+
+        Before it was nondeterministiacally being enabled based on the previous state of GraphicsContext.
+
+        Covered by existing layout tests.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider): Added setShouldAntialias(true).
+
 2009-10-19  Jens Alfke  <jens@mooseyard.com>
 
         Reviewed by Darin Adler.
