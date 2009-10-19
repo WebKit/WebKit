@@ -521,22 +521,26 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID res
     load32(Address(temp, offset + 4), resultTag);
 }
 
+void JIT::testPrototype(Structure* structure, JumpList& failureCases)
+{
+    if (structure->m_prototype.isNull())
+        return;
+
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&asCell(structure->m_prototype)->m_structure), ImmPtr(asCell(structure->m_prototype)->m_structure)));
+}
+
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress)
 {
     // It is assumed that regT0 contains the basePayload and regT1 contains the baseTag.  The value can be found on the stack.
 
     JumpList failureCases;
     failureCases.append(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
-
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    failureCases.append(branchPtr(NotEqual, regT2, ImmPtr(oldStructure)));
+    failureCases.append(branchPtr(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(oldStructure)));
+    testPrototype(oldStructure, failureCases);
 
     // Verify that nothing in the prototype chain has a setter for this property. 
-    for (RefPtr<Structure>* it = chain->head(); *it; ++it) {
-        loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
-        loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        failureCases.append(branchPtr(NotEqual, regT2, ImmPtr(it->get())));
-    }
+    for (RefPtr<Structure>* it = chain->head(); *it; ++it)
+        testPrototype(it->get(), failureCases);
 
     // Reallocate property storage if needed.
     Call callTarget;
@@ -1347,35 +1351,27 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID res
     } 
 }
 
+void JIT::testPrototype(Structure* structure, JumpList& failureCases)
+{
+    if (structure->m_prototype.isNull())
+        return;
+
+    move(ImmPtr(&asCell(structure->m_prototype)->m_structure), regT2);
+    move(ImmPtr(asCell(structure->m_prototype)->m_structure), regT3);
+    failureCases.append(branchPtr(NotEqual, Address(regT2), regT3));
+}
+
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress)
 {
     JumpList failureCases;
     // Check eax is an object of the right Structure.
     failureCases.append(emitJumpIfNotJSCell(regT0));
     failureCases.append(branchPtr(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(oldStructure)));
-    JumpList successCases;
+    testPrototype(oldStructure, failureCases);
 
-    // ecx = baseObject
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    // proto(ecx) = baseObject->structure()->prototype()
-    failureCases.append(branch32(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType)));
-
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
-    
     // ecx = baseObject->m_structure
-    for (RefPtr<Structure>* it = chain->head(); *it; ++it) {
-        // null check the prototype
-        successCases.append(branchPtr(Equal, regT2, ImmPtr(JSValue::encode(jsNull()))));
-
-        // Check the structure id
-        failureCases.append(branchPtr(NotEqual, Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(it->get())));
-        
-        loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        failureCases.append(branch32(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType)));
-        loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
-    }
-
-    successCases.link(this);
+    for (RefPtr<Structure>* it = chain->head(); *it; ++it)
+        testPrototype(it->get(), failureCases);
 
     Call callTarget;
 

@@ -386,6 +386,8 @@ namespace JSC {
 
         Address addressFor(unsigned index, RegisterID base = callFrameRegister);
 
+        void testPrototype(Structure*, JumpList& failureCases);
+
 #if USE(JSVALUE32_64)
         Address tagFor(unsigned index, RegisterID base = callFrameRegister);
         Address payloadFor(unsigned index, RegisterID base = callFrameRegister);

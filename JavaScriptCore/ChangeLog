@@ -1,5 +1,19 @@
 2009-10-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Tightened up some put_by_id_transition code generation.
+        https://bugs.webkit.org/show_bug.cgi?id=30539
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition): No need to do object type
+        checks or read Structures and prototypes from objects: they're all known
+        constants at compile time.
+
+2009-10-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Added a private API for getting a global context from a context, for
