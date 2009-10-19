@@ -123,6 +123,7 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
 {
     if (namedAttrMap) {
+        ec = 0;
         namedAttrMap->removeNamedItem(name, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;

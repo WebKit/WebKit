@@ -1,3 +1,13 @@
+2009-10-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix uninitialized variable reference in Element::removeAttribute().
+        https://bugs.webkit.org/show_bug.cgi?id=30502
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute):
+
 2009-10-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
