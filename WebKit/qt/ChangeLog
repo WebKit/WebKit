@@ -1,3 +1,23 @@
+2009-10-19  Jakob Truelsen  <antialize@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29042
+
+        Allow one to costumize the minimal and maximal shrink factors,
+        Added methods setPrintingMinimumShrinkFactor, printingMinimumShrinkFactor,
+        setPrintingMaximumShrinkFactor, printingMaximumShrinkFactor to QWebSettings.
+
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setPrintingMinimumShrinkFactor):
+        (QWebSettings::printingMinimumShrinkFactor):
+        (QWebSettings::setPrintingMaximumShrinkFactor):
+        (QWebSettings::printingMaximumShrinkFactor):
+        * Api/qwebsettings.h:
+
 2009-10-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
@@ -103,6 +123,7 @@
         * Api/qgraphicswebview.cpp:
         (QGraphicsWebView::event):
 
+>>>>>>> .r49765
 2009-10-13  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

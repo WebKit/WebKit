@@ -63,6 +63,8 @@ Settings::Settings(Page* page)
     , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
     , m_localStorageQuota(5 * 1024 * 1024)  // Suggested by the HTML5 spec.
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
+    , m_printingMinimumShrinkFactor(0.0f)
+    , m_printingMaximumShrinkFactor(0.0f)
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)
     , m_privateBrowsingEnabled(false)
@@ -538,5 +540,15 @@ void Settings::setExperimentalWebSocketsEnabled(bool enabled)
     m_experimentalWebSocketsEnabled = enabled;
 }
 #endif
+
+void Settings::setPrintingMinimumShrinkFactor(float printingMinimumShrinkFactor)
+{
+    m_printingMinimumShrinkFactor = printingMinimumShrinkFactor;
+}    
+
+void Settings::setPrintingMaximumShrinkFactor(float printingMaximumShrinkFactor)
+{
+    m_printingMaximumShrinkFactor = printingMaximumShrinkFactor;
+}    
 
 } // namespace WebCore

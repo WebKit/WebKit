@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderView.h"
+#include "Settings.h"
 
 using namespace WebCore;
 
@@ -95,18 +96,23 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
 
 void PrintContext::begin(float width)
 {
-    // By imaging to a width a little wider than the available pixels,
-    // thin pages will be scaled down a little, matching the way they
-    // print in IE and Camino. This lets them use fewer sheets than they
-    // would otherwise, which is presumably why other browsers do this.
-    // Wide pages will be scaled down more than this.
-    const float PrintingMinimumShrinkFactor = 1.25f;
+    float PrintingMinimumShrinkFactor = m_frame->settings() ? m_frame->settings()->printingMinimumShrinkFactor() : 0.0f;
+    float PrintingMaximumShrinkFactor = m_frame->settings() ? m_frame->settings()->printingMaximumShrinkFactor() : 0.0f;
 
-    // This number determines how small we are willing to reduce the page content
-    // in order to accommodate the widest line. If the page would have to be
-    // reduced smaller to make the widest line fit, we just clip instead (this
-    // behavior matches MacIE and Mozilla, at least)
-    const float PrintingMaximumShrinkFactor = 2.0f;
+    if (PrintingMaximumShrinkFactor < PrintingMinimumShrinkFactor || PrintingMinimumShrinkFactor <= 0.0f) {
+        // By imaging to a width a little wider than the available pixels,
+        // thin pages will be scaled down a little, matching the way they
+        // print in IE and Camino. This lets them use fewer sheets than they
+        // would otherwise, which is presumably why other browsers do this.
+        // Wide pages will be scaled down more than this.
+        PrintingMinimumShrinkFactor = 1.25f;
+
+        // This number determines how small we are willing to reduce the page content
+        // in order to accommodate the widest line. If the page would have to be
+        // reduced smaller to make the widest line fit, we just clip instead (this
+        // behavior matches MacIE and Mozilla, at least)
+        PrintingMaximumShrinkFactor = 2.0f;
+    }
 
     float minLayoutWidth = width * PrintingMinimumShrinkFactor;
     float maxLayoutWidth = width * PrintingMaximumShrinkFactor;

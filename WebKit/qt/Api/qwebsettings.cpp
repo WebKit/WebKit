@@ -62,6 +62,8 @@ public:
     QString localStoragePath;
     QString offlineWebApplicationCachePath;
     qint64 offlineStorageDefaultQuota;
+    float printingMinimumShrinkFactor;
+    float printingMaximumShrinkFactor;
 
     void apply();
     WebCore::Settings* settings;
@@ -173,6 +175,12 @@ void QWebSettingsPrivate::apply()
 
         QString storagePath = !localStoragePath.isEmpty() ? localStoragePath : global->localStoragePath;
         settings->setLocalStorageDatabasePath(storagePath);
+
+        float minimumShrinkFactor = printingMinimumShrinkFactor > 0.0f ? printingMinimumShrinkFactor : global->printingMinimumShrinkFactor;
+        settings->setPrintingMinimumShrinkFactor(minimumShrinkFactor);
+
+        float maximumShrinkFactor = printingMaximumShrinkFactor > 0.0f ? printingMaximumShrinkFactor : global->printingMaximumShrinkFactor;
+        settings->setPrintingMaximumShrinkFactor(maximumShrinkFactor);
 
         value = attributes.value(QWebSettings::ZoomTextOnly,
                                  global->attributes.value(QWebSettings::ZoomTextOnly));
@@ -378,6 +386,8 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::SessionStorageEnabled, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
+    d->printingMinimumShrinkFactor = 0.0f;
+    d->printingMaximumShrinkFactor = 0.0f;
 }
 
 /*!
@@ -489,6 +499,60 @@ void QWebSettings::setDefaultTextEncoding(const QString& encoding)
 QString QWebSettings::defaultTextEncoding() const
 {
     return d->defaultTextEncoding;
+}
+
+/*!
+    \since 4.7 
+    Specifies minimum shrink fator allowed for printing. If set to 0 a
+    default value is used.
+
+    When printing, content will be shrunk to reduce page usage, it
+    will reduced by a factor between printingMinimumShrinkFactor and
+    printingMaximumShrinkFactor. 
+
+    \sa printingMinimumShrinkFactor()
+    \sa setPrintingMaximumShrinkFactor()
+    \sa printingMaximumShrinkFactor()
+*/
+void QWebSettings::setPrintingMinimumShrinkFactor(float printingMinimumShrinkFactor)
+{
+    d->printingMinimumShrinkFactor = printingMinimumShrinkFactor;
+    d->apply();
+}
+
+/*!
+    \since 4.7 
+    returns the minimum shrink factor used for printing.
+
+    \sa setPrintingMinimumShrinkFactor()
+*/
+float QWebSettings::printingMinimumShrinkFactor() const
+{
+    return d->printingMinimumShrinkFactor;
+}
+
+/*!
+    \since 4.7 
+    Specifies maximum shrink fator allowed for printing. If set to 0 a
+    default value is used.
+
+    \sa setPrintingMinimumShrinkFactor()
+*/
+void QWebSettings::setPrintingMaximumShrinkFactor(float printingMaximumShrinkFactor)
+{
+    d->printingMaximumShrinkFactor = printingMaximumShrinkFactor;
+    d->apply();
+}
+
+/*!
+    \since 4.7 
+    returns the maximum shrink factor used for printing.
+
+    \sa setPrintingMinimumShrinkFactor()
+*/
+float QWebSettings::printingMaximumShrinkFactor() const
+{
+    return d->printingMaximumShrinkFactor;
 }
 
 /*!

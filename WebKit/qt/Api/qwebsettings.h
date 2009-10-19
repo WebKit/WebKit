@@ -103,6 +103,12 @@ public:
     void setDefaultTextEncoding(const QString &encoding);
     QString defaultTextEncoding() const;
 
+    void setPrintingMinimumShrinkFactor(float printingMinimumShrinkFactor);
+    float printingMinimumShrinkFactor() const;
+
+    void setPrintingMaximumShrinkFactor(float printingMaximimShrinkFactor);
+    float printingMaximumShrinkFactor() const;
+
     static void setIconDatabasePath(const QString &location);
     static QString iconDatabasePath();
     static void clearIconDatabase();
