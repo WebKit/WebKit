@@ -1,5 +1,16 @@
 2009-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: touching WebCore so that it
+        initiated inspector frontend deployment on Windows.
+
+        Web Inspector: frontend files are not deployed in Windows
+        incremental build.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+
+2009-10-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Title of dir(["test", "test2"]) should be Array
