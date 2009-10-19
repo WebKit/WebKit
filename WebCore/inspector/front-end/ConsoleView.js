@@ -27,6 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
+
 WebInspector.ConsoleView = function(drawer)
 {
     WebInspector.View.call(this, document.getElementById("console-view"));
@@ -44,7 +46,7 @@ WebInspector.ConsoleView = function(drawer)
 
     this.promptElement = document.getElementById("console-prompt");
     this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
-    this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " .=:[({;");
+    this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
 
     this.topGroup = new WebInspector.ConsoleGroup(null, 0);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
@@ -274,8 +276,7 @@ WebInspector.ConsoleView.prototype = {
     completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
     {
         // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
-        const expressionStopCharacters = " =:{;";
-        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, expressionStopCharacters, this.promptElement, "backward");
+        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, ExpressionStopCharacters, this.promptElement, "backward");
         var expressionString = expressionRange.toString();
         var lastIndex = expressionString.length - 1;
 
@@ -333,7 +334,7 @@ WebInspector.ConsoleView.prototype = {
             if (bestMatchOnly)
                 break;
         }
-        setTimeout(completionsReadyCallback, 0, results);
+        completionsReadyCallback(results);
     },
 
     _clearButtonClicked: function()
