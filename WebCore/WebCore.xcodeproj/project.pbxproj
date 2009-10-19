@@ -1229,6 +1229,8 @@
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
 		845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845E72F90FD2623900A87D79 /* SVGFilter.cpp */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
+		84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */; };
+		84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 84801953108BAFB300CB2B1F /* FEGaussianBlur.h */; };
 		849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 849F77750EFEC6200090849D /* StrokeStyleApplier.h */; };
 		84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */; };
 		84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A81F3C0FC7DFF000955300 /* SourceAlpha.h */; };
@@ -3554,8 +3556,6 @@
 		B255997F0D00D8BA00BB825C /* SVGFEDisplacementMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */; };
 		B25599800D00D8BA00BB825C /* SVGFEFlood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */; };
 		B25599810D00D8BA00BB825C /* SVGFEFlood.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E70D00D8B900BB825C /* SVGFEFlood.h */; };
-		B25599820D00D8BA00BB825C /* SVGFEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E80D00D8B900BB825C /* SVGFEGaussianBlur.cpp */; };
-		B25599830D00D8BA00BB825C /* SVGFEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E90D00D8B900BB825C /* SVGFEGaussianBlur.h */; };
 		B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */; };
 		B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598EB0D00D8B900BB825C /* SVGFEImage.h */; };
 		B25599860D00D8BA00BB825C /* SVGFEMerge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */; };
@@ -6521,6 +6521,8 @@
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = filters/Filter.h; sourceTree = "<group>"; };
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
+		84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEGaussianBlur.cpp; path = filters/FEGaussianBlur.cpp; sourceTree = "<group>"; };
+		84801953108BAFB300CB2B1F /* FEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlur.h; path = filters/FEGaussianBlur.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
 		84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceAlpha.cpp; path = filters/SourceAlpha.cpp; sourceTree = "<group>"; };
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
@@ -8661,8 +8663,6 @@
 		B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMap.h; sourceTree = "<group>"; };
 		B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEFlood.cpp; sourceTree = "<group>"; };
 		B25598E70D00D8B900BB825C /* SVGFEFlood.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEFlood.h; sourceTree = "<group>"; };
-		B25598E80D00D8B900BB825C /* SVGFEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEGaussianBlur.cpp; sourceTree = "<group>"; };
-		B25598E90D00D8B900BB825C /* SVGFEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEGaussianBlur.h; sourceTree = "<group>"; };
 		B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEImage.cpp; sourceTree = "<group>"; };
 		B25598EB0D00D8B900BB825C /* SVGFEImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEImage.h; sourceTree = "<group>"; };
 		B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMerge.cpp; sourceTree = "<group>"; };
@@ -12724,6 +12724,8 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */,
+				84801953108BAFB300CB2B1F /* FEGaussianBlur.h */,
 				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
 				A75E8B810E1DE2D6007F2481 /* FEBlend.h */,
 				A75E8B820E1DE2D6007F2481 /* FEColorMatrix.cpp */,
@@ -13934,8 +13936,6 @@
 				B25598E50D00D8B900BB825C /* SVGFEDisplacementMap.h */,
 				B25598E60D00D8B900BB825C /* SVGFEFlood.cpp */,
 				B25598E70D00D8B900BB825C /* SVGFEFlood.h */,
-				B25598E80D00D8B900BB825C /* SVGFEGaussianBlur.cpp */,
-				B25598E90D00D8B900BB825C /* SVGFEGaussianBlur.h */,
 				B25598EA0D00D8B900BB825C /* SVGFEImage.cpp */,
 				B25598EB0D00D8B900BB825C /* SVGFEImage.h */,
 				B25598EC0D00D8B900BB825C /* SVGFEMerge.cpp */,
@@ -17739,7 +17739,6 @@
 				B22279E30D00BF220071B782 /* SVGFEFuncBElement.h in Headers */,
 				B22279E60D00BF220071B782 /* SVGFEFuncGElement.h in Headers */,
 				B22279E90D00BF220071B782 /* SVGFEFuncRElement.h in Headers */,
-				B25599830D00D8BA00BB825C /* SVGFEGaussianBlur.h in Headers */,
 				B22279EC0D00BF220071B782 /* SVGFEGaussianBlurElement.h in Headers */,
 				B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */,
 				B22279EF0D00BF220071B782 /* SVGFEImageElement.h in Headers */,
@@ -18063,6 +18062,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */,
 				973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */,
+				84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19912,7 +19912,6 @@
 				B22279E20D00BF220071B782 /* SVGFEFuncBElement.cpp in Sources */,
 				B22279E50D00BF220071B782 /* SVGFEFuncGElement.cpp in Sources */,
 				B22279E80D00BF220071B782 /* SVGFEFuncRElement.cpp in Sources */,
-				B25599820D00D8BA00BB825C /* SVGFEGaussianBlur.cpp in Sources */,
 				B22279EB0D00BF220071B782 /* SVGFEGaussianBlurElement.cpp in Sources */,
 				B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */,
 				B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */,
@@ -20197,6 +20196,7 @@
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */,
 				973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */,
+				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

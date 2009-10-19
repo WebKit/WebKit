@@ -1,3 +1,26 @@
+2009-10-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move feGaussianBlur from WebCore/svg to WebCore/platform
+        [https://bugs.webkit.org/show_bug.cgi?id=30495]
+
+        This patch moves SVGFRGaussianBlur from svg/graphics/filters
+        to platform/graphics/filters/FEGaussianBlur. This is needed
+        for shadow support on Qt and Cairo.
+        No change in functionality, therfore no new test case needed.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FEGaussianBlur.cpp: Added.
+        * platform/graphics/filters/FEGaussianBlur.h: Added.
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp: Removed.
+        * svg/graphics/filters/SVGFEGaussianBlur.h: Removed.
+
 2009-10-19  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

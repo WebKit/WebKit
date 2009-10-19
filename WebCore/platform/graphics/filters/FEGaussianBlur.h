@@ -19,10 +19,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGFEGaussianBlur_h
-#define SVGFEGaussianBlur_h
+#ifndef FEGaussianBlur_h
+#define FEGaussianBlur_h
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
 
@@ -41,7 +41,6 @@ namespace WebCore {
         virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
-        TextStream& externalRepresentation(TextStream& ts) const;
 
     private:
         FEGaussianBlur(FilterEffect*, const float&, const float&);
@@ -53,6 +52,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
 
-#endif // SVGFEGaussianBlur_h
+#endif // FEGaussianBlur_h

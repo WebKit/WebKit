@@ -34441,6 +34441,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.h"
+						>
+					</File>
+					<File
 						RelativePath="..\svg\graphics\filters\SVGDistantLightSource.h"
 						>
 					</File>
@@ -34474,14 +34482,6 @@
 					</File>
 					<File
 						RelativePath="..\svg\graphics\filters\SVGFEFlood.h"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEGaussianBlur.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFEGaussianBlur.h"
 						>
 					</File>
 					<File

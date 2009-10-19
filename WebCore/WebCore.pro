@@ -2778,6 +2778,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FEColorMatrix.cpp \
         platform/graphics/filters/FEComponentTransfer.cpp \
         platform/graphics/filters/FEComposite.cpp \
+        platform/graphics/filters/FEGaussianBlur.cpp \
         platform/graphics/filters/FilterEffect.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp
@@ -3017,7 +3018,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFEDiffuseLighting.cpp \
         svg/graphics/filters/SVGFEDisplacementMap.cpp \
         svg/graphics/filters/SVGFEFlood.cpp \
-        svg/graphics/filters/SVGFEGaussianBlur.cpp \
         svg/graphics/filters/SVGFEImage.cpp \
         svg/graphics/filters/SVGFEMerge.cpp \
         svg/graphics/filters/SVGFEMorphology.cpp \

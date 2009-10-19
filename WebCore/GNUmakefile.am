@@ -2599,6 +2599,8 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
+	WebCore/platform/graphics/filters/FEGaussianBlur.h \
 	WebCore/platform/graphics/filters/Filter.h \
 	WebCore/platform/graphics/filters/FilterEffect.cpp \
 	WebCore/platform/graphics/filters/FilterEffect.h \
@@ -3238,8 +3240,6 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGFEDisplacementMap.h \
 	WebCore/svg/graphics/filters/SVGFEFlood.cpp \
 	WebCore/svg/graphics/filters/SVGFEFlood.h \
-	WebCore/svg/graphics/filters/SVGFEGaussianBlur.cpp \
-	WebCore/svg/graphics/filters/SVGFEGaussianBlur.h \
 	WebCore/svg/graphics/filters/SVGFEImage.cpp \
 	WebCore/svg/graphics/filters/SVGFEImage.h \
 	WebCore/svg/graphics/filters/SVGFEMerge.cpp \

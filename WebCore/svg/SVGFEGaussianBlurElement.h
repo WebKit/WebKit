@@ -24,7 +24,7 @@
 #define SVGFEGaussianBlurElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEGaussianBlur.h"
+#include "FEGaussianBlur.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {

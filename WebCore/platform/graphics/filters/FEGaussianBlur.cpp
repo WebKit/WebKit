@@ -22,14 +22,13 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(FILTERS)
-#include "SVGFEGaussianBlur.h"
+#if ENABLE(FILTERS)
+#include "FEGaussianBlur.h"
 
 #include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-#include "SVGRenderTreeAsText.h"
 #include <math.h>
 
 namespace WebCore {
@@ -135,14 +134,6 @@ void FEGaussianBlur::dump()
 {
 }
 
-TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=GAUSSIAN-BLUR] ";
-    FilterEffect::externalRepresentation(ts);
-    ts << " [std dev. x=" << stdDeviationX() << " y=" << stdDeviationY() << "]";
-    return ts;
-}
-
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif // ENABLE(FILTERS)
