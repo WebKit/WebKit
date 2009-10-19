@@ -1,3 +1,13 @@
+2009-10-19  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Tor Arne.
+
+        Wrong ifdef combination in QGraphicsWebView's event method.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::event):
+
+
 2009-10-19  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Holger Freyther.
@@ -168,7 +178,6 @@
         * Api/qgraphicswebview.cpp:
         (QGraphicsWebView::event):
 
->>>>>>> .r49765
 2009-10-13  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

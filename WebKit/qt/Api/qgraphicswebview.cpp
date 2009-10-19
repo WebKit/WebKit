@@ -263,23 +263,26 @@ bool QGraphicsWebView::event(QEvent* event)
                 return true;
             }
             d->page->updatePositionDependentActions(fakeEvent.pos());
-        }
+        } else
 #endif // QT_NO_CONTEXTMENU
+        {
 #ifndef QT_NO_CURSOR
 #if QT_VERSION >= 0x040400
-        } else if (event->type() == QEvent::CursorChange) {
-            // An unsetCursor will set the cursor to Qt::ArrowCursor.
-            // Thus this cursor change might be a QWidget::unsetCursor()
-            // If this is not the case and it came from WebCore, the
-            // QWebPageClient already has set its cursor internally
-            // to Qt::ArrowCursor, so updating the cursor is always
-            // right, as it falls back to the last cursor set by
-            // WebCore.
-            // FIXME: Add a QEvent::CursorUnset or similar to Qt.
-            if (cursor().shape() == Qt::ArrowCursor)
-                d->resetCursor();
+            if (event->type() == QEvent::CursorChange) {
+                // An unsetCursor will set the cursor to Qt::ArrowCursor.
+                // Thus this cursor change might be a QWidget::unsetCursor()
+                // If this is not the case and it came from WebCore, the
+                // QWebPageClient already has set its cursor internally
+                // to Qt::ArrowCursor, so updating the cursor is always
+                // right, as it falls back to the last cursor set by
+                // WebCore.
+                // FIXME: Add a QEvent::CursorUnset or similar to Qt.
+                if (cursor().shape() == Qt::ArrowCursor)
+                    d->resetCursor();
+            }
 #endif
 #endif
+        }
     }
     return QGraphicsWidget::event(event);
 }
