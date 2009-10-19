@@ -2101,7 +2101,6 @@ HEADERS += \
     svg/graphics/filters/SVGFEDiffuseLighting.h \
     svg/graphics/filters/SVGFEDisplacementMap.h \
     svg/graphics/filters/SVGFEFlood.h \
-    svg/graphics/filters/SVGFEGaussianBlur.h \
     svg/graphics/filters/SVGFEImage.h \
     svg/graphics/filters/SVGFEMerge.h \
     svg/graphics/filters/SVGFEMorphology.h \

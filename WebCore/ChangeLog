@@ -1,3 +1,10 @@
+2009-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed build warning fix.
+        [Qt] Apply changes to WebCore.pro introduced in r49778
+
+        * WebCore.pro: Removed svg/graphics/filters/SVGFEGaussianBlur.h from HEADERS
+
 2009-10-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.
