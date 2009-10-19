@@ -1,3 +1,12 @@
+2009-10-19  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Update outdated metrics for these passing tests.
+
+        * platform/qt/css1/font_properties/font-expected.txt:
+        * platform/qt/fast/xsl/document-function-expected.txt:
+
 2009-10-18  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adam Barth.
