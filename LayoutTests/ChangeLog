@@ -1,3 +1,14 @@
+2009-10-19  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Language tag should include both language and country sub-tags,
+        case insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=30440
+
+        * fast/js/navigator-language-expected.txt:
+        * fast/js/navigator-language.html:
+
 2009-10-19  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

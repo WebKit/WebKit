@@ -7,16 +7,19 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
+<!--
+Language tags should follow specification RFC5646:
+http://tools.ietf.org/html/rfc5646
+2.1.1.  Formatting of Language Tags
+
+   At all times, language tags and their subtags, including private use
+   and extensions, are to be treated as case insensitive: there exist
+   conventions for the capitalization of some of the subtags, but these
+   MUST NOT be taken to carry meaning.
+-->
 <script>
 description(
-"<pre>Test for bug 29653: [Qt] Qt-based browser fails to show the right language translation.\n\
-Language tags should follow the specification below:\n\
-2.1.1.  Formatting of Language Tags\n\
-\n\
-   At all times, language tags and their subtags, including private use\n\
-   and extensions, are to be treated as case insensitive: there exist\n\
-   conventions for the capitalization of some of the subtags, but these\n\
-   MUST NOT be taken to carry meaning.</pre>"
+"<pre>Test for bug 29653: [Qt] Qt-based browser fails to show the right language translation."
 );
 
 if (window.layoutTestController) {
@@ -24,7 +27,7 @@ if (window.layoutTestController) {
     layoutTestController.setPOSIXLocale("en_US.iso88591");
 }
 
-shouldBe("navigator.language.substring(0,2)", "'en'");
+shouldBe("navigator.language.toLowerCase()", "'en-us'");
 
 var successfullyParsed = true;
 </script>

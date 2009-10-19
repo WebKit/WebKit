@@ -1,15 +1,8 @@
 Test for bug 29653: [Qt] Qt-based browser fails to show the right language translation.
-Language tags should follow the specification below:
-2.1.1.  Formatting of Language Tags
-
-   At all times, language tags and their subtags, including private use
-   and extensions, are to be treated as case insensitive: there exist
-   conventions for the capitalization of some of the subtags, but these
-   MUST NOT be taken to carry meaning.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.language.substring(0,2) is 'en'
+PASS navigator.language.toLowerCase() is 'en-us'
 PASS successfullyParsed is true
 
 TEST COMPLETE
