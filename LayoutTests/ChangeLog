@@ -2,6 +2,14 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Add platform expected file for canvas test.
+
+        * platform/qt/fast/canvas/canvas-empty-image-pattern-expected.txt: Added.
+
+2009-10-19  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Update outdated metrics for these passing tests.
 
         * platform/qt/css1/font_properties/font-expected.txt:
