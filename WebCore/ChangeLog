@@ -1,3 +1,12 @@
+2009-10-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix build on Windows.
+
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+
 2009-10-19  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Holger Freyther.
