@@ -1,3 +1,14 @@
+2009-10-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Remove deletion of outgoing FormData object when reply is finished.
+        The buffers will be destroyed a bit later, when the QNetworkReply is deleted.
+        Bug: https://bugs.webkit.org/show_bug.cgi?id=29551
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2009-10-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
