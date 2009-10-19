@@ -41,9 +41,10 @@ public:
             return adoptRef(new QualifiedNameImpl(prefix, localName, namespaceURI));
         }
 
-        AtomicString m_prefix;
-        AtomicString m_localName;
-        AtomicString m_namespace;
+        const AtomicString m_prefix;
+        const AtomicString m_localName;
+        const AtomicString m_namespace;
+        mutable AtomicString m_localNameUpper;
 
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
@@ -75,6 +76,9 @@ public:
     const AtomicString& prefix() const { return m_impl->m_prefix; }
     const AtomicString& localName() const { return m_impl->m_localName; }
     const AtomicString& namespaceURI() const { return m_impl->m_namespace; }
+
+    // Uppercased localName, cached for efficiency
+    const AtomicString& localNameUpper() const;
 
     String toString() const;
 

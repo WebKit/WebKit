@@ -83,6 +83,9 @@ public:
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_string.endsWith(s, caseSensitive); }
     
+    AtomicString lower() const;
+    AtomicString upper() const { return AtomicString(impl()->upper()); }
+    
     int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }
     float toFloat(bool* ok = 0) const { return m_string.toFloat(ok); }

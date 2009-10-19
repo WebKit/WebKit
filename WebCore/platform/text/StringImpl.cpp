@@ -149,46 +149,26 @@ UChar32 StringImpl::characterStartingAt(unsigned i)
     return 0;
 }
 
-bool StringImpl::isLower()
-{
-    // Do a faster loop for the case where all the characters are ASCII.
-    bool allLower = true;
-    UChar ored = 0;
-    for (unsigned i = 0; i < m_length; i++) {
-        UChar c = m_data[i];
-        allLower = allLower && isASCIILower(c);
-        ored |= c;
-    }
-    if (!(ored & ~0x7F))
-        return allLower;
-
-    // Do a slower check for cases that include non-ASCII characters.
-    allLower = true;
-    unsigned i = 0;
-    while (i < m_length) {
-        UChar32 character;
-        U16_NEXT(m_data, i, m_length, character)
-        allLower = allLower && Unicode::isLower(character);
-    }
-    return allLower;
-}
-
 PassRefPtr<StringImpl> StringImpl::lower()
 {
+    // Note: This is a hot function in the Dromaeo benchmark, specifically the
+    // no-op code path up through the first 'return' statement.
+    
     // First scan the string for uppercase and non-ASCII characters:
-    int32_t length = m_length;
     UChar ored = 0;
     bool noUpper = true;
-    for (int i = 0; i < length; i++) {
-        UChar c = m_data[i];
-        ored |= c;
-        noUpper = noUpper && !isASCIIUpper(c);
+    const UChar *end = m_data + m_length;
+    for (const UChar* chp = m_data; chp != end; chp++) {
+        if (UNLIKELY(isASCIIUpper(*chp)))
+            noUpper = false;
+        ored |= *chp;
     }
     
     // Nothing to do if the string is all ASCII with no uppercase.
     if (noUpper && !(ored & ~0x7F))
         return this;
 
+    int32_t length = m_length;
     UChar* data;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
 

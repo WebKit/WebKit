@@ -67,7 +67,7 @@ String HTMLElement::nodeName() const
     // the string on a hit in the hash.
     // FIXME: We should have a way to detect XHTML elements and replace the hasPrefix() check with it.
     if (document()->isHTMLDocument() && !tagQName().hasPrefix())
-        return tagQName().localName().string().upper();
+        return tagQName().localNameUpper();
     return Element::nodeName();
 }
     

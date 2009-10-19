@@ -228,6 +228,16 @@ void AtomicString::remove(StringImpl* r)
 {
     stringTable().remove(r);
 }
+    
+AtomicString AtomicString::lower() const
+{
+    // Note: This is a hot function in the Dromaeo benchmark.
+    StringImpl* impl = this->impl();
+    RefPtr<StringImpl> newImpl = impl->lower();
+    if (LIKELY(newImpl == impl))
+        return *this;
+    return AtomicString(newImpl);
+}
 
 #if USE(JSC)
 PassRefPtr<StringImpl> AtomicString::add(const JSC::Identifier& identifier)
