@@ -1,3 +1,11 @@
+2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Enable tests that pass when DOM pasting is allowed.
+
+        * platform/gtk/Skipped:
+
 2009-10-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

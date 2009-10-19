@@ -320,6 +320,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-universal-access-from-file-uris", TRUE,
                  "enable-scripts", TRUE,
                  "enable-web-sockets", TRUE,
+                 "enable-dom-paste", TRUE,
                  "default-font-family", "Times",
                  "monospace-font-family", "Courier",
                  "serif-font-family", "Times",

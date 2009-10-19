@@ -716,7 +716,6 @@ editing/deleting/skip-virama-001.html
 editing/deleting/smart-editing-disabled.html
 editing/deleting/type-delete-after-quote-2.html
 editing/execCommand/4128080-2.html
-editing/execCommand/5939887.html
 editing/execCommand/copy-without-selection.html
 editing/execCommand/createLink.html
 editing/execCommand/enabling-and-selection-2.html
@@ -747,13 +746,9 @@ editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
 editing/inserting/space-after-removeformat.html
 editing/inserting/typing-tab-designmode.html
-editing/pasteboard/19644-1.html
-editing/pasteboard/19644-2.html
 editing/pasteboard/4744008.html
-editing/pasteboard/4922709.html
 editing/pasteboard/5368833.html
 editing/pasteboard/5665299.html
-editing/pasteboard/5761530-1.html
 editing/pasteboard/5780697-2.html
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-paste-float.html

@@ -97,6 +97,7 @@ struct _WebKitWebSettingsPrivate {
     WebKitEditingBehavior editing_behavior;
     gboolean enable_universal_access_from_file_uris;
     gboolean enable_web_sockets;
+    gboolean enable_dom_paste;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -137,7 +138,8 @@ enum {
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
     PROP_EDITING_BEHAVIOR,
     PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS,
-    PROP_ENABLE_WEB_SOCKETS
+    PROP_ENABLE_WEB_SOCKETS,
+    PROP_ENABLE_DOM_PASTE
 };
 
 // Create a default user agent string
@@ -667,6 +669,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
 
+    /**
+     * WebKitWebSettings:enable-dom-paste
+     *
+     * Whether to enable DOM paste. If set to %TRUE, document.execCommand("Paste")
+     * will correctly execute and paste content of the clipboard.
+     *
+     * Since: 1.1.16
+     */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_DOM_PASTE,
+                                    g_param_spec_boolean("enable-dom-paste",
+                                                         _("Enable DOM paste"),
+                                                         _("Whether to enable DOM paste"),
+                                                         FALSE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -863,6 +881,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_WEB_SOCKETS:
         priv->enable_web_sockets = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_DOM_PASTE:
+        priv->enable_dom_paste = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -977,6 +998,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_WEB_SOCKETS:
         g_value_set_boolean(value, priv->enable_web_sockets);
         break;
+    case PROP_ENABLE_DOM_PASTE:
+        g_value_set_boolean(value, priv->enable_dom_paste);
+        break;
    default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1042,6 +1066,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "editing-behavior", priv->editing_behavior,
                  "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
                  "enable-web-sockets", priv->enable_web_sockets,
+                 "enable-dom-paste", priv->enable_dom_paste,
                  NULL));
 
     return copy;

@@ -2392,7 +2392,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
         enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache,
-        enableUniversalAccessFromFileURI, enableWebSockets;
+        enableUniversalAccessFromFileURI, enableWebSockets, enableDOMPaste;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -2422,6 +2422,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "editing-behavior", &editingBehavior,
                  "enable-universal-access-from-file-uris", &enableUniversalAccessFromFileURI,
                  "enable-web-sockets", &enableWebSockets,
+                 "enable-dom-paste", &enableDOMPaste,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2451,6 +2452,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #if ENABLE(WEB_SOCKETS)
     settings->setExperimentalWebSocketsEnabled(enableWebSockets);
 #endif
+    settings->setDOMPasteAllowed(enableDOMPaste);
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
@@ -2541,6 +2543,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("enable-web-sockets"))
         settings->setExperimentalWebSocketsEnabled(g_value_get_boolean(&value));
 #endif
+    else if (name == g_intern_string("enable-dom-paste"))
+        settings->setDOMPasteAllowed(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);
