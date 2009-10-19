@@ -1,3 +1,12 @@
+2009-10-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7309062> Crashes in WebCore::DocumentLoader::isStopping below WebKit::NetscapePluginInstanceProxy::loadRequest.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::loadRequest): Null-check the DocumentLoader before deferencing it.
+
 2009-10-16  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Jon Honeycutt.

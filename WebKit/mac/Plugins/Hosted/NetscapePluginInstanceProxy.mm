@@ -575,9 +575,10 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
         return NPERR_INVALID_URL;
 
     // Don't allow requests to be loaded when the document loader is stopping all loaders.
-    if ([[m_pluginView dataSource] _documentLoader]->isStopping())
+    DocumentLoader* documentLoader = [[m_pluginView dataSource] _documentLoader];
+    if (!documentLoader || documentLoader->isStopping())
         return NPERR_GENERIC_ERROR;
-    
+
     NSString *target = nil;
     if (cTarget) {
         // Find the frame given the target string.
@@ -587,7 +588,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
 
     // don't let a plugin start any loads if it is no longer part of a document that is being 
     // displayed unless the loads are in the same frame as the plugin.
-    if ([[m_pluginView dataSource] _documentLoader] != core([m_pluginView webFrame])->loader()->activeDocumentLoader() &&
+    if (documentLoader != core([m_pluginView webFrame])->loader()->activeDocumentLoader() &&
         (!cTarget || [frame findFrameNamed:target] != frame)) {
         return NPERR_GENERIC_ERROR; 
     }
