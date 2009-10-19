@@ -1,3 +1,16 @@
+2009-10-19  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Use fillRect() instead of drawRect() to fix Chromium media controls rendering.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30371
+
+        Chromium Mac layout tests will need to be rebaselined.  Existing layout tests for Linux/Win still pass.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider): Use fillRect() instead of drawRect().
+
 2009-10-19  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Adam Barth.
