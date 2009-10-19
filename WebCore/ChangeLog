@@ -32,6 +32,17 @@
 
 2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by David Hyatt.
+
+        Refactor out some of the code in paint() into paintPanScrollIcon()
+        and paintScrollbars() in preparation of some Qt API changes.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+
+2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Adam Roben.
 
         Make the local static panScrollIcon into a Image* instead

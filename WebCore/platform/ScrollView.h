@@ -207,6 +207,7 @@ public:
 
     // Widget override.  Handles painting of the contents of the view as well as the scrollbars.
     virtual void paint(GraphicsContext*, const IntRect&);
+    void paintScrollbars(GraphicsContext*, const IntRect&);
 
     // Widget overrides to ensure that our children's visibility status is kept up to date when we get shown and hidden.
     virtual void show();
@@ -217,6 +218,7 @@ public:
     static const int noPanScrollRadius = 15;
     void addPanScrollIcon(const IntPoint&);
     void removePanScrollIcon();
+    void paintPanScrollIcon(GraphicsContext*);
 
     virtual bool isPointInScrollbarCorner(const IntPoint&);
     virtual bool scrollbarCornerPresent() const;
@@ -234,7 +236,7 @@ protected:
     
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
-    
+
     // These methods are used to create/destroy scrollbars.
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);

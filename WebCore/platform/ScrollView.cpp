@@ -751,6 +751,22 @@ void ScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& corn
     ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, cornerRect);
 }
 
+void ScrollView::paintScrollbars(GraphicsContext* context, const IntRect& rect)
+{
+    if (m_horizontalScrollbar)
+        m_horizontalScrollbar->paint(context, rect);
+    if (m_verticalScrollbar)
+        m_verticalScrollbar->paint(context, rect);
+
+    paintScrollCorner(context, scrollCornerRect());
+}
+
+void ScrollView::paintPanScrollIcon(GraphicsContext* context)
+{
+    DEFINE_STATIC_LOCAL(Image*, panScrollIcon, (Image::loadPlatformResource("panIcon").releaseRef()));
+    context->drawImage(panScrollIcon, m_panScrollIconPoint);
+}
+
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (platformWidget()) {
@@ -785,20 +801,15 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         scrollViewDirtyRect.intersect(frameRect());
         context->translate(x(), y());
         scrollViewDirtyRect.move(-x(), -y());
-        if (m_horizontalScrollbar)
-            m_horizontalScrollbar->paint(context, scrollViewDirtyRect);
-        if (m_verticalScrollbar)
-            m_verticalScrollbar->paint(context, scrollViewDirtyRect);
 
-        paintScrollCorner(context, scrollCornerRect());
+        paintScrollbars(context, scrollViewDirtyRect);
+
         context->restore();
     }
 
     // Paint the panScroll Icon
-    if (m_drawPanScrollIcon) {
-        DEFINE_STATIC_LOCAL(Image*, panScrollIcon, (Image::loadPlatformResource("panIcon").releaseRef()));
-        context->drawImage(panScrollIcon, m_panScrollIconPoint);
-    }
+    if (m_drawPanScrollIcon)
+        paintPanScrollIcon(context);
 }
 
 bool ScrollView::isPointInScrollbarCorner(const IntPoint& windowPoint)
