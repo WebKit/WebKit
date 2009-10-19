@@ -105,6 +105,9 @@ fast/events/standalone-image-drag-to-editable.html
 # Windows drag-and-drop does not work correctly (https://bugs.webkit.org/show_bug.cgi?id=24731)
 fast/events/drag-and-drop-none.html
 
+# Event.dataTransfer.types does not behave correctly (https://bugs.webkit.org/show_bug.cgi?id=30527)
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 
@@ -686,6 +689,5 @@ plugins/private-browsing-mode.html
 # Skip these two failures I introduced this morning while I explore them.
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
-# These tests have never passed on Windows, reopening their bugs
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+# This test has never passed on Windows (https://bugs.webkit.org/show_bug.cgi?id=30234)
 platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
