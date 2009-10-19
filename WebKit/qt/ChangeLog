@@ -1,3 +1,11 @@
+2009-10-19  Markus Goetz <Markus.Goetz@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        QWebPage: Doc: setNetworkAccessManager should only be called once.
+
+        * Api/qwebpage.cpp:
+
 2009-10-19  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Tor Arne.
@@ -6,7 +14,6 @@
 
         * Api/qgraphicswebview.cpp:
         (QGraphicsWebView::event):
-
 
 2009-10-19  Girish Ramakrishnan  <girish@forwardbias.in>
 

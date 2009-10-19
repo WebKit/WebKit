@@ -2868,6 +2868,9 @@ QNetworkProxy QWebPage::networkProxy() const
     Sets the QNetworkAccessManager \a manager responsible for serving network requests for this
     QWebPage.
 
+    \note It is currently not supported to change the network access manager after the
+    QWebPage has used it. The results of doing this are undefined.
+
     \sa networkAccessManager()
 */
 void QWebPage::setNetworkAccessManager(QNetworkAccessManager *manager)
