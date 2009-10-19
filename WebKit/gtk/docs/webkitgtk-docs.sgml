@@ -25,6 +25,7 @@
     <xi:include href="xml/webkitwebdatasource.xml"/>
     <xi:include href="xml/webkitwebresource.xml"/>
     <xi:include href="xml/webkitdownload.xml"/>
+    <xi:include href="xml/webkithittestresult.xml"/>
     <xi:include href="xml/webkitsoupauthdialog.xml"/>
     <xi:include href="xml/webkitsecurityorigin.xml"/>
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>

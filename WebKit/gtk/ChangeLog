@@ -1,3 +1,10 @@
+2009-10-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Make WebKitHitTestResult actually appear in the
+        documentation index.
+
+        * docs/webkitgtk-docs.sgml:
+
 2009-10-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
