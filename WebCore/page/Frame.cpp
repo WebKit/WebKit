@@ -198,6 +198,7 @@ Frame::~Frame()
 
     if (m_domWindow)
         m_domWindow->disconnectFrame();
+    script()->clearWindowShell();
 
     HashSet<DOMWindow*>::iterator end = m_liveFormerWindows.end();
     for (HashSet<DOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)

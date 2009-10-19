@@ -1,3 +1,18 @@
+2009-10-19  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in DOMWindow::clearTimeout etc when DOMWindow is not connected to a frame.
+        https://bugs.webkit.org/show_bug.cgi?id=29832
+
+        Need to make sure the script caches are reset when frame gets disconnected from still-alive DOMWindow.
+        This will prevent JS from calling DOMWindow methods that can not be completed w/o the frame.
+
+        I am not sure it's possible to test this since the only file that repros the problem need ~10 seconds to cause crash.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Right after frame disconnects from DOMWindow, clear WindowShell.
+
 2009-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed build warning fix.
