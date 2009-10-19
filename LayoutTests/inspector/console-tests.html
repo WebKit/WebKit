@@ -10,9 +10,6 @@ function doit()
     console.info('info');
     console.warn('warn');
     console.error('error');
-    console.log('Message format number %i, %d and %f', 1, 2, 3.5);
-    console.log('Message %s for %s', 'format', 'string');
-    console.log('Object %o', {'foo' : 'bar' });
     for (var i = 0; i < 5; ++i)
         console.log('repeated');
     for (var i = 0; i < 2; ++i)
@@ -20,9 +17,6 @@ function doit()
     console.group('group');
     console.groupEnd();
     console.log('1', '2', '3');
-    console.dir(document);
-    console.dir(["test1", "test2"]);
-    console.dir(document.childNodes);
 
     function callback(result)
     {

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 8: Message format number %i, %d and %f
+CONSOLE MESSAGE: line 9: Message %s for %s
+CONSOLE MESSAGE: line 10: Object %o
+Tests that console logging dumps proper messages.
+
+console-format.html:8Message format number 1, 2 and 3.5
+console-format.html:9Message format for string
+console-format.html:10Object Object
+

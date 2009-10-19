@@ -11,7 +11,8 @@ if (window.layoutTestController) {
 var ignoreLoad = window.location.href.indexOf("?reload") === -1;
 if (ignoreLoad) {
     setTimeout(function() {
-        layoutTestController.showWebInspector();
+        if (window.layoutTestController)
+            layoutTestController.showWebInspector();
         window.location.href += "?reload";
     }, 0);
 }
@@ -42,9 +43,8 @@ function evaluateInWebInspector(script, callback)
     var callId = lastCallId++;
     callbacks[callId] = callback;
     setTimeout(function() {
-        if (window.layoutTestController) {
+        if (window.layoutTestController)
             layoutTestController.evaluateInWebInspector(callId, script);
-        }
     }, 0);
 
 }

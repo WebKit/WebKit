@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="evaluate-in-frontend.js"></script>
+<script>
+
+function doit()
+{
+    console.dir(document);
+    console.dir(["test1", "test2"]);
+    console.dir(document.childNodes);
+
+    function callback(result)
+    {
+        for (var i = 0; i < result.length; ++i)
+            output(result[i]);
+        notifyDone();
+    }
+    evaluateInWebInspector("dumpMessages()", callback);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console logging dumps proper messages.
+</p>
+
+<div id="frontend-script" style="display:none">
+function dumpMessages()
+{
+    var result = [];
+    var messages = WebInspector.console.messages;
+    for (var i = 0; i &lt; messages.length; ++i)
+        result.push(messages[i].toMessageElement().textContent.replace(/\u200b/g, ""));
+    return result;
+}
+</div>
+
+<div id="output">
+</div>
+
+</body>
+</html>

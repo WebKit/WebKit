@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 8: [object HTMLDocument]
+CONSOLE MESSAGE: line 9: test1,test2
+CONSOLE MESSAGE: line 10: [object NodeList]
+Tests that console logging dumps proper messages.
+
+console-dir.html:8HTMLDocument
+console-dir.html:9Array
+console-dir.html:10NodeList
+

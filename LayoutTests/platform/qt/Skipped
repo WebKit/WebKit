@@ -4866,6 +4866,9 @@ fast/dom/Window/slow_unload_handler.html
 http/tests/globalhistory
 
 # Skip inspector tests
+inspector/console-dir.html
+inspector/console-dirxml.html
+inspector/console-format.html
 inspector/console-tests.html
 inspector/elements-panel-structure.html
 inspector/evaluate-in-frontend.html

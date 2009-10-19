@@ -3510,6 +3510,9 @@ http/tests/webarchive/test-preload-resources.html
 
 # Tests in inspector/ directory
 #   Tests failing
+inspector/console-dir.html
+inspector/console-dirxml.html
+inspector/console-format.html
 inspector/console-tests.html
 inspector/elements-panel-structure.html
 inspector/evaluate-in-frontend.html
