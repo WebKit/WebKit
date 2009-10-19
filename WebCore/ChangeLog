@@ -1,3 +1,35 @@
+2009-10-19  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Dimitri Glazkov (dglazkov@chromium.org).
+
+        [v8] typeof(HTMLMediaElement) should return undefined if media
+        engine is not available
+        https://bugs.webkit.org/show_bug.cgi?id=30343
+
+        Check for availability of the media engine to disable
+        HTMLMediaElement, HTMLAudioElement, HTMLVideoElement, MediaError
+        in runtime.
+
+        Try runs and review in Chromium:
+        http://codereview.chromium.org/276011
+
+        Test: manual-tests/chromium/media-player-not-available.html
+
+        The above test can work work in Chromium. Testing procedures:
+        1. Remove all media support libraries in Chromium (e.g. ffmpeg libraries)
+        2. Open Chromium with above test page
+        3. Verify the test results according to the test page
+
+        * bindings/v8/custom/V8CustomBinding.h:
+        Declare enabler methods.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        Report enabled only if media player is available.
+        * manual-tests/chromium/media-player-not-available.html: Added.
+        Manual test, following instruction in this test for procedures.
+        * page/DOMWindow.idl:
+        Mark HTMLMediaElement, HTMLAudioElement, HTMLVideElement, MediaError
+        as enabled at runtime.
+
 2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Roben.

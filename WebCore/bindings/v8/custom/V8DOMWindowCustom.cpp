@@ -242,6 +242,26 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio)
     return MediaPlayer::isAvailable();
 }
 
+ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLMediaElement)
+{
+    return MediaPlayer::isAvailable();
+}
+
+ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLAudioElement)
+{
+    return MediaPlayer::isAvailable();
+}
+
+ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLVideoElement)
+{
+    return MediaPlayer::isAvailable();
+}
+
+ACCESSOR_RUNTIME_ENABLER(DOMWindowMediaError)
+{
+    return MediaPlayer::isAvailable();
+}
+
 #endif
 
 #if ENABLE(SHARED_WORKERS)
