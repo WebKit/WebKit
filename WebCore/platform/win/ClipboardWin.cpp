@@ -577,8 +577,32 @@ HashSet<String> ClipboardWin::types() const
 
 PassRefPtr<FileList> ClipboardWin::files() const
 {
-    notImplemented();
-    return 0;
+    RefPtr<FileList> files = FileList::create();
+    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+        return files.release();
+
+    if (!m_dataObject)
+        return files.release();
+
+    STGMEDIUM medium;
+    if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
+        return files.release();
+
+    HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal));
+    if (!hdrop)
+        return files.release();
+
+    WCHAR filename[MAX_PATH];
+    UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
+    for (UINT i = 0; i < fileCount; i++) {
+        if (!DragQueryFileW(hdrop, i, filename, ARRAYSIZE(filename)))
+            continue;
+        files->append(File::create(reinterpret_cast<UChar*>(filename)));
+    }
+
+    GlobalUnlock(medium.hGlobal);
+    ReleaseStgMedium(&medium);
+    return files.release();
 }
 
 void ClipboardWin::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
