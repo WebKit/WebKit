@@ -1,3 +1,36 @@
+2009-10-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update test results and Skipped list after changes in r49791.
+
+        Some test results were accidentally committed in r49192. At that time
+        results were incorrect, but testing still succeeded because of
+        unimplemented features. After r49791 tests, though generating semantically
+        equal output to Mac's render trees, started to fail and need to have
+        generated results updated. This patch does just that.
+
+        * platform/gtk/Skipped: Skip a test that does not generate semantically
+        equal render trees.
+        * platform/gtk/editing/inserting/insert-3907422-fix-expected.txt:
+        * platform/gtk/editing/pasteboard/4076267-2-expected.txt:
+        * platform/gtk/editing/pasteboard/4076267-3-expected.txt:
+        * platform/gtk/editing/pasteboard/4076267-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-table-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-002-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-003-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-006-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-007-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-010-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-015-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/gtk/editing/pasteboard/select-element-1-expected.txt: Removed.
+
 2009-10-19  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

@@ -11,7 +11,12 @@ layer at (0,0) size 800x600
           RenderText {#text} at (14,14) size 357x30
             text run at (14,14) width 357: "Is bound in shallows and in miseries."
         RenderBlock (anonymous) at (14,102) size 756x30
-          RenderText {#text} at (0,0) size 382x30
-            text run at (0,0) width 382: "Upon such a full sea are we now afloat,"
-selection start: position 37 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 2 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 17x30
+            text run at (0,0) width 17: "U"
+      RenderBlock (anonymous) at (0,146) size 784x0
+      RenderBlock {DIV} at (0,146) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 17x30
+          text run at (14,14) width 17: "U"
+        RenderText {#text} at (31,14) size 365x30
+          text run at (31,14) width 365: "pon such a full sea are we now afloat,"
+caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

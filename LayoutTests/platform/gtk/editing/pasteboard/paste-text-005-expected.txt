@@ -4,16 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 348x30
-          text run at (14,14) width 348: "There is a tide in the affairs of men,"
+        RenderText {#text} at (14,14) size 63x30
+          text run at (14,14) width 63: "There "
+        RenderText {#text} at (77,14) size 285x30
+          text run at (77,14) width 285: "is a tide in the affairs of men,"
       RenderBlock {DIV} at (0,58) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 285x30
+          text run at (14,14) width 285: "is a tide in the affairs of men,"
+      RenderBlock {DIV} at (0,116) size 784x58 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 434x30
           text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
-      RenderBlock {DIV} at (0,116) size 784x58 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,174) size 784x58 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 351x30
           text run at (14,14) width 351: "Omitted, all the voyage of their life,"
-      RenderBlock {DIV} at (0,174) size 784x58 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,232) size 784x58 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 357x30
           text run at (14,14) width 357: "Is bound in shallows and in miseries."
-selection start: position 6 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

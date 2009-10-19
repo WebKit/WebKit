@@ -9,5 +9,6 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,46) size 784x20
         RenderBlock {DIV} at (0,0) size 784x20
-          RenderBR {BR} at (0,0) size 0x20
-caret: position 0 of child 0 {BR} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 330x20
+            text run at (0,0) width 330: " this text should have a single leading space before it"
+caret: position 55 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

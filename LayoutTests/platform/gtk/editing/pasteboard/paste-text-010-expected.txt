@@ -8,5 +8,13 @@ layer at (0,0) size 800x600
           text run at (14,14) width 348: "There is a tide in the affairs of men."
         RenderBR {BR} at (362,37) size 0x0
         RenderBR {BR} at (14,44) size 0x30
-        RenderBR {BR} at (14,74) size 0x30
-caret: position 0 of child 3 {BR} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (14,74) size 74x30
+          text run at (14,74) width 74: "of men."
+        RenderText {#text} at (88,74) size 74x30
+          text run at (88,74) width 74: "of men."
+      RenderBlock (anonymous) at (0,118) size 784x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+caret: position 7 of child 4 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

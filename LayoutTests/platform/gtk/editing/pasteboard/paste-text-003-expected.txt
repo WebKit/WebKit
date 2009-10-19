@@ -3,20 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x232 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x376 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x30
-          RenderText {#text} at (0,0) size 348x30
-            text run at (0,0) width 348: "There is a tide in the affairs of men,"
-        RenderBlock {DIV} at (14,44) size 756x174 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 728x30
-            RenderText {#text} at (0,0) size 434x30
-              text run at (0,0) width 434: "Which taken at the flood leads on to fortune."
-          RenderBlock {DIV} at (14,44) size 728x116 [border: (2px solid #FF0000)]
+          RenderText {#text} at (0,0) size 63x30
+            text run at (0,0) width 63: "There "
+          RenderText {#text} at (63,0) size 285x30
+            text run at (63,0) width 285: "is a tide in the affairs of men,"
+        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 434x30
+            text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
+        RenderBlock (anonymous) at (14,102) size 756x0
+        RenderBlock {DIV} at (14,102) size 756x260 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 728x0
+          RenderBlock {DIV} at (14,14) size 728x58 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 80x30
+              text run at (14,14) width 80: "Omitted"
+            RenderText {#text} at (94,14) size 285x30
+              text run at (94,14) width 285: "is a tide in the affairs of men,"
+          RenderBlock (anonymous) at (14,72) size 728x0
+          RenderBlock {DIV} at (14,72) size 728x58 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 434x30
+              text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
+          RenderBlock (anonymous) at (14,130) size 728x0
+          RenderBlock {DIV} at (14,130) size 728x116 [border: (2px solid #FF0000)]
             RenderBlock (anonymous) at (14,14) size 700x30
-              RenderText {#text} at (0,0) size 351x30
-                text run at (0,0) width 351: "Omitted, all the voyage of their life,"
+              RenderText {#text} at (0,0) size 80x30
+                text run at (0,0) width 80: "Omitted"
+              RenderText {#text} at (80,0) size 271x30
+                text run at (80,0) width 271: ", all the voyage of their life,"
             RenderBlock {DIV} at (14,44) size 700x58 [border: (2px solid #FF0000)]
               RenderText {#text} at (14,14) size 357x30
                 text run at (14,14) width 357: "Is bound in shallows and in miseries."
-selection start: position 6 of child 0 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
