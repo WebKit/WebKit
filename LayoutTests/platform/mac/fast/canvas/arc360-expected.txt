@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x436
+        RenderText {#text} at (0,0) size 749x36
+          text run at (0,0) width 749: "Test canvas arc() start / end points when the arc is >= 360 degrees. The result should be a circle with two line segments"
+          text run at (0,18) width 477: "connected to the left hand side, towards the top left and bottom left corners. "
+        RenderHTMLCanvas {CANVAS} at (0,36) size 400x400
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

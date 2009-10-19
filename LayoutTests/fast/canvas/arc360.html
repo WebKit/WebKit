@@ -1,0 +1,18 @@
+<body>
+<p>Test canvas arc() start / end points when the arc is >= 360 degrees. The result should be a circle with two line segments connected to the left hand side, towards the top left and bottom left corners.
+<canvas id="mycanvas" width="400" height="400"></canvas>
+<script>
+var canvas = document.getElementById('mycanvas');
+var ctx = canvas.getContext('2d');
+var cx = 200, cy = 200, radius = 100;
+function deg2rad(x) {
+  return x * 3.141592653589 / 180;
+}
+ctx.lineWidth = 10;
+ctx.beginPath();
+ctx.moveTo(0, 100);
+ctx.arc(cx, cy, radius, deg2rad(-180), deg2rad(180), false);
+ctx.lineTo(0, 300);
+ctx.stroke();
+</script>
+</body>

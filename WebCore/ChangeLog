@@ -1,3 +1,17 @@
+2009-10-16  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix for chromium/skia canvas arc start/end positions, when the arc is
+        >= 360 degrees.
+        https://bugs.webkit.org/show_bug.cgi?id=30449
+
+        Covered by new test:
+        LayoutTests/fast/canvas/arc360.html
+
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::addArc):
+
 2009-10-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

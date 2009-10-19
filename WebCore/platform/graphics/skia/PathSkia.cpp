@@ -123,26 +123,31 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlo
     SkScalar cx = WebCoreFloatToSkScalar(p.x());
     SkScalar cy = WebCoreFloatToSkScalar(p.y());
     SkScalar radius = WebCoreFloatToSkScalar(r);
+    SkScalar s360 = SkIntToScalar(360);
 
     SkRect oval;
     oval.set(cx - radius, cy - radius, cx + radius, cy + radius);
 
     float sweep = ea - sa;
-    // check for a circle
-    if (sweep >= 2 * piFloat || sweep <= -2 * piFloat)
+    SkScalar startDegrees = WebCoreFloatToSkScalar(sa * 180 / piFloat);
+    SkScalar sweepDegrees = WebCoreFloatToSkScalar(sweep * 180 / piFloat);
+    // Check for a circle.
+    if (sweepDegrees >= s360 || sweepDegrees <= -s360) {
+        // Move to the start position (0 sweep means we add a single point).
+        m_path->arcTo(oval, startDegrees, 0, false);
+        // Draw the circle.
         m_path->addOval(oval);
-    else {
-        SkScalar startDegrees = WebCoreFloatToSkScalar(sa * 180 / piFloat);
-        SkScalar sweepDegrees = WebCoreFloatToSkScalar(sweep * 180 / piFloat);
-
+        // Force a moveTo the end position.
+        m_path->arcTo(oval, startDegrees + sweepDegrees, 0, true);
+    } else {
         // Counterclockwise arcs should be drawn with negative sweeps, while
         // clockwise arcs should be drawn with positive sweeps. Check to see
         // if the situation is reversed and correct it by adding or subtracting
         // a full circle
         if (anticlockwise && sweepDegrees > 0) {
-            sweepDegrees -= SkIntToScalar(360);
+            sweepDegrees -= s360;
         } else if (!anticlockwise && sweepDegrees < 0) {
-            sweepDegrees += SkIntToScalar(360);
+            sweepDegrees += s360;
         }
 
         m_path->arcTo(oval, startDegrees, sweepDegrees, false);

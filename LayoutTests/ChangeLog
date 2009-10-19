@@ -1,3 +1,15 @@
+2009-10-16  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        New test for 360 degree arc endpoints, and expected results.
+        http://bugs.webkit.org/show_bug.cgi?id=30449
+
+        * fast/canvas/arc360.html: Added.
+        * platform/mac/fast/canvas/arc360-expected.checksum: Added.
+        * platform/mac/fast/canvas/arc360-expected.png: Added.
+        * platform/mac/fast/canvas/arc360-expected.txt: Added.
+
 2009-10-19  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
