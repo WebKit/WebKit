@@ -1,3 +1,17 @@
+2009-10-18  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Use _stricmp and _strnicmp instead of deprecated stricmp and strnicmp.
+        https://bugs.webkit.org/show_bug.cgi?id=30474
+
+        stricmp and strnicmp are deprecated beginning in Visual
+        C++ 2005. Use _stricmp and _strnicmp instead in StringExtras.h.
+
+        * wtf/StringExtras.h:
+        (strncasecmp):
+        (strcasecmp):
+
 2009-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: apparently we shouldn't export those symbols?
