@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        Move sendRemainingDelegateMessages to ResourceLoadNotifier
+        https://bugs.webkit.org/show_bug.cgi?id=30531
+
+        This method is about notifying folks and doesn't interact with the rest
+        of FrameLoader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/FrameLoader.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+
+2009-10-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Bypass popup blocker using click event
         https://bugs.webkit.org/show_bug.cgi?id=21501
 

@@ -403,7 +403,6 @@ private:
 
     bool shouldReload(const KURL& currentURL, const KURL& destinationURL);
 
-    void sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
     void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
 
     void recursiveCheckLoadComplete();
