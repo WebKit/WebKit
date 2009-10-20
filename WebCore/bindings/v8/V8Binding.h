@@ -61,7 +61,7 @@ namespace WebCore {
         return v8NonStringValueToAtomicWebCoreString(value);
     }
 
-    inline String toString(const String& string)
+    inline const String& toString(const String& string)
     {
         return string;
     }
