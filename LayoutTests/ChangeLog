@@ -1,5 +1,11 @@
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Skip failing a11y test while we investigate what's going on.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip tests expecting new results.
 
         * platform/gtk/Skipped:

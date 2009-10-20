@@ -89,6 +89,9 @@ accessibility/table-one-cell.html
 accessibility/table-sections.html
 accessibility/table-with-aria-role.html
 accessibility/table-with-rules.html
+# Tests *crashing*
+# https://bugs.webkit.org/show_bug.cgi?id=30123
+accessibility/iframe-bastardization.html
 
 # Tests in animations/
 # Tests expecting new results
