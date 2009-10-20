@@ -1,5 +1,19 @@
 2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Rubberstamped by Adam Barth.
+
+        As we do not support rendering a QWebFrame without it being clipped
+        the the frame as well as the viewport, we now set the viewport size
+        to the size of the contents.
+
+        Rendering pure contents (no scrollbars etc) without clipping can be
+        acomplished using QWebFrame::documentElement()->render(...)
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::render):
+
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Add menu item to dump the plugin list to the console,

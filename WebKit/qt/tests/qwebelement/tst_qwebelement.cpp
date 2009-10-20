@@ -851,6 +851,9 @@ void tst_QWebElement::render()
     waitForSignal(&page, SIGNAL(loadFinished(bool)));
     QCOMPARE(loadSpy.count(), 1);
 
+    QSize size = page.mainFrame()->contentsSize();
+    page.setViewportSize(size);
+
     QList<QWebElement> imgs = page.mainFrame()->findAllElements("img");
     QCOMPARE(imgs.count(), 1);
 
@@ -893,7 +896,6 @@ void tst_QWebElement::render()
 
     QImage image4(300, 300, QImage::Format_ARGB32);
     QPainter painter4(&image4);
-    page.mainFrame()->setClipRenderToViewport(false);
     page.mainFrame()->render(&painter4, tableRect);
     painter4.end();
 
