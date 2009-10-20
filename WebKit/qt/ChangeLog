@@ -1,3 +1,14 @@
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add menu item to dump the plugin list to the console,
+        which can be handy for debugging.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::dumpPlugins):
+        (MainWindow::setupUI):
+
 2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
