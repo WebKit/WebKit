@@ -1,3 +1,19 @@
+2009-10-20  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25411
+        [GTK] ATK accessible ancestry broken
+
+        Work around for the problem of bogus additional objects in the ancestry.
+        We now set the parent when we ref the child, then ask the Atk child if
+        it knows its parent. This solves the bulk of the cases. For those it
+        doesn't, fall back to the existing logic.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_parent):
+        (webkit_accessible_ref_child):
+
 2009-10-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Alice Liu.
