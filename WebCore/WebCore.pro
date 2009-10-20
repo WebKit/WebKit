@@ -1187,6 +1187,7 @@ SOURCES += \
     platform/FileChooser.cpp \
     platform/GeolocationService.cpp \
     platform/image-decoders/qt/RGBA32BufferQt.cpp \
+    platform/graphics/filters/FEGaussianBlur.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/BitmapImage.cpp \
@@ -1873,6 +1874,7 @@ HEADERS += \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
     platform/graphics/filters/FEComposite.h \
+    platform/graphics/filters/FEGaussianBlur.h \
     platform/graphics/filters/FilterEffect.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \

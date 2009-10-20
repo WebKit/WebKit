@@ -1,3 +1,10 @@
+2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Unreviewed buildfix.
+        [Qt] Add FEGaussianBlur.h and FEGaussianBlur.cpp which were refactored in r49778 to WebCore.pro.
+
+        * WebCore.pro:
+
 2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.
