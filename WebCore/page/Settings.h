@@ -270,11 +270,6 @@ namespace WebCore {
         void setWebGLEnabled(bool);
         bool webGLEnabled() const { return m_webGLEnabled; }
 
-#if ENABLE(WEB_SOCKETS)
-        void setExperimentalWebSocketsEnabled(bool);
-        bool experimentalWebSocketsEnabled() const { return m_experimentalWebSocketsEnabled; }
-#endif
-
         void setPrintingMinimumShrinkFactor(float);
         float printingMinimumShrinkFactor() const { return m_printingMinimumShrinkFactor; }
 
@@ -351,10 +346,6 @@ namespace WebCore {
         bool m_acceleratedCompositingEnabled : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
-
-#if ENABLE(WEB_SOCKETS)
-        bool m_experimentalWebSocketsEnabled : 1;
-#endif
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

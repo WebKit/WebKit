@@ -120,9 +120,6 @@ Settings::Settings(Page* page)
     , m_acceleratedCompositingEnabled(true)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
-#if ENABLE(WEB_SOCKETS)
-    , m_experimentalWebSocketsEnabled(false)
-#endif
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -533,13 +530,6 @@ void Settings::setWebGLEnabled(bool enabled)
 {
     m_webGLEnabled = enabled;
 }
-
-#if ENABLE(WEB_SOCKETS)
-void Settings::setExperimentalWebSocketsEnabled(bool enabled)
-{
-    m_experimentalWebSocketsEnabled = enabled;
-}
-#endif
 
 void Settings::setPrintingMinimumShrinkFactor(float printingMinimumShrinkFactor)
 {

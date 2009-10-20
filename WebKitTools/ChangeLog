@@ -1,3 +1,17 @@
+2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Removed WebSocket runtime settings.
+        https://bugs.webkit.org/show_bug.cgi?id=29896
+
+        WebSocket runtime configuration is supported by chromium/v8 only.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-10-19  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

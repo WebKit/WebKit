@@ -597,16 +597,6 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType
     if (!frame)
         return v8::Local<v8::Function>();
 
-#if ENABLE(WEB_SOCKETS)
-    // Make typeof(window.WebSocket) == 'undefined' when
-    // experimentalWebSocketEnabled is false.
-    if (type == V8ClassIndex::WEBSOCKET) {
-        Settings* settings = frame->settings();
-        if (!settings || !settings->experimentalWebSocketsEnabled())
-            return v8::Local<v8::Function>();
-    }
-#endif
-
     v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
         return v8::Local<v8::Function>();

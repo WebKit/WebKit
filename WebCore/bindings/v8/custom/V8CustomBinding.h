@@ -648,6 +648,7 @@ namespace WebCore {
         DECLARE_CALLBACK(WebSocketRemoveEventListener);
         DECLARE_CALLBACK(WebSocketSend);
         DECLARE_CALLBACK(WebSocketClose);
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket);
 #endif
 
 #undef DECLARE_INDEXED_ACCESS_CHECK

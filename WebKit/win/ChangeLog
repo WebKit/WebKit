@@ -1,3 +1,21 @@
+2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Removed WebSocket runtime settings.
+        https://bugs.webkit.org/show_bug.cgi?id=29896
+
+        WebSocket runtime configuration is supported by chromium/v8 only.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::experimentalNotificationsEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-10-19  Adam Roben  <aroben@apple.com>
 
         Fix crashes/assertions when calling WebLocalizedString from multiple

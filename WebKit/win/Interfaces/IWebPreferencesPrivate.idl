@@ -82,9 +82,6 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT experimentalNotificationsEnabled([out, retval] BOOL *enabled);
     HRESULT setExperimentalNotificationsEnabled([in] BOOL enabled);
 
-    HRESULT experimentalWebSocketsEnabled([out, retval] BOOL *enabled);
-    HRESULT setExperimentalWebSocketsEnabled([in] BOOL enabled);
-
     HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
     HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
 

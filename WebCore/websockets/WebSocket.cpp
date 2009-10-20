@@ -86,6 +86,22 @@ static bool isValidProtocolString(const WebCore::String& protocol)
     return true;
 }
 
+#if USE(V8)
+
+static bool webSocketsAvailable = false;
+
+void WebSocket::setIsAvailable(bool available)
+{
+    webSocketsAvailable = available;
+}
+
+bool WebSocket::isAvailable()
+{
+    return webSocketsAvailable;
+}
+
+#endif
+
 WebSocket::WebSocket(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(CONNECTING)

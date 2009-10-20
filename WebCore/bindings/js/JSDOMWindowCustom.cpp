@@ -730,8 +730,6 @@ JSValue JSDOMWindow::webSocket(ExecState* exec) const
     Settings* settings = frame->settings();
     if (!settings)
         return jsUndefined();
-    if (!settings->experimentalWebSocketsEnabled())
-        return jsUndefined();
     return getDOMConstructor<JSWebSocketConstructor>(exec, this);
 }
 #endif

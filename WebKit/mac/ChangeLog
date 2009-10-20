@@ -1,3 +1,19 @@
+2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Removed WebSocket runtime settings.
+        https://bugs.webkit.org/show_bug.cgi?id=29896
+
+        WebSocket runtime configuration is supported by chromium/v8 only.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-10-19  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

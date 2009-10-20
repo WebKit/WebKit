@@ -1,3 +1,33 @@
+2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Set EnabledAtRuntime for WebSocket in DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=29896
+
+        Supported by chromium/v8 only.
+        Add WebSocket::isAvailable()/setIsAvailable(bool) to control v8
+        bindings.
+        Remove Settings::experimentalWebSocketsEnabled() and
+        setExperimentalWebSocketsEnabled(bool).
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::webSocket):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getConstructor):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_RUNTIME_ENABLER):
+        * page/DOMWindow.idl:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::setIsAvailable):
+        (WebCore::WebSocket::isAvailable):
+        * websockets/WebSocket.h:
+
 2009-10-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
