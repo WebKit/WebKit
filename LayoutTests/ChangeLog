@@ -1,3 +1,24 @@
+2009-10-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dmitri Titov.
+
+        Remove "source" from storage events
+        https://bugs.webkit.org/show_bug.cgi?id=30536
+
+        Remove "source" from storage events per
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-October/023703.html
+
+        * storage/domstorage/localstorage/iframe-events-expected.txt:
+        * storage/domstorage/localstorage/iframe-events.html:
+        * storage/domstorage/localstorage/resources/iframe-events-second.html:
+        * storage/domstorage/localstorage/simple-events-expected.txt:
+        * storage/domstorage/localstorage/simple-events.html:
+        * storage/domstorage/sessionstorage/iframe-events-expected.txt:
+        * storage/domstorage/sessionstorage/iframe-events.html:
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html:
+        * storage/domstorage/sessionstorage/simple-events-expected.txt:
+        * storage/domstorage/sessionstorage/simple-events.html:
+
 2009-10-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

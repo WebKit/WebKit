@@ -28,7 +28,6 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "DOMWindow.h"
 #include "Storage.h"
 
 namespace WebCore {
@@ -42,23 +41,22 @@ StorageEvent::StorageEvent()
 {
 }
 
-PassRefPtr<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source, Storage* storageArea)
+PassRefPtr<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, Storage* storageArea)
 {
-    return adoptRef(new StorageEvent(type, key, oldValue, newValue, uri, source, storageArea));
+    return adoptRef(new StorageEvent(type, key, oldValue, newValue, uri, storageArea));
 }
 
-StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source, Storage* storageArea)
+StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, Storage* storageArea)
     : Event(type, false, true)
     , m_key(key)
     , m_oldValue(oldValue)
     , m_newValue(newValue)
     , m_uri(uri)
-    , m_source(source)
     , m_storageArea(storageArea)
 {
 }
 
-void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source, Storage* storageArea)
+void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& uri, Storage* storageArea)
 {
     if (dispatched())
         return;
@@ -69,7 +67,6 @@ void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bo
     m_oldValue = oldValue;
     m_newValue = newValue;
     m_uri = uri;
-    m_source = source;
     m_storageArea = storageArea;
 }
 

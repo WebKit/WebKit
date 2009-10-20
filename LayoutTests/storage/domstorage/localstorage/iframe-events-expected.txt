@@ -6,7 +6,6 @@ Key - Main Frame
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe received storage event:
@@ -14,7 +13,6 @@ Key - Main Frame
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe about to change localStorage...
@@ -23,7 +21,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
 Storage Area - This window's window.localStorage
 
 Subframe received storage event:
@@ -31,7 +28,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
 Storage Area - This window's window.localStorage
 
 Main frame about to run removeItem on localStorage...
@@ -40,7 +36,6 @@ Key - Main Frame
 New Value - null
 Old Value - SET
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe received storage event:
@@ -48,7 +43,6 @@ Key - Main Frame
 New Value - null
 Old Value - SET
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe about to change localStorage...
@@ -58,7 +52,6 @@ Key -
 New Value - null
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe received storage event:
@@ -66,7 +59,6 @@ Key -
 New Value - null
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/localstorage/iframe-events.html
 Storage Area - This window's window.localStorage
 
 Subframe about to change localStorage...
@@ -75,7 +67,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
 Storage Area - This window's window.localStorage
 
 Subframe received storage event:
@@ -83,7 +74,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/localstorage/resources/iframe-events-second.html
 Storage Area - This window's window.localStorage
 
 

@@ -31,7 +31,6 @@ function handleStorageEvent(e)
     log("New Value     - " + e.newValue);
     log("Old Value     - " + e.oldValue);
     log("URI           - " + normalizeURL(e.uri));
-    log("Source        - " + normalizeURL(e.source.location.href));
     log("Storage Area  - " + ((e.storageArea == window.localStorage) ? "This window's window.localStorage" : "Another window's window.localStorage"));
     log("");
     

@@ -6,7 +6,6 @@ Key - Main Frame
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
@@ -14,7 +13,6 @@ Key - Main Frame
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe about to change sessionStorage...
@@ -23,7 +21,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
 Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
@@ -31,7 +28,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
 Storage Area - This window's window.sessionStorage
 
 Main frame about to run removeItem on sessionStorage...
@@ -40,7 +36,6 @@ Key - Main Frame
 New Value - null
 Old Value - SET
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
@@ -48,7 +43,6 @@ Key - Main Frame
 New Value - null
 Old Value - SET
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe about to change sessionStorage...
@@ -58,7 +52,6 @@ Key -
 New Value - null
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
@@ -66,7 +59,6 @@ Key -
 New Value - null
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
-Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Storage Area - This window's window.sessionStorage
 
 Subframe about to change sessionStorage...
@@ -75,7 +67,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
 Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
@@ -83,7 +74,6 @@ Key - Subframe
 New Value - SET
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
-Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
 Storage Area - This window's window.sessionStorage
 
 

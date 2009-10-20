@@ -4,27 +4,23 @@ Key - FOO
 New Value - BAR
 Old Value - null
 Event has a URI
-Event has a source DOMWindow
 
 Storage event fired:
 Key - FU
 New Value - BAR
 Old Value - null
 Event has a URI
-Event has a source DOMWindow
 
 Storage event fired:
 Key - FOO
 New Value - null
 Old Value - BAR
 Event has a URI
-Event has a source DOMWindow
 
 Storage event fired:
 Key - FU
 New Value - null
 Old Value - BAR
 Event has a URI
-Event has a source DOMWindow
 
 

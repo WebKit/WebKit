@@ -1,3 +1,29 @@
+2009-10-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dmitri Titov.
+
+        Remove "source" from storage events
+        https://bugs.webkit.org/show_bug.cgi?id=30536
+
+        Remove "source" from storage events per
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-October/023703.html
+
+        This was removed because it makes it introduces synchronous access that can
+        cross the event loop boundry (since a storage event can fire from one process
+        and be handled in another).
+
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::handleEvent):
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::uri):
+        * storage/StorageEvent.idl:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2009-10-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

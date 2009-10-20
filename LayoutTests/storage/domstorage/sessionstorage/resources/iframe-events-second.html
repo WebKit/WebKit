@@ -8,7 +8,6 @@ function handleStorageEvent(e)
     parent.log("New Value     - " + e.newValue);
     parent.log("Old Value     - " + e.oldValue);
     parent.log("URI           - " + parent.normalizeURL(e.uri));
-    parent.log("Source        - " + parent.normalizeURL(e.source.location.href));
     parent.log("Storage Area  - " + ((e.storageArea == window.sessionStorage) ? "This window's window.sessionStorage" : "Another window's window.sessionStorage"));
     parent.log("");
     
