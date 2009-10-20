@@ -1,5 +1,21 @@
 2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed By Adam Barth.
+
+        Add some actions to the menu for cursor debugging.
+
+        GraphicsView based launcher only.
+
+        * QGVLauncher/main.cpp:
+        (MainView::setWaitCursor):
+        (MainView::resetCursor):
+        (MainView::flip):
+        (MainWindow::setWaitCursor):
+        (MainWindow::resetCursor):
+        (MainWindow::buildUI):
+
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Adam Barth.
 
         Remove clipRenderToViewport as agreed upon in

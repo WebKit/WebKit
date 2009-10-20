@@ -90,8 +90,17 @@ public:
         m_mainWidget->setGeometry(rect);
     }
 
-public slots:
-    void flip()
+    void setWaitCursor()
+    {
+        m_mainWidget->setCursor(Qt::WaitCursor);
+    }
+
+    void resetCursor()
+    {
+        m_mainWidget->unsetCursor();
+    }
+
+   void flip()
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         QSizeF center = m_mainWidget->boundingRect().size() / 2;
@@ -246,6 +255,16 @@ public slots:
         mw->show();
     }
 
+    void setWaitCursor()
+    {
+        view->setWaitCursor();
+    }
+
+    void resetCursor()
+    {
+        view->resetCursor();
+    }
+
     void flip()
     {
         view->flip();
@@ -278,6 +297,10 @@ private:
         QMenu* viewMenu = menuBar()->addMenu("&View");
         viewMenu->addAction(page->action(QWebPage::Stop));
         viewMenu->addAction(page->action(QWebPage::Reload));
+
+        QMenu* testMenu = menuBar()->addMenu("&Tests");
+        testMenu->addAction("Set Wait Cursor", this, SLOT(setWaitCursor()), QKeySequence("Ctrl+W"));
+        testMenu->addAction("Reset Cursor", this, SLOT(resetCursor()), QKeySequence("Ctrl+Shift+W"));
 
         QMenu* fxMenu = menuBar()->addMenu("&Effects");
         fxMenu->addAction("Flip", this, SLOT(flip()));
