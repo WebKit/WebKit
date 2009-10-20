@@ -48,6 +48,7 @@ committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org"),
     Committer("Adam Langley", "agl@chromium.org"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
+    Committer("Anton Muhin", "antonm@chromium.org"),
     Committer("Antonio Gomes", "tonikitoo@webkit.org"),
     Committer("Anthony Ricaud", "rik@webkit.org"),
     Committer("Ben Murdoch", "benm@google.com"),
@@ -73,6 +74,7 @@ committers_unable_to_review = [
     Committer("Julie Parent", "jparent@google.com"),
     Committer("Kenneth Rohde Christiansen", "kenneth@webkit.org"),
     Committer("Laszlo Gombos", "laszlo.1.gombos@nokia.com"),
+    Committer("Mads Ager", "ager@chromium.org"),
     Committer("Nate Chapin", "japhet@chromium.org"),
     Committer("Ojan Vafai", "ojan@chromium.org"),
     Committer("Pam Greene", "pam@chromium.org"),
@@ -84,6 +86,7 @@ committers_unable_to_review = [
     Committer("Tony Chang", "tony@chromium.org"),
     Committer("Yael Aharon", "yael.aharon@nokia.com"),
     Committer("Yong Li", "yong.li@torchmobile.com"),
+    Committer("Yury Semikhatsky", "yurys@chromium.org"),
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
 
