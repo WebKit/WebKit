@@ -1,3 +1,15 @@
+2009-10-20  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        <rdar://problem/7319749> REGRESSION(r49806): Contextual Menu items missing
+        https://bugs.webkit.org/show_bug.cgi?id=30568
+
+        Revert accidental change from r49806.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+
 2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.
