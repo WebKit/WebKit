@@ -1,3 +1,11 @@
+2009-10-19  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Clarify usage of SuddenTermination API. No code change.
+
+        * platform/SuddenTermination.h:
+
 2009-10-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
