@@ -43,7 +43,7 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | DateInstance::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
 
     };
 

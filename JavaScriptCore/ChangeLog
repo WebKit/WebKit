@@ -1,3 +1,14 @@
+2009-10-20  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Move OverridesMarkChildren flag from DatePrototype to its parent class
+        https://bugs.webkit.org/show_bug.cgi?id=30372
+
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::createStructure):
+        * runtime/DatePrototype.h:
+
 2009-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
