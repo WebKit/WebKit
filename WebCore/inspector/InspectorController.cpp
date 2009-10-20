@@ -653,7 +653,9 @@ void InspectorController::populateScriptObjects()
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
         it->second->createScriptObject(m_frontend.get());
-        m_frontend->addCookieDomain(it->second->frame()->document()->url().host());
+        KURL resourceURL = it->second->frame()->document()->url();
+        if (resourceURL.protocolInHTTPFamily() || resourceURL.protocolIs("file"))
+            m_frontend->addCookieDomain(resourceURL.host());
     }
 
     unsigned messageCount = m_consoleMessages.size();
@@ -982,7 +984,9 @@ void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identi
 
     if (windowVisible()) {
         resource->updateScriptObject(m_frontend.get());
-        m_frontend->addCookieDomain(resource->frame()->document()->url().host());
+        KURL resourceURL = resource->frame()->document()->url();
+        if (resourceURL.protocolInHTTPFamily() || resourceURL.protocolIs("file"))
+            m_frontend->addCookieDomain(resourceURL.host());
     }
 }
 

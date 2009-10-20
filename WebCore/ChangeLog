@@ -1,3 +1,19 @@
+2009-10-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Alice Liu.
+
+        Fixes <http://webkit.org/b/30421>.
+        Web Inpsector: Local Files can show up on Cookies List with Cookies from other Domain.
+
+        When a page like Google generates an about:blank, it shows up as a local file on
+        the list of Cookie domains, but has all of the cookies of Google. When we are adding
+        cookie domains to the inspector, we should only add the domain is the URL of the resource
+        is in the HTTP protocol family or a file URL.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didFinishLoading):
+
 2009-10-20  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Darin Fisher.
