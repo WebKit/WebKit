@@ -1,3 +1,17 @@
+2009-10-20  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Use a version of libWebKitSystemInterface with global symbols marked
+        private_extern for Chromium Mac.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30590
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/mac: Added.
+        * WebCore.gyp/mac/Empty.cpp: Added.
+        * WebCore.gyp/mac/adjust_visibility.sh: Added.
+
 2009-10-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

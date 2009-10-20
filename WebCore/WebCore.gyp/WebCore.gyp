@@ -44,7 +44,58 @@
       # WebKit is checked out in src/chromium/third_party/WebKit
       'variables': {'chromium_src_dir': '../../../..'},
     }],
-  ],  
+    ['OS == "mac"', {
+      'targets': [
+        {
+          # On the Mac, libWebKitSystemInterface*.a is used to help WebCore
+          # interface with the system.  This library is supplied as a static
+          # library in binary format.  At present, it contains many global
+          # symbols not marked private_extern.  It should be considered an
+          # implementation detail of WebCore, and does not need these symbols
+          # to be exposed so widely.
+          #
+          # This target contains an action that cracks open the existing
+          # static library and rebuilds it with these global symbols
+          # transformed to private_extern.
+          'target_name': 'webkit_system_interface',
+          'type': 'static_library',
+          'variables': {
+            'adjusted_library_path':
+                '<(PRODUCT_DIR)/libWebKitSystemInterfaceLeopardPrivateExtern.a',
+          },
+          'sources': [
+            # An empty source file is needed to convince Xcode to produce
+            # output for this target.  The resulting library won't actually
+            # contain anything.  The library at adjusted_library_path will,
+            # and that library is pushed to dependents of this target below.
+            'mac/Empty.cpp',
+          ],
+          'actions': [
+            {
+              'action_name': 'Adjust Visibility',
+              'inputs': [
+                'mac/adjust_visibility.sh',
+                '../../WebKitLibraries/libWebKitSystemInterfaceLeopard.a',
+              ],
+              'outputs': [
+                '<(adjusted_library_path)',
+              ],
+              'action': [
+                '<@(_inputs)',
+                '<@(_outputs)',
+                '<(INTERMEDIATE_DIR)/adjust_visibility',  # work directory
+              ],
+            },
+          ],  # actions
+          'link_settings': {
+            'libraries': [
+              '<(adjusted_library_path)',
+            ],
+          },  # link_settings
+        },  # target webkit_system_interface
+      ],  # targets
+    }],  # condition OS == "mac"
+  ],  # conditions
 
   'variables': {
     # If set to 1, doesn't compile debug symbols into webcore reducing the
@@ -604,6 +655,9 @@
           ],
         }],
         ['OS=="mac"', {
+          'dependencies': [
+            'webkit_system_interface',
+          ],
           'defines': [
             # Match Safari and Mozilla on Mac x86.
             'WEBCORE_NAVIGATOR_PLATFORM="MacIntel"',
@@ -740,11 +794,6 @@
             '../platform/image-decoders/xbm/XBMImageDecoder.cpp',
             '../platform/image-decoders/xbm/XBMImageDecoder.h',
           ],
-          'link_settings': {
-            'libraries': [
-              '../../WebKitLibraries/libWebKitSystemInterfaceLeopard.a',
-            ],
-          },
           'direct_dependent_settings': {
             'include_dirs': [
               '../../WebKitLibraries',
@@ -789,5 +838,5 @@
         }],
       ],
     },
-  ], # targets
+  ],  # targets
 }
