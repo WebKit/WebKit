@@ -47,10 +47,12 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue proto) 
         { 
-            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::OverridesHasInstance | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames)); 
+            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, StructureFlags)); 
         }
 
     protected:
+        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::OverridesHasInstance | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames | JSC::JSObject::StructureFlags;
+
         JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, NonNullPassRefPtr<JSC::Structure>);
 
         virtual void markChildren(JSC::MarkStack&);

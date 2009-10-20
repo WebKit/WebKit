@@ -463,6 +463,7 @@ sub GenerateHeader
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
     my @ancestorInterfaceNames = ();
+    my %structureFlags = ();
 
     # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
@@ -574,6 +575,7 @@ sub GenerateHeader
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"};
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"};
         push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"};
+        $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
 
     # Check if we have any writable properties
@@ -602,21 +604,20 @@ sub GenerateHeader
 
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent,
-            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
-            "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | JSC::NeedsThisConversion | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames));\n" .
-            "    }\n\n");
-    } elsif ($hasGetter) {
-        push(@headerContent,
-            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
-            "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames));\n" .
-            "    }\n\n");
+        $structureFlags{"JSC::ImplementsHasInstance"} = 1;
+        $structureFlags{"JSC::NeedsThisConversion"} = 1;
     }
+    push(@headerContent,
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
+        "    {\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));\n" .
+        "    }\n\n");
 
     # markChildren function
-    push(@headerContent, "    virtual void markChildren(JSC::MarkStack&);\n\n") if $needsMarkChildren;
+    if ($needsMarkChildren) {
+        push(@headerContent, "    virtual void markChildren(JSC::MarkStack&);\n\n");
+        $structureFlags{"JSC::OverridesMarkChildren"} = 1;
+    }
 
     # Custom pushEventHandlerScope function
     push(@headerContent, "    virtual void pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
@@ -628,13 +629,19 @@ sub GenerateHeader
     push(@headerContent, "    virtual bool deleteProperty(JSC::ExecState*, const JSC::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
 
     # Custom getPropertyNames function exists on DOMWindow
-    push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if $interfaceName eq "DOMWindow";
+    if ($interfaceName eq "DOMWindow") {
+        push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n");
+        $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;
+    }
 
     # Custom defineProperty function exists on DOMWindow
     push(@headerContent, "    virtual bool defineOwnProperty(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interfaceName eq "DOMWindow";
 
     # Custom getOwnPropertyNames function
-    push(@headerContent, "    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"});    
+    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+        push(@headerContent, "    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n");
+        $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
+    }
 
     # Custom getPropertyAttributes function
     push(@headerContent, "    virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
@@ -712,6 +719,14 @@ sub GenerateHeader
         push(@headerContent, "        return static_cast<$implClassName*>(Base::impl());\n");
         push(@headerContent, "    }\n");
     }
+    
+    # structure flags
+    push(@headerContent, "protected:\n");
+    push(@headerContent, "    static const unsigned StructureFlags = ");
+    foreach my $structureFlag (keys %structureFlags) {
+        push(@headerContent, $structureFlag . " | ");
+    }
+    push(@headerContent, "Base::StructureFlags;\n");
 
     # Index getter
     if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
@@ -719,6 +734,7 @@ sub GenerateHeader
     }
     if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
         push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
+        
     }
     
     # Index setter
@@ -770,6 +786,7 @@ sub GenerateHeader
     push(@headerContent, "\n");
 
     # Add prototype declaration.
+    %structureFlags = ();
     push(@headerContent, "class ${className}Prototype : public JSC::JSObject {\n");
     push(@headerContent, "    typedef JSC::JSObject Base;\n");
     push(@headerContent, "public:\n");
@@ -787,19 +804,16 @@ sub GenerateHeader
         push(@headerContent, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"};
         push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"};
-
-        push(@headerContent,
-            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
-            "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot" . ($needsMarkChildren ? " | JSC::OverridesMarkChildren" : "") . " | JSC::OverridesGetPropertyNames));\n" .
-            "    }\n");
-    } elsif ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-        push(@headerContent,
-            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
-            "    {\n" .
-            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames));\n" .
-            "    }\n");
+        $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
+    if ($dataNode->extendedAttributes->{"CustomMarkFunction"} or $needsMarkChildren) {
+        $structureFlags{"JSC::OverridesMarkChildren"} = 1;
+    }
+    push(@headerContent,
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
+        "    {\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot" . ($needsMarkChildren ? " | JSC::OverridesMarkChildren" : "") . " | JSC::OverridesGetPropertyNames));\n" .
+        "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -809,6 +823,14 @@ sub GenerateHeader
     push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
 
     push(@headerContent, "    ${className}Prototype(NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }\n");
+
+    # structure flags
+    push(@headerContent, "protected:\n");
+    push(@headerContent, "    static const unsigned StructureFlags = ");
+    foreach my $structureFlag (keys %structureFlags) {
+        push(@headerContent, $structureFlag . " | ");
+    }
+    push(@headerContent, "Base::StructureFlags;\n");
 
     push(@headerContent, "};\n\n");
 
@@ -2253,8 +2275,11 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue proto) 
     { 
-        return Structure::create(proto, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames)); 
+        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags)); 
     }
+    
+protected:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | DOMConstructorObject::StructureFlags;
 EOF
 
     if ($canConstruct) {

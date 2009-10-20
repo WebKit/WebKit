@@ -1,3 +1,36 @@
+2009-10-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: Dromaeo DOM test is 14% slower
+        https://bugs.webkit.org/show_bug.cgi?id=30273
+
+        Make DOM bindings automatically inherit correct structure
+        flags rather than being needlessly conservative.  This is
+        done by making the bindings generator use the same model
+        for TypeInfo flags that we now use in JSC.
+
+        This gains us about 1% of this regression back.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::createStructure):
+        (WebCore::DOMConstructorObject::createStructure):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::createStructure):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructure):
+
 2009-10-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Nikolas Zimmermann.

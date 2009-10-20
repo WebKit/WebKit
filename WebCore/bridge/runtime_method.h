@@ -47,10 +47,11 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren));
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
     }
 
 private:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | InternalFunction::StructureFlags;
     static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

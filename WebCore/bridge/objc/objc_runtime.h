@@ -104,10 +104,11 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot));
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
     }
 
 private:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

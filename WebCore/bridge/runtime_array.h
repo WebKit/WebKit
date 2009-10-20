@@ -59,10 +59,11 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesGetPropertyNames));
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags));
     }
 
 private:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
     static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue indexGetter(ExecState*, const Identifier&, const PropertySlot&);
 

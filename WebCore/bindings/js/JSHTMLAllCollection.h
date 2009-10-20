@@ -42,10 +42,12 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue proto) 
         { 
-            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot | JSC::MasqueradesAsUndefined | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames)); 
+            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, StructureFlags)); 
         }
 
         static const JSC::ClassInfo s_info;
+    protected:
+        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::MasqueradesAsUndefined | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames | JSHTMLCollection::StructureFlags;
 
     private:
         virtual bool toBoolean(JSC::ExecState*) const { return false; }

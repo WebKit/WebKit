@@ -76,10 +76,12 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesMarkChildren));
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));
         }
 
     protected:
+        static const unsigned StructureFlags = JSC::OverridesMarkChildren | DOMObject::StructureFlags;
+
         DOMObjectWithGlobalPointer(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
             : DOMObject(structure)
             , m_globalObject(globalObject)
@@ -106,10 +108,11 @@ namespace WebCore {
     public:
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::OverridesMarkChildren));
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));
         }
 
     protected:
+        static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesMarkChildren | DOMObjectWithGlobalPointer::StructureFlags;
         DOMConstructorObject(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
             : DOMObjectWithGlobalPointer(structure, globalObject)
         {
