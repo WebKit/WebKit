@@ -29,6 +29,110 @@
 // each child still represent the root node. We have to be particularly careful of recursion with this mode
 // because a root node can represent itself AND an ancestor.
 
+WebInspector.BottomUpProfileDataGridNode = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode, /*BottomUpProfileDataGridTree*/ owningTree)
+{
+    // In bottom up mode, our parents are our children since we display an inverted tree.
+    // However, we don't want to show the very top parent since it is redundant.
+    var hasChildren = !!(profileNode.parent && profileNode.parent.parent);
+
+    WebInspector.ProfileDataGridNode.call(this, profileView, profileNode, owningTree, hasChildren);
+
+    this._remainingNodeInfos = [];
+}
+
+WebInspector.BottomUpProfileDataGridNode.prototype = {
+    _takePropertiesFromProfileDataGridNode: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    {
+        this._save();
+
+        this.selfTime = profileDataGridNode.selfTime;
+        this.totalTime = profileDataGridNode.totalTime;
+        this.numberOfCalls = profileDataGridNode.numberOfCalls;
+    },
+
+    // When focusing, we keep just the members of the callstack.
+    _keepOnlyChild: function(/*ProfileDataGridNode*/ child)
+    {
+        this._save();
+
+        this.removeChildren();
+        this.appendChild(child);
+    },
+
+    _exclude: function(aCallUID)
+    {
+        if (this._remainingNodeInfos)
+            this._populate();
+
+        this._save();
+
+        var children = this.children;
+        var index = this.children.length;
+
+        while (index--)
+            children[index]._exclude(aCallUID);
+
+        var child = this.childrenByCallUID[aCallUID];
+
+        if (child)
+            this._merge(child, true);
+    },
+
+    _merge: function(/*ProfileDataGridNode*/ child, /*Boolean*/ shouldAbsorb)
+    {
+        this.selfTime -= child.selfTime;
+
+        WebInspector.ProfileDataGridNode.prototype._merge.call(this, child, shouldAbsorb);
+    },
+
+    _sharedPopulate: function()
+    {
+        var remainingNodeInfos = this._remainingNodeInfos;
+        var count = remainingNodeInfos.length;
+
+        for (var index = 0; index < count; ++index) {
+            var nodeInfo = remainingNodeInfos[index];
+            var ancestor = nodeInfo.ancestor;
+            var focusNode = nodeInfo.focusNode;
+            var child = this.findChild(ancestor);
+
+            // If we already have this child, then merge the data together.
+            if (child) {
+                var totalTimeAccountedFor = nodeInfo.totalTimeAccountedFor;
+
+                child.selfTime += focusNode.selfTime;
+                child.numberOfCalls += focusNode.numberOfCalls;
+
+                if (!totalTimeAccountedFor)
+                    child.totalTime += focusNode.totalTime;
+            } else {
+                // If not, add it as a true ancestor.
+                // In heavy mode, we take our visual identity from ancestor node...
+                var child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
+
+                if (ancestor !== focusNode) {
+                    // but the actual statistics from the "root" node (bottom of the callstack).
+                    child.selfTime = focusNode.selfTime;
+                    child.totalTime = focusNode.totalTime;
+                    child.numberOfCalls = focusNode.numberOfCalls;
+                }
+
+                this.appendChild(child);
+            }
+
+            var parent = ancestor.parent;
+            if (parent && parent.parent) {
+                nodeInfo.ancestor = parent;
+                child._remainingNodeInfos.push(nodeInfo);
+            }
+        }
+
+        delete this._remainingNodeInfos;
+    }
+}
+
+WebInspector.BottomUpProfileDataGridNode.prototype.__proto__ = WebInspector.ProfileDataGridNode.prototype;
+
 WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView, /*ProfileNode*/ aProfileNode)
 {
     WebInspector.ProfileDataGridTree.call(this, aProfileView, aProfileNode);
@@ -139,114 +243,10 @@ WebInspector.BottomUpProfileDataGridTree.prototype = {
 
         if (this.lastComparator)
             this.sort(this.lastComparator, true);
-    }
+    },
+
+    _sharedPopulate: WebInspector.BottomUpProfileDataGridNode.prototype._sharedPopulate
 }
 
 WebInspector.BottomUpProfileDataGridTree.prototype.__proto__ = WebInspector.ProfileDataGridTree.prototype;
 
-WebInspector.BottomUpProfileDataGridNode = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode, /*BottomUpProfileDataGridTree*/ owningTree)
-{
-    // In bottom up mode, our parents are our children since we display an inverted tree.
-    // However, we don't want to show the very top parent since it is redundant.
-    var hasChildren = !!(profileNode.parent && profileNode.parent.parent);
-
-    WebInspector.ProfileDataGridNode.call(this, profileView, profileNode, owningTree, hasChildren);
-
-    this._remainingNodeInfos = [];
-}
-
-WebInspector.BottomUpProfileDataGridNode.prototype = {
-    _takePropertiesFromProfileDataGridNode: function(/*ProfileDataGridNode*/ profileDataGridNode)
-    {
-        this._save();
-
-        this.selfTime = profileDataGridNode.selfTime;
-        this.totalTime = profileDataGridNode.totalTime;
-        this.numberOfCalls = profileDataGridNode.numberOfCalls;
-    },
-
-    // When focusing, we keep just the members of the callstack.
-    _keepOnlyChild: function(/*ProfileDataGridNode*/ child)
-    {
-        this._save();
-
-        this.removeChildren();
-        this.appendChild(child);
-    },
-
-    _exclude: function(aCallUID)
-    {
-        if (this._remainingNodeInfos)
-            this._populate();
-
-        this._save();
-
-        var children = this.children;
-        var index = this.children.length;
-
-        while (index--)
-            children[index]._exclude(aCallUID);
-
-        var child = this.childrenByCallUID[aCallUID];
-
-        if (child)
-            this._merge(child, true);
-    },
-
-    _merge: function(/*ProfileDataGridNode*/ child, /*Boolean*/ shouldAbsorb)
-    {
-        this.selfTime -= child.selfTime;
-
-        WebInspector.ProfileDataGridNode.prototype._merge.call(this, child, shouldAbsorb);
-    },
-
-    _populate: function(event)
-    {
-        var remainingNodeInfos = this._remainingNodeInfos;
-        var count = remainingNodeInfos.length;
-
-        for (var index = 0; index < count; ++index) {
-            var nodeInfo = remainingNodeInfos[index];
-            var ancestor = nodeInfo.ancestor;
-            var focusNode = nodeInfo.focusNode;
-            var child = this.findChild(ancestor);
-
-            // If we already have this child, then merge the data together.
-            if (child) {
-                var totalTimeAccountedFor = nodeInfo.totalTimeAccountedFor;
-
-                child.selfTime += focusNode.selfTime;
-                child.numberOfCalls += focusNode.numberOfCalls;
-
-                if (!totalTimeAccountedFor)
-                    child.totalTime += focusNode.totalTime;
-            } else {
-                // If not, add it as a true ancestor.
-                // In heavy mode, we take our visual identity from ancestor node...
-                var child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
-
-                if (ancestor !== focusNode) {
-                    // but the actual statistics from the "root" node (bottom of the callstack).
-                    child.selfTime = focusNode.selfTime;
-                    child.totalTime = focusNode.totalTime;
-                    child.numberOfCalls = focusNode.numberOfCalls;
-                }
-
-                this.appendChild(child);
-            }
-
-            var parent = ancestor.parent;
-            if (parent && parent.parent) {
-                nodeInfo.ancestor = parent;
-                child._remainingNodeInfos.push(nodeInfo);
-            }
-        }
-
-        delete this._remainingNodeInfos;
-
-        if (this.removeEventListener)
-            this.removeEventListener("populate", this._populate, this);
-    }
-}
-
-WebInspector.BottomUpProfileDataGridNode.prototype.__proto__ = WebInspector.ProfileDataGridNode.prototype;
