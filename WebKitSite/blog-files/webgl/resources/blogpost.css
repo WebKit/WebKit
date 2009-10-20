@@ -67,3 +67,10 @@ a:hover {
     text-decoration:none;
     text-shadow: #888 0px 0px 5px;
 } 
+
+ul.demo > li {
+    clear:both;
+    padding:10px;
+    padding-right:150px;
+    font-size:1.5em;
+}
