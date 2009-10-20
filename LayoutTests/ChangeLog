@@ -1,3 +1,15 @@
+2009-10-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bypass popup blocker using click event
+        https://bugs.webkit.org/show_bug.cgi?id=21501
+
+        Test that a fake event can't get around the popup blocker.
+
+        * http/tests/security/popup-blocked-from-fake-event-expected.txt: Added.
+        * http/tests/security/popup-blocked-from-fake-event.html: Added.
+
 2009-10-19  Jason Yan  <tailofthesun@gmail.com>
  
          Reviewed by Eric Seidel.

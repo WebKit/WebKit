@@ -160,6 +160,9 @@ bool ScriptController::processingUserGesture() const
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.
     if (event) {
+        if (event->createdByDOM())
+            return false;
+
         const AtomicString& type = event->type();
         bool eventOk =
             // mouse events

@@ -186,6 +186,9 @@ bool ScriptController::processingUserGestureEvent() const
         return false;
 
     if (Event* event = m_windowShell->window()->currentEvent()) {
+        if (event->createdByDOM())
+            return false;
+
         const AtomicString& type = event->type();
         if ( // mouse events
             type == eventNames().clickEvent || type == eventNames().mousedownEvent ||

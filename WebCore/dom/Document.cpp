@@ -2891,42 +2891,47 @@ void Document::dispatchWindowLoadEvent()
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
+    RefPtr<Event> event;
     if (eventType == "Event" || eventType == "Events" || eventType == "HTMLEvents")
-        return Event::create();
-    if (eventType == "KeyboardEvent" || eventType == "KeyboardEvents")
-        return KeyboardEvent::create();
-    if (eventType == "MessageEvent")
-        return MessageEvent::create();
-    if (eventType == "MouseEvent" || eventType == "MouseEvents")
-        return MouseEvent::create();
-    if (eventType == "MutationEvent" || eventType == "MutationEvents")
-        return MutationEvent::create();
-    if (eventType == "OverflowEvent")
-        return OverflowEvent::create();
-    if (eventType == "PageTransitionEvent")
-        return PageTransitionEvent::create();
-    if (eventType == "ProgressEvent")
-        return ProgressEvent::create();
+        event = Event::create();
+    else if (eventType == "KeyboardEvent" || eventType == "KeyboardEvents")
+        event = KeyboardEvent::create();
+    else if (eventType == "MessageEvent")
+        event = MessageEvent::create();
+    else if (eventType == "MouseEvent" || eventType == "MouseEvents")
+        event = MouseEvent::create();
+    else if (eventType == "MutationEvent" || eventType == "MutationEvents")
+        event = MutationEvent::create();
+    else if (eventType == "OverflowEvent")
+        event = OverflowEvent::create();
+    else if (eventType == "PageTransitionEvent")
+        event = PageTransitionEvent::create();
+    else if (eventType == "ProgressEvent")
+        event = ProgressEvent::create();
 #if ENABLE(DOM_STORAGE)
-    if (eventType == "StorageEvent")
-        return StorageEvent::create();
+    else if (eventType == "StorageEvent")
+        event = StorageEvent::create();
 #endif
-    if (eventType == "TextEvent")
-        return TextEvent::create();
-    if (eventType == "UIEvent" || eventType == "UIEvents")
-        return UIEvent::create();
-    if (eventType == "WebKitAnimationEvent")
-        return WebKitAnimationEvent::create();
-    if (eventType == "WebKitTransitionEvent")
-        return WebKitTransitionEvent::create();
-    if (eventType == "WheelEvent")
-        return WheelEvent::create();
+    else if (eventType == "TextEvent")
+        event = TextEvent::create();
+    else if (eventType == "UIEvent" || eventType == "UIEvents")
+        event = UIEvent::create();
+    else if (eventType == "WebKitAnimationEvent")
+        event = WebKitAnimationEvent::create();
+    else if (eventType == "WebKitTransitionEvent")
+        event = WebKitTransitionEvent::create();
+    else if (eventType == "WheelEvent")
+        event = WheelEvent::create();
 #if ENABLE(SVG)
-    if (eventType == "SVGEvents")
-        return Event::create();
-    if (eventType == "SVGZoomEvents")
-        return SVGZoomEvent::create();
+    else if (eventType == "SVGEvents")
+        event = Event::create();
+    else if (eventType == "SVGZoomEvents")
+        event = SVGZoomEvent::create();
 #endif
+    if (event) {
+        event->setCreatedByDOM(true);
+        return event.release();
+    }
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }
