@@ -70,7 +70,6 @@ public:
         , allowsScrolling(true)
         , marginWidth(-1)
         , marginHeight(-1)
-        , clipRenderToViewport(true)
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
 
@@ -94,7 +93,6 @@ public:
     bool allowsScrolling;
     int marginWidth;
     int marginHeight;
-    bool clipRenderToViewport;
 };
 
 class QWebHitTestResultPrivate {

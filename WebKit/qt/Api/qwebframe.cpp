@@ -1014,26 +1014,6 @@ void QWebFrame::render(QPainter *painter)
 }
 
 /*!
-    \since 4.6
-    \property QWebFrame::clipRenderToViewport
-
-    Returns true if render will clip content to viewport; otherwise returns false.
-*/
-bool QWebFrame::clipRenderToViewport() const
-{
-    return d->clipRenderToViewport;
-}
-
-/*!
-    \since 4.6
-    Sets whether the content of a frame will be clipped to viewport when rendered.
-*/
-void QWebFrame::setClipRenderToViewport(bool clipRenderToViewport)
-{
-    d->clipRenderToViewport = clipRenderToViewport;
-}
-
-/*!
     \property QWebFrame::textSizeMultiplier
     \brief the scaling factor for all text in the frame
     \obsolete

@@ -1,5 +1,17 @@
 2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Rubberstamped by Adam Barth.
+
+        Remove clipRenderToViewport as agreed upon in
+        https://bugs.webkit.org/show_bug.cgi?id=29843
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Adam Barth.
 
         Update the tests to test the new render functionality, and take

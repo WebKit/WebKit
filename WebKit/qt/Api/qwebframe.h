@@ -112,7 +112,6 @@ class QWEBKIT_EXPORT QWebFrame : public QObject {
     Q_PROPERTY(QIcon icon READ icon)
     Q_PROPERTY(QSize contentsSize READ contentsSize)
     Q_PROPERTY(QPoint scrollPosition READ scrollPosition WRITE setScrollPosition)
-    Q_PROPERTY(bool clipRenderToViewport READ clipRenderToViewport WRITE setClipRenderToViewport)
     Q_PROPERTY(bool focus READ hasFocus)
 private:
     QWebFrame(QWebPage *parent, QWebFrameData *frameData);
@@ -176,9 +175,6 @@ public:
     void render(QPainter*);
     void render(QPainter*, const QRegion& clip);
     void render(QPainter*, RenderLayer layer, const QRegion& clip = QRegion());
-
-    bool clipRenderToViewport() const;
-    void setClipRenderToViewport(bool clipRenderToViewport);
 
     void setTextSizeMultiplier(qreal factor);
     qreal textSizeMultiplier() const;
