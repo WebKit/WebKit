@@ -1,3 +1,17 @@
+2009-10-20  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fast/css/getComputedStyle/marginComputedStyle is missing
+        https://bugs.webkit.org/show_bug.cgi?id=30566
+
+        * fast/css/getComputedStyle/marginComputedStyle-expected.txt: Added.
+        * fast/css/getComputedStyle/marginComputedStyle.html: Added.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.checksum: Removed.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.png: Removed.
+        * platform/mac/fast/css/getComputedStyle/marginComputedStyle-expected.txt: Removed.
+        * platform/qt/fast/css/marginComputedStyle-expected.txt: Removed.
+
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
         Another batch of skipped tests with links to their bugs.

@@ -1,0 +1,49 @@
+<html>
+<head>
+<style>
+div { 
+    background: purple;
+    border: 10px double #000000; 
+    width:50%;
+    height:auto; 
+    margin-left:auto; 
+    margin-right:auto;
+    margin-top:auto;
+    margin-bottom:auto;
+    padding-left:auto;
+    left: auto;
+    color: white; 
+    font: 24px 'Lucida Grande';
+}
+</style>
+</head>
+
+<body>
+<div id="foo">Test</div>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var foodiv = document.getElementById('foo');
+    document.write("width: " + window.getComputedStyle(foodiv, null).getPropertyValue("width"));
+    document.write( "<br>");
+    document.write("height: " + window.getComputedStyle(foodiv, null).getPropertyValue("height"));
+    document.write( "<br>");
+    document.write("margin-left: " + window.getComputedStyle(foodiv, null).getPropertyValue("margin-left"));
+    document.write( "<br>");
+    document.write("margin-right: " + window.getComputedStyle(foodiv, null).getPropertyValue("margin-right"));
+    document.write( "<br>");
+    document.write("margin-top: " + window.getComputedStyle(foodiv, null).getPropertyValue("margin-top"));
+    document.write( "<br>");
+    document.write("margin-bottom: " + window.getComputedStyle(foodiv, null).getPropertyValue("margin-bottom"));
+    document.write( "<br>");
+    document.write("padding-left: " + window.getComputedStyle(foodiv, null).getPropertyValue("padding-left"));
+    document.write( "<br>");
+    document.write("left: " + window.getComputedStyle(foodiv, null).getPropertyValue("left"));
+    document.write( "<br>");
+</script>
+
+</body>
+
+</html>
