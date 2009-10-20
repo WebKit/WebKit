@@ -1,3 +1,15 @@
+2009-10-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for WebCore's CSSParserFunction
+        https://bugs.webkit.org/show_bug.cgi?id=30563
+
+        Inherits CSSParserFunction struct from FastAllocBase because it has been
+        instantiated by 'new' in WebCore/css/CSSParser.cpp:4827.
+
+        * css/CSSProperty.h:
+
 2009-10-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
