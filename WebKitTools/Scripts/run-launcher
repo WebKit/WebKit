@@ -49,6 +49,8 @@ if (isQt()) {
     my $libDir = catdir(productDir(), 'lib');
     $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
 
+    $ENV{QTWEBKIT_PLUGIN_PATH} = catdir($libDir, 'plugins');
+
     print "Starting webkit launcher, running against the built WebKit in $libDir...\n";
     if (isDarwin()) {
         $ENV{DYLD_LIBRARY_PATH} = $ENV{DYLD_LIBRARY_PATH} ? "$libDir:$ENV{DYLD_LIBRARY_PATH}" : $libDir;

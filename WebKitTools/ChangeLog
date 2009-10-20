@@ -1,3 +1,11 @@
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make the Netscape Test plugin available to the Qt launcher.
+
+        * Scripts/run-launcher:
+
 2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.
