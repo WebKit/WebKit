@@ -1,3 +1,12 @@
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
+        Skip a bunch of tests failing in the debug bots because WebKit
+        does not work correctly with very recent versions of libxml2. The
+        tracker bug for the issue is
+        https://bugs.webkit.org/show_bug.cgi?id=30508
+
+        * platform/gtk/Skipped:
+
 2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

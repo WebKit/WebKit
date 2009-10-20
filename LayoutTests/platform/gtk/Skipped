@@ -1397,6 +1397,42 @@ fast/text/reset-drag-on-mouse-down.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30562
 fast/text/zero-width-characters.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30508
+# All these tests fail because WebKit does not work correctly with
+# very recent versions of libxml2, which the debug bots use
+fast/xpath/evaluate-twice.html
+fast/xpath/string-value.html
+fast/xpath/text-nodes.html
+fast/xpath/4XPath/Borrowed/od_20000608.html
+fast/xpath/4XPath/Borrowed/sr_20021217.html
+fast/xpath/4XPath/Core/test_core_functions.html
+fast/xpath/4XPath/Core/test_location_path.html
+fast/xpath/4XPath/Core/test_node_test.html
+fast/xpath/4XPath/Core/test_nodeset_expr.html
+fast/xpath/4XPath/Core/test_numeric_expr.html
+fast/xpath/4XPath/Core/test_parser.html
+fast/xpath/4XPath/Core/test_predicate_list.html
+fast/xpath/4XPath/Core/test_step.html
+fast/xpath/py-dom-xpath/abbreviations.html
+fast/xpath/py-dom-xpath/paths.html
+fast/xsl/default-html.html
+fast/xsl/xslt-doc-enc.xml
+fast/xsl/xslt-doc-noenc.xml
+fast/xsl/xslt-processor.html
+fast/events/xsl-onload.xhtml
+fast/encoding/css-charset-default.xhtml
+fast/encoding/invalid-xml.html
+fast/encoding/utf-32-big-endian-nobom.xml
+fast/encoding/utf-32-little-endian-nobom.xml
+fast/dynamic/ancestor-to-absolute.html
+fast/dom/import-document-fragment.html
+fast/dom/Document/CaretRangeFromPoint/basic.html
+fast/dom/Element/getClientRects.html
+fast/dom/HTMLFontElement/size-attribute.html
+editing/selection/inline-closest-leaf-child.html
+editing/pasteboard/crash-accessing-clipboardData-types.html
+
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 #   Tests timing out
 fast/loader/null-request-after-willSendRequest.html
