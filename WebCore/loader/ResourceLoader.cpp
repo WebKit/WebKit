@@ -197,18 +197,18 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
-        
+
     ASSERT(!m_reachedTerminalState);
 
     if (m_sendResourceLoadCallbacks) {
         if (!m_identifier) {
             m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
-            frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifier, request);
+            frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
         }
 
         frameLoader()->notifier()->willSendRequest(this, request, redirectResponse);
     }
-    
+
     m_request = request;
 }
 

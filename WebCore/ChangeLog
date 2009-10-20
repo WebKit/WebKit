@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Remove ResourceLoadNotifier::activeDocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30533
+
+        Removing this method from ResourceLoadNotifier better decouples the
+        notifier from FrameLoader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::requestFromDelegate):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveResponse):
+        * loader/ResourceLoadNotifier.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+
+2009-10-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move sendRemainingDelegateMessages to ResourceLoadNotifier
         https://bugs.webkit.org/show_bug.cgi?id=30531
 

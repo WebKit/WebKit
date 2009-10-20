@@ -2948,7 +2948,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
 
     if (Page* page = m_frame->page()) {
         identifier = page->progress()->createUniqueIdentifier();
-        notifier()->dispatchAssignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
+        notifier()->assignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
     }
 
     if (!m_provisionalDocumentLoader->startLoadingMainResource(identifier))
@@ -3485,7 +3485,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     identifier = 0;
     if (Page* page = m_frame->page()) {
         identifier = page->progress()->createUniqueIdentifier();
-        notifier()->dispatchAssignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
+        notifier()->assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
     }
 
     ResourceRequest newRequest(request);

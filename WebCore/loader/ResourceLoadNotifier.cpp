@@ -57,11 +57,6 @@ void ResourceLoadNotifier::didCancelAuthenticationChallenge(ResourceLoader* load
     m_frame->loader()->client()->dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
-void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest& clientRequest)
-{
-    dispatchAssignIdentifierToInitialRequest(identifier, activeDocumentLoader(), clientRequest);
-}
-
 void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
     m_frame->loader()->applyUserAgent(clientRequest);
@@ -71,7 +66,7 @@ void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceReque
 
 void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
 {
-    activeDocumentLoader()->addResponse(r);
+    loader->documentLoader()->addResponse(r);
 
     if (Page* page = m_frame->page())
         page->progress()->incrementProgress(loader->identifier(), r);
@@ -108,7 +103,7 @@ void ResourceLoadNotifier::didLoadResourceByXMLHttpRequest(unsigned long identif
     m_frame->loader()->client()->dispatchDidLoadResourceByXMLHttpRequest(identifier, sourceString);
 }
 
-void ResourceLoadNotifier::dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     m_frame->loader()->client()->assignIdentifierToInitialRequest(identifier, loader, request);
 
@@ -177,11 +172,6 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
         dispatchDidFinishLoading(loader, identifier);
     else
         m_frame->loader()->client()->dispatchDidFailLoading(loader, identifier, error);
-}
-
-DocumentLoader* ResourceLoadNotifier::activeDocumentLoader() const
-{
-    return m_frame->loader()->activeDocumentLoader();
 }
 
 } // namespace WebCore

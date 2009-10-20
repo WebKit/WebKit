@@ -50,7 +50,6 @@ public:
     void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
     void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
 
-    void assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest&);
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
     void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
@@ -58,7 +57,7 @@ public:
     void didFailToLoad(ResourceLoader*, const ResourceError&);
     void didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
 
-    void dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
+    void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
@@ -67,8 +66,6 @@ public:
     void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
 
 private:
-    inline DocumentLoader* activeDocumentLoader() const;
-
     Frame* m_frame;
 };
 
