@@ -1,3 +1,16 @@
+2009-10-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Check COMPILER(MSVC) instead of PLATFORM(WIN_OS) to avoid the use of vasprintf.
+        https://bugs.webkit.org/show_bug.cgi?id=30473
+
+        vasprintf is missing in MSVC. Use COMPILER(MSVC) guards instead of
+        PLALTFORM(WIN_OS) guards.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::error):
+
 2009-10-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

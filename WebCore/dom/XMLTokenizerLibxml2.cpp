@@ -887,7 +887,7 @@ void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
     if (m_parserStopped)
         return;
 
-#if PLATFORM(WIN_OS)
+#if COMPILER(MSVC)
     char m[1024];
     vsnprintf(m, sizeof(m) - 1, message, args);
 #else
@@ -901,7 +901,7 @@ void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
     else
         handleError(type, m, lineNumber(), columnNumber());
 
-#if !PLATFORM(WIN_OS)
+#if !COMPILER(MSVC)
     free(m);
 #endif
 }
