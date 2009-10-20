@@ -5476,6 +5476,11 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/security/canvas-remote-read-data-url-image.html
 http/tests/security/canvas-remote-read-data-url-svg-image.html
 
+# xmlhttprequest https://bugs.webkit.org/show_bug.cgi?id=30582
+http/tests/xmlhttprequest/logout.html
+http/tests/xmlhttprequest/re-login-async.html
+http/tests/xmlhttprequest/re-login.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=28088 -- document.activeElement does not work
 editing/selection/find-in-text-control.html
 
