@@ -1,3 +1,20 @@
+2009-10-20  Satoshi Nakagawa  <psychs@limechat.net>
+
+        Reviewed by Darin Adler.
+
+        Fixed Japanese text search problems.
+        Treat small kana letters and kana letters as different characters in search.
+        Do not ignore diacritic marks in search for Japanese texts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30437
+
+        Test: fast/text/international/japanese-kana-letters.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::createCollator):
+        (WebCore::collator):
+        (WebCore::createSearcher):
+
 2009-10-20  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
