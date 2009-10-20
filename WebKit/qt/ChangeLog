@@ -1,3 +1,16 @@
+2009-10-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Introduce new render method on QWebFrame, which supports specifying
+        which layers to render (scrollbars, contents, pan-icon).
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderPrivate):
+        (QWebFrame::render):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2009-10-19  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Ariya Hidayat.
