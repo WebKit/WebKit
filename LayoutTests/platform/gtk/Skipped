@@ -1394,6 +1394,9 @@ fast/text/international/thai-baht-space.html
 fast/text/international/thai-offsetForPosition-inside-character.html
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/reset-drag-on-mouse-down.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30562
+fast/text/zero-width-characters.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 #   Tests timing out
 fast/loader/null-request-after-willSendRequest.html

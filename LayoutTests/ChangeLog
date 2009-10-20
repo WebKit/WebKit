@@ -1,5 +1,11 @@
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Skip failing test, with comment pointing to the bug to track it.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip plugins/private-browsing-mode.html, since our plugin
         implementation lacks that feature.
 
