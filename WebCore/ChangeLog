@@ -1,3 +1,13 @@
+2009-10-19  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixing a typo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30543
+
+        * platform/sql/SQLiteDatabase.h:
+
 2009-10-19  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
