@@ -5504,6 +5504,15 @@ fast/events/onunload-window-property.html
 fast/dom/Window/get-set-properties.html
 http/tests/security/window-events-pass.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=30587
+fast/events/node-event-anchor-lock.html
+
+# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30589
+media/video-played-reset.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=30586
 media/video-src-empty.html
 
