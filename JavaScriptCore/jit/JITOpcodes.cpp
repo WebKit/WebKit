@@ -2500,7 +2500,13 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     // Grab key @ i
     loadPtr(addressFor(it), regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStrings)), regT2);
+
+#if PLATFORM(X86_64)
+    loadPtr(BaseIndex(regT2, regT0, TimesEight), regT2);
+#else
     loadPtr(BaseIndex(regT2, regT0, TimesFour), regT2);
+#endif
+
     emitPutVirtualRegister(dst, regT2);
 
     // Increment i
