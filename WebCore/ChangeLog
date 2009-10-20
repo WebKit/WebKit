@@ -1,3 +1,12 @@
+2009-10-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Watched Expressions Buttons Do Not Match Inspector Styles
+        https://bugs.webkit.org/show_bug.cgi?id=30554
+
+        * inspector/front-end/inspector.css: added style to pane buttons
+
 2009-10-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

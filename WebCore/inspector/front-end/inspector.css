@@ -2212,12 +2212,8 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     margin: 0 0 5px 20px;
 }
 
-.panel-enabler-view button {
-    font-size: 13px;
-    margin: 6px 0 0 0;
-    padding: 3px 20px;
+.panel-enabler-view button, .pane button {
     color: rgb(6, 6, 6);
-    height: 24px;
     background-color: transparent;
     border: 1px solid rgb(165, 165, 165);
     background-color: rgb(237, 237, 237);
@@ -2226,12 +2222,24 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     -webkit-appearance: none;
 }
 
-.panel-enabler-view button:active {
+.panel-enabler-view button {
+    font-size: 13px;
+    margin: 6px 0 0 0;
+    padding: 3px 20px;
+    height: 24px;
+}
+
+.pane button {
+    margin: 6px 0 6px 3px;
+    padding: 2px 9px;
+}
+
+.panel-enabler-view button:active, .pane button:active {
     background-color: rgb(215, 215, 215);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
 }
 
-body.inactive .panel-enabler-view button, .panel-enabler-view button:disabled {
+body.inactive .panel-enabler-view button, .panel-enabler-view button:disabled, body.inactive .pane button, .pane button:disabled {
     color: rgb(130, 130, 130);
     border-color: rgb(212, 212, 212);
     background-color: rgb(239, 239, 239);
