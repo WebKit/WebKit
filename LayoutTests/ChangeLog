@@ -1,3 +1,13 @@
+2009-10-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add a layout test for nested SVG <use> element which has a child.
+        https://bugs.webkit.org/show_bug.cgi?id=26117
+
+        * svg/custom/use-on-use-with-child-expected.txt: Added.
+        * svg/custom/use-on-use-with-child.svg: Added.
+
 2009-10-19  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

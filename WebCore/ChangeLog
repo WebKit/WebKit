@@ -1,3 +1,18 @@
+2009-10-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fixed a bug on nested SVG <use> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=26117
+        When a <use> element refer to another <use> element which has
+        child/children, the instance tree built for this <use> element
+        is incorrect (more nodes than expected).
+
+        Test: svg/dom/use-on-use-with-child.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildInstanceTree):
+
 2009-10-19  Oliver Hunt  <oliver@apple.com>
 
         Small changes to fully invalidate and update the JavaScriptCallFrame.
