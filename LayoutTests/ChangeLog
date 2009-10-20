@@ -1,5 +1,11 @@
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Another batch of skipped tests with links to their bugs.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip 3 failing xmlhttprequest tests.
 
         https://bugs.webkit.org/show_bug.cgi?id=30582

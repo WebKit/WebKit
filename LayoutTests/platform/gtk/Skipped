@@ -5492,6 +5492,21 @@ fast/dom/Window/timer-resume-on-navigation-back.html
 fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=30583
+fast/forms/textarea-appearance-wrap.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30584
+svg/custom/font-face-not-in-document.svg
+
+# leftover unload handlers https://bugs.webkit.org/show_bug.cgi?id=30585
+fast/loader/unload-hyperlink-targeted.html
+fast/events/onunload-window-property.html
+fast/dom/Window/get-set-properties.html
+http/tests/security/window-events-pass.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30586
+media/video-src-empty.html
+
 # Media tests that keep failing on the bot
 media/video-currentTime-set.html
 media/video-play-pause-events.html
