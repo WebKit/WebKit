@@ -3552,6 +3552,10 @@ plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30561
+plugins/private-browsing-mode.html
+
 #   Tests generating new results
 plugins/embed-attributes-style.html
 plugins/netscape-dom-access.html

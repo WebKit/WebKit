@@ -1,3 +1,10 @@
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
+        Skip plugins/private-browsing-mode.html, since our plugin
+        implementation lacks that feature.
+
+        * platform/gtk/Skipped:
+
 2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Rubber-stamped by Tor Arne Vestbø.
