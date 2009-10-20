@@ -1,5 +1,12 @@
 2009-10-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: updated variable name.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
+2009-10-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Mark Rowe.
 
         * jit/JITOpcodes.cpp:

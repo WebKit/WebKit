@@ -254,7 +254,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, double, LocaleDateTimeFormat format, const ArgList&)
 {
     GregorianDateTime gregorianDateTime;
-    const bool notUTC = false;
+    const bool outputIsUTC = false;
     if (!dateObject->getGregorianDateTime(outputIsUTC, gregorianDateTime))
         return jsNontrivialString(exec, "Invalid Date");
     return formatLocaleDate(exec, gregorianDateTime, format);
