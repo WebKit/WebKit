@@ -1,3 +1,12 @@
+2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Skip failing tests introduced by disabling Phonon support in Buildbot's Qt version
+        until a proper solution for the Phonon related craches and timeouts is found.
+
+        * platform/qt/Skipped:
+
 2009-10-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Nikolas Zimmermann.
