@@ -1,5 +1,19 @@
 2009-10-19  Jeremy Orlow  <jorlow@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Fix fallout from last change.
+        https://bugs.webkit.org/show_bug.cgi?id=30550
+
+        Update init-events to match reality.  I only ran the domstorage layout tests
+        and thus missed one in fast/events/.  This addresses fallout from
+        https://bugs.webkit.org/show_bug.cgi?id=30536
+
+        * fast/events/init-events-expected.txt:
+        * fast/events/script-tests/init-events.js:
+
+2009-10-19  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Dmitri Titov.
 
         Remove "source" from storage events

@@ -126,22 +126,20 @@ PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').lengthCom
 PASS testInitEvent('Progress', '"a", false, false, true, 1001, 1002').lengthComputable is true
 PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').loaded is 1001
 PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').total is 1002
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').type is 'a'
-PASS testInitEvent('Storage', 'null, false, false, "b", "c", "d", "e", window').type is 'null'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').bubbles is false
-PASS testInitEvent('Storage', '"a", true, false, "b", "c", "d", "e", window').bubbles is true
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').cancelable is false
-PASS testInitEvent('Storage', '"a", false, true, "b", "c", "d", "e", window').cancelable is true
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').key is 'b'
-PASS testInitEvent('Storage', '"a", false, false, null, "c", "d", "e", window').key is 'null'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').oldValue is 'c'
-PASS testInitEvent('Storage', '"a", false, false, "b", null, "d", "e", window').oldValue is null
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').newValue is 'd'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", null, "e", window').newValue is null
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').uri is 'e'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", null, window').uri is 'null'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", window').source is window
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e", null').source is null
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').type is 'a'
+PASS testInitEvent('Storage', 'null, false, false, "b", "c", "d", "e"').type is 'null'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').bubbles is false
+PASS testInitEvent('Storage', '"a", true, false, "b", "c", "d", "e"').bubbles is true
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').cancelable is false
+PASS testInitEvent('Storage', '"a", false, true, "b", "c", "d", "e"').cancelable is true
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').key is 'b'
+PASS testInitEvent('Storage', '"a", false, false, null, "c", "d", "e"').key is 'null'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').oldValue is 'c'
+PASS testInitEvent('Storage', '"a", false, false, "b", null, "d", "e"').oldValue is null
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').newValue is 'd'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", null, "e"').newValue is null
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').uri is 'e'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", null').uri is 'null'
 PASS testInitEvent('Text', '"a", false, false, window, "b"').type is 'a'
 PASS testInitEvent('Text', 'null, false, false, window, "b"').type is 'null'
 PASS testInitEvent('Text', '"a", false, false, window, "b"').bubbles is false

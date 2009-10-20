@@ -145,22 +145,20 @@ shouldBe("testInitEvent('Progress', '\"a\", false, false, true, 1001, 1002').len
 shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').loaded", "1001");
 shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').total", "1002");
 
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').type", "'a'");
-shouldBe("testInitEvent('Storage', 'null, false, false, \"b\", \"c\", \"d\", \"e\", window').type", "'null'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').bubbles", "false");
-shouldBe("testInitEvent('Storage', '\"a\", true, false, \"b\", \"c\", \"d\", \"e\", window').bubbles", "true");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').cancelable", "false");
-shouldBe("testInitEvent('Storage', '\"a\", false, true, \"b\", \"c\", \"d\", \"e\", window').cancelable", "true");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').key", "'b'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, null, \"c\", \"d\", \"e\", window').key", "'null'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').oldValue", "'c'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", null, \"d\", \"e\", window').oldValue", "null");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').newValue", "'d'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", null, \"e\", window').newValue", "null");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').uri", "'e'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", null, window').uri", "'null'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", window').source", "window");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\", null').source", "null");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').type", "'a'");
+shouldBe("testInitEvent('Storage', 'null, false, false, \"b\", \"c\", \"d\", \"e\"').type", "'null'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').bubbles", "false");
+shouldBe("testInitEvent('Storage', '\"a\", true, false, \"b\", \"c\", \"d\", \"e\"').bubbles", "true");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').cancelable", "false");
+shouldBe("testInitEvent('Storage', '\"a\", false, true, \"b\", \"c\", \"d\", \"e\"').cancelable", "true");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').key", "'b'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, null, \"c\", \"d\", \"e\"').key", "'null'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').oldValue", "'c'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", null, \"d\", \"e\"').oldValue", "null");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').newValue", "'d'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", null, \"e\"').newValue", "null");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').uri", "'e'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", null').uri", "'null'");
 
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').type", "'a'");
 shouldBe("testInitEvent('Text', 'null, false, false, window, \"b\"').type", "'null'");
