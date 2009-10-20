@@ -4878,11 +4878,6 @@ loader/go-back-to-different-window-size.html
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 
-# Started failing after http://trac.webkit.org/changeset/47229
-# https://bugs.webkit.org/show_bug.cgi?id=28288
-fast/css/getComputedStyle/computed-style-font-family-monospace.html
-fast/css/getComputedStyle/computed-style-font-family.html
-
 # Missing DRT ability to track worker thread counts
 fast/workers/dedicated-worker-lifecycle.html
 fast/workers/shared-worker-frame-lifecycle.html

@@ -1,3 +1,12 @@
+2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Enable previously disabled fast/css tests after r48873 landed which
+        fixed https://bugs.webkit.org/show_bug.cgi?id=28288
+
+        * platform/qt/Skipped:
+
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
         Skip failing test, with comment pointing to the bug to track it.
