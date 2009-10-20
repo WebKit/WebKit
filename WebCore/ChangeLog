@@ -1,3 +1,41 @@
+2009-10-19  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Better implementation of WebCore::ScriptString for the V8 bindings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29909
+
+        WebCore::ScriptString is used for XMLHttpRequest's responseText attribute which is
+        shared with JavaScript.  Thus, simply using a WebCore::String and copying the value
+        is pretty inefficient, especially since responseText is built up with a sequence of
+        operator+= calls.  JSC builds use a JSC::UString to share the buffer when possible,
+        this patch adopts a similar approach for V8.
+
+        No new tests, behavior is unchanged and covered by LayoutTests/http/tests/xmlhttprequest
+
+        * WebCore.gypi:
+        * bindings/v8/ScriptString.h:
+        (WebCore::ScriptString::ScriptString):
+        (WebCore::ScriptString::operator String):
+        (WebCore::ScriptString::isNull):
+        (WebCore::ScriptString::size):
+        (WebCore::ScriptString::operator=):
+        (WebCore::ScriptString::operator+=):
+        (WebCore::ScriptString::v8StringOrNull):
+        * bindings/v8/ScriptStringImpl.cpp: Added.
+        (WebCore::ScriptStringImpl::ScriptStringImpl):
+        (WebCore::ScriptStringImpl::~ScriptStringImpl):
+        (WebCore::ScriptStringImpl::toString):
+        (WebCore::ScriptStringImpl::isNull):
+        (WebCore::ScriptStringImpl::size):
+        (WebCore::ScriptStringImpl::append):
+        * bindings/v8/ScriptStringImpl.h: Added.
+        (WebCore::ScriptStringImpl::ScriptStringImpl):
+        (WebCore::ScriptStringImpl::v8StringHandle):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+
 2009-10-19  Adam Barth  <abarth@webkit.org>
 
         No review, rolling out r49837.

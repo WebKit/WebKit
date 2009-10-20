@@ -28,47 +28,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptString_h
-#define ScriptString_h
-
-#include "PlatformString.h"
+#include "config.h"
 #include "ScriptStringImpl.h"
+
 #include "V8Binding.h"
 
 namespace WebCore {
 
-class ScriptString {
-public:
-    ScriptString() : m_impl(0) {}
-    ScriptString(const String& s) : m_impl(new ScriptStringImpl(s)) {}
-    ScriptString(const char* s) : m_impl(new ScriptStringImpl(s)) {}
+ScriptStringImpl::ScriptStringImpl(const String& s)
+{
+    v8::HandleScope scope;
+    m_handle.set(v8String(s));
+}
 
-    operator String() const { return m_impl->toString(); }
+ScriptStringImpl::ScriptStringImpl(const char* s)
+{
+    v8::HandleScope scope;
+    m_handle.set(v8::String::New(s));
+}
 
-    bool isNull() const { return !m_impl.get() || m_impl->isNull(); }
-    size_t size() const { return m_impl->size(); }
+String ScriptStringImpl::toString() const
+{
+    return v8StringToWebCoreString(m_handle.get());
+}
 
-    ScriptString& operator=(const char* s)
-    {
-        m_impl = new ScriptStringImpl(s);
-        return *this;
-    }
+bool ScriptStringImpl::isNull() const
+{
+    return m_handle.get().IsEmpty();
+}
 
-    ScriptString& operator+=(const String& s)
-    {
-        m_impl->append(s);
-        return *this;
-    }
+size_t ScriptStringImpl::size() const
+{
+    return m_handle.get()->Length();
+}
 
-    v8::Handle<v8::Value> v8StringOrNull() const
-    {
-        return isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(m_impl->v8StringHandle());
-    }
-
-private:
-    RefPtr<ScriptStringImpl> m_impl;
-};
+void ScriptStringImpl::append(const String& s)
+{
+    v8::HandleScope scope;
+    if (m_handle.get().IsEmpty())
+        m_handle.set(v8String(s));
+    else
+        m_handle.set(v8::String::Concat(m_handle.get(), v8String(s)));
+}
 
 } // namespace WebCore
-
-#endif // ScriptString_h

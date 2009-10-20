@@ -46,11 +46,9 @@ namespace WebCore {
 
 ACCESSOR_GETTER(XMLHttpRequestResponseText)
 {
-    // FIXME: This is only needed because webkit set this getter as custom.
-    // So we need a custom method to avoid forking the IDL file.
     INC_STATS("DOM.XMLHttpRequest.responsetext._get");
     XMLHttpRequest* xmlHttpRequest = V8DOMWrapper::convertToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, info.Holder());
-    return v8StringOrNull(xmlHttpRequest->responseText());
+    return xmlHttpRequest->responseText().v8StringOrNull();
 }
 
 CALLBACK_FUNC_DECL(XMLHttpRequestAddEventListener)

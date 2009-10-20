@@ -771,6 +771,8 @@
             'bindings/v8/ScriptState.h',
             'bindings/v8/ScriptState.cpp',
             'bindings/v8/ScriptString.h',
+            'bindings/v8/ScriptStringImpl.cpp',
+            'bindings/v8/ScriptStringImpl.h',
             'bindings/v8/ScriptValue.cpp',
             'bindings/v8/ScriptValue.h',
             'bindings/v8/SerializedScriptValue.h',

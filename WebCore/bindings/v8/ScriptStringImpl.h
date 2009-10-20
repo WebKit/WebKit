@@ -28,47 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptString_h
-#define ScriptString_h
+#ifndef ScriptStringImpl_h
+#define ScriptStringImpl_h
 
+#include "OwnHandle.h"
 #include "PlatformString.h"
-#include "ScriptStringImpl.h"
-#include "V8Binding.h"
+
+#include <v8.h>
 
 namespace WebCore {
 
-class ScriptString {
+// This class is used for strings that tend to be shared with JavaScript frequently.  The JSC implementation uses wtf::UString - see bindings/js/ScriptString.h
+// Currently XMLHttpRequest uses a ScriptString to build up the responseText attribute.  As data arrives from the network, it is appended to the ScriptString
+// via operator+= and a JavaScript readystatechange event is fired.  JavaScript can access the responseText attribute of the XMLHttpRequest object.  JavaScript
+// may also query the responseXML attribute of the XMLHttpRequest object which results in the responseText attribute being coerced into a WebCore::String and
+// then parsed as an XML document.
+// This implementation optimizes for the common case where the responseText is built up with many calls to operator+= before the actual text is queried.
+class ScriptStringImpl : public RefCounted<ScriptStringImpl> {
 public:
-    ScriptString() : m_impl(0) {}
-    ScriptString(const String& s) : m_impl(new ScriptStringImpl(s)) {}
-    ScriptString(const char* s) : m_impl(new ScriptStringImpl(s)) {}
+    ScriptStringImpl() {}
+    ScriptStringImpl(const String& s);
+    ScriptStringImpl(const char* s);
 
-    operator String() const { return m_impl->toString(); }
+    String toString() const;
 
-    bool isNull() const { return !m_impl.get() || m_impl->isNull(); }
-    size_t size() const { return m_impl->size(); }
+    bool isNull() const;
+    size_t size() const;
 
-    ScriptString& operator=(const char* s)
-    {
-        m_impl = new ScriptStringImpl(s);
-        return *this;
-    }
+    void append(const String& s);
 
-    ScriptString& operator+=(const String& s)
-    {
-        m_impl->append(s);
-        return *this;
-    }
-
-    v8::Handle<v8::Value> v8StringOrNull() const
-    {
-        return isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(m_impl->v8StringHandle());
-    }
+    v8::Handle<v8::String> v8StringHandle() { return m_handle.get(); }
 
 private:
-    RefPtr<ScriptStringImpl> m_impl;
+    OwnHandle<v8::String> m_handle;
 };
 
 } // namespace WebCore
 
-#endif // ScriptString_h
+#endif // ScriptStringImpl_h
