@@ -1,3 +1,9 @@
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
+        Another batch of skipped tests with links to their bugs.
+
+        * platform/gtk/Skipped:
+
 2009-10-20  Satoshi Nakagawa  <psychs@limechat.net>
 
         Reviewed by Darin Adler.

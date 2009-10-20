@@ -5419,6 +5419,12 @@ svg/filters/subRegion-in-userSpace.svg
 # Requires expected results - related changeset: http://trac.webkit.org/changeset/47678
 fast/block/margin-collapse/block-inside-inline
 
+# Requires gtk specific expected results
+fast/css/getComputedStyle/marginComputedStyle.html
+
+# Seems to simply timeout in our boxes
+http/tests/security/frameNavigation/cross-origin-opener.html
+
 # ------------------
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
@@ -5509,12 +5515,16 @@ fast/events/node-event-anchor-lock.html
 
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
+http/tests/loading/basic-auth-resend-wrong-credentials.html 
 
 # https://bugs.webkit.org/show_bug.cgi?id=30589
 media/video-played-reset.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30586
 media/video-src-empty.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30594
+fast/dom/Window/window-properties.html
 
 # Media tests that keep failing on the bot
 media/video-currentTime-set.html
@@ -5525,6 +5535,9 @@ media/video-play-pause-exception.html
 fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/pageshow-pagehide-on-back-uncached.html
 fast/events/pageshow-pagehide.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30593
+editing/selection/5333725.html
 
 # No TextInputController
 fast/forms/input-maxlength-ime-completed.html
