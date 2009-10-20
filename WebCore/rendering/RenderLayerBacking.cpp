@@ -89,8 +89,8 @@ void RenderLayerBacking::createGraphicsLayer()
         m_graphicsLayer->setName("Anonymous Node");
 #endif  // NDEBUG
 
-    updateLayerOpacity();
-    updateLayerTransform();
+    updateLayerOpacity(renderer()->style());
+    updateLayerTransform(renderer()->style());
 }
 
 void RenderLayerBacking::destroyGraphicsLayer()
@@ -104,15 +104,13 @@ void RenderLayerBacking::destroyGraphicsLayer()
     m_maskLayer = 0;
 }
 
-void RenderLayerBacking::updateLayerOpacity()
+void RenderLayerBacking::updateLayerOpacity(const RenderStyle* style)
 {
-    m_graphicsLayer->setOpacity(compositingOpacity(renderer()->opacity()));
+    m_graphicsLayer->setOpacity(compositingOpacity(style->opacity()));
 }
 
-void RenderLayerBacking::updateLayerTransform()
+void RenderLayerBacking::updateLayerTransform(const RenderStyle* style)
 {
-    RenderStyle* style = renderer()->style();
-
     // FIXME: This could use m_owningLayer->transform(), but that currently has transform-origin
     // baked into it, and we don't want that.
     TransformationMatrix t;
@@ -219,11 +217,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // Set transform property, if it is not animating. We have to do this here because the transform
     // is affected by the layer dimensions.
     if (!renderer()->animation()->isAnimatingPropertyOnRenderer(renderer(), CSSPropertyWebkitTransform))
-        updateLayerTransform();
+        updateLayerTransform(renderer()->style());
 
     // Set opacity, if it is not animating.
     if (!renderer()->animation()->isAnimatingPropertyOnRenderer(renderer(), CSSPropertyOpacity))
-        updateLayerOpacity();
+        updateLayerOpacity(renderer()->style());
     
     RenderStyle* style = renderer()->style();
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D);
@@ -1082,8 +1080,11 @@ bool RenderLayerBacking::startTransition(double beginTime, int property, const R
             opacityVector.insert(new FloatAnimationValue(0, compositingOpacity(fromStyle->opacity())));
             opacityVector.insert(new FloatAnimationValue(1, compositingOpacity(toStyle->opacity())));
             // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
-            if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, String(), beginTime))
+            if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, String(), beginTime)) {
+                // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
+                updateLayerOpacity(toStyle);
                 didAnimate = true;
+            }
         }
     }
 
@@ -1093,8 +1094,11 @@ bool RenderLayerBacking::startTransition(double beginTime, int property, const R
             KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
             transformVector.insert(new TransformAnimationValue(0, &fromStyle->transform()));
             transformVector.insert(new TransformAnimationValue(1, &toStyle->transform()));
-            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, String(), beginTime))
+            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, String(), beginTime)) {
+                // To ensure that the correct transform is visible when the animation ends, also set the final opacity.
+                updateLayerTransform(toStyle);
                 didAnimate = true;
+            }
         }
     }
 

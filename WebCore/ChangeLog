@@ -1,3 +1,27 @@
+2009-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Flash at end of opacity/transform transition sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=30501
+        
+        When a transition finishes, there window of time between when the animation is
+        removed, and the final style set on the GraphicsLayer. This caused the layer to revert
+        to its old appearance for one or two frames. To avoid this, we set the final
+        transform or opacity at the start of the transition; we know that the animation
+        will override the final value for as long as its running.
+        
+        No test because this is a very transient effect that can't be captured
+        in a test.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateLayerOpacity):
+        (WebCore::RenderLayerBacking::updateLayerTransform):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::startTransition):
+        * rendering/RenderLayerBacking.h:
+
 2009-10-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
