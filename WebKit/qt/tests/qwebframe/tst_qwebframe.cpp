@@ -2691,26 +2691,24 @@ void tst_QWebFrame::render()
 
     QPicture picture;
 
-    // render clipping to Viewport
-    frame->setClipRenderToViewport(true);
-    QPainter painter1(&picture);
-    frame->render(&painter1);
-    painter1.end();
-
     QSize size = page.mainFrame()->contentsSize();
     page.setViewportSize(size);
-    QCOMPARE(size.width(), picture.boundingRect().width());   // 100px
-    QCOMPARE(size.height(), picture.boundingRect().height()); // 100px
 
-    // render without clipping to Viewport
-    frame->setClipRenderToViewport(false);
+    // render contents layer only (the iframe is smaller than the image, so it will have scrollbars)
+    QPainter painter1(&picture);
+    frame->render(&painter1, QWebFrame::ContentsLayer);
+    painter1.end();
+
+    QCOMPARE(size.width(), picture.boundingRect().width() + frame->scrollBarGeometry(Qt::Vertical).width());
+    QCOMPARE(size.height(), picture.boundingRect().height() + frame->scrollBarGeometry(Qt::Horizontal).height());
+
+    // render everything, should be the size of the iframe
     QPainter painter2(&picture);
-    frame->render(&painter2);
+    frame->render(&painter2, QWebFrame::AllLayers);
     painter2.end();
 
-    QImage resource(":/image.png");
-    QCOMPARE(resource.width(), picture.boundingRect().width());   // resource width: 128px
-    QCOMPARE(resource.height(), picture.boundingRect().height()); // resource height: 128px
+    QCOMPARE(size.width(), picture.boundingRect().width());   // width: 100px
+    QCOMPARE(size.height(), picture.boundingRect().height()); // height: 100px
 }
 
 void tst_QWebFrame::scrollPosition()

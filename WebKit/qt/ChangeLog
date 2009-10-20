@@ -1,5 +1,24 @@
 2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Update the tests to test the new render functionality, and take
+        into consideration that render() clips to the frame itself as well
+        as the viewport.
+
+        QWebFrame::render() now always clips, so the old tests were bogus.
+
+        Rendering pure contents (no scrollbars etc) without clipping can now
+        be accomplished using QWebFrame::documentElement()->render(...)
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Adam Barth.
 
         As we do not support rendering a QWebFrame without it being clipped
