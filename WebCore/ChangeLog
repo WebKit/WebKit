@@ -1,3 +1,24 @@
+2009-10-19  Adam Barth  <abarth@webkit.org>
+
+        No review, rolling out r49837.
+        http://trac.webkit.org/changeset/49837
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setStandardFontFamily):
+        (WebCore::Settings::setFixedFontFamily):
+        (WebCore::Settings::setSerifFontFamily):
+        (WebCore::Settings::setSansSerifFontFamily):
+        (WebCore::Settings::setCursiveFontFamily):
+        (WebCore::Settings::setFantasyFontFamily):
+        * page/Settings.h:
+        (WebCore::Settings::standardFontFamily):
+        (WebCore::Settings::fixedFontFamily):
+        (WebCore::Settings::serifFontFamily):
+        (WebCore::Settings::sansSerifFontFamily):
+        (WebCore::Settings::cursiveFontFamily):
+        (WebCore::Settings::fantasyFontFamily):
+        * platform/text/UScriptCode.h: Removed.
+
 2009-10-19  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
