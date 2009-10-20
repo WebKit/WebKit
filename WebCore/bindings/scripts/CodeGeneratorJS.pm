@@ -812,7 +812,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::OverridesGetOwnPropertySlot" . ($needsMarkChildren ? " | JSC::OverridesMarkChildren" : "") . " | JSC::OverridesGetPropertyNames));\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");

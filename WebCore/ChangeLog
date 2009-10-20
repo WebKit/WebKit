@@ -1,3 +1,14 @@
+2009-10-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION: Dromaeo DOM test is 14% slower
+        https://bugs.webkit.org/show_bug.cgi?id=30273
+
+        Whoops, make prototype bindings actually use the StructureFlags.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-10-19  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.
