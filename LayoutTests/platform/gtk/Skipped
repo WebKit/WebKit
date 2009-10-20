@@ -90,6 +90,12 @@ accessibility/table-sections.html
 accessibility/table-with-aria-role.html
 accessibility/table-with-rules.html
 
+# Tests in animations/
+# Tests expecting new results
+animations/change-transform-in-end-event.html
+animations/state-at-end-event-transform.html
+animations/state-at-end-event.html
+
 # Tests in css1/ directory
 #   Tests generating new results
 css1/basic/class_as_selector.html
@@ -1846,6 +1852,7 @@ fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
 fast/box-sizing/percentage-height.html
+fast/canvas/arc360.html
 fast/canvas/canvas-as-image-incremental-repaint.html
 fast/canvas/canvas-as-image.html
 fast/canvas/canvas-before-css.html
@@ -5409,6 +5416,10 @@ fast/forms/textarea-metrics.html
 # These two tests seem to fail on and off, skip them for now
 transitions/change-values-during-transition.html
 transitions/zero-duration-with-non-zero-delay-end.html
+
+# Missing new results
+transitions/move-after-transition.html
+transitions/transition-end-event-rendering.html
 
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT

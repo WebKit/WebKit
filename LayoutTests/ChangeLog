@@ -1,5 +1,11 @@
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Skip tests expecting new results.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip media/restore-from-page-cache.html since we are missing some
         of the needed API for the test.
 
