@@ -9,6 +9,15 @@
 
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Skip another failing test because we don't currently support
+        changing the locale after gtk_init has been called.
+
+        Also, add another test to the list of libxml2 issues.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip a bunch of tests failing in the debug bots because WebKit
         does not work correctly with very recent versions of libxml2. The
         tracker bug for the issue is
