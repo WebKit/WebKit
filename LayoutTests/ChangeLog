@@ -1,5 +1,11 @@
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
+        Skip failing editing test.
+
+        * platform/gtk/Skipped:
+
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip a bunch of failing DnD tests.
 
         * platform/gtk/Skipped:
