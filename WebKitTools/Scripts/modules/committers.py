@@ -60,6 +60,7 @@ committers_unable_to_review = [
     Committer("Drew Wilson", "atwilson@chromium.org"),
     Committer("Dirk Schulze", "krit@webkit.org"),
     Committer("Dmitry Titov", "dimich@chromium.org"),
+    Committer("Dumitru Daniliuc", "dumi@chromium.org"),
     Committer("Eli Fidler", "eli@staikos.net"),
     Committer("Eric Roman", "eroman@chromium.org"),
     Committer("Fumitoshi Ukai", "ukai@chromium.org"),
