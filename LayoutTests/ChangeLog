@@ -1,3 +1,10 @@
+2009-10-20  Xan Lopez  <xlopez@igalia.com>
+
+        Skip media/restore-from-page-cache.html since we are missing some
+        of the needed API for the test.
+
+        * platform/gtk/Skipped:
+
 2009-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
