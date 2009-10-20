@@ -1,3 +1,21 @@
+2009-10-19  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Infinite loop (leading to crash) when setting cursor in QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=30549
+
+        Patch reimplements QGraphicsItem's itemChange method, and make
+        CursorChange event to be emitted after cursor has already been
+        set.
+
+        QWidget::setCursor send the event just after it sets the cursor,
+        then patch makes both behaviors compatible.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::itemChange):
+        * Api/qgraphicswebview.h:
+
 2009-10-19  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, build fix.

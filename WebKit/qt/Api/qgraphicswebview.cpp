@@ -246,6 +246,28 @@ bool QGraphicsWebView::sceneEvent(QEvent* event)
 
 /*! \reimp
 */
+QVariant QGraphicsWebView::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    switch (change) {
+    // Differently from QWebView, it is interesting to QGraphicsWebView to handle
+    // post mouse cursor change notifications. Reason: 'ItemCursorChange' is sent
+    // as the first action in QGraphicsItem::setCursor implementation, and at that
+    // item widget's cursor has not been effectively changed yet.
+    // After cursor is properly set (at 'ItemCursorHasChanged' emission time), we
+    // fire 'CursorChange'.
+    case ItemCursorChange:
+        return value;
+    case ItemCursorHasChanged:
+        QEvent event(QEvent::CursorChange);
+        QApplication::sendEvent(this, &event);
+        return value;
+    }
+
+    return QGraphicsWidget::itemChange(change, value);
+}
+
+/*! \reimp
+*/
 bool QGraphicsWebView::event(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
