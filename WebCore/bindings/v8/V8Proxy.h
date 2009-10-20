@@ -362,6 +362,8 @@ namespace WebCore {
         
         void resetIsolatedWorlds();
 
+        void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
+
         static bool canAccessPrivate(DOMWindow*);
 
         static const char* rangeExceptionName(int exceptionCode);

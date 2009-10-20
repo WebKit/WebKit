@@ -1,3 +1,17 @@
+2009-10-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Set debug id for contexts of isolated worlds to distinguish them in debugger.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30559
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::evaluateInNewContext):
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId):
+        * bindings/v8/V8Proxy.h:
+
 2009-10-20  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Unreviewed buildfix.
