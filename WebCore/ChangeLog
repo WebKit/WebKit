@@ -1,3 +1,22 @@
+2009-10-20  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Hide Chromium's media slider thumb if no source has been loaded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30529
+
+        Covered by existing layout tests, notably:
+            LayoutTests/media/controls-rendering.html
+            LayoutTests/media/unsupported-tracks.html
+            LayoutTests/media/video-src-none.html
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::hasSource): Returns true if an HTMLMediaElement has a valid source set.
+        (WebCore::paintMediaMuteButton): Refactored to use hasSource().
+        (WebCore::paintMediaPlayButton): Ditto.
+        (WebCore::paintMediaSliderThumb): Add call to hasSource() to determine if we should paint the thumb.
+
 2009-10-20  Satoshi Nakagawa  <psychs@limechat.net>
 
         Reviewed by Darin Adler.
