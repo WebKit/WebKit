@@ -5472,6 +5472,10 @@ http/tests/security/isolatedWorld/world-reuse.html
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
+# Canvas security issues https://bugs.webkit.org/show_bug.cgi?id=30580
+http/tests/security/canvas-remote-read-data-url-image.html
+http/tests/security/canvas-remote-read-data-url-svg-image.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=28088 -- document.activeElement does not work
 editing/selection/find-in-text-control.html
 
