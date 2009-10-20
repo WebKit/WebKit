@@ -1,5 +1,15 @@
 2009-10-20  Gabor Loki  <loki@inf.u-szeged.hu>
 
+        Reviewed by Geoffrey Garen.
+
+        The op_next_pname should use 4 bytes addressing mode in case of JSValue32
+        https://bugs.webkit.org/show_bug.cgi?id=30570
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_next_pname):
+
+2009-10-20  Gabor Loki  <loki@inf.u-szeged.hu>
+
         Reviewed by Oliver Hunt.
 
         Move OverridesMarkChildren flag from DatePrototype to its parent class
