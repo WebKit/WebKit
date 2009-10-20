@@ -1,3 +1,12 @@
+2009-10-19  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Manual Test for crash caused by JS accessing DOMWindow which is disconnected from the Frame.
+        https://bugs.webkit.org/show_bug.cgi?id=30544
+
+        * manual-tests/crash-on-accessing-domwindow-without-frame.html: Added.
+
 2009-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
