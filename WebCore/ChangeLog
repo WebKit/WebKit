@@ -1,3 +1,28 @@
+2009-10-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20797
+
+        Make generic font family getters/setters accept an additional
+        argument (script code). It has a default value so that if an embedder
+        does not have/want a per-script font family setting, call-sites
+        don't have to be changed.
+        This is to prepare for fixing bug 10874 (font selection is not
+        language-dependent) and bug 18085.
+
+        There should be no change in layout and no new layout test
+        is added.
+
+        * WebCore.base.exp:
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * platform/text/UScriptCode.h: Added. This is for ports that
+          do not use ICU. the part of ICU's common/unicode/uscript.h
+          that defines script code enum was copied. To keep enums compatible
+          with those in ICU, we don't generate the list out of Scripts.txt
+          of the Unicode Data base or CLDR's data.
+
 2009-10-19  Evan Stade  <estade@chromium.org>
 
         Reviewed by Darin Adler.

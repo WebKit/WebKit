@@ -28,8 +28,15 @@
 #define Settings_h
 
 #include "AtomicString.h"
+#include "AtomicStringHash.h"
 #include "FontRenderingMode.h"
 #include "KURL.h"
+#if USE(ICU_UNICODE)
+#include "unicode/uscript.h"
+#else
+#include "UScriptCode.h"
+#endif
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -64,27 +71,29 @@ namespace WebCore {
     // if possible in the future.
     enum EditingBehavior { EditingMacBehavior, EditingWindowsBehavior };
 
+    typedef HashMap<int, AtomicString> ScriptFontFamilyMap;
+
     class Settings {
     public:
         Settings(Page*);
 
-        void setStandardFontFamily(const AtomicString&);
-        const AtomicString& standardFontFamily() const { return m_standardFontFamily; }
+        void setStandardFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& standardFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
-        void setFixedFontFamily(const AtomicString&);
-        const AtomicString& fixedFontFamily() const { return m_fixedFontFamily; }
+        void setFixedFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& fixedFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
-        void setSerifFontFamily(const AtomicString&);
-        const AtomicString& serifFontFamily() const { return m_serifFontFamily; }
+        void setSerifFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& serifFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
-        void setSansSerifFontFamily(const AtomicString&);
-        const AtomicString& sansSerifFontFamily() const { return m_sansSerifFontFamily; }
+        void setSansSerifFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& sansSerifFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
-        void setCursiveFontFamily(const AtomicString&);
-        const AtomicString& cursiveFontFamily() const { return m_cursiveFontFamily; }
+        void setCursiveFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& cursiveFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
-        void setFantasyFontFamily(const AtomicString&);
-        const AtomicString& fantasyFontFamily() const { return m_fantasyFontFamily; }
+        void setFantasyFontFamily(const AtomicString&, UScriptCode script=USCRIPT_COMMON);
+        const AtomicString& fantasyFontFamily(UScriptCode script=USCRIPT_COMMON) const;
 
         void setMinimumFontSize(int);
         int minimumFontSize() const { return m_minimumFontSize; }
@@ -288,12 +297,14 @@ namespace WebCore {
         String m_ftpDirectoryTemplatePath;
         String m_localStorageDatabasePath;
         KURL m_userStyleSheetLocation;
-        AtomicString m_standardFontFamily;
-        AtomicString m_fixedFontFamily;
-        AtomicString m_serifFontFamily;
-        AtomicString m_sansSerifFontFamily;
-        AtomicString m_cursiveFontFamily;
-        AtomicString m_fantasyFontFamily;
+
+        ScriptFontFamilyMap m_fixedFontFamilyMap;
+        ScriptFontFamilyMap m_serifFontFamilyMap;
+        ScriptFontFamilyMap m_sansSerifFontFamilyMap;
+        ScriptFontFamilyMap m_cursiveFontFamilyMap;
+        ScriptFontFamilyMap m_fantasyFontFamilyMap;
+        ScriptFontFamilyMap m_standardFontFamilyMap;
+
         EditableLinkBehavior m_editableLinkBehavior;
         TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
         int m_minimumFontSize;
