@@ -1,6 +1,6 @@
 description("Test dom storage with many different types of keys (as opposed to values)");
 
-function runTest(storageString)
+function test(storageString)
 {
     storage = eval(storageString);
     if (!storage) {
@@ -141,6 +141,12 @@ function runTest(storageString)
 
     evalAndLog("storage.setItem('length', 0)");
     shouldBe("storage.length", "13");
-
-    window.successfullyParsed = true;
 }
+
+test("sessionStorage");
+debug("");
+debug("");
+test("localStorage");
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();

@@ -1,3 +1,63 @@
+2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Combine local and session storage tests into one and use script-tests properly
+        https://bugs.webkit.org/show_bug.cgi?id=30640
+
+        I was apparently misusing the script-tests stuff.  I changed all the tests to
+        test both local storage and session storage so that we can use the
+        make-test-script-wrappers stuff as is.
+
+        * storage/domstorage/clear-expected.txt: Added.
+        * storage/domstorage/clear.html: Added.
+        * storage/domstorage/complex-keys-expected.txt: Added.
+        * storage/domstorage/complex-keys.html: Added.
+        * storage/domstorage/complex-values-expected.txt: Added.
+        * storage/domstorage/complex-values.html: Added.
+        * storage/domstorage/localstorage/clear-expected.txt: Removed.
+        * storage/domstorage/localstorage/clear.html: Removed.
+        * storage/domstorage/localstorage/complex-keys-expected.txt: Removed.
+        * storage/domstorage/localstorage/complex-keys.html: Removed.
+        * storage/domstorage/localstorage/complex-values-expected.txt: Removed.
+        * storage/domstorage/localstorage/complex-values.html: Removed.
+        * storage/domstorage/localstorage/quota-expected.txt: Removed.
+        * storage/domstorage/localstorage/quota.html: Removed.
+        * storage/domstorage/localstorage/remove-item-expected.txt: Removed.
+        * storage/domstorage/localstorage/remove-item.html: Removed.
+        * storage/domstorage/quota-expected.txt: Added.
+        * storage/domstorage/quota.html: Added.
+        * storage/domstorage/remove-item-expected.txt: Added.
+        * storage/domstorage/remove-item.html: Added.
+        * storage/domstorage/script-tests/TEMPLATE.html: Added.
+        * storage/domstorage/script-tests/clear.js:
+        (test):
+        (runTest):
+        * storage/domstorage/script-tests/complex-keys.js:
+        (test):
+        (runTest):
+        * storage/domstorage/script-tests/complex-values.js:
+        (test):
+        (runTest):
+        * storage/domstorage/script-tests/no-quota.js: Removed.
+        * storage/domstorage/script-tests/quota.js:
+        (testQuota):
+        (testNoQuota):
+        (runTest):
+        * storage/domstorage/script-tests/remove-item.js:
+        (test):
+        (runTest):
+        * storage/domstorage/sessionstorage/clear-expected.txt: Removed.
+        * storage/domstorage/sessionstorage/clear.html: Removed.
+        * storage/domstorage/sessionstorage/complex-keys-expected.txt: Removed.
+        * storage/domstorage/sessionstorage/complex-keys.html: Removed.
+        * storage/domstorage/sessionstorage/complex-values-expected.txt: Removed.
+        * storage/domstorage/sessionstorage/complex-values.html: Removed.
+        * storage/domstorage/sessionstorage/no-quota-expected.txt: Removed.
+        * storage/domstorage/sessionstorage/no-quota.html: Removed.
+        * storage/domstorage/sessionstorage/remove-item-expected.txt: Removed.
+        * storage/domstorage/sessionstorage/remove-item.html: Removed.
+
 2009-10-21  Darin Adler  <darin@apple.com>
 
         Update since we rolled Japanese tailoring out that was done to fix

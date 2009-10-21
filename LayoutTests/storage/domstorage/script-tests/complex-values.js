@@ -20,7 +20,7 @@ function testKeyValue(key, value)
     shouldBeEqualToString(keyString, value);
 }
 
-function runTest(storageString)
+function test(storageString)
 {
     storage = eval(storageString);
     if (!storage) {
@@ -84,6 +84,12 @@ function runTest(storageString)
     shouldBe("eventCounter", "0");
     evalAndLog("storage.foo = 'TEST'");
     shouldBe("eventCounter", "1");
-    
-    window.successfullyParsed = true;
 }
+
+test("sessionStorage");
+debug("");
+debug("");
+test("localStorage");
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();

@@ -1,6 +1,6 @@
 description("Test .removeItem within DOM Storage.");
 
-function runTest(storageString)
+function test(storageString)
 {
     storage = eval(storageString);
     if (!storage) {
@@ -39,7 +39,12 @@ function runTest(storageString)
     shouldBeNull("storage.getItem('foo3')");
     evalAndLog("storage.removeItem('foo3')");
     shouldBeNull("storage.getItem('foo3')");
-
-    window.successfullyParsed = true;
 }
 
+test("sessionStorage");
+debug("");
+debug("");
+test("localStorage");
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();

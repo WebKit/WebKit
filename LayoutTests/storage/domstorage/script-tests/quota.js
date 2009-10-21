@@ -1,6 +1,6 @@
-description("Test whether the quota is doing its job.");
+description("Test the DOM Storage quota code.");
 
-function runTest(storageString)
+function testQuota(storageString)
 {
     storage = eval(storageString);
     if (!storage) {
@@ -44,6 +44,44 @@ function runTest(storageString)
     } catch (e) {
         testFailed("Exception: " + e);
     }
-
-    window.successfullyParsed = true;
 }
+
+function testNoQuota(storageString)
+{
+    storage = eval(storageString);
+    if (!storage) {
+        testFailed(storageString + " DOES NOT exist");
+        return;
+    }
+
+    debug("Testing " + storageString);
+
+    evalAndLog("storage.clear()");
+    shouldBe("storage.length", "0");
+
+    debug("Creating 'data' which contains 64K of data");
+    data = "X";
+    for (var i=0; i<16; i++)
+        data += data;
+    shouldBe("data.length", "65536");
+
+    debug("Putting 'data' into 40 " + storageString + " buckets.");
+    for (var i=0; i<40; i++)
+        storage[i] = data;
+
+    debug("Putting 'data' into another bucket.h");
+    try {
+        storage[40] = data;
+        testPassed("Insertion worked.");
+    } catch (e) {
+        testFailed("Exception: " + e);
+    }
+}
+
+testNoQuota("sessionStorage");
+debug("");
+debug("");
+testQuota("localStorage");
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();
