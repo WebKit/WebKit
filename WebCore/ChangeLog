@@ -1,3 +1,31 @@
+2009-10-21  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Chromium Linux: disable subpixel text on layers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30635
+        http://code.google.com/p/chromium/issues/detail?id=25365
+
+        With the addition of layers for drawing rounded corners in r49641,
+        subpixel text on rounded rectangles broke. This is because the layer
+        only contains a single alpha channel and this is insufficient to
+        compose subpixel text correctly.
+
+        On Windows, a large body of code in TransparencyWin.cpp exists to try
+        to deal with this. Even then, in some cases, it downgrades to
+        anti-aliased text. We need a fix for the grevious effects quickly thus
+        this patch disables subpixel text when rendering into a layer.
+
+        This would be covered by existing tests except that subpixel text is
+        disabled for pixel tests on Chromium Linux.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::isCanvasMultiLayered):
+        (WebCore::adjustTextRenderMode):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+
 2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMac 10.4 build fix, make sure we specify the Sqlite3 dependency correctly as otherwise
