@@ -26,6 +26,7 @@ module ranges {
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;
         readonly attribute DOMString        message;
+        readonly attribute DOMString        description;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();

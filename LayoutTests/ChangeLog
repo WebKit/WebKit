@@ -1,3 +1,16 @@
+2009-10-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixes part of <http://webkit.org/b/30522>.
+        Web Inspector: DOM Exceptions throughout the Inspector should be more human readable.
+        
+        Adds a test to check the name and description of some DOM Exceptions.
+
+        * fast/dom/dom-exception-description-expected.txt: Added.
+        * fast/dom/dom-exception-description.html: Added.
+        * fast/dom/script-tests/dom-exception-description.js: Added.
+
 2009-10-21  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

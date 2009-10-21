@@ -1,0 +1,15 @@
+This test checks the names and descriptions of DOM exceptions matches what they should be.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.exception.name is "NOT_FOUND_ERR"
+An attempt was made to reference a Node in a context where it does not exist.
+PASS window.exception.name is "HIERARCHY_REQUEST_ERR"
+A Node was inserted somewhere it doesn't belong.
+PASS window.exception.name is "INDEX_SIZE_ERR"
+Index or size was negative, or greater than the allowed value.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

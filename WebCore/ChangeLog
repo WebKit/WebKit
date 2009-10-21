@@ -1,5 +1,25 @@
 2009-10-21  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Eric Seidel.
+
+        Fixes part of <http://webkit.org/b/30522>.
+        Web Inspector: DOM Exceptions throughout the Inspector should be more human readable.
+
+        Expose the description attribute that is now a member of
+        ExceptionBase as of r49723, so when a user logs an exception, they
+        can see the description in the Web Inspector.
+
+        Test: fast/dom/dom-exception-description.html
+
+        * dom/DOMCoreException.idl:
+        * dom/EventException.idl:
+        * dom/RangeException.idl:
+        * svg/SVGException.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XPathException.idl:
+
+2009-10-21  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         Fixes <https://bugs.webkit.org/show_bug.cgi?id=30616>.

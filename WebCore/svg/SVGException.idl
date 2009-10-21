@@ -28,6 +28,7 @@ module svg {
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;
         readonly attribute DOMString        message;
+        readonly attribute DOMString        description;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // Override in a Mozilla compatible format
