@@ -174,3 +174,15 @@ def get_config(wk_root):
         config = open(config_file).read()
 
     return config
+
+def svn_revision():
+    if os.system("git info") == 0:
+        info = commands.getoutput("git-svn info ../..")
+    else:
+        info = commands.getoutput("svn info")
+    
+    for line in info.split("\n"):
+        if line.startswith("Revision: "):
+            return line.replace("Revision: ", "").strip()
+    
+    return ""

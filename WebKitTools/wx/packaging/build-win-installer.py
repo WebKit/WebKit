@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Copyright (C) 2008 Kevin Ollivier  All rights reserved.
 #
@@ -30,6 +30,14 @@ import commands
 import glob
 from subprocess import *
 
+script_dir = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.abspath(os.path.join(script_dir, "..", "build")))
+
+from build_utils import *
+
+wxwk_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+wxwebkit_dir = os.path.abspath(os.path.join(wxwk_root, "WebKitBuild", get_config(wxwk_root) + git_branch_name()))
+
 # Find InnoSetup executable
 def getInnoSetupPath():
     name = "ISCC.exe"
@@ -37,6 +45,7 @@ def getInnoSetupPath():
     dirs = os.environ["PATH"].split(":")
     # Add the default file path
     dirs.append("C:\\Program Files\\Inno Setup 5")
+    dirs.append("C:\\Program Files (x86)\\Inno Setup 5")
                     
     if os.environ.has_key("INNO5"):
         retval = os.environ["INNO5"]
@@ -48,40 +57,19 @@ def getInnoSetupPath():
                 retval = filepath
             
     return retval
-    
-def getWebKitOutputDir():
-    retval = ""
-    if os.environ.has_key("WEBKITOUTPUTDIR"):
-        retval = os.environ["WEBKITOUTPUTDIR"]
-        
-    if retval == "":
-        retval = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "WebKitBuild"))
-        
-    return os.path.join(retval, "Release")
-
-def getRevisionString():
-    pipe = Popen("svnversion", shell=True, stdout=PIPE).stdout
-    svnrevision = pipe.read().strip()
-    print "r" + svnrevision
-    svnrevision = string.split(svnrevision, ":")[0]
-    svnrevision = svnrevision.replace("M", "")
-    svnrevision = "r" + svnrevision
-    
-    return svnrevision
 
 if __name__ == "__main__":
     innoSetup = getInnoSetupPath()
-    buildDir = getWebKitOutputDir()
     os.chdir(sys.path[0])
 
-    svnrevision = getRevisionString()
+    svnrevision = svn_revision()
 
     if not os.path.exists(innoSetup):
         print "ERROR: Cannot find InnoSetup."
         #sys.exit(1)
         
-    if not os.path.exists(buildDir):
-        print "ERROR: Build dir %s doesn't exist." % buildDir
+    if not os.path.exists(wxwebkit_dir):
+        print "ERROR: Build dir %s doesn't exist." % wxwebkit_dir
         sys.exit(1)
 
     fileList = """
@@ -89,7 +77,7 @@ CopyMode: alwaysoverwrite; Source: *.pyd;        DestDir: "{app}"
 CopyMode: alwaysoverwrite; Source: *.py;        DestDir: "{app}"
 """
     
-    dlls = glob.glob(os.path.join(buildDir, "*.dll"))
+    dlls = glob.glob(os.path.join(wxwebkit_dir, "*.dll"))
     for dll in dlls:
         if dll.find("wxbase") == -1 and dll.find("wxmsw") == -1:
             fileList += """CopyMode: alwaysoverwrite; Source: %s;        DestDir: "{app}" \n""" % dll
@@ -97,8 +85,8 @@ CopyMode: alwaysoverwrite; Source: *.py;        DestDir: "{app}"
     installerTemplate = open("wxWebKitInstaller.iss.in", "r").read()
 
     installerTemplate = installerTemplate.replace("<<VERSION>>", svnrevision)
-    installerTemplate = installerTemplate.replace("<<ROOTDIR>>", buildDir )
-    installerTemplate = installerTemplate.replace("<<PYTHONVER>>", "2.5" )
+    installerTemplate = installerTemplate.replace("<<ROOTDIR>>", wxwebkit_dir )
+    installerTemplate = installerTemplate.replace("<<PYTHONVER>>", sys.version[0:3] )
     installerTemplate = installerTemplate.replace("<<FILES>>", fileList )
 
     outputFile = open("wxWebKitInstaller.iss", "w")

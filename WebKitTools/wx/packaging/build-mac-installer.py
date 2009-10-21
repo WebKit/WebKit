@@ -48,17 +48,7 @@ wxwebkit_dir = os.path.abspath(os.path.join(wxwk_root, "WebKitBuild", get_config
 wx_version = wx.__version__[:5]
 py_version = sys.version[:3]
 
-wxwk_version = ""
-
-if os.system("git info") == 0:
-    info = commands.getoutput("git-svn info ../..")
-else:
-    info = commands.getoutput("svn info")
-    
-for line in info.split("\n"):
-    print line
-    if line.startswith("Revision: "):
-        wxwk_version = line.replace("Revision: ", "").strip()
+wxwk_version = svn_revision()
 
 platform = "osx"
     
