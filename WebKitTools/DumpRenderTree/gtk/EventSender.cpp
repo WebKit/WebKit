@@ -129,6 +129,21 @@ static void updateClickCount(int /* button */)
         clickCount++;
 }
 
+#if !GTK_CHECK_VERSION(2,17,3)
+static void getRootCoords(GtkWidget* view, int* rootX, int* rootY)
+{
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    int tmpX, tmpY;
+
+    gtk_widget_translate_coordinates(view, window, lastMousePositionX, lastMousePositionY, &tmpX, &tmpY);
+
+    gdk_window_get_origin(window->window, rootX, rootY);
+
+    *rootX += tmpX;
+    *rootY += tmpY;
+}
+#endif
+
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
@@ -156,7 +171,11 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     event.button.device = gdk_device_get_core_pointer();
 
     int x_root, y_root;
+#if GTK_CHECK_VERSION(2,17,3)
     gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+#else
+    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
+#endif
 
     event.button.x_root = x_root;
     event.button.y_root = y_root;
@@ -209,7 +228,11 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     event.button.device = gdk_device_get_core_pointer();
 
     int x_root, y_root;
+#if GTK_CHECK_VERSION(2,17,3)
     gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+#else
+    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
+#endif
 
     event.button.x_root = x_root;
     event.button.y_root = y_root;
@@ -255,7 +278,11 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event.motion.device = gdk_device_get_core_pointer();
 
     int x_root, y_root;
+#if GTK_CHECK_VERSION(2,17,3)
     gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+#else
+    getRootCoords(GTK_WIDGET(view), &x_root, &y_root);
+#endif
 
     event.motion.x_root = x_root;
     event.motion.y_root = y_root;

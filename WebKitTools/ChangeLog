@@ -1,3 +1,14 @@
+2009-10-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Added conditional code to avoid using
+        gdk_window_get_root_coords if we do not have a gtk+ release newer
+        than 2.17.3.
+        https://bugs.webkit.org/show_bug.cgi?id=30636
+
+        * WebKitTools/DumpRenderTree/gtk/EventSender.cpp:
+
 2009-10-21  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.
