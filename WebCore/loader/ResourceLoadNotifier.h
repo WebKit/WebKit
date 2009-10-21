@@ -40,8 +40,8 @@ class Frame;
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
-class ResourceRequest;
 class ScriptString;
+struct ResourceRequest;
 
 class ResourceLoadNotifier : public Noncopyable {
 public:
