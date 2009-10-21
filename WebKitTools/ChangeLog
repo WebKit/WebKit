@@ -1,5 +1,11 @@
 2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Fix for when linking using --as-needed with gcc.
+
+        * wx/browser/wscript:
+
+2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
+
         wxMac 10.4 build fix. Build and link against a version of libcurl new enough
         to support all the features used by CURL backend.
         
