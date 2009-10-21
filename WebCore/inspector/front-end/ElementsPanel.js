@@ -268,7 +268,12 @@ WebInspector.ElementsPanel.prototype = {
 
             if (!this._searchResults.length) {
                 this._currentSearchResultIndex = 0;
-                this.focusedDOMNode = node;
+
+                // Only change the focusedDOMNode if the search was manually performed, because
+                // the search may have been performed programmatically and we wouldn't want to
+                // change the current focusedDOMNode.
+                if (WebInspector.currentFocusElement === document.getElementById("search"))
+                    this.focusedDOMNode = node;
             }
 
             this._searchResults.push(node);

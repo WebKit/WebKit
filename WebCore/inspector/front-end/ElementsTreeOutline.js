@@ -578,7 +578,7 @@ WebInspector.ElementsTreeElement.prototype = {
             this.toggleNewAttributeButton(false);
             var attribute = listItem.getElementsByClassName("webkit-html-attribute")[0];
             if (attribute)
-                return this._startEditingAttribute(attribute, attribute.getElementsByClassName("webkit-html-attribute-name")[0]);
+                return this._startEditingAttribute(attribute, attribute.getElementsByClassName("webkit-html-attribute-value")[0]);
 
             return this._addNewAttribute(listItem);
         }

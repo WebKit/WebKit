@@ -376,7 +376,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 {
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
 
-    this.titleElement.addEventListener("click", function(e) { e.stopPropagation(); }, false);
+    this.titleElement.addEventListener("click", this._clickSelector.bind(this), false);
     this.titleElement.addEventListener("dblclick", this._dblclickSelector.bind(this), false);
     this.element.addEventListener("dblclick", this._dblclickEmptySpace.bind(this), false);
 
@@ -589,6 +589,19 @@ WebInspector.StylePropertiesSection.prototype = {
         item.listItemElement.textContent = "";
         item._newProperty = true;
         return item;
+    },
+
+    _clickSelector: function(event)
+    {
+        event.stopPropagation();
+
+        // Don't search "Computed Styles", "Style Attribute", or Mapped Attributes.
+        if (this.computedStyle || !this.rule || this.rule.isUser)
+            return;
+
+        var searchElement = document.getElementById("search");
+        searchElement.value = this.styleRule.selectorText;
+        WebInspector.performSearch({ target: searchElement });
     },
 
     _dblclickEmptySpace: function(event)

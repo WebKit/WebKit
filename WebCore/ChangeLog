@@ -1,3 +1,17 @@
+2009-10-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Selectors in the Styles pane should trigger a search for that selector when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=17126
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.addNodesToSearchResult): only change focusedDOMNode on a manual search
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._clickSelector): trigger a search
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditing): correctly start editing attribute value instead of name
+
 2009-10-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
