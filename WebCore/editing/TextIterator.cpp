@@ -1432,95 +1432,6 @@ static const size_t minimumSearchBufferSize = 8192;
 static bool searcherInUse;
 #endif
 
-// Tailored collation rules for Japanese text search.
-// The default Unicode Collation Algorithm is unnatural in Japanese.
-// These rules intend to treat the following characters as different characters.
-//
-// - Small kana letters and normal kana letters
-// - Voiceless letters, voiced letters and semi-voiced letters
-//
-// This is original work built in reference to the following Unicode standard documents.
-//
-// - http://unicode.org/reports/tr10/
-// - http://unicode.org/Public/UCA/latest/allkeys.txt
-//
-static const UChar japaneseKanaCollationRules[] = {
-    '&', 0x3041, '=', 0x30a1, '=', 0xff67, '<', 0x3042,
-    '=', 0x30a2, '=', 0xff71, '<', 0x3043, '=', 0x30a3,
-    '=', 0xff68, '<', 0x3044, '=', 0x30a4, '=', 0xff72,
-    '<', 0x3045, '=', 0x30a5, '=', 0xff69, '<', 0x3046,
-    '=', 0x30a6, '=', 0xff73, '<', 0x3094, '=', 0x30f4,
-    '<', 0x3047, '=', 0x30a7, '=', 0xff6a, '<', 0x3048,
-    '=', 0x30a8, '=', 0xff74, '<', 0x3049, '=', 0x30a9,
-    '=', 0xff6b, '<', 0x304a, '=', 0x30aa, '=', 0xff75,
-    '<', 0x3095, '=', 0x30f5, '<', 0x304b, '=', 0x30ab,
-    '=', 0xff76, '<', 0x304c, '=', 0x30ac, '<', 0x304d,
-    '=', 0x30ad, '=', 0xff77, '<', 0x304e, '=', 0x30ae,
-    '<', 0x304f, '=', 0x30af, '=', 0xff78, '<', 0x3050,
-    '=', 0x30b0, '<', 0x3096, '=', 0x30f6, '<', 0x3051,
-    '=', 0x30b1, '=', 0xff79, '<', 0x3052, '=', 0x30b2,
-    '<', 0x3053, '=', 0x30b3, '=', 0xff7a, '<', 0x3054,
-    '=', 0x30b4, '<', 0x3055, '=', 0x30b5, '=', 0xff7b,
-    '<', 0x3056, '=', 0x30b6, '<', 0x3057, '=', 0x30b7,
-    '=', 0xff7c, '<', 0x3058, '=', 0x30b8, '<', 0x3059,
-    '=', 0x30b9, '=', 0xff7d, '<', 0x305a, '=', 0x30ba,
-    '<', 0x305b, '=', 0x30bb, '=', 0xff7e, '<', 0x305c,
-    '=', 0x30bc, '<', 0x305d, '=', 0x30bd, '=', 0xff7f,
-    '<', 0x305e, '=', 0x30be, '<', 0x305f, '=', 0x30bf,
-    '=', 0xff80, '<', 0x3060, '=', 0x30c0, '<', 0x3061,
-    '=', 0x30c1, '=', 0xff81, '<', 0x3062, '=', 0x30c2,
-    '<', 0x3063, '=', 0x30c3, '=', 0xff6f, '<', 0x3064,
-    '=', 0x30c4, '=', 0xff82, '<', 0x3065, '=', 0x30c5,
-    '<', 0x3066, '=', 0x30c6, '=', 0xff83, '<', 0x3067,
-    '=', 0x30c7, '<', 0x3068, '=', 0x30c8, '=', 0xff84,
-    '<', 0x3069, '=', 0x30c9, '<', 0x306a, '=', 0x30ca,
-    '=', 0xff85, '<', 0x306b, '=', 0x30cb, '=', 0xff86,
-    '<', 0x306c, '=', 0x30cc, '=', 0xff87, '<', 0x306d,
-    '=', 0x30cd, '=', 0xff88, '<', 0x306e, '=', 0x30ce,
-    '=', 0xff89, '<', 0x306f, '=', 0x30cf, '=', 0xff8a,
-    '<', 0x3070, '=', 0x30d0, '<', 0x3071, '=', 0x30d1,
-    '<', 0x3072, '=', 0x30d2, '=', 0xff8b, '<', 0x3073,
-    '=', 0x30d3, '<', 0x3074, '=', 0x30d4, '<', 0x3075,
-    '=', 0x30d5, '=', 0xff8c, '<', 0x3076, '=', 0x30d6,
-    '<', 0x3077, '=', 0x30d7, '<', 0x3078, '=', 0x30d8,
-    '=', 0xff8d, '<', 0x3079, '=', 0x30d9, '<', 0x307a,
-    '=', 0x30da, '<', 0x307b, '=', 0x30db, '=', 0xff8e,
-    '<', 0x307c, '=', 0x30dc, '<', 0x307d, '=', 0x30dd,
-    '<', 0x307e, '=', 0x30de, '=', 0xff8f, '<', 0x307f,
-    '=', 0x30df, '=', 0xff90, '<', 0x3080, '=', 0x30e0,
-    '=', 0xff91, '<', 0x3081, '=', 0x30e1, '=', 0xff92,
-    '<', 0x3082, '=', 0x30e2, '=', 0xff93, '<', 0x3083,
-    '=', 0x30e3, '=', 0xff6c, '<', 0x3084, '=', 0x30e4,
-    '=', 0xff94, '<', 0x3085, '=', 0x30e5, '=', 0xff6d,
-    '<', 0x3086, '=', 0x30e6, '=', 0xff95, '<', 0x3087,
-    '=', 0x30e7, '=', 0xff6e, '<', 0x3088, '=', 0x30e8,
-    '=', 0xff96, '<', 0x3089, '=', 0x30e9, '=', 0xff97,
-    '<', 0x308a, '=', 0x30ea, '=', 0xff98, '<', 0x308b,
-    '=', 0x30eb, '=', 0xff99, '<', 0x308c, '=', 0x30ec,
-    '=', 0xff9a, '<', 0x308d, '=', 0x30ed, '=', 0xff9b,
-    '<', 0x308e, '=', 0x30ee, '<', 0x308f, '=', 0x30ef,
-    '=', 0xff9c, '<', 0x30f7, '<', 0x3090, '=', 0x30f0,
-    '<', 0x30f8, '<', 0x3091, '=', 0x30f1, '<', 0x3092,
-    '=', 0x30f2, '=', 0xff66, '<', 0x3093, '=', 0x30f3,
-    '=', 0xff9d, 0
-};
-
-static UCollator* createCollator()
-{
-    // Set tailored collation rules to fix Japanese text search.
-    // See the comments before japaneseKanaCollationRules for details.
-    UErrorCode status = U_ZERO_ERROR;
-    UCollator* collator = ucol_openRules(japaneseKanaCollationRules, -1, UCOL_DEFAULT, UCOL_DEFAULT_STRENGTH, 0, &status);
-    ASSERT(status == U_ZERO_ERROR);
-    return collator;
-}
-
-static UCollator* collator()
-{
-    static UCollator* collator = createCollator();
-    return collator;
-}
-
 static UStringSearch* createSearcher()
 {
     // Provide a non-empty pattern and non-empty text so usearch_open will not fail,
@@ -1529,10 +1440,6 @@ static UStringSearch* createSearcher()
     UErrorCode status = U_ZERO_ERROR;
     UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, currentSearchLocaleID(), 0, &status);
     ASSERT(status == U_ZERO_ERROR || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
-    status = U_ZERO_ERROR;
-    usearch_setCollator(searcher, collator(), &status);
-    ASSERT(status == U_ZERO_ERROR);
-    usearch_reset(searcher);
     return searcher;
 }
 
