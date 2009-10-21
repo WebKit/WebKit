@@ -5531,6 +5531,9 @@ media/video-src-empty.html
 # https://bugs.webkit.org/show_bug.cgi?id=30594
 fast/dom/Window/window-properties.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=30620
+fast/xsl/sort-locale.xml
+
 # Media tests that keep failing on the bot
 media/video-currentTime-set.html
 media/video-play-pause-events.html

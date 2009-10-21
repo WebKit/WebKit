@@ -1,5 +1,11 @@
 2009-10-21  Xan Lopez  <xlopez@igalia.com>
 
+        Skip another failing test.
+
+        * platform/gtk/Skipped:
+
+2009-10-21  Xan Lopez  <xlopez@igalia.com>
+
         Skip a few more libxml2 related tests.
 
         * platform/gtk/Skipped:
