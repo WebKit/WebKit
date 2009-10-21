@@ -54,6 +54,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
+#include "Storage.h"
 #include "WebSocket.h"
 #include "WindowFeatures.h"
 
@@ -277,6 +278,18 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker)
 ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket)
 {
     return WebSocket::isAvailable();
+}
+#endif
+
+#if ENABLE(DOM_STORAGE)
+ACCESSOR_RUNTIME_ENABLER(DOMWindowLocalStorage)
+{
+    return Storage::localStorageAvailable();
+}
+
+ACCESSOR_RUNTIME_ENABLER(DOMWindowSessionStorage)
+{
+    return Storage::sessionStorageAvailable();
 }
 #endif
 

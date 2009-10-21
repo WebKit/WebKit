@@ -44,6 +44,13 @@ namespace WebCore {
         static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
         ~Storage();
 
+#if USE(V8)
+        static void setLocalStorageAvailable(bool);
+        static bool localStorageAvailable();
+        static void setSessionStorageAvailable(bool);
+        static bool sessionStorageAvailable();
+#endif
+
         unsigned length() const;
         String key(unsigned index) const;
         String getItem(const String&) const;

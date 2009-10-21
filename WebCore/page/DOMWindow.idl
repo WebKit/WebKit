@@ -164,8 +164,8 @@ module window {
             raises(DOMException);
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        readonly attribute Storage sessionStorage;
-        readonly attribute Storage localStorage;
+        readonly attribute [EnabledAtRuntime] Storage sessionStorage;
+        readonly attribute [EnabledAtRuntime] Storage localStorage;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;

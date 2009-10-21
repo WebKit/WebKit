@@ -577,6 +577,8 @@ namespace WebCore {
 #endif      
 
 #if ENABLE(DOM_STORAGE)
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowLocalStorage);
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowSessionStorage);
         DECLARE_INDEXED_PROPERTY_GETTER(Storage);
         DECLARE_INDEXED_PROPERTY_SETTER(Storage);
         DECLARE_INDEXED_PROPERTY_DELETER(Storage);
