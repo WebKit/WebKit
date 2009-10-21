@@ -765,10 +765,13 @@ WebInspector.ResourcesPanel.prototype = {
             this.dividersLabelBarElement.appendChild(divider);
         }
 
-        if (this.calculator.startAtZero) {
+        if (this.calculator.startAtZero || !this.calculator.computePercentageFromEventTime) {
             // If our current sorting method starts at zero, that means it shows all
             // resources starting at the same point, and so onLoad event and DOMContent
             // event lines really wouldn't make much sense here, so don't render them.
+            // Additionally, if the calculator doesn't have the computePercentageFromEventTime
+            // function defined, we are probably sorting by size, and event times aren't relevant
+            // in this case.
             return;
         }
 

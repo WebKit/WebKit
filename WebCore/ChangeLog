@@ -1,3 +1,16 @@
+2009-10-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30616>.
+        REGRESSION (r49036): Web Inspector: Summary graph no longer switching to size summary.
+        
+        Add a check to make sure a function we need to calculate percentages is
+        defined before we use it.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._updateGraphDividersIfNeeded):
+
 2009-10-21  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.
