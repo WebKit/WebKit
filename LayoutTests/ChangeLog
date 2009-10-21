@@ -1,3 +1,17 @@
+2009-10-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Removed 5333725.html from Skipped and modified the expected
+        result of 5232159-expected.txt and fake-drag-expected.txt, this
+        modifications come from the changes in EventSender (bug 30633 and
+        bug 30636).
+        https://bugs.webkit.org/show_bug.cgi?id=30593
+
+        * LayoutTests/platform/gtk/Skipped:
+        * LayoutTests/platform/gtk/editing/selection/5232159-expected.txt:
+        * LayoutTests/platform/gtk/editing/selection/fake-drag-expected.tx :
+
 2009-10-21  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Eric Seidel.

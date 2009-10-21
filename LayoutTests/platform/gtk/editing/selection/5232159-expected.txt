@@ -23,4 +23,5 @@ layer at (0,60) size 800x100
         text run at (0,40) width 740: "tincidunt, ipsum metus tristique risus, et convallis turpis elit eget massa. Nunc consectetuer dolor vel nunc. Cum sociis"
         text run at (0,60) width 753: "natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque dapibus ante et nulla. Cras nec velit."
         text run at (0,80) width 645: "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer ut tortor."
-caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 236 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
