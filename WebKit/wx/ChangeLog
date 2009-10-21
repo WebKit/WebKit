@@ -1,3 +1,13 @@
+2009-10-21  Pedro Romano  <pmcnr72@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Include 'WebFrame.h' declared classes in wxPython bindings.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30504
+
+        * bindings/python/webview.i:
+
 2009-10-18  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
