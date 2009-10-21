@@ -616,6 +616,10 @@ namespace WebCore {
         DECLARE_CALLBACK(WorkerContextClearInterval);
         DECLARE_CALLBACK(WorkerContextAddEventListener);
         DECLARE_CALLBACK(WorkerContextRemoveEventListener);
+
+#if ENABLE(NOTIFICATIONS)
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications);
+#endif
 #endif // ENABLE(WORKERS)
 
 #if ENABLE(NOTIFICATIONS)
@@ -637,6 +641,10 @@ namespace WebCore {
 #if ENABLE(SHARED_WORKERS)
         DECLARE_CALLBACK(SharedWorkerConstructor);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker);
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebkitNotifications);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

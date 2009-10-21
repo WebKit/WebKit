@@ -168,7 +168,7 @@ module window {
         readonly attribute Storage localStorage;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        readonly attribute NotificationCenter webkitNotifications;
+        readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
 
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS

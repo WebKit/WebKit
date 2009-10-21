@@ -46,6 +46,7 @@
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "MediaPlayer.h"
+#include "NotificationCenter.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "ScheduledAction.h"
@@ -276,6 +277,13 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker)
 ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket)
 {
     return WebSocket::isAvailable();
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+ACCESSOR_RUNTIME_ENABLER(DOMWindowWebkitNotifications)
+{
+    return NotificationCenter::isAvailable();
 }
 #endif
 

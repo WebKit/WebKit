@@ -72,7 +72,7 @@ module threads {
 
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         // Notification interface
-        readonly attribute NotificationCenter webkitNotifications;
+        readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
 
         // Constructors

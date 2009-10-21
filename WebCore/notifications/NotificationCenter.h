@@ -47,8 +47,12 @@ namespace WebCore {
 
     class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveDOMObject { 
     public:
+#if USE(V8)
+        static void setIsAvailable(bool);
+        static bool isAvailable();
+#endif
         static PassRefPtr<NotificationCenter> create(ScriptExecutionContext* context, NotificationPresenter* presenter) { return adoptRef(new NotificationCenter(context, presenter)); }
-        
+
         Notification* createHTMLNotification(const String& URI, ExceptionCode& ec)
         {
             return Notification::create(KURL(ParsedURLString, URI), context(), ec, presenter());
