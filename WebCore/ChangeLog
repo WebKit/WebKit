@@ -1,3 +1,18 @@
+2009-10-21  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        Plugins: Create manual tests for testing plugins
+        
+        Create two test files:
+        1. windowed.html - Test plugin in windowed mode.
+        2. windowless.html - Test plugin in windowless mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30503
+
+        * manual-tests/plugins/windowed.html: Added.
+        * manual-tests/plugins/windowless.html: Added.
+
 2009-10-21  Satoshi Nakagawa  <psychs@limechat.net>
 
         Reviewed by Darin Adler.
