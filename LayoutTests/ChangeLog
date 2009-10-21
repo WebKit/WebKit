@@ -1,3 +1,13 @@
+2009-10-21  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix click-focus-anchor layout test to mimic click event.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30610
+
+        * fast/events/click-focus-anchor.html:
+
 2009-10-21  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
