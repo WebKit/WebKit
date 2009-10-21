@@ -1,3 +1,17 @@
+2009-10-21  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        REGRESSION: Clicking on nodes in the console should take you to the element in the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=27231
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatnode): Turns on ElementsTreeOutline.showInElementsPanelEnabled
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline): Added ElementsTreeOutline.showInElementsPanelEnabled
+        (WebInspector.ElementsTreeElement.prototype.onmousedown): Reveals the node in the Elements panel if 
+        treeOutline.showInElementsPanelEnabled is true.
+
 2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Eric Seidel.

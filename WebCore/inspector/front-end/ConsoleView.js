@@ -539,6 +539,7 @@ WebInspector.ConsoleView.prototype = {
             if (!nodeId)
                 return;
             var treeOutline = new WebInspector.ElementsTreeOutline();
+            treeOutline.showInElementsPanelEnabled = true;
             treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
             treeOutline.element.addStyleClass("outline-disclosure");
             if (!treeOutline.children[0].hasChildren)
