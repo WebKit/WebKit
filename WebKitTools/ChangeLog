@@ -2,6 +2,16 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Fixed the double click condition, it is not double click if
+        we move in just in one direction.
+        https://bugs.webkit.org/show_bug.cgi?id=30636
+
+        * WebKitTools/DumpRenderTree/gtk/EventSender.cpp:
+
+2009-10-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Initialize the events completly before emitting them.
         https://bugs.webkit.org/show_bug.cgi?id=30633
 
