@@ -1322,6 +1322,13 @@ END
             $template = "instance";
         }
 
+        my $conditional = "";
+        if ($attrExt->{"EnabledAtRuntime"}) {
+            # Only call Set()/SetAccessor() if this method should be enabled
+            $enable_function = $interfaceName . $codeGenerator->WK_ucfirst($function->signature->name);
+            $conditional = "if (V8Custom::v8${enable_function}Enabled())\n";
+        }
+
         if ($attrExt->{"DoNotCheckDomainSecurity"} &&
             ($dataNode->extendedAttributes->{"CheckDomainSecurity"} || $interfaceName eq "DOMWindow")) {
             # Mark the accessor as ReadOnly and set it on the proto object so
@@ -1342,7 +1349,7 @@ END
             push(@implContent, <<END);
 
   // $commentInfo
-  $template->SetAccessor(
+  $conditional $template->SetAccessor(
       v8::String::New("$name"),
       ${interfaceName}Internal::${name}AttrGetter,
       0,
@@ -1370,7 +1377,7 @@ END
       push(@implContent, <<END);
 
   // $commentInfo
-  ${template}->Set(
+  $conditional ${template}->Set(
       v8::String::New("$name"),
       $templateFunction,
       static_cast<v8::PropertyAttribute>($property_attributes));
