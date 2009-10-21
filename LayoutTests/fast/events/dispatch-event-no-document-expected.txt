@@ -1,0 +1,5 @@
+The test verifies that EventTarget with an event listener but without ScriptExecutionContext (not inserted into Document) does not crash during an attempt to dispatch an event. It should just not call the handler. This is what FF 3.5 is also doing.
+
+Test passes if there is no crash, and event is not dispatched.
+
+PASS

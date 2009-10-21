@@ -232,6 +232,10 @@ bool EventTarget::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
         ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
+
+    if (!scriptExecutionContext())
+        return false;
+
     return dispatchEvent(event);
 }
 

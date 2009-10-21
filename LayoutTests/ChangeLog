@@ -1,3 +1,13 @@
+2009-10-21  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix the crash when a node not in a document receives dispatchEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=30611
+
+        * fast/events/dispatch-event-no-document-expected.txt: Added.
+        * fast/events/dispatch-event-no-document.html: Added.
+
 2009-10-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

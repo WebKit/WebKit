@@ -1,3 +1,15 @@
+2009-10-21  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix the crash when a node not in a document receives dispatchEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=30611
+
+        Test: fast/events/dispatch-event-no-document.html
+
+        * dom/EventTarget.cpp: Check for scriptExecutionContext() at the moment of dispatchEvent; do nothing if no context.
+        (WebCore::EventTarget::dispatchEvent):
+
 2009-10-21  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.
