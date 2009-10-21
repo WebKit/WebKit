@@ -1,3 +1,10 @@
+2009-10-21  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        Corrected a couple of long-obsolete comments regarding Safari's use of this class.
+
 2009-10-20  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

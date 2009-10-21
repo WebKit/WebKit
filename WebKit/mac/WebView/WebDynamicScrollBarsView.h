@@ -29,8 +29,7 @@
 // This is a Private header (containing SPI), despite the fact that its name
 // does not contain the word Private.
 
-// FIXME: Does Safari really need to use this any more? AppKit added autohidesScrollers
-// in Panther, and that was the original reason we needed this view in Safari.
+// This was once used by Safari, but has not been for a long time.
 
 // FIXME: <rdar://problem/5898985> Mail currently expects this header to define WebCoreScrollbarAlwaysOn.
 extern const int WebCoreScrollbarAlwaysOn;
@@ -47,5 +46,8 @@ extern const int WebCoreScrollbarAlwaysOn;
     BOOL horizontallyPinnedByPreviousWheelEvent;
     unsigned inUpdateScrollersLayoutPass;
 }
-- (void)setAllowsHorizontalScrolling:(BOOL)flag; // This method is used by Safari, so it cannot be removed.
+
+// This was originally added for Safari's benefit, but Safari has not used it for a long time.
+// Perhaps it can be removed.
+- (void)setAllowsHorizontalScrolling:(BOOL)flag;
 @end
