@@ -1,3 +1,12 @@
+2009-10-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Initialize the events completly before emitting them.
+        https://bugs.webkit.org/show_bug.cgi?id=30633
+
+        * WebKitTools/DumpRenderTree/gtk/EventSender.cpp:
+
 2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Fix for when linking using --as-needed with gcc.

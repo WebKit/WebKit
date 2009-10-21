@@ -53,6 +53,7 @@ extern "C" {
 }
 
 static bool down = false;
+static bool currentEventButton = 1;
 static bool dragMode = true;
 static bool replayingSavedEvents = false;
 static int lastMousePositionX;
@@ -145,9 +146,20 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
         event.button.button = (int)JSValueToNumber(context, arguments[0], exception) + 1;
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
+
+    currentEventButton = event.button.button;
+
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
     event.button.window = GTK_WIDGET(view)->window;
+    event.button.time = GDK_CURRENT_TIME;
+    event.button.device = gdk_device_get_core_pointer();
+
+    int x_root, y_root;
+    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+
+    event.button.x_root = x_root;
+    event.button.y_root = y_root;
 
     updateClickCount(1);
 
@@ -187,9 +199,20 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
         event.button.button = (int)JSValueToNumber(context, arguments[0], exception) + 1;
         g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
     }
+
+    currentEventButton = event.button.button;
+
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
     event.button.window = GTK_WIDGET(view)->window;
+    event.button.time = GDK_CURRENT_TIME;
+    event.button.device = gdk_device_get_core_pointer();
+
+    int x_root, y_root;
+    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+
+    event.button.x_root = x_root;
+    event.button.y_root = y_root;
 
     if ((dragMode && !replayingSavedEvents) || msgQueue[endOfQueue].delay) {
         msgQueue[endOfQueue].event = event;
@@ -223,11 +246,29 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
 
     GdkEvent event;
+    memset(&event, 0, sizeof(event));
     event.type = GDK_MOTION_NOTIFY;
     event.motion.x = lastMousePositionX;
     event.motion.y = lastMousePositionY;
     event.motion.time = GDK_CURRENT_TIME;
     event.motion.window = GTK_WIDGET(view)->window;
+    event.motion.device = gdk_device_get_core_pointer();
+
+    int x_root, y_root;
+    gdk_window_get_root_coords(GTK_WIDGET(view)->window, lastMousePositionX, lastMousePositionY, &x_root, &y_root);
+
+    event.motion.x_root = x_root;
+    event.motion.y_root = y_root;
+
+    if (down) {
+        if (currentEventButton == 1)
+            event.motion.state = GDK_BUTTON1_MASK;
+        else if (currentEventButton == 2)
+            event.motion.state = GDK_BUTTON2_MASK;
+        else if (currentEventButton == 3)
+            event.motion.state = GDK_BUTTON3_MASK;
+    } else
+        event.motion.state = 0;
 
     if (dragMode && down && !replayingSavedEvents) {
         msgQueue[endOfQueue].event = event;
