@@ -1,3 +1,18 @@
+2009-10-20  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fixes RefPtr initialization in the V8 implementation of WebCore::ScriptString to use the ::create() idiom and
+        use adoptRef() properly.  I failed to read the RefPtr docs the first time through :(
+
+        No new tests, error was caught by valgrind on the Chromium builders.
+
+        * bindings/v8/ScriptString.h:
+        (WebCore::ScriptString::ScriptString):
+        (WebCore::ScriptString::operator=):
+        * bindings/v8/ScriptStringImpl.h:
+        (WebCore::ScriptStringImpl::create):
+
 2009-10-20  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

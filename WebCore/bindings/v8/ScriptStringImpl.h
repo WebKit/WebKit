@@ -46,9 +46,15 @@ namespace WebCore {
 // This implementation optimizes for the common case where the responseText is built up with many calls to operator+= before the actual text is queried.
 class ScriptStringImpl : public RefCounted<ScriptStringImpl> {
 public:
-    ScriptStringImpl() {}
-    ScriptStringImpl(const String& s);
-    ScriptStringImpl(const char* s);
+    static PassRefPtr<ScriptStringImpl> create(const String& s)
+    {
+        return adoptRef(new ScriptStringImpl(s));
+    }
+
+    static PassRefPtr<ScriptStringImpl> create(const char* s)
+    {
+        return adoptRef(new ScriptStringImpl(s));
+    }
 
     String toString() const;
 
@@ -60,6 +66,9 @@ public:
     v8::Handle<v8::String> v8StringHandle() { return m_handle.get(); }
 
 private:
+    ScriptStringImpl(const String& s);
+    ScriptStringImpl(const char* s);
+
     OwnHandle<v8::String> m_handle;
 };
 
