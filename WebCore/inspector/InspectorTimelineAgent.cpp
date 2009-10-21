@@ -43,8 +43,7 @@
 namespace WebCore {
 
 InspectorTimelineAgent::InspectorTimelineAgent(InspectorFrontend* frontend)
-    : m_sessionStartTime(currentTimeInMilliseconds())
-    , m_frontend(frontend)
+    : m_frontend(frontend)
     , m_currentTimelineItem(0)
 {
     ASSERT(m_frontend);
@@ -56,7 +55,7 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 
 void InspectorTimelineAgent::willDispatchDOMEvent(const Event& event)
 {
-    m_currentTimelineItem = new DOMDispatchTimelineItem(m_currentTimelineItem.release(), sessionTimeInMilliseconds(), event);
+    m_currentTimelineItem = new DOMDispatchTimelineItem(m_currentTimelineItem.release(), currentTimeInMilliseconds(), event);
 }
 
 void InspectorTimelineAgent::didDispatchDOMEvent()
@@ -67,7 +66,7 @@ void InspectorTimelineAgent::didDispatchDOMEvent()
 
 void InspectorTimelineAgent::willLayout()
 {
-    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), sessionTimeInMilliseconds(), LayoutTimelineItemType);
+    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), currentTimeInMilliseconds(), LayoutTimelineItemType);
 }
 
 void InspectorTimelineAgent::didLayout()
@@ -78,7 +77,7 @@ void InspectorTimelineAgent::didLayout()
 
 void InspectorTimelineAgent::willRecalculateStyle()
 {
-    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), sessionTimeInMilliseconds(), RecalculateStylesTimelineItemType);
+    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), currentTimeInMilliseconds(), RecalculateStylesTimelineItemType);
 }
 
 void InspectorTimelineAgent::didRecalculateStyle()
@@ -89,7 +88,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
 
 void InspectorTimelineAgent::willPaint()
 {
-    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), sessionTimeInMilliseconds(), PaintTimelineItemType);
+    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), currentTimeInMilliseconds(), PaintTimelineItemType);
 }
 
 void InspectorTimelineAgent::didPaint()
@@ -100,7 +99,7 @@ void InspectorTimelineAgent::didPaint()
 
 void InspectorTimelineAgent::willWriteHTML()
 {
-    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), sessionTimeInMilliseconds(), ParseHTMLTimelineItemType);
+    m_currentTimelineItem = new TimelineItem(m_currentTimelineItem.release(), currentTimeInMilliseconds(), ParseHTMLTimelineItemType);
 }
 
 void InspectorTimelineAgent::didWriteHTML()
@@ -111,7 +110,6 @@ void InspectorTimelineAgent::didWriteHTML()
 
 void InspectorTimelineAgent::reset()
 {
-    m_sessionStartTime = currentTimeInMilliseconds();
     m_currentTimelineItem.set(0);
 }
 
@@ -120,7 +118,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord()
     OwnPtr<TimelineItem> item(m_currentTimelineItem.release());
     m_currentTimelineItem = item->releasePrevious();
 
-    item->setEndTime(sessionTimeInMilliseconds());
+    item->setEndTime(currentTimeInMilliseconds());
     if (m_currentTimelineItem.get())
         m_currentTimelineItem->addChildItem(item.release());
     else
@@ -130,11 +128,6 @@ void InspectorTimelineAgent::didCompleteCurrentRecord()
 double InspectorTimelineAgent::currentTimeInMilliseconds()
 {
     return currentTime() * 1000.0;
-}
-
-double InspectorTimelineAgent::sessionTimeInMilliseconds()
-{
-    return currentTimeInMilliseconds() - m_sessionStartTime;
 }
 
 } // namespace WebCore

@@ -61,13 +61,10 @@ namespace WebCore {
         void didWriteHTML();
         void willWriteHTML();
     private:
-        double sessionTimeInMilliseconds();
-
         static double currentTimeInMilliseconds();
 
         void didCompleteCurrentRecord();
 
-        double m_sessionStartTime;
         InspectorFrontend* m_frontend;
         OwnPtr<TimelineItem> m_currentTimelineItem;
     };

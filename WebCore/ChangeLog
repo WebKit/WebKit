@@ -1,3 +1,23 @@
+2009-10-20  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Changes TimelineItems to be created with raw timestamps as opposed
+        to a time relative to a start of session.  Normalized timestamps cause
+        problems when monitoring a browsing session across multiple page
+        transitions.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::willDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+
 2009-10-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
