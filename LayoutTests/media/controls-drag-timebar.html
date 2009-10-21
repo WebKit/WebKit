@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>drag timebar test</title>
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
             var x, y, time, count;
@@ -53,7 +54,7 @@
                 waitForEvent('playing', playing);
                 waitForEvent('seeked', seeked);
                 run("video.autoplay = true");
-                run("video.src = 'content/test.mp4'");
+                run("video.src = '" + findMediaFile("video", "content/test") + "'");
             }    
         </script>
     </head>
