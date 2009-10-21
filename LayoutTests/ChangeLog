@@ -1,3 +1,18 @@
+2009-10-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: simple console tests do not require testing harness.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30478
+
+        * inspector/uncaught-dom1-exception-expected.txt:
+        * inspector/uncaught-dom1-exception.html:
+        * inspector/uncaught-dom3-exception-expected.txt:
+        * inspector/uncaught-dom3-exception.html:
+        * inspector/uncaught-dom8-exception-expected.txt:
+        * inspector/uncaught-dom8-exception.html:
+
 2009-10-20  Xan Lopez  <xlopez@igalia.com>
 
         Another batch of skipped tests with links to their bugs.

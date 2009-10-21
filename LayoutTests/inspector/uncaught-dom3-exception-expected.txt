@@ -1,5 +1,2 @@
-CONSOLE MESSAGE: line 17: HIERARCHY_REQUEST_ERR: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
-ALERT: Exception timeout exceeded.
+CONSOLE MESSAGE: line 9: HIERARCHY_REQUEST_ERR: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
 This tests that we are getting the correct message for DOM Exception 3: HIERARCHY_REQUEST_ERR.
-
-
