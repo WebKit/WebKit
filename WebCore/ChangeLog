@@ -1,3 +1,9 @@
+2009-10-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium build fix - add missing image to gypi.
+
+        * WebCore.gypi:
+
 2009-10-21  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Eric Seidel.

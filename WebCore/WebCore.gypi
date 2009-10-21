@@ -3696,6 +3696,7 @@
             'inspector/front-end/Images/paneBottomGrow.png',
             'inspector/front-end/Images/paneBottomGrowActive.png',
             'inspector/front-end/Images/paneGrowHandleLine.png',
+            'inspector/front-end/Images/paneSettingsButtons.png',
             'inspector/front-end/Images/pauseOnExceptionButtonGlyph.png',
             'inspector/front-end/Images/percentButtonGlyph.png',
             'inspector/front-end/Images/profileGroupIcon.png',
