@@ -602,6 +602,16 @@ WebInspector.CPUProfileType.prototype = {
     setRecordingProfile: function(isProfiling)
     {
         this._recording = isProfiling;
+    },
+
+    createSidebarTreeElementForProfile: function(profile)
+    {
+        return new WebInspector.ProfileSidebarTreeElement(profile);
+    },
+
+    createView: function(profile)
+    {
+        return new WebInspector.CPUProfileView(profile);
     }
 }
 
@@ -627,18 +637,5 @@ WebInspector.CPUProfile.prototype = {
     get head()
     {
         return this.representedObject.head;
-    },
-
-    createView: function()
-    {
-        return new WebInspector.CPUProfileView(this);
-    },
-
-    // FIXME: Extract this into a superclass so that createView can be simply overridden by subclasses.
-    viewForProfile: function()
-    {
-        if (!this._profileView)
-            this._profileView = this.createView();
-        return this._profileView;
     }
 }

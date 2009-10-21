@@ -61,6 +61,25 @@ WebInspector.ProfileType.prototype = {
 
     buttonClicked: function()
     {
+    },
+
+    viewForProfile: function(profile)
+    {
+        if (!profile._profileView)
+            profile._profileView = this.createView(profile);
+        return profile._profileView;
+    },
+
+    // Must be implemented by subclasses.
+    createView: function(profile)
+    {
+        throw new Error("Needs implemented.");
+    },
+
+    // Must be implemented by subclasses.
+    createSidebarTreeElementForProfile: function(profile)
+    {
+        throw new Error("Needs implemented.");
     }
 }
 
@@ -212,10 +231,12 @@ WebInspector.ProfilesPanel.prototype = {
 
     addProfileHeader: function(typeId, profile)
     {
-        var sidebarParent = this.getProfileType(typeId).treeElement;
+        var profileType = this.getProfileType(typeId);
+        var sidebarParent = profileType.treeElement;
         var small = false;
         var alternateTitle;
 
+        profile.__profilesPanelProfileType = profileType;
         this._profiles.push(profile);
         this._profilesIdMap[this._makeKey(profile.uid, typeId)] = profile;
 
@@ -257,7 +278,7 @@ WebInspector.ProfilesPanel.prototype = {
             }
         }
 
-        var profileTreeElement = new WebInspector.ProfileSidebarTreeElement(profile);
+        var profileTreeElement = profileType.createSidebarTreeElementForProfile(profile);
         profileTreeElement.small = small;
         if (alternateTitle)
             profileTreeElement.mainTitle = alternateTitle;
@@ -276,7 +297,7 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleView)
             this.visibleView.hide();
 
-        var view = profile.viewForProfile();
+        var view = profile.__profilesPanelProfileType.viewForProfile(profile);
 
         view.show(this.profileViews);
 

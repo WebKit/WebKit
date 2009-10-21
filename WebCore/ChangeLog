@@ -1,3 +1,25 @@
+2009-10-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Enable creation of custom SidebarTreeElements for different ProfileTypes
+
+        ProfileTypes can now create sidebar tree elements of custom types.
+        https://bugs.webkit.org/show_bug.cgi?id=30520
+
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType.prototype.setRecordingProfile):
+        (WebInspector.CPUProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.CPUProfileType.prototype.createView):
+        (WebInspector.CPUProfile.prototype.get head):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType.prototype.buttonClicked):
+        (WebInspector.ProfileType.prototype.viewForProfile):
+        (WebInspector.ProfileType.prototype.createView):
+        (WebInspector.ProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.showProfile):
+
 2009-10-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
