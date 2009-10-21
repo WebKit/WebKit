@@ -47,7 +47,7 @@ namespace WebCore {
 
     class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient {
     public:
-        static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return new WebSocketChannel(context, client, url, protocol); }
+        static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
         virtual ~WebSocketChannel();
 
         virtual void connect();

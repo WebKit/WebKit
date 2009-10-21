@@ -1,3 +1,12 @@
+2009-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix leak of WebSocketChannel by adopting the newly-created reference.
+
+        * websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::create):
+
 2009-10-20  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.
