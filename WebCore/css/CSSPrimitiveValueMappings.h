@@ -378,6 +378,7 @@ template<> inline CSSPrimitiveValue::operator EFillBox() const
         case CSSValueContentBox:
             return ContentFillBox;
         case CSSValueText:
+        case CSSValueWebkitText:
             return TextFillBox;
         default:
             ASSERT_NOT_REACHED();

@@ -1,3 +1,22 @@
+2009-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed background-clip parsing regressions introduced in r46240.
+
+        Test: fast/css/background-clip-text.html
+
+        * css/CSSParser.cpp:
+        (WebCore::parseBackgroundClip): Added this helper method.
+        (WebCore::CSSParser::parseFillShorthand): Use parseBackgroundClip() to
+        reparse the value. The old code called parseFillProperty() again, which
+        didn’t work, because parseFillProperty() advances the value list.
+        (WebCore::CSSParser::parseFillProperty): Changed to use
+        parseBackgroundClip().
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator EFillBox): Added a case for
+        CSSValueWebkitText.
+
 2009-10-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

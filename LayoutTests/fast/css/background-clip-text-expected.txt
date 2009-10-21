@@ -1,0 +1,19 @@
+This tests checks that the '-webkit-text' and 'text' keywords are parsed correctly in the 'background-clip' and '-webkit-background-clip' properties, and that 'background-clip' is parsed correctly in the 'background' shorthand.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("background-clip: -webkit-text", "background-clip") is "-webkit-text"
+PASS test("background-clip: -webkit-text", "-webkit-background-clip") is null
+PASS test("background-clip: text", "background-clip") is null
+PASS test("background-clip: text", "-webkit-background-clip") is null
+PASS test("-webkit-background-clip: -webkit-text", "background-clip") is null
+PASS test("-webkit-background-clip: -webkit-text", "-webkit-background-clip") is "-webkit-text"
+PASS test("-webkit-background-clip: text", "background-clip") is null
+PASS test("-webkit-background-clip: text", "-webkit-background-clip") is "text"
+PASS test("background: url() padding-box", "background-clip") is "padding-box"
+PASS test("background: url() padding-box", "-webkit-background-clip") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

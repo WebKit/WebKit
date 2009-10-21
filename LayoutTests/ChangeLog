@@ -1,3 +1,17 @@
+2009-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added a background-clip parsing test that would have caught some
+        regressions that were introduced in r46240.
+
+        * fast/css/background-clip-text-expected.txt: Added.
+        * fast/css/background-clip-text.html: Added.
+        * fast/css/script-tests: Added.
+        * fast/css/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/backgrounds/repeat/script-tests/TEMPLATE.html.
+        * fast/css/script-tests/background-clip-text.js: Added.
+        (test):
+
 2009-10-21  Xan Lopez  <xlopez@igalia.com>
 
         Skip another failing test.
