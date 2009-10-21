@@ -343,7 +343,10 @@ def common_configure(conf):
             
         conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
         conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)
-        conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
+        if sys.platform.startswith('darwin') and min_version and min_version == '10.4':
+            conf.check_cfg(path=os.path.join(wklibs_dir, 'unix', 'bin', 'curl-config'), args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
+        else:
+            conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
         
         if not sys.platform.startswith('darwin'):
             conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX', mandatory=True)

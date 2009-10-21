@@ -74,6 +74,10 @@ LIBPNG_VERSION="1.2.33"
 LIBPNG_TARBALL="libpng-$LIBPNG_VERSION.tar.gz"
 LIBPNG_URL="http://wxwebkit.wxcommunity.com/downloads/deps/$LIBPNG_TARBALL"
 
+LIBCURL_VERSION="7.19.6"
+LIBCURL_TARBALL="curl-$LIBCURL_VERSION.tar.gz"
+LIBCURL_URL="http://curl.haxx.se/download/$LIBCURL_TARBALL"
+
 export MAC_OS_X_DEPLOYMENT_TARGET=10.4
 
 cd $DL_DIR
@@ -171,4 +175,26 @@ if [ ! -f $DEPS_PREFIX/lib/libpng.a ]; then
   
   cd $DL_DIR
   rm -rf $DL_DIR/libpng-$LIBPNG_VERSION
+fi
+
+if [ ! -f $DEPS_PREFIX/lib/libcurl.$DLLEXT ]; then
+  $DL_CMD -o $DL_DIR/$LIBCURL_TARBALL $LIBCURL_URL
+
+  tar xzvf $DL_DIR/$LIBCURL_TARBALL
+  cd $DL_DIR/curl-$LIBCURL_VERSION
+
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
+    LDFLAGS="-arch i386 -arch ppc"
+    make install
+  else
+    ./configure --prefix=$DEPS_PREFIX
+  
+    make
+    make install
+  fi
+  
+  cd $DL_DIR
+  rm -rf $DL_DIR/curl-$LIBCURL_VERSION
 fi

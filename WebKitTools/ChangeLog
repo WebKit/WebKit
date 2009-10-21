@@ -1,3 +1,11 @@
+2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMac 10.4 build fix. Build and link against a version of libcurl new enough
+        to support all the features used by CURL backend.
+        
+        * wx/build/settings.py:
+        * wx/install-unix-extras:
+
 2009-10-20  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

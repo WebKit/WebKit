@@ -1,3 +1,10 @@
+2009-10-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMac 10.4 build fix, make sure we specify the Sqlite3 dependency correctly as otherwise
+        it will use the sqlite3 system library rather than WebCoreSQLite3.
+
+        * wscript:
+
 2009-10-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

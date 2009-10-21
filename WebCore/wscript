@@ -117,7 +117,7 @@ def build(bld):
         source = ' '.join(flattenSources(webcore_sources.values())),
         cxxflags = cxxflags,
         target = 'webcore',
-        uselib = 'WX ICU XML XSLT CURL ' + get_config(),
+        uselib = 'WX ICU XML XSLT CURL SQLITE3 ' + get_config(),
         uselib_local = '',
         install_path = output_dir,
         )
