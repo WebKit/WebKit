@@ -1,0 +1,115 @@
+<html>
+<head>
+    <script>
+        function canFind(target, specimen)
+        {
+            getSelection().empty();
+            document.body.innerHTML = specimen;
+            document.execCommand("FindString", false, target);
+            var result = getSelection().rangeCount != 0;
+            getSelection().empty();
+            return result;
+        }
+
+        function runTests()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var smallHiraganaA = String.fromCharCode(0x3041);
+            var hiraganaA = String.fromCharCode(0x3042);
+            var smallKatakanaA = String.fromCharCode(0x30a1);
+            var katakanaA = String.fromCharCode(0x30a2);
+            var halfwidthSmallKatakanaA = String.fromCharCode(0xff67);
+            var halfwidthKatakanaA = String.fromCharCode(0xff71);
+            var hiraganaKa = String.fromCharCode(0x304b);
+            var hiraganaGa = String.fromCharCode(0x304c);
+
+            var success = true;
+
+            var message = "FAILURE:";
+
+            if (!canFind(smallHiraganaA, smallHiraganaA)) {
+                success = false;
+                message += " Cannot find small hiragana A when searching for small hiragana A.";
+            }
+
+            if (!canFind(hiraganaA, hiraganaA)) {
+                success = false;
+                message += " Cannot find hiragana A when searching for hiragana A.";
+            }
+
+            if (!canFind(smallKatakanaA, smallKatakanaA)) {
+                success = false;
+                message += " Cannot find small katakana A when searching for small katakana A.";
+            }
+
+            if (!canFind(katakanaA, katakanaA)) {
+                success = false;
+                message += " Cannot find katakana A when searching for katakana A.";
+            }
+
+            if (!canFind(halfwidthSmallKatakanaA, halfwidthSmallKatakanaA)) {
+                success = false;
+                message += " Cannot find halfwidth small katakana A when searching for halfwidth small katakana A.";
+            }
+
+            if (!canFind(halfwidthKatakanaA, halfwidthKatakanaA)) {
+                success = false;
+                message += " Cannot find halfwidth katakana A when searching for halfwidth katakana A.";
+            }
+
+            if (!canFind(smallHiraganaA, smallKatakanaA)) {
+                success = false;
+                message += " Cannot find small katakana A when searching for small hiragana A.";
+            }
+
+            if (!canFind(hiraganaA, halfwidthKatakanaA)) {
+                success = false;
+                message += " Cannot find halfwidth katakana A when searching for hiragana A.";
+            }
+
+            if (canFind(smallHiraganaA, hiraganaA)) {
+                success = false;
+                message += " Found small hiragana A when searching for hiragana A.";
+            }
+
+            if (canFind(smallKatakanaA, katakanaA)) {
+                success = false;
+                message += " Found small katakana A when searching for katakana A.";
+            }
+
+            if (canFind(halfwidthSmallKatakanaA, halfwidthKatakanaA)) {
+                success = false;
+                message += " Found halfwidth small katakana A when searching for halfwidth katakana A.";
+            }
+
+            if (canFind(smallHiraganaA, katakanaA)) {
+                success = false;
+                message += " Found small hiragana A when searching for katakana A.";
+            }
+
+            if (canFind(katakanaA, halfwidthSmallKatakanaA)) {
+                success = false;
+                message += " Found katakana A when searching for halfwidth small katakana A.";
+            }
+
+            if (canFind(halfwidthKatakanaA, smallHiraganaA)) {
+                success = false;
+                message += " Found halfwidth katakana A when searching for small hiragana A.";
+            }
+
+            if (canFind(hiraganaKa, hiraganaGa)) {
+                success = false;
+                message += " Found hiragana Ka when searching for hiragana Ga.";
+            }
+
+            if (success)
+                message = "SUCCESS: Found hiragana and katakana correctly.";
+
+            document.body.innerHTML = message;
+        }
+    </script>
+</head>
+<body onload="runTests()"></body>
+</html>
