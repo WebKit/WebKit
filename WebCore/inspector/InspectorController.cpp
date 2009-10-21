@@ -171,6 +171,11 @@ InspectorController::~InspectorController()
         s_settingCache = 0;
     }
     
+    // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
+    // no references to the DOM agent from the DOM tree.
+    if (m_domAgent)
+        m_domAgent->setDocument(0);
+
     m_inspectorBackend->disconnectController();
 }
 
