@@ -1,3 +1,16 @@
+2009-10-21  Darin Adler  <darin@apple.com>
+
+        Swedish search (and other languages as well) is broken while fixing Japanese search
+        https://bugs.webkit.org/show_bug.cgi?id=30646
+
+        Rolled Japanese tailoring out that was done to fix
+        https://bugs.webkit.org/show_bug.cgi?id=30437 earlier.
+        It was overriding the locale-specific tailoring.
+        We'll land a fix once we figure out how to add the
+        Japanese tailoring without removing anything.
+
+        * editing/TextIterator.cpp: Rolled out r49924.
+
 2009-10-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium build fix - add missing image to gypi.

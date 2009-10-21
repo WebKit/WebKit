@@ -1,1 +1,1 @@
-SUCCESS: Found hiragana and katakana correctly.
+FAILURE: Found small hiragana A when searching for hiragana A. Found small katakana A when searching for katakana A. Found halfwidth small katakana A when searching for halfwidth katakana A. Found small hiragana A when searching for katakana A. Found katakana A when searching for halfwidth small katakana A. Found halfwidth katakana A when searching for small hiragana A. Found hiragana Ka when searching for hiragana Ga.

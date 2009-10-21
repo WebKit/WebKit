@@ -1,3 +1,12 @@
+2009-10-21  Darin Adler  <darin@apple.com>
+
+        Update since we rolled Japanese tailoring out that was done to fix
+        https://bugs.webkit.org/show_bug.cgi?id=30437 earlier.
+
+        * fast/text/international/japanese-kana-letters-expected.txt: Update
+        test results to expect failure. We'll land results that expect
+        success once we re-fix the bug.
+
 2009-10-21  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Seidel.
