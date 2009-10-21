@@ -108,6 +108,11 @@ void LayoutTestController::waitUntilDone()
     m_timeoutTimer.start(11000, this);
 }
 
+void LayoutTestController::keepWebHistory()
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::notifyDone()
 {
     qDebug() << ">>>>notifyDone";

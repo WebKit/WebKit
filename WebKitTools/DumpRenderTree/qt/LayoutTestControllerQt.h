@@ -83,6 +83,7 @@ public slots:
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void waitUntilDone();
+    void keepWebHistory();
     void notifyDone();
     void dumpBackForwardList() { m_dumpBackForwardList = true; }
     void dumpEditingCallbacks();
