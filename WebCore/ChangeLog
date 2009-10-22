@@ -1,3 +1,14 @@
+2009-10-21  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: windowFocused and windowBlurred Fail to Clear/Mark Inspector as "inactive"
+        https://bugs.webkit.org/show_bug.cgi?id=30663
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.windowFocused):
+        (WebInspector.windowBlurred):
+
 2009-10-22  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

@@ -511,13 +511,13 @@ WebInspector.windowResize = function(event)
 
 WebInspector.windowFocused = function(event)
 {
-    if (event.target.nodeType === Node.DOCUMENT_NODE)
+    if (event.target === document.defaultView)
         document.body.removeStyleClass("inactive");
 }
 
-WebInspector.windowBlured = function(event)
+WebInspector.windowBlurred = function(event)
 {
-    if (event.target.nodeType === Node.DOCUMENT_NODE)
+    if (event.target === document.defaultView)
         document.body.addStyleClass("inactive");
 }
 
@@ -1424,7 +1424,7 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 WebInspector.addMainEventListeners = function(doc)
 {
     doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), true);
-    doc.defaultView.addEventListener("blur", this.windowBlured.bind(this), true);
+    doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), true);
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
