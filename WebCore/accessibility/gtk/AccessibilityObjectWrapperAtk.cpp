@@ -122,7 +122,21 @@ static AccessibilityObject* core(AtkImage* image)
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
-    return returnString(core(object)->stringValue());
+    AccessibilityObject* coreObject = core(object);
+    if (coreObject->isControl()) {
+        AccessibilityRenderObject* renderObject = static_cast<AccessibilityRenderObject*>(coreObject);
+        AccessibilityObject* label = renderObject->correspondingLabelForControlElement();
+        if (label) {
+            AccessibilityRenderObject::AccessibilityChildrenVector children = label->children();
+            // Currently, label->stringValue() should be an empty String. This
+            // might not be the case down the road.
+            String name = label->stringValue();
+            for (unsigned i = 0; i < children.size(); ++i)
+                name += children.at(i).get()->stringValue();
+            return returnString(name);
+        }
+    }
+    return returnString(coreObject->stringValue());
 }
 
 static const gchar* webkit_accessible_get_description(AtkObject* object)
@@ -130,6 +144,20 @@ static const gchar* webkit_accessible_get_description(AtkObject* object)
     // TODO: the Mozilla MSAA implementation prepends "Description: "
     // Should we do this too?
     return returnString(core(object)->accessibilityDescription());
+}
+
+static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
+{
+    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
+    if (accObject->isControl()) {
+        AccessibilityObject* label = accObject->correspondingLabelForControlElement();
+        if (label)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+    } else {
+        AccessibilityObject* control = accObject->correspondingControlForLabelElement();
+        if (control)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
+    }
 }
 
 static gpointer webkit_accessible_parent_class = NULL;
@@ -421,6 +449,16 @@ static AtkStateSet* webkit_accessible_ref_state_set(AtkObject* object)
     return stateSet;
 }
 
+static AtkRelationSet* webkit_accessible_ref_relation_set(AtkObject* object)
+{
+    AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_relation_set(object);
+    AccessibilityObject* coreObject = core(object);
+
+    setAtkRelationSetFromCoreObject(coreObject, relationSet);
+
+    return relationSet;
+}
+
 static void webkit_accessible_init(AtkObject* object, gpointer data)
 {
     if (ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize)
@@ -455,6 +493,7 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->ref_state_set = webkit_accessible_ref_state_set;
     klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
     klass->get_attributes = webkit_accessible_get_attributes;
+    klass->ref_relation_set = webkit_accessible_ref_relation_set;
 }
 
 GType

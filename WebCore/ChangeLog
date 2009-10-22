@@ -1,3 +1,23 @@
+2009-10-22  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+ 
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25530
+        [Gtk] Implement LABEL_FOR/LABELLED_BY relationship pair for labels
+
+        Implements atk_object_ref_relation_set and LABEL_FOR/LABELLED_BY.
+        Also causes the accessible name for labeled controls to be based on
+        the label as expected, rather than based on the contents.
+
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (correspondingLabelForControlElement):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+        (webkit_accessible_ref_relation_set):
+        (webkit_accessible_class_init):
+        (webkit_accessible_get_name):
+
 2009-10-22  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

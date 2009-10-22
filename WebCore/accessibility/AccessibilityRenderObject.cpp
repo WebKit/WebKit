@@ -2212,6 +2212,21 @@ AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElem
     return axObjectCache()->getOrCreate(correspondingControl->renderer());     
 }
 
+AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElement() const
+{
+    if (!m_renderer)
+        return 0;
+
+    Node* node = m_renderer->node();
+    if (node && node->isHTMLElement()) {
+        HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
+        if (label)
+            return axObjectCache()->getOrCreate(label->renderer());
+    }
+
+    return 0;
+}
+
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
