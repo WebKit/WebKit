@@ -50,6 +50,8 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(CompoundType, OverridesMarkChildren));
         }
 
+        virtual bool isPropertyNameIterator() const { return true; }
+
         virtual void markChildren(MarkStack&);
 
         JSValue get(ExecState*, JSObject*, size_t i);

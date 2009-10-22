@@ -1228,6 +1228,10 @@ static const char* typeName(JSCell* cell)
 #endif
     if (cell->isGetterSetter())
         return "gettersetter";
+    if (cell->isAPIValueWrapper())
+        return "value wrapper";
+    if (cell->isPropertyNameIterator())
+        return "for-in iterator";
     ASSERT(cell->isObject());
     const ClassInfo* info = cell->classInfo();
     return info ? info->className : "Object";

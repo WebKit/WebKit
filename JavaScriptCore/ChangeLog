@@ -1,3 +1,20 @@
+2009-10-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed ASSERT when opening Safari's Caches window while the Web Inspector
+        is open.
+
+        * runtime/Collector.cpp:
+        (JSC::typeName): Added two new types to the type name list in the Collector.
+        These types have been around for a while, but nobody remembered to consider them here.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::isPropertyNameIterator):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::isPropertyNameIterator): Give the Collector
+        a way to tell if a cell is a JSPropertyNameIterator.
+
 2009-10-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Jon Honeycutt.

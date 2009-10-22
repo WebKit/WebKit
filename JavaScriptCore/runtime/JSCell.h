@@ -59,6 +59,7 @@ namespace JSC {
         virtual bool isGetterSetter() const;
         bool inherits(const ClassInfo*) const;
         virtual bool isAPIValueWrapper() const { return false; }
+        virtual bool isPropertyNameIterator() const { return false; }
 
         Structure* structure() const;
 
