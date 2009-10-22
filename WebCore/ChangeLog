@@ -1,3 +1,18 @@
+2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix memory leak in QNetworkReplyHandler::abort().
+        In QNetworkReplyHandler::release(), m_reply should no longer point to its parent
+        after being released.
+        https://bugs.webkit.org/show_bug.cgi?id=30167
+
+        No layout test available as a non-functional fix.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+        (WebCore::QNetworkReplyHandler::release):
+
 2009-10-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

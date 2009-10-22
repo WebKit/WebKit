@@ -175,8 +175,8 @@ void QNetworkReplyHandler::abort()
         QNetworkReply* reply = release();
         reply->abort();
         reply->deleteLater();
-        deleteLater();
     }
+    deleteLater();
 }
 
 QNetworkReply* QNetworkReplyHandler::release()
@@ -188,6 +188,7 @@ QNetworkReply* QNetworkReplyHandler::release()
         // posted meta call events that were the result of a signal emission
         // don't reach the slots in our instance.
         QCoreApplication::removePostedEvents(this, QEvent::MetaCall);
+        m_reply->setParent(0);
         m_reply = 0;
     }
     return reply;
