@@ -922,6 +922,44 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
         values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
         profile: function() { return console.profile.apply(console, arguments) }, \
         profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
+        _logEvent: function _inspectorCommandLineAPI_logEvent(e) { console.log(e.type, e); }, \
+        _allEventTypes: [\"mouse\", \"key\", \"load\", \"unload\", \"abort\", \"error\", \
+            \"select\", \"change\", \"submit\", \"reset\", \"focus\", \"blur\", \
+            \"resize\", \"scroll\"], \
+        _normalizeEventTypes: function(t) { \
+            if (typeof t === \"undefined\") \
+                t = _inspectorCommandLineAPI._allEventTypes; \
+            else if (typeof t === \"string\") \
+                t = [t]; \
+            var i, te = []; \
+            for (i = 0; i < t.length; i++) { \
+                if (t[i] === \"mouse\") \
+                    te.splice(0, 0, \"mousedown\", \"mouseup\", \"click\", \"dblclick\", \
+                        \"mousemove\", \"mouseover\", \"mouseout\"); \
+                else if (t[i] === \"key\") \
+                    te.splice(0, 0, \"keydown\", \"keyup\", \"keypress\"); \
+                else \
+                    te.push(t[i]); \
+            } \
+            return te; \
+        }, \
+        monitorEvent: function(o, t) { \
+            if (!o || !o.addEventListener || !o.removeEventListener) \
+                return; \
+            t = _inspectorCommandLineAPI._normalizeEventTypes(t); \
+            for (i = 0; i < t.length; i++) { \
+                o.removeEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
+                o.addEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
+            } \
+        }, \
+        unmonitorEvent: function(o, t) { \
+            if (!o || !o.removeEventListener) \
+                return; \
+            t = _inspectorCommandLineAPI._normalizeEventTypes(t); \
+            for (i = 0; i < t.length; i++) { \
+                o.removeEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
+            } \
+        }, \
         _inspectedNodes: [], \
         get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
         get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
