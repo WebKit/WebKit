@@ -171,10 +171,7 @@ InspectorController::~InspectorController()
         s_settingCache = 0;
     }
     
-    // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
-    // no references to the DOM agent from the DOM tree.
-    if (m_domAgent)
-        m_domAgent->setDocument(0);
+    releaseDOMAgent();
 
     m_inspectorBackend->disconnectController();
 }
@@ -557,7 +554,8 @@ void InspectorController::setFrontendProxyObject(ScriptState* scriptState, Scrip
     m_scriptState = scriptState;
     m_injectedScriptObj = injectedScriptObj;
     m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
-    m_domAgent = new InspectorDOMAgent(m_frontend.get());
+    releaseDOMAgent();
+    m_domAgent = InspectorDOMAgent::create(m_frontend.get());
     m_timelineAgent = 0;
 }
 
@@ -613,11 +611,7 @@ void InspectorController::close()
 
     m_frontend.set(0);
     m_injectedScriptObj = ScriptObject();
-    // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
-    // no references to the DOM agent from the DOM tree.
-    if (m_domAgent)
-        m_domAgent->setDocument(0);
-    m_domAgent = 0;
+    releaseDOMAgent();
     m_timelineAgent = 0;
     m_scriptState = 0;
     if (m_page)
@@ -645,6 +639,15 @@ void InspectorController::showWindow()
 void InspectorController::closeWindow()
 {
     m_client->closeWindow();
+}
+
+void InspectorController::releaseDOMAgent()
+{
+    // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
+    // no references to the DOM agent from the DOM tree.
+    if (m_domAgent)
+        m_domAgent->setDocument(0);
+    m_domAgent = 0;
 }
 
 void InspectorController::populateScriptObjects()

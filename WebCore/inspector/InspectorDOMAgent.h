@@ -68,6 +68,11 @@ namespace WebCore {
 
     class InspectorDOMAgent : public EventListener {
     public:
+        static PassRefPtr<InspectorDOMAgent> create(InspectorFrontend* frontend)
+        {
+            return adoptRef(new InspectorDOMAgent(frontend));
+        }
+
         static const InspectorDOMAgent* cast(const EventListener* listener)
         {
             return listener->type() == InspectorDOMAgentType

@@ -300,6 +300,7 @@ private:
     void storeLastActivePanel(const String& panelName);
     void closeWindow();
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
+    void releaseDOMAgent();
 
     friend class InspectorFrontend;
     // Following are used from InspectorFrontend only. We don't want to expose them to the

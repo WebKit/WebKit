@@ -1,3 +1,20 @@
+2009-10-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Fix DOMAgent leak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30615
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::releaseDOMAgent):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+
 2009-10-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
