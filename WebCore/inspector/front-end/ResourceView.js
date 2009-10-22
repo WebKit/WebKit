@@ -178,7 +178,7 @@ WebInspector.ResourceView.prototype = {
 
         var isFormEncoded = false;
         var requestContentType = this._getHeaderValue(this.resource.requestHeaders, "Content-Type");
-        if (requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
+        if (requestContentType && requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
             isFormEncoded = true;
 
         if (isFormEncoded) {
