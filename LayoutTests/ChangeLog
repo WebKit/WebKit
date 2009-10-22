@@ -1,3 +1,9 @@
+2009-10-22  Xan Lopez  <xlopez@igalia.com>
+
+        Unskip a couple of working tests.
+
+        * platform/gtk/Skipped:
+
 2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.

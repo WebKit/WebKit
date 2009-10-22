@@ -5353,8 +5353,6 @@ fast/events/tab-focus-anchor.html
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
-media/audio-delete-while-step-button-clicked.html
-scrollbars/scrollbar-miss-mousemove-disabled.html
 
 # Tests that require editing callbacks (and possibly Glib DOM bindings)
 editing/execCommand/indent-with-style.html
