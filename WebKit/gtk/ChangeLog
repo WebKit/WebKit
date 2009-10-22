@@ -1,3 +1,12 @@
+2009-10-22  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        m_webView should be private attribute of the EditorClientGtk.
+        https://bugs.webkit.org/show_bug.cgi?id=30664
+
+        * WebKit/gtk/WebCoreSupport/EditorClientGtk.h:
+
 2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.
