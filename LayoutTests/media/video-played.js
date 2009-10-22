@@ -96,6 +96,11 @@ function milliToSecs(milliseconds)
     return milliseconds / 1000;
 }
 
+function nowInSecs()
+{
+    return milliToSecs((new Date()).getTime());
+}
+
 function playForMillisecs(milliseconds)
 {
     if (milliToSecs(milliseconds) > video.duration) {
@@ -105,8 +110,8 @@ function playForMillisecs(milliseconds)
 
     run("video.play()");
 
+    var startTime = nowInSecs();
     var playedFromTime = video.currentTime;
-    var callCount = 0;
     var playDuration = milliToSecs(milliseconds);
     var callPauseIfTimeIsReached = function ()
     {
@@ -117,11 +122,11 @@ function playForMillisecs(milliseconds)
             // At the begining of playForMillisecs()
             playedTime = video.duration - playedFromTime + video.currentTime;
         }
-        
-        if (callCount++ > 10) {
+
+        var elapsed = nowInSecs() - startTime;
+        if (elapsed > 2) {
             // Just in case something goes wrong.
-            var elapsed = milliToSecs(callCount * milliseconds);
-            failTest("ERROR: test stalled, waited " + milliToSecs(elapsed) + "seconds for movie to play " + playedTime + " seconds");
+            failTest("ERROR: test stalled, waited " + elapsed + " seconds for movie to play " + playedTime + " seconds");
             return;
         }
         

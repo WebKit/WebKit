@@ -1,3 +1,16 @@
+2009-10-22  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix video-played.js to use an error timeout based on time rather than function call count.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30657
+
+        * media/video-played.js:
+        (nowInSecs): Returns the current time in seconds.
+        (playForMillisecs.callPauseIfTimeIsReached): Change from call counts to using elapsed time.
+        (playForMillisecs): Ditto.
+
 2009-10-22  Xan Lopez  <xlopez@igalia.com>
 
         libsoup can reconstruct URIs with empty querys now, so unskip
