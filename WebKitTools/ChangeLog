@@ -1,3 +1,9 @@
+2009-10-21  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.  Adding myself to the committers list.
+
+        * Scripts/modules/committers.py:
+
 2009-10-21  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

@@ -73,6 +73,7 @@ committers_unable_to_review = [
     Committer("Joseph Pecoraro", "joepeck@webkit.org"),
     Committer("Julie Parent", "jparent@google.com"),
     Committer("Kenneth Rohde Christiansen", "kenneth@webkit.org"),
+    Committer("Kent Tamura", "tkent@chromium.org"),
     Committer("Laszlo Gombos", "laszlo.1.gombos@nokia.com"),
     Committer("Mads Ager", "ager@chromium.org"),
     Committer("Nate Chapin", "japhet@chromium.org"),
