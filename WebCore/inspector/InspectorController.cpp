@@ -1047,7 +1047,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
         resource->updateScriptObject(m_frontend.get());
 }
 
-void InspectorController::enableResourceTracking(bool always)
+void InspectorController::enableResourceTracking(bool always, bool reload)
 {
     if (!enabled())
         return;
@@ -1063,7 +1063,8 @@ void InspectorController::enableResourceTracking(bool always)
     if (m_frontend)
         m_frontend->resourceTrackingWasEnabled();
 
-    m_inspectedPage->mainFrame()->loader()->reload();
+    if (reload)
+        m_inspectedPage->mainFrame()->loader()->reload();
 }
 
 void InspectorController::disableResourceTracking(bool always)

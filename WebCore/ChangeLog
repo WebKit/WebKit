@@ -1,3 +1,19 @@
+2009-10-22  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Makes a page reload optional when activating resource monitoring in
+        InspectorController. It leaves the default behavior as performing the reload.
+        Reload is an optional param so callsites do not have to change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30684
+
+        No new tests added.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableResourceTracking):
+        * inspector/InspectorController.h:
+
 2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.
