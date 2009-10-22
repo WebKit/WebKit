@@ -5523,6 +5523,9 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 # https://bugs.webkit.org/show_bug.cgi?id=30589
 media/video-played-reset.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=30680
+media/audio-delete-while-step-button-clicked.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=30586
 media/video-src-empty.html
 
