@@ -39,6 +39,8 @@
 #include <unicode/unorm.h>
 
 
+extern int charUnicodeToUTF8HACK(unsigned short, char*);
+
 namespace WebCore {
 
 void SimpleFontData::platformInit()
@@ -93,15 +95,15 @@ void SimpleFontData::determinePitch()
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    const char charArray[1] = { glyph };
+    if (!m_platformData.font())
+        return 0;
+
+    char charArray[4];
     float escapements[1];
 
-    if (m_platformData.font()) {
-        m_platformData.font()->GetEscapements(charArray, 1, escapements);
-        return escapements[0] * m_platformData.font()->Size();
-    }
-
-    return 0;
+    charUnicodeToUTF8HACK(glyph, charArray);
+    m_platformData.font()->GetEscapements(charArray, 1, escapements);
+    return escapements[0] * m_platformData.font()->Size();
 }
 
 } // namespace WebCore

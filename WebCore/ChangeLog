@@ -1,3 +1,13 @@
+2009-10-22  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        [Haiku] Correction of the accented letter width (they were 2 characters long).
+        https://bugs.webkit.org/show_bug.cgi?id=30629
+
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2009-10-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7270320> Screenshots of off-screen plug-ins are blank
