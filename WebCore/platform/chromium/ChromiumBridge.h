@@ -126,6 +126,9 @@ namespace WebCore {
         static void notifyJSOutOfMemory(Frame*);
         static bool allowScriptDespiteSettings(const KURL& documentURL);
 
+        // Keygen -------------------------------------------------------------
+        static String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challenge, const KURL& url);
+
         // Language -----------------------------------------------------------
         static String computedDefaultLanguage();
 

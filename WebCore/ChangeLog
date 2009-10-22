@@ -1,3 +1,21 @@
+2009-10-14  Gaurav Shah  <gauravsh@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Replaces temporary link stub for <keygen> tag handler for the Chromium
+        browser with a call via the Chromium Bridge.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30360
+
+        * platform/SSLKeyGenerator.h:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/SSLKeyGeneratorChromium.cpp:
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/chromium/TemporaryLinkStubs.cpp:
+        (WebCore::KURL::fileSystemPath):
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2009-10-22  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Eric Seidel.
