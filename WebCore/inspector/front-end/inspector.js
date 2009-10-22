@@ -511,13 +511,19 @@ WebInspector.windowResize = function(event)
 
 WebInspector.windowFocused = function(event)
 {
-    if (event.target === document.defaultView)
+    // Fires after blur, so when focusing on either the main inspector
+    // or an <iframe> within the inspector we should always remove the
+    // "inactive" class.
+    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
         document.body.removeStyleClass("inactive");
 }
 
 WebInspector.windowBlurred = function(event)
 {
-    if (event.target === document.defaultView)
+    // Leaving the main inspector or an <iframe> within the inspector.
+    // We can add "inactive" now, and if we are moving the focus to another
+    // part of the inspector then windowFocused will correct this.
+    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
         document.body.addStyleClass("inactive");
 }
 
@@ -1423,8 +1429,8 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 
 WebInspector.addMainEventListeners = function(doc)
 {
-    doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), true);
-    doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), true);
+    doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);
+    doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), false);
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 

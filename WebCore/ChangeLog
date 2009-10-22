@@ -1,3 +1,17 @@
+2009-10-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: windowFocused and windowBlured Fail to Clear/Mark Inspector as "inactive"
+        https://bugs.webkit.org/show_bug.cgi?id=30663
+
+          Correctly handle focusing/blurring on inner <iframe>'s such as Source Frames.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.windowFocused): fix for inner iframes
+        (WebInspector.windowBlurred): fix for inner iframes
+        (WebInspector.addMainEventListeners): change useCapture to false
+
 2009-10-22  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Timothy Hatcher.
