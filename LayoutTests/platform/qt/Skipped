@@ -393,7 +393,6 @@ fast/forms/textarea-scroll-height.html
 fast/forms/textarea-scrollbar.html
 fast/forms/textarea-scrolled-type.html
 fast/frames/iframe-window-focus.html
-fast/history/clicked-link-is-visited.html
 fast/history/go-back-to-changed-name.html
 fast/html/keygen.html
 fast/inline/dirtyLinesForInline.html

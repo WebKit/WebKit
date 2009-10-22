@@ -1,3 +1,15 @@
+2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Enable track visited links in QWebPage
+        https://bugs.webkit.org/show_bug.cgi?id=30574
+
+        Test: fast/history/clicked-link-is-visited.html
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2009-10-22  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Eric Seidel.

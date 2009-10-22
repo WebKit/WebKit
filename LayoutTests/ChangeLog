@@ -1,3 +1,14 @@
+2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Added expected result for clicked-link-is-visited.html.
+        Removed test case from qt/Skipped as it works now.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/history: Added.
+        * platform/qt/fast/history/clicked-link-is-visited-expected.txt: Added.
+
 2009-10-22  Xan Lopez  <xlopez@igalia.com>
 
         Skip failing tests that seems to be somewhat tied to the Mac

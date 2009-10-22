@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 539x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 539x21
+            text run at (0,0) width 539: "Bug 9150 DumpRenderTree should be able to keep URL history during runs"
+      RenderBlock {DIV} at (0,21) size 784x21
+        RenderText {#text} at (0,0) size 136x21
+          text run at (0,0) width 136: "The tests passes if "
+        RenderInline {A} at (0,0) size 54x21 [color=#551A8B]
+          RenderText {#text} at (136,0) size 54x21
+            text run at (136,0) width 54: "this link"
+        RenderText {#text} at (190,0) size 207x21
+          text run at (190,0) width 207: " is rendered in a visited color."
