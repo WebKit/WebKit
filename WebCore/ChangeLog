@@ -1,3 +1,13 @@
+2009-10-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix calculation of length in WebSocketChannel.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=30656
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData):
+
 2009-10-21  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
