@@ -50,6 +50,7 @@
 - (void)fadeWindowIn;
 - (void)fadeWindowOut;
 - (void)closeWindow;
+- (void)updateRate;
 
 @end
 

@@ -181,6 +181,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 
     // First, update right away, then schedule future update
     [self updateTime];
+    [self updateRate];
 
     [_timelineUpdateTimer invalidate];
     [_timelineUpdateTimer release];
@@ -466,12 +467,18 @@ static NSTextField *createTimeTextField(NSRect frame)
     [_delegate mediaElement]->setVolume(volume / [self maxVolume], e);
 }
 
+- (void)updateRate
+{
+    [_playButton setIntValue:[self playing]];
+}
+
 - (void)playingChanged:(id)sender
 {
-    [self setPlaying:![self playing]];
-    
+    BOOL nowPlaying = [self playing];
+    [self setPlaying:!nowPlaying];
+
     // Keep HUD visible when paused
-    if (![self playing])
+    if (!nowPlaying)
         [self fadeWindowIn];
     else if (!_mouseIsInHUD) {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];

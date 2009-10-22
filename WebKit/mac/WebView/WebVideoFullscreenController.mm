@@ -42,6 +42,10 @@
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieView)
 
+SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
+
+#define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
+
 @interface WebVideoFullscreenWindow : NSWindow
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER)
 <NSAnimationDelegate>
@@ -76,6 +80,7 @@ SOFT_LINK_CLASS(QTKit, QTMovieView)
 {
     ASSERT(!_backgroundFullscreenWindow);
     ASSERT(!_fadeAnimation);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 
@@ -109,7 +114,15 @@ SOFT_LINK_CLASS(QTKit, QTMovieView)
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
         QTMovieView *movieView = [[self fullscreenWindow] movieView];
-        [movieView setMovie:_mediaElement->platformMedia().qtMovie];
+        QTMovie *movie = _mediaElement->platformMedia().qtMovie;
+
+        ASSERT(movieView);
+        ASSERT(movie);
+        [movieView setMovie:movie];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(rateChanged:) 
+                                                     name:QTMovieRateDidChangeNotification 
+                                                   object:movie];
     }
 }
 
@@ -286,6 +299,16 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 {
     [_hudController fadeWindowIn];
 }
+
+#pragma mark -
+#pragma mark QTMovie callbacks
+
+- (void)rateChanged:(NSNotification *)unusedNotification
+{
+    UNUSED_PARAM(unusedNotification);
+    [_hudController updateRate];
+}
+
 @end
 
 @implementation WebVideoFullscreenWindow
@@ -442,6 +465,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [super resignKeyWindow];
     [[self windowController] requestExitFullscreenWithAnimation:NO];
 }
+
 @end
 
 #endif /* ENABLE(VIDEO) */

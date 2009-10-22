@@ -1,3 +1,23 @@
+2009-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein & Simon Fraser.
+
+        <rdar://problem/7297717>
+        https://bugs.webkit.org/show_bug.cgi?id=30323
+        Play/pause button in full-screen video controller does not reflect current state
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]): Register for QTMovieRateDidChangeNotification
+        (-[WebVideoFullscreenController rateChanged:]): Call HUD controller when rate changes.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]): Call updateRate so play button
+        reflects playback state.
+        (-[WebVideoFullscreenHUDWindowController updateRate]): New, set play button state according to
+        movie state.
+        (-[WebVideoFullscreenHUDWindowController playingChanged:]): Only call [self playing] once.
+
 2009-10-21  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Dan Bernstein.
