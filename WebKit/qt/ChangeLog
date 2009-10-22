@@ -1,3 +1,23 @@
+2009-10-22  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add a Y-Axis rotation to QGVLauncher.
+
+        It uses the QStateMachine API from Qt 4.6.
+
+        * QGVLauncher/main.cpp:
+        (WebView::WebView):
+        (WebView::setYRotation):
+        (WebView::yRotation):
+        (MainView::flip):
+        (MainView::animatedYFlip):
+        (SharedScene::SharedScene):
+        (SharedScene::webView):
+        (MainWindow::init):
+        (MainWindow::animatedYFlip):
+        (MainWindow::buildUI):
+
 2009-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed By Adam Barth.
