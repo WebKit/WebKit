@@ -303,7 +303,7 @@ private:
         QMenu *fileMenu = menuBar()->addMenu("&File");
         QAction *newWindow = fileMenu->addAction("New Window", this, SLOT(newWindow()));
 #if QT_VERSION >= 0x040400
-        fileMenu->addAction(tr("Print"), this, SLOT(print()));
+        fileMenu->addAction(tr("Print"), this, SLOT(print()), QKeySequence::Print);
 #endif
         QAction* screenshot = fileMenu->addAction("Screenshot", this, SLOT(screenshot()));
         fileMenu->addAction("Close", this, SLOT(close()));

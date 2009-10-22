@@ -1,3 +1,14 @@
+2009-10-22  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Add Print Shortcut to QtLauncher
+
+        https://bugs.webkit.org/show_bug.cgi?id=30682
+
+        * QtLauncher/main.cpp:
+        (MainWindow::setupUI):
+
 2009-10-22  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubberstamped by Tor Arne Vestbø.
