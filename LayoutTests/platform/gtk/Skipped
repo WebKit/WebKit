@@ -5549,17 +5549,6 @@ fast/forms/input-maxlength-ime-preedit.html
 # No User Scripts
 userscripts
 
-# SoupURI fails to recreate URIs with empty queries
-# See http://bugzilla.gnome.org/show_bug.cgi?id=594405
-fast/dom/SelectorAPI/bug-17313.html
-fast/forms/document-write.html
-fast/forms/empty-get.html
-fast/forms/form-data-encoding-normalization-overrun.html
-fast/forms/missing-action.html
-fast/forms/submit-nil-value-field-assert.html
-fast/forms/form-post-urlencoded.html
-http/tests/navigation/back-send-referrer.html
-
 # XHR sends sometimes yield null bytes sent instead of 0.
 http/tests/xmlhttprequest/workers/shared-worker-methods.html
 http/tests/xmlhttprequest/workers/shared-worker-methods-async.html

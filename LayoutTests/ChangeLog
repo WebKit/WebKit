@@ -1,5 +1,12 @@
 2009-10-22  Xan Lopez  <xlopez@igalia.com>
 
+        libsoup can reconstruct URIs with empty querys now, so unskip
+        another bunch of tests.
+
+        * platform/gtk/Skipped:
+
+2009-10-22  Xan Lopez  <xlopez@igalia.com>
+
         Unskip a couple of working tests.
 
         * platform/gtk/Skipped:
