@@ -147,10 +147,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     }
     KURL url = urlString.isEmpty() ? KURL() : node->document()->completeURL(deprecatedParseURL(urlString));
 
-    NativeImageSkia* bitmap = 0;
-#if !PLATFORM(CG)
-    bitmap = image->nativeImageForCurrentFrame();
-#endif
+    NativeImagePtr bitmap = image->nativeImageForCurrentFrame();
     ChromiumBridge::clipboardWriteImage(bitmap, url, title);
 }
 

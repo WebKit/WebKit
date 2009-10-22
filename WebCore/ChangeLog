@@ -1,3 +1,15 @@
+2009-10-22  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixes Chromium Mac pasteboard handling to flow through the same code paths as other platforms.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30591
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2009-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
