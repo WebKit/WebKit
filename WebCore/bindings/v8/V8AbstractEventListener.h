@@ -97,15 +97,12 @@ namespace WebCore {
 
         virtual void handleEvent(ScriptExecutionContext*, Event*);
 
-        // Returns the owner frame of the listener.
-        Frame* frame() { return m_frame; }
-
         virtual bool isLazy() const { return false; }
 
         // Returns the listener object, either a function or an object.
-        v8::Local<v8::Object> getListenerObject()
+        v8::Local<v8::Object> getListenerObject(ScriptExecutionContext* context)
         {
-            prepareListenerObject();
+            prepareListenerObject(context);
             return v8::Local<v8::Object>::New(m_listener);
         }
 
@@ -122,30 +119,24 @@ namespace WebCore {
         // Dispose listener object and clear the handle.
         void disposeListenerObject();
 
-        // Detach the listener from its owner frame.
-        void disconnectFrame() { m_frame = 0; }
-
         virtual bool disconnected() const { return m_guard && m_guard->isDisconnected(); }
 
     protected:
-        V8AbstractEventListener(Frame*, PassRefPtr<V8ListenerGuard>, bool isAttribute);
+        V8AbstractEventListener(PassRefPtr<V8ListenerGuard>, bool isAttribute);
 
-        virtual void prepareListenerObject() { }
+        virtual void prepareListenerObject(ScriptExecutionContext*) { }
 
         void setListenerObject(v8::Handle<v8::Object> listener);
 
-        void invokeEventHandler(v8::Handle<v8::Context>, Event*, v8::Handle<v8::Value> jsEvent);
+        void invokeEventHandler(ScriptExecutionContext*, Event*, v8::Handle<v8::Value> jsEvent);
 
         // Get the receiver object to use for event listener call.
         v8::Local<v8::Object> getReceiverObject(Event*);
-
-        int lineNumber() const { return m_lineNumber; }
-
     private:
         // Implementation of EventListener function.
         virtual bool virtualisAttribute() const { return m_isAttribute; }
 
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsevent, Event*) = 0;
+        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsevent, Event*) = 0;
 
         v8::Persistent<v8::Object> m_listener;
 
@@ -155,16 +146,7 @@ namespace WebCore {
         // Indicates if this is an HTML type listener.
         bool m_isAttribute;
 
-        // Frame to which the event listener is attached to. An event listener must be destroyed before its owner frame is
-        // deleted. See fast/dom/replaceChild.html
-        // FIXME: this could hold m_frame live until the event listener is deleted.
-        Frame* m_frame;
-        RefPtr<SharedPersistent<v8::Context> > m_context;
         RefPtr<V8ListenerGuard> m_guard;
-
-        // Position in the HTML source for HTML event listeners.
-        int m_lineNumber;
-        int m_columnNumber;
     };
 
 } // namespace WebCore

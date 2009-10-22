@@ -35,11 +35,12 @@
 #include "Document.h"
 #include "Event.h"
 #include "Frame.h"
-#include "Tokenizer.h"
 #include "V8Binding.h"
 #include "V8EventListenerList.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
@@ -49,28 +50,12 @@ static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter
     listener->disposeListenerObject();
 }
 
-V8AbstractEventListener::V8AbstractEventListener(Frame* frame, PassRefPtr<V8ListenerGuard> guard, bool isAttribute)
+V8AbstractEventListener::V8AbstractEventListener(PassRefPtr<V8ListenerGuard> guard, bool isAttribute)
     : EventListener(JSEventListenerType)
     , m_isWeak(true)
     , m_isAttribute(isAttribute)
-    , m_frame(frame)
     , m_guard(guard)
-    , m_lineNumber(0)
-    , m_columnNumber(0)
 {
-    if (!m_frame)
-        return;
-
-    // We might be called directly from the parser.
-    v8::HandleScope handleScope;
-
-    m_context = V8Proxy::shared_context(m_frame);
-
-    // Get the position in the source if any.
-    if (m_isAttribute && m_frame->document()->tokenizer()) {
-        m_lineNumber = m_frame->document()->tokenizer()->lineNumber();
-        m_columnNumber = m_frame->document()->tokenizer()->columnNumber();
-    }
 }
 
 V8AbstractEventListener::~V8AbstractEventListener()
@@ -83,7 +68,7 @@ V8AbstractEventListener::~V8AbstractEventListener()
     disposeListenerObject();
 }
 
-void V8AbstractEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
+void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)
 {
     // EventListener could be disconnected from the frame.
     if (disconnected())
@@ -95,17 +80,9 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* scriptExecutio
 
     v8::HandleScope handleScope;
 
-    if (!m_context)
-        return;
-
-    // Create a new local handle since the persistent handle stored in
-    // m_context may be disposed before we're done.
-    v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context->get());
+    v8::Local<v8::Context> v8Context = toV8Context(context);
     if (v8Context.IsEmpty())
         return;
-
-    // m_frame can removed by the callback function, protect it until the callback function returns.
-    RefPtr<Frame> protectFrame(m_frame);
 
     // Enter the V8 context in which to perform the event handling.
     v8::Context::Scope scope(v8Context);
@@ -113,7 +90,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* scriptExecutio
     // Get the V8 wrapper for the event object.
     v8::Handle<v8::Value> jsEvent = V8DOMWrapper::convertEventToV8Object(event);
 
-    invokeEventHandler(v8Context, event, jsEvent);
+    invokeEventHandler(context, event, jsEvent);
 
     Document::updateStyleForAllDocuments();
 }
@@ -140,8 +117,13 @@ void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
         m_listener.MakeWeak(this, &weakEventListenerCallback);
 }
 
-void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> v8Context, Event* event, v8::Handle<v8::Value> jsEvent)
+void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)
 {
+
+    v8::Local<v8::Context> v8Context = toV8Context(context);
+    if (v8Context.IsEmpty())
+        return;
+
     // We push the event being processed into the global object, so that it can be exposed by DOMWindow's bindings.
     v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
     v8::Local<v8::Value> returnValue;
@@ -165,7 +147,7 @@ void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> v8Conte
 
         // Call the event handler.
         tryCatch.SetVerbose(false); // We do not want to report the exception to the inspector console.
-        returnValue = callListenerFunction(jsEvent, event);
+        returnValue = callListenerFunction(context, jsEvent, event);
         if (!tryCatch.CanContinue())
             return;
 

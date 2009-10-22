@@ -75,7 +75,7 @@ DateExtension* DateExtension::get()
 
 void DateExtension::setAllowSleep(bool allow)
 {
-    v8::Local<v8::Value> result = V8Proxy::retrieve()->context()->Global()->Get(v8::String::New("Date"));
+    v8::Local<v8::Value> result = V8Proxy::currentContext()->Global()->Get(v8::String::New("Date"));
     if (result.IsEmpty())
         return;
 

@@ -35,15 +35,15 @@
 
 namespace WebCore {
 
-V8EventListener::V8EventListener(Frame* frame, PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isAttribute)
-    : V8AbstractEventListener(frame, guard, isAttribute)
+V8EventListener::V8EventListener(PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isAttribute)
+    : V8AbstractEventListener(guard, isAttribute)
 {
     setListenerObject(listener);
 }
 
-v8::Local<v8::Function> V8EventListener::getListenerFunction()
+v8::Local<v8::Function> V8EventListener::getListenerFunction(ScriptExecutionContext* context)
 {
-    v8::Local<v8::Object> listener = getListenerObject();
+    v8::Local<v8::Object> listener = getListenerObject(context);
 
     // Has the listener been disposed?
     if (listener.IsEmpty())
@@ -61,19 +61,20 @@ v8::Local<v8::Function> V8EventListener::getListenerFunction()
     return v8::Local<v8::Function>();
 }
 
-v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event)
+v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    v8::Local<v8::Function> handlerFunction = getListenerFunction();
+
+    v8::Local<v8::Function> handlerFunction = getListenerFunction(context);
     v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-    V8Proxy* proxy = V8Proxy::retrieve(frame());
-    if (!proxy)
-        return v8::Local<v8::Value>();
-    return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+    if (V8Proxy* proxy = V8Proxy::retrieve(context))
+        return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+
+    return v8::Local<v8::Value>();
 }
 
 } // namespace WebCore

@@ -1,3 +1,85 @@
+2009-10-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Rework event listeners to not hold references to frame or V8 context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30648
+
+        Covered by existing layout tests: fast/events/attribute-listener*
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added passing ScriptExecutionContext*
+            to event listener handling code.
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::setAllowSleep): Changed to use currentContext().
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): Reworked to match JSC logic.
+        (WebCore::getEventListenerHandlerBody): Added ScriptExecutionContext* param.
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener): Removed Frame* param
+            and usage.
+        (WebCore::V8AbstractEventListener::handleEvent): Chaged to use ScriptExecutionContext*.
+        (WebCore::V8AbstractEventListener::invokeEventHandler): Ditto.
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8AbstractEventListener::getListenerObject): Ditto.
+        (WebCore::V8AbstractEventListener::prepareListenerObject): Ditto.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventListenerToV8Object):  Added ScriptExecutionContext* param.
+        (WebCore::V8DOMWrapper::getEventListener): Ditto.
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::convertEventListenerToV8Object): Ditto.
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findOrCreateWrapper): Removed ContextType* template param,
+            because it's no longer needed.
+        * bindings/v8/V8IsolatedWorld.h:
+        (WebCore::V8IsolatedWorld::sharedContext): Renamed from shared_context.
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener): Removed Frame* param and usage.
+        (WebCore::V8LazyEventListener::callListenerFunction): Added ScriptExecutionContext* param.
+        (WebCore::V8LazyEventListener::prepareListenerObject): Ditto.
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::create): Reordered params to match JSC impl.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy): Adjusted formatting to match WebKit style.
+        (WebCore::V8Proxy::evaluateInNewContext): Changed to use m_context directly.
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId): Ditto.
+        (WebCore::V8Proxy::createWrapperFromCacheSlowCase): Ditto.
+        (WebCore::V8Proxy::isContextInitialized): Ditto.
+        (WebCore::V8Proxy::updateDocumentWrapperCache): Ditto.
+        (WebCore::V8Proxy::clearDocumentWrapperCache): Ditto.
+        (WebCore::V8Proxy::disposeContextHandles): Added explicit disposing of m_context. 
+        (WebCore::V8Proxy::clearForClose): Changed to use m_context directly.
+        (WebCore::V8Proxy::clearForNavigation): Ditto.
+        (WebCore::V8Proxy::setSecurityToken): Ditto.
+        (WebCore::V8Proxy::updateDocument): Ditto.
+        (WebCore::V8Proxy::initContextIfNeeded): Ditto.
+        (WebCore::V8Proxy::context): Changed to use v8::Local.
+        (WebCore::V8Proxy::mainWorldContext): Changed to use m_context directly. 
+        (WebCore::V8Proxy::setContextDebugId): Ditto.
+        (WebCore::toV8Context):
+        * bindings/v8/V8Proxy.h: Removed shared_context decl, changed to use straight
+            v8::Persistent for m_context.
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::workerProxy): Added.
+        (WebCore::V8WorkerContextEventListener::V8WorkerContextEventListener): Removed
+            WorkerContextExecutionProxy* param.
+        (WebCore::V8WorkerContextEventListener::handleEvent): Started using ScriptExecutionContext*.
+        (WebCore::V8WorkerContextEventListener::reportError): Ditto.
+        (WebCore::V8WorkerContextEventListener::callListenerFunction): Ditto.
+        (WebCore::V8WorkerContextEventListener::getReceiverObject): Ditto.
+        * bindings/v8/V8WorkerContextEventListener.h:
+        (WebCore::V8WorkerContextEventListener::create): Removed
+            WorkerContextExecutionProxy* param.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::findOrCreateEventListener): Removed ContextType*
+            template param.
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener): Removed Frame* param.
+        (WebCore::V8EventListener::getListenerFunction): Started using ScriptExecutionContext*.
+        (WebCore::V8EventListener::callListenerFunction): Ditto.
+        * bindings/v8/custom/V8CustomEventListener.h:
+        (WebCore::V8EventListener::create): Removed Frame* param.
+
 2009-10-14  Gaurav Shah  <gauravsh@google.com>
 
         Reviewed by Darin Fisher.
@@ -3336,7 +3418,6 @@
         (InjectedScript.CallFrameProxy.prototype._wrapScopeChain): don't send call frame properties until they're needed.
         * inspector/front-end/ScriptsPanel.js:
 
->>>>>>> .r49765
 2009-10-13  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Ariya Hidayat.

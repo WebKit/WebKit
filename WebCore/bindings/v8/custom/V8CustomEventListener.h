@@ -44,18 +44,18 @@ namespace WebCore {
     // that can handle the event.
     class V8EventListener : public V8AbstractEventListener {
     public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isAttribute)
+        static PassRefPtr<V8EventListener> create(PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isAttribute)
         {
-            return adoptRef(new V8EventListener(frame, guard, listener, isAttribute));
+            return adoptRef(new V8EventListener(guard, listener, isAttribute));
         }
 
     protected:
-        V8EventListener(Frame*, PassRefPtr<V8ListenerGuard>, v8::Local<v8::Object> listener, bool isAttribute);
+        V8EventListener(PassRefPtr<V8ListenerGuard>, v8::Local<v8::Object> listener, bool isAttribute);
 
-        v8::Local<v8::Function> getListenerFunction();
+        v8::Local<v8::Function> getListenerFunction(ScriptExecutionContext*);
 
     private:
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*);
+      virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
      };
 
 } // namespace WebCore

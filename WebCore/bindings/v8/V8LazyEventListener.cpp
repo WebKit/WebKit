@@ -40,25 +40,30 @@
 
 namespace WebCore {
 
-V8LazyEventListener::V8LazyEventListener(Frame* frame, const String& code, const String& functionName, bool isSVGEvent)
-    : V8AbstractEventListener(frame, 0, true)
-    , m_code(code)
+V8LazyEventListener::V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, int lineNumber, int columnNumber)
+    : V8AbstractEventListener(0, true)
     , m_functionName(functionName)
     , m_isSVGEvent(isSVGEvent)
+    , m_code(code)
+    , m_sourceURL(sourceURL)
+    , m_lineNumber(lineNumber)
+    , m_columnNumber(columnNumber)
 {
 }
 
-v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event)
+v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    v8::Local<v8::Function> handlerFunction = v8::Local<v8::Function>::Cast(getListenerObject());
+    v8::Local<v8::Function> handlerFunction = v8::Local<v8::Function>::Cast(getListenerObject(context));
     v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-    V8Proxy* proxy = V8Proxy::retrieve(frame());
-    return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+    if (V8Proxy* proxy = V8Proxy::retrieve(context))
+        return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+
+    return v8::Local<v8::Value>();
 }
 
 static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& args)
@@ -66,16 +71,19 @@ static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& ar
     return args.Holder()->GetHiddenValue(V8HiddenPropertyName::toStringString());
 }
 
-void V8LazyEventListener::prepareListenerObject()
+void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 {
     if (hasExistingListenerObject())
         return;
 
-    // Switch to the context of m_frame.
     v8::HandleScope handleScope;
 
+    V8Proxy* proxy = V8Proxy::retrieve(context);
+    if (!proxy)
+        return;
+
     // Use the outer scope to hold context.
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(frame());
+    v8::Handle<v8::Context> v8Context = proxy->context();
     // Bail out if we cannot get the context.
     if (v8Context.IsEmpty())
         return;
@@ -101,10 +109,8 @@ void V8LazyEventListener::prepareListenerObject()
     // Insert '\n' otherwise //-style comments could break the handler.
     code.append(  "\n}).call(this, evt);}}}})");
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
-    v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, frame()->document()->url(), lineNumber());
+    v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_lineNumber);
     if (!script.IsEmpty()) {
-        V8Proxy* proxy = V8Proxy::retrieve(frame());
-        ASSERT(proxy);
         v8::Local<v8::Value> value = proxy->runScript(script, false);
         if (!value.IsEmpty()) {
             ASSERT(value->IsFunction());

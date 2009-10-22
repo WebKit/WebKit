@@ -2166,7 +2166,7 @@ sub ReturnNativeToJSValue
     }
 
     if ($type eq "EventListener") {
-        return "return V8DOMWrapper::convertEventListenerToV8Object($value)";
+        return "return V8DOMWrapper::convertEventListenerToV8Object(imp->scriptExecutionContext(), $value)";
     }
 
     if ($type eq "SerializedScriptValue") {
