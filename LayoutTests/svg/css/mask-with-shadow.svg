@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<?xml-stylesheet type="text/css" href="../resources/test.css" ?>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body" width="450" height="500" viewBox="0 0 450 500">
+
+    <g id="testContent" class="legend" text-anchor="middle">
+
+        <defs>
+
+        <linearGradient id="maskedGradient" x1="0" x2="1" y1="0" y2="1" color-interpolation="linearRGB">
+            <stop offset="0" stop-color="blue" />
+            <stop offset="1" stop-color="red" />
+        </linearGradient>
+
+        <rect id="masked" width="300" height="300" fill="url(#maskedGradient)" />
+
+        <mask id="mask_1" style="-webkit-shadow:5px 5px 5px grey">
+            <circle cx="55" cy="55" r="50" fill="#ffffff" />
+            <circle cx="55" cy="165" r="50" fill="#ffffff" />
+            <circle cx="165" cy="55" r="50" fill="#ffffff" />
+            <circle cx="165" cy="165" r="50" fill="#ffffff" />
+        </mask>
+
+     
+        </defs>
+
+
+        <g>
+            <use xlink:href="#masked" mask="url(#mask_1)"/>
+        </g>
+    </g>
+    
+</svg>

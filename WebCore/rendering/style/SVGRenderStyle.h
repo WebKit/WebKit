@@ -30,6 +30,7 @@
 #include "GraphicsTypes.h"
 #include "SVGPaint.h"
 #include "SVGRenderStyleDefs.h"
+#include "ShadowData.h"
 
 #include <wtf/Platform.h>
 
@@ -97,6 +98,8 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, lightingColor, LightingColor, lightingColor, Color(255, 255, 255))
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, misc, baselineShiftValue, BaselineShiftValue, baselineShiftValue, 0)
+
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_OWNPTR(ShadowData, shadowSVG, shadow, Shadow, shadow, 0)
 
         // convenience
         bool hasStroke() const { return (strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
@@ -172,6 +175,7 @@ namespace WebCore {
         DataRef<StyleClipData> clip;
         DataRef<StyleMaskData> mask;
         DataRef<StyleMiscData> misc;
+        DataRef<StyleShadowSVGData> shadowSVG;
 
     private:
         enum CreateDefaultType { CreateDefault };

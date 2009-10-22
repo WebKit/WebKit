@@ -51,6 +51,7 @@ SVGRenderStyle::SVGRenderStyle()
     mask = defaultStyle->mask;
     misc = defaultStyle->misc;
     markers = defaultStyle->markers;
+    shadowSVG = defaultStyle->shadowSVG;
 
     setBitDefaults();
 }
@@ -67,6 +68,7 @@ SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     mask.init();
     misc.init();
     markers.init();
+    shadowSVG.init();
 }
 
 SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
@@ -80,6 +82,7 @@ SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     mask = other.mask;
     misc = other.misc;
     markers = other.markers;
+    shadowSVG = other.shadowSVG;
 
     svg_inherited_flags = other.svg_inherited_flags;
     svg_noninherited_flags = other.svg_noninherited_flags;
@@ -93,7 +96,7 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& o) const
 {
     return (fill == o.fill && stroke == o.stroke && text == o.text &&
         stops == o.stops && clip == o.clip && mask == o.mask &&
-        misc == o.misc && markers == o.markers &&
+        misc == o.misc && markers == o.markers && shadowSVG == o.shadowSVG &&
         svg_inherited_flags == o.svg_inherited_flags &&
         svg_noninherited_flags == o.svg_noninherited_flags);
 }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter primitiveUnits="objectBoundingBox" id="filter" x="-50%" y="-50%" width="160%" height="160%" >
+<feFlood x="-40%" y="-40%" width="50%" height="50%" flood-color="red" result="flood1"/>
+<feFlood x="-20%" y="-20%" width="50%" height="50%" flood-color="green" result="flood2"/>
+<feComposite in="flood1" in2="flood2" width="120%" height="120%" result="comp1" />
+<feGaussianBlur stdDeviation="4 4" />
+</filter>
+</defs>
+<rect x="200" y="200" width="300" height="300" fill="green" style="filter:url(#filter);-webkit-shadow:-10px -10px 3px orange;"/>
+</svg>

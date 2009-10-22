@@ -406,6 +406,8 @@ rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 rect: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(glyph-orientation-vertical) : auto
 rect: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-shadow) : none
+rect: style.getPropertyCSSValue(-webkit-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-attachment) : scroll
 g: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-clip) : border-box
@@ -814,4 +816,6 @@ g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 g: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(glyph-orientation-vertical) : auto
 g: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-shadow) : none
+g: style.getPropertyCSSValue(-webkit-shadow) : [object CSSPrimitiveValue]
 

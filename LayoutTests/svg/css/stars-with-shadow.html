@@ -1,0 +1,72 @@
+<html>
+<head>
+<script language="javascript">
+<!--
+
+SVG_NS = 'http://www.w3.org/2000/svg';
+
+function pathFromStar (radius, innerRadius, sides) {
+    var path = [];
+    for (var i = 0; i < sides * 2; ++i) {
+        var theta = Math.PI * i / sides + (Math.PI / 2);
+        var r = (i % 2) ? radius : innerRadius;
+        var x = r * Math.cos(theta);
+        var y = r * Math.sin(theta);
+        path.push((i ? 'L' : 'M'), x, y);
+    }
+    path.push('Z');
+    return path.join(' ');
+}
+
+function newSvgElement (tagName, parentNode, attrs) {
+    var node = document.createElementNS(SVG_NS, tagName);
+    if (attrs) {
+        for (var k in attrs) {
+            node.setAttribute(k, attrs[k]);
+        }
+    }
+    if (parentNode) {
+        parentNode.appendChild(node);
+    }
+    return node;
+}
+
+function setCenterPosition (node, x, y) {
+    node.setAttribute('transform', 'translate($1, $2)'
+        .replace('$1', x)
+        .replace('$2', y));
+}
+
+window.addEventListener('load', function () {
+
+    var svgContainer = newSvgElement('svg', document.body);
+    var shapes = [
+        { pos: [ 100, 100 ], size: 60 },
+        { pos: [ 250, 100 ], size: 60 },
+        { pos: [ 400, 100 ], size: 50 }
+    ];
+    for (var i = 0; i < shapes.length; ++i) {
+        var shape = shapes[i];
+        var node = newSvgElement('path', svgContainer, {
+            d: pathFromStar(shape.size, shape.size / 2, 5),
+            fill: '#999',
+            stroke: 'purple',
+            'stroke-width': 10,
+        });
+        setCenterPosition(node, shape.pos[0], shape.pos[1]);
+        node.id = 'svg';
+    }
+});
+
+//-->
+</script>
+
+<style>
+    #svg {
+        -webkit-shadow: 5px 5px 5px #888;
+    }
+</style>
+</head>
+<body>
+</body>
+</html>

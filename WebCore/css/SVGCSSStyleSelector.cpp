@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "ShadowValue.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"
@@ -526,6 +527,35 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             // Silently ignoring this property for now
             // http://bugs.webkit.org/show_bug.cgi?id=6022
             break;
+        case CSSPropertyWebkitShadow: {
+            if (isInherit)
+                return svgstyle->setShadow(m_parentStyle->svgStyle()->shadow() ? new ShadowData(*m_parentStyle->svgStyle()->shadow()) : 0);
+            if (isInitial || primitiveValue) // initial | none
+                return svgstyle->setShadow(0);
+
+            if (!value->isValueList())
+                return;
+
+            float zoomFactor = m_style->effectiveZoom();
+
+            CSSValueList *list = static_cast<CSSValueList*>(value);
+            ASSERT(list->length() == 1);
+            ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(0));
+            int x = item->x->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
+            int y = item->y->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
+            int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
+            Color color;
+            if (item->color)
+                color = getColorFromPrimitiveValue(item->color.get());
+
+            // -webkit-shadow does should not have a spread or style
+            ASSERT(!item->spread);
+            ASSERT(!item->style);
+                
+            ShadowData* shadowData = new ShadowData(x, y, blur, 0, Normal, color.isValid() ? color : Color::transparent);
+            svgstyle->setShadow(shadowData);
+            return;
+        }
         default:
             // If you crash here, it's because you added a css property and are not handling it
             // in either this switch statement or the one in CSSStyleSelector::applyProperty

@@ -213,6 +213,25 @@ bool StyleMiscData::operator==(const StyleMiscData &other) const
            && baselineShiftValue == other.baselineShiftValue;
 }
 
+StyleShadowSVGData::StyleShadowSVGData()
+{
+}
+
+StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
+    : RefCounted<StyleShadowSVGData>()
+    , shadow(other.shadow ? new ShadowData(*other.shadow) : 0)
+{
+}
+
+bool StyleShadowSVGData::operator==(const StyleShadowSVGData& other) const
+{
+    if ((!shadow && other.shadow) || (shadow && !other.shadow))
+        return false;
+    if (shadow && other.shadow && (*shadow != *other.shadow))
+        return false;
+    return true;
+}
+
 #endif // ENABLE(SVG)
 
 // vim:ts=4:noet

@@ -1,3 +1,55 @@
+2009-10-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for <rdar://problem/6942706> ER: Add a CSS property that 
+        allows shadows to work for SVG content
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=30479
+
+        New results that include -webkit-shadow:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
+        New tests and their results.
+        * platform/mac/svg/css/arrow-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/arrow-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/arrow-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/clippath-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/clippath-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/clippath-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/group-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/group-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/group-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/mask-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/mask-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/mask-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/path-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/path-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/path-with-shadow-expected.txt: Added.
+        * platform/mac/svg/css/stars-with-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/stars-with-shadow-expected.png: Added.
+        * platform/mac/svg/css/stars-with-shadow-expected.txt: Added.
+        * platform/mac/svg/filters/shadow-on-filter-expected.checksum: Added.
+        * platform/mac/svg/filters/shadow-on-filter-expected.png: Added.
+        * platform/mac/svg/filters/shadow-on-filter-expected.txt: Added.
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.checksum: Added.
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.png: Added.
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.txt: Added.
+        * svg/css/arrow-with-shadow.svg: Added.
+        * svg/css/circle-in-mask-with-shadow.svg: Added.
+        * svg/css/clippath-with-shadow.svg: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/group-with-shadow.svg: Added.
+        * svg/css/mask-with-shadow.svg: Added.
+        * svg/css/path-with-shadow.svg: Added.
+        * svg/css/stars-with-shadow.html: Added.
+        * svg/filters/shadow-on-filter.svg: Added.
+        * svg/filters/shadow-on-rect-with-filter.svg: Added.
+
 2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

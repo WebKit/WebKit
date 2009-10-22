@@ -1,0 +1,9 @@
+layer at (0,0) size 785x616
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x616
+  RenderBlock {HTML} at (0,0) size 785x616
+    RenderBody {BODY} at (8,8) size 769x600
+      RenderSVGRoot {svg} at (40.19,36.70) size 426.11x128.98
+        RenderPath {path} at (40.19,36.70) size 135.62x128.98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}] [stroke={[type=SOLID] [color=#800080] [stroke width=10.00]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,30.00 L-35.27,48.54 L-28.53,9.27 L-57.06,-18.54 L-17.63,-24.27 L-0.00,-60.00 L17.63,-24.27 L57.06,-18.54 L28.53,9.27 L35.27,48.54 Z"]
+        RenderPath {path} at (190.19,36.70) size 135.62x128.98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,100.00)}] [stroke={[type=SOLID] [color=#800080] [stroke width=10.00]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,30.00 L-35.27,48.54 L-28.53,9.27 L-57.06,-18.54 L-17.63,-24.27 L-0.00,-60.00 L17.63,-24.27 L57.06,-18.54 L28.53,9.27 L35.27,48.54 Z"]
+        RenderPath {path} at (349.70,46.70) size 116.60x110.89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,100.00)}] [stroke={[type=SOLID] [color=#800080] [stroke width=10.00]}] [fill={[type=SOLID] [color=#999999]}] [data="M0.00,25.00 L-29.39,40.45 L-23.78,7.73 L-47.55,-15.45 L-14.69,-20.23 L-0.00,-50.00 L14.69,-20.23 L47.55,-15.45 L23.78,7.73 L29.39,40.45 Z"]

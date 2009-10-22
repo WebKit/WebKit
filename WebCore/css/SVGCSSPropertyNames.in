@@ -46,3 +46,5 @@ glyph-orientation-vertical
 kerning
 text-anchor
 writing-mode
+
+-webkit-shadow

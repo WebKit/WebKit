@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (31.67,31.67) size 253.33x281.67
+    RenderSVGContainer {g} at (31.67,31.67) size 253.33x281.67 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+      RenderPath {line} at (33.33,31.67) size 250x3.33 [stroke={[type=SOLID] [color=#800080]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,10.00 L85.00,10.00"]
+      RenderPath {rect} at (31.67,65) size 253.33x170 [stroke={[type=SOLID] [color=#800080]}] [fill={[type=SOLID] [color=#800080]}] [data="M10.00,20.00 L85.00,20.00 L85.00,70.00 L10.00,70.00 Z"]
+      RenderSVGText {text} at (10,90) size 75x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 75x18
+          chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 12 width 75.00: "Hello there!"

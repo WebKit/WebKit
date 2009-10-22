@@ -1,3 +1,53 @@
+2009-10-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6942706> ER: Add a CSS property that allows 
+        shadows to work for SVG content
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=30479
+
+        This patch adds a new SVG-specific CSS property called -webkit-
+        shadow that has the same syntax as -webkit-box-shadow
+
+        Add CSSPropertyWebkitShadow to the list of SVG CSS properties, and 
+        make valueForShadow a member function rather than a static function 
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::valueForShadow):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+
+        Call valueForShadow for CSSPropertyWebkitShadow
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+
+        Do standard CSS stuff for CSSPropertyWebkitShadow
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+
+        Set the appropriate shadow on the paint context if we have one. 
+        This seems to be all we have to do to have an SVG-shaped shadow.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+
+        Add shadow to SVGRenderStyle. I added a new macro that I don't like 
+        just because that's the way things are done here right now.
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        (WebCore::SVGRenderStyle::operator==):
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (StyleShadowSVGData::StyleShadowSVGData):
+        (StyleShadowSVGData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::StyleShadowSVGData::create):
+        (WebCore::StyleShadowSVGData::copy):
+        (WebCore::StyleShadowSVGData::operator!=):
+
 2009-10-22  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
  
         Reviewed by Xan Lopez.
