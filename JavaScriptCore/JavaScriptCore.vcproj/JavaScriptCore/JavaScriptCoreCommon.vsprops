@@ -13,7 +13,7 @@
 		Name="VCLinkerTool"
 		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
-		ModuleDefinitionFile="JavaScriptCore$(WebKitDLLConfigSuffix).def"
+		ModuleDefinitionFile="JavaScriptCore.def"
 	/>
 	<Tool
 		Name="VCPostBuildEventTool"

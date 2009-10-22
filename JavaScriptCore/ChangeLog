@@ -1,3 +1,16 @@
+2009-10-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30686
+        Remove debug-specific def file.
+        Only Debug_All target uses JavaScriptCore_debug.dll naming, and since
+        that target is only used internally, maintaining two files just to
+        suppress a single link warning isn't worthwhile.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Removed.
+
 2009-10-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7270320> Screenshots of off-screen plug-ins are blank
