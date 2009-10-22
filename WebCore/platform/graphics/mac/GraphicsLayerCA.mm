@@ -274,7 +274,6 @@ static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction& tim
     return 0;
 }
 
-#ifndef NDEBUG
 static void setLayerBorderColor(PlatformLayer* layer, const Color& color)
 {
     CGColorRef borderColor = createCGColor(color);
@@ -286,7 +285,6 @@ static void clearBorderColor(PlatformLayer* layer)
 {
     [layer setBorderColor:nil];
 }
-#endif
 
 static void setLayerBackgroundColor(PlatformLayer* layer, const Color& color)
 {
@@ -317,7 +315,6 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoord
     return CompositingCoordinatesBottomUp;
 }
 
-#ifndef NDEBUG
 bool GraphicsLayer::showDebugBorders()
 {
     static bool showDebugBorders = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerBorders"];
@@ -329,7 +326,6 @@ bool GraphicsLayer::showRepaintCounter()
     static bool showRepaintCounter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerRepaintCounter"];
     return showRepaintCounter;
 }
-#endif
 
 static NSDictionary* nullActionsDictionary()
 {
@@ -373,9 +369,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     setContentsOrientation(defaultContentsOrientation());
 #endif
 
-#ifndef NDEBUG
     updateDebugIndicators();
-#endif
 
     m_animationDelegate.adoptNS([[WebAnimationDelegate alloc] init]);
     [m_animationDelegate.get() setLayer:this];
@@ -964,9 +958,7 @@ void GraphicsLayerCA::updateChildrenTransform()
 void GraphicsLayerCA::updateMasksToBounds()
 {
     [m_layer.get() setMasksToBounds:m_masksToBounds];
-#ifndef NDEBUG
     updateDebugIndicators();
-#endif
 }
 
 void GraphicsLayerCA::updateContentsOpaque()
@@ -1051,9 +1043,7 @@ void GraphicsLayerCA::updateLayerDrawsContent()
     else
         [m_layer.get() setContents:nil];
 
-#ifndef NDEBUG
     updateDebugIndicators();
-#endif
 }
 
 void GraphicsLayerCA::updateLayerBackgroundColor()
@@ -1695,7 +1685,6 @@ PlatformLayer* GraphicsLayerCA::platformLayer() const
     return primaryLayer();
 }
 
-#ifndef NDEBUG
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -1722,7 +1711,6 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
     
     END_BLOCK_OBJC_EXCEPTIONS
 }
-#endif // NDEBUG
 
 bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
 {
@@ -1800,9 +1788,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     // need to tell new layer to draw itself
     setNeedsDisplay();
     
-#ifndef NDEBUG
     updateDebugIndicators();
-#endif
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
@@ -1846,12 +1832,10 @@ void GraphicsLayerCA::setupContentsLayer(CALayer* contentsLayer)
     } else
         [contentsLayer setAnchorPoint:CGPointZero];
 
-#ifndef NDEBUG
     if (showDebugBorders()) {
         setLayerBorderColor(contentsLayer, Color(0, 0, 128, 180));
         [contentsLayer setBorderWidth:1.0f];
     }
-#endif
 }
 
 void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)

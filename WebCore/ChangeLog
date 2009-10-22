@@ -1,3 +1,29 @@
+2009-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make accelerated compositing debug indicators work in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=30588
+        
+        Allow some debug indicators, that show which page elements go into compositing layers,
+        to work in release builds, when the runtime prefs are set.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::setZPosition):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::clearBorderColor):
+        (WebCore::GraphicsLayer::showRepaintCounter):
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::updateMasksToBounds):
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerCA::setDebugBorder):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::setupContentsLayer):
+        * platform/graphics/mac/WebLayer.mm:
+
 2009-10-22  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.

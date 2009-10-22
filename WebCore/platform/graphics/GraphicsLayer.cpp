@@ -59,9 +59,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     : m_client(client)
     , m_anchorPoint(0.5f, 0.5f, 0)
     , m_opacity(1)
-#ifndef NDEBUG
     , m_zPosition(0)
-#endif
     , m_backgroundColorSet(false)
     , m_contentsOpaque(false)
     , m_preserves3D(false)
@@ -74,9 +72,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
     , m_maskLayer(0)
-#ifndef NDEBUG
     , m_repaintCount(0)
-#endif
 {
 }
 
@@ -229,7 +225,6 @@ void GraphicsLayer::resumeAnimations()
 {
 }
 
-#ifndef NDEBUG
 void GraphicsLayer::updateDebugIndicators()
 {
     if (GraphicsLayer::showDebugBorders()) {
@@ -251,7 +246,6 @@ void GraphicsLayer::setZPosition(float position)
 {
     m_zPosition = position;
 }
-#endif
 
 float GraphicsLayer::accumulatedOpacity() const
 {

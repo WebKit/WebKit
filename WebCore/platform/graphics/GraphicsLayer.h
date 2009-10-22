@@ -276,10 +276,8 @@ public:
     
     void dumpLayer(TextStream&, int indent = 0) const;
 
-#ifndef NDEBUG
     int repaintCount() const { return m_repaintCount; }
     int incrementRepaintCount() { return ++m_repaintCount; }
-#endif
 
     // Report whether the underlying compositing system uses a top-down
     // or a bottom-up coordinate system.
@@ -294,7 +292,6 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-#ifndef NDEBUG
     static bool showDebugBorders();
     static bool showRepaintCounter();
     
@@ -305,7 +302,6 @@ public:
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
     virtual void setZPosition(float);
-#endif
 
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
@@ -342,9 +338,7 @@ protected:
 
     Color m_backgroundColor;
     float m_opacity;
-#ifndef NDEBUG
     float m_zPosition;
-#endif
 
     bool m_backgroundColorSet : 1;
     bool m_contentsOpaque : 1;
@@ -365,9 +359,7 @@ protected:
 
     IntRect m_contentsRect;
 
-#ifndef NDEBUG
     int m_repaintCount;
-#endif
 };
 
 

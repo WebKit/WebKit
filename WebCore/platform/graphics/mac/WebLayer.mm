@@ -80,7 +80,6 @@ using namespace WebCore;
     }
 #endif
 
-#ifndef NDEBUG
     if (layerContents->showRepaintCounter()) {
         bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
 
@@ -107,7 +106,6 @@ using namespace WebCore;
         
         CGContextRestoreGState(context);        
     }
-#endif
 
     CGContextRestoreGState(context);
 }
