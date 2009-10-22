@@ -30,6 +30,7 @@
 #include "PluginView.h"
 
 #include "BitmapImage.h"
+#include "BitmapInfo.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -495,7 +496,54 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
     return result;
 }
 
-void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const IntRect& rect) const
+void PluginView::paintIntoTransformedContext(HDC hdc)
+{
+    if (m_isWindowed) {
+        SendMessage(platformPluginWidget(), WM_PRINTCLIENT, reinterpret_cast<WPARAM>(hdc), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
+        return;
+    }
+
+    m_npWindow.type = NPWindowTypeDrawable;
+    m_npWindow.window = hdc;
+
+    WINDOWPOS windowpos = { 0 };
+
+#if PLATFORM(WINCE)
+    IntRect r = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
+
+    windowpos.x = r.x();
+    windowpos.y = r.y();
+    windowpos.cx = r.width();
+    windowpos.cy = r.height();
+#else
+    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
+
+    windowpos.x = p.x();
+    windowpos.y = p.y();
+    windowpos.cx = frameRect().width();
+    windowpos.cy = frameRect().height();
+#endif
+
+    NPEvent npEvent;
+    npEvent.event = WM_WINDOWPOSCHANGED;
+    npEvent.lParam = reinterpret_cast<uint32>(&windowpos);
+    npEvent.wParam = 0;
+
+    dispatchNPEvent(npEvent);
+
+    setNPWindowRect(frameRect());
+
+    npEvent.event = WM_PAINT;
+    npEvent.wParam = reinterpret_cast<uint32>(hdc);
+
+    // This is supposed to be a pointer to the dirty rect, but it seems that the Flash plugin
+    // ignores it so we just pass null.
+    npEvent.lParam = 0;
+
+    dispatchNPEvent(npEvent);
+}
+
+void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const IntRect& rect)
 {
 #if !PLATFORM(WINCE)
     ASSERT(m_isWindowed);
@@ -517,7 +565,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
 
     SetWorldTransform(hdc, &transform);
 
-    SendMessage(platformPluginWidget(), WM_PRINTCLIENT, reinterpret_cast<WPARAM>(hdc), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
+    paintIntoTransformedContext(hdc);
 
     SetWorldTransform(hdc, &originalTransform);
 
@@ -547,7 +595,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     ASSERT(parent()->isFrameView());
     IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
     HDC hdc = context->getWindowsContext(rectInWindow, m_isTransparent);
-    NPEvent npEvent;
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
@@ -563,44 +610,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     }
 #endif
 
-    m_npWindow.type = NPWindowTypeDrawable;
-    m_npWindow.window = hdc;
-
-    WINDOWPOS windowpos;
-    memset(&windowpos, 0, sizeof(windowpos));
-
-#if PLATFORM(WINCE)
-    IntRect r = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
-
-    windowpos.x = r.x();
-    windowpos.y = r.y();
-    windowpos.cx = r.width();
-    windowpos.cy = r.height();
-#else
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
-
-    windowpos.x = p.x();
-    windowpos.y = p.y();
-    windowpos.cx = frameRect().width();
-    windowpos.cy = frameRect().height();
-#endif
-
-    npEvent.event = WM_WINDOWPOSCHANGED;
-    npEvent.lParam = reinterpret_cast<uint32>(&windowpos);
-    npEvent.wParam = 0;
-
-    dispatchNPEvent(npEvent);
-
-    setNPWindowRect(frameRect());
-
-    npEvent.event = WM_PAINT;
-    npEvent.wParam = reinterpret_cast<uint32>(hdc);
-
-    // This is supposed to be a pointer to the dirty rect, but it seems that the Flash plugin
-    // ignores it so we just pass null.
-    npEvent.lParam = 0;
-
-    dispatchNPEvent(npEvent);
+    paintIntoTransformedContext(hdc);
 
     context->releaseWindowsContext(hdc, frameRect(), m_isTransparent);
 }
@@ -1018,6 +1028,39 @@ void PluginView::platformDestroy()
     setPlatformPluginWidget(0);
 }
 
+PassRefPtr<Image> PluginView::snapshot()
+{
+    OwnPtr<HDC> hdc(CreateCompatibleDC(0));
+
+    if (!m_isWindowed) {
+        // Enable world transforms.
+        SetGraphicsMode(hdc.get(), GM_ADVANCED);
+
+        XFORM transform;
+        GetWorldTransform(hdc.get(), &transform);
+
+        // Windowless plug-ins assume that they're drawing onto the view's DC.
+        // Translate the context so that the plug-in draws at (0, 0).
+        ASSERT(parent()->isFrameView());
+        IntPoint position = static_cast<FrameView*>(parent())->contentsToWindow(frameRect()).location();
+        transform.eDx = -position.x();
+        transform.eDy = -position.y();
+        SetWorldTransform(hdc.get(), &transform);
+    }
+
+    void* bits;
+    BitmapInfo bmp = BitmapInfo::createBottomUp(frameRect().size());
+    OwnPtr<HBITMAP> hbmp(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0));
+
+    HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc.get(), hbmp.get()));
+
+    paintIntoTransformedContext(hdc.get());
+
+    SelectObject(hdc.get(), hbmpOld);
+
+    return BitmapImage::create(hbmp.get());
+}
+
 void PluginView::halt()
 {
     ASSERT(!m_isHalted);
@@ -1025,8 +1068,7 @@ void PluginView::halt()
 
 #if !PLATFORM(QT)
     // Show a screenshot of the plug-in.
-    OwnPtr<HBITMAP> nodeImage(m_parentFrame->nodeImage(m_element));
-    toRenderWidget(m_element->renderer())->showSubstituteImage(BitmapImage::create(nodeImage.get()));
+    toRenderWidget(m_element->renderer())->showSubstituteImage(snapshot());
 #endif
 
     m_isHalted = true;

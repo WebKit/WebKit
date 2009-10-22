@@ -1,3 +1,36 @@
+2009-10-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7270320> Screenshots of off-screen plug-ins are blank
+        <rdar://problem/7270314> After halting a transparent PluginView on
+        Windows, the transparency is applied twice
+
+        Replace use of Frame::nodeImage() with a function that takes a snapshot
+        of a PluginView.
+
+        Reviewed by Dan Bernstein.
+
+        * plugins/PluginView.h:
+        Made paintWindowedPluginIntoContext() non-const, as it now calls
+        paintIntoTransformedContext(). Declare paintIntoTransformedContext()
+        and snapshot() for Windows platforms.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintIntoTransformedContext):
+        Paints into the passed HDC without applying any coordinate translations.
+        Code moved from paintWindowedPluginIntoContext() and paint(). Removed
+        the memset() of windowpos in lieu of assignment.
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        Code moved to paintIntoTransformedContext().
+        (WebCore::PluginView::paint):
+        Ditto.
+        (WebCore::PluginView::snapshot):
+        Create a context, and if the plug-in is windowless, translate it so the
+        plug-in will draw at the correct location. Create a bitmap, and select
+        it into the context. Paint the plug-in, and create a BitmapImage from
+        the bitmap.
+        (WebCore::PluginView::halt):
+        Use snapshot().
+
 2009-10-22  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

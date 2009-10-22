@@ -96,6 +96,7 @@ EXPORTS
     ?defineSetter@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAVJSObject@2@I@Z
     ?defineSetter@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAV12@I@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHBITMAP__@@@Z
+    ?deleteOwnedPtr@WTF@@YAXPAUHDC__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHRGN__@@@Z
     ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@I@Z

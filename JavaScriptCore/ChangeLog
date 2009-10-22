@@ -1,3 +1,17 @@
+2009-10-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7270320> Screenshots of off-screen plug-ins are blank
+        <rdar://problem/7270314> After halting a transparent PluginView on
+        Windows, the transparency is applied twice
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Export WTF::deleteOwnedPtr(HDC).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        Ditto.
+
 2009-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: updated variable name.
