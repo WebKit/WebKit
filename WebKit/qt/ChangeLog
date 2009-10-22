@@ -1,5 +1,23 @@
 2009-10-22  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Rubberstamped by Tor Arne Vestbø.
+
+        Code standarlization for QGVLauncher.
+
+        1) Made member initilization lists in constructors
+           to be per line.
+        2) Made applyProxy method inline as all other methods in
+           WebPage class.
+
+        * QGVLauncher/main.cpp:
+        (WebPage::WebPage):
+        (WebPage::applyProxy):
+        (MainView::MainView):
+        (MainWindow::MainWindow):
+        (MainWindow::init):
+
+2009-10-22  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Add a Y-Axis rotation to QGVLauncher.
