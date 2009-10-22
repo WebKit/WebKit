@@ -113,23 +113,30 @@ class SVNTestRepository:
         run(['rm', '-rf', test_object.svn_repo_path])
         run(['rm', '-rf', test_object.svn_checkout_path])
 
+# For testing the SCM baseclass directly.
+class SCMClassTests(unittest.TestCase):
+    def setUp(self):
+        self.dev_null = open(os.devnull, "w") # Used to make our Popen calls quiet.
 
-class SCMTest(unittest.TestCase):
-    def _create_patch(self, patch_contents):
-        patch_path = os.path.join(self.svn_checkout_path, 'patch.diff')
-        write_into_file_at_path(patch_path, patch_contents)
-        patch = {}
-        patch['reviewer'] = 'Joe Cool'
-        patch['bug_id'] = '12345'
-        patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
-        return patch
+    def tearDown(self):
+        self.dev_null.close()
 
-    def _setup_webkittools_scripts_symlink(self, local_scm):
-        webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
-        webkit_scripts_directory = webkit_scm.scripts_directory()
-        local_scripts_directory = local_scm.scripts_directory()
-        os.mkdir(os.path.dirname(local_scripts_directory))
-        os.symlink(webkit_scripts_directory, local_scripts_directory)
+    def test_run_command_with_pipe(self):
+        input_process = subprocess.Popen(['/bin/echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)
+        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input=input_process.stdout), "bar")
+
+        # Test the non-pipe case too:
+        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input="foo\nbar"), "bar")
+
+        command_returns_non_zero = ['/bin/sh', '--invalid-option']
+        # Test when the input pipe process fails.
+        input_process = subprocess.Popen(command_returns_non_zero, stdout=subprocess.PIPE, stderr=self.dev_null)
+        self.assertTrue(input_process.poll() != 0)
+        self.assertRaises(ScriptError, SCM.run_command, ['/usr/bin/grep', 'bar'], input=input_process.stdout)
+
+        # Test when the run_command process fails.
+        input_process = subprocess.Popen(['/bin/echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null) # grep shows usage and calls exit(2) when called w/o arguments.
+        self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero, input=input_process.stdout)
 
     def test_error_handlers(self):
         git_failure_message="Merge conflict during commit: Your file or directory 'WebCore/ChangeLog' is probably out-of-date: resource out of date; try updating at /usr/local/libexec/git-core//git-svn line 469"
@@ -149,6 +156,24 @@ svn: resource out of date; try updating
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=svn_failure_message))
         self.assertRaises(ScriptError, commit_error_handler, ScriptError(output='blah blah blah'))
 
+
+# GitTest and SVNTest inherit from this so any test_ methods here will be run once for this class and then once for each subclass.
+class SCMTest(unittest.TestCase):
+    def _create_patch(self, patch_contents):
+        patch_path = os.path.join(self.svn_checkout_path, 'patch.diff')
+        write_into_file_at_path(patch_path, patch_contents)
+        patch = {}
+        patch['reviewer'] = 'Joe Cool'
+        patch['bug_id'] = '12345'
+        patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
+        return patch
+
+    def _setup_webkittools_scripts_symlink(self, local_scm):
+        webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
+        webkit_scripts_directory = webkit_scm.scripts_directory()
+        local_scripts_directory = local_scm.scripts_directory()
+        os.mkdir(os.path.dirname(local_scripts_directory))
+        os.symlink(webkit_scripts_directory, local_scripts_directory)
 
     # Tests which both GitTest and SVNTest should run.
     # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses

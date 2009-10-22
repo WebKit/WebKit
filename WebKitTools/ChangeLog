@@ -1,3 +1,17 @@
+2009-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool's "patch failed to download an apply" error should give more information
+        https://bugs.webkit.org/show_bug.cgi?id=30632
+
+        * Scripts/modules/scm.py:
+         - Use the common run_command method instead of custom POpen code.
+         - Make run_command know how to take pipes as input.
+        * Scripts/modules/scm_unittest.py:
+         - Add new tests to cover change.
+         - Also move test_error_handlers into new SCMClassTests so we don't run it 3 times.
+
 2009-10-21  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.  Adding myself to the committers list.

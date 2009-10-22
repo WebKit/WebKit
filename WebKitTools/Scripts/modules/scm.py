@@ -124,9 +124,14 @@ class SCM:
 
     @staticmethod
     def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False):
-        stdin = subprocess.PIPE if input else None
+        if hasattr(input, 'read'): # Check if the input is a file.
+            stdin = input
+            string_to_communicate = None
+        else:
+            stdin = subprocess.PIPE if input else None
+            string_to_communicate = input
         process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
-        output = process.communicate(input)[0].rstrip()
+        output = process.communicate(string_to_communicate)[0].rstrip()
         exit_code = process.wait()
         if exit_code:
             script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
@@ -166,11 +171,8 @@ class SCM:
         args = [self.script_path('svn-apply'), '--reviewer', patch['reviewer']]
         if force:
             args.append('--force')
-        patch_apply_process = subprocess.Popen(args, stdin=curl_process.stdout)
 
-        return_code = patch_apply_process.wait()
-        if return_code:
-            raise ScriptError(message="Patch %s from bug %s failed to download and apply." % (patch['url'], patch['bug_id']))
+        self.run_command(args, input=curl_process.stdout)
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
