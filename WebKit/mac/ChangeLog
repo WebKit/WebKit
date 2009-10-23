@@ -1,3 +1,15 @@
+2009-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7322847>
+        Pressing space bar key in full screen mode should pause movie but doesn't
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController keyDown:]):  New, toggle playback on space key.
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]): Play button action is now called togglePlaying.
+        (-[WebVideoFullscreenHUDWindowController togglePlaying:]): Rename from playingChanged.
+
 2009-10-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

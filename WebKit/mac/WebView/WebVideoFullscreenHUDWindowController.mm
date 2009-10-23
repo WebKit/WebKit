@@ -39,6 +39,8 @@ using namespace std;
 
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
+- (void)keyDown:(NSEvent *)event;
+
 - (void)updateTime;
 - (void)timelinePositionChanged:(id)sender;
 - (float)currentTime;
@@ -50,7 +52,7 @@ using namespace std;
 - (double)volume;
 - (void)setVolume:(double)volume;
 
-- (void)playingChanged:(id)sender;
+- (void)togglePlaying:(id)sender;
 - (BOOL)playing;
 - (void)setPlaying:(BOOL)playing;
 
@@ -165,11 +167,19 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 }
 #endif
 
+- (void)keyDown:(NSEvent *)event
+{
+    if ([[event characters] isEqualToString:@" "])
+        [_playButton performClick:self];
+    else
+        [super keyDown:event];
+}
+
 - (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
 {
     return _delegate;
 }
-     
+
 - (void)setDelegate:(id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
 {
     _delegate = delegate;
@@ -315,7 +325,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     CGFloat center = (windowWidth - kButtonSize) / 2;
     _playButton = createControlWithMediaUIControlType(WKMediaUIControlPlayPauseButton, NSMakeRect(center, top - kButtonSize, kButtonSize, kButtonSize));
     [_playButton setTarget:self];
-    [_playButton setAction:@selector(playingChanged:)];
+    [_playButton setAction:@selector(togglePlaying:)];
     [contentView addSubview:_playButton];
 
     CGFloat closeToRight = windowWidth - 2 * kMargin - kButtonMiniSize;
@@ -472,7 +482,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     [_playButton setIntValue:[self playing]];
 }
 
-- (void)playingChanged:(id)sender
+- (void)togglePlaying:(id)sender
 {
     BOOL nowPlaying = [self playing];
     [self setPlaying:!nowPlaying];
