@@ -63,9 +63,8 @@
 .syntax .il { color: #666666 } /* Literal.Number.Integer.Long */
 
 
-a:hover {
+a.no-underscore:hover {
     text-decoration:none;
-    text-shadow: #888 0px 0px 5px;
 } 
 
 ul.demo > li {
