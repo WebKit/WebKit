@@ -633,7 +633,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     case NPNVnetscapeWindow: {
         void* w = reinterpret_cast<void*>(value);
         QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-        *((XID *)w) = client ? client->ownerWidget()->winId() : 0;
+        *((XID *)w) = client ? client->ownerWidget()->window()->winId() : 0;
         return NPERR_NO_ERROR;
     }
 

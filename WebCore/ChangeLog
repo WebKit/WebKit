@@ -2,6 +2,24 @@
 
         Reviewed by Holger Freyther.
 
+        [Qt] Plugins : Use window's winId() instead of the widget's.
+
+        As per, https://developer.mozilla.org/en/NPN_GetValue
+        NPNVnetscapeWindow on Unix/X11: "Gets the browser toplevel window in which the
+        plug-in is displayed; returns Window".
+
+        The issue was found because NPNVNetscapeWindow winId() ends up creating
+        a native window resulting in flicker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30706
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::getValue):
+
+2009-10-23  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
         [Qt] Windowless Plugins : Don't use m_clipRect when painting.
 
         Though it works, it is not correct to use m_clipRect for painting
