@@ -202,6 +202,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     writing-mode: lr-tb
     glyph-orientation-horizontal: 0deg
     glyph-orientation-vertical: auto
+    -webkit-shadow: none
     background-position-x: 0%
     background-position-y: 0%
     border-spacing: 0px 0px

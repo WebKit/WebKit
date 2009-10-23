@@ -1,3 +1,12 @@
+2009-10-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Updating expected results - unreviewed.
+
+        Updated expected computed style results on Windows after r49959.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-10-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
