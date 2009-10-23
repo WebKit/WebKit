@@ -49,6 +49,7 @@
 #include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "NotificationCenter.h"

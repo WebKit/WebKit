@@ -1,3 +1,15 @@
+2009-10-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Adds missing UnusedParam.h includes, required when INSPECTOR is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=30677
+
+        Build fix, no new tests required.
+
+        * page/Console.cpp: Modified. Added UnusedParam.h include.
+        * workers/WorkerContext.cpp: Modified. Added UnusedParam.h include.
+
 2009-10-23  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Holger Freyther.

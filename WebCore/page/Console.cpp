@@ -46,6 +46,7 @@
 
 #include "ScriptCallStack.h"
 #include <stdio.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
