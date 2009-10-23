@@ -1,3 +1,13 @@
+2009-10-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+        Build fix following bug #30696.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_global_context):
+
 2009-10-22  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
