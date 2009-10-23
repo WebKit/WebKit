@@ -1,3 +1,18 @@
+2009-10-23  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update the expected pixel result for test svg-as-background-6.html
+
+        The old result is incorrect because of the wrong SVG masking offset calculation.
+        Patch http://trac.webkit.org/changeset/49598 fixed the issue.
+        The pixel result of this layout test needs to be updated.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30692
+
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png:
+
 2009-10-23  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Sam Weinig.
