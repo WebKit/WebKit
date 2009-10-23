@@ -569,12 +569,16 @@ namespace WebCore {
 
         DECLARE_INDEXED_PROPERTY_GETTER(ClientRectList);
         DECLARE_INDEXED_PROPERTY_GETTER(FileList);
-  
+
 #if ENABLE(DATAGRID)
         DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);
         DECLARE_INDEXED_PROPERTY_GETTER(DataGridColumnList);
         DECLARE_NAMED_PROPERTY_GETTER(DataGridColumnList);
-#endif      
+#endif
+
+#if ENABLE(DATABASE)
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowOpenDatabase);
+#endif
 
 #if ENABLE(DOM_STORAGE)
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowLocalStorage);

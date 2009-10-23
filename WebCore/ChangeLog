@@ -1,3 +1,23 @@
+2009-10-22  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Adding a class that allows us to enable/disable features at
+        runtime. Adding a flag to enable database support.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30653
+
+        * WebCore.gypi:
+        * bindings/v8/RuntimeEnabledFeatures.cpp: Added.
+        * bindings/v8/RuntimeEnabledFeatures.h: Added.
+        (WebCore::RuntimeEnabledFeatures::setDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::databaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_RUNTIME_ENABLER):
+        * page/DOMWindow.idl:
+
 2009-10-23  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

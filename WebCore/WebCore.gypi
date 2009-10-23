@@ -742,6 +742,8 @@
             'bindings/v8/NPV8Object.cpp',
             'bindings/v8/NPV8Object.h',
             'bindings/v8/OwnHandle.h',
+            'bindings/v8/RuntimeEnabledFeatures.cpp',
+            'bindings/v8/RuntimeEnabledFeatures.h',
             'bindings/v8/ScheduledAction.cpp',
             'bindings/v8/ScheduledAction.h',
             'bindings/v8/ScopedDOMDataStore.cpp',

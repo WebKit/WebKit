@@ -49,6 +49,7 @@
 #include "NotificationCenter.h"
 #include "Page.h"
 #include "PlatformScreen.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SerializedScriptValue.h"
@@ -278,6 +279,13 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker)
 ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket)
 {
     return WebSocket::isAvailable();
+}
+#endif
+
+#if ENABLE(DATABASE)
+ACCESSOR_RUNTIME_ENABLER(DOMWindowOpenDatabase)
+{
+    return WebCore::RuntimeEnabledFeatures::databaseEnabled();
 }
 #endif
 
