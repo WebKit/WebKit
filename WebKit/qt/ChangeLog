@@ -1,3 +1,13 @@
+2009-10-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (speculative build fix - qt is currently already broken!)
+        Build fix following bug #30696.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript):
+
 2009-10-22  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

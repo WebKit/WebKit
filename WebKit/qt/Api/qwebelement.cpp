@@ -682,7 +682,7 @@ static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValu
     if (!scriptController)
         return false;
 
-    state = scriptController->globalObject()->globalExec();
+    state = scriptController->globalObject(mainThreadNormalWorld())->globalExec();
     if (!state)
         return false;
 
