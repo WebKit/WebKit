@@ -1,3 +1,13 @@
+2009-10-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Fixes a leak in createThreadInternal on Android.
+        https://bugs.webkit.org/show_bug.cgi?id=30698
+
+        * wtf/ThreadingPthreads.cpp: Modified.
+        (WTF::createThreadInternal): Avoid leaking a ThreadData object on failure.
+
 2009-10-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Alexey Proskuryakov.
