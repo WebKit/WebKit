@@ -1,5 +1,11 @@
 2009-10-23  Eric Seidel  <eric@webkit.org>
 
+        No review, only adding Alice to the list of reviewers.
+
+        * Scripts/modules/committers.py:
+
+2009-10-23  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Eric Carlson.
 
         fast/media/mq-transform-02.html failed on Leopard Commit Bot

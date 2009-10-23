@@ -97,6 +97,7 @@ reviewers_list = [
     Reviewer("Adam Treat", "treat@kde.org"),
     Reviewer("Adele Peterson", "adele@apple.com"),
     Reviewer("Alexey Proskuryakov", "ap@webkit.org"),
+    Reviewer("Alice Liu", "alice.liu@apple.com"),
     Reviewer("Anders Carlsson", "andersca@apple.com"),
     Reviewer("Antti Koivisto", "koivisto@iki.fi"),
     Reviewer("Ariya Hidayat", "ariya.hidayat@trolltech.com"),
