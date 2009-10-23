@@ -246,7 +246,7 @@ function bulk_edit_posts( $post_data = null ) {
 
 	if ( isset($post_data['post_category']) ) {
 		if ( is_array($post_data['post_category']) && ! empty($post_data['post_category']) )
-			$new_cats = array_map( absint, $post_data['post_category'] );
+			$new_cats = array_map( 'absint', $post_data['post_category'] );
 		else
 			unset($post_data['post_category']);
 	}
@@ -1057,6 +1057,32 @@ function wp_set_post_lock( $post_id ) {
 		update_post_meta( $post->ID, '_edit_lock', $now );
 	if ( !add_post_meta( $post->ID, '_edit_last', $current_user->ID, true ) )
 		update_post_meta( $post->ID, '_edit_last', $current_user->ID );
+}
+
+/**
+ * Outputs the notice message to say that someone else is editing this post at the moment.
+ * 
+ * @since 2.8.5
+ * @return none
+ */
+function _admin_notice_post_locked() {
+	global $post;
+	$last_user = get_userdata( get_post_meta( $post->ID, '_edit_last', true ) );
+	$last_user_name = $last_user ? $last_user->display_name : __('Somebody');
+	
+	switch ($post->post_type) {
+		case 'post':
+			$message = __( 'Warning: %s is currently editing this post' );
+			break;
+		case 'page':
+			$message = __( 'Warning: %s is currently editing this page' );
+			break;
+		default:
+			$message = __( 'Warning: %s is currently editing this.' );
+	}
+	
+	$message = sprintf( $message, esc_html( $last_user_name ) );
+	echo "<div class='error'><p>$message</p></div>";	
 }
 
 /**
