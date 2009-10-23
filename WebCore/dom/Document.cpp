@@ -515,7 +515,9 @@ Document::JSWrapperCache* Document::createWrapperCache(DOMWrapperWorld* world)
 {
     JSWrapperCache* wrapperCache = new JSWrapperCache();
     m_wrapperCacheMap.set(world, wrapperCache);
+#if USE(JSC)
     world->rememberDocument(this);
+#endif
     return wrapperCache;
 }
 

@@ -42,6 +42,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+    class DOMWrapperWorld;
     class Event;
     class Frame;
     class HTMLPlugInElement;
@@ -90,14 +91,11 @@ namespace WebCore {
         // all DOM nodes and DOM constructors.
         void evaluateInNewContext(const Vector<ScriptSourceCode>&, int extensionGroup);
 
-        // JSC has a WindowShell object, but for V8, the ScriptController
-        // is the WindowShell.
-        bool haveWindowShell() const { return true; }
-
         // Masquerade 'this' as the windowShell.
         // This is a bit of a hack, but provides reasonable compatibility
         // with what JSC does as well.
-        ScriptController* windowShell() { return this; }
+        ScriptController* windowShell(DOMWrapperWorld*) { return this; }
+        ScriptController* existingWindowShell(DOMWrapperWorld*) { return this; }
 
         XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
@@ -187,6 +185,8 @@ namespace WebCore {
         // The XSSAuditor associated with this ScriptController.
         OwnPtr<XSSAuditor> m_XSSAuditor;
     };
+
+    DOMWrapperWorld* mainThreadNormalWorld();
 
 } // namespace WebCore
 

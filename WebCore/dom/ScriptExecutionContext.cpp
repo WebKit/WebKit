@@ -29,13 +29,16 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
-#include "JSDOMWindow.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+
+#if USE(JSC)
+#include "JSDOMWindow.h"
+#endif
 
 namespace WebCore {
 
@@ -196,6 +199,7 @@ ScriptExecutionContext::Task::~Task()
 {
 }
 
+#if USE(JSC)
 JSC::JSGlobalData* ScriptExecutionContext::globalData()
 {
      if (isDocument())
@@ -209,5 +213,6 @@ JSC::JSGlobalData* ScriptExecutionContext::globalData()
     ASSERT_NOT_REACHED();
     return 0;
 }
+#endif
 
 } // namespace WebCore
