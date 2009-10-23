@@ -1,3 +1,9 @@
+2009-10-23  Xan Lopez  <xlopez@igalia.com>
+
+        Skip new tests missing expected results.
+
+        * platform/mac/Skipped:
+
 2009-10-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Geoff Garen.
