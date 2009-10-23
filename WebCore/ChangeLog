@@ -1,3 +1,16 @@
+2009-10-23  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Slight optimizations to object returning and exception handling in generated V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=30599
+
+        * bindings/scripts/CodeGeneratorV8.pm: Generate better code
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::convertToV8Object): Added overload that takes a Ref<>
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Remove unnecessary template param to prevent compile error
+
 2009-10-23  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.
