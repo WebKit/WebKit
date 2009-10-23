@@ -1,3 +1,28 @@
+2009-10-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: pull basic sidebar implementation into the Panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30720
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.Panel.prototype.handleKeyEvent):
+        (WebInspector.Panel.prototype._createSidebar):
+        (WebInspector.Panel.prototype._startSidebarDragging):
+        (WebInspector.Panel.prototype._sidebarDragging):
+        (WebInspector.Panel.prototype._endSidebarDragging):
+        (WebInspector.Panel.prototype._updateSidebarWidth):
+        (WebInspector.Panel.prototype.setCenterViewWidth):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.setCenterViewWidth):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        (WebInspector.StoragePanel.prototype.setCenterViewWidth):
+
 2009-10-23  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.

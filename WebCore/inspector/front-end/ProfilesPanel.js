@@ -85,7 +85,7 @@ WebInspector.ProfileType.prototype = {
 
 WebInspector.ProfilesPanel = function()
 {
-    WebInspector.Panel.call(this);
+    WebInspector.Panel.call(this, true);
 
     this.element.addStyleClass("profiles");
     this._profileTypesByIdMap = {};
@@ -98,21 +98,6 @@ WebInspector.ProfilesPanel = function()
     this.panelEnablerView.addEventListener("enable clicked", this._enableProfiling, this);
 
     this.element.appendChild(this.panelEnablerView.element);
-
-    this.sidebarElement = document.createElement("div");
-    this.sidebarElement.id = "profiles-sidebar";
-    this.sidebarElement.className = "sidebar";
-    this.element.appendChild(this.sidebarElement);
-
-    this.sidebarResizeElement = document.createElement("div");
-    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
-    this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
-    this.element.appendChild(this.sidebarResizeElement);
-
-    this.sidebarTreeElement = document.createElement("ol");
-    this.sidebarTreeElement.className = "sidebar-tree";
-    this.sidebarElement.appendChild(this.sidebarTreeElement);
-    this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
 
     this.profileViews = document.createElement("div");
     this.profileViews.id = "profile-views";
@@ -162,7 +147,6 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        this._updateSidebarWidth();
         if (this._shouldPopulateProfiles)
             this._populateProfiles();
     },
@@ -209,11 +193,6 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViewStatusBarItemsContainer.removeChildren();
 
         this._updateInterface();
-    },
-
-    handleKeyEvent: function(event)
-    {
-        this.sidebarTree.handleKeyEvent(event);
     },
 
     registerProfileType: function(profileType)
@@ -470,49 +449,10 @@ WebInspector.ProfilesPanel.prototype = {
         delete this._shouldPopulateProfiles;
     },
 
-    _startSidebarDragging: function(event)
+    setMainViewWidth: function(width)
     {
-        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
-    },
-
-    _sidebarDragging: function(event)
-    {
-        this._updateSidebarWidth(event.pageX);
-
-        event.preventDefault();
-    },
-
-    _endSidebarDragging: function(event)
-    {
-        WebInspector.elementDragEnd(event);
-    },
-
-    _updateSidebarWidth: function(width)
-    {
-        if (this.sidebarElement.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet or the window is closed,
-            // so we can't calculate what is need. Return early.
-            return;
-        }
-
-        if (!("_currentSidebarWidth" in this))
-            this._currentSidebarWidth = this.sidebarElement.offsetWidth;
-
-        if (typeof width === "undefined")
-            width = this._currentSidebarWidth;
-
-        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
-
-        this._currentSidebarWidth = width;
-
-        this.sidebarElement.style.width = width + "px";
         this.profileViews.style.left = width + "px";
         this.profileViewStatusBarItemsContainer.style.left = width + "px";
-        this.sidebarResizeElement.style.left = (width - 3) + "px";
-        
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
     }
 }
 

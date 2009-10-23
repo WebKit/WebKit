@@ -26,9 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Panel = function()
+WebInspector.Panel = function(createSidebar)
 {
     WebInspector.View.call(this);
+    if (createSidebar)
+        this._createSidebar();
 
     this.element.addStyleClass("panel");
 }
@@ -82,6 +84,7 @@ WebInspector.Panel.prototype = {
             this._toolbarItem.addStyleClass("toggled-on");
 
         WebInspector.currentFocusElement = document.getElementById("main-panels");
+        this._updateSidebarWidth();
     },
 
     hide: function()
@@ -267,6 +270,77 @@ WebInspector.Panel.prototype = {
             currentView.jumpToLastSearchResult();
         else
             currentView.jumpToPreviousSearchResult();
+    },
+
+    handleKeyEvent: function(event)
+    {
+        this.sidebarTree.handleKeyEvent(event);
+    },
+
+    _createSidebar: function()
+    {
+        this.sidebarElement = document.createElement("div");
+        this.sidebarElement.className = "sidebar";
+        this.element.appendChild(this.sidebarElement);
+
+        this.sidebarResizeElement = document.createElement("div");
+        this.sidebarResizeElement.className = "sidebar-resizer-vertical";
+        this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
+        this.element.appendChild(this.sidebarResizeElement);
+
+        this.sidebarTreeElement = document.createElement("ol");
+        this.sidebarTreeElement.className = "sidebar-tree";
+        this.sidebarElement.appendChild(this.sidebarTreeElement);
+        this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
+    },
+
+    _startSidebarDragging: function(event)
+    {
+        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
+    },
+
+    _sidebarDragging: function(event)
+    {
+        this._updateSidebarWidth(event.pageX);
+
+        event.preventDefault();
+    },
+
+    _endSidebarDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+    },
+
+    _updateSidebarWidth: function(width)
+    {
+        if (this.sidebarElement.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
+            return;
+        }
+
+        if (!("_currentSidebarWidth" in this))
+            this._currentSidebarWidth = this.sidebarElement.offsetWidth;
+
+        if (typeof width === "undefined")
+            width = this._currentSidebarWidth;
+
+        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
+
+        this._currentSidebarWidth = width;
+
+        this.sidebarElement.style.width = width + "px";
+        this.setMainViewWidth(width);
+        this.sidebarResizeElement.style.left = (width - 3) + "px";
+        
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
+    },
+    
+    setMainViewWidth: function(width)
+    {
+        // Should be implemented by ancestors.
     }
 }
 
