@@ -178,6 +178,9 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     const bool syncX = m_pluginDisplay && m_pluginDisplay != QX11Info::display();
 
     QPainter* painter = context->platformContext();
+    IntRect exposedRect(rect);
+    exposedRect.intersect(frameRect());
+    exposedRect.move(-frameRect().x(), -frameRect().y());
 
     QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
     const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
@@ -202,11 +205,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
             && backingStoreHasUntransformedContents) {
             GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
             XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
-                offset.x() + m_windowRect.x() + m_clipRect.x(), offset.y() + m_windowRect.y() + m_clipRect.y(),
-                m_clipRect.width(), m_clipRect.height(), m_clipRect.x(), m_clipRect.y());
+                offset.x() + m_windowRect.x() + exposedRect.x(), offset.y() + m_windowRect.y() + exposedRect.y(),
+                exposedRect.width(), exposedRect.height(), exposedRect.x(), exposedRect.y());
         } else { // no backing store, clean the pixmap because the plugin thinks its transparent
             QPainter painter(&qtDrawable);
-            painter.fillRect(m_clipRect, Qt::white);
+            painter.fillRect(exposedRect, Qt::white);
         }
 
         if (syncX)
@@ -219,18 +222,18 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     exposeEvent.type = GraphicsExpose;
     exposeEvent.display = QX11Info::display();
     exposeEvent.drawable = m_drawable;
-    exposeEvent.x = m_clipRect.x();
-    exposeEvent.y = m_clipRect.y();
-    exposeEvent.width = m_clipRect.x() + m_clipRect.width(); // flash bug? it thinks width is the right
-    exposeEvent.height = m_clipRect.y() + m_clipRect.height(); // flash bug? it thinks height is the bottom
+    exposeEvent.x = exposedRect.x();
+    exposeEvent.y = exposedRect.y();
+    exposeEvent.width = exposedRect.x() + exposedRect.width(); // flash bug? it thinks width is the right in transparent mode
+    exposeEvent.height = exposedRect.y() + exposedRect.height(); // flash bug? it thinks height is the bottom in transparent mode
 
     dispatchNPEvent(xevent);
 
     if (syncX)
         XSync(m_pluginDisplay, False); // sync changes by plugin
 
-    painter->drawPixmap(frameRect().x() + m_clipRect.x(), frameRect().y() + m_clipRect.y(), qtDrawable,
-        m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height());
+    painter->drawPixmap(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), qtDrawable,
+                        exposedRect);
 }
 
 // TODO: Unify across ports.
@@ -661,7 +664,7 @@ void PluginView::invalidateRect(NPRect* rect)
         invalidate();
         return;
     }
-    IntRect r(rect->left, rect->top, rect->right + rect->left, rect->bottom + rect->top);
+    IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
     invalidateWindowlessPluginRect(r);
 }
 

@@ -1,3 +1,24 @@
+2009-10-23  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Windowless Plugins : Don't use m_clipRect when painting.
+
+        Though it works, it is not correct to use m_clipRect for painting
+        in Windowless mode. Instead, the rect paramater that is passed
+        as a part of PluginView::paint() must be used. This change will
+        also result in some speedup since previously we used to paint all
+        the visible parts of a windowless plugin (even if those parts were
+        not dirty).
+
+        Also, fix invalidateRect() to compute the correct width and height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30711
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::invalidateRect):
+
 2009-10-21  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Holger Freyther.
