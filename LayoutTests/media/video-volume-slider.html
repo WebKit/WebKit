@@ -1,0 +1,38 @@
+<html>
+<head>
+    <title>Test rendering of volume slider of video tag</title>
+    <script src=media-file.js></script>
+    <script>
+        var video;
+
+        function init()
+        {
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+
+            video = document.getElementsByTagName("video")[0];
+            video.src = findMediaFile("video", "content/test");
+        }
+
+        function test()
+        {
+            video.volume = 0.7;
+
+            if (window.eventSender) {
+                x = video.offsetLeft + video.offsetWidth - 10;
+                y = video.offsetTop + video.offsetHeight - 10;
+                eventSender.mouseMoveTo(x, y);
+            }
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</head>
+<body onload="init()">
+    Tests if the volume slider is rendererd properly. This test assumes the<br>
+    volume slider is implmented and mouse over the right bottom corner of<br>
+    video element will show the volume slider.<br>
+    <video oncanplaythrough="test()" controls></video>
+</body>
+</html>

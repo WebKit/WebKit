@@ -84,6 +84,9 @@ media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 
+# This test requires media controls has a volume slider.
+media/video-volume-slider.html
+
 # As long as pages with unload handlers are put in the Page Cache, this test doesn't make any sense for Mac.
 # <rdar://problem/7196485> and https://bugs.webkit.org/show_bug.cgi?id=29021
 fast/loader/frames-with-unload-handlers-in-page-cache.html

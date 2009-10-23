@@ -1,3 +1,20 @@
+2009-10-23  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Volume slider always starts at half volume
+        https://bugs.webkit.org/show_bug.cgi?id=28322
+
+        * media/video-volume-slider.html: Added.
+        Pixel test for the volume slider of the media control. This test
+        assumes volume slider is implemented and usable. It moves the mouse
+        over the right bottom corner of a video element to trigger the
+        volume slider. If volume slider is not implemented at all, you'll
+        only see a video element with the first frame.
+        * platform/gtk/Skipped: The above test requires a volume slider so it's skipped.
+        * platform/mac/Skipped: ditto.
+        * platform/win/Skipped: ditto.
+
 2009-10-23  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.

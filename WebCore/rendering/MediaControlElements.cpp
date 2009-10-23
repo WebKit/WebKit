@@ -646,6 +646,15 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
     }
 }
 
+void MediaControlVolumeSliderElement::update()
+{
+    float volume = m_mediaElement->volume();
+    if (value().toFloat() != volume) {
+        setValue(String::number(volume));
+        MediaControlInputElement::update();
+    }
+}
+
 // ----------------------------
 
 MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* document, HTMLMediaElement* element)

@@ -1,3 +1,28 @@
+2009-10-23  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Volume slider always starts at half volume
+        https://bugs.webkit.org/show_bug.cgi?id=28322
+
+        Sets the value attribute of volume slider to the volume attribute
+        of the media element. Also update the value attribute of the
+        input element for the volume slider when the volume attribute
+        of the media element is updated.
+
+        Test: media/video-volume-slider.html
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderElement::update):
+        Set the value attribute of the input element for the volume slider
+        using the current volume of the media element.
+        * rendering/MediaControlElements.h:
+        Add method definition of update().
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createVolumeSlider):
+        Creates a volume slider with value attribute equals to the current
+        volume attribute of the media element.
+
 2009-10-23  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
