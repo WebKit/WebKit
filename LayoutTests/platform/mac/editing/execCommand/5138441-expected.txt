@@ -11,9 +11,10 @@ layer at (0,0) size 800x600
           text run at (0,36) width 149: "to implement indenting."
       RenderBlock {DIV} at (0,70) size 784x62
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x18
-          RenderText {#text} at (0,0) size 230x18
-            text run at (0,0) width 230: "This should be indented, not quoted."
+          RenderBlock {DIV} at (0,0) size 744x18
+            RenderText {#text} at (0,0) size 230x18
+              text run at (0,0) width 230: "This should be indented, not quoted."
         RenderBlock {BLOCKQUOTE} at (8,26) size 768x36 [border: (1px dashed #AAAAAA)]
           RenderText {#text} at (9,9) size 175x18
             text run at (9,9) width 175: "This text should be Quoted."
-caret: position 0 of child 0 {#text} of child 1 {BLOCKQUOTE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

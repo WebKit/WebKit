@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document to 34 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document to 35 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -24,5 +24,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 246x18
             text run at (0,0) width 246: "This paragraph should not be indented."
           RenderBR {BR} at (246,14) size 0x0
-selection start: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 34 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 35 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

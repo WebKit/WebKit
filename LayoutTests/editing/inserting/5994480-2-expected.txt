@@ -1,1 +1,1 @@
-<font class="Apple-style-span" face="'Lucida Grande'" size="3"><span class="Apple-style-span" style="background-color: rgb(255, 255, 255); font-size: 11px;"><br></span></font>
+<font class="Apple-style-span" face="'Lucida Grande'" size="3"><span class="Apple-style-span" style="font-size: 11px;"><br></span></font>

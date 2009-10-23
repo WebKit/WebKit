@@ -1,3 +1,41 @@
+2009-10-23  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION: Copy is copying incorrect background-color
+        <rdar://problem/7248529>
+        https://bugs.webkit.org/show_bug.cgi?id=29697
+
+        Test: editing/execCommand/indent-paragraphs.html
+
+        This change removes the BackgroundColor from the list 
+        of inheritable CSS properties and changes significantly
+        the way we perform indentation.
+        The new implementation of IndentOutdentCommand uses a new method
+        defined in CompositeEditCommand called moveParagraphWithClones.
+        This is an improved version of the original moveParagraph that
+        is aimed at preserving the original markup of the paragraph being
+        moved.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::): removed CSSPropertyBackgroundColor from editingStyleProperties.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::CompositeEditCommand): Removed trailing blanks.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt): Removed trailing blanks.
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement): Added.
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion): Added.
+        (WebCore::CompositeEditCommand::moveParagraphWithClones): Added.
+        (WebCore::CompositeEditCommand::moveParagraphs): Modified to use cleanupAfterDeletion.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Removed trailing blanks.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph): Removed trailing blanks.
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary): Removed trailing blanks.
+        * editing/CompositeEditCommand.h: Added three new methods.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem): Changed to use moveParagraphWithClones.
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote): Changed to use moveParagraphWithClones.
+        (WebCore::IndentOutdentCommand::indentRegion): Removed comment.
+        * editing/IndentOutdentCommand.h: Removed prepareBlockquoteLevelForInsertion method.
+
 2009-10-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

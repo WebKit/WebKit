@@ -10,11 +10,13 @@ layer at (0,0) size 800x600
           text run at (0,18) width 320: "'foo' and 'bar' before and after the indent operation."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x36
-          RenderText {#text} at (0,0) size 21x18
-            text run at (0,0) width 21: "foo"
-          RenderBR {BR} at (21,14) size 0x0
-          RenderText {#text} at (0,18) size 20x18
-            text run at (0,18) width 20: "bar"
+          RenderInline {SPAN} at (0,0) size 21x18
+            RenderText {#text} at (0,0) size 21x18
+              text run at (0,0) width 21: "foo"
+            RenderBR {BR} at (21,14) size 0x0
+          RenderInline {SPAN} at (0,0) size 20x18
+            RenderText {#text} at (0,18) size 20x18
+              text run at (0,18) width 20: "bar"
         RenderBlock (anonymous) at (0,36) size 784x0
-selection start: position 1 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 2 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

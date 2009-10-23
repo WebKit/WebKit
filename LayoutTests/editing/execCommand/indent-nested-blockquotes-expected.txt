@@ -4,4 +4,4 @@ hello
 world
 webkit
 is great
-<blockquote id="outer"> hello <blockquote id="inner"> world<br></blockquote></blockquote><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;">webkit</blockquote></blockquote></blockquote><blockquote id="outer"> is great </blockquote>
+<blockquote id="outer"> hello <blockquote id="inner"> world<br></blockquote></blockquote><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><blockquote id="outer"><blockquote id="inner"> webkit </blockquote></blockquote></blockquote><blockquote id="outer"> is great </blockquote>

@@ -1,3 +1,33 @@
+2009-10-23  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION: Copy is copying incorrect background-color
+        <rdar://problem/7248529>
+        https://bugs.webkit.org/show_bug.cgi?id=29697
+
+        All the following tests have been re-baselined because
+        the indent command now preserves the original markup.
+        A new test (indent-paragraph.html) has been added to test
+        several indent combinations not covered by the existing tests.
+        
+        * editing/execCommand/19087-expected.txt:
+        * editing/execCommand/19653-1-expected.txt:
+        * editing/execCommand/indent-div-inside-list-expected.txt:
+        * editing/execCommand/indent-nested-blockquotes-expected.txt:
+        * editing/execCommand/indent-nested-div-expected.txt:
+        * editing/execCommand/indent-paragraphs.html: Added.
+        * editing/execCommand/indent-second-paragraph-in-blockquote-expected.txt:
+        * editing/execCommand/indent-with-style-expected.txt:
+        * editing/inserting/5994480-2-expected.txt:
+        * platform/mac/editing/execCommand/4641880-2-expected.txt:
+        * platform/mac/editing/execCommand/4916541-expected.txt:
+        * platform/mac/editing/execCommand/5138441-expected.txt:
+        * platform/mac/editing/execCommand/5481523-expected.txt:
+        * platform/mac/editing/execCommand/indent-paragraphs-expected.txt: Added.
+        * platform/mac/editing/execCommand/indent-selection-expected.txt:
+        * platform/mac/editing/pasteboard/select-element-1-expected.txt:
+
 2009-10-23  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Sam Weinig.

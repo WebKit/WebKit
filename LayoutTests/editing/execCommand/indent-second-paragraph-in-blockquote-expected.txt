@@ -2,4 +2,4 @@ This tests indenting the second paragraph in a blockquote. By indenting "world",
 
 hello
 world
-<blockquote id="test"> hello<br></blockquote><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;">world</blockquote></blockquote>
+<blockquote id="test"> hello<br></blockquote><blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><blockquote id="test"> world </blockquote></blockquote>

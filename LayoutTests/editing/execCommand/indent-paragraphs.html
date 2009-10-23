@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+</head>
+<body>
+This tests indenting three paragraphs with different hierarchies.
+<div id="root" contenteditable="true">
+<div id="test">
+    <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div>
+    <div>Hello <img src="http://"> world</span></div>
+    Hello <img src="http://"> world
+</div>
+</div>
+<br>
+<ul>
+<li>Before indent:<span id="c1"></span></li>
+<li>After indent:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+function editingTest()
+{
+    var e = document.getElementById('root');
+
+    document.execCommand("SelectAll");
+    document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+    document.execCommand("Indent");
+    document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

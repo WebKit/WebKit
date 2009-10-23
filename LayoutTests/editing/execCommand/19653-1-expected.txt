@@ -5,7 +5,7 @@ This tests creating a list from an empty paragraph when the typing style was Bol
 <ul><li><b>Bold</b></li></ul>
 
 This tests indenting an empty paragraph with bold already applied to it. The word below should be bold.
-<blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><b>Bold</b></blockquote>
+<blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div><b>Bold</b></div></blockquote>
 
 This tests indenting an empty paragraph when the typing style was Bold. The word below should be bold.
 <blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><b>Bold</b></blockquote>
