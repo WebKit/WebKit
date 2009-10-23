@@ -1,3 +1,21 @@
+2009-10-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chrome Linux: fix caret positioning in LTR complex languages
+        The caret is positioned off by one in languages like Thai.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28284
+
+        A group of us spent a while trying various approaches to write a test
+        for this; however, since it is only that the blinking cursor is
+        displayed incorrectly, we concluded it can not be tested.
+
+        (Patch by Hironori Bono.)
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+
 2009-10-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.

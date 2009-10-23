@@ -668,8 +668,6 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
 
     if (toX == -1 && !to)
         toX = rightEdge;
-    else if (!walker.rtl())
-        toX += truncateFixedPointToInteger(toAdvance);
 
     ASSERT(fromX != -1 && toX != -1);
 
