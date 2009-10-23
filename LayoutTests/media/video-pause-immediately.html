@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>Test pause() pauses the clock immediately</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var timeAfterPause;
+
+            function test()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEvent("canplay", canplay);
+                waitForEvent("playing", playing);
+                waitForEvent("pause", pause);
+            }
+
+            function canplay()
+            {
+                video.play();
+            }
+
+            function playing()
+            {
+                setTimeout(pauseVideo, 200);
+            }
+
+            function pauseVideo()
+            {
+                video.pause();
+                timeAfterPause = video.currentTime;
+            }
+
+            function pause()
+            {
+                testExpected("(video.currentTime - timeAfterPause)", 0);
+                testExpected("(video.played.end(0) - timeAfterPause)", 0);
+                endTest();
+            }
+        </script>
+     </head>
+    <body onload="test()">
+        <p>Test that pausing the media element has an immediate effect on the clock.</p>
+        <video controls></video>
+    </body>
+</html>
+

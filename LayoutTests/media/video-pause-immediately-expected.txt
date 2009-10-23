@@ -1,0 +1,9 @@
+Test that pausing the media element has an immediate effect on the clock.
+
+EVENT(canplay)
+EVENT(playing)
+EVENT(pause)
+EXPECTED ((video.currentTime - timeAfterPause) == '0') OK
+EXPECTED ((video.played.end(0) - timeAfterPause) == '0') OK
+END OF TEST
+

@@ -1,3 +1,15 @@
+2009-10-23  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Add a layout test to assert that media element implementors do not
+        advance currentTime after being paused.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30699
+
+        * media/video-pause-immediately-expected.txt: Added.
+        * media/video-pause-immediately.html: Added.
+
 2009-10-23  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Eric Seidel.
