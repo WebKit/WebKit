@@ -106,3 +106,4 @@ HAVE_DTRACE_macosx_ = $(HAVE_DTRACE_macosx_1040);
 HAVE_DTRACE_macosx_1040 = 0;
 HAVE_DTRACE_macosx_1050 = 0;
 HAVE_DTRACE_macosx_1060 = 1;
+HAVE_DTRACE_macosx_1070 = 1;

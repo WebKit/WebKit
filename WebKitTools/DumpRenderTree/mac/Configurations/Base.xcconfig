@@ -22,11 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 HEADER_SEARCH_PATHS = ForwardingHeaders mac/InternalHeaders;
-FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(MAC_OS_X_VERSION_MAJOR));
-FRAMEWORK_SEARCH_PATHS_ = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
-FRAMEWORK_SEARCH_PATHS_1040 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
-FRAMEWORK_SEARCH_PATHS_1050 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks
-FRAMEWORK_SEARCH_PATHS_1060 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
 GCC_PREPROCESSOR_DEFINITIONS = ENABLE_DASHBOARD_SUPPORT WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST;
 DEBUG_INFORMATION_FORMAT = dwarf
 PREBINDING = NO

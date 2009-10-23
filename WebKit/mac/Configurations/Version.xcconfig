@@ -36,6 +36,7 @@ SYSTEM_VERSION_PREFIX_ = 4; // Some Tiger versions of Xcode don't set MAC_OS_X_V
 SYSTEM_VERSION_PREFIX_1040 = 4;
 SYSTEM_VERSION_PREFIX_1050 = 5;
 SYSTEM_VERSION_PREFIX_1060 = 6;
+SYSTEM_VERSION_PREFIX_1070 = 7;
 
 // The production build always uses the full version with a system version prefix.
 BUNDLE_VERSION_Production = $(SYSTEM_VERSION_PREFIX)$(FULL_VERSION);
