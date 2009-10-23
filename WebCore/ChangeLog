@@ -1,3 +1,21 @@
+2009-10-21  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        Plugins : Use test.swf in the plugins manual tests.
+
+        They previously referenced youtube videos which among other things are
+        cumbersome to use without internet connection. The old youtube link is
+        just commented out so that testing with youtube can be done with
+        little effort.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30662
+
+        * manual-tests/plugins/test.swf: Copied from LayoutTests/fast/replaced/resources/test.swf.
+        * manual-tests/plugins/windowed.html:
+        * manual-tests/plugins/windowless.html:
+        * manual-tests/qt/plugin-sibling-frame-include.html:
+
 2009-10-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.
