@@ -145,6 +145,8 @@ namespace WebCore {
         InspectorResource(long long identifier, DocumentLoader*);
         Type type() const;
 
+        CachedResource* cachedResource() const;
+
         long long m_identifier;
         RefPtr<DocumentLoader> m_loader;
         RefPtr<Frame> m_frame;

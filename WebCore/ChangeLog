@@ -1,3 +1,27 @@
+2009-10-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30506
+        <rdar://problem/7319845> Resources that the server sent as 304 not modified are not shown
+        in the inspectors resource pane
+
+        I don't know how to make a test for this.
+
+        The issue here was that preloaded resources weren't added to DocLoader document resource set,
+        but Web Inspector asked DocLoader to fetch data from CachedResource. Even when (if) document
+        parser eventually requested the same resource for real and it got added to resource set, it
+        was too late - the Inspector wasn't updated.
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::cachedResource):
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::resourceData):
+        * inspector/InspectorResource.h:
+        Fix the issue by trying to fetch corresponding CachedResource harder - also look in global
+        cache. This seems safe, and easier than updating the Inspector on transitions between
+        resource states (revalidate vs. revalidate done and preload vs. non-preload).
+
 2009-10-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
