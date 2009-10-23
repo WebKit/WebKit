@@ -1,3 +1,12 @@
+2009-10-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: EventListenersSidebarPane TODO No Longer Needed
+        https://bugs.webkit.org/show_bug.cgi?id=30705
+
+        * inspector/front-end/EventListenersSidebarPane.js:
+
 2009-10-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -203,18 +203,13 @@ WebInspector.EventListenerBar.prototype = {
 
         if (node.nodeType === Node.DOCUMENT_NODE)
             return "document";
-        
+
         return appropriateSelectorForNode(node);
     },
 
     _getFunctionDisplayName: function()
     {
-        // TODO: v8 does not yet provide the raw function, this handles such a case with a placeholder
-        // I didn't make this a UIString because it should be implemented eventually.
-        if (!this.eventListener.listener)
-            return "(listener)";
-
-        // Requires that Function.toString() return at least the function's signature
+        // Requires that Function.toString() return at least the function's signature.
         var match = this.eventListener.listener.toString().match(/function ([^\(]+?)\(/);
         return (match ? match[1] : WebInspector.UIString("(anonymous function)"));
     }
