@@ -2560,8 +2560,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
             LIBS *= $$QT_LFLAGS_SQLITE
         } else {
             INCLUDEPATH += $${SQLITE3SRCDIR}
-            symbian: LIBS += -lsqlite3.lib
-            else: LIBS += -lsqlite3
+            LIBS += -lsqlite3
         }
     }
 
