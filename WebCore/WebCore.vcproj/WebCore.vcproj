@@ -4309,6 +4309,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLCollection.cpp"
 				>
 				<FileConfiguration
@@ -30011,6 +30067,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLAllCollection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLAllCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLCollection.cpp"
 				>
 			</File>
@@ -33858,19 +33922,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLAllCollection.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSHTMLAllCollection.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLCanvasElementCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLAllCollectionCustom.cpp"
 					>
 				</File>
 				<File

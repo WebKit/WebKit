@@ -64,6 +64,7 @@ public:
 
 protected:
     HTMLCollection(PassRefPtr<Node> base, CollectionType, CollectionCache*);
+    HTMLCollection(PassRefPtr<Node> base, CollectionType);
 
     CollectionCache* info() const { return m_info; }
     void resetCollectionInfo() const;
@@ -71,8 +72,6 @@ protected:
     mutable bool m_idsDone; // for nextNamedItem()
 
 private:
-    HTMLCollection(PassRefPtr<Node> base, CollectionType);
-
     virtual Element* itemAfter(Element*) const;
     virtual unsigned calcLength() const;
     virtual void updateNameCache() const;

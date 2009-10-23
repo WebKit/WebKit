@@ -126,6 +126,7 @@ DOM_CLASSES = \
     FileList \
     Geolocation \
     Geoposition \
+    HTMLAllCollection \
     HTMLAnchorElement \
     HTMLAppletElement \
     HTMLAreaElement \

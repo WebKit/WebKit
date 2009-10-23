@@ -169,6 +169,7 @@ IDL_BINDINGS += \
 	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/File.idl \
 	WebCore/html/FileList.idl \
+	WebCore/html/HTMLAllCollection.idl \
 	WebCore/html/HTMLAnchorElement.idl \
 	WebCore/html/HTMLAppletElement.idl \
 	WebCore/html/HTMLAreaElement.idl \
@@ -370,9 +371,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSExceptionBase.cpp \
 	WebCore/bindings/js/JSExceptionBase.h \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
-	WebCore/bindings/js/JSHTMLAllCollection.cpp \
-	WebCore/bindings/js/JSHTMLAllCollection.h \
-	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
+	WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
+ 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
 	WebCore/bindings/js/JSHTMLCanvasElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
@@ -960,6 +960,8 @@ webcore_sources += \
 	WebCore/html/FileList.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
+	WebCore/html/HTMLAllCollection.cpp \
+	WebCore/html/HTMLAllCollection.h \
 	WebCore/html/HTMLAnchorElement.cpp \
 	WebCore/html/HTMLAnchorElement.h \
 	WebCore/html/HTMLAppletElement.cpp \

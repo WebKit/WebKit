@@ -39,7 +39,7 @@ module html {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // FIXME: This should eventually be available (if they are wanted) for all languages.
-                 attribute [Custom, Deletable] HTMLCollection all;
+                 attribute [Custom, Deletable] HTMLAllCollection all;
 #endif
 
         void clear();

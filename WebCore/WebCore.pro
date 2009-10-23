@@ -394,6 +394,7 @@ IDL_BINDINGS += \
     html/DataGridColumnList.idl \
     html/File.idl \
     html/FileList.idl \
+    html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \
     html/HTMLAnchorElement.idl \
     html/HTMLAppletElement.idl \
@@ -703,10 +704,10 @@ SOURCES += \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSExceptionBase.cpp \
     bindings/js/JSGeolocationCustom.cpp \
-    bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLCanvasElementCustom.cpp \
+    bindings/js/JSHTMLAllCollectionCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDataGridElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
@@ -990,6 +991,7 @@ SOURCES += \
     html/File.cpp \
     html/FileList.cpp \
     html/FormDataList.cpp \
+    html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \
     html/HTMLAreaElement.cpp \
@@ -1403,7 +1405,6 @@ HEADERS += \
     bindings/js/JSEventSourceConstructor.h \
     bindings/js/JSEventTarget.h \
     bindings/js/JSHistoryCustom.h \
-    bindings/js/JSHTMLAllCollection.h \
     bindings/js/JSHTMLAppletElementCustom.h \
     bindings/js/JSHTMLEmbedElementCustom.h \
     bindings/js/JSHTMLInputElementCustom.h \
@@ -1664,6 +1665,7 @@ HEADERS += \
     html/File.h \
     html/FileList.h \
     html/FormDataList.h \
+    html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \
     html/HTMLAppletElement.h \
     html/HTMLAreaElement.h \

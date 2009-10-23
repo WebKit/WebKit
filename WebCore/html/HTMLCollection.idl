@@ -34,8 +34,9 @@ module html {
         [Custom] Node item(in unsigned long index);
         [Custom] Node namedItem(in DOMString name);
 
-        // Extensions
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         NodeList tags(in DOMString name);
+#endif
     };
 
 }

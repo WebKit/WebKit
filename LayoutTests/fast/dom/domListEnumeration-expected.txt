@@ -14,7 +14,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is nodeList.item(2)
 
 [object HTMLCollection]
-PASS resultArray.length is 7
+PASS resultArray.length is 6
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is htmlCollection.item(0)
 PASS resultArray[1].i is '1'

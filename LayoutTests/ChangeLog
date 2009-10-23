@@ -1,3 +1,24 @@
+2009-10-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update and add test for https://bugs.webkit.org/show_bug.cgi?id=30695
+        Drop .tags() support from HTMLCollection
+
+        * fast/dom/HTMLDocument/document-all-expected.txt: Added.
+        * fast/dom/HTMLDocument/document-all.html: Added.
+        * fast/dom/HTMLDocument/script-tests: Added.
+        * fast/dom/HTMLDocument/script-tests/document-all.js: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/script-tests/domListEnumeration.js:
+        * fast/dom/undetectable-document-all-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2009-10-23  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.

@@ -1,0 +1,7 @@
+PASS htmlallcollection.toString() is '[object HTMLAllCollection]'
+PASS typeof htmlallcollection.tags == "function" is true
+PASS htmlallcollection.tags("body").length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,32 +1,35 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
-#include "JSHTMLCollection.h"
+#include "JSHTMLAllCollection.h"
 
 #include "AtomicString.h"
-#include "HTMLCollection.h"
-#include "HTMLOptionsCollection.h"
 #include "HTMLAllCollection.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
-#include "JSHTMLOptionsCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "Node.h"
@@ -37,7 +40,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)
+static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->impl()->namedItems(propertyName, namedItems);
@@ -55,14 +58,14 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    JSHTMLCollection* jsCollection = static_cast<JSHTMLCollection*>(function);
-    HTMLCollection* collection = jsCollection->impl();
+    JSHTMLAllCollection* jsCollection = static_cast<JSHTMLAllCollection*>(function);
+    HTMLAllCollection* collection = jsCollection->impl();
 
     // Also, do we need the TypeError test here ?
 
@@ -96,26 +99,26 @@ static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* funct
     return jsUndefined();
 }
 
-CallType JSHTMLCollection::getCallData(CallData& callData)
+CallType JSHTMLAllCollection::getCallData(CallData& callData)
 {
-    callData.native.function = callHTMLCollection;
+    callData.native.function = callHTMLAllCollection;
     return CallTypeHost;
 }
 
-bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, const Identifier& propertyName)
+bool JSHTMLAllCollection::canGetItemsForName(ExecState*, HTMLAllCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->namedItems(propertyName, namedItems);
     return !namedItems.isEmpty();
 }
 
-JSValue JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue JSHTMLAllCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLCollection* thisObj = static_cast<JSHTMLCollection*>(asObject(slot.slotBase()));
+    JSHTMLAllCollection* thisObj = static_cast<JSHTMLAllCollection*>(asObject(slot.slotBase()));
     return getNamedItems(exec, thisObj, propertyName);
 }
 
-JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
+JSValue JSHTMLAllCollection::item(ExecState* exec, const ArgList& args)
 {
     bool ok;
     uint32_t index = args.at(0).toString(exec).toUInt32(&ok, false);
@@ -124,34 +127,9 @@ JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
     return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
-JSValue JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
+JSValue JSHTMLAllCollection::namedItem(ExecState* exec, const ArgList& args)
 {
     return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
-}
-
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* collection)
-{
-    if (!collection)
-        return jsNull();
-
-    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), collection);
-
-    if (wrapper)
-        return wrapper;
-
-    switch (collection->type()) {
-        case SelectOptions:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLOptionsCollection, collection);
-            break;
-        case DocAll:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLAllCollection, collection);
-            break;
-        default:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLCollection, collection);
-            break;
-    }
-
-    return wrapper;
 }
 
 } // namespace WebCore

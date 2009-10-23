@@ -1,3 +1,52 @@
+2009-10-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=30695
+        Drop .tags() support from HTMLCollection
+
+        - Make .tags() only work for HTMLAllCollections in JS. .tags() is still
+          available for all HTMLCollection like objects in Objective-C since that
+          is API.
+        - Auto-generate HTMLAllCollection.
+
+        Test: fast/dom/HTMLDocument/document-all.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLAllCollection.cpp: Removed.
+        * bindings/js/JSHTMLAllCollection.h: Removed.
+        * bindings/js/JSHTMLAllCollectionCustom.cpp: Added.
+        (WebCore::getNamedItems):
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::getCallData):
+        (WebCore::JSHTMLAllCollection::canGetItemsForName):
+        (WebCore::JSHTMLAllCollection::nameGetter):
+        (WebCore::JSHTMLAllCollection::item):
+        (WebCore::JSHTMLAllCollection::namedItem):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::all):
+        * dom/Document.h:
+        * dom/HTMLAllCollection.idl: Removed.
+        * html/HTMLAllCollection.cpp: Added.
+        (WebCore::HTMLAllCollection::create):
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+        (WebCore::HTMLAllCollection::~HTMLAllCollection):
+        * html/HTMLAllCollection.h: Added.
+        * html/HTMLAllCollection.idl: Added.
+        * html/HTMLCollection.h:
+        * html/HTMLCollection.idl:
+        * html/HTMLDocument.idl:
+        * page/DOMWindow.idl:
+
 2009-10-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

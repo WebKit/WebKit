@@ -426,6 +426,7 @@ module window {
         attribute HTMLUListElementConstructor HTMLUListElement;
 
         attribute HTMLCollectionConstructor HTMLCollection;
+        attribute HTMLAllCollectionConstructor HTMLAllCollection;
 
         attribute [CustomGetter] HTMLImageElementConstructor Image; // Usable with new operator
         attribute [CustomGetter] HTMLOptionElementConstructor Option; // Usable with new operator

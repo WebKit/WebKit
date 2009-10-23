@@ -108,7 +108,7 @@ shouldBe("resultArray[2].item", "nodeList.item(2)");
 // HTMLCollection
 var htmlCollection = document.forms;
 resultArray = iterateList(htmlCollection);
-shouldBe("resultArray.length", "7");
+shouldBe("resultArray.length", "6");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "htmlCollection.item(0)");
 shouldBe("resultArray[1].i", "'1'");

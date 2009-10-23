@@ -28,6 +28,7 @@
 
 #include "CharacterNames.h"
 #include "Frame.h"
+#include "HTMLAllCollection.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
