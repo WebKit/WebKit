@@ -1,3 +1,12 @@
+2009-10-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Isolated worlds tests now pass, removing then from the Skipped
+        list.
+
+        * platform/win/Skipped:
+
 2009-10-23  Xan Lopez  <xlopez@igalia.com>
 
         Use the correct Skipped file ...
