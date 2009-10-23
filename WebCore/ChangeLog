@@ -1,3 +1,13 @@
+2009-10-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix the Windows Release build by moving Accessibility files
+        into all-in-one file and excluding them from the build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * accessibility/AccessibilityAllInOne.cpp: Added.
+
 2009-10-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Geoff Garen.
