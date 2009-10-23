@@ -1,3 +1,16 @@
+2009-10-23  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Modified the tests results according to the last changes due
+        to the fixes of the bug (r49985):
+        https://bugs.webkit.org/show_bug.cgi?id=29697.
+
+        * platform/gtk/editing/execCommand/4916541-expected.txt:
+        * platform/gtk/editing/execCommand/5138441-expected.txt:
+        * platform/gtk/editing/execCommand/5481523-expected.txt:
+        * platform/gtk/editing/execCommand/indent-paragraphs-expected.txt: Added.
+
 2009-10-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Name for image elements should use alt attribute text

@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 395x20
+          text run at (0,0) width 395: "This tests indenting three paragraphs with different hierarchies."
+      RenderBlock {DIV} at (0,20) size 784x75
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x75
+          RenderBlock {DIV} at (0,0) size 744x25
+            RenderBlock {DIV} at (0,0) size 744x25
+              RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#FF0000]
+                RenderText {#text} at (0,5) size 39x20
+                  text run at (0,5) width 39: "Hello "
+                RenderImage {IMG} at (39,0) size 20x20
+                RenderText {#text} at (59,5) size 41x20
+                  text run at (59,5) width 41: " world"
+          RenderBlock {DIV} at (0,25) size 744x25
+            RenderBlock {DIV} at (0,0) size 744x25
+              RenderText {#text} at (0,5) size 39x20
+                text run at (0,5) width 39: "Hello "
+              RenderImage {IMG} at (39,0) size 20x20
+              RenderText {#text} at (59,5) size 41x20
+                text run at (59,5) width 41: " world"
+          RenderBlock {DIV} at (0,50) size 744x25
+            RenderText {#text} at (0,5) size 39x20
+              text run at (0,5) width 39: "Hello "
+            RenderImage {IMG} at (39,0) size 20x20
+            RenderText {#text} at (59,5) size 41x20
+              text run at (59,5) width 41: " world"
+      RenderBlock (anonymous) at (0,95) size 784x20
+        RenderBR {BR} at (0,0) size 0x20
+      RenderBlock {UL} at (0,131) size 784x140
+        RenderListItem {LI} at (40,0) size 744x60
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 90x20
+            text run at (0,0) width 90: "Before indent:"
+          RenderInline {SPAN} at (0,0) size 692x60
+            RenderText {#text} at (90,0) size 692x60
+              text run at (90,0) width 106: " <div id=\"test\"> "
+              text run at (196,0) width 479: "<div><span class=\"Apple-style-span\" style=\"background-color: rgb(255, 0,"
+              text run at (0,20) width 333: "0);\">Hello <img src=\"http://\"> world</span></div> "
+              text run at (333,20) width 287: "<div>Hello <img src=\"http://\"> world</div> "
+              text run at (620,20) width 72: "Hello <img"
+              text run at (0,40) width 173: "src=\"http://\"> world </div>"
+        RenderListItem {LI} at (40,60) size 744x80
+          RenderListMarker at (-18,0) size 7x20: bullet
+          RenderText {#text} at (0,0) size 80x20
+            text run at (0,0) width 80: "After indent:"
+          RenderInline {SPAN} at (0,0) size 730x80
+            RenderText {#text} at (80,0) size 730x80
+              text run at (80,0) width 622: " <blockquote class=\"webkit-indent-blockquote\" style=\"margin: 0 0 0 40px; border: none; padding:"
+              text run at (0,20) width 730: "0px;\"><div id=\"test\"><div><span class=\"Apple-style-span\" style=\"background-color: rgb(255, 0, 0);\">Hello <img"
+              text run at (0,40) width 714: "src=\"http://\"> world</span></div></div><div id=\"test\"><div>Hello <img src=\"http://\"> world</div></div><div"
+              text run at (0,60) width 69: "id=\"test\"> "
+              text run at (69,60) width 341: "Hello <img src=\"http://\"> world </div></blockquote>"
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {DIV} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 2 {#text} of child 2 {DIV} of child 1 {BLOCKQUOTE} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
