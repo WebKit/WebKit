@@ -1,3 +1,10 @@
+2009-10-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMac 10.4 build fix, needs to link against WebKitSystemInterfaceTiger to get 
+        character measurement APIs that are private on Tiger.
+
+        * wx/build/settings.py:
+
 2009-10-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

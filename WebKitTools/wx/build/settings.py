@@ -280,6 +280,7 @@ def common_configure(conf):
         sdk_version = min_version
         if min_version == "10.4":
             sdk_version += "u"
+            conf.env.append_value('LIB', ['WebKitSystemInterfaceTiger'])
         
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
         sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
