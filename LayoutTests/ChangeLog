@@ -1,5 +1,12 @@
 2009-10-23  Xan Lopez  <xlopez@igalia.com>
 
+        Use the correct Skipped file ...
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+
+2009-10-23  Xan Lopez  <xlopez@igalia.com>
+
         Skip new tests missing expected results.
 
         * platform/mac/Skipped:

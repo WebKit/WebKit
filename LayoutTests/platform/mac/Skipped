@@ -67,17 +67,6 @@ svg/carto.net/tabgroup.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 
-# missing expected results
-svg/css/arrow-with-shadow.svg
-svg/css/circle-in-mask-with-shadow.svg
-svg/css/clippath-with-shadow.svg
-svg/css/group-with-shadow.svg
-svg/css/mask-with-shadow.svg
-svg/css/path-with-shadow.svg
-svg/css/stars-with-shadow.html
-svg/filters/shadow-on-filter.svg
-svg/filters/shadow-on-rect-with-filter.svg
-
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 media/video-error-abort.html
 

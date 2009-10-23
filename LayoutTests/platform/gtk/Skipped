@@ -4357,6 +4357,15 @@ svg/transforms/text-with-pattern-with-svg-transform.svg
 svg/webarchive/svg-cursor-subresources.svg
 svg/webarchive/svg-feimage-subresources.svg
 svg/webarchive/svg-script-subresouces.svg
+svg/css/arrow-with-shadow.svg
+svg/css/circle-in-mask-with-shadow.svg
+svg/css/clippath-with-shadow.svg
+svg/css/group-with-shadow.svg
+svg/css/mask-with-shadow.svg
+svg/css/path-with-shadow.svg
+svg/css/stars-with-shadow.html
+svg/filters/shadow-on-filter.svg
+svg/filters/shadow-on-rect-with-filter.svg
 
 # Tests in tables/ directory
 #   Tests generating new results
