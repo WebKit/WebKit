@@ -1,3 +1,15 @@
+2009-10-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Pan-scrolling pointer shows up in other tabs or windows, can't "fix" it.
+        <http://webkit.org/b/30732> and <rdar://7332018>.
+        
+        Turns off pan-scrolling on a WebView when it is about to lose focus.
+
+        * WebView.cpp:
+        (WebViewWndProc):
+
 2009-10-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Name for image elements should use alt attribute text
