@@ -1,3 +1,9 @@
+2009-10-23  Sam Weinig  <sam@webkit.org>
+
+        Try and fix the windows build.
+
+        * Interfaces/WebKit.idl:
+
 2009-10-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Geoff Garen.
