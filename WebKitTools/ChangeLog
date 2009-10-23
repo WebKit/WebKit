@@ -1,5 +1,13 @@
 2009-10-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+        Build fix following bug #30696.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+
+2009-10-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig & Geoff Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=30696
