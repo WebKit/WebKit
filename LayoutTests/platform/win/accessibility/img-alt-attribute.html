@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+        <script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+        </script>
+    </head>
+    <body id="body">
+        <img aria-labeledby="desc" alt="alternate text" title="title">
+        <img alt="alternate text" title="title">
+
+        <p id="desc" style="visibility: hidden">ARIA labeled-by name</p>
+
+        <p>
+            This test verifies that, on Windows, an img tag's alt text is
+            returned for the element's 'title' property when the element has no
+            ARIA name.
+        </p>
+
+        <p id="console"></p>
+
+        <script>
+            if (window.accessibilityController) {
+                document.getElementById("body").focus();
+
+                var e = accessibilityController.focusedElement.childAtIndex(0);
+                shouldBe('e.title', '"ARIA labeled-by name"');
+
+                e = accessibilityController.focusedElement.childAtIndex(1);
+                shouldBe('e.title', '"alternate text"');
+            }
+        </script>
+    </body>
+</html>

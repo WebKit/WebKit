@@ -27,7 +27,8 @@
 #include "WebKitDLL.h"
 #include "AccessibleBase.h"
 
-#include <oleacc.h>
+#include "AccessibleImage.h"
+#include "WebView.h"
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/BString.h>
@@ -43,7 +44,7 @@
 #include <WebCore/RenderFrame.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderView.h>
-#include "WebView.h"
+#include <oleacc.h>
 #include <wtf/RefPtr.h>
 
 using namespace WebCore;
@@ -67,6 +68,9 @@ AccessibleBase::~AccessibleBase()
 AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj)
 {
     ASSERT_ARG(obj, obj);
+
+    if (obj->isImage())
+        return new AccessibleImage(obj);
 
     return new AccessibleBase(obj);
 }
