@@ -1,3 +1,21 @@
+2009-10-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30696
+        Enable isolated-worlds tests on mac.
+
+        Add private interface for DRT to invoke execution in a given world.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (evaluateScriptInIsolatedWorldCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+
 2009-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -122,7 +122,7 @@ JSValue JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -132,13 +132,13 @@ JSValue JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& arg
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
 JSValue JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
@@ -147,7 +147,7 @@ JSValue JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
 
 JSValue JSWorkerContext::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);

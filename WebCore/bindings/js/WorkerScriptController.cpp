@@ -52,6 +52,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     , m_workerContext(workerContext)
     , m_executionForbidden(false)
 {
+    m_globalData->clientData = new WebCoreJSClientData(m_globalData.get());
 }
 
 WorkerScriptController::~WorkerScriptController()
@@ -122,7 +123,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
 
     ExecState* exec = m_workerContextWrapper->globalExec();
     m_workerContextWrapper->globalData()->timeoutChecker.start();
-    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper);
+    Completion comp = evaluateInWorld(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper, currentWorld(exec));
     m_workerContextWrapper->globalData()->timeoutChecker.stop();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue)

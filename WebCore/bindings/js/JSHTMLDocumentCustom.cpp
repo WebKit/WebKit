@@ -105,14 +105,14 @@ JSValue JSHTMLDocument::open(ExecState* exec, const ArgList& args)
     if (args.size() > 2) {
         Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
         if (frame) {
-            JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame);
+            JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame, currentWorld(exec));
             if (wrapper) {
                 JSValue function = wrapper->get(exec, Identifier(exec, "open"));
                 CallData callData;
                 CallType callType = function.getCallData(callData);
                 if (callType == CallTypeNone)
                     return throwError(exec, TypeError);
-                return call(exec, function, callType, callData, wrapper, args);
+                return callInWorld(exec, function, callType, callData, wrapper, args, currentWorld(exec));
             }
         }
         return jsUndefined();

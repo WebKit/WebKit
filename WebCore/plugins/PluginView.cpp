@@ -394,7 +394,7 @@ static bool getString(ScriptController* proxy, JSValue result, String& string)
         return false;
     JSLock lock(JSC::SilenceAssertionsOnly);
 
-    ExecState* exec = proxy->globalObject()->globalExec();
+    ExecState* exec = proxy->globalObject(pluginWorld())->globalExec();
     UString ustring = result.toString(exec);
     exec->clearException();
 

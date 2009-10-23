@@ -1,3 +1,258 @@
+2009-10-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30696
+        Add support for IsolatedWorlds to JSC bindings.
+
+        An IsolatedWorld is basically a parallel, separate copy of the window shells and DOM wrapper objects for
+        a given document.  To support isolation this patch:
+
+            * Adds support to the ScriptController to track multiple window shells, one per world.
+            * Adds support to Document to support multiple separate wrapper-maps, one per world.
+            * Replaces the single global DOM wrapper map (on the WebCoreJSClientData) with separate maps,
+              stored on the (new) IsolatedWorld objects.
+
+        In addition to supporting separate copies of these objects, two other features are supported:
+
+            * It is necessary to track the current world on entry into JSC, so that within callbacks out to WebCore
+              we can determine which world (and as such, set of DOM bindings) we should be operating on.
+            * EventListeners & Callbacks are run in the world they were registered in.
+              This requires the handler to retain a reference to the world.
+
+        No new tests. (Enabled existing isolated world layout tests.)
+
+        * WebCore.base.exp:
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        (WebCore::JSAbstractWorker::addEventListener):
+        (WebCore::JSAbstractWorker::removeEventListener):
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::JSCallbackData):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::removeWrappers):
+        (WebCore::DOMObjectWrapperMap::get):
+        (WebCore::DOMObjectWrapperMap::set):
+        (WebCore::DOMObjectWrapperMap::remove):
+        (WebCore::DOMObjectWrapperMap::take):
+        (WebCore::IsolatedWorld::IsolatedWorld):
+        (WebCore::IsolatedWorld::~IsolatedWorld):
+        (WebCore::EnterIsolatedWorld::EnterIsolatedWorld):
+        (WebCore::EnterIsolatedWorld::~EnterIsolatedWorld):
+        (WebCore::JSGlobalDataWorldIterator::JSGlobalDataWorldIterator):
+        (WebCore::JSGlobalDataWorldIterator::operator bool):
+        (WebCore::JSGlobalDataWorldIterator::operator*):
+        (WebCore::JSGlobalDataWorldIterator::operator->):
+        (WebCore::JSGlobalDataWorldIterator::operator++):
+        (WebCore::getCurrentWorld):
+        (WebCore::getNormalWorld):
+        (WebCore::commonNormalWorld):
+        (WebCore::commonCurrentWorld):
+        (WebCore::DOMObjectHashTableMap::mapFor):
+        (WebCore::DOMObjectWrapperMap::mapFor):
+        (WebCore::forgetDOMObject):
+        (WebCore::getCachedDOMNodeWrapper):
+        (WebCore::forgetDOMNode):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::forgetAllDOMNodesForDocument):
+        (WebCore::forgetWorldOfDOMNodesForDocument):
+        (WebCore::isObservableThroughDOM):
+        (WebCore::markDOMNodesForDocument):
+        (WebCore::markActiveObjectsForContext):
+        (WebCore::takeWrappers):
+        (WebCore::updateDOMNodeDocument):
+        (WebCore::markDOMObjectWrapper):
+        (WebCore::allowsAccessFromFrame):
+        (WebCore::printErrorMessageForFrame):
+        (WebCore::JSC_DebuggerCallFrame_evaluateInWorld):
+        (WebCore::JSC_callInWorld):
+        (WebCore::JSC_constructInWorld):
+        (WebCore::JSC_evaluateInWorld):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::IsolatedWorld::rememberDocument):
+        (WebCore::IsolatedWorld::forgetDocument):
+        (WebCore::IsolatedWorld::rememberScriptController):
+        (WebCore::IsolatedWorld::forgetScriptController):
+        (WebCore::DOMObjectHashTableMap::~DOMObjectHashTableMap):
+        (WebCore::DOMObjectHashTableMap::get):
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData):
+        (WebCore::WebCoreJSClientData::currentWorld):
+        (WebCore::WebCoreJSClientData::normalWorld):
+        (WebCore::WebCoreJSClientData::rememberWorld):
+        (WebCore::WebCoreJSClientData::forgetWorld):
+        (WebCore::debuggerWorld):
+        (WebCore::pluginWorld):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::createJSAttributeEventListener):
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::printErrorMessage):
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowShell):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotification::addEventListener):
+        (WebCore::):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::reportError):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        * bindings/js/JSEventSourceCustom.cpp:
+        (WebCore::JSEventSource::addEventListener):
+        (WebCore::JSEventSource::removeEventListener):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::databaseForId):
+        (WebCore::JSInspectorBackend::inspectedWindow):
+        (WebCore::JSInspectorBackend::nodeForId):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSLazyEventListener.h:
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::markChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::markChildren):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        (WebCore::JSNode::markChildren):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::markChildren):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::addEventListener):
+        (WebCore::JSWebSocket::removeEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::constructXMLHttpRequest):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::markChildren):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::markChildren):
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluate):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::processingUserGestureEvent):
+        (WebCore::ScriptController::attachDebugger):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::createRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::globalObject):
+        (WebCore::ScriptController::forgetWorld):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromNode):
+        (WebCore::scriptStateFromPage):
+        * bindings/js/ScriptState.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_Construct):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        * dom/Document.cpp:
+        (WebCore::Document::createWrapperCache):
+        * dom/Document.h:
+        (WebCore::Document::wrapperCacheMap):
+        (WebCore::Document::getWrapperCache):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        * inspector/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        * platform/network/mac/AuthenticationMac.mm:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::dropProtection):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::create):
+
 2009-10-22  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

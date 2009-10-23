@@ -62,6 +62,9 @@ namespace WebCore {
         void setException(ScriptValue);
 
         void forbidExecution();
+
+        JSC::JSGlobalData* globalData() { return m_globalData.get(); }
+
     private:
         void initScriptIfNeeded()
         {

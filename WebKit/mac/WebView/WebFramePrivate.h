@@ -96,6 +96,8 @@ typedef enum {
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 #endif
 
+- (NSString *)_stringByEvaluatingJavaScriptInIsolatedWorld:(unsigned)worldID WithGlobalObject:(JSObjectRef)globalObject FromString:(NSString *)string;
+
 // Pause a given CSS animation or transition on the target node at a specific time.
 // If the animation or transition is already paused, it will update its pause time.
 // This method is only intended to be used for testing the CSS animation and transition system.

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSQuarantinedObjectWrapper.h"
 
+#include "JSDOMBinding.h"
+
 #include <runtime/JSGlobalObject.h>
 
 using namespace JSC;
@@ -243,7 +245,8 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
     ConstructType unwrappedConstructType = wrapper->m_unwrappedObject->getConstructData(unwrappedConstructData);
     ASSERT(unwrappedConstructType != ConstructTypeNone);
 
-    JSValue unwrappedResult = JSC::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
+    // FIXME: Quarantined objects are all in the debuggerWorld(), for now. Instead, we should remove the quarantined objects, & replace them with an isolated world?
+    JSValue unwrappedResult = constructInWorld(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs, debuggerWorld());
 
     JSValue resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
     ASSERT(resultValue.isObject());
@@ -293,7 +296,8 @@ JSValue JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, JS
     CallType unwrappedCallType = wrapper->m_unwrappedObject->getCallData(unwrappedCallData);
     ASSERT(unwrappedCallType != CallTypeNone);
 
-    JSValue unwrappedResult = JSC::call(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
+    // FIXME: Quarantined objects are all in the debuggerWorld(), for now. Instead, we should remove the quarantined objects, & replace them with an isolated world?
+    JSValue unwrappedResult = callInWorld(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs, debuggerWorld());
 
     JSValue result = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
 

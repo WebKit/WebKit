@@ -70,30 +70,6 @@ svg/hixie/perf/002.xml
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 media/video-error-abort.html
 
-# This port doesn't support isolated worlds yet.
-http/tests/security/isolatedWorld/all-window-properties.html
-http/tests/security/isolatedWorld/all-window-prototypes.html
-http/tests/security/isolatedWorld/body-properties.html
-http/tests/security/isolatedWorld/body-prototype.html
-http/tests/security/isolatedWorld/click-event.html
-http/tests/security/isolatedWorld/document-open.html
-http/tests/security/isolatedWorld/document-properties.html
-http/tests/security/isolatedWorld/document-prototype.html
-http/tests/security/isolatedWorld/global-variables.html
-http/tests/security/isolatedWorld/image-properties.html
-http/tests/security/isolatedWorld/image-prototype.html
-http/tests/security/isolatedWorld/location-properties.html
-http/tests/security/isolatedWorld/location-prototype.html
-http/tests/security/isolatedWorld/window-setTimeout-function.html
-http/tests/security/isolatedWorld/window-setTimeout-string.html
-http/tests/security/isolatedWorld/storage-properties.html
-http/tests/security/isolatedWorld/storage-prototype.html
-http/tests/security/isolatedWorld/number-prototype.html
-http/tests/security/isolatedWorld/object-prototype.html
-http/tests/security/isolatedWorld/string-prototype.html
-http/tests/security/isolatedWorld/window-properties.html
-http/tests/security/isolatedWorld/world-reuse.html
-
 # New test with questionable results
 # See https://bugs.webkit.org/show_bug.cgi?id=28079 for explanation.
 fast/forms/menulist-style-color.html

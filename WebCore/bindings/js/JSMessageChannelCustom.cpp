@@ -36,17 +36,11 @@ void JSMessageChannel::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    if (MessagePort* port = m_impl->port1()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
-        if (wrapper)
-            markStack.append(wrapper);
-    }
+    if (MessagePort* port = m_impl->port1())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
 
-    if (MessagePort* port = m_impl->port2()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
-        if (wrapper)
-            markStack.append(wrapper);
-    }
+    if (MessagePort* port = m_impl->port2())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), port);
 }
 
 } // namespace WebCore

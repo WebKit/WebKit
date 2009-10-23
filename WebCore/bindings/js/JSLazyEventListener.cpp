@@ -35,8 +35,8 @@ namespace WebCore {
 static WTF::RefCountedLeakCounter eventListenerCounter("JSLazyEventListener");
 #endif
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber)
-    : JSEventListener(0, true)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber, DOMWrapperWorld* isolatedWorld)
+    : JSEventListener(0, true, isolatedWorld)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)
@@ -92,7 +92,7 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
     if (!scriptController->isEnabled())
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext);
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext, m_isolatedWorld.get());
     if (!globalObject)
         return;
 

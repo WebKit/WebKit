@@ -30,16 +30,18 @@
 
 namespace JSC {
     class JSGlobalData;
+    class DebuggerCallFrame;
 }
 
 namespace WebCore {
 
     class Document;
     class Frame;
+    class JSNode;
     class KURL;
     class Node;
     class String;
-    class JSNode;
+    class ScriptController;
 
     typedef int ExceptionCode;
 
@@ -136,14 +138,104 @@ namespace WebCore {
         }
     };
 
+    typedef HashMap<void*, DOMObject*> DOMObjectWrapperMap;
+
+    class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+    public:
+        DOMWrapperWorld(JSC::JSGlobalData*);
+        ~DOMWrapperWorld();
+
+        void rememberDocument(Document* document) { documentsWithWrappers.add(document); }
+        void forgetDocument(Document* document) { documentsWithWrappers.remove(document); }
+        void rememberScriptController(ScriptController* scriptController) { scriptControllersWithShells.add(scriptController); }
+        void forgetScriptController(ScriptController* scriptController) { scriptControllersWithShells.remove(scriptController); }
+
+        // FIXME: can we make this private?
+        DOMObjectWrapperMap m_wrappers;
+
+    private:
+        JSC::JSGlobalData* m_globalData;
+        HashSet<Document*> documentsWithWrappers;
+        HashSet<ScriptController*> scriptControllersWithShells;
+    };
+
+    // Map from static HashTable instances to per-GlobalData ones.
+    class DOMObjectHashTableMap {
+    public:
+        static DOMObjectHashTableMap& mapFor(JSC::JSGlobalData&);
+
+        ~DOMObjectHashTableMap()
+        {
+            HashMap<const JSC::HashTable*, JSC::HashTable>::iterator mapEnd = m_map.end();
+            for (HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
+                iter->second.deleteTable();
+        }
+
+        const JSC::HashTable* get(const JSC::HashTable* staticTable)
+        {
+            HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
+            if (iter != m_map.end())
+                return &iter->second;
+            return &m_map.set(staticTable, JSC::HashTable(*staticTable)).first->second;
+        }
+
+    private:
+        HashMap<const JSC::HashTable*, JSC::HashTable> m_map;
+    };
+
+    class WebCoreJSClientData : public JSC::JSGlobalData::ClientData {
+        friend class EnterDOMWrapperWorld;
+        friend class JSGlobalDataWorldIterator;
+
+    public:
+        WebCoreJSClientData(JSC::JSGlobalData* globalData)
+            : m_normalWorld(globalData)
+        {
+            m_worldStack.append(&m_normalWorld);
+            m_worldSet.add(&m_normalWorld);
+        }
+        // FIXME: add a destructor to assert m_worldSet only contains m_normalWorld?
+
+        DOMWrapperWorld* currentWorld() { return m_worldStack.last(); }
+        DOMWrapperWorld* normalWorld() { return &m_normalWorld; }
+
+        void rememberWorld(DOMWrapperWorld* world)
+        {
+            ASSERT(!m_worldSet.contains(world));
+            m_worldSet.add(world);
+        }
+        void forgetWorld(DOMWrapperWorld* world)
+        {
+            ASSERT(m_worldSet.contains(world));
+            m_worldSet.remove(world);
+        }
+
+        DOMObjectHashTableMap hashTableMap;
+    private:
+        Vector<DOMWrapperWorld*> m_worldStack;
+        HashSet<DOMWrapperWorld*> m_worldSet;
+        DOMWrapperWorld m_normalWorld;
+    };
+
+    class EnterDOMWrapperWorld {
+    public:
+        EnterDOMWrapperWorld(JSC::JSGlobalData&, DOMWrapperWorld*);
+        EnterDOMWrapperWorld(JSC::ExecState*, DOMWrapperWorld*);
+        ~EnterDOMWrapperWorld();
+
+    private:
+        WebCoreJSClientData* m_clientData;
+    };
+
     DOMObject* getCachedDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle);
     void cacheDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle, DOMObject* wrapper);
-    void forgetDOMObject(JSC::JSGlobalData&, void* objectHandle);
+    void forgetDOMNode(DOMObject* wrapper, Node* node, Document* document);
+    void forgetDOMObject(DOMObject* wrapper, void* objectHandle);
 
     JSNode* getCachedDOMNodeWrapper(Document*, Node*);
     void cacheDOMNodeWrapper(Document*, Node*, JSNode* wrapper);
-    void forgetDOMNode(Document*, Node*);
     void forgetAllDOMNodesForDocument(Document*);
+    void forgetWorldOfDOMNodesForDocument(Document*, DOMWrapperWorld*);
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
     void markDOMNodesForDocument(JSC::MarkStack&, Document*);
     void markActiveObjectsForContext(JSC::MarkStack&, JSC::JSGlobalData&, ScriptExecutionContext*);
@@ -153,6 +245,13 @@ namespace WebCore {
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
     JSC::Structure* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSC::ExecState*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
+
+    DOMWrapperWorld* currentWorld(JSC::ExecState*);
+    DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);
+    DOMWrapperWorld* mainThreadCurrentWorld();
+    DOMWrapperWorld* mainThreadNormalWorld();
+    inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
+    inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
 
     JSC::JSObject* getCachedDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*);
     void cacheDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* constructor);
@@ -304,6 +403,11 @@ namespace WebCore {
     Frame* toDynamicFrame(JSC::ExecState*);
     bool processingUserGesture(JSC::ExecState*);
     KURL completeURL(JSC::ExecState*, const String& relativeURL);
+
+    JSC::JSValue DebuggerCallFrame_evaluateInWorld(const JSC::DebuggerCallFrame& debuggerCallFrame, const JSC::UString& script, JSC::JSValue& exception);
+    JSC::JSValue callInWorld(JSC::ExecState*, JSC::JSValue function, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList&, DOMWrapperWorld*);
+    JSC::JSObject* constructInWorld(JSC::ExecState* exec, JSC::JSValue object, JSC::ConstructType constructType, const JSC::ConstructData& constructData, const JSC::ArgList& args, DOMWrapperWorld*);
+    JSC::Completion evaluateInWorld(JSC::ExecState*, JSC::ScopeChain&, const JSC::SourceCode&, JSC::JSValue thisValue, DOMWrapperWorld*);
 
 } // namespace WebCore
 

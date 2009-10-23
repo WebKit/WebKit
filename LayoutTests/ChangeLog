@@ -1,3 +1,33 @@
+2009-10-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30696
+        Enable isolated-worlds tests on mac.
+          * Update the results to switch from windows to unix line-endings.
+          * Update all-window-prototypes.html to allow for properties on
+            the global object with null prototypes (just skip over them).
+
+        * http/tests/security/isolatedWorld/all-window-properties-expected.txt:
+        * http/tests/security/isolatedWorld/all-window-prototypes-expected.txt:
+        * http/tests/security/isolatedWorld/all-window-prototypes.html:
+        * http/tests/security/isolatedWorld/body-properties-expected.txt:
+        * http/tests/security/isolatedWorld/body-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/document-properties-expected.txt:
+        * http/tests/security/isolatedWorld/document-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/global-variables-expected.txt:
+        * http/tests/security/isolatedWorld/image-properties-expected.txt:
+        * http/tests/security/isolatedWorld/image-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/location-properties-expected.txt:
+        * http/tests/security/isolatedWorld/location-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/number-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/object-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/storage-properties-expected.txt:
+        * http/tests/security/isolatedWorld/storage-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/string-prototype-expected.txt:
+        * http/tests/security/isolatedWorld/window-properties-expected.txt:
+        * platform/mac/Skipped:
+
 2009-10-22  Brian Weinstein  <bweinstein@apple.com>
 
         Updating expected results - unreviewed.

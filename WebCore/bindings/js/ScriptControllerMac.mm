@@ -114,7 +114,7 @@ WebScriptObject* ScriptController::windowScriptObject()
     if (!m_windowScriptObject) {
         JSC::JSLock lock(JSC::SilenceAssertionsOnly);
         JSC::Bindings::RootObject* root = bindingRootObject();
-        m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell()) originRootObject:root rootObject:root];
+        m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell(pluginWorld())) originRootObject:root rootObject:root];
     }
 
     ASSERT([m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);

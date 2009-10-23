@@ -35,6 +35,7 @@
 #include "JSDOMBinding.h"
 
 namespace WebCore {
+    class DOMWrapperWorld;
     class Node;
     class Page;
 

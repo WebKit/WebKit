@@ -29,6 +29,7 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "Frame.h"
+#include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "StringSourceProvider.h"
 #include "WebCoreFrameView.h"
@@ -302,7 +303,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     MarkedArgumentBuffer argList;
     getListFromJArray(exec, args, argList);
     rootObject->globalObject()->globalData()->timeoutChecker.start();
-    JSValue result = JSC::call(exec, function, callType, callData, _imp, argList);
+    JSValue result = WebCore::callInWorld(exec, function, callType, callData, _imp, argList, WebCore::pluginWorld());
     rootObject->globalObject()->globalData()->timeoutChecker.stop();
 
     return convertValueToJObject(result);
@@ -321,7 +322,7 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->globalData()->timeoutChecker.start();
-    Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script)));
+    Completion completion = WebCore::evaluateInWorld(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script)), JSC::JSValue(), WebCore::pluginWorld());
     rootObject->globalObject()->globalData()->timeoutChecker.stop();
     ComplType type = completion.complType();
     

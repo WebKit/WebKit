@@ -53,10 +53,11 @@ JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRef
     addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
 }
 
-void JSDOMWindowBase::updateDocument()
+void JSDOMWindowBase::updateDocument(DOMWrapperWorld* world)
 {
     ASSERT(d()->impl->document());
     ExecState* exec = globalExec();
+    EnterDOMWrapperWorld worldEntry(exec, world);
     symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, this, d()->impl->document()), DontDelete | ReadOnly);
 }
 
@@ -79,21 +80,7 @@ String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* othe
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
 {
-    if (message.isEmpty())
-        return;
-
-    Frame* frame = impl()->frame();
-    if (!frame)
-        return;
-
-    Settings* settings = frame->settings();
-    if (!settings)
-        return;
-    
-    if (settings->privateBrowsingEnabled())
-        return;
-
-    impl()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
+    printErrorMessageForFrame(impl()->frame(), message);
 }
 
 ExecState* JSDOMWindowBase::globalExec()
@@ -157,13 +144,16 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
 
 JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 {
-    static JSGlobalData* globalData;
+    ASSERT(isMainThread());
+
+    static JSGlobalData* globalData = 0;
     if (!globalData) {
         globalData = JSGlobalData::createLeaked().releaseRef();
         globalData->timeoutChecker.setTimeoutInterval(10000); // 10 seconds
 #ifndef NDEBUG
         globalData->mainThreadOnly = true;
 #endif
+        globalData->clientData = new WebCoreJSClientData(globalData);
     }
 
     return globalData;
@@ -181,21 +171,21 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow* domWindow)
     return toJS(exec, domWindow);
 }
 
-JSValue toJS(ExecState*, DOMWindow* domWindow)
+JSValue toJS(ExecState* exec, DOMWindow* domWindow)
 {
     if (!domWindow)
         return jsNull();
     Frame* frame = domWindow->frame();
     if (!frame)
         return jsNull();
-    return frame->script()->windowShell();
+    return frame->script()->windowShell(currentWorld(exec));
 }
 
-JSDOMWindow* toJSDOMWindow(Frame* frame)
+JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld* world)
 {
     if (!frame)
         return 0;
-    return frame->script()->windowShell()->window();
+    return frame->script()->windowShell(world)->window();
 }
 
 JSDOMWindow* toJSDOMWindow(JSValue value)

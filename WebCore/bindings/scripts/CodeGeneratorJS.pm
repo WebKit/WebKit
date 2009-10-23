@@ -1188,19 +1188,21 @@ sub GenerateImplementation
             push(@implContent, "    impl()->invalidateEventListeners();\n");
         }
 
-        if ($interfaceName eq "Node") {
-             push(@implContent, "    forgetDOMNode(impl()->document(), impl());\n");
-        } else {
-            if ($podType) {
-                my $animatedType = $implClassName;
-                $animatedType =~ s/SVG/SVGAnimated/;
+        if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
+            if ($interfaceName eq "Node") {
+                 push(@implContent, "    forgetDOMNode(this, impl(), impl()->document());\n");
+            } else {
+                if ($podType) {
+                    my $animatedType = $implClassName;
+                    $animatedType =~ s/SVG/SVGAnimated/;
 
-                # Special case for JSSVGNumber
-                if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "float") {
-                    push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
+                    # Special case for JSSVGNumber
+                    if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "float") {
+                        push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
+                    }
                 }
+                push(@implContent, "    forgetDOMObject(this, impl());\n");
             }
-            push(@implContent, "    forgetDOMObject(*Heap::heap(this)->globalData(), impl());\n");
         }
 
         push(@implContent, "}\n\n");
@@ -1210,7 +1212,7 @@ sub GenerateImplementation
     # its own special handling rather than relying on the caching that Node normally does.
     if ($interfaceName eq "Document") {
         push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    forgetDOMObject(*Heap::heap(this)->globalData(), static_cast<${implClassName}*>(impl()));\n}\n\n");
+        push(@implContent, "{\n    forgetDOMObject(this, static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
     if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
@@ -1476,7 +1478,7 @@ sub GenerateImplementation
                             } else {
                                 $implIncludes{"Frame.h"} = 1;
                                 $implIncludes{"JSDOMGlobalObject.h"} = 1;
-                                push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(imp->scriptExecutionContext());\n");
+                                push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(imp->scriptExecutionContext(), exec);\n");
                                 push(@implContent, "    if (!globalObject)\n");
                                 push(@implContent, "        return;\n");
                             }

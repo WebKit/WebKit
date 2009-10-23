@@ -511,6 +511,14 @@ Document::~Document()
         m_styleSheets->documentDestroyed();
 }
 
+Document::JSWrapperCache* Document::createWrapperCache(DOMWrapperWorld* world)
+{
+    JSWrapperCache* wrapperCache = new JSWrapperCache();
+    m_wrapperCacheMap.set(world, wrapperCache);
+    world->rememberDocument(this);
+    return wrapperCache;
+}
+
 void Document::resetLinkColor()
 {
     m_linkColor = Color(0, 0, 238);

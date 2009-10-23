@@ -104,6 +104,8 @@ namespace WebCore {
         void removeTimeout(int timeoutId);
         DOMTimer* findTimeout(int timeoutId);
 
+        JSC::JSGlobalData* globalData();
+
     protected:
         // Explicitly override the security origin for this script context.
         // Note: It is dangerous to change the security origin of a script context

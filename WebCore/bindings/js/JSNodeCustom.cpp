@@ -114,7 +114,7 @@ JSValue JSNode::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -124,7 +124,7 @@ JSValue JSNode::removeEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -143,10 +143,8 @@ void JSNode::markChildren(MarkStack& markStack)
     // the document, we need to mark the document, but we don't need to explicitly
     // mark any other nodes.
     if (node->inDocument()) {
-        if (Document* doc = node->ownerDocument()) {
-            if (DOMObject* docWrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), doc))
-                markStack.append(docWrapper);
-        }
+        if (Document* doc = node->ownerDocument())
+            markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), doc);
         return;
     }
 

@@ -32,6 +32,7 @@
 #include "ScriptState.h"
 
 #include "Frame.h"
+#include "JSDOMWindowBase.h"
 #include "Node.h"
 #include "Page.h"
 
@@ -49,12 +50,12 @@ ScriptState* scriptStateFromNode(Node* node)
         return 0;
     if (!frame->script()->isEnabled())
         return 0;
-    return frame->script()->globalObject()->globalExec();
+    return frame->script()->globalObject(mainThreadCurrentWorld())->globalExec();
 }
 
 ScriptState* scriptStateFromPage(Page* page)
 {
-    return page->mainFrame()->script()->globalObject()->globalExec();
+    return page->mainFrame()->script()->globalObject(mainThreadCurrentWorld())->globalExec();
 }
 
 }

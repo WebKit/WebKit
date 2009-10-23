@@ -1,3 +1,17 @@
+2009-10-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30696
+        Update to incorporate support for IsolatedWorlds in JSC bindings.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::globalContext):
+        (WebFrame::windowObjectCleared):
+        (WebFrame::stringByEvaluatingJavaScriptInIsolatedWorld):
+        * WebFrame.h:
+
 2009-10-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.

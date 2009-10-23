@@ -5,8 +5,11 @@
 <script>
 for (p in window) {
   var obj = window[p];
-  if (obj)
-    obj.__proto__.foo = "FAIL: Visible in isolated world.";
+  if (obj) {
+    var proto = obj.__proto__;
+    if (proto)
+      proto.foo = "FAIL: Visible in isolated world.";
+  }
 }
 
 if (window.layoutTestController) {

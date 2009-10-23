@@ -48,8 +48,9 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
     JSLock lock(SilenceAssertionsOnly);
 
     ScriptController* scriptController = frame->script();
-    if (scriptController->haveWindowShell()) {
-        m_window = scriptController->windowShell()->window();
+    // FIXME: explicitly save and restore isolated worlds' global objects when using the back/forward cache. <rdar://problem/7328111>
+    if (JSDOMWindowShell* windowShell = scriptController->existingWindowShell(mainThreadNormalWorld())) {
+        m_window = windowShell->window();
         scriptController->attachDebugger(0);
     }
 }
@@ -70,11 +71,11 @@ void ScriptCachedFrameData::restore(Frame* frame)
     JSLock lock(SilenceAssertionsOnly);
 
     ScriptController* scriptController = frame->script();
-    if (scriptController->haveWindowShell()) {
-        JSDOMWindowShell* windowShell = scriptController->windowShell();
-        if (m_window) {
+    // FIXME: explicitly save and restore isolated worlds' global objects when using the back/forward cache. <rdar://problem/7328111>
+    if (JSDOMWindowShell* windowShell = scriptController->existingWindowShell(mainThreadNormalWorld())) {
+        if (m_window)
             windowShell->setWindow(m_window.get());
-        } else {
+        else {
             windowShell->setWindow(frame->domWindow());
             scriptController->attachDebugger(page->debugger());
             windowShell->window()->setProfileGroup(page->group().identifier());

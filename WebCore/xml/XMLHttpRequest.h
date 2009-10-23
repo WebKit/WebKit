@@ -26,10 +26,12 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "FormData.h"
+#include "JSDOMBinding.h"
 #include "ResourceResponse.h"
 #include "ScriptString.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/OwnPtr.h>
+#include <runtime/Protect.h>
 
 namespace WebCore {
 
@@ -182,7 +184,7 @@ private:
     unsigned m_lastSendLineNumber;
     String m_lastSendURL;
     ExceptionCode m_exceptionCode;
-    
+
     EventTargetData m_eventTargetData;
 };
 

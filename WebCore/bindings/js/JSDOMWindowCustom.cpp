@@ -771,7 +771,8 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     newFrame->loader()->setOpener(openerFrame);
     newFrame->page()->setOpenedByDOM();
 
-    JSDOMWindow* newWindow = toJSDOMWindow(newFrame);
+    // FIXME: If a window is created from an isolated world, what are the consequences of this? 'dialogArguments' only appears back in the normal world?
+    JSDOMWindow* newWindow = toJSDOMWindow(newFrame, normalWorld(exec->globalData()));
 
     if (dialogArgs)
         newWindow->putDirect(Identifier(exec, "dialogArguments"), dialogArgs);
@@ -831,7 +832,7 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
         if (!shouldAllowNavigation(exec, frame))
             return jsUndefined();
 
-        const JSDOMWindow* targetedWindow = toJSDOMWindow(frame);
+        const JSDOMWindow* targetedWindow = toJSDOMWindow(frame, currentWorld(exec));
         if (!completedURL.isEmpty() && (!protocolIsJavaScript(completedURL) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
             bool userGesture = processingUserGesture(exec);
 
@@ -932,7 +933,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     if (!dialogFrame)
         return jsUndefined();
 
-    JSDOMWindow* dialogWindow = toJSDOMWindow(dialogFrame);
+    JSDOMWindow* dialogWindow = toJSDOMWindow(dialogFrame, currentWorld(exec));
     dialogFrame->page()->chrome()->runModal();
 
     Identifier returnValue(exec, "returnValue");
@@ -975,7 +976,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 
 JSValue JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
@@ -984,7 +985,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 
 JSValue JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
-    ScheduledAction* action = ScheduledAction::create(exec, args);
+    ScheduledAction* action = ScheduledAction::create(exec, args, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
@@ -1052,7 +1053,7 @@ JSValue JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -1066,7 +1067,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

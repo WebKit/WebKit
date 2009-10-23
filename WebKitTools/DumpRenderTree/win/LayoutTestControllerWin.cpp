@@ -947,6 +947,18 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     inspectorPrivate->evaluateInFrontend(callId, bstrT(script).GetBSTR());
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldId, JSObjectRef globalObject, JSStringRef script)
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return;
+
+    BSTR result;
+    if (FAILED(framePrivate->stringByEvaluatingJavaScriptInIsolatedWorld(worldId, reinterpret_cast<OLE_HANDLE>(globalObject), bstrT(script).GetBSTR(), &result)))
+        return;
+    SysFreeString(result);
+}
+
 void LayoutTestController::removeAllVisitedLinks()
 {
     COMPtr<IWebHistory> history;

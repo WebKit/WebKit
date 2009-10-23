@@ -46,11 +46,8 @@ void JSMessagePort::markChildren(MarkStack& markStack)
     Base::markChildren(markStack);
 
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
-    if (MessagePort* entangledPort = m_impl->locallyEntangledPort()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), entangledPort);
-        if (wrapper)
-            markStack.append(wrapper);
-    }
+    if (MessagePort* entangledPort = m_impl->locallyEntangledPort())
+        markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), entangledPort);
 
     m_impl->markEventListeners(markStack);
 }
@@ -61,7 +58,7 @@ JSValue JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -71,7 +68,7 @@ JSValue JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

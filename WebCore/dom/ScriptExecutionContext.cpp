@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
+#include "JSDOMWindow.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
@@ -193,6 +194,20 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 
 ScriptExecutionContext::Task::~Task()
 {
+}
+
+JSC::JSGlobalData* ScriptExecutionContext::globalData()
+{
+     if (isDocument())
+        return JSDOMWindow::commonJSGlobalData();
+
+#if ENABLE(WORKERS)
+    if (isWorkerContext())
+        return static_cast<WorkerContext*>(this)->script()->globalData();
+#endif
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore

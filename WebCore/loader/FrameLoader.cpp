@@ -3845,7 +3845,8 @@ void FrameLoader::dispatchDocumentElementAvailable()
 
 void FrameLoader::dispatchWindowObjectAvailable()
 {
-    if (!m_frame->script()->isEnabled() || !m_frame->script()->haveWindowShell())
+    // FIXME: should this be isolated-worlds-aware?
+    if (!m_frame->script()->isEnabled() || !m_frame->script()->existingWindowShell(mainThreadNormalWorld()))
         return;
 
     m_client->windowObjectCleared();

@@ -299,7 +299,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return nil;
 
     [self _rootObject]->globalObject()->globalData()->timeoutChecker.start();
-    JSValue result = call(exec, function, callType, callData, [self _imp], argList);
+    JSValue result = callInWorld(exec, function, callType, callData, [self _imp], argList, pluginWorld());
     [self _rootObject]->globalObject()->globalData()->timeoutChecker.stop();
 
     if (exec->hadException()) {
@@ -328,7 +328,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock(SilenceAssertionsOnly);
     
     [self _rootObject]->globalObject()->globalData()->timeoutChecker.start();
-    Completion completion = JSC::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)));
+    Completion completion = evaluateInWorld([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue(), pluginWorld());
     [self _rootObject]->globalObject()->globalData()->timeoutChecker.stop();
     ComplType type = completion.complType();
     

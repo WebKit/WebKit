@@ -515,3 +515,10 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     NSString *scriptNS = (NSString *)scriptCF.get();
     [[[mainFrame webView] inspector] evaluateInFrontend:nil callId:callId script:scriptNS];
 }
+
+void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+    RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
+    NSString *scriptNS = (NSString *)scriptCF.get();
+    [mainFrame _stringByEvaluatingJavaScriptInIsolatedWorld:worldID WithGlobalObject:globalObject FromString:scriptNS];
+}

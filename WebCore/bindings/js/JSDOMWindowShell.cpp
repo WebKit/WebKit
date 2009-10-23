@@ -171,18 +171,18 @@ void* JSDOMWindowShell::operator new(size_t size)
 // Conversion methods
 // ----
 
-JSValue toJS(ExecState*, Frame* frame)
+JSValue toJS(ExecState* exec, Frame* frame)
 {
     if (!frame)
         return jsNull();
-    return frame->script()->windowShell();
+    return frame->script()->windowShell(currentWorld(exec));
 }
 
-JSDOMWindowShell* toJSDOMWindowShell(Frame* frame)
+JSDOMWindowShell* toJSDOMWindowShell(Frame* frame, DOMWrapperWorld* isolatedWorld)
 {
     if (!frame)
         return 0;
-    return frame->script()->windowShell();
+    return frame->script()->windowShell(isolatedWorld);
 }
 
 } // namespace WebCore

@@ -1444,7 +1444,7 @@ void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>
 
     UString title = getCurrentUserInitiatedProfileName(true);
 
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
+    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
     Profiler::profiler()->startProfiling(scriptState, title);
 
     addStartProfilingMessageToConsole(title, 0, UString());
@@ -1461,7 +1461,7 @@ void InspectorController::stopUserInitiatedProfiling()
 
     UString title = getCurrentUserInitiatedProfileName();
 
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
+    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
     RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(scriptState, title);
     if (profile)
         addProfile(profile, 0, UString());

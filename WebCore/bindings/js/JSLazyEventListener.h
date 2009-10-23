@@ -29,14 +29,14 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber)
+        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber, DOMWrapperWorld* isolatedWorld)
         {
-            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, node, sourceURL, lineNumber));
+            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, node, sourceURL, lineNumber, isolatedWorld));
         }
         virtual ~JSLazyEventListener();
 
     private:
-        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node*, const String& sourceURL, int lineNumber);
+        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node*, const String& sourceURL, int lineNumber, DOMWrapperWorld* isolatedWorld);
 
         virtual JSC::JSObject* jsFunction(ScriptExecutionContext*) const;
         virtual bool wasCreatedFromMarkup() const { return true; }

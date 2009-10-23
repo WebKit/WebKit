@@ -93,4 +93,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT isDisplayingStandaloneImage([out, retval] BOOL* result);
 
     HRESULT allowsFollowingLink([in] BSTR url, [out, retval] BOOL* result);
+
+    HRESULT stringByEvaluatingJavaScriptInIsolatedWorld([in] unsigned worldID, [in] OLE_HANDLE jsGlobalObject, [in] BSTR script, [out, retval] BSTR* result);
 }

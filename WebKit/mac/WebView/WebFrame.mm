@@ -85,6 +85,7 @@
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
 #import <runtime/JSLock.h>
+#import <runtime/JSObject.h>
 #import <runtime/JSValue.h>
 #import <wtf/CurrentTime.h>
 
@@ -270,11 +271,12 @@ WebView *getWebView(WebFrame *webFrame)
     ScriptController* scriptController = _private->coreFrame->script();
 
     // Calling ScriptController::globalObject() would create a window shell, and dispatch corresponding callbacks, which may be premature
-    //  if the script debugger is attached before a document is created.
-    if (!scriptController->haveWindowShell())
+    // if the script debugger is attached before a document is created.  These calls use the debuggerWorld(), we will need to pass a world
+    // to be able to debug isolated worlds.
+    if (!scriptController->existingWindowShell(debuggerWorld()))
         return;
 
-    JSGlobalObject* globalObject = scriptController->globalObject();
+    JSGlobalObject* globalObject = scriptController->globalObject(debuggerWorld());
     if (!globalObject)
         return;
 
@@ -607,7 +609,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return @"";
 
     JSLock lock(SilenceAssertionsOnly);
-    return String(result.toString(_private->coreFrame->script()->globalObject()->globalExec()));
+    return String(result.toString(_private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }
 
 - (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1202,6 +1204,34 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return SecurityOrigin::canLoad(URL, String(), _private->coreFrame->document());
 }
 
+- (NSString *)_stringByEvaluatingJavaScriptInIsolatedWorld:(unsigned)worldID WithGlobalObject:(JSObjectRef)globalObjectRef FromString:(NSString *)string
+{
+    // Start off with some guess at a frame and a global object, we'll try to do better...!
+    JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script()->globalObject(mainThreadNormalWorld());
+
+    // The global object is probably a shell object? - if so, we know how to use this!
+    JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
+    if (!strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell"))
+        anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
+
+    // Get the frame frome the global object we've settled on.
+    Frame* frame = anyWorldGlobalObject->impl()->frame();
+    ASSERT(frame->document());
+    JSValue result = frame->script()->executeScriptInIsolatedWorld(worldID, string, true).jsValue();
+
+    if (!frame) // In case the script removed our frame from the page.
+        return @"";
+
+    // This bizarre set of rules matches behavior from WebKit for Safari 2.0.
+    // If you don't like it, use -[WebScriptObject evaluateWebScript:] or 
+    // JSEvaluateScript instead, since they have less surprising semantics.
+    if (!result || !result.isBoolean() && !result.isString() && !result.isNumber())
+        return @"";
+
+    JSLock lock(SilenceAssertionsOnly);
+    return String(result.toString(anyWorldGlobalObject->globalExec()));
+}
+
 @end
 
 @implementation WebFrame
@@ -1433,7 +1463,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return toGlobalRef(coreFrame->script()->globalObject()->globalExec());
+    return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 @end

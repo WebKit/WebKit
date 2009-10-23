@@ -67,7 +67,7 @@ JSValue JSNotification::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener)), false), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener)), false, currentWorld(exec)), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -77,7 +77,7 @@ JSValue JSNotification::removeEventListener(ExecState* exec, const ArgList& args
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
