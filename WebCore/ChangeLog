@@ -2,6 +2,12 @@
 
         Another shot at a fixed build.
 
+        * DerivedSources.cpp:
+
+2009-10-23  Sam Weinig  <sam@webkit.org>
+
+        Another shot at a fixed build.
+
         * html/HTMLOptionsCollection.idl:
 
 2009-10-23  Brady Eidson  <beidson@apple.com>

@@ -82,6 +82,7 @@
 #include "JSFile.cpp"
 #include "JSFileList.cpp"
 #include "JSHistory.cpp"
+#include "JSHTMLAllCollection.cpp"
 #include "JSHTMLAnchorElement.cpp"
 #include "JSHTMLAppletElement.cpp"
 #include "JSHTMLAreaElement.cpp"
