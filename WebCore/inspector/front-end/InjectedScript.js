@@ -540,7 +540,7 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
             for (var prop in expressionResult)
                 props[prop] = true;
         if (includeInspectorCommandLineAPI)
-            for (var prop in InjectedScript._window()._inspectorCommandLineAPI)
+            for (var prop in InjectedScript._window().console._inspectorCommandLineAPI)
                 if (prop.charAt(0) !== '_')
                     props[prop] = true;
     } catch(e) {
@@ -575,7 +575,7 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
     InjectedScript._ensureCommandLineAPIInstalled(evalFunction, object);
     // Surround the expression in with statements to inject our command line API so that
     // the window object properties still take more precedent than our API functions.
-    expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
+    expression = "with (window.console._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
     var value = evalFunction.call(object, expression);
 
     // When evaluating on call frame error is not thrown, but returned as a value.
@@ -592,7 +592,7 @@ InjectedScript.addInspectedNode = function(nodeId)
         return false;
 
     InjectedScript._ensureCommandLineAPIInstalled(InjectedScript._window().eval, InjectedScript._window());
-    var inspectedNodes = InjectedScript._window()._inspectorCommandLineAPI._inspectedNodes;
+    var inspectedNodes = InjectedScript._window().console._inspectorCommandLineAPI._inspectedNodes;
     inspectedNodes.unshift(node);
     if (inspectedNodes.length >= 5)
         inspectedNodes.pop();
@@ -901,9 +901,9 @@ InjectedScript._inspectObject = function(o)
 
 InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObject)
 {
-    if (evalFunction.call(evalObject, "window._inspectorCommandLineAPI"))
+    if (evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI"))
         return;
-    var inspectorCommandLineAPI = evalFunction.call(evalObject, "window._inspectorCommandLineAPI = { \
+    var inspectorCommandLineAPI = evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI = { \
         $: function() { return document.getElementById.apply(document, arguments) }, \
         $$: function() { return document.querySelectorAll.apply(document, arguments) }, \
         $x: function(xpath, context) { \
@@ -961,11 +961,11 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
             } \
         }, \
         _inspectedNodes: [], \
-        get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
-        get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
-        get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
-        get $3() { return _inspectorCommandLineAPI._inspectedNodes[3] }, \
-        get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] } \
+        get $0() { return console._inspectorCommandLineAPI._inspectedNodes[0] }, \
+        get $1() { return console._inspectorCommandLineAPI._inspectedNodes[1] }, \
+        get $2() { return console._inspectorCommandLineAPI._inspectedNodes[2] }, \
+        get $3() { return console._inspectorCommandLineAPI._inspectedNodes[3] }, \
+        get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] } \
     };");
 
     inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InjectedScript._clearConsoleMessages);

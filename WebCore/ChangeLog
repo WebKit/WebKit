@@ -1,3 +1,16 @@
+2009-10-23  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector injects _inspectorCommandLineAPI into global object when opened
+        https://bugs.webkit.org/show_bug.cgi?id=30675
+
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getCompletions):
+        (InjectedScript._evaluateOn):
+        (InjectedScript.addInspectedNode):
+        (InjectedScript._ensureCommandLineAPIInstalled): Moved _inspectorCommandLineAPI from window to console.
+
 2009-10-23  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Tor Arne Vestbø.
