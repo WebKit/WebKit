@@ -36,10 +36,9 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         return String();
     // FIXME: This could be a lot faster, but assuming the data will not
     // often be much longer than the provided width, this may be fast enough.
-    String output = m_filenames[0].copy();
-    while (font.width(TextRun(output.impl())) > width && output.length() > 4) {
+    String output = m_filenames[0].threadsafeCopy();
+    while (font.width(TextRun(output.impl())) > width && output.length() > 4)
         output = output.replace(output.length() - 4, 4, String("..."));
-    }
     return output;
 }
 

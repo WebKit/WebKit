@@ -1,3 +1,32 @@
+2009-10-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixes style problems in Android-specific files.
+        https://bugs.webkit.org/show_bug.cgi?id=30717
+
+        Style changes only, no new tests possible.
+
+        * page/android/EventHandlerAndroid.cpp: Modified.
+        (WebCore::EventHandler::passMouseDownEventToWidget): Fixes whitespace in method signature.
+        (WebCore::EventHandler::passSubframeEventToSubframe): Fixes whitespace in method signature.
+        (WebCore::EventHandler::passWheelEventToWidget): Fixes whitespace in method signature.
+        (WebCore::EventHandler::passMouseMoveEventToSubframe): Fixes whitespace in method signature.
+        * platform/android/ClipboardAndroid.h: Modified. Fixes header include order and indenting.
+        * platform/android/CursorAndroid.cpp: Modified. 
+        (WebCore::grabCursor): Fixes function braces.
+        (WebCore::grabbingCursor): Fixes function braces.
+        * platform/android/FileChooserAndroid.cpp: Modified.
+        (WebCore::FileChooser::basenameForWidth): Fixes braces on while statement, and updates String::copy to String::threadsafeCopy.
+        * platform/android/FileSystemAndroid.cpp: Modified. Fixes header include order.
+        (WebCore::unloadModule): Fixes zero test.
+        (WebCore::writeToFile): Fixes if statement structure.
+        * platform/android/KeyEventAndroid.cpp: Modified.
+        (WebCore::windowsKeyCodeForKeyEvent): Fixes switch statement indenting.
+        (WebCore::keyIdentifierForAndroidKeyCode): Fixes switch statement indenting.
+        * platform/android/ScreenAndroid.cpp: Modified. Fixes header include order and switch statement indenting.
+        * platform/android/TemporaryLinkStubs.cpp: Modified. Fixes header include order.
+
 2009-10-23  Sam Weinig  <sam@webkit.org>
 
         Another shot at a fixed build.

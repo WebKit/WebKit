@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #define LOG_TAG "WebCore"
 
 #include "config.h"
@@ -282,12 +283,14 @@ const Cursor& westPanningCursor()
     return c;
 }
 
-const Cursor& grabCursor() {
+const Cursor& grabCursor()
+{
     notImplemented();
     return c;
 }
 
-const Cursor& grabbingCursor() {
+const Cursor& grabbingCursor()
+{
     notImplemented();
     return c;
 }
