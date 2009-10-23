@@ -434,9 +434,9 @@ static void resetDefaultsToConsistentValues()
     SInt32 qtVersion;
     OSErr err = Gestalt(gestaltQuickTimeVersion, &qtVersion);
     assert(err == noErr);
-    // Bug 7228836 exists in at least 7.6.3 and 7.6.4, hopefully it will be fixed in 7.6.5.
+    // Bug 7228836 exists in at least 7.6.3 through 7.6.4, hopefully it will be fixed in 7.6.5.
     // FIXME: Once we know the exact versions of QuickTime affected, we can update this check.
-    if (qtVersion <= 0x07640000)
+    if (qtVersion <= 0x07648000) // 7.6.4, final release (0x8).  See http://developer.apple.com/mac/library/techn
         [preferences setAcceleratedCompositingEnabled:NO];
     else
 #endif
