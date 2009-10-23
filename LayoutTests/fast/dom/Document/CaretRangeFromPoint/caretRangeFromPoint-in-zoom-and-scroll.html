@@ -1,0 +1,128 @@
+<HTML>
+<HEAD>
+<TITLE>document.caretRangeFromPoint() Method</TITLE>
+<SCRIPT LANGUAGE="JavaScript">
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function assertEqual(actual, expected) {
+    if (actual != expected)
+        log("Failure, actual: " + actual + "; expected: " + expected);
+    else
+        log("Success");
+}
+
+function sendClick()
+{
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function check(event, expected)
+{
+    var range =document.caretRangeFromPoint(event.clientX, event.clientY);
+    var offset = 0;
+    if (range)
+      offset = range.startOffset;
+    else {
+      alert("range is null");
+      return;
+    }
+
+    var element = document.elementFromPoint(event.clientX, event.clientY);
+    assertEqual(element.id, "first");
+    assertEqual(offset, expected);
+}
+
+function checkBase(event)
+{
+    check(event, 54);
+}
+
+function checkScroll(event)
+{
+    check(event, 93);
+}
+
+function checkZoom(event)
+{
+    check(event, 19);
+}
+
+function checkZoomScroll(event)
+{
+    check(event, 64);
+}
+
+function zoomPageIn()
+{
+    if (window.eventSender) {
+        eventSender.zoomPageIn();
+    }
+}
+
+function zoomPageOut()
+{
+    if (window.eventSender) {
+        eventSender.zoomPageOut();
+    }
+}
+
+function scrollPage(x, y)
+{
+    window.scrollTo(x, y);
+}
+
+onload = function()
+{
+    if (!window.layoutTestController)
+        return;
+    
+    layoutTestController.dumpAsText();
+
+    // Base.
+    window.addEventListener("click", checkBase, false);
+    sendClick();
+    window.removeEventListener("click", checkBase, false);
+
+    // Scroll.
+    window.addEventListener("click", checkScroll, false);
+    scrollPage(50, 50);
+    sendClick();
+    scrollPage(0, 0);
+    window.removeEventListener("click", checkScroll, false);
+
+    // Zoom.
+    window.addEventListener("click", checkZoom, false);
+    zoomPageIn(); zoomPageIn(); zoomPageIn();
+    sendClick();
+    zoomPageOut(); zoomPageOut(); zoomPageOut();
+    window.removeEventListener("click", checkZoom, false);
+
+    // Scroll and Zoom.
+    window.addEventListener("click", checkZoomScroll, false);
+    zoomPageIn(); zoomPageIn(); zoomPageIn();
+    scrollPage(50, 50);
+    sendClick();
+    zoomPageOut(); zoomPageOut(); zoomPageOut();
+    scrollPage(0, 0);
+    window.removeEventListener("click", checkZoomScroll, false);
+}
+</SCRIPT>
+</HEAD>
+<BODY style="width: 100px; height: 100px" >
+<P id="first">This is to test document.caretRangeFromPoint() in a zoom and scrolled page. The point calculation in caretRangeFromPoint() is wrong in a zoom and scrolled page. <span id="same">Same applies to elementFromPoint(). 
+</P>
+<P id="second">In a window large enough to hold the page without any scroll, click mouse after "S" in "Same" at the above sentence, observe the printed offset.
+</P>
+<P id="third">Now, please resize the window to make the page scroll. Then, scroll the page. Click the mouse after "S" in "Same", observe the printed offset.
+</P>
+<BR id="fourth"><BR>Result: <SPAN ID="mySpan" STYLE="font-weight:bold"></SPAN>".
+<ul id="console"></ul>
+</BODY>
+</HTML>

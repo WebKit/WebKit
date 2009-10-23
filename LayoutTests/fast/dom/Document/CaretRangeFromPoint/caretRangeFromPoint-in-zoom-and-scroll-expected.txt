@@ -1,0 +1,17 @@
+This is to test document.caretRangeFromPoint() in a zoom and scrolled page. The point calculation in caretRangeFromPoint() is wrong in a zoom and scrolled page. Same applies to elementFromPoint().
+
+In a window large enough to hold the page without any scroll, click mouse after "S" in "Same" at the above sentence, observe the printed offset.
+
+Now, please resize the window to make the page scroll. Then, scroll the page. Click the mouse after "S" in "Same", observe the printed offset.
+
+
+
+Result: ".
+Success
+Success
+Success
+Success
+Success
+Success
+Success
+Success

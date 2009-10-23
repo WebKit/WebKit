@@ -1,3 +1,23 @@
+2009-10-23  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix caretRangeFromPoint()/elementFromPoint() returns wrong result 
+        for a zoomed and scrolled page.
+        https://bugs.webkit.org/show_bug.cgi?id=30689.
+
+        The real cause is the wrong calculation of event.clientX/Y when
+        page is zoomed and scolled.
+        After Sam fixed the event.clientX/Y in r49551, the hit test point
+        should be recalculated (revert r49490).
+
+        * fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll-expected.txt: Added.
+        * fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html: Added.
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html:
+        * fast/dom/elementFromPoint-relative-to-viewport-expected.txt:
+        * fast/dom/elementFromPoint-relative-to-viewport.html:
+
 2009-10-23  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

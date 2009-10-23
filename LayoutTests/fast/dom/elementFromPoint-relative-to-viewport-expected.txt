@@ -13,8 +13,8 @@ PASS scrolledRightBoxOffscreen is '3'
 PASS scrolledDownAndRightBoxOffscreen is '8'
 PASS unscrolledBoxInitial is '0'
 PASS scrolledDownBoxInitial is '5'
-PASS scrolledRightBoxInitial is '2'
-PASS scrolledDownAndRightBoxInitial is '7'
+PASS scrolledRightBoxInitial is '3'
+PASS scrolledDownAndRightBoxInitial is '8'
 PASS successfullyParsed is true
 
 TEST COMPLETE
