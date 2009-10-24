@@ -136,29 +136,34 @@ WebInspector.ResourcesPanel = function()
     this.sortingSelectElement.className = "status-bar-item";
     this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
 
-    var createFilterElement = function (category) {
+    function createFilterElement(category)
+    {
+        if (category === "all")
+            var label = WebInspector.UIString("All");
+        else if (WebInspector.resourceCategories[category])
+            var label = WebInspector.resourceCategories[category].title;
+
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
         categoryElement.addStyleClass(category);
-        var label = WebInspector.UIString("All");
-        if (WebInspector.resourceCategories[category])
-            label = WebInspector.resourceCategories[category].title;
         categoryElement.appendChild(document.createTextNode(label));
         categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
         this.filterBarElement.appendChild(categoryElement);
+
         return categoryElement;
-    };
+    }
 
     this.allElement = createFilterElement.call(this, "all");
-    
+
     // Add a divider
     var dividerElement = document.createElement("div");
     dividerElement.addStyleClass("divider");
     this.filterBarElement.appendChild(dividerElement);
-    
-    this.filter(this.allElement);
+
     for (var category in this.categories)
         createFilterElement.call(this, category);
+
+    this.filter(this.allElement);
 
     this.reset();
 
@@ -172,53 +177,56 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (!this._categories) {
             this._categories = {documents: {color: {r: 47, g: 102, b: 236}}, stylesheets: {color: {r: 157, g: 231, b: 119}}, images: {color: {r: 164, g: 60, b: 255}}, scripts: {color: {r: 255, g: 121, b: 0}}, xhr: {color: {r: 231, g: 231, b: 10}}, fonts: {color: {r: 255, g: 82, b: 62}}, other: {color: {r: 186, g: 186, b: 186}}};
-            for (var category in this._categories) {
+            for (var category in this._categories)
                 this._categories[category].title = WebInspector.resourceCategories[category].title;
-            }
         }
+
         return this._categories; 
     },
 
-    filter: function (target)
+    filter: function(target)
     {
-        if (target.category === "All") {
+        if (target === this.allElement) {
             if (target.hasStyleClass("selected")) {
-                // We can't unselect all, so we break early here
+                // We can't unselect All, so we break early here
                 return;
             }
-            
-            // If all wasn't selected, and now is, unselect everything else.
-            for (var child in this.filterBarElement.childNodes) {
-                if (target.category !== "All") {
+
+            // If All wasn't selected, and now is, unselect everything else.
+            for (var i = 0; i < this.filterBarElement.childNodes.length; ++i) {
+                var child = this.filterBarElement.childNodes[i];
+                if (!child.category)
+                    continue;
+
+                if (child !== this.allElement)
                     child.removeStyleClass("selected");
-                }
-              
-                var filterClass = "filter-" + target.category;
+
+                var filterClass = "filter-" + child.category.toLowerCase();
                 this.resourcesGraphsElement.removeStyleClass(filterClass);
                 this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
             }
         } else {
-            // Something other than all is being selected, so we want to unselect all
+            // Something other than All is being selected, so we want to unselect All.
             if (this.allElement.hasStyleClass("selected")) {
                 this.allElement.removeStyleClass("selected");
                 this.resourcesGraphsElement.removeStyleClass("filter-all");
                 this.resourcesTreeElement.childrenListElement.removeStyleClass("filter-all");
             }
         }
-        
+
         if (target.hasStyleClass("selected")) {
             target.removeStyleClass("selected");
+
             var filterClass = "filter-" + target.category.toLowerCase();
-            
             this.resourcesGraphsElement.removeStyleClass(filterClass);
             this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
         } else {
             target.addStyleClass("selected");
+
             var filterClass = "filter-" + target.category.toLowerCase();
-         
             this.resourcesGraphsElement.addStyleClass(filterClass);
-            this.resourcesTreeElement.childrenListElement.addStyleClass(filterClass);   
-        } 
+            this.resourcesTreeElement.childrenListElement.addStyleClass(filterClass);
+        }
     },
 
     _updateFilter: function (e)

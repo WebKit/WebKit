@@ -1,5 +1,20 @@
 2009-10-24  Timothy Hatcher  <timothy@apple.com>
 
+        Fix the Scope Bar in the Web Inspector's Resource panel, so that selecting
+        All will deselect the other filters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30744
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.createFilterElement): Better syntax.
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.filter): Use a normal for loop,
+        and the child variable instead of target in the loop. Other clean up.
+
+2009-10-24  Timothy Hatcher  <timothy@apple.com>
+
         Make resizing the Web Inspector's Elements panel sidebar work again.
         Also makes Resources panel use the sidebar code in Panel.
 
