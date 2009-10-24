@@ -1,3 +1,24 @@
+2009-10-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30734
+        Remove XMLTokenizer::m_currentNodeIsReferenced
+
+        No change in behavior, no tests.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::setCurrentNode):
+        * dom/XMLTokenizer.h:
+        Don't store a boolean for the current node being the document - we can always check for that.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        A fragment passed to XMLTokenizer is never null - in fact, the first thing we do is dereference
+        it unconditionally, and then begin checking it for null, as if it could help.
+
 2009-10-23  Beth Dakin  <bdakin@apple.com>
 
         No review since this is a build fix.
