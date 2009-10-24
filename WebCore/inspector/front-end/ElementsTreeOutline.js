@@ -528,11 +528,6 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._startEditingFromEvent(event, treeElement))
             return;
 
-        if (this.treeOutline.panel) {
-            this.treeOutline.rootDOMNode = this.representedObject.parentNode;
-            this.treeOutline.focusedDOMNode = this.representedObject;
-        }
-
         if (this.hasChildren && !this.expanded)
             this.expand();
     },
