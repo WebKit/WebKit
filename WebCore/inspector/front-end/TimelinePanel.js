@@ -30,7 +30,9 @@
 
 WebInspector.TimelinePanel = function()
 {
-    WebInspector.Panel.call(this, true);
+    WebInspector.Panel.call(this);
+
+    this.createSidebar();
 
     this.element.addStyleClass("timeline");
 
@@ -57,11 +59,6 @@ WebInspector.TimelinePanel.prototype = {
     get statusBarItems()
     {
         return [this.toggleTimelineButton.element];
-    },
-
-    handleKeyEvent: function(event)
-    {
-        this.sidebarTree.handleKeyEvent(event);
     },
 
     timelineWasStarted: function()
@@ -97,7 +94,7 @@ WebInspector.TimelinePanel.prototype = {
             InspectorController.startTimelineProfiler();
     },
 
-    setMainViewWidth: function(width)
+    updateMainViewWidth: function(width)
     {
         this.timelineView.style.left = width + "px";
     },

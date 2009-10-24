@@ -1,5 +1,40 @@
 2009-10-24  Timothy Hatcher  <timothy@apple.com>
 
+        Make resizing the Web Inspector's Elements panel sidebar work again.
+        Also makes Resources panel use the sidebar code in Panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30742
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel): Don't create the sidebar with an argument.
+        (WebInspector.Panel.prototype.show): Call updateSidebarWidth.
+        (WebInspector.Panel.prototype.handleKeyEvent): Call handleSidebarKeyEvent.
+        (WebInspector.Panel.prototype.handleSidebarKeyEvent): Added.
+        (WebInspector.Panel.prototype.createSidebar): Renamed from _createSidebar.
+        (WebInspector.Panel.prototype._sidebarDragging): Call updateSidebarWidth.
+        (WebInspector.Panel.prototype.updateSidebarWidth): Renamed from _updateSidebarWidth.
+        (WebInspector.Panel.prototype.setSidebarWidth): Added. Called by updateSidebarWidth.
+        (WebInspector.Panel.prototype.updateMainViewWidth): Renamed from setMainViewWidth.
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel): Call createSidebar.
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth): Renamed from setMainViewWidth.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show): Remove call to _updateSidebarWidth.
+        (WebInspector.ResourcesPanel.prototype.showResource): Call updateSidebarWidth
+        (WebInspector.ResourcesPanel.prototype.closeVisibleResource): Ditto.
+        (WebInspector.ResourcesPanel.prototype.setSidebarWidth): Added.
+        (WebInspector.ResourcesPanel.prototype.updateMainViewWidth): Added.
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel): Call createSidebar.
+        (WebInspector.StoragePanel.prototype.updateMainViewWidth): Renamed from setMainViewWidth.
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel): Call createSidebar.
+        (WebInspector.TimelinePanel.prototype.updateMainViewWidth): Renamed from setMainViewWidth.
+
+2009-10-24  Timothy Hatcher  <timothy@apple.com>
+
         Call updateSelection() in a few places so hovering in the Web Inspector's
         Elements panel always has the correct row selection height.
 

@@ -29,7 +29,9 @@
 
 WebInspector.StoragePanel = function(database)
 {
-    WebInspector.Panel.call(this, true);
+    WebInspector.Panel.call(this);
+
+    this.createSidebar();
 
     this.databasesListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("DATABASES"), {}, true);
     this.sidebarTree.appendChild(this.databasesListTreeElement);
@@ -109,11 +111,6 @@ WebInspector.StoragePanel.prototype = {
         
         if (this.sidebarTree.selectedTreeElement)
             this.sidebarTree.selectedTreeElement.deselect();
-    },
-
-    handleKeyEvent: function(event)
-    {
-        this.sidebarTree.handleKeyEvent(event);
     },
 
     addDatabase: function(database)
@@ -394,7 +391,7 @@ WebInspector.StoragePanel.prototype = {
         return null;
     },
 
-    setMainViewWidth: function(width)
+    updateMainViewWidth: function(width)
     {
         this.storageViews.style.left = width + "px";
         this.storageViewStatusBarItemsContainer.style.left = width + "px";

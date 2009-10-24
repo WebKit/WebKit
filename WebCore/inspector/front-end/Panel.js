@@ -26,11 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Panel = function(createSidebar)
+WebInspector.Panel = function()
 {
     WebInspector.View.call(this);
-    if (createSidebar)
-        this._createSidebar();
 
     this.element.addStyleClass("panel");
 }
@@ -84,7 +82,8 @@ WebInspector.Panel.prototype = {
             this._toolbarItem.addStyleClass("toggled-on");
 
         WebInspector.currentFocusElement = document.getElementById("main-panels");
-        this._updateSidebarWidth();
+
+        this.updateSidebarWidth();
     },
 
     hide: function()
@@ -274,23 +273,41 @@ WebInspector.Panel.prototype = {
 
     handleKeyEvent: function(event)
     {
-        this.sidebarTree.handleKeyEvent(event);
+        this.handleSidebarKeyEvent(event);
     },
 
-    _createSidebar: function()
+    handleSidebarKeyEvent: function(event)
     {
+        if (this.hasSidebar && this.sidebarTree)
+            this.sidebarTree.handleKeyEvent(event);
+    },
+
+    createSidebar: function(parentElement, resizerParentElement)
+    {
+        if (this.hasSidebar)
+            return;
+
+        if (!parentElement)
+            parentElement = this.element;
+
+        if (!resizerParentElement)
+            resizerParentElement = parentElement;
+
+        this.hasSidebar = true;
+
         this.sidebarElement = document.createElement("div");
         this.sidebarElement.className = "sidebar";
-        this.element.appendChild(this.sidebarElement);
+        parentElement.appendChild(this.sidebarElement);
 
         this.sidebarResizeElement = document.createElement("div");
         this.sidebarResizeElement.className = "sidebar-resizer-vertical";
         this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
-        this.element.appendChild(this.sidebarResizeElement);
+        resizerParentElement.appendChild(this.sidebarResizeElement);
 
         this.sidebarTreeElement = document.createElement("ol");
         this.sidebarTreeElement.className = "sidebar-tree";
         this.sidebarElement.appendChild(this.sidebarTreeElement);
+
         this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
     },
 
@@ -301,7 +318,7 @@ WebInspector.Panel.prototype = {
 
     _sidebarDragging: function(event)
     {
-        this._updateSidebarWidth(event.pageX);
+        this.updateSidebarWidth(event.pageX);
 
         event.preventDefault();
     },
@@ -311,8 +328,11 @@ WebInspector.Panel.prototype = {
         WebInspector.elementDragEnd(event);
     },
 
-    _updateSidebarWidth: function(width)
+    updateSidebarWidth: function(width)
     {
+        if (!this.hasSidebar)
+            return;
+
         if (this.sidebarElement.offsetWidth <= 0) {
             // The stylesheet hasn't loaded yet or the window is closed,
             // so we can't calculate what is need. Return early.
@@ -328,17 +348,22 @@ WebInspector.Panel.prototype = {
         width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
 
         this._currentSidebarWidth = width;
+        this.setSidebarWidth(width);
 
-        this.sidebarElement.style.width = width + "px";
-        this.setMainViewWidth(width);
-        this.sidebarResizeElement.style.left = (width - 3) + "px";
-        
+        this.updateMainViewWidth(width);
+
         var visibleView = this.visibleView;
         if (visibleView && "resize" in visibleView)
             visibleView.resize();
     },
-    
-    setMainViewWidth: function(width)
+
+    setSidebarWidth: function(width)
+    {
+        this.sidebarElement.style.width = width + "px";
+        this.sidebarResizeElement.style.left = (width - 3) + "px";
+    },
+
+    updateMainViewWidth: function(width)
     {
         // Should be implemented by ancestors.
     }

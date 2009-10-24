@@ -85,7 +85,9 @@ WebInspector.ProfileType.prototype = {
 
 WebInspector.ProfilesPanel = function()
 {
-    WebInspector.Panel.call(this, true);
+    WebInspector.Panel.call(this);
+
+    this.createSidebar();
 
     this.element.addStyleClass("profiles");
     this._profileTypesByIdMap = {};
@@ -449,7 +451,7 @@ WebInspector.ProfilesPanel.prototype = {
         delete this._shouldPopulateProfiles;
     },
 
-    setMainViewWidth: function(width)
+    updateMainViewWidth: function(width)
     {
         this.profileViews.style.left = width + "px";
         this.profileViewStatusBarItemsContainer.style.left = width + "px";

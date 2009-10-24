@@ -46,15 +46,9 @@ WebInspector.ResourcesPanel = function()
     this.containerElement.addEventListener("scroll", this._updateDividersLabelBarPosition.bind(this), false);
     this.element.appendChild(this.containerElement);
 
-    this.sidebarElement = document.createElement("div");
-    this.sidebarElement.id = "resources-sidebar";
-    this.sidebarElement.className = "sidebar";
-    this.containerElement.appendChild(this.sidebarElement);
+    this.createSidebar(this.containerElement, this.element);
 
-    this.sidebarResizeElement = document.createElement("div");
-    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
-    this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
-    this.element.appendChild(this.sidebarResizeElement);
+    this.sidebarElement.id = "resources-sidebar";
 
     this.containerContentElement = document.createElement("div");
     this.containerContentElement.id = "resources-container-content";
@@ -79,12 +73,6 @@ WebInspector.ResourcesPanel = function()
     this.dividersLabelBarElement = document.createElement("div");
     this.dividersLabelBarElement.id = "resources-dividers-label-bar";
     this.containerContentElement.appendChild(this.dividersLabelBarElement);
-
-    this.sidebarTreeElement = document.createElement("ol");
-    this.sidebarTreeElement.className = "sidebar-tree";
-    this.sidebarElement.appendChild(this.sidebarTreeElement);
-
-    this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
 
     var timeGraphItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Time"));
     timeGraphItem.onselect = this._graphSelected.bind(this);
@@ -284,7 +272,6 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
 
         this._updateDividersLabelBarPosition();
-        this._updateSidebarWidth();
         this.refreshIfNeeded();
 
         var visibleView = this.visibleView;
@@ -675,7 +662,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         this.visibleResource = resource;
 
-        this._updateSidebarWidth();
+        this.updateSidebarWidth();
     },
 
     showView: function(view)
@@ -697,7 +684,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (this._lastSelectedGraphTreeElement)
             this._lastSelectedGraphTreeElement.select(true);
 
-        this._updateSidebarWidth();
+        this.updateSidebarWidth();
     },
 
     resourceViewForResource: function(resource)
@@ -724,11 +711,6 @@ WebInspector.ResourcesPanel.prototype = {
 
         view.setupSourceFrameIfNeeded();
         return view.sourceFrame;
-    },
-
-    handleKeyEvent: function(event)
-    {
-        this.sidebarTree.handleKeyEvent(event);
     },
 
     _sortResourcesIfNeeded: function()
@@ -926,41 +908,8 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    _startSidebarDragging: function(event)
+    setSidebarWidth: function(width)
     {
-        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
-    },
-
-    _sidebarDragging: function(event)
-    {
-        this._updateSidebarWidth(event.pageX);
-
-        event.preventDefault();
-    },
-
-    _endSidebarDragging: function(event)
-    {
-        WebInspector.elementDragEnd(event);
-    },
-
-    _updateSidebarWidth: function(width)
-    {
-        if (this.sidebarElement.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet or the window is closed,
-            // so we can't calculate what is need. Return early.
-            return;
-        }
-
-        if (!("_currentSidebarWidth" in this))
-            this._currentSidebarWidth = this.sidebarElement.offsetWidth;
-
-        if (typeof width === "undefined")
-            width = this._currentSidebarWidth;
-
-        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
-
-        this._currentSidebarWidth = width;
-
         if (this.visibleResource) {
             this.containerElement.style.width = width + "px";
             this.sidebarElement.style.removeProperty("width");
@@ -969,15 +918,15 @@ WebInspector.ResourcesPanel.prototype = {
             this.containerElement.style.removeProperty("width");
         }
 
+        this.sidebarResizeElement.style.left = (width - 3) + "px";
+    },
+
+    updateMainViewWidth: function(width)
+    {
         this.containerContentElement.style.left = width + "px";
         this.viewsContainerElement.style.left = width + "px";
-        this.sidebarResizeElement.style.left = (width - 3) + "px";
 
         this._updateGraphDividersIfNeeded();
-
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
     },
 
     _enableResourceTracking: function()
