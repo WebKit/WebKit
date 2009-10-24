@@ -1,5 +1,18 @@
 2009-10-24  Timothy Hatcher  <timothy@apple.com>
 
+        Make the scope bars in the Web Inspector match other scope bars in Mac OS X.
+        Also cleans up the CSS to use classes instead of ID selectors.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28186
+
+        Reviewed by Dan Bernstein.
+
+        * inspector/front-end/ResourcesPanel.js: Add the scope-bar class.
+        * inspector/front-end/inspector.css: Lots of changes to make it look right.
+        * inspector/front-end/inspector.html: Add the scope-bar class.
+
+2009-10-24  Timothy Hatcher  <timothy@apple.com>
+
         Fix selecting Resources in the Web Inspector's Resources panel.
 
         https://bugs.webkit.org/show_bug.cgi?id=30743

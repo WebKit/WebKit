@@ -35,6 +35,7 @@ WebInspector.ResourcesPanel = function()
 
     this.filterBarElement = document.createElement("div");
     this.filterBarElement.id = "resources-filter";
+    this.filterBarElement.className = "scope-bar";
     this.element.appendChild(this.filterBarElement);
 
     this.viewsContainerElement = document.createElement("div");
