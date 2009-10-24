@@ -229,7 +229,12 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    _updateFilter: function (e)
+    isCategoryVisible: function(categoryName)
+    {
+        return (this.resourcesGraphsElement.hasStyleClass("filter-all") || this.resourcesGraphsElement.hasStyleClass("filter-" + categoryName.toLowerCase()));
+    },
+
+    _updateFilter: function(e)
     {
         this.filter(e.target);
     },
@@ -1332,7 +1337,7 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
 
     get selectable()
     {
-        return WebInspector.panels.resources._filterCategory == "all" || WebInspector.panels.resources._filterCategory == this.resource.category.name;
+        return WebInspector.panels.resources.isCategoryVisible(this.resource.category.name);
     },
 
     createIconElement: function()

@@ -1,5 +1,18 @@
 2009-10-24  Timothy Hatcher  <timothy@apple.com>
 
+        Fix selecting Resources in the Web Inspector's Resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30743
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.isCategoryVisible): Added.
+        (WebInspector.ResourceSidebarTreeElement.prototype.get selectable): Call
+        isCategoryVisible on the ResourcesPanel.
+
+2009-10-24  Timothy Hatcher  <timothy@apple.com>
+
         Fix the Scope Bar in the Web Inspector's Resource panel, so that selecting
         All will deselect the other filters.
 
