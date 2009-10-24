@@ -1,3 +1,38 @@
+2009-10-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement a Timeline panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30725
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Images/timelineIcon.png: Added.
+        * inspector/front-end/TimelineAgent.js:
+        (WebInspector.addItemToTimeline):
+        (WebInspector.timelineProfilerWasStarted):
+        (WebInspector.timelineProfilerWasStopped):
+        * inspector/front-end/TimelinePanel.js: Added.
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.toolbarItemClass.get toolbarItemLabel):
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype.handleKeyEvent):
+        (WebInspector.TimelinePanel.prototype.timelineWasStarted):
+        (WebInspector.TimelinePanel.prototype.timelineWasStopped):
+        (WebInspector.TimelinePanel.prototype.addItemToTimeline):
+        (WebInspector.TimelinePanel.prototype._innerAddItemToTimeline):
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButton):
+        (WebInspector.TimelinePanel.prototype.setMainViewWidth):
+        (WebInspector.TimelinePanel.prototype.getItemTypeName):
+        (WebInspector.TimelineRecordTreeElement):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2009-10-23  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

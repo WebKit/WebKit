@@ -203,6 +203,10 @@ body.attached #search-results-matches {
     background-image: url(Images/scriptsIcon.png);
 }
 
+.toolbar-item.timeline .toolbar-icon {
+    background-image: url(Images/timelineIcon.png);
+}
+
 .toolbar-item.storage .toolbar-icon {
     background-image: url(Images/storageIcon.png);
 }
@@ -3259,6 +3263,26 @@ body.inactive .sidebar-tree-item.selected {
 
 body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     background-image: url(Images/searchSmallGray.png);
+}
+
+/* Timeline Style */
+
+#timeline-views {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 200px;
+    bottom: 0;
+}
+
+.timeline-tree-item {
+    height: 18px;
+    padding-left: 24px;
+    white-space: nowrap;
+}
+
+.timeline-tree-item .data.dimmed {
+    color: rgba(0, 0, 0, 0.7);
 }
 
 /* Profiler Style */

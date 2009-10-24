@@ -42,13 +42,16 @@ WebInspector.TimelineAgent.ItemType = {
 };
 
 WebInspector.addItemToTimeline = function(record) {
-    // Not implemented.
+    if (WebInspector.panels.timeline)
+        WebInspector.panels.timeline.addItemToTimeline(record);
 }
 
 WebInspector.timelineProfilerWasStarted = function() {
-    // Not implemented.
+    if (WebInspector.panels.timeline)
+        WebInspector.panels.timeline.timelineWasStarted();
 }
 
 WebInspector.timelineProfilerWasStopped = function() {
-    // Not implemented.
+    if (WebInspector.panels.timeline)
+        WebInspector.panels.timeline.timelineWasStopped();
 }
