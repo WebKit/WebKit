@@ -161,8 +161,14 @@ WebInspector.ResourcesPanel = function()
         return categoryElement;
     };
 
-    var allElement = createFilterElement.call(this, "all");
-    this.filter(allElement.category);
+    this.allElement = createFilterElement.call(this, "all");
+    
+    // Add a divider
+    var dividerElement = document.createElement("div");
+    dividerElement.addStyleClass("divider");
+    this.filterBarElement.appendChild(dividerElement);
+    
+    this.filter(this.allElement);
     for (var category in this.categories)
         createFilterElement.call(this, category);
 
@@ -185,27 +191,51 @@ WebInspector.ResourcesPanel.prototype = {
         return this._categories; 
     },
 
-    filter: function (category) {
-        if (this._filterCategory && this._filterCategory === category)
-            return;
-
-        if (this._filterCategory) {
-            var filterElement = this.filterBarElement.getElementsByClassName(this._filterCategory)[0];
-            filterElement.removeStyleClass("selected");
-            var oldClass = "filter-" + this._filterCategory;
-            this.resourcesTreeElement.childrenListElement.removeStyleClass(oldClass);
-            this.resourcesGraphsElement.removeStyleClass(oldClass);
+    filter: function (target)
+    {
+        if (target.category === "All") {
+            if (target.hasStyleClass("selected")) {
+                // We can't unselect all, so we break early here
+                return;
+            }
+            
+            // If all wasn't selected, and now is, unselect everything else.
+            for (var child in this.filterBarElement.childNodes) {
+                if (target.category !== "All") {
+                    child.removeStyleClass("selected");
+                }
+              
+                var filterClass = "filter-" + target.category;
+                this.resourcesGraphsElement.removeStyleClass(filterClass);
+                this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
+            }
+        } else {
+            // Something other than all is being selected, so we want to unselect all
+            if (this.allElement.hasStyleClass("selected")) {
+                this.allElement.removeStyleClass("selected");
+                this.resourcesGraphsElement.removeStyleClass("filter-all");
+                this.resourcesTreeElement.childrenListElement.removeStyleClass("filter-all");
+            }
         }
-        this._filterCategory = category;
-        var filterElement = this.filterBarElement.getElementsByClassName(this._filterCategory)[0];
-        filterElement.addStyleClass("selected");
-        var newClass = "filter-" + this._filterCategory;
-        this.resourcesTreeElement.childrenListElement.addStyleClass(newClass);
-        this.resourcesGraphsElement.addStyleClass(newClass);
+        
+        if (target.hasStyleClass("selected")) {
+            target.removeStyleClass("selected");
+            var filterClass = "filter-" + target.category.toLowerCase();
+            
+            this.resourcesGraphsElement.removeStyleClass(filterClass);
+            this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
+        } else {
+            target.addStyleClass("selected");
+            var filterClass = "filter-" + target.category.toLowerCase();
+         
+            this.resourcesGraphsElement.addStyleClass(filterClass);
+            this.resourcesTreeElement.childrenListElement.addStyleClass(filterClass);   
+        } 
     },
 
-    _updateFilter: function (e) {
-        this.filter(e.target.category);
+    _updateFilter: function (e)
+    {
+        this.filter(e.target);
     },
 
     get toolbarItemLabel()
