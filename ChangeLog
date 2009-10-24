@@ -1,3 +1,15 @@
+2009-10-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] [Symbian] Set the capability and memory required to run QtWebKit for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=30476
+
+        Set the stack size to 80 Kb and heap size to the 128kB - 32MB range
+        to all executables linking against WebKit library.
+
+        * WebKit.pri:
+
 2009-10-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

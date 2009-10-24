@@ -1,3 +1,26 @@
+2009-10-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] [Symbian] Set the capability and memory required to run QtWebKit for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=30476
+
+        Assign ReadUserData WriteUserData NetworkServices Symbian capabilities
+        to all QtWebkit executables.
+
+        * QGVLauncher/QGVLauncher.pro:
+        * QtLauncher/QtLauncher.pro:
+        * tests/benchmarks/loading/tst_loading.pro:
+        * tests/benchmarks/painting/tst_painting.pro:
+        * tests/qgraphicswebview/qgraphicswebview.pro:
+        * tests/qwebelement/qwebelement.pro:
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebhistory/qwebhistory.pro:
+        * tests/qwebhistoryinterface/qwebhistoryinterface.pro:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebplugindatabase/qwebplugindatabase.pro:
+        * tests/qwebview/qwebview.pro:
+
 2009-10-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (speculative build fix - qt is currently already broken!)

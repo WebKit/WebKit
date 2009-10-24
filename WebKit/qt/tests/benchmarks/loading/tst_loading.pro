@@ -5,4 +5,7 @@ SOURCES += tst_loading.cpp
 QT += testlib network
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
-symbian:TARGET.UID3 = 0xA000E541
+symbian {
+    TARGET.UID3 = 0xA000E541
+    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
+}

@@ -10,4 +10,7 @@ QT += network
 macx:QT+=xml
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
-symbian:TARGET.UID3 = 0xA000E544
+symbian {
+    TARGET.UID3 = 0xA000E544
+    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
+}

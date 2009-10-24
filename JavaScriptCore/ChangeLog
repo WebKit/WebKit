@@ -1,3 +1,15 @@
+2009-10-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] [Symbian] Set the capability and memory required to run QtWebKit for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=30476
+
+        Assign ReadUserData WriteUserData NetworkServices Symbian capabilities
+        to jsc.exe.
+
+        * jsc.pro:
+
 2009-10-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Dmitry Titov.

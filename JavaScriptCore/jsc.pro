@@ -29,3 +29,7 @@ lessThan(QT_MINOR_VERSION, 4) {
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
+
+symbian {
+    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
+}
