@@ -1,5 +1,19 @@
 2009-10-24  Timothy Hatcher  <timothy@apple.com>
 
+        Call updateSelection() in a few places so hovering in the Web Inspector's
+        Elements panel always has the correct row selection height.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30735
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.toggleNewAttributeButton): Call updateSelection().
+        (WebInspector.ElementsTreeElement.prototype._insertInLastAttributePosition): Ditto.
+        * inspector/front-end/inspector.css: Prevent text wrapping in the middle of the add attribute text.
+
+2009-10-24  Timothy Hatcher  <timothy@apple.com>
+
         Remove the re-root tree feature from the Web Inspector's
         Elements panel. This feature wasn't super useful and gets
         in the way of double-click to edit.

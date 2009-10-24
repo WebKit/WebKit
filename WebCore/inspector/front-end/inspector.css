@@ -1163,6 +1163,7 @@ body.drawer-visible #drawer {
 .add-attribute {
     margin-left: 1px;
     margin-right: 1px;
+    white-space: nowrap;
 }
 
 .placard {

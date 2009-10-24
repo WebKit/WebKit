@@ -328,6 +328,8 @@ WebInspector.ElementsTreeElement.prototype = {
             if (this._addAttributeElement && this._addAttributeElement.parentNode)
                 this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
             delete this._addAttributeElement;
+
+            this.updateSelection();
         }
 
         if (!this._addAttributeElement && visible && !this._editing) {
@@ -342,7 +344,7 @@ WebInspector.ElementsTreeElement.prototype = {
         } else if (!visible && this._addAttributeElement)
             removeAddAttributeSpan.call(this);
     },
-    
+
     updateSelection: function()
     {
         var listItemElement = this.listItemElement;
@@ -543,6 +545,8 @@ WebInspector.ElementsTreeElement.prototype = {
             tag.appendChild(node);
             tag.appendChild(document.createTextNode('>'));
         }
+
+        this.updateSelection();
     },
 
     _startEditingFromEvent: function(event, treeElement)
