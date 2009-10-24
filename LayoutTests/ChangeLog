@@ -1,3 +1,14 @@
+2009-10-23  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Added test for bug 27239 (ignore Refresh for view source mode).
+        https://bugs.webkit.org/show_bug.cgi?id=27239
+
+        * http/tests/security/view-source-no-refresh.html: Added
+        * http/tests/security/view-source-no-refresh-expected.txt: Added
+        * http/tests/security/resources/view-source-no-refresh.php: Added
+
 2009-10-23  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -757,6 +757,8 @@ void FrameLoader::receivedFirstData()
     String url;
     if (!m_documentLoader)
         return;
+    if (m_frame->inViewSourceMode())
+        return;
     if (!parseHTTPRefresh(m_documentLoader->response().httpHeaderField("Refresh"), false, delay, url))
         return;
 
