@@ -1,3 +1,17 @@
+2009-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Missing images at 350.org due to wrong URLs
+        https://bugs.webkit.org/show_bug.cgi?id=30748
+
+        Test: fast/dom/HTMLImageElement/parse-src.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::getURLAttribute): Pass the attribute value through deprecateParseURL().
+        This matches what the Objective-C bindings do, as well as what HTMLImageLoader::sourceURI()
+        and SVGImageLoader::sourceURI() do.
+
 2009-10-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.

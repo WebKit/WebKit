@@ -1414,7 +1414,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(attribute));
     }
 #endif
-    return document()->completeURL(getAttribute(name));
+    return document()->completeURL(deprecatedParseURL(getAttribute(name)));
 }
 
 } // namespace WebCore

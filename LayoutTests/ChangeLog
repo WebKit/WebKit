@@ -1,3 +1,16 @@
+2009-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Missing images at 350.org due to wrong URLs
+        https://bugs.webkit.org/show_bug.cgi?id=30748
+
+        * fast/dom/HTMLImageElement/parse-src-expected.txt: Added.
+        * fast/dom/HTMLImageElement/parse-src.html: Added.
+        * fast/dom/HTMLImageElement/script-tests: Added.
+        * fast/dom/HTMLImageElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Document/script-tests/TEMPLATE.html.
+        * fast/dom/HTMLImageElement/script-tests/parse-src.js: Added.
+
 2009-10-23  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
