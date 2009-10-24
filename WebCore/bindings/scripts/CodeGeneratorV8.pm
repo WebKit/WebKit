@@ -2152,7 +2152,11 @@ sub ReturnNativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "return V8DOMWrapper::convertNodeToV8Object($value)";
+        if ($signature->extendedAttributes->{"ReturnsNew"}) {
+            return "return V8DOMWrapper::convertNewNodeToV8Object($value)";
+        } else {
+            return "return V8DOMWrapper::convertNodeToV8Object($value)";
+        }
     }
 
     if ($type eq "EventTarget" or $type eq "SVGElementInstance") {

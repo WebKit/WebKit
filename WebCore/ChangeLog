@@ -1,3 +1,14 @@
+2009-10-24  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implements ReturnsNew hint for V8 bindings generation code.
+        https://bugs.webkit.org/show_bug.cgi?id=30745
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):
+
 2009-10-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
