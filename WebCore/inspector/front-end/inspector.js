@@ -1463,8 +1463,23 @@ WebInspector.performSearch = function(event)
 {
     var query = event.target.value;
     var forceSearch = event.keyIdentifier === "Enter";
+    var isShortSearch = (query.length < 3);
 
-    if (!query || !query.length || (!forceSearch && query.length < 3)) {
+    // Clear a leftover short search flag due to a non-conflicting forced search.
+    if (isShortSearch && this.shortSearchWasForcedByKeyEvent && this.currentQuery !== query)
+        delete this.shortSearchWasForcedByKeyEvent;
+
+    // Indicate this was a forced search on a short query.
+    if (isShortSearch && forceSearch)
+        this.shortSearchWasForcedByKeyEvent = true;
+
+    if (!query || !query.length || (!forceSearch && isShortSearch)) {
+        // Prevent clobbering a short search forced by the user.
+        if (this.shortSearchWasForcedByKeyEvent) {
+            delete this.shortSearchWasForcedByKeyEvent;
+            return;
+        }
+
         delete this.currentQuery;
 
         for (var panelName in this.panels) {
