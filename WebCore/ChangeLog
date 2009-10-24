@@ -1,3 +1,17 @@
+2009-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/7294131> Assertion failure in AuthenticationMac at
+        mac(const Credential&) after authenticating to MobileMe Gallery movie
+
+        * platform/network/Credential.cpp:
+        (WebCore::Credential::Credential): Initialize m_persistence.
+        (WebCore::Credential::isEmpty): Made this method const.
+        * platform/network/Credential.h:
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac): Return nil if the Credential is empty.
+
 2009-10-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

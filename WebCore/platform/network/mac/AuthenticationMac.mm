@@ -150,6 +150,9 @@ NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
 
 NSURLCredential *mac(const Credential& coreCredential)
 {
+    if (coreCredential.isEmpty())
+        return nil;
+
     NSURLCredentialPersistence persistence = NSURLCredentialPersistenceNone;
     switch (coreCredential.persistence()) {
         case CredentialPersistenceNone:

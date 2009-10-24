@@ -32,6 +32,7 @@ namespace WebCore {
 Credential::Credential()
     : m_user("")
     , m_password("")
+    , m_persistence(CredentialPersistenceNone)
 {
 }
    
@@ -44,7 +45,7 @@ Credential::Credential(const String& user, const String& password, CredentialPer
 {
 }
 
-bool Credential::isEmpty()
+bool Credential::isEmpty() const
 {
     return m_user.isEmpty() && m_password.isEmpty();
 }
