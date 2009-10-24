@@ -36103,14 +36103,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\DOMDispatchTimelineItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\DOMDispatchTimelineItem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorBackend.cpp"
 				>
 			</File>
@@ -36215,11 +36207,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\TimelineItem.cpp"
+				RelativePath="..\inspector\TimelineItemFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\TimelineItem.h"
+				RelativePath="..\inspector\TimelineItemFactory.h"
 				>
 			</File>
 			<Filter

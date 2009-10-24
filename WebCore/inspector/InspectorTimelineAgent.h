@@ -34,13 +34,20 @@
 #include "ScriptObject.h"
 #include "ScriptArray.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
     class Event;
     class InspectorFrontend;
-    class TimelineItem;
+
+    // Must be kept in sync with TimelineAgent.js
+    enum TimelineItemType {
+        DOMDispatchTimelineItemType = 0,
+        LayoutTimelineItemType = 1,
+        RecalculateStylesTimelineItemType = 2,
+        PaintTimelineItemType = 3,
+        ParseHTMLTimelineItemType = 4,
+    };
 
     class InspectorTimelineAgent {
     public:
@@ -60,13 +67,24 @@ namespace WebCore {
         void didPaint();
         void didWriteHTML();
         void willWriteHTML();
+
     private:
+        struct TimelineItemEntry {
+            TimelineItemEntry(ScriptObject item, ScriptArray children, TimelineItemType type) : item(item), children(children), type(type) { }
+            ScriptObject item;
+            ScriptArray children;
+            TimelineItemType type;
+        };
+        
+        void pushCurrentTimelineItem(ScriptObject, TimelineItemType);
+        
         static double currentTimeInMilliseconds();
 
-        void didCompleteCurrentRecord();
-
+        void didCompleteCurrentRecord(TimelineItemType);
+        
         InspectorFrontend* m_frontend;
-        OwnPtr<TimelineItem> m_currentTimelineItem;
+        
+        Vector< TimelineItemEntry > m_itemStack;
     };
 
 } // namespace WebCore

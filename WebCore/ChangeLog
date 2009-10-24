@@ -1,3 +1,42 @@
+2009-10-23  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Removes the need for C++ Timeline types in InspectorTimelineAgent in favor
+        of ScriptObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=30707
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/DOMDispatchTimelineItem.cpp: Removed.
+        * inspector/DOMDispatchTimelineItem.h: Removed.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::willDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentTimelineItem):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineItemEntry::TimelineItemEntry):
+        * inspector/TimelineItem.cpp: Removed.
+        * inspector/TimelineItem.h: Removed.
+        * inspector/TimelineItemFactory.cpp: Added.
+        (WebCore::TimelineItemFactory::createGenericTimelineItem):
+        (WebCore::TimelineItemFactory::createDOMDispatchTimelineItem):
+        * inspector/TimelineItemFactory.h: Added.
+        (WebCore::):
+        (WebCore::TimelineItemFactory::TimelineItemFactory):
+
 2009-10-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

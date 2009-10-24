@@ -1163,8 +1163,6 @@ webcore_sources += \
 	WebCore/icu/unicode/uversion.h \
 	WebCore/inspector/ConsoleMessage.cpp \
 	WebCore/inspector/ConsoleMessage.h \
-	WebCore/inspector/DOMDispatchTimelineItem.cpp \
-	WebCore/inspector/DOMDispatchTimelineItem.h \
 	WebCore/inspector/InspectorBackend.cpp \
 	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
@@ -1191,8 +1189,8 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptProfile.h \
 	WebCore/inspector/JavaScriptProfileNode.cpp \
 	WebCore/inspector/JavaScriptProfileNode.h \
-	WebCore/inspector/TimelineItem.cpp \
-	WebCore/inspector/TimelineItem.h \
+	WebCore/inspector/TimelineItemFactory.cpp \
+	WebCore/inspector/TimelineItemFactory.h \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/Cache.h \
 	WebCore/loader/CachePolicy.h \
