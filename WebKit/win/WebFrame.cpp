@@ -490,6 +490,16 @@ JSGlobalContextRef STDMETHODCALLTYPE WebFrame::globalContext()
     return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
 
+JSGlobalContextRef STDMETHODCALLTYPE WebFrame::contextForWorldID(
+    /* [in] */ unsigned worldID)
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return 0;
+
+    return toGlobalRef(coreFrame->script()->globalObject(worldID)->globalExec());
+}
+
 HRESULT STDMETHODCALLTYPE WebFrame::loadRequest( 
     /* [in] */ IWebURLRequest* request)
 {

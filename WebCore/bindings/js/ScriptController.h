@@ -83,6 +83,8 @@ public:
     {
         return windowShell(world)->window();
     }
+    JSDOMWindow* globalObject(unsigned worldID);
+
     void forgetWorld(DOMWrapperWorld* world)
     {
         m_windowShells.remove(world);

@@ -97,6 +97,7 @@ typedef enum {
 #endif
 
 - (NSString *)_stringByEvaluatingJavaScriptInIsolatedWorld:(unsigned)worldID WithGlobalObject:(JSObjectRef)globalObject FromString:(NSString *)string;
+- (JSGlobalContextRef)contextForWorldID:(unsigned)worldID;
 
 // Pause a given CSS animation or transition on the target node at a specific time.
 // If the animation or transition is already paused, it will update its pause time.

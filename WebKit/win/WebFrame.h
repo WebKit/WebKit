@@ -153,6 +153,8 @@ public:
         /* [retval][out] */ IDOMElement **formElement);
 
     virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE globalContext();
+    virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE contextForWorldID(
+        /* [in] */ unsigned worldID);
 
     // IWebFramePrivate
     virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(

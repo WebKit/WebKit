@@ -1232,6 +1232,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return String(result.toString(anyWorldGlobalObject->globalExec()));
 }
 
+- (JSGlobalContextRef)contextForWorldID:(unsigned)worldID;
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return 0;
+    return toGlobalRef(coreFrame->script()->globalObject(worldID)->globalExec());
+}
+
 @end
 
 @implementation WebFrame

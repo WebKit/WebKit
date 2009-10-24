@@ -1,3 +1,15 @@
+2009-10-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30729
+        Provide private API to request the global context for a specific world.
+        Used to initialize parameters on the global object.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::globalObject):
+        * bindings/js/ScriptController.h:
+
 2009-10-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.
