@@ -1,3 +1,9 @@
+2009-10-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Include config.h before including other files.
+
+        * AccessibleImage.cpp:
+
 2009-10-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
