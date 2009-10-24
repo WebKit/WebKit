@@ -92,11 +92,11 @@ void FEComponentTransfer::setAlphaFunction(const ComponentTransferFunction& func
     m_alphaFunc = func;
 }
 
-void identity(unsigned char*, const ComponentTransferFunction&)
+static void identity(unsigned char*, const ComponentTransferFunction&)
 {
 }
 
-void table(unsigned char* values, const ComponentTransferFunction& transferFunction)
+static void table(unsigned char* values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
@@ -113,7 +113,7 @@ void table(unsigned char* values, const ComponentTransferFunction& transferFunct
     }
 }
 
-void discrete(unsigned char* values, const ComponentTransferFunction& transferFunction)
+static void discrete(unsigned char* values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
@@ -128,7 +128,7 @@ void discrete(unsigned char* values, const ComponentTransferFunction& transferFu
     }
 }
 
-void linear(unsigned char* values, const ComponentTransferFunction& transferFunction)
+static void linear(unsigned char* values, const ComponentTransferFunction& transferFunction)
 {
     for (unsigned i = 0; i < 256; ++i) {
         double val = transferFunction.slope * i + 255 * transferFunction.intercept;
@@ -137,7 +137,7 @@ void linear(unsigned char* values, const ComponentTransferFunction& transferFunc
     }
 }
 
-void gamma(unsigned char* values, const ComponentTransferFunction& transferFunction)
+static void gamma(unsigned char* values, const ComponentTransferFunction& transferFunction)
 {
     for (unsigned i = 0; i < 256; ++i) {
         double val = 255.0 * (transferFunction.amplitude * pow((i / 255.0), transferFunction.exponent) + transferFunction.offset);
