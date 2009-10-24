@@ -1,3 +1,15 @@
+2009-10-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Fix up to accommodate for HTMLAllCollection changes in
+        http://trac.webkit.org/changeset/49998.
+
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+
 2009-10-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

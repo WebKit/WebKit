@@ -215,7 +215,6 @@ sub AddClassForwardIfNeeded
 sub GetImplementationFileName
 {
     my $iface = shift;
-    return "HTMLCollection.h" if $iface eq "HTMLAllCollection";
     return "Event.h" if $iface eq "DOMTimeStamp";
     return "NamedAttrMap.h" if $iface eq "NamedNodeMap";
     return "NameNodeList.h" if $iface eq "NodeList";
@@ -1397,7 +1396,7 @@ END
     }
 
     # Set the class name.  This is used when printing objects.
-    push(@implContent, "  desc->SetClassName(v8::String::New(\"" . GetClassName(${interfaceName}) . "\"));\n");
+    push(@implContent, "  desc->SetClassName(v8::String::New(\"${interfaceName}\"));\n");
 
     if ($has_constants) {
         push(@implContent, <<END);
@@ -1624,15 +1623,6 @@ sub GenerateFunctionCallString()
 }
 
 
-# Get the class name used for printing javascript DOM-object wrappers.
-sub GetClassName
-{
-    my $type = shift;
-    return "HTMLCollection" if $type eq "HTMLAllCollection";
-    return $type;
-}
-
-
 sub GetTypeFromSignature
 {
     my $signature = shift;
@@ -1710,6 +1700,7 @@ sub IsRefPtrType
     return 1 if $type eq "EventListener";
     return 1 if $type eq "FileList";
     return 1 if $type eq "HTMLCollection";
+    return 1 if $type eq "HTMLAllCollection";
     return 1 if $type eq "HTMLDocument";
     return 1 if $type eq "HTMLElement";
     return 1 if $type eq "HTMLOptionsCollection";

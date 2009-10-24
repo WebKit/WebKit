@@ -32,6 +32,7 @@
 #include "HTMLDocument.h"
 
 #include "Frame.h"
+#include "HTMLAllCollection.h"
 #include "HTMLCollection.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
