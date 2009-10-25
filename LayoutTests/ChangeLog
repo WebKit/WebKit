@@ -1,3 +1,12 @@
+2009-10-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=30751
+        HTMLOptionsCollection should not inherit from HTMLCollection
+
+        * fast/dom/wrapper-classes-expected.txt:
+
 2009-10-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -28,7 +28,6 @@
 
 #import "DOMDocumentFragmentInternal.h"
 #import "DOMExtensions.h"
-#import "DOMHTMLCollectionInternal.h"
 #import "DOMHTMLDocumentInternal.h"
 #import "DOMHTMLInputElementInternal.h"
 #import "DOMHTMLSelectElementInternal.h"
@@ -37,7 +36,6 @@
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
 #import "FrameView.h"
-#import "HTMLCollection.h"
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"
 #import "HTMLSelectElement.h"
@@ -181,10 +179,3 @@
 }
 
 @end
-
-Class kitClass(WebCore::HTMLCollection* collection)
-{
-    if (collection->type() == WebCore::SelectOptions)
-        return [DOMHTMLOptionsCollection class];
-    return [DOMHTMLCollection class];
-}

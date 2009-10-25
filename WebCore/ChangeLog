@@ -1,3 +1,58 @@
+2009-10-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=30751
+        HTMLOptionsCollection should not inherit from HTMLCollection
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added JSHTMLCollectionFunctions.h
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::nameGetter):
+        (WebCore::JSHTMLAllCollection::item):
+        (WebCore::JSHTMLAllCollection::namedItem):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::nameGetter):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLOptionsCollection::getCallData):
+        (WebCore::JSHTMLOptionsCollection::canGetItemsForName):
+        (WebCore::JSHTMLOptionsCollection::nameGetter):
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        (WebCore::JSHTMLOptionsCollection::item):
+        (WebCore::JSHTMLOptionsCollection::namedItem):
+        Refactor to use generic implementation of HTMLCollection bindings functions
+        from JSHTMLCollectionFunctions.h
+
+        * bindings/js/JSHTMLCollectionFunctions.h: Added.
+        (WebCore::getCollectionNamedItems):
+        (WebCore::getCollectionItems):
+        (WebCore::callHTMLCollectionGeneric):
+        Added generic functions that JSHTMLCollection, JSHTMLAllCollection and
+        JSHTMLOptionsCollection can all use.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp: Add include of JSHTMLAllCollection.h
+        for toJS on document.all.
+
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper):
+        Remove special cases for HTMLOptionsCollection.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLOptionsCollection.idl:
+
 2009-10-24  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.
