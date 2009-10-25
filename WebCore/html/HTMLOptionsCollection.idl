@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,26 +20,25 @@
 
 module html {
 
+    // FIXME: The W3C spec says that HTMLOptionsCollection should not have a parent class.
     interface [
-        GenerateConstructor,
-        HasIndexGetter,
+        GenerateNativeConverter,
         HasCustomIndexSetter,
-        HasNameGetter,
-        CustomCall,
         InterfaceUUID=a03aaeac-e47d-4bb3-acb4-f1897ae74237,
         ImplementationUUID=99c11fde-6f9f-44a4-a041-49a894c52e70
-    ] HTMLOptionsCollection {
-                 attribute [CustomSetter] unsigned long length
+    ] HTMLOptionsCollection : HTMLCollection {
+                 attribute long selectedIndex;
+                 attribute [Custom] unsigned long length
                         setter raises (DOMException);
-        [Custom] Node item(in unsigned long index);
-        [Custom] Node namedItem(in DOMString name);
 
         [Custom] void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
         [Custom] void remove(in unsigned long index);
 
-        // Extension
-                 attribute long selectedIndex;
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+        Node item(in unsigned long index);
+        Node namedItem(in DOMString name);
+#endif
     };
 
 }

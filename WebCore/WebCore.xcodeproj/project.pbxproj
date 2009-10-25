@@ -4328,7 +4328,6 @@
 		BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */; };
 		BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */; };
 		BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */; };
-		BC97E53F10926C870010D361 /* JSHTMLCollectionFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E53E10926C870010D361 /* JSHTMLCollectionFunctions.h */; };
 		BC98543D0CD3D98B00069BC1 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98543B0CD3D98B00069BC1 /* JSConsole.cpp */; };
 		BC98543E0CD3D98C00069BC1 /* JSConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = BC98543C0CD3D98B00069BC1 /* JSConsole.h */; };
 		BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */; };
@@ -9462,7 +9461,6 @@
 		BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAllCollection.cpp; sourceTree = "<group>"; };
 		BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAllCollection.h; sourceTree = "<group>"; };
 		BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAllCollectionCustom.cpp; sourceTree = "<group>"; };
-		BC97E53E10926C870010D361 /* JSHTMLCollectionFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLCollectionFunctions.h; sourceTree = "<group>"; };
 		BC98543B0CD3D98B00069BC1 /* JSConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsole.cpp; sourceTree = "<group>"; };
 		BC98543C0CD3D98B00069BC1 /* JSConsole.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSConsole.h; sourceTree = "<group>"; };
 		BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetCustom.cpp; sourceTree = "<group>"; };
@@ -14272,7 +14270,6 @@
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
-				BC97E53E10926C870010D361 /* JSHTMLCollectionFunctions.h */,
 				C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */,
 				C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */,
 				C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */,
@@ -18071,7 +18068,6 @@
 				7553CFE8108F473F00EA281E /* TimelineItemFactory.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
-				BC97E53F10926C870010D361 /* JSHTMLCollectionFunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

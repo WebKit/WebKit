@@ -141,8 +141,8 @@ PASS jsWrapperClass(document) is 'HTMLDocument'
 PASS jsWrapperClass(document.__proto__) is 'HTMLDocumentPrototype'
 PASS jsWrapperClass(document.constructor) is 'HTMLDocumentConstructor'
 PASS jsWrapperClass(document.createElement('select').options) is 'HTMLOptionsCollection'
-PASS jsWrapperClass(document.createElement('select').options.__proto__) is 'HTMLOptionsCollectionPrototype'
-PASS jsWrapperClass(document.createElement('select').options.constructor) is 'HTMLOptionsCollectionConstructor'
+FAIL jsWrapperClass(document.createElement('select').options.__proto__) should be HTMLOptionsCollectionPrototype. Was HTMLCollectionPrototype.
+FAIL jsWrapperClass(document.createElement('select').options.constructor) should be HTMLOptionsCollectionConstructor. Was Function.
 
 HTML Elements
 

@@ -30,6 +30,7 @@ module html {
         HasIndexGetter,
         HasNameGetter,
         CustomCall,
+        CustomToJS,
         MasqueradesAsUndefined
     ] HTMLAllCollection {
         readonly attribute unsigned long length;

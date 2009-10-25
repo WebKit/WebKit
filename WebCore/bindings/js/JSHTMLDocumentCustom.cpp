@@ -38,7 +38,6 @@
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDOMWindowShell.h"
-#include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "SegmentedString.h"
 #include "Tokenizer.h"

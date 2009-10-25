@@ -1708,7 +1708,7 @@ sub GenerateImplementation
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
         }
         push(@implContent, "}\n");
-        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection" or $interfaceName eq "HTMLOptionsCollection") {
+        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
         }
@@ -1719,7 +1719,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    return jsNumber(exec, static_cast<$implClassName*>(impl())->item(index));\n");
         push(@implContent, "}\n");
-        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection" or $interfaceName eq "HTMLOptionsCollection") {
+        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
         }

@@ -33938,10 +33938,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLCollectionFunctions.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSHTMLDataGridElementCustom.cpp"
 					>
 				</File>

@@ -34,7 +34,6 @@
 #import "DOMCounterInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMHTMLCollectionInternal.h"
-#import "DOMHTMLOptionsCollectionInternal.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMMediaListInternal.h"
@@ -106,7 +105,6 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     WRAP(CSSValue)
     WRAP(Counter)
     WRAP(Event)
-    WRAP(HTMLCollection)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)
     WRAP(NamedNodeMap)
@@ -119,13 +117,19 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
     WRAP(TreeWalker)
-    WRAP(DOMWindowShell)
 #if ENABLE(XPATH)
     WRAP(XPathExpression)
     WRAP(XPathResult)
 #endif
 
+    // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
+    // binding, but not a subclass in the ObjC binding.
+    WRAP(HTMLCollection)
+
     #undef WRAP
+
+    if (object->inherits(&WebCore::JSDOMWindowShell::s_info))
+        return kit(static_cast<WebCore::JSDOMWindowShell*>(object)->impl());
 
     if (object->inherits(&WebCore::JSDOMImplementation::s_info))
         return kit(implementationFront(static_cast<WebCore::JSDOMImplementation*>(object)));
