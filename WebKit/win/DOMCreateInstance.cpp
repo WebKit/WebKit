@@ -45,6 +45,7 @@
 #include "GEN_DOMHTMLElement.h"
 #include "GEN_DOMHTMLDocument.h"
 #include "GEN_DOMHTMLCollection.h"
+#include "GEN_DOMHTMLOptionsCollection.h"
 #include "GEN_DOMDocumentType.h"
 #include "GEN_DOMDocumentFragment.h"
 #include "GEN_DOMNotation.h"
@@ -90,6 +91,7 @@
 #include <WebCore/HTMLDocument.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLCollection.h>
+#include <WebCore/HTMLOptionsCollection.h>
 #include <WebCore/DocumentType.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/Notation.h>
@@ -355,3 +357,4 @@ CREATE_ONLY_SELF(StyleSheetList)
 // HTML
 
 CREATE_ONLY_SELF(HTMLCollection)
+CREATE_ONLY_SELF(HTMLOptionsCollection)

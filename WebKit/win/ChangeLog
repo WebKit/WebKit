@@ -1,5 +1,11 @@
 2009-10-25  Sam Weinig  <sam@webkit.org>
 
+        Another try at fixing windows.
+
+        * DOMCreateInstance.cpp:
+
+2009-10-25  Sam Weinig  <sam@webkit.org>
+
         Touch WebKit.idl in an effort to try and regenerate the COM bindings.
 
         * Interfaces/WebKit.idl:
