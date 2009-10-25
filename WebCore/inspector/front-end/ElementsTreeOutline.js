@@ -512,6 +512,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
+        if (this.isEventWithinDisclosureTriangle(event))
+            return;
+
         if (this.treeOutline.showInElementsPanelEnabled) {    
             WebInspector.showElementsPanel();
             WebInspector.panels.elements.focusedDOMNode = this.representedObject;

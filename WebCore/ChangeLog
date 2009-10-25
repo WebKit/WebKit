@@ -1,3 +1,13 @@
+2009-10-25  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Expanding a node in the Console should not show the element in Elements panel
+        https://bugs.webkit.org/show_bug.cgi?id=30749
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.onmousedown): Check if inside disclosure triangle.
+
 2009-10-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
