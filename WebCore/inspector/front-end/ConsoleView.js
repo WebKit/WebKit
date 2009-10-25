@@ -400,10 +400,9 @@ WebInspector.ConsoleView.prototype = {
 
     _promptKeyDown: function(event)
     {
-        switch (event.keyIdentifier) {
-            case "Enter":
-                this._enterKeyPressed(event);
-                return;
+        if (isEnterKey(event)) {
+            this._enterKeyPressed(event);
+            return;
         }
 
         this.prompt.handleKeyEvent(event);

@@ -1,3 +1,22 @@
+2009-10-24  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Fixed issue with IME inside console
+        https://bugs.webkit.org/show_bug.cgi?id=30660
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._promptKeyDown):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._promptKeyDown):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.searchKeyDown): Moved performSearch here from WebInspector.searchKeyUp.
+        (WebInspector.startEditing.element.handleKeyEvent):
+        (WebInspector.startEditing):
+        * inspector/front-end/utilities.js:
+        (isEnterKey): Added. Check if in IME.
+
 2009-10-24  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

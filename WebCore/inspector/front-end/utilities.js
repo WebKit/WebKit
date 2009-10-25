@@ -817,3 +817,8 @@ String.format = function(format, substitutions, formatters, initialValue, append
 
     return { formattedResult: result, unusedSubstitutions: unusedSubstitutions };
 }
+
+function isEnterKey(event) {
+    // Check if in IME.
+    return event.keyCode !== 229 && event.keyIdentifier === "Enter";
+}

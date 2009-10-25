@@ -461,8 +461,6 @@ WebInspector.loaded = function()
     // this._updateErrorAndWarningCounts();
 
     var searchField = document.getElementById("search");
-    searchField.addEventListener("keydown", this.searchKeyDown.bind(this), false);
-    searchField.addEventListener("keyup", this.searchKeyUp.bind(this), false);
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
 
     toolbarElement.addEventListener("mousedown", this.toolbarDragStart, true);
@@ -1441,19 +1439,8 @@ WebInspector.addMainEventListeners = function(doc)
 
 WebInspector.searchKeyDown = function(event)
 {
-    if (event.keyIdentifier !== "Enter")
-        return;
-
-    // Call preventDefault since this was the Enter key. This prevents a "search" event
-    // from firing for key down. We handle the Enter key on key up in searchKeyUp. This
-    // stops performSearch from being called twice in a row.
-    event.preventDefault();
-}
-
-WebInspector.searchKeyUp = function(event)
-{
-    if (event.keyIdentifier !== "Enter")
-        return;
+    if (!isEnterKey(event))
+        return false;
 
     // Select all of the text so the user can easily type an entirely new query.
     event.target.select();
@@ -1462,6 +1449,10 @@ WebInspector.searchKeyUp = function(event)
     // performance is poor because of searching on every key. The search field has
     // the incremental attribute set, so we still get incremental searches.
     this.performSearch(event);
+
+    // Call preventDefault since this was the Enter key. This prevents a "search" event
+    // from firing for key down. This stops performSearch from being called twice in a row.
+    event.preventDefault();
 }
 
 WebInspector.performSearch = function(event)
@@ -1640,7 +1631,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         if (event.handled)
             return;
 
-        if (event.keyIdentifier === "Enter") {
+        if (isEnterKey(event)) {
             editingCommitted.call(element);
             event.preventDefault();
         } else if (event.keyCode === 27) { // Escape key
