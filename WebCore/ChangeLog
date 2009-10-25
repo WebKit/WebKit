@@ -1,3 +1,12 @@
+2009-10-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        Build fix for WIN_OS if Netscape plugin support is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=30753
+
+        * plugins/PluginDatabase.cpp:
+
 2009-10-25  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Darin Adler.
