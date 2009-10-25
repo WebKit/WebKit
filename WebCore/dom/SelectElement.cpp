@@ -874,13 +874,19 @@ void SelectElement::typeAheadFind(SelectElementData& data, Element* element, Key
     int index = (optionToListIndex(data, element, selected >= 0 ? selected : 0) + searchStartOffset) % itemCount;
     ASSERT(index >= 0);
 
+    // Compute a case-folded copy of the prefix string before beginning the search for
+    // a matching element. This code uses foldCase to work around the fact that
+    // String::startWith does not fold non-ASCII characters. This code can be changed
+    // to use startWith once that is fixed.
+    String prefixWithCaseFolded(prefix.foldCase());
     for (int i = 0; i < itemCount; ++i, index = (index + 1) % itemCount) {
         OptionElement* optionElement = toOptionElement(items[index]);
         if (!optionElement || items[index]->disabled())
             continue;
 
+        // Fold the option string and check if its prefix is equal to the folded prefix.
         String text = optionElement->textIndentedToRespectGroupLabel();
-        if (stripLeadingWhiteSpace(text).startsWith(prefix, false)) {
+        if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded)) {
             setSelectedIndex(data, element, listToOptionIndex(data, element, index));
             if (!data.usesMenuList())
                 listBoxOnChange(data, element);

@@ -1,3 +1,17 @@
+2009-10-25  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A quick fix for Bug 29103.
+        Since String::startsWith() cannot fold non-ASCII characters, this change folds the prefix string
+        and the option string before calling String::startsWith().
+        https://bugs.webkit.org/show_bug.cgi?id=29103
+
+        * fast/forms/listbox-typeahead-cyrillic-expected.txt: Added.
+        * fast/forms/listbox-typeahead-cyrillic.html: Added.
+        * fast/forms/listbox-typeahead-greek-expected.txt: Added.
+        * fast/forms/listbox-typeahead-greek.html: Added.
+
 2009-10-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
