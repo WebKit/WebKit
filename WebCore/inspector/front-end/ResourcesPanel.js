@@ -164,7 +164,7 @@ WebInspector.ResourcesPanel = function()
     for (var category in this.categories)
         createFilterElement.call(this, category);
 
-    this.filter(this.allElement);
+    this.filter(this.allElement, false);
 
     this.reset();
 
@@ -185,8 +185,25 @@ WebInspector.ResourcesPanel.prototype = {
         return this._categories; 
     },
 
-    filter: function(target)
+    filter: function(target, selectMultiple)
     {
+        function unselectAll()
+        {
+            for (var i = 0; i < this.filterBarElement.childNodes.length; ++i) {
+                var child = this.filterBarElement.childNodes[i];
+                if (!child.category)
+                    continue;
+                
+                child.removeStyleClass("selected");
+                
+                var filterClass = "filter-" + child.category.toLowerCase();
+                this.resourcesGraphsElement.removeStyleClass(filterClass);
+                this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
+            }
+        }
+        
+        var targetFilterClass = "filter-" + target.category.toLowerCase();
+
         if (target === this.allElement) {
             if (target.hasStyleClass("selected")) {
                 // We can't unselect All, so we break early here
@@ -194,18 +211,7 @@ WebInspector.ResourcesPanel.prototype = {
             }
 
             // If All wasn't selected, and now is, unselect everything else.
-            for (var i = 0; i < this.filterBarElement.childNodes.length; ++i) {
-                var child = this.filterBarElement.childNodes[i];
-                if (!child.category)
-                    continue;
-
-                if (child !== this.allElement)
-                    child.removeStyleClass("selected");
-
-                var filterClass = "filter-" + child.category.toLowerCase();
-                this.resourcesGraphsElement.removeStyleClass(filterClass);
-                this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
-            }
+            unselectAll.call(this);
         } else {
             // Something other than All is being selected, so we want to unselect All.
             if (this.allElement.hasStyleClass("selected")) {
@@ -214,19 +220,33 @@ WebInspector.ResourcesPanel.prototype = {
                 this.resourcesTreeElement.childrenListElement.removeStyleClass("filter-all");
             }
         }
+        
+        if (!selectMultiple) {
+            // If multiple selection is off, we want to unselect everything else
+            // and just select ourselves.
+            unselectAll.call(this);
+            
+            target.addStyleClass("selected");
+            this.resourcesGraphsElement.addStyleClass(targetFilterClass);
+            this.resourcesTreeElement.childrenListElement.addStyleClass(targetFilterClass);
+            
+            return;
+        }
 
         if (target.hasStyleClass("selected")) {
+            // If selectMultiple is turned on, and we were selected, we just
+            // want to unselect ourselves.
             target.removeStyleClass("selected");
 
-            var filterClass = "filter-" + target.category.toLowerCase();
-            this.resourcesGraphsElement.removeStyleClass(filterClass);
-            this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
+            this.resourcesGraphsElement.removeStyleClass(targetFilterClass);
+            this.resourcesTreeElement.childrenListElement.removeStyleClass(targetFilterClass);
         } else {
+            // If selectMultiple is turned on, and we weren't selected, we just
+            // want to select ourselves.
             target.addStyleClass("selected");
 
-            var filterClass = "filter-" + target.category.toLowerCase();
-            this.resourcesGraphsElement.addStyleClass(filterClass);
-            this.resourcesTreeElement.childrenListElement.addStyleClass(filterClass);
+            this.resourcesGraphsElement.addStyleClass(targetFilterClass);
+            this.resourcesTreeElement.childrenListElement.addStyleClass(targetFilterClass);
         }
     },
 
@@ -237,7 +257,14 @@ WebInspector.ResourcesPanel.prototype = {
 
     _updateFilter: function(e)
     {
-        this.filter(e.target);
+        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+        var selectMultiple = false;
+        if (isMac && e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey)
+            selectMultiple = true;
+        if (!isMac && e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey)
+            selectMultiple = true;
+        
+        this.filter(e.target, selectMultiple);
     },
 
     get toolbarItemLabel()

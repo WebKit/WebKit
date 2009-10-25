@@ -1,3 +1,22 @@
+2009-10-24  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30752>.
+        Web Inspector: Multiple Selection on Scope Bars by default Conflicts with other behavior on OSX.
+        
+        Have the scope bars select one scope by default, but if the multiple selection key
+        is pressed, allow for multiple selection.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype._updateFilter):
+        (WebInspector.ConsoleView.prototype.filter):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.filter):
+        (WebInspector.ResourcesPanel.prototype._updateFilter):
+
 2009-10-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

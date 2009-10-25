@@ -94,49 +94,76 @@ WebInspector.ConsoleView = function(drawer)
     this.warningElement = createFilterElement.call(this, "Warnings");
     this.logElement = createFilterElement.call(this, "Logs");
 
-    this.filter(this.allElement);
+    this.filter(this.allElement, false);
 }
 
 WebInspector.ConsoleView.prototype = {
     
     _updateFilter: function(e)
     {
-        this.filter(e.target);
+        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+        var selectMultiple = false;
+        if (isMac && e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey)
+            selectMultiple = true;
+        if (!isMac && e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey)
+            selectMultiple = true;
+
+        this.filter(e.target, selectMultiple);
     },
     
-    filter: function(target)
+    filter: function(target, selectMultiple)
     {
+        function unselectAll()
+        {
+            this.allElement.removeStyleClass("selected");
+            this.errorElement.removeStyleClass("selected");
+            this.warningElement.removeStyleClass("selected");
+            this.logElement.removeStyleClass("selected");
+            
+            this.messagesElement.removeStyleClass("filter-all");
+            this.messagesElement.removeStyleClass("filter-errors");
+            this.messagesElement.removeStyleClass("filter-warnings");
+            this.messagesElement.removeStyleClass("filter-logs");
+        }
+        
+        var targetFilterClass = "filter-" + target.category.toLowerCase();
+
         if (target.category == "All") {
             if (target.hasStyleClass("selected")) {
                 // We can't unselect all, so we break early here
                 return;
             }
-            
-            this.errorElement.removeStyleClass("selected");
-            this.warningElement.removeStyleClass("selected");
-            this.logElement.removeStyleClass("selected");
-            
-            document.getElementById("console-messages").removeStyleClass("filter-errors");
-            document.getElementById("console-messages").removeStyleClass("filter-warnings");
-            document.getElementById("console-messages").removeStyleClass("filter-logs");
+
+            unselectAll.call(this);
         } else {
             // Something other than all is being selected, so we want to unselect all
             if (this.allElement.hasStyleClass("selected")) {
                 this.allElement.removeStyleClass("selected");
-                document.getElementById("console-messages").removeStyleClass("filter-all");
+                this.messagesElement.removeStyleClass("filter-all");
             }
         }
         
-        if (target.hasStyleClass("selected")) {
-            target.removeStyleClass("selected");
-            var newClass = "filter-" + target.category.toLowerCase();
-            var filterElement = document.getElementById("console-messages");
-            filterElement.removeStyleClass(newClass);
-        } else {
+        if (!selectMultiple) {
+            // If multiple selection is off, we want to unselect everything else
+            // and just select ourselves.
+            unselectAll.call(this);
+            
             target.addStyleClass("selected");
-            var newClass = "filter-" + target.category.toLowerCase();
-            var filterElement = document.getElementById("console-messages");
-            filterElement.addStyleClass(newClass);
+            this.messagesElement.addStyleClass(targetFilterClass);
+            
+            return;
+        }
+        
+        if (target.hasStyleClass("selected")) {
+            // If selectMultiple is turned on, and we were selected, we just
+            // want to unselect ourselves.
+            target.removeStyleClass("selected");
+            this.messagesElement.removeStyleClass(targetFilterClass);
+        } else {
+            // If selectMultiple is turned on, and we weren't selected, we just
+            // want to select ourselves.
+            target.addStyleClass("selected");
+            this.messagesElement.addStyleClass(targetFilterClass);
         }
     },
     
