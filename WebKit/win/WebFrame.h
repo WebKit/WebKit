@@ -153,8 +153,6 @@ public:
         /* [retval][out] */ IDOMElement **formElement);
 
     virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE globalContext();
-    virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE contextForWorldID(
-        /* [in] */ unsigned worldID);
 
     // IWebFramePrivate
     virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(
@@ -251,6 +249,9 @@ public:
         /* [in] */ OLE_HANDLE jsGlobalObject,
         /* [in] */ BSTR script,
         /* [retval][out] */ BSTR* evaluationResult);
+
+    virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE contextForWorldID(
+        /* [in] */ unsigned worldID);
 
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
