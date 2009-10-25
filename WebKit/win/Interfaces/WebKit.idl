@@ -372,4 +372,3 @@ library WebKit
         [default] interface IWebWorkersPrivate;
     }
 }
-
