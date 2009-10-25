@@ -376,6 +376,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
 	WebCore/bindings/js/JSHTMLCanvasElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
+	WebCore/bindings/js/JSHTMLCollectionFunctions.h \
 	WebCore/bindings/js/JSHTMLDataGridElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLDocumentCustom.cpp \
 	WebCore/bindings/js/JSHTMLElementCustom.cpp \
