@@ -1,3 +1,18 @@
+2009-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Data loss occurs when unbolding nested bold tags.
+        https://bugs.webkit.org/show_bug.cgi?id=30083
+
+        Adds a test to make sure WebKit can remove nested b, i, & s tags properly
+        without loosing the content of inner elements.
+
+        * editing/style/remove-nested-inline-styles-expected.txt: Added.
+        * editing/style/remove-nested-inline-styles.html: Added.
+        * editing/style/script-tests/remove-nested-inline-styles.js: Added.
+        (removeStyleAndExpect):
+
 2009-10-26  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

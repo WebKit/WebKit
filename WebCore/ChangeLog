@@ -1,3 +1,19 @@
+2009-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Data loss occurs when unbolding nested bold tags.
+        https://bugs.webkit.org/show_bug.cgi?id=30083
+
+        Fixes the loop in swapInNodePreservingAttributesAndChildren by saving nextSibling() of child
+        to a temporary valuable.  It was originally calling nextSibling() after appending the child
+        to new parent, in which case, nextSibling is always 0.
+
+        Test: editing/style/unbolding-nested-b.html
+
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+
 2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.

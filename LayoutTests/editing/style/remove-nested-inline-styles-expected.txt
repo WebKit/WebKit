@@ -1,0 +1,14 @@
+Test to make sure WebKit does not remove content when unbolding nested b's. See Bug 30083 for detail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS '<span id="e">12</span>' is '<span id="e">12</span>'
+PASS '<span id="e"><span id="foo">12</span></span>' is '<span id="e"><span id="foo">12</span></span>'
+FAIL '<span id="e"><b id="foo"><b><b>1</b></b>2</b></span>' should be <span id="e"><span id="foo">12</span></span>. Was <span id="e"><b id="foo"><b><b>1</b></b>2</b></span>.
+PASS '<span id="e">12</span>' is '<span id="e">12</span>'
+PASS '<span id="e">12</span>' is '<span id="e">12</span>'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
