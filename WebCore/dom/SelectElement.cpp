@@ -479,12 +479,14 @@ bool SelectElement::appendFormData(SelectElementData& data, Element* element, Fo
     // We return the first one if it was a combobox select
     if (!successful && !data.multiple() && data.size() <= 1 && items.size()) {
         OptionElement* optionElement = toOptionElement(items[0]);
-        const AtomicString& value = optionElement->value();
-        if (value.isNull())
-            list.appendData(name, optionElement->text().stripWhiteSpace());
-        else
-            list.appendData(name, value);
-        successful = true;
+        if (optionElement) {
+            const AtomicString& value = optionElement->value();
+            if (value.isNull())
+                list.appendData(name, optionElement->text().stripWhiteSpace());
+            else
+                list.appendData(name, value);
+            successful = true;
+        }
     }
 
     return successful;

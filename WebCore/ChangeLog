@@ -1,3 +1,16 @@
+2009-10-26  Rahul Kuchhal  <kuchhal@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Prevent crash when optgroup element is empty by adding a NULL check.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30365
+
+        Test: fast/forms/select-empty-optgroup.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::appendFormData):
+
 2009-10-21  Steven Knight  <sgk@chromium.org>
 
         Reviewed by David Levin.
