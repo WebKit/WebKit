@@ -1,3 +1,9 @@
+2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix.
+
+        * platform/qt/Skipped: shared-workers-close.html replaced with shared-worker-close.html
+
 2009-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth and Darin Adler.
