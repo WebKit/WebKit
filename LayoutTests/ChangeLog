@@ -2,6 +2,14 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] Skipping two other tests because of missing features on our platform.
+
+        * platform/qt/Skipped:
+
+2009-10-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Add platform-dependent expected file for test added in r49875.
 
         * platform/qt/fast/css/getComputedStyle/marginComputedStyle-expected.txt: Added.

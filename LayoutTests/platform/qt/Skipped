@@ -166,6 +166,7 @@ fast/events/drag-file-crash.html
 
 # ------- missing eventSender.zoomPageIn
 fast/events/clientXY-in-zoom-and-scroll.html
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 
 # ------- missing eventSender.zoomPageOut
 fast/dom/elementFromPoint-relative-to-viewport.html
@@ -192,6 +193,9 @@ fast/images/icon-decoding.html
 
 # ------- missing private browsing support?
 plugins/private-browsing-mode.html
+
+# ------- missing japanese font support
+fast/text/international/japanese-kana-letters.html
 
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
