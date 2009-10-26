@@ -498,7 +498,6 @@
             'bindings/js/JSHTMLAppletElementCustom.h',
             'bindings/js/JSHTMLCanvasElementCustom.cpp',
             'bindings/js/JSHTMLCollectionCustom.cpp',
-            'bindings/js/JSHTMLCollectionFunctions.h',
             'bindings/js/JSHTMLDataGridElementCustom.cpp',
             'bindings/js/JSHTMLDocumentCustom.cpp',
             'bindings/js/JSHTMLElementCustom.cpp',

@@ -1,3 +1,12 @@
+2009-10-26  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Rollout r50041-50043.  The HTML5 spec changed to make HTMLOptionsCollection
+        inherit from HTMLCollection.
+
+        * fast/dom/wrapper-classes-expected.txt:
+
 2009-10-26  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Eric Seidel.

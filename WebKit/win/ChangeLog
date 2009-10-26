@@ -1,3 +1,12 @@
+2009-10-26  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Rollout r50041-50043.  The HTML5 spec changed to make HTMLOptionsCollection
+        inherit from HTMLCollection.
+
+        * DOMCreateInstance.cpp:
+
 2009-10-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

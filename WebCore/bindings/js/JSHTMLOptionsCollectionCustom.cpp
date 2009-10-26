@@ -25,56 +25,20 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"
-#include "JSHTMLCollection.h"
-#include "JSHTMLCollectionFunctions.h"
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLSelectElement.h"
 #include "JSHTMLSelectElementCustom.h"
+
 #include <wtf/MathExtras.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* function, JSValue, const ArgList& args)
-{
-    return callHTMLCollectionGeneric<HTMLOptionsCollection, JSHTMLOptionsCollection>(exec, function, args);
-}
-
-CallType JSHTMLOptionsCollection::getCallData(CallData& callData)
-{
-    callData.native.function = callHTMLCollection;
-    return CallTypeHost;
-}
-
-bool JSHTMLOptionsCollection::canGetItemsForName(ExecState*, HTMLOptionsCollection* collection, const Identifier& propertyName)
-{
-    Vector<RefPtr<Node> > namedItems;
-    collection->namedItems(propertyName, namedItems);
-    return !namedItems.isEmpty();
-}
-
-JSValue JSHTMLOptionsCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLOptionsCollection* thisObj = static_cast<JSHTMLOptionsCollection*>(asObject(slot.slotBase()));
-    return getCollectionNamedItems<JSHTMLOptionsCollection>(exec, thisObj, propertyName);
-}
-
-void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
+JSValue JSHTMLOptionsCollection::length(ExecState* exec) const
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
-    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
-    selectIndexSetter(base, exec, index, value);
-}
-
-JSValue JSHTMLOptionsCollection::item(ExecState* exec, const ArgList& args)
-{
-    return getCollectionItems<JSHTMLOptionsCollection>(exec, this, args.at(0));
-}
-
-JSValue JSHTMLOptionsCollection::namedItem(ExecState* exec, const ArgList& args)
-{
-    return getCollectionNamedItems<JSHTMLOptionsCollection>(exec, this, Identifier(exec, args.at(0).toString(exec)));
+    return jsNumber(exec, imp->length());
 }
 
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
@@ -94,6 +58,13 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
     if (!ec)
         imp->setLength(newLength, ec);
     setDOMException(exec, ec);
+}
+
+void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
+{
+    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
+    selectIndexSetter(base, exec, index, value);
 }
 
 JSValue JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
@@ -124,4 +95,4 @@ JSValue JSHTMLOptionsCollection::remove(ExecState* exec, const ArgList& args)
     return base->remove(exec, args);
 }
 
-} // namespace WebCore
+}
