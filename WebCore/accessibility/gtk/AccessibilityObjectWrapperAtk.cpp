@@ -370,15 +370,20 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
 
 static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkStateSet* stateSet)
 {
-    // Please keep the state list in alphabetical order
+    AccessibilityObject* parent = coreObject->parentObject();
+    bool isListBoxOption = parent && parent->isListBox();
 
+    // Please keep the state list in alphabetical order
     if (coreObject->isChecked())
         atk_state_set_add_state(stateSet, ATK_STATE_CHECKED);
 
     // FIXME: isReadOnly does not seem to do the right thing for
-    // controls, so check explicitly for them
-    if (!coreObject->isReadOnly() ||
-        (coreObject->isControl() && coreObject->canSetValueAttribute()))
+    // controls, so check explicitly for them. In addition, because
+    // isReadOnly is false for listBoxOptions, we need to add one
+    // more check so that we do not present them as being "editable".
+    if ((!coreObject->isReadOnly() ||
+        (coreObject->isControl() && coreObject->canSetValueAttribute())) &&
+        !isListBoxOption)
         atk_state_set_add_state(stateSet, ATK_STATE_EDITABLE);
 
     // FIXME: Put both ENABLED and SENSITIVE together here for now
@@ -408,8 +413,23 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     // TODO: ATK_STATE_SELECTABLE_TEXT
 
-    if (coreObject->isSelected())
+    if (coreObject->canSetSelectedAttribute()) {
+        atk_state_set_add_state(stateSet, ATK_STATE_SELECTABLE);
+        // Items in focusable lists in Gtk have both STATE_SELECT{ABLE,ED}
+        // and STATE_FOCUS{ABLE,ED}. We'll fake the latter based on the
+        // former.
+        if (isListBoxOption)
+            atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
+    }
+
+    if (coreObject->isSelected()) {
         atk_state_set_add_state(stateSet, ATK_STATE_SELECTED);
+        // Items in focusable lists in Gtk have both STATE_SELECT{ABLE,ED}
+        // and STATE_FOCUS{ABLE,ED}. We'll fake the latter based on the
+        // former.
+        if (isListBoxOption)
+            atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
+    }
 
     // FIXME: Group both SHOWING and VISIBLE here for now
     // Not sure how to handle this in WebKit, see bug

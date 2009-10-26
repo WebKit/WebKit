@@ -2,6 +2,18 @@
 
         Reviewed by Xan Lopez.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25679
+        [Gtk] Improve accessibility of focusable lists
+
+        Fixes the issues with the Atk states exposed for ListBoxOption
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+
+2009-10-26  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
         https://bugs.webkit.org/show_bug.cgi?id=27085
         [Gtk] Incorrect rendering of list
 
