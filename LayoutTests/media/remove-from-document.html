@@ -3,7 +3,7 @@
 <script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    waitForEvent('load', function () {
+    waitForEvent('canplaythrough', function () {
 
         testExpected("video.networkState", HTMLMediaElement.NETWORK_LOADED);
         testExpected("video.paused", false);

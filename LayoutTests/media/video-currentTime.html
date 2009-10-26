@@ -3,8 +3,8 @@
 <script src=video-test.js></script>
 <script>
     testExpected("video.currentTime", 0)
-    waitForEvent('load', function() { testExpected("video.currentTime", 0); } );
-    video.addEventListener('load', function() { video.play(); setTimeout(testCurrentTime, 500) });
+    waitForEvent('canplaythrough', function() { testExpected("video.currentTime", 0); } );
+    video.addEventListener('canplaythrough', function() { video.play(); setTimeout(testCurrentTime, 500) });
     waitForEvent('play');
     function testCurrentTime()
     {

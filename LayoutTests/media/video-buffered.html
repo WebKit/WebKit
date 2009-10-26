@@ -7,7 +7,7 @@
     testException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
     testException("video.buffered.start(0)", "DOMException.INDEX_SIZE_ERR");
     testException("video.buffered.end(0)", "DOMException.INDEX_SIZE_ERR");
-    waitForEvent('load', 
+    waitForEvent('canplaythrough', 
         function () 
         {
             testExpected("video.buffered.length", 1);

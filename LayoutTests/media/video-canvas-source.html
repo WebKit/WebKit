@@ -10,7 +10,7 @@
             var width;
             var height;
 
-            function videoLoaded()
+            function canplaythrough()
             {
                 width = video.videoWidth / 2;
                 height = video.videoHeight / 2;
@@ -27,7 +27,7 @@
                 description("Test to ensure we don't taint a canvas when drawing from a video the uses source elements rather than the src attribute");
                 findMediaElement();
                 canvas = document.getElementsByTagName('canvas')[0];
-                waitForEvent('load', videoLoaded);
+                waitForEvent('canplaythrough', canplaythrough);
                 var mediaFile = findMediaFile("video", "content/counting");
                 run("var source = document.createElement('source'); source.src = '" + mediaFile + "'; video.appendChild(source)");
             }

@@ -1,7 +1,7 @@
 Test 'controls' attribute
 
 EXPECTED (video.controls != 'null') OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.controls != 'null') OK
 RUN(video.removeAttribute('controls'))
 EXPECTED (video.controls == 'false') OK

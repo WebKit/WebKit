@@ -9,7 +9,7 @@ EXPECTED (mediaElement.autobuffer == 'true') OK
 RUN(mediaElement.src = 'content/test.wav')
 RUN(mediaElement.load())
 
-++ Test after 'load' event
+++ Test after 'canplaythrough' event
 EXPECTED (mediaElement.getAttribute('autobuffer') != 'null') OK
 EXPECTED (mediaElement.autobuffer == 'true') OK
 END OF TEST

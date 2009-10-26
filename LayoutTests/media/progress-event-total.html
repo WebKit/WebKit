@@ -12,20 +12,11 @@
                 testExpected("event.loaded", 0);
             }
         
-            function testOnLoad()
+            function testOnProgress()
             {
                 consoleWrite("EVENT(" + event.type + ")");
                 testExpected("event.lengthComputable", true);
                 testExpected("event.loaded", 0, '>');
-                var allowedTotalBytes = [103746, 188483, 192844];
-                for (var i = 0; i < allowedTotalBytes.length; ++i) {
-                  if (event.total == allowedTotalBytes[i])
-                    break;
-                }
-                if (i < allowedTotalBytes.length)
-                    consoleWrite("SUCCESS: event.total is " + allowedTotalBytes.join(" or ") + " (Playback engine specific)");
-                else
-                    consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes.join(" or ") + ")");
                 endTest();
             }
 
@@ -40,7 +31,7 @@
 
     <body onload="start()">
 
-        <video controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        <video controls onloadstart="testOnLoadStart()" onprogress="testOnProgress()">
         </video>
 
     </body>

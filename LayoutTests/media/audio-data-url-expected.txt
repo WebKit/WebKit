@@ -6,7 +6,6 @@ EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
-EVENT(load)
 EXPECTED (mediaElement.duration.toFixed(2) == '2.94') OK
 END OF TEST
 

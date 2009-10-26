@@ -16,7 +16,7 @@
     <script src=video-test.js></script>
     <script>
         testExpected("video.controls", null, '!=');
-        waitForEvent('load', function () {
+        waitForEvent('canplaythrough', function () {
             if (window.eventSender) 
             {
                 eventSender.mouseMoveTo(54,240); // over play button

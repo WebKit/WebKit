@@ -18,7 +18,7 @@
                     } , 8000);
                 }
                 var count = document.getElementsByTagName('audio').length;
-                document.addEventListener("load", function () {
+                document.addEventListener("canplaythrough", function () {
                     if (!--count) {
                         document.body.offsetLeft;
                         if (window.layoutTestController)

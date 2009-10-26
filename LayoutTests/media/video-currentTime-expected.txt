@@ -1,5 +1,5 @@
 EXPECTED (video.currentTime == '0') OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.currentTime == '0') OK
 EVENT(play)
 EXPECTED (video.currentTime > '0') OK

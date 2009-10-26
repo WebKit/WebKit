@@ -1,3 +1,75 @@
+2009-10-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove HTML5 media element 'load' event
+        https://bugs.webkit.org/show_bug.cgi?id=30464
+        
+        Part 1, change layout tests to not use the event.
+
+        * media/audio-constructor-autobuffer-expected.txt:
+        * media/audio-constructor-autobuffer.html:
+        * media/audio-constructor-expected.txt:
+        * media/audio-constructor-src-expected.txt:
+        * media/audio-constructor-src.html:
+        * media/audio-constructor.html:
+        * media/audio-controls-rendering.html:
+        * media/audio-data-url-expected.txt:
+        * media/audio-data-url.html:
+        * media/audio-mpeg-supported-expected.txt:
+        * media/audio-mpeg-supported.html:
+        * media/media-load-event-expected.txt:
+        * media/media-load-event.html:
+        * media/progress-event-expected.txt:
+        * media/progress-event-total-expected.txt:
+        * media/progress-event-total.html:
+        * media/progress-event.html:
+        * media/remove-from-document-expected.txt:
+        * media/remove-from-document-no-load-expected.txt:
+        * media/remove-from-document-no-load.html:
+        * media/remove-from-document.html:
+        * media/restore-from-page-cache-expected.txt:
+        * media/restore-from-page-cache.html:
+        * media/video-append-source-expected.txt:
+        * media/video-append-source.html:
+        * media/video-buffered-expected.txt:
+        * media/video-buffered.html:
+        * media/video-canvas-source-expected.txt:
+        * media/video-canvas-source.html:
+        * media/video-controls-expected.txt:
+        * media/video-controls-transformed-expected.txt:
+        * media/video-controls-transformed.html:
+        * media/video-controls-zoomed-expected.txt:
+        * media/video-controls-zoomed.html:
+        * media/video-controls.html:
+        * media/video-currentTime-expected.txt:
+        * media/video-currentTime-set-expected.txt:
+        * media/video-currentTime-set.html:
+        * media/video-currentTime-set2-expected.txt:
+        * media/video-currentTime-set2.html:
+        * media/video-currentTime.html:
+        * media/video-dom-src-expected.txt:
+        * media/video-dom-src.html:
+        * media/video-error-abort-expected.txt:
+        * media/video-error-abort.html:
+        * media/video-error-does-not-exist.html:
+        * media/video-muted-expected.txt:
+        * media/video-muted.html:
+        * media/video-no-autoplay-expected.txt:
+        * media/video-no-autoplay.html:
+        * media/video-seek-past-end-paused-expected.txt:
+        * media/video-seek-past-end-paused.html:
+        * media/video-seek-past-end-playing-expected.txt:
+        * media/video-seek-past-end-playing.html:
+        * media/video-seekable-expected.txt:
+        * media/video-seekable.html:
+        * media/video-seeking-expected.txt:
+        * media/video-seeking.html:
+        * media/video-src-change-expected.txt:
+        * media/video-src-change.html:
+        * media/video-volume-expected.txt:
+        * media/video-volume.html:
+
 2009-10-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

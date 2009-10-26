@@ -1,6 +1,6 @@
 Test that setting currentTime changes the time, and that 'ended' event is fired in a reasonable amount of time
 
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.currentTime == '0') OK
 RUN(video.currentTime = video.duration - 0.2)
 EXPECTED (video.currentTime.toFixed(2) == '5.83') OK

@@ -4,6 +4,6 @@ EXPECTED (audio instanceof HTMLAudioElement == 'true') OK
 RUN(audio.load())
 EVENT(loadstart)
 EXPECTED (relativeURL(audio.currentSrc) == 'content/test.wav') OK
-EVENT(load)
+EVENT(canplaythrough)
 END OF TEST
 

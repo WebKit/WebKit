@@ -28,7 +28,7 @@
                 }
             }
                 
-            function load() 
+            function canplaythrough() 
             {
                 testExpected("loadCount", 0);
                 if (!loadCount) {
@@ -43,7 +43,7 @@
                 video = mediaElement = document.getElementsByTagName('video')[0];
 
                 waitForEvent('loadstart');
-                waitForEvent('load', load );
+                waitForEvent('canplaythrough', canplaythrough);
                 
                 video.src = mediaFile;
             }

@@ -8,7 +8,7 @@
     testExpected("video.muted", true);
     video.src = findMediaFile("video", "content/test");
     run("video.load()");
-    waitForEvent("load", function () {
+    waitForEvent("canplaythrough", function () {
         testExpected("video.muted", true);
         run("video.muted = false");
         testExpected("video.muted", false);

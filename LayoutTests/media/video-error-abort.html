@@ -9,7 +9,7 @@
 
     waitForEvent("abort", function () { testExpected("video.error.code", MediaError.MEDIA_ERR_ABORTED); } );
 
-    waitForEvent('load', function () { 
+    waitForEvent('canplaythrough', function () { 
         testExpected("video.error", null);
         endTest();
     } );

@@ -1,4 +1,4 @@
-Test that removing a media element from the tree when no media has been loaded does not generate a load event.
+Test that removing a media element from the tree when no media has been loaded does not generate a loadstart event.
 
 EXPECTED (video.networkState == '0') OK
 RUN(document.body.removeChild(video))

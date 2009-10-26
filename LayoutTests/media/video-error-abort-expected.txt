@@ -3,7 +3,7 @@ EVENT(loadstart)
 EVENT(abort)
 EXPECTED (video.error.code == '1') OK
 EVENT(loadstart)
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.error == 'null') OK
 END OF TEST
 

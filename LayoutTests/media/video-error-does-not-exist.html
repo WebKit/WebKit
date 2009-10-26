@@ -6,7 +6,7 @@
     consoleWrite("");
     testExpected("video.error", null);
 
-    waitForEventAndTest("load", "false");
+    waitForEventAndTest("canplaythrough", "false");
     
     waitForEvent("error", function () {
         testExpected("video.error", null, "!=");

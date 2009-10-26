@@ -4,7 +4,7 @@ EXPECTED (video.muted == 'false') OK
 RUN(video.muted = true)
 EXPECTED (video.muted == 'true') OK
 RUN(video.load())
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.muted == 'true') OK
 RUN(video.muted = false)
 EXPECTED (video.muted == 'false') OK

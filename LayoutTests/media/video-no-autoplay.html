@@ -15,7 +15,7 @@
         testExpected("video.paused", true);
         endTest();
     }
-    waitForEvent('load', function () { setTimeout(testPaused, 500);} );
+    waitForEvent('canplaythrough', function () { setTimeout(testPaused, 500);} );
 
     video.src = findMediaFile("video", "content/test");
 </script>

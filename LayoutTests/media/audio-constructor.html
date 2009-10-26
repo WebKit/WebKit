@@ -13,7 +13,7 @@
     var mediaFile = findMediaFile("audio", "content/test");
     waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", mediaFile); });
 
-    waitForEventAndEnd("load");
+    waitForEventAndEnd("canplaythrough");
 
     audio.src = mediaFile;
     run("audio.load()");

@@ -2,9 +2,8 @@ EVENT(loadstart)
 EXPECTED (!event.lengthComputable == 'true') OK
 EXPECTED (event.total == '0') OK
 EXPECTED (event.loaded == '0') OK
-EVENT(load)
+EVENT(progress)
 EXPECTED (event.lengthComputable == 'true') OK
 EXPECTED (event.loaded > '0') OK
-SUCCESS: event.total is 103746 or 188483 or 192844 (Playback engine specific)
 END OF TEST
 

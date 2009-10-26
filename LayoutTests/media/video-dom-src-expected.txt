@@ -1,6 +1,6 @@
 EXPECTED (video.currentSrc == '') OK
 EXPECTED (video.currentSrc == '') OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 END OF TEST
 

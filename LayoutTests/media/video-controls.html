@@ -4,7 +4,7 @@
 <script src=video-test.js></script>
 <script>
     testExpected("video.controls", null, '!=');
-    waitForEvent('load', function () {
+    waitForEvent('canplaythrough', function () {
         document.body.offsetTop;
         testExpected("video.controls", null, '!=');
         run("video.removeAttribute('controls')");

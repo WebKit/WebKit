@@ -5,7 +5,7 @@
 <script src=video-test.js></script>
 <script>
 
-    waitForEvent('load', function () { 
+    waitForEvent('canplaythrough', function () { 
         testExpected("video.paused", true);
         testExpected("video.ended", false);
         run("video.play()");

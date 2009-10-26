@@ -3,7 +3,7 @@ Test controls on zoomed video.
 This test only runs in DRT!
 
 EXPECTED (video.controls != 'null') OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.paused == 'false') OK
 END OF TEST
 

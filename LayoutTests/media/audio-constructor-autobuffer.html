@@ -5,9 +5,9 @@
 
         <script>
 
-            function loaded()
+            function canplaythrough()
             {
-                consoleWrite("++ Test after 'load' event");
+                consoleWrite("++ Test after 'canplaythrough' event");
                 testExpected("mediaElement.getAttribute('autobuffer')", null, "!=");
                 testExpected("mediaElement.autobuffer", true);
                 endTest();
@@ -23,7 +23,7 @@
                 testExpected("mediaElement.autobuffer", true);
                 consoleWrite("");
 
-                mediaElement.onload = loaded;
+                mediaElement.addEventListener("canplaythrough", canplaythrough);
                 run("mediaElement.src = '" + findMediaFile("audio", "content/test") + "'");
                 run("mediaElement.load()");
 

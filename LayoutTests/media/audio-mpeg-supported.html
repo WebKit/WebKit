@@ -14,8 +14,8 @@
             endTest();
         });
     
-        mediaElement.addEventListener('load', function() { 
-            consoleWrite("EVENT(load)");
+        mediaElement.addEventListener('canplaythrough', function() { 
+            consoleWrite("EVENT(canplaythrough)");
             testExpected("mediaElement.currentTime", 0);
             mediaElement.play(); 
             setTimeout(testCurrentTime, 500) 

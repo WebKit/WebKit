@@ -2,9 +2,5 @@ EVENT(loadstart)
 EXPECTED (!event.lengthComputable == 'true') OK
 EXPECTED (event.total == '0') OK
 EXPECTED (event.loaded == '0') OK
-EVENT(load)
-EXPECTED (event.lengthComputable == 'true') OK
-EXPECTED (event.loaded > '0') OK
-EXPECTED (event.total > '0') OK
 END OF TEST
 

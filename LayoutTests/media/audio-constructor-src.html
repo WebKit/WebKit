@@ -10,5 +10,5 @@
 
     waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", "content/test.wav"); });
 
-    waitForEventAndEnd("load");
+    waitForEventAndEnd("canplaythrough");
 </script>

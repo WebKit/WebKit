@@ -10,17 +10,9 @@
                 testExpected("!event.lengthComputable", true);
                 testExpected("event.total", 0);
                 testExpected("event.loaded", 0);
-            }
-        
-            function testOnLoad()
-            {
-                consoleWrite("EVENT(" + event.type + ")");
-                testExpected("event.lengthComputable", true);
-                testExpected("event.loaded", 0, '>');
-                testExpected("event.total", 0, '>');
                 endTest();
             }
-
+        
             function start()
             {
                 setSrcByTagName("video", findMediaFile("video", "content/test"));
@@ -31,7 +23,7 @@
 
     <body onload="start()">
 
-        <video controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        <video controls onloadstart="testOnLoadStart()" >
         </video>
 
     </body>

@@ -3,7 +3,7 @@ TEST(video.seekable.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.seekable.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.seekable.start(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.seekable.end(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.seekable.length == '1') OK
 EXPECTED (video.seekable.start(0) == '0') OK
 EXPECTED (video.seekable.end(0) > '0') OK

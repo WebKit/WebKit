@@ -34,7 +34,7 @@
         consoleWrite("");
      }
 
-    function loaded() 
+    function canplaythrough() 
     {
         run("video.currentTime = 0.5");
         counter = 1;
@@ -46,7 +46,7 @@
     
     waitForEvent('waiting' );
     waitForEvent('seeked', seeked );
-    waitForEvent('load', loaded);
+    waitForEvent('canplaythrough', canplaythrough);
 
     video.src = findMediaFile("video", "content/test");
 </script>

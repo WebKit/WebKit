@@ -3,7 +3,7 @@ TEST(video.buffered.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.buffered.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.buffered.start(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.buffered.end(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.buffered.length == '1') OK
 EXPECTED (video.buffered.start(0) == '0') OK
 EXPECTED (video.buffered.end(0) > '0') OK

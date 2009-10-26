@@ -7,7 +7,7 @@
     video.src = mediaFile;
     testExpected("video.currentSrc", "");
 
-    waitForEvent('load', function () { 
+    waitForEvent('canplaythrough', function () { 
         testExpected("relativeURL(video.currentSrc)", mediaFile);
         endTest();
     } );

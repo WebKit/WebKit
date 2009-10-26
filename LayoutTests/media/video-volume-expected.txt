@@ -8,7 +8,7 @@ EXPECTED (video.volume == '0') OK
 TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
 RUN(video.load())
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.volume == '0') OK
 RUN(video.volume = 0.5)
 EXPECTED (video.volume == '0.5') OK

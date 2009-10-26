@@ -12,7 +12,7 @@
     testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
     video.src = findMediaFile("video", "content/test");
     run("video.load()");
-    waitForEvent("load", function () {
+    waitForEvent("canplaythrough", function () {
         testExpected("video.volume", 0);
         run("video.volume = 0.5");
         testExpected("video.volume", 0.5);

@@ -6,6 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
  
 PASS !!ctx.getImageData(0, 0, width, height) is true
 RUN(var source = document.createElement('source'); source.src = 'content/counting.mp4'; video.appendChild(source))
-EVENT(load)
+EVENT(canplaythrough)
 END OF TEST
 

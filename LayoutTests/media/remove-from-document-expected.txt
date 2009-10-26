@@ -1,6 +1,6 @@
 Test that removing a media element from the tree pauses playback but does not unload the media.
 
-EVENT(load)
+EVENT(canplaythrough)
 EXPECTED (video.networkState == '3') OK
 EXPECTED (video.paused == 'false') OK
 RUN(document.body.removeChild(video))

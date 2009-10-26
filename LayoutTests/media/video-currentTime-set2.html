@@ -2,7 +2,7 @@
 <script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    waitForEvent('load',  
+    waitForEvent('canplaythrough',  
     function () { 
         video.currentTime = 1.5; 
         testExpected("video.currentTime.toFixed(1)", 1.5);

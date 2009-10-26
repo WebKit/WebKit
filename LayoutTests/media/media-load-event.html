@@ -28,12 +28,12 @@
                 mediaElement.setAttribute('onplaying', "playing()");
 
                 waitForEvent("loadstart");
-                waitForEvent("load");
                 waitForEvent("waiting");
                 waitForEvent("ratechange");
                 waitForEvent("durationchange");
                 waitForEvent("pause");
                 waitForEvent("play");
+                waitForEvent("canplaythrough");
                 waitForEvent('loadeddata');
 
                 var mediaFile = findMediaFile("audio", "content/test");
