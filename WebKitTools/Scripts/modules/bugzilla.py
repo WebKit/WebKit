@@ -294,7 +294,18 @@ class Bugzilla:
 
         self.authenticated = True
 
-    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False):
+    def _fill_attachment_form(self, description, patch_file_object, comment_text=None, mark_for_review=False, mark_for_commit_queue=False, bug_id=None):
+        self.browser['description'] = description
+        self.browser['ispatch'] = ("1",)
+        self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
+        self.browser['flag_type-3'] = ('?',) if mark_for_commit_queue else ('X',)
+        if bug_id:
+            patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
+        else:
+            patch_name ="%s.patch" % timestamp()
+        self.browser.add_file(patch_file_object, "text/plain", patch_name, 'data')
+
+    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False):
         self.authenticate()
         
         log('Adding patch "%s" to bug %s' % (description, bug_id))
@@ -304,13 +315,10 @@ class Bugzilla:
         
         self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
-        self.browser['description'] = description
-        self.browser['ispatch'] = ("1",)
+        self._fill_attachment_form(description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue, bug_id=bug_id)
         if comment_text:
             log(comment_text)
             self.browser['comment'] = comment_text
-        self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
-        self.browser.add_file(patch_file_object, "text/plain", "bug-%s-%s.patch" % (bug_id, timestamp()))
         self.browser.submit()
 
     def prompt_for_component(self, components):
@@ -334,7 +342,7 @@ class Bugzilla:
             error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
         raise BugzillaError("Bug not created: %s" % error_message)
 
-    def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False):
+    def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False, mark_for_commit_queue=False):
         self.authenticate()
 
         log('Creating bug with patch description "%s"' % patch_description)
@@ -355,10 +363,8 @@ class Bugzilla:
         if bug_description:
             log(bug_description)
             self.browser['comment'] = bug_description
-        self.browser['description'] = patch_description
-        self.browser['ispatch'] = ("1",)
-        self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
-        self.browser.add_file(patch_file_object, "text/plain", "%s.patch" % timestamp(), 'data')
+
+        self._fill_attachment_form(patch_description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue)
         response = self.browser.submit()
 
         bug_id = self._check_create_bug_response(response.read())

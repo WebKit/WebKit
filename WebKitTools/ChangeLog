@@ -1,3 +1,16 @@
+2009-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool post-diff should know how to mark commit-queue=?
+        https://bugs.webkit.org/show_bug.cgi?id=29202
+
+        * Scripts/bugzilla-tool:
+         - Add --commit-queue option to post-diff, post-commits and create-bug.
+        * Scripts/modules/bugzilla.py:
+         - Added support for --commit-queue to add_patch_to_bug and create_bug_with_patch.
+         - Added _fill_attachment_form to share code between add_patch_to_bug and create_bug_with_patch.
+
 2009-10-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

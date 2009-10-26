@@ -425,6 +425,7 @@ class PostDiffAsPatchToBug(Command):
         return [
             make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+            make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
 
     @staticmethod
@@ -448,7 +449,7 @@ class PostDiffAsPatchToBug(Command):
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
 
         description = options.description or "Patch v1"
-        tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review)
+        tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
 class PostCommitsAsPatchesToBug(Command):
@@ -498,7 +499,7 @@ class PostCommitsAsPatchesToBug(Command):
             diff_file = self._diff_file_for_commit(tool, commit_id)
             description = options.description or commit_message.description(lstrip=True, strip_url=True)
             comment_text = self._comment_text_for_commit(options, commit_message, tool, commit_id)
-            tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
+            tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
 class RolloutCommit(Command):
@@ -565,6 +566,7 @@ class CreateBug(Command):
             make_option("--component", action="store", type="string", dest="component", help="Component for the new bug."),
             make_option("--no-prompt", action="store_false", dest="prompt", default=True, help="Do not prompt for bug title and comment; use commit log instead."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+            make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
         Command.__init__(self, 'Create a bug from local changes or local commits.', '[COMMITISH]', options=options)
 
@@ -588,7 +590,7 @@ class CreateBug(Command):
 
         diff = tool.scm().create_patch_from_local_commit(commit_id)
         diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review)
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
         if bug_id and len(commit_ids) > 1:
             options.bug_id = bug_id
@@ -608,7 +610,7 @@ class CreateBug(Command):
 
         diff = tool.scm().create_patch()
         diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review)
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = raw_input("Bug title: ")
