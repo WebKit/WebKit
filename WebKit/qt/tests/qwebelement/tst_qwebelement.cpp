@@ -70,7 +70,10 @@ private slots:
     void attributesNS();
     void classes();
     void namespaceURI();
+    void iteration();
     void foreachManipulation();
+    void emptyCollection();
+    void appendCollection();
     void evaluateJavaScript();
     void documentElement();
     void frame();
@@ -134,7 +137,7 @@ void tst_QWebElement::simpleCollection()
     m_mainFrame->setHtml(html);
     QWebElement body = m_mainFrame->documentElement();
 
-    QList<QWebElement> list = body.findAll("p");
+    QWebElementCollection list = body.findAll("p");
     QCOMPARE(list.count(), 2);
     QCOMPARE(list.at(0).toPlainText(), QString("first para"));
     QCOMPARE(list.at(1).toPlainText(), QString("second para"));
@@ -267,6 +270,41 @@ void tst_QWebElement::namespaceURI()
 
 }
 
+void tst_QWebElement::iteration()
+{
+    QString html = "<body><p>first para</p><p>second para</p></body>";
+    m_mainFrame->setHtml(html);
+    QWebElement body = m_mainFrame->documentElement();
+
+   QWebElementCollection paras = body.findAll("p");
+    QList<QWebElement> referenceList = paras.toList();
+
+    QList<QWebElement> foreachList;
+    foreach(QWebElement p, paras) {
+       foreachList.append(p);
+    }
+    QVERIFY(foreachList.count() == 2);
+    QCOMPARE(foreachList.count(), referenceList.count());
+    QCOMPARE(foreachList.at(0), referenceList.at(0));
+    QCOMPARE(foreachList.at(1), referenceList.at(1));
+
+    QList<QWebElement> forLoopList;
+    for (int i = 0; i < paras.count(); ++i) {
+        forLoopList.append(paras.at(i));
+    }
+    QVERIFY(foreachList.count() == 2);
+    QCOMPARE(foreachList.count(), referenceList.count());
+    QCOMPARE(foreachList.at(0), referenceList.at(0));
+    QCOMPARE(foreachList.at(1), referenceList.at(1));
+
+    for (int i = 0; i < paras.count(); ++i) {
+        QCOMPARE(paras.at(i), paras[i]);
+    }
+
+    QCOMPARE(paras.at(0), paras.first());
+    QCOMPARE(paras.at(1), paras.last());
+}
+
 void tst_QWebElement::foreachManipulation()
 {
     QString html = "<body><p>first para</p><p>second para</p></body>";
@@ -278,6 +316,43 @@ void tst_QWebElement::foreachManipulation()
     }
 
     QCOMPARE(body.findAll("div").count(), 4);
+}
+
+void tst_QWebElement::emptyCollection()
+{
+    QWebElementCollection emptyCollection;
+    QCOMPARE(emptyCollection.count(), 0);
+}
+
+void tst_QWebElement::appendCollection()
+{
+    QString html = "<body><span class='a'>aaa</span><p>first para</p><div>foo</div>"
+        "<span class='b'>bbb</span><p>second para</p><div>bar</div></body>";
+    m_mainFrame->setHtml(html);
+    QWebElement body = m_mainFrame->documentElement();
+
+    QWebElementCollection collection = body.findAll("p");
+    QCOMPARE(collection.count(), 2);
+
+    collection.append(body.findAll("div"));
+    QCOMPARE(collection.count(), 4);
+
+    collection += body.findAll("span.a");
+    QCOMPARE(collection.count(), 5);
+
+    QWebElementCollection all = collection + body.findAll("span.b");
+    QCOMPARE(all.count(), 6);
+    QCOMPARE(collection.count(), 5);
+
+     all += collection;
+    QCOMPARE(all.count(), 11);
+
+    QCOMPARE(collection.count(), 5);
+    QWebElementCollection test;
+    test.append(collection);
+    QCOMPARE(test.count(), 5);
+    test.append(QWebElementCollection());
+    QCOMPARE(test.count(), 5);
 }
 
 void tst_QWebElement::evaluateJavaScript()
@@ -773,7 +848,7 @@ void tst_QWebElement::nullSelect()
 {
     m_mainFrame->setHtml("<body><p>Test");
 
-    QList<QWebElement> collection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
+    QWebElementCollection collection = m_mainFrame->findAllElements("invalid{syn(tax;;%#$f223e>>");
     QVERIFY(collection.count() == 0);
 }
 
@@ -815,7 +890,7 @@ void tst_QWebElement::hasSetFocus()
                             "<input type='text' id='input2'/>" \
                             "</body></html>");
 
-    QList<QWebElement> inputs = m_mainFrame->documentElement().findAll("input");
+    QWebElementCollection inputs = m_mainFrame->documentElement().findAll("input");
     QWebElement input1 = inputs.at(0);
     input1.setFocus();
     QVERIFY(input1.hasFocus());
@@ -854,7 +929,7 @@ void tst_QWebElement::render()
     QSize size = page.mainFrame()->contentsSize();
     page.setViewportSize(size);
 
-    QList<QWebElement> imgs = page.mainFrame()->findAllElements("img");
+    QWebElementCollection imgs = page.mainFrame()->findAllElements("img");
     QCOMPARE(imgs.count(), 1);
 
     QImage resource(":/image.png");
@@ -885,7 +960,7 @@ void tst_QWebElement::render()
 
     // compare table rendered through QWebElement::render to whole page table rendering
     QRect tableRect(0, 0, 300, 300);
-    QList<QWebElement> tables = page.mainFrame()->findAllElements("table");
+    QWebElementCollection tables = page.mainFrame()->findAllElements("table");
     QCOMPARE(tables.count(), 1);
 
     QImage image3(300, 300, QImage::Format_ARGB32);

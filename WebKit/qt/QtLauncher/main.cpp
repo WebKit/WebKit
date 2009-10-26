@@ -253,7 +253,7 @@ protected slots:
                                             QLineEdit::Normal, "a", &ok);
 
         if (ok && !str.isEmpty()) {
-            QList<QWebElement> result =  view->page()->mainFrame()->findAllElements(str);
+            QWebElementCollection result =  view->page()->mainFrame()->findAllElements(str);
             foreach (QWebElement e, result)
                 e.setStyleProperty("background-color", "yellow");
             statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);

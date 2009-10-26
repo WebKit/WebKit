@@ -202,23 +202,9 @@ bool QWebElement::isNull() const
 
     \sa findFirst()
 */
-QList<QWebElement> QWebElement::findAll(const QString &selectorQuery) const
+QWebElementCollection QWebElement::findAll(const QString &selectorQuery) const
 {
-    QList<QWebElement> elements;
-    if (!m_element)
-        return elements;
-
-    ExceptionCode exception = 0; // ###
-    RefPtr<NodeList> nodes = m_element->querySelectorAll(selectorQuery, exception);
-    if (!nodes)
-        return elements;
-
-    for (unsigned i = 0; i < nodes->length(); ++i) {
-        WebCore::Node* n = nodes->item(i);
-        elements.append(QWebElement(static_cast<Element*>(n)));
-    }
-
-    return elements;
+    return QWebElementCollection(*this, selectorQuery);
 }
 
 /*!
@@ -1450,3 +1436,391 @@ void QWebElement::render(QPainter* painter)
     context.restore();
 }
 
+class QWebElementCollectionPrivate : public QSharedData
+{
+public:
+    static QWebElementCollectionPrivate* create(const PassRefPtr<Node> &context, const QString &query);
+
+    RefPtr<NodeList> m_result;
+
+private:
+    inline QWebElementCollectionPrivate() {}
+};
+
+QWebElementCollectionPrivate* QWebElementCollectionPrivate::create(const PassRefPtr<Node> &context, const QString &query)
+{
+    if (!context)
+        return 0;
+
+    // Let WebKit do the hard work hehehe
+    ExceptionCode exception = 0; // ###
+    RefPtr<NodeList> nodes = context->querySelectorAll(query, exception);
+    if (!nodes)
+        return 0;
+
+    QWebElementCollectionPrivate* priv = new QWebElementCollectionPrivate;
+    priv->m_result = nodes;
+    return priv;
+}
+
+/*!
+    \class QWebElementCollection
+    \since 4.6
+    \brief The QWebElementCollection class represents a collection of web elements.
+    \preliminary
+
+    Elements in a document can be selected using QWebElement::findAll() or using the
+    QWebElement constructor. The collection is composed by choosing all elements in the
+    document that match a specified CSS selector expression.
+
+    The number of selected elements is provided through the count() property. Individual
+    elements can be retrieved by index using at().
+
+    It is also possible to iterate through all elements in the collection using Qt's foreach
+    macro:
+
+    \code
+        QWebElementCollection collection = document.findAll("p");
+        foreach (QWebElement paraElement, collection) {
+            ...
+        }
+    \endcode
+*/
+
+/*!
+    Constructs an empty collection.
+*/
+QWebElementCollection::QWebElementCollection()
+{
+}
+
+/*!
+    Constructs a copy of \a other.
+*/
+QWebElementCollection::QWebElementCollection(const QWebElementCollection &other)
+    : d(other.d)
+{
+}
+
+/*!
+    Constructs a collection of elements from the list of child elements of \a contextElement that
+    match the specified CSS selector \a query.
+*/
+QWebElementCollection::QWebElementCollection(const QWebElement &contextElement, const QString &query)
+{
+    d = QExplicitlySharedDataPointer<QWebElementCollectionPrivate>(QWebElementCollectionPrivate::create(contextElement.m_element, query));
+}
+
+/*!
+    Assigns \a other to this collection and returns a reference to this collection.
+*/
+QWebElementCollection &QWebElementCollection::operator=(const QWebElementCollection &other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+    Destroys the collection.
+*/
+QWebElementCollection::~QWebElementCollection()
+{
+}
+
+/*! \fn QWebElementCollection &QWebElementCollection::operator+=(const QWebElementCollection &other)
+
+    Appends the items of the \a other list to this list and returns a
+    reference to this list.
+
+    \sa operator+(), append()
+*/
+
+/*!
+    Returns a collection that contains all the elements of this collection followed
+    by all the elements in the \a other collection. Duplicates may occur in the result.
+
+    \sa operator+=()
+*/
+QWebElementCollection QWebElementCollection::operator+(const QWebElementCollection &other) const
+{
+    QWebElementCollection n = *this; n.d.detach(); n += other; return n;
+}
+
+/*!
+    Extends the collection by appending all items of \a other.
+
+    The resulting collection may include duplicate elements.
+
+    \sa operator+=()
+*/
+void QWebElementCollection::append(const QWebElementCollection &other)
+{
+    if (!d) {
+        *this = other;
+        return;
+    }
+    if (!other.d)
+        return;
+    Vector<RefPtr<Node> > nodes;
+    RefPtr<NodeList> results[] = { d->m_result, other.d->m_result };
+    nodes.reserveInitialCapacity(results[0]->length() + results[1]->length());
+
+    for (int i = 0; i < 2; ++i) {
+        int j = 0;
+        Node* n = results[i]->item(j);
+        while (n) {
+            nodes.append(n);
+            n = results[i]->item(++j);
+        }
+    }
+
+    d->m_result = StaticNodeList::adopt(nodes);
+}
+
+/*!
+    Returns the number of elements in the collection.
+*/
+int QWebElementCollection::count() const
+{
+    if (!d)
+        return 0;
+    return d->m_result->length();
+}
+
+/*!
+    Returns the element at index position \a i in the collection.
+*/
+QWebElement QWebElementCollection::at(int i) const
+{
+    if (!d)
+        return QWebElement();
+    Node* n = d->m_result->item(i);
+    return QWebElement(static_cast<Element*>(n));
+}
+
+/*!
+    \fn const QWebElement QWebElementCollection::operator[](int position) const
+
+    Returns the element at the specified \a position in the collection.
+*/
+
+/*! \fn QWebElement QWebElementCollection::first() const
+
+    Returns the first element in the collection.
+
+    \sa last(), operator[](), at(), count()
+*/
+
+/*! \fn QWebElement QWebElementCollection::last() const
+
+    Returns the last element in the collection.
+
+    \sa first(), operator[](), at(), count()
+*/
+
+/*!
+    Returns a QList object with the elements contained in this collection.
+*/
+QList<QWebElement> QWebElementCollection::toList() const
+{
+    if (!d)
+        return QList<QWebElement>();
+    QList<QWebElement> elements;
+    int i = 0;
+    Node* n = d->m_result->item(i);
+    while (n) {
+        if (n->isElementNode())
+            elements.append(QWebElement(static_cast<Element*>(n)));
+        n = d->m_result->item(++i);
+    }
+    return elements;
+}
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::begin() const
+
+    Returns an STL-style iterator pointing to the first element in the collection.
+
+    \sa end()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::end() const
+
+    Returns an STL-style iterator pointing to the imaginary element after the
+    last element in the list.
+
+    \sa begin()
+*/
+
+/*!
+    \class QWebElementCollection::const_iterator
+    \since 4.6
+    \brief The QWebElementCollection::const_iterator class provides an STL-style const iterator for QWebElementCollection.
+
+    QWebElementCollection provides STL style const iterators for fast low-level access to the elements.
+
+    QWebElementCollection::const_iterator allows you to iterate over a QWebElementCollection.
+
+    The default QWebElementCollection::const_iterator constructors creates an uninitialized iterator. You must initialize
+    it using a QWebElementCollection function like QWebElementCollection::begin() or QWebElementCollection::end() before you
+    can start iterating.
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator::const_iterator()
+
+    Constructs an uninitialized iterator.
+
+    Functions like operator*() and operator++() should not be called on
+    an uninitialized iterator. Use operator=() to assign a value
+    to it before using it.
+
+    \sa QWebElementCollection::begin()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator::const_iterator(const const_iterator &other)
+
+    Constructs a copy of \a other.
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator::const_iterator(const QWebElementCollection *collection, int index)
+    \internal
+*/
+
+/*!
+    \fn const QWebElement QWebElementCollection::const_iterator::operator*() const
+
+    Returns the current element.
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator==(const const_iterator &other) const
+
+    Returns true if \a other points to the same item as this iterator;
+    otherwise returns false.
+
+    \sa operator!=()
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator!=(const const_iterator &other) const
+
+    Returns true if \a other points to a different element than this;
+    iterator; otherwise returns false.
+
+    \sa operator==()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator++()
+
+    The prefix ++ operator (\c{++it}) advances the iterator to the next element in the collection
+    and returns an iterator to the new current element.
+
+    Calling this function on QWebElementCollection::end() leads to undefined results.
+
+    \sa operator--()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator++(int)
+
+    \overload
+
+    The postfix ++ operator (\c{it++}) advances the iterator to the next element in the collection
+    and returns an iterator to the previously current element.
+
+    Calling this function on QWebElementCollection::end() leads to undefined results.
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator--()
+
+    The prefix -- operator (\c{--it}) makes the preceding element current and returns an
+    iterator to the new current element.
+
+    Calling this function on QWebElementCollection::begin() leads to undefined results.
+
+    \sa operator++()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator--(int)
+
+    \overload
+
+    The postfix -- operator (\c{it--}) makes the preceding element current and returns
+    an iterator to the previously current element.
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator+=(int j)
+
+    Advances the iterator by \a j elements. If \a j is negative, the iterator goes backward.
+
+    \sa operator-=(), operator+()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator &QWebElementCollection::const_iterator::operator-=(int j)
+
+    Makes the iterator go back by \a j elements. If \a j is negative, the iterator goes forward.
+
+    \sa operator+=(), operator-()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator+(int j) const
+
+    Returns an iterator to the element at \a j positions forward from this iterator. If \a j
+    is negative, the iterator goes backward.
+
+    \sa operator-(), operator+=()
+*/
+
+/*!
+    \fn QWebElementCollection::const_iterator QWebElementCollection::const_iterator::operator-(int j) const
+
+    Returns an iterator to the element at \a j positiosn backward from this iterator.
+    If \a j is negative, the iterator goes forward.
+
+    \sa operator+(), operator-=()
+*/
+
+/*!
+    \fn int QWebElementCollection::const_iterator::operator-(const_iterator other) const
+
+    Returns the number of elements between the item point to by \a other
+    and the element pointed to by this iterator.
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator<(const const_iterator &other) const
+
+    Returns true if the element pointed to by this iterator is less than the element pointed to
+    by the \a other iterator.
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator<=(const const_iterator &other) const
+
+    Returns true if the element pointed to by this iterator is less than or equal to the
+    element pointed to by the \a other iterator.
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator>(const const_iterator &other) const
+
+    Returns true if the element pointed to by this iterator is greater than the element pointed to
+    by the \a other iterator.
+*/
+
+/*!
+    \fn bool QWebElementCollection::const_iterator::operator>=(const const_iterator &other) const
+
+    Returns true if the element pointed to by this iterator is greater than or equal to the
+    element pointed to by the \a other iterator.
+*/
