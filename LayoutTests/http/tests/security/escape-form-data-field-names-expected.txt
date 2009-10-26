@@ -1,0 +1,3 @@
+Test for bug 30723: Input names added to multipart/form-data headers need to be escaped
+
+PASS

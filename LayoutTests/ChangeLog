@@ -1,3 +1,14 @@
+2009-10-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth and Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30723
+        <rdar://problem/6189415> Input names added to multipart/form-data headers need to be escaped.
+
+        * http/tests/security/escape-form-data-field-names-expected.txt: Added.
+        * http/tests/security/escape-form-data-field-names.html: Added.
+        * http/tests/security/resources/escape-form-data-field-names.cgi: Added.
+
 2009-10-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

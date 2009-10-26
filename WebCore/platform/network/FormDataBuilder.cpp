@@ -108,6 +108,34 @@ static inline void append(Vector<char>& buffer, const CString& string)
     buffer.append(string.data(), string.length());
 }
 
+static void appendQuotedString(Vector<char>& buffer, const CString& string)
+{
+    // Append a string as a quoted value, escaping quotes and line breaks.
+    // FIXME: Is it correct to use percent escaping here? Other browsers do not encode these characters yet,
+    // so we should test popular servers to find out if there is an encoding form they can handle.
+    unsigned length = string.length();
+    for (unsigned i = 0; i < length; ++i) {
+        unsigned char c = string.data()[i];
+
+        switch (c) {
+        case  0x0a:
+            append(buffer, "%0A");
+            break;
+        case 0x0d:
+            append(buffer, "%0D");
+            break;
+        case '"':
+            append(buffer, "%22");
+            break;
+        case '%':
+            append(buffer, "%25");
+            break;
+        default:
+            append(buffer, c);
+        }
+    }
+}
+
 Vector<char> FormDataBuilder::generateUniqueBoundaryString()
 {
     Vector<char> boundary;
@@ -161,8 +189,10 @@ void FormDataBuilder::beginMultiPartHeader(Vector<char>& buffer, const CString& 
 {
     addBoundaryToMultiPartHeader(buffer, boundary);
 
+    // FIXME: This loses data irreversibly if the input name includes characters you can't encode
+    // in the website's character set.
     append(buffer, "Content-Disposition: form-data; name=\"");
-    append(buffer, name);
+    appendQuotedString(buffer, name);
     append(buffer, '"');
 }
 
@@ -179,12 +209,10 @@ void FormDataBuilder::addBoundaryToMultiPartHeader(Vector<char>& buffer, const C
 
 void FormDataBuilder::addFilenameToMultiPartHeader(Vector<char>& buffer, const TextEncoding& encoding, const String& filename)
 {
-    // FIXME: This won't work if the filename includes a " mark,
-    // or control characters like CR or LF. This also does strange
-    // things if the filename includes characters you can't encode
+    // FIXME: This loses data irreversibly if the filename includes characters you can't encode
     // in the website's character set.
     append(buffer, "; filename=\"");
-    append(buffer, encoding.encode(filename.characters(), filename.length(), QuestionMarksForUnencodables));
+    appendQuotedString(buffer, encoding.encode(filename.characters(), filename.length(), QuestionMarksForUnencodables));
     append(buffer, '"');
 }
 
