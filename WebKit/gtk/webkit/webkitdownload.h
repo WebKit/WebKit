@@ -84,6 +84,9 @@ webkit_download_get_uri                     (WebKitDownload       *download);
 WEBKIT_API WebKitNetworkRequest*
 webkit_download_get_network_request         (WebKitDownload       *download);
 
+WEBKIT_API WebKitNetworkResponse*
+webkit_download_get_network_response         (WebKitDownload       *download);
+
 WEBKIT_API const gchar*
 webkit_download_get_suggested_filename      (WebKitDownload       *download);
 

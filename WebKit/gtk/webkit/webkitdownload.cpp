@@ -31,6 +31,7 @@
 #include "webkitdownload.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
+#include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 
 #include <glib/gstdio.h>
@@ -74,7 +75,7 @@ struct _WebKitDownloadPrivate {
     GFileOutputStream* outputStream;
     DownloadClient* downloadClient;
     WebKitNetworkRequest* networkRequest;
-    ResourceResponse* networkResponse;
+    WebKitNetworkResponse* networkResponse;
     RefPtr<ResourceHandle> resourceHandle;
 };
 
@@ -95,7 +96,8 @@ enum {
     PROP_PROGRESS,
     PROP_STATUS,
     PROP_CURRENT_SIZE,
-    PROP_TOTAL_SIZE
+    PROP_TOTAL_SIZE,
+    PROP_NETWORK_RESPONSE
 };
 
 G_DEFINE_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT);
@@ -119,6 +121,11 @@ static void webkit_download_dispose(GObject* object)
         priv->networkRequest = NULL;
     }
 
+    if (priv->networkResponse) {
+        g_object_unref(priv->networkResponse);
+        priv->networkResponse = NULL;
+    }
+
     G_OBJECT_CLASS(webkit_download_parent_class)->dispose(object);
 }
 
@@ -138,7 +145,6 @@ static void webkit_download_finalize(GObject* object)
     }
 
     delete priv->downloadClient;
-    delete priv->networkResponse;
 
     // The download object may never have _start called on it, so we
     // need to make sure timer is non-NULL.
@@ -158,6 +164,9 @@ static void webkit_download_get_property(GObject* object, guint prop_id, GValue*
     switch(prop_id) {
     case PROP_NETWORK_REQUEST:
         g_value_set_object(value, webkit_download_get_network_request(download));
+        break;
+    case PROP_NETWORK_RESPONSE:
+        g_value_set_object(value, webkit_download_get_network_response(download));
         break;
     case PROP_DESTINATION_URI:
         g_value_set_string(value, webkit_download_get_destination_uri(download));
@@ -190,6 +199,9 @@ static void webkit_download_set_property(GObject* object, guint prop_id, const G
     switch(prop_id) {
     case PROP_NETWORK_REQUEST:
         priv->networkRequest = WEBKIT_NETWORK_REQUEST(g_value_dup_object(value));
+        break;
+    case PROP_NETWORK_RESPONSE:
+        priv->networkResponse = WEBKIT_NETWORK_RESPONSE(g_value_dup_object(value));
         break;
     case PROP_DESTINATION_URI:
         webkit_download_set_destination_uri(download, g_value_get_string(value));
@@ -249,6 +261,21 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         _("Network Request"),
                                                         _("The network request for the URI that should be downloaded"),
                                                         WEBKIT_TYPE_NETWORK_REQUEST,
+                                                        (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitDownload:network-response
+     *
+     * The #WebKitNetworkResponse instance associated with the download.
+     *
+     * Since: 1.1.16
+     */
+    g_object_class_install_property(objectClass,
+                                    PROP_NETWORK_RESPONSE,
+                                    g_param_spec_object("network-response",
+                                                        _("Network Response"),
+                                                        _("The network response for the URI that should be downloaded"),
+                                                        WEBKIT_TYPE_NETWORK_RESPONSE,
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
@@ -530,11 +557,29 @@ WebKitNetworkRequest* webkit_download_get_network_request(WebKitDownload* downlo
     return priv->networkRequest;
 }
 
+/**
+ * webkit_download_get_network_response:
+ * @download: the #WebKitDownload
+ *
+ * Retrieves the #WebKitNetworkResponse object that backs the download
+ * process.
+ *
+ * Returns: the #WebKitNetworkResponse instance
+ *
+ * Since: 1.1.16
+ */
+WebKitNetworkResponse* webkit_download_get_network_response(WebKitDownload* download)
+{
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), NULL);
+
+    WebKitDownloadPrivate* priv = download->priv;
+    return priv->networkResponse;
+}
+
 static void webkit_download_set_response(WebKitDownload* download, const ResourceResponse& response)
 {
-    // FIXME Use WebKitNetworkResponse when it's merged.
     WebKitDownloadPrivate* priv = download->priv;
-    priv->networkResponse = new ResourceResponse(response);
+    priv->networkResponse = webkit_network_response_new_with_core_response(response);
 
     if (!response.isNull() && !response.suggestedFilename().isEmpty())
         webkit_download_set_suggested_filename(download, response.suggestedFilename().utf8().data());
@@ -704,10 +749,12 @@ guint64 webkit_download_get_total_size(WebKitDownload* download)
     g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
 
     WebKitDownloadPrivate* priv = download->priv;
-    if (!priv->networkResponse)
+    SoupMessage* message = priv->networkResponse ? webkit_network_response_get_message(priv->networkResponse) : NULL;
+
+    if (!message)
         return 0;
 
-    return MAX(priv->currentSize, priv->networkResponse->expectedContentLength());
+    return MAX(priv->currentSize, soup_message_headers_get_content_length(message->response_headers));
 }
 
 /**
@@ -744,9 +791,9 @@ gdouble webkit_download_get_progress(WebKitDownload* download)
 
     WebKitDownloadPrivate* priv = download->priv;
     if (!priv->networkResponse)
-        return 0;
+        return 0.0;
 
-    gdouble total_size = (gdouble)priv->networkResponse->expectedContentLength();
+    gdouble total_size = static_cast<gdouble>(webkit_download_get_total_size(download));
 
     if (total_size == 0)
         return 1.0;
@@ -803,7 +850,7 @@ static void webkit_download_received_data(WebKitDownload* download, const gchar*
     g_object_notify(G_OBJECT(download), "current-size");
 
     ASSERT(priv->networkResponse);
-    if (priv->currentSize > priv->networkResponse->expectedContentLength())
+    if (priv->currentSize > webkit_download_get_total_size(download))
         g_object_notify(G_OBJECT(download), "total-size");
 
     gdouble lastProgress = webkit_download_get_progress(download);
