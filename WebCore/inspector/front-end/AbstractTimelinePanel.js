@@ -164,6 +164,10 @@ WebInspector.AbstractTimelinePanel.prototype = {
             selectMultiple = true;
 
         this.filter(e.target, selectMultiple);
+
+        // When we are updating our filtering, scroll to the top so we don't end up
+        // in blank graph under all the resources.
+        this.containerElement.scrollTop = 0;
     },
 
     _createGraph: function()

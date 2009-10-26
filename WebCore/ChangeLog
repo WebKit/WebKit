@@ -1,3 +1,20 @@
+2009-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/30792>.
+        Web Inspector: When changing resource scope, resource graph can get in weird state.
+        
+        If the user was scrolled down while looking at All resources, and then just
+        selects Fonts, or something that doesn't have many resources, then the graph
+        will stay scrolled down, even when there is no content there.
+        
+        When the filter is updated, scroll to the top of the graph view, so this won't
+        happen.
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype._updateFilter):
+
 2009-10-26  Sam Weinig  <sam@webkit.org>
 
         Fix mac clean build.
