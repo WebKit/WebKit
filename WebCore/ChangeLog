@@ -1,3 +1,18 @@
+2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Use "%lli" to format "long long" on WIN_OS to fix HTML5 WebDB crash
+        https://bugs.webkit.org/show_bug.cgi?id=30777
+
+        No new tests as the crash can be reproduced by existing storage
+        LayoutTests (by hitting an assert in debug mode Webkit on WIN_OS).
+
+        * platform/text/String.cpp:
+        (WebCore::String::number): Qt's QString::vsprintf does not
+        understand the "%I64u" format string. Always use the "%lli"
+        format string for Qt port.
+
 2009-10-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
