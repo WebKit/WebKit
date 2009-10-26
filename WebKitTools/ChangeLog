@@ -1,3 +1,18 @@
+2009-10-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Upgrade pywebsocket to 0.4.1. This will make reusing LayoutTests/fast/js/resources easier, for example.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30763
+
+        * pywebsocket/mod_pywebsocket/__init__.py:
+        * pywebsocket/mod_pywebsocket/dispatch.py:
+        * pywebsocket/mod_pywebsocket/headerparserhandler.py:
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+        * pywebsocket/test/test_dispatch.py:
+
 2009-10-26  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Levin.

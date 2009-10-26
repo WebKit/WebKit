@@ -51,6 +51,14 @@ Installation:
        PythonOption mod_pywebsocket.handler_root <websock_handlers>
        PythonHeaderParserHandler mod_pywebsocket.headerparserhandler
 
+   To limit the search for Web Socket handlers to a directory <scan_dir>
+   under <websock_handlers>, configure as follows:
+   
+       PythonOption mod_pywebsocket.handler_scan <scan_dir>
+       
+   <scan_dir> is useful in saving scan time when <websock_handlers>
+   contains many non-Web Socket handler files.
+
    Example snippet of httpd.conf:
    (mod_pywebsocket is in /websock_lib, Web Socket handlers are in
    /websock_handlers, port is 80 for ws, 443 for wss.)

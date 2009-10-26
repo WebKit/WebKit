@@ -56,7 +56,7 @@ setup(author='Yuzo Fujishima',
       name=_PACKAGE_NAME,
       packages=[_PACKAGE_NAME],
       url='http://code.google.com/p/pywebsocket/',
-      version='0.4.0',
+      version='0.4.1',
       )
 
 

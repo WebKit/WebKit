@@ -36,6 +36,7 @@ Use this server to run mod_pywebsocket without Apache HTTP Server.
 
 Usage:
     python standalone.py [-p <ws_port>] [-w <websock_handlers>]
+                         [-s <scan_dir>]
                          [-d <document_root>]
 
 <ws_port> is the port number to use for ws:// connection.
@@ -45,6 +46,9 @@ Usage:
 <websock_handlers> is the path to the root directory of Web Socket handlers.
 See __init__.py for details of <websock_handlers> and how to write Web Socket
 handlers. If this path is relative, <document_root> is used as the base.
+
+<scan_dir> is a path under the root directory. If specified, only the handlers
+under scan_dir are scanned. This is useful in saving scan time.
 
 Note:
 This server is derived from SocketServer.ThreadingMixIn. Hence a thread is
@@ -162,7 +166,8 @@ class WebSocketRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self._request = _StandaloneRequest(
                 self, WebSocketRequestHandler.options.use_tls)
         self._dispatcher = dispatch.Dispatcher(
-                WebSocketRequestHandler.options.websock_handlers)
+                WebSocketRequestHandler.options.websock_handlers,
+                WebSocketRequestHandler.options.scan_dir)
         self._print_warnings_if_any()
         self._handshaker = handshake.Handshaker(self._request,
                                                 self._dispatcher)
@@ -206,6 +211,10 @@ def _main():
     parser.add_option('-w', '--websock_handlers', dest='websock_handlers',
                       default='.',
                       help='Web Socket handlers root directory.')
+    parser.add_option('-s', '--scan_dir', dest='scan_dir',
+                      default=None,
+                      help=('Web Socket handlers scan directory. '
+                            'Must be a directory under websock_handlers.'))
     parser.add_option('-d', '--document_root', dest='document_root',
                       default='.',
                       help='Document root directory.')
@@ -225,6 +234,9 @@ def _main():
             print >>sys.stderr, ('To use TLS, specify private_key and '
                                  'certificate.')
             sys.exit(1)
+
+    if not options.scan_dir:
+        options.scan_dir = options.websock_handlers
 
     WebSocketRequestHandler.options = options
     WebSocketServer.options = options

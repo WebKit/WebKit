@@ -119,17 +119,27 @@ class Dispatcher(object):
     This class maintains a map from resource name to handlers.
     """
 
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, scan_dir=None):
         """Construct an instance.
 
         Args:
             root_dir: The directory where handler definition files are
-            placed.
+                      placed.
+            scan_dir: The directory where handler definition files are
+                      searched. scan_dir must be a directory under root_dir,
+                      including root_dir itself.  If scan_dir is None, root_dir
+                      is used as scan_dir. scan_dir can be useful in saving
+                      scan time when root_dir contains many subdirectories.
         """
 
         self._handlers = {}
         self._source_warnings = []
-        self._source_files_in_dir(root_dir)
+        if scan_dir is None:
+            scan_dir = root_dir
+        if not os.path.abspath(scan_dir).startswith(os.path.abspath(root_dir)):
+            raise DispatchError('scan_dir:%s must be a directory under '
+                                'root_dir:%s.' % (scan_dir, root_dir))
+        self._source_files_in_dir(root_dir, scan_dir)
 
     def source_warnings(self):
         """Return warnings in sourcing handlers."""
@@ -176,11 +186,14 @@ class Dispatcher(object):
         except KeyError:
             raise DispatchError('No handler for: %r' % request.ws_resource)
 
-    def _source_files_in_dir(self, root_dir):
-        """Source all the handler source files in the directory."""
+    def _source_files_in_dir(self, root_dir, scan_dir):
+        """Source all the handler source files in the scan_dir directory.
+        
+        The resource path is determined relative to root_dir.
+        """
 
         to_resource = _path_to_resource_converter(root_dir)
-        for path in _source_file_paths(root_dir):
+        for path in _source_file_paths(scan_dir):
             try:
                 handlers = _source(open(path).read())
             except DispatchError, e:

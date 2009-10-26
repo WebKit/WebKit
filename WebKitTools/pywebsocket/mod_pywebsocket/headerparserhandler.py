@@ -45,6 +45,11 @@ import util
 # PythonOption to specify the handler root directory.
 _PYOPT_HANDLER_ROOT = 'mod_pywebsocket.handler_root'
 
+# PythonOption to specify the handler scan directory.
+# This must be a directory under the root directory.
+# The default is the root directory.
+_PYOPT_HANDLER_SCAN = 'mod_pywebsocket.handler_scan'
+
 
 def _create_dispatcher():
     _HANDLER_ROOT = apache.main_server.get_options().get(
@@ -52,7 +57,9 @@ def _create_dispatcher():
     if not _HANDLER_ROOT:
         raise Exception('PythonOption %s is not defined' % _PYOPT_HANDLER_ROOT,
                         apache.APLOG_ERR)
-    dispatcher = dispatch.Dispatcher(_HANDLER_ROOT)
+    _HANDLER_SCAN = apache.main_server.get_options().get(
+            _PYOPT_HANDLER_SCAN, _HANDLER_ROOT)
+    dispatcher = dispatch.Dispatcher(_HANDLER_ROOT, _HANDLER_SCAN)
     for warning in dispatcher.source_warnings():
         apache.log_error('mod_pywebsocket: %s' % warning, apache.APLOG_WARNING)
     return dispatcher

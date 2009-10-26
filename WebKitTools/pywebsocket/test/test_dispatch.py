@@ -46,6 +46,8 @@ import mock
 _TEST_HANDLERS_DIR = os.path.join(
         os.path.split(__file__)[0], 'testdata', 'handlers')
 
+_TEST_HANDLERS_SUB_DIR = os.path.join(_TEST_HANDLERS_DIR, 'sub')
+
 class DispatcherTest(unittest.TestCase):
     def test_normalize_path(self):
         self.assertEqual(os.path.abspath('/a/b').replace('\\', '/'),
@@ -106,7 +108,7 @@ class DispatcherTest(unittest.TestCase):
                 'def web_socket_transfer_data(request):pass\n'))
 
     def test_source_warnings(self):
-        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR)
+        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         warnings = dispatcher.source_warnings()
         warnings.sort()
         expected_warnings = [
@@ -126,8 +128,8 @@ class DispatcherTest(unittest.TestCase):
         for expected, actual in zip(expected_warnings, warnings):
             self.assertEquals(expected, actual)
 
-    def test_shake_hand(self):
-        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR)
+    def test_do_extra_handshake(self):
+        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         request = mock.MockRequest()
         request.ws_resource = '/origin_check'
         request.ws_origin = 'http://example.com'
@@ -138,7 +140,7 @@ class DispatcherTest(unittest.TestCase):
                           dispatcher.do_extra_handshake, request)
 
     def test_transfer_data(self):
-        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR)
+        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         request = mock.MockRequest(connection=mock.MockConn(''))
         request.ws_resource = '/origin_check'
         request.ws_protocol = 'p1'
@@ -155,7 +157,7 @@ class DispatcherTest(unittest.TestCase):
                          request.connection.written_data())
 
     def test_transfer_data_no_handler(self):
-        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR)
+        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         for resource in ['/blank', '/sub/non_callable',
                          '/sub/no_wsh_at_the_end', '/does/not/exist']:
             request = mock.MockRequest(connection=mock.MockConn(''))
@@ -170,7 +172,7 @@ class DispatcherTest(unittest.TestCase):
                 self.fail()
 
     def test_transfer_data_handler_exception(self):
-        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR)
+        dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         request = mock.MockRequest(connection=mock.MockConn(''))
         request.ws_resource = '/sub/exception_in_transfer'
         request.ws_protocol = 'p3'
@@ -181,6 +183,36 @@ class DispatcherTest(unittest.TestCase):
             self.failUnless(str(e).find('Intentional') != -1)
         except Exception:
             self.fail()
+
+    def test_scan_dir(self):
+        disp = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
+        self.assertEqual(3, len(disp._handlers))
+        self.failUnless(disp._handlers.has_key('/origin_check'))
+        self.failUnless(disp._handlers.has_key('/sub/exception_in_transfer'))
+        self.failUnless(disp._handlers.has_key('/sub/plain'))
+
+    def test_scan_sub_dir(self):
+        disp = dispatch.Dispatcher(_TEST_HANDLERS_DIR, _TEST_HANDLERS_SUB_DIR)
+        self.assertEqual(2, len(disp._handlers))
+        self.failIf(disp._handlers.has_key('/origin_check'))
+        self.failUnless(disp._handlers.has_key('/sub/exception_in_transfer'))
+        self.failUnless(disp._handlers.has_key('/sub/plain'))
+
+    def test_scan_sub_dir_as_root(self):
+        disp = dispatch.Dispatcher(_TEST_HANDLERS_SUB_DIR,
+                                   _TEST_HANDLERS_SUB_DIR)
+        self.assertEqual(2, len(disp._handlers))
+        self.failIf(disp._handlers.has_key('/origin_check'))
+        self.failIf(disp._handlers.has_key('/sub/exception_in_transfer'))
+        self.failIf(disp._handlers.has_key('/sub/plain'))
+        self.failUnless(disp._handlers.has_key('/exception_in_transfer'))
+        self.failUnless(disp._handlers.has_key('/plain'))
+
+    def test_scan_dir_must_under_root(self):
+        dispatch.Dispatcher('a/b', 'a/b/c')  # OK
+        dispatch.Dispatcher('a/b///', 'a/b')  # OK
+        self.assertRaises(dispatch.DispatchError,
+                          dispatch.Dispatcher, 'a/b/c', 'a/b')
 
 
 if __name__ == '__main__':
