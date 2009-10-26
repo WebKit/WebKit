@@ -2,6 +2,14 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] Skip two flakey tests because of sporadic timeouts.
+
+        * platform/qt/Skipped:
+
+2009-10-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Skipping two other tests because of missing features on our platform.
 
         * platform/qt/Skipped:

@@ -115,6 +115,8 @@ animations/transform-origin-vs-functions.html
 animations/change-one-anim.html
 http/tests/cookies/simple-cookies-max-age.html
 http/tests/xmlhttprequest/workers/close.html
+http/tests/xmlhttprequest/workers/shared-workers-close.html
+transitions/change-values-during-transition.html
 
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg
