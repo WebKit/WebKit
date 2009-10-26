@@ -42,6 +42,8 @@ private
 
     IMAGE_FILE_MARKER_FORMAT = /^svn:mime-type = image\/png$/
 
+    START_OF_BINARY_DATA_FORMAT = /^[0-9a-zA-Z\+\/=]{20,}/ # Assume 20 chars without a space is base64 binary data.
+
     START_OF_SECTION_FORMAT = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@\s*(.*)/
 
     START_OF_EXTENT_STRING = "%c" % 0
@@ -182,6 +184,10 @@ EOF
         end
     end
 
+    def self.has_image_suffix(filename)
+        filename =~ /\.(png|jpg|gif)$/
+    end
+
     class FileDiff
         def initialize(lines)
             @filename = PrettyPatch.filename_from_diff_header(lines[0].chomp)
@@ -197,9 +203,16 @@ EOF
                     break
                 when BINARY_FILE_MARKER_FORMAT
                     @binary = true
-                    if (IMAGE_FILE_MARKER_FORMAT.match(lines[i + 1])) then
+                    if (IMAGE_FILE_MARKER_FORMAT.match(lines[i + 1]) or PrettyPatch.has_image_suffix(@filename)) then
                         @image = true
                         startOfSections = i + 2
+                        for x in startOfSections...lines.length
+                            # Binary diffs often have property changes listed before the actual binary data.  Skip them.
+                            if START_OF_BINARY_DATA_FORMAT.match(lines[x]) then
+                                startOfSections = x
+                                break
+                            end
+                        end
                     end
                     break
                 end

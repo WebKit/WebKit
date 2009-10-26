@@ -1,3 +1,12 @@
+2009-10-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch should show images even when they have the wrong mime type
+        https://bugs.webkit.org/show_bug.cgi?id=29506
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2009-10-17  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Eric Carlson.
