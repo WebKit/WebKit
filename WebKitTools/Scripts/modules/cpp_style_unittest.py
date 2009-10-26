@@ -2819,12 +2819,12 @@ class WebKitStyleTest(CppStyleTestBase):
             '    int myVariable;\n'
             '};\n'
             '}',
-            'Code inside a namespace should not be indented.  [whitespace/indent] [4]',
+            '',
             'foo.h')
         self.assert_multi_line_lint(
             'namespace OuterNamespace {\n'
-            'namespace InnerNamespace {\n'
-            'class Document {\n'
+            '    namespace InnerNamespace {\n'
+            '    class Document {\n'
             '};\n'
             '};\n'
             '}',
@@ -2833,7 +2833,7 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             'namespace WebCore {\n'
             '#if 0\n'
-            'class Document {\n'
+            '    class Document {\n'
             '};\n'
             '#endif\n'
             '}',
@@ -3306,7 +3306,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'namespace WebCore {\n'
             'int foo;\n'
             '};\n',
-            'Code inside a namespace should not be indented.  [whitespace/indent] [4]')
+            '')
         self.assert_multi_line_lint(
             'for (int i = 0; i < 10; i++) {\n'
             '    DoSomething();\n'

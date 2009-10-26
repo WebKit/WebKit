@@ -1,3 +1,14 @@
+2009-10-26  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Levin.
+
+        REGRESSION: 2 failures in run-webkit-unittests
+        https://bugs.webkit.org/show_bug.cgi?id=30645
+
+        * Scripts/modules/cpp_style_unittest.py:
+        Fixed a few test scenarios which apparently lost some spaces from 
+        text literals.
+
 2009-10-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Make sure isQt() doesn't return true if --wx was passed to build-webkit.
