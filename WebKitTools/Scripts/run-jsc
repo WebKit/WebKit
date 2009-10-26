@@ -30,6 +30,7 @@
 
 use strict;
 use warnings;
+use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use Getopt::Long;
@@ -44,7 +45,7 @@ GetOptions("count|c=i" => \$count,
 die "$usage\n" if (@ARGV < 1);
 
 my $jsc = jscProductDir() . "/jsc @ARGV";
-$jsc .= " 2> /dev/null" unless $verbose;
+$jsc .= " 2> " . File::Spec->devnull() unless $verbose;
 
 my $dyld = jscProductDir();
 

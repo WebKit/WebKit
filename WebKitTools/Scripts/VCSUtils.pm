@@ -70,7 +70,7 @@ my $svnVersion;
 sub isGitDirectory($)
 {
     my ($dir) = @_;
-    return system("cd $dir && git rev-parse > /dev/null 2>&1") == 0;
+    return system("cd $dir && git rev-parse > " . File::Spec->devnull() . " 2>&1") == 0;
 }
 
 sub isGit()
@@ -159,7 +159,6 @@ sub determineGitRoot()
 
 sub determineSVNRoot()
 {
-    my $devNull = File::Spec->devnull();
     my $last = '';
     my $path = '.';
     my $parent = '..';
@@ -169,7 +168,7 @@ sub determineSVNRoot()
         my $thisRoot;
         my $thisUUID;
         # Ignore error messages in case we've run past the root of the checkout.
-        open INFO, "svn info '$path' 2> $devNull |" or die;
+        open INFO, "svn info '$path' 2> " . File::Spec->devnull() . " |" or die;
         while (<INFO>) {
             if (/^Repository Root: (.+)/) {
                 $thisRoot = $1;

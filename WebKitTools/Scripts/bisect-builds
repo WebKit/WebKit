@@ -368,7 +368,7 @@ sub mountAndRunNightly($$$$)
     while (-e $mountPath) {
         $i++;
         usleep 100 if $i > 1;
-        `hdiutil detach '$mountPath' 2> /dev/null`;
+        exec "hdiutil", "detach '$mountPath' 2> " . File::Spec->devnull();
         die "Could not unmount $diskImage at $mountPath" if $i > 100;
     }
     die "Can't mount $diskImage: $mountPath already exists!" if -e $mountPath;
@@ -393,7 +393,7 @@ sub mountAndRunNightly($$$$)
     $tempFile ||= "";
     `DYLD_FRAMEWORK_PATH=$frameworkPath WEBKIT_UNSET_DYLD_FRAMEWORK_PATH=YES $safari $tempFile`;
 
-    `hdiutil detach '$mountPath' 2> /dev/null`;
+    exec "hdiutil", "detach '$mountPath' 2> " . File::Spec->devnull();
 }
 
 sub parseRevisions($$;$)

@@ -1,3 +1,20 @@
+2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Unification of using null device in perl scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=30572
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/bisect-builds:
+        * Scripts/resolve-ChangeLogs:
+        * Scripts/run-iexploder-tests:
+        * Scripts/run-jsc:
+        * Scripts/run-mangleme-tests:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+        Using File::Spec->devnull() instead of hard coded /dev/null.
+
 2009-10-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Holger Freyther.

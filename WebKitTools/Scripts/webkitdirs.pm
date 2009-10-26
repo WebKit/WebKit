@@ -117,7 +117,7 @@ sub determineBaseProductDir
             unlink($personalPlistFile) || die "Could not delete $personalPlistFile: $!";
         }
 
-        open PRODUCT, "defaults read com.apple.Xcode PBXApplicationwideBuildSettings 2> /dev/null |" or die;
+        open PRODUCT, "defaults read com.apple.Xcode PBXApplicationwideBuildSettings 2> " . File::Spec->devnull() . " |" or die;
         $baseProductDir = join '', <PRODUCT>;
         close PRODUCT;
 
@@ -125,7 +125,7 @@ sub determineBaseProductDir
         undef $baseProductDir unless $baseProductDir =~ /^\//;
 
         if (!defined($baseProductDir)) {
-            open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+            open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> " . File::Spec->devnull() . " |" or die;
             $baseProductDir = <PRODUCT>;
             close PRODUCT;
             if ($baseProductDir) {

@@ -32,6 +32,7 @@ use strict;
 use warnings;
 
 use Cwd;
+use File::Spec;
 use FindBin;
 use Getopt::Long;
 use IPC::Open2;
@@ -149,7 +150,7 @@ sub openHTTPDIfNeeded()
         "-c", "User \"#$<\"");
 
     my $retryCount = 20;
-    while (system("/usr/bin/curl -q --silent --stderr - --output /dev/null $listen") && $retryCount) {
+    while (system("/usr/bin/curl -q --silent --stderr - --output " . File::Spec->devnull() . " $listen") && $retryCount) {
         sleep 1;
         --$retryCount;
     }

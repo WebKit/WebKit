@@ -408,7 +408,7 @@ sub fixOneMergedChangeLog($)
         close FILE;
 
         # Apply the new patch
-        open(PATCH, "| patch -p1 $file > /dev/null") or die $!;
+        open(PATCH, "| patch -p1 $file > " . File::Spec->devnull()) or die $!;
         print PATCH $newPatch;
         close(PATCH) or die $!;
 
@@ -460,7 +460,7 @@ sub mergeChanges($$$)
     unlink("${fileNewer}.orig");
     unlink("${fileNewer}.rej");
 
-    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > /dev/null") or die $!;
+    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
     print PATCH fixChangeLogPatch($patch);
     close(PATCH);
 
