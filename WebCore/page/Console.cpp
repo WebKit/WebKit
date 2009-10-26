@@ -248,8 +248,7 @@ void Console::assertCondition(bool condition, ScriptCallStack* callStack)
     if (condition)
         return;
 
-    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19135> It would be nice to prefix assertion failures with a message like "Assertion failed: ".
-    addMessage(LogMessageType, ErrorMessageLevel, callStack, true);
+    addMessage(AssertMessageType, ErrorMessageLevel, callStack, true);
 }
 
 void Console::count(ScriptCallStack* callStack)

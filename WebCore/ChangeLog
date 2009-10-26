@@ -1,3 +1,19 @@
+2009-10-26  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        console.assert should prefix messages with "Assertion failed: "
+        https://bugs.webkit.org/show_bug.cgi?id=19135
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype.toMessageElement): Append "Assertion failed: " for AssertMessageType.
+        (WebInspector.ConsoleMessage.prototype.toString):
+        * page/Console.cpp:
+        (WebCore::Console::assertCondition): Use AssertMessageType.
+        * page/Console.h:
+        (WebCore::MessageType): Added AssertMessageType.
+
 2009-10-26  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -64,7 +64,8 @@ namespace WebCore {
         ObjectMessageType,
         TraceMessageType,
         StartGroupMessageType,
-        EndGroupMessageType
+        EndGroupMessageType,
+        AssertMessageType
     };
 
     enum MessageLevel {

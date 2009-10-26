@@ -789,6 +789,8 @@ WebInspector.ConsoleMessage.prototype = {
 
         var messageTextElement = document.createElement("span");
         messageTextElement.className = "console-message-text";
+        if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
+            messageTextElement.appendChild(document.createTextNode(WebInspector.UIString("Assertion failed: ")));
         messageTextElement.appendChild(this.formattedMessage);
         element.appendChild(messageTextElement);
 
@@ -850,6 +852,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageType.EndGroup:
                 typeString = "End Group";
                 break;
+            case WebInspector.ConsoleMessage.MessageType.Assert:
+                typeString = "Assert";
+                break;
         }
         
         var levelString;
@@ -905,7 +910,8 @@ WebInspector.ConsoleMessage.MessageType = {
     Object: 1,
     Trace: 2,
     StartGroup: 3,
-    EndGroup: 4
+    EndGroup: 4,
+    Assert: 5
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
