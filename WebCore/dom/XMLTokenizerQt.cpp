@@ -185,7 +185,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
 
 XMLTokenizer::~XMLTokenizer()
 {
-    setCurrentNode(0);
+    clearCurrentNodeStack();
     if (m_parsingFragment && m_doc)
         m_doc->deref();
     if (m_pendingScript)
@@ -566,7 +566,7 @@ void XMLTokenizer::parseStartElement()
         return;
     }
 
-    setCurrentNode(newElement.get());
+    pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
         newElement->attach();
 
@@ -579,18 +579,25 @@ void XMLTokenizer::parseEndElement()
     exitText();
 
     Node* n = m_currentNode;
-    RefPtr<Node> parent = n->parentNode();
     n->finishParsingChildren();
 
     if (!n->isElementNode() || !m_view) {
-        setCurrentNode(parent.get());
+        popCurrentNode();
         return;
     }
 
     Element* element = static_cast<Element*>(n);
+
+    // The element's parent may have already been removed from document.
+    // Parsing continues in this case, but scripts aren't executed.
+    if (!element->inDocument()) {
+        popCurrentNode();
+        return;
+    }
+
     ScriptElement* scriptElement = toScriptElement(element);
     if (!scriptElement) {
-        setCurrentNode(parent.get());
+        popCurrentNode();
         return;
     }
 
@@ -622,7 +629,7 @@ void XMLTokenizer::parseEndElement()
             m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
     }
     m_requestingScript = false;
-    setCurrentNode(parent.get());
+    popCurrentNode();
 }
 
 void XMLTokenizer::parseCharacters()

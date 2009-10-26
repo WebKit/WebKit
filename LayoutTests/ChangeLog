@@ -1,3 +1,15 @@
+2009-10-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30049
+        <rdar://problem/7286002> Manipulating DOM from a script while parsing XHTML can cause a crash
+
+        * fast/parser/remove-current-node-parent-x-2-expected.txt: Added.
+        * fast/parser/remove-current-node-parent-x-2.xhtml: Added.
+        * fast/parser/remove-current-node-parent-x-expected.txt: Added.
+        * fast/parser/remove-current-node-parent-x.xhtml: Added.
+
 2009-10-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

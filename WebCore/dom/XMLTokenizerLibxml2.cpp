@@ -611,7 +611,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
 
 XMLTokenizer::~XMLTokenizer()
 {
-    setCurrentNode(0);
+    clearCurrentNodeStack();
     if (m_parsingFragment && m_doc)
         m_doc->deref();
     if (m_pendingScript)
@@ -798,7 +798,7 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         return;
     }
 
-    setCurrentNode(newElement.get());
+    pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
         newElement->attach();
 
@@ -819,22 +819,29 @@ void XMLTokenizer::endElementNs()
     exitText();
 
     Node* n = m_currentNode;
-    RefPtr<Node> parent = n->parentNode();
     n->finishParsingChildren();
 
     if (!n->isElementNode() || !m_view) {
-        setCurrentNode(parent.get());
+        popCurrentNode();
         return;
     }
 
     Element* element = static_cast<Element*>(n);
-    ScriptElement* scriptElement = toScriptElement(element);
-    if (!scriptElement) {
-        setCurrentNode(parent.get());
+
+    // The element's parent may have already been removed from document.
+    // Parsing continues in this case, but scripts aren't executed.
+    if (!element->inDocument()) {
+        popCurrentNode();
         return;
     }
 
-    // don't load external scripts for standalone documents (for now)
+    ScriptElement* scriptElement = toScriptElement(element);
+    if (!scriptElement) {
+        popCurrentNode();
+        return;
+    }
+
+    // Don't load external scripts for standalone documents (for now).
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
@@ -862,7 +869,7 @@ void XMLTokenizer::endElementNs()
             m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
     }
     m_requestingScript = false;
-    setCurrentNode(parent.get());
+    popCurrentNode();
 }
 
 void XMLTokenizer::characters(const xmlChar* s, int len)
