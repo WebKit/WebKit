@@ -649,6 +649,7 @@ webcore_sources += \
 	WebCore/dom/Attr.h \
 	WebCore/dom/Attribute.cpp \
 	WebCore/dom/Attribute.h \
+	WebCore/dom/BeforeLoadEvent.h \
 	WebCore/dom/BeforeTextInsertedEvent.cpp \
 	WebCore/dom/BeforeTextInsertedEvent.h \
 	WebCore/dom/BeforeUnloadEvent.cpp \
@@ -1556,6 +1557,7 @@ webcore_sources += \
 	WebCore/platform/graphics/StringTruncator.cpp \
 	WebCore/platform/graphics/StringTruncator.h \
 	WebCore/platform/graphics/StrokeStyleApplier.h \
+	WebCore/platform/graphics/TextRenderingMode.h \
 	WebCore/platform/graphics/TextRun.h \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \
@@ -2009,7 +2011,8 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/ResourceResponseSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
 	WebCore/platform/network/soup/ResourceResponse.h \
-	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
+	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
+	WebCore/workers/SharedWorkerRepository.h
 
 # ---
 # Channel mesaging support
@@ -2247,6 +2250,7 @@ webcore_sources += \
 	WebCore/storage/StorageAreaSync.cpp \
 	WebCore/storage/StorageAreaSync.h \
 	WebCore/storage/StorageEvent.cpp \
+	WebCore/storage/StorageEventDispatcher.h \
 	WebCore/storage/StorageEventDispatcher.cpp \
 	WebCore/storage/StorageEvent.h \
 	WebCore/storage/StorageMap.cpp \
@@ -2518,7 +2522,6 @@ webcore_built_sources += \
 	WebCore/workers/SharedWorker.h \
 	WebCore/workers/SharedWorkerContext.cpp \
 	WebCore/workers/SharedWorkerContext.h \
-	WebCore/workers/SharedWorkerRepository.h \
 	WebCore/workers/SharedWorkerThread.cpp \
 	WebCore/workers/SharedWorkerThread.h
 
@@ -3519,6 +3522,7 @@ webcore_dist += \
 	WebCore/bindings/scripts/generate-bindings.pl \
 	WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	WebCore/css/html.css \
+	WebCore/css/mathml.css \
 	WebCore/css/quirks.css \
 	WebCore/css/view-source.css \
 	WebCore/css/svg.css \

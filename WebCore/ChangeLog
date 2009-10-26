@@ -1,3 +1,9 @@
+2009-10-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. make distcheck build fixes.
+
+        * GNUmakefile.am:
+
 2009-10-26  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Dimitri Glazkov.
