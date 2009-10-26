@@ -42,8 +42,9 @@ class Reviewer(Committer):
         Committer.__init__(self, name, email)
         self.can_review = True
 
-# All reviewers are committers, so this list is only of committers
-# who are not reviewers.
+# This is intended as a cannonical, machine-readable list of all non-reviewer committers for WebKit.
+# If your name is missing here and you are a committer, please add it.  No review needed.
+# All reviewers are committers, so this list is only of committers who are not reviewers.
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org"),
     Committer("Adam Langley", "agl@chromium.org"),
@@ -91,24 +92,31 @@ committers_unable_to_review = [
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
 
+# This is intended as a cannonical, machine-readable list of all reviewers for WebKit.
+# If your name is missing here and you are a reviewer, please add it.  No review needed.
 reviewers_list = [
     Reviewer("Adam Barth", "abarth@webkit.org"),
+    Reviewer("Ada Chan", "adachan@apple.com"),
     Reviewer("Adam Roben", "aroben@apple.com"),
     Reviewer("Adam Treat", "treat@kde.org"),
     Reviewer("Adele Peterson", "adele@apple.com"),
     Reviewer("Alexey Proskuryakov", "ap@webkit.org"),
     Reviewer("Alice Liu", "alice.liu@apple.com"),
+    Reviewer("Alp Toker", "alp@nuanti.com"),
     Reviewer("Anders Carlsson", "andersca@apple.com"),
     Reviewer("Antti Koivisto", "koivisto@iki.fi"),
     Reviewer("Ariya Hidayat", "ariya.hidayat@trolltech.com"),
     Reviewer("Brady Eidson", "beidson@apple.com"),
+    Reviewer("Cameron Zwarich", "zwarich@apple.com"),
     Reviewer("Dan Bernstein", "mitz@webkit.org"),
     Reviewer("Darin Adler", "darin@apple.com"),
     Reviewer("Darin Fisher", "fishd@chromium.org"),
+    Reviewer("David Harrison", "harrison@apple.com"),
     Reviewer("David Hyatt", "hyatt@apple.com"),
     Reviewer("David Kilzer", "ddkilzer@webkit.org"),
     Reviewer("David Levin", "levin@chromium.org"),
     Reviewer("Dimitri Glazkov", "dglazkov@chromium.org"),
+    Reviewer("Don Melton", "gramps@apple.com"),
     Reviewer("Dmitri Titov", "dimich@chromium.org"),
     Reviewer("Eric Carlson", "eric.carlson@apple.com"),
     Reviewer("Eric Seidel", "eric@webkit.org"),
@@ -119,14 +127,18 @@ reviewers_list = [
     Reviewer("Holger Freyther", "zecke@selfish.org"),
     Reviewer("Jan Alonzo", "jmalonzo@gmail.com"),
     Reviewer("John Sullivan", "sullivan@apple.com"),
+    Reviewer("Jon Honeycutt", "jhoneycutt@apple.com"),
     Reviewer("Justin Garcia", "justin.garcia@apple.com"),
+    Reviewer("Kevin Decker", "kdecker@apple.com"),
     Reviewer("Kevin McCullough", "kmccullough@apple.com"),
     Reviewer("Kevin Ollivier", "kevino@theolliviers.com"),
+    Reviewer("Lars Knoll", "lars@trolltech.com"),
     Reviewer("Maciej Stachowiak", "mjs@apple.com"),
     Reviewer("Mark Rowe", "mrowe@apple.com"),
     Reviewer("Nikolas Zimmermann", "zimmermann@kde.org"),
     Reviewer("Oliver Hunt", "oliver@apple.com"),
     Reviewer("Pavel Feldman", "pfeldman@chromium.org"),
+    Reviewer("Rob Buis", "rwlbuis@gmail.com"),
     Reviewer("Sam Weinig", "sam@webkit.org"),
     Reviewer("Simon Fraser", "simon.fraser@apple.com"),
     Reviewer("Simon Hausmann", "hausmann@webkit.org"),
