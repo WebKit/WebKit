@@ -34,32 +34,6 @@
 
 namespace WebCore {
 
-#if USE(V8)
-// FIXME: Remove once these features are turned on by default in Chromium.
-static bool s_localStorageAvailable = true;
-static bool s_sessionStorageAvailable = true;
-
-void Storage::setLocalStorageAvailable(bool available)
-{
-    s_localStorageAvailable = available;
-}
-
-bool Storage::localStorageAvailable()
-{
-    return s_localStorageAvailable;
-}
-
-void Storage::setSessionStorageAvailable(bool available)
-{
-    s_sessionStorageAvailable = available;
-}
-
-bool Storage::sessionStorageAvailable()
-{
-    return s_sessionStorageAvailable;
-}
-#endif
-
 PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storageArea)
 {
     return adoptRef(new Storage(frame, storageArea));
