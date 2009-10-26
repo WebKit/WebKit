@@ -1,3 +1,14 @@
+2009-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Pass "console" as object group when evaluating selection.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30738
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+
 2009-10-26  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.
