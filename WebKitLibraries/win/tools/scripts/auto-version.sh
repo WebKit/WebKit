@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,60 +23,80 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-SRCPATH=`cygpath -u "$WEBKITLIBRARIESDIR\Tools\Scripts"`
-VERSIONPATH=`cygpath -u "$1"`
-VERSIONPATH=$VERSIONPATH/include
-VERSIONFILE=$VERSIONPATH/autoversion.h
-mkdir -p "$VERSIONPATH"
 
-if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    PROPOSEDVERSION=`cat $SRCPATH/VERSION`
-else
-    PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
-fi
-PROPOSEDVERSION=`echo "$PROPOSEDVERSION" | sed -r 's/(.+?)[\r\n]*$/\1/'`
+# Trim any trailing \r or \n from the given variable.
+chomp()
+{
+    local old_value=$(eval echo "\$$1");
+    local value=$(echo "$old_value" | sed 's/[\r\n]*$//')
+    eval $1=\$value;
+}
 
-BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
-BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
-BLDVARIANTVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\5/'`
-if [ "$BLDMINORVERSION" == "" ]; then
-    BLDMINORVERSION=0
-fi
-if [ "$BLDVARIANTVERSION" == "" ]; then
-    BLDVARIANTVERSION=0
-fi
-SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed -r 's/^Revision: (.+?)[\r\n]*$/\1/'`
+FALLBACK_VERSION_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\VERSION"`
+OUTPUT_FILE=$(cygpath -u "$1")/include/autoversion.h
+mkdir -p $(dirname "$OUTPUT_FILE")
 
-MAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\(.\)[^\.]*\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
-MINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/.\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
-TINYVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
-if [ "$MINORVERSION" == "" ]; then
-    MINORVERSION=0
-fi
-if [ "$TINYVERSION" == "" ]; then
-    TINYVERSION=0
+# Take the initial version number from RC_PROJECTSOURCEVERSION if it
+# exists, otherwise fall back to the version number stored in the source.
+ENVIRONMENT_VERSION="$RC_PROJECTSOURCEVERSION";
+FALLBACK_VERSION=$(cat "$FALLBACK_VERSION_PATH");
+PROPOSED_VERSION=${ENVIRONMENT_VERSION:-$FALLBACK_VERSION}
+chomp PROPOSED_VERSION
+
+# Split out the three components of the dotted version number.  We pad
+# the input with trailing dots to handle the case where the input version
+# has fewer components than we expect.
+BUILD_MAJOR_VERSION=$(echo "$PROPOSED_VERSION.." | cut -d '.' -f 1)
+BUILD_MINOR_VERSION=$(echo "$PROPOSED_VERSION.." | cut -d '.' -f 2)
+BUILD_TINY_VERSION=$(echo "$PROPOSED_VERSION.." | cut -d '.' -f 3)
+
+# Cut the major component down to three characters by dropping any
+# extra leading digits, then adjust the major version portion of the
+# version string to match.
+CHARACTERS_TO_DROP=$(( ${#BUILD_MAJOR_VERSION} - 3 ))
+BUILD_MAJOR_VERSION=${BUILD_MAJOR_VERSION:$CHARACTERS_TO_DROP}
+PROPOSED_VERSION=${PROPOSED_VERSION:$CHARACTERS_TO_DROP}
+
+# Have the minor and tiny components default to zero if not present.
+BUILD_MINOR_VERSION=${BUILD_MINOR_VERSION:-0}
+BUILD_TINY_VERSION=${BUILD_TINY_VERSION:-0}
+
+# Split the first component further by using the first digit for the
+# major version and the remaining two characters as the minor version.
+# The minor version is shifted down to the tiny version, with the tiny
+# version becoming the variant version.
+MAJOR_VERSION=${BUILD_MAJOR_VERSION:0:1}
+MINOR_VERSION=${BUILD_MAJOR_VERSION:1}
+TINY_VERSION=${BUILD_MINOR_VERSION}
+VARIANT_VERSION=${BUILD_TINY_VERSION}
+
+VERSION_TEXT=${PROPOSED_VERSION}
+VERSION_TEXT_SHORT=${VERSION_TEXT}
+
+if [ -z ${ENVIRONMENT_VERSION} ]; then
+    # If we didn't pull the version number from the environment then we're doing
+    # an engineering build and we'll stamp the build with some more information.
+
+    BUILD_DATE=$(date)
+    SVN_REVISION=$(svn info | grep '^Revision' | sed 's/^Revision: //')
+
+    chomp BUILD_DATE
+    chomp SVN_REVISION
+
+    VERSION_TEXT_SHORT="${VERSION_TEXT_SHORT}+"
+    VERSION_TEXT="${VERSION_TEXT_SHORT} ${USER} - ${BUILD_DATE} - r${SVN_REVISION}"
 fi
 
-BLDNMBR="$PROPOSEDVERSION"
-BLDNMBRSHORT="$BLDNMBR"
-
-if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    BLDNMBRSHORT="$BLDNMBRSHORT+"
-    BLDUSERNAME=`echo "$(whoami)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
-    BLDDATE=`echo "$(date)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
-    BLDNMBR="$BLDNMBRSHORT $BLDUSERNAME - $BLDDATE - r$SVNOPENSOURCEREVISION"
-fi
-
-cat > "$VERSIONFILE" <<EOF
-#define __VERSION_TEXT__ "$BLDNMBR"
-#define __BUILD_NUMBER__ "$BLDNMBR"
-#define __BUILD_NUMBER_SHORT__ "$BLDNMBRSHORT"
-#define __VERSION_MAJOR__ $MAJORVERSION
-#define __VERSION_MINOR__ $MINORVERSION
-#define __VERSION_TINY__ $TINYVERSION
-#define __VERSION_BUILD__ $BLDVARIANTVERSION
-#define __BUILD_NUMBER_MAJOR__ $BLDMAJORVERSION
-#define __BUILD_NUMBER_MINOR__ $BLDMINORVERSION
-#define __BUILD_NUMBER_VARIANT__ $BLDVARIANTVERSION
-#define __SVN_REVISION__ $SVNREVISION
+cat > "$OUTPUT_FILE" <<EOF
+#define __VERSION_TEXT__ "${VERSION_TEXT}"
+#define __BUILD_NUMBER__ "${VERSION_TEXT}"
+#define __BUILD_NUMBER_SHORT__ "${VERSION_TEXT_SHORT}"
+#define __VERSION_MAJOR__ ${MAJOR_VERSION}
+#define __VERSION_MINOR__ ${MINOR_VERSION}
+#define __VERSION_TINY__ ${TINY_VERSION}
+#define __VERSION_BUILD__ ${VARIANT_VERSION}
+#define __BUILD_NUMBER_MAJOR__ ${BUILD_MAJOR_VERSION}
+#define __BUILD_NUMBER_MINOR__ ${BUILD_MINOR_VERSION}
+#define __BUILD_NUMBER_VARIANT__ ${BUILD_TINY_VERSION}
+#define __SVN_REVISION__ ${SVN_REVISION}
 EOF

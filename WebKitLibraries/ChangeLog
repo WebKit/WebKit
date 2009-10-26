@@ -1,3 +1,14 @@
+2009-10-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Clean up the regex madness in auto-version.sh to make it obvious what the script is doing.
+
+        Also teaches auto-version.sh to handle RC_PROJECTSOURCEVERSION that has more than three digits
+        in the major component of the version number.
+
+        * win/tools/scripts/auto-version.sh:
+
 2009-10-19  Marshall Culpepper  <mculpepper@appcelerator.com>
 
         Reviewed by Eric Seidel.
