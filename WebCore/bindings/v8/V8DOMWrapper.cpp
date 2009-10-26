@@ -1274,7 +1274,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy
 
     v8::Handle<v8::Context> context;
     if (proxy)
-        context = V8Proxy::context(proxy->frame());
+        context = proxy->context();
 
     // Enter the node's context and create the wrapper in that context.
     if (!context.IsEmpty())
