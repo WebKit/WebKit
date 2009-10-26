@@ -74,6 +74,7 @@ global_cflags :=
 global_cxxflags :=
 corekit_cflags :=
 corekit_cppflags :=
+EXTRA_DIST :=
 BUILT_SOURCES :=
 CLEANFILES :=
 DISTCLEANFILES :=
@@ -413,24 +414,6 @@ webkitgtk_cleanfiles += \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
 
-# Files that will be distributed
-EXTRA_DIST = \
-	$(srcdir)/gtk-doc.make \
-	WebKit/LICENSE \
-	$(javascriptcore_dist) \
-	$(webcore_dist) \
-	$(srcdir)/autotools/symbols.filter \
-	$(srcdir)/WebKit/gtk/ChangeLog \
-	$(srcdir)/WebKit/gtk/NEWS \
-	$(srcdir)/WebKit/gtk/webkitmarshal.list \
-	$(srcdir)/WebKit/gtk/docs/GNUmakefile.* \
-	$(srcdir)/WebKit/gtk/docs/webkitenvironment.xml \
-	$(srcdir)/WebKit/gtk/docs/webkitgtk-docs.sgml \
-	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
-	$(srcdir)/WebKit/gtk/docs/version.xml.in \
-	$(srcdir)/WebKit/gtk/po/* \
-	$(srcdir)/WebKit/gtk/resources/*
-
 if ENABLE_INTROSPECTION
 JSCORE_GIRSOURCES = $(srcdir)/WebKit/gtk/JSCore-1.0.gir # JSCore-1.0.gir is handwritten
 WEBKIT_GIRSOURCES = WebKit-1.0.gir
@@ -527,6 +510,24 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 		> xgen-gtc \
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
+
+# Files that will be distributed
+EXTRA_DIST += \
+	$(srcdir)/gtk-doc.make \
+	WebKit/LICENSE \
+	$(javascriptcore_dist) \
+	$(webcore_dist) \
+	$(srcdir)/autotools/symbols.filter \
+	$(srcdir)/WebKit/gtk/ChangeLog \
+	$(srcdir)/WebKit/gtk/NEWS \
+	$(srcdir)/WebKit/gtk/webkitmarshal.list \
+	$(srcdir)/WebKit/gtk/docs/GNUmakefile.* \
+	$(srcdir)/WebKit/gtk/docs/webkitenvironment.xml \
+	$(srcdir)/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
+	$(srcdir)/WebKit/gtk/docs/version.xml.in \
+	$(srcdir)/WebKit/gtk/po/* \
+	$(srcdir)/WebKit/gtk/resources/*
 
 # extra resource files
 resourcesdir = ${datadir}/webkit-1.0/resources

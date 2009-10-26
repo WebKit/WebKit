@@ -1,6 +1,8 @@
 2009-10-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
-        Unreviewed. Fix make dist regression introduced by r48672.
+        Reviewed by Jan Alonzo.
+
+        Alternative solution to regression introduced in r48672.
 
         * GNUmakefile.am:
 
