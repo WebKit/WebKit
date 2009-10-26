@@ -1,3 +1,14 @@
+2009-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue will get stuck on patches if land-patches terminates unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=30634
+
+        * Scripts/bugzilla-tool:
+         - Add a way for land-patches to exit(2) to indicate an error, but one it has handled.
+         - Make commit-queue auto cq- any patch where land-patches exited anything other than '0' or '2'.
+
 2009-10-26  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.

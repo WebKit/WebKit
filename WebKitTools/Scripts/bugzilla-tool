@@ -73,7 +73,7 @@ def commit_message_for_this_commit(scm):
         log("Parsing ChangeLog: %s" % changelog_path)
         changelog_entry = ChangeLog(changelog_path).latest_entry()
         if not changelog_entry:
-            error("Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
+            raise ScriptError(message="Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
         changelog_messages.append(changelog_entry)
 
     # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
@@ -325,6 +325,11 @@ class LandPatchesFromBugs(Command):
         options += WebKitLandingScripts.land_options()
         Command.__init__(self, 'Lands all patches on a bug optionally testing them first', 'BUGID', options=options)
 
+    @staticmethod
+    def handled_error(error):
+        log(error)
+        exit(2) # Exit 2 insted of 1 to indicate to the commit-queue to indicate we handled the error, and that the queue should keep looping.
+
     @classmethod
     def land_patches(cls, bug_id, patches, options, tool):
         try:
@@ -344,11 +349,11 @@ class LandPatchesFromBugs(Command):
         except CheckoutNeedsUpdate, e:
             log("Commit was rejected because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
-            error(e)
+            cls.handled_error(e)
         except ScriptError, e:
             # Mark the patch as commit-queue- and comment in the bug.
             tool.bugs.reject_patch_from_commit_queue(patch['id'], e.message_with_output())
-            error(e)
+            cls.handled_error(e)
 
     @staticmethod
     def _fetch_list_of_patches_to_land(options, args, tool):
@@ -746,7 +751,13 @@ class LandPatchesFromCommitQueue(Command):
             bug_log = self._add_log_to_output_tee(bug_log_path)
             bugzilla_tool_path = __file__ # re-execute this script
             bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id]
-            WebKitLandingScripts.run_command_with_teed_output(bugzilla_tool_args, sys.stdout)
+            try:
+                WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
+            except ScriptError, e:
+                # Unexpected failure!  Mark the patch as commit-queue- and comment in the bug.
+                # exit(2) is a special exit code we use to indicate that the error was already handled by land-patches and we should keep looping anyway.
+                if e.exit_code != 2:
+                    tool.bugs.reject_patch_from_commit_queue(patch['id'], "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output())
             self._remove_log_from_output_tee(bug_log)
 
         log("Finished WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))
