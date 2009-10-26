@@ -34,6 +34,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLSelectElement.h"
 #include "V8Binding.h"
+#include "V8NamedNodesCollection.h"
 #include "V8Proxy.h"
 #include <v8.h>
 
@@ -210,6 +211,38 @@ namespace WebCore {
 
     v8::Handle<v8::Value> toOptionsCollectionSetter(uint32_t index, v8::Handle<v8::Value>, HTMLSelectElement*);
 
+    template<class Collection>
+    v8::Handle<v8::Value> getNamedItemsFromCollection(Collection* collection, AtomicString name)
+    {
+        Vector<RefPtr<Node> > namedItems;
+        collection->namedItems(name, namedItems);
+
+        if (!namedItems.size())
+            return v8::Handle<v8::Value>();
+
+        if (namedItems.size() == 1)
+            return V8DOMWrapper::convertNodeToV8Object(namedItems.at(0).release());
+
+        NodeList* list = new V8NamedNodesCollection(namedItems);
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, list);
+    }
+
+    template<class Collection>
+    v8::Handle<v8::Value> getItemFromCollection(Collection* collection, v8::Handle<v8::Value> argument)
+    {
+        v8::Local<v8::Uint32> index = argument->ToArrayIndex();
+        if (index.IsEmpty()) {
+            v8::Handle<v8::Value> result = getNamedItemsFromCollection(collection, toWebCoreString(argument->ToString()));
+
+            if (result.IsEmpty())
+                return v8::Undefined();
+
+            return result;
+        }
+
+        RefPtr<Node> result = collection->item(index->Uint32Value());
+        return V8DOMWrapper::convertNodeToV8Object(result.release());
+    }
 } // namespace WebCore
 
 #endif // V8Collection_h

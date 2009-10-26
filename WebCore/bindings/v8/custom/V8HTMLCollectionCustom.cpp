@@ -32,42 +32,11 @@
 #include "HTMLCollection.h"
 
 #include "V8Binding.h"
+#include "V8Collection.h"
 #include "V8CustomBinding.h"
-#include "V8NamedNodesCollection.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
-
-static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name)
-{
-    Vector<RefPtr<Node> > namedItems;
-    collection->namedItems(name, namedItems);
-
-    if (!namedItems.size())
-        return v8::Handle<v8::Value>();
-
-    if (namedItems.size() == 1)
-        return V8DOMWrapper::convertNodeToV8Object(namedItems.at(0).release());
-
-    NodeList* list = new V8NamedNodesCollection(namedItems);
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, list);
-}
-
-static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::Value> argument)
-{
-    v8::Local<v8::Uint32> index = argument->ToArrayIndex();
-    if (index.IsEmpty()) {
-        v8::Handle<v8::Value> result = getNamedItems(collection, toWebCoreString(argument->ToString()));
-
-        if (result.IsEmpty())
-            return v8::Undefined();
-
-        return result;
-    }
-
-    RefPtr<Node> result = collection->item(index->Uint32Value());
-    return V8DOMWrapper::convertNodeToV8Object(result.release());
-}
 
 NAMED_PROPERTY_GETTER(HTMLCollection)
 {
@@ -85,21 +54,21 @@ NAMED_PROPERTY_GETTER(HTMLCollection)
 
     // Finally, search the DOM structure.
     HTMLCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, info.Holder());
-    return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
+    return getNamedItemsFromCollection(imp, v8StringToAtomicWebCoreString(name));
 }
 
 CALLBACK_FUNC_DECL(HTMLCollectionItem)
 {
     INC_STATS("DOM.HTMLCollection.item()");
     HTMLCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
-    return getItem(imp, args[0]);
+    return getItemFromCollection(imp, args[0]);
 }
 
 CALLBACK_FUNC_DECL(HTMLCollectionNamedItem)
 {
     INC_STATS("DOM.HTMLCollection.namedItem()");
     HTMLCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
-    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]));
+    v8::Handle<v8::Value> result = getNamedItemsFromCollection(imp, toWebCoreString(args[0]));
 
     if (result.IsEmpty())
         return v8::Undefined();
@@ -116,7 +85,7 @@ CALLBACK_FUNC_DECL(HTMLCollectionCallAsFunction)
     HTMLCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
 
     if (args.Length() == 1)
-        return getItem(imp, args[0]);
+        return getItemFromCollection(imp, args[0]);
 
     // If there is a second argument it is the index of the item we want.
     String name = toWebCoreString(args[0]);

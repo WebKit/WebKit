@@ -280,6 +280,8 @@ namespace WebCore {
 
         DECLARE_PROPERTY_ACCESSOR_SETTER(AttrValue);
 
+        DECLARE_CALLBACK(HTMLOptionsCollectionItem);
+        DECLARE_CALLBACK(HTMLOptionsCollectionNamedItem);
         DECLARE_PROPERTY_ACCESSOR(HTMLOptionsCollectionLength);
 
         DECLARE_CALLBACK(HTMLInputElementSetSelectionRange);
