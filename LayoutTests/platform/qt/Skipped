@@ -61,9 +61,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
 
-# Flanky test
-http/tests/cookies/simple-cookies-max-age.html
-
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html
 http/tests/security/isolatedWorld/all-window-prototypes.html
@@ -113,9 +110,11 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator/basic-iteration.html
 
-# Fluctuating tests
+# Fluctuating/flakey tests
 animations/transform-origin-vs-functions.html
 animations/change-one-anim.html
+http/tests/cookies/simple-cookies-max-age.html
+http/tests/xmlhttprequest/workers/close.html
 
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg

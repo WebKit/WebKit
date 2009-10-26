@@ -1,5 +1,14 @@
 2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        http/tests/cookies/simple-cookies-max-age.html moved to flakey tests group.
+        http/tests/xmlhttprequest/workers/close.html added to flakey tests group.
+
+        * platform/qt/Skipped: 
+
+2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix for r49854.
 
         * platform/qt/Skipped: Missing html extension added.
