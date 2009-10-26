@@ -1,3 +1,14 @@
+2009-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Re-add CSSPropertyWebkitBackgroundSize in one more place
+
+        Fixes transitions/multiple-background-size-transitions.html, transitions/background-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::FillLayersPropertyWrapper::FillLayersPropertyWrapper):
+
 2009-10-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

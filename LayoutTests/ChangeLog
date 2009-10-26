@@ -1,5 +1,14 @@
 2009-10-26  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Use -webkit-background-size as the transition property in this test now
+        that it is distinct from background-size.
+
+        * transitions/multiple-background-size-transitions.html:
+
+2009-10-26  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Beth Dakin.
 
         Update expedted results after r50108.
