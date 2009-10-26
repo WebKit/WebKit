@@ -3693,6 +3693,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAnchorElement.cpp"
 				>
 				<FileConfiguration
@@ -4306,62 +4362,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLCanvasElement.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAllCollection.h"
 				>
 			</File>
 			<File
@@ -7671,6 +7671,10 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
+				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -7719,10 +7723,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
-				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
@@ -22354,6 +22354,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\ImageBuffer.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\ImageBuffer.h"
 					>
 				</File>
@@ -23874,6 +23878,78 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\transforms\TranslateTransformOperation.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="filters"
+					>
+					<File
+						RelativePath="..\platform\graphics\filters\FEBlend.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEBlend.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEColorMatrix.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEColorMatrix.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEComponentTransfer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEComponentTransfer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEComposite.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEComposite.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FEGaussianBlur.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\Filter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FilterEffect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FilterEffect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SourceAlpha.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SourceAlpha.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SourceGraphic.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SourceGraphic.h"
 						>
 					</File>
 				</Filter>
@@ -29451,6 +29527,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLAllCollection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLAllCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLAnchorElement.cpp"
 				>
 				<FileConfiguration
@@ -30064,14 +30148,6 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLCanvasElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLAllCollection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLAllCollection.h"
 				>
 			</File>
 			<File
@@ -33922,15 +33998,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSHTMLAllCollectionCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLCanvasElementCustom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSHTMLAllCollectionCustom.cpp"
 					>
 				</File>
 				<File
@@ -34715,10 +34791,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEFloodElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEFloodElement.h"
 				>
 			</File>
@@ -35293,46 +35365,6 @@
 					Name="filters"
 					>
 					<File
-						RelativePath="..\platform\graphics\filters\FEBlend.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEBlend.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEColorMatrix.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEColorMatrix.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEComponentTransfer.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEComponentTransfer.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEComposite.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEComposite.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEGaussianBlur.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FEGaussianBlur.h"
-						>
-					</File>
-					<File
 						RelativePath="..\svg\graphics\filters\SVGDistantLightSource.h"
 						>
 					</File>
@@ -35409,6 +35441,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\svg\graphics\filters\SVGFETile.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\svg\graphics\filters\SVGFETile.h"
 						>
 					</File>
@@ -35418,6 +35454,22 @@
 					</File>
 					<File
 						RelativePath="..\svg\graphics\filters\SVGFETurbulence.h"
+						>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\filters\SVGFilter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\filters\SVGFilter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\filters\SVGFilterBuilder.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\filters\SVGFilterBuilder.h"
 						>
 					</File>
 					<File

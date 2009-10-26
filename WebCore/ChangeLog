@@ -1,3 +1,27 @@
+2009-10-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Build fix for ENABLE_FILTERS under Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=30762
+
+        Build correction for ENABLE_FILTERS feature.  No new tests needed.
+
+        * WebCore.vcproj/WebCore.vcproj:  Make the following changes:
+          (1) Create a new 'filters' sub-folder of the platform/graphics 
+              folder to properly show the sources held in this directory.
+          (2) Move the files that are currently shown in svn/graphics/filters
+              to platform/graphics/filters (where they actually live on disk).
+          (3) Add the missing SVGFilter, SVGFilterBuilder, and SVGFETile to
+              the project so they are built.
+          (4) Remove SVGFEFloodElement.cpp from the build, since it is already
+              being compiled by SVGAllInOne.cpp.  Its presence as a separate
+              entity is causing a linker warning for duplicate symbols.
+          (5) Add ImageBuffer.cpp to the build to support color space
+              calculations for non-CG builds.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Add the platform/graphics/filters
+          path to the search paths in the project.
+
 2009-10-26  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.
