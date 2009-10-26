@@ -1,3 +1,18 @@
+2009-10-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed documentation fix from David Boddie (Qt Doc Team)
+
+        Ensure that qdoc will always see the RenderHints property.
+
+        The property was only defined in the header file if the Q_OS_SYMBIAN
+        symbol was not defined, resulting in the property not showing up
+        in the Qt documentation just because one platform doesn't support it.
+
+        A follow up commit will improve the documentation for the property
+        and note that it is not supported on the Symbiam platform.
+
+        * Api/qwebview.h:
+
 2009-10-26  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

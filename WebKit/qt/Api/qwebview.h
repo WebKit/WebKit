@@ -53,9 +53,8 @@ class QWEBKIT_EXPORT QWebView : public QWidget {
 
 // FIXME: temporary work around for elftran issue that it couldn't find the QPainter::staticMetaObject
 // symbol from Qt lib; it should be reverted after the right symbol is exported.  
-// remember to revert the qdoc \property comment as well.
 // See bug: http://qt.nokia.com/developer/task-tracker/index_html?method=entry&id=258893
-#if !defined(Q_OS_SYMBIAN)
+#if defined(Q_QDOC) || !defined(Q_OS_SYMBIAN)
     Q_PROPERTY(QPainter::RenderHints renderHints READ renderHints WRITE setRenderHints)
 #endif
     Q_FLAGS(QPainter::RenderHints)
