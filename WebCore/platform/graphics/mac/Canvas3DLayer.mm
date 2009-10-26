@@ -33,6 +33,8 @@
 #import "GraphicsLayer.h"
 #import <QuartzCore/QuartzCore.h>
 #import <OpenGL/OpenGL.h>
+#import <wtf/RetainPtr.h>
+#include <wtf/FastMalloc.h>
 
 using namespace WebCore;
 
@@ -105,6 +107,42 @@ using namespace WebCore;
 
     // Call super to finalize the drawing. By default all it does is call glFlush().
     [super drawInCGLContext:glContext pixelFormat:pixelFormat forLayerTime:timeInterval displayTime:timeStamp];
+}
+
+static void freeData(void *, const void *data, size_t /* size */)
+{
+    fastFree(const_cast<void *>(data));
+}
+
+-(CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace
+{
+    CGLSetCurrentContext(m_contextObj);
+
+    RetainPtr<CGColorSpaceRef> imageColorSpace = colorSpace;
+    if (!imageColorSpace)
+        imageColorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
+
+    CGRect layerBounds = CGRectIntegral([self bounds]);
+    
+    size_t width = layerBounds.size.width;
+    size_t height = layerBounds.size.height;
+
+    size_t rowBytes = (width * 4 + 15) & ~15;
+    size_t dataSize = rowBytes * height;
+    void* data = fastMalloc(dataSize);
+    if (!data)
+        return 0;
+
+    glPixelStorei(GL_PACK_ROW_LENGTH, rowBytes / 4);
+    glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+
+    CGDataProviderRef provider = CGDataProviderCreateWithData(0, data, dataSize, freeData);
+    CGImageRef image = CGImageCreate(width, height, 8, 32, rowBytes, imageColorSpace.get(),
+                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
+                                                 provider, 0, true,
+                                                 kCGRenderingIntentDefault);
+    CGDataProviderRelease(provider);
+    return image;
 }
 
 @end

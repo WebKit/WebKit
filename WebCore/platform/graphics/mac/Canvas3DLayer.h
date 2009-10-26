@@ -41,7 +41,9 @@ namespace WebCore {
     GLuint m_texture;
 }
 
--(id)initWithContext:(CGLContextObj)context texture:(GLuint)texture;
+- (id)initWithContext:(CGLContextObj)context texture:(GLuint)texture;
+
+- (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 
 @end
 

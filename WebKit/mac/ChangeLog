@@ -1,3 +1,14 @@
+2009-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6988966> Hardware layers do not show up in page snapshots
+
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _compositingLayersHostingView]):
+        Add a private method that returns the NSView used to host compositing layers.
+        
 2009-10-23  Mark Rowe  <mrowe@apple.com>
 
         Fix engineering builds in the mysterious future.

@@ -117,8 +117,8 @@
 - (void)_pauseNullEventsForAllNetscapePlugins;
 #endif
 
-// SPI for DumpRenderTree
 - (BOOL)_isUsingAcceleratedCompositing;
+- (NSView *)_compositingLayersHostingView;
 
 // SPI for printing (should be converted to API someday). When the WebHTMLView isn't being printed
 // directly, this method must be called before paginating, or the computed height might be incorrect.

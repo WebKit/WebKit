@@ -2173,6 +2173,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 #endif
 }
 
+- (NSView *)_compositingLayersHostingView
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return _private->layerHostingView;
+#else
+    return 0;
+#endif
+}
+
 @end
 
 @implementation NSView (WebHTMLViewFileInternal)

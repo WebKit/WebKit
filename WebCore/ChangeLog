@@ -1,3 +1,16 @@
+2009-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6988966> Hardware layers do not show up in page snapshots
+
+        Add a method that gets called when snapshotting Canvas3DLayers for page snapshots,
+        that allows the layer to return a CGImageRef of its contents.
+        
+        * platform/graphics/mac/Canvas3DLayer.h:
+        * platform/graphics/mac/Canvas3DLayer.mm:
+        (-[Canvas3DLayer copyImageSnapshotWithColorSpace:]):
+
 2009-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
