@@ -1,3 +1,12 @@
+2009-10-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Reenable mod_rewrite in Fedora's httpd.conf
+        https://bugs.webkit.org/show_bug.cgi?id=30741
+
+        * http/conf/fedora-httpd.conf:
+
 2009-10-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Rebaseline test after 49998.
