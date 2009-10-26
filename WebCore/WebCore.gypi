@@ -2379,6 +2379,7 @@
             'platform/network/chromium/NetworkStateNotifierChromium.cpp',
             'platform/network/chromium/NetworkStateNotifierPrivate.h',
             'platform/network/chromium/ResourceError.h',
+            'platform/network/chromium/ResourceRequest.cpp',
             'platform/network/chromium/ResourceRequest.h',
             'platform/network/chromium/ResourceResponse.h',
             'platform/network/chromium/SocketStreamError.h',

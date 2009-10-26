@@ -1,3 +1,14 @@
+2009-10-26  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Darin Fisher.
+
+        Make the number of connections for chromium controlled by
+        chromium rather than by ResourceRequestBase.
+        https://bugs.webkit.org/show_bug.cgi?id=30661
+
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/chromium/ResourceRequest.cpp:
+
 2009-10-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. make distcheck build fixes.
