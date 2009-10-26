@@ -1,3 +1,11 @@
+2009-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Update expedted results after r50108.
+
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-10-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
