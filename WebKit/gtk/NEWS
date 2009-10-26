@@ -1,4 +1,28 @@
 =================
+WebKitGTK+ 1.1.16
+=================
+
+What's new in WebKitGTK+ 1.1.16?
+
+  - Add optional support to generate the gobject-introspection
+    gir/typelib files. Enable with --enable-introspection, it's off by
+    default.
+  - Add a new load status value, WEBKIT_LOAD_FAILED, emitted when
+    there's an error during the load process. This is the natural
+    companion to WEBKIT_LOAD_FINISHED, which is only emitted when the
+    load finished succesfuly.
+  - Ensure that keyboard events filtered by GtkIMContext still create
+    the proper DOM events.
+  - Many a11y improvements: caret browsing fixes, expose heading
+    levels, more accessible roles supported, more work in correctly
+    showing the element's ancestry list, improved support for lists,
+    etc.
+  - Many improvements to our media support.
+  - Add a new setting to control DOM pastes
+    (document.execCommand("Paste"))
+  - Many, many bugfixes all over the place.
+
+=================
 WebKitGTK+ 1.1.15
 =================
 
