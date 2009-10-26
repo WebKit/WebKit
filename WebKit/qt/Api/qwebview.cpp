@@ -684,24 +684,38 @@ qreal QWebView::textSizeMultiplier() const
     return page()->mainFrame()->textSizeMultiplier();
 }
 
-#if !defined(Q_OS_SYMBIAN)
 /*!
     \property QWebView::renderHints
     \since 4.6
     \brief the default render hints for the view
 
-    These hints are used to initialize QPainter before painting the web page.
+    These hints are used to initialize QPainter before painting the Web page.
 
     QPainter::TextAntialiasing is enabled by default.
 
+    \note This property is not available on Symbian. However, the getter and
+    setter functions can still be used directly.
+
     \sa QPainter::renderHints()
 */
-#endif
+
+/*!
+    \since 4.6
+    Returns the render hints used by the view to render content.
+
+    \sa QPainter::renderHints()
+*/
 QPainter::RenderHints QWebView::renderHints() const
 {
     return d->renderHints;
 }
 
+/*!
+    \since 4.6
+    Sets the render hints used by the view to the specified \a hints.
+
+    \sa QPainter::setRenderHints()
+*/
 void QWebView::setRenderHints(QPainter::RenderHints hints)
 {
     if (hints == d->renderHints)
@@ -711,11 +725,11 @@ void QWebView::setRenderHints(QPainter::RenderHints hints)
 }
 
 /*!
-    If \a enabled is true, the render hint \a hint is enabled; otherwise it
-    is disabled.
-
     \since 4.6
-    \sa renderHints
+    If \a enabled is true, enables the specified render \a hint; otherwise
+    disables it.
+
+    \sa renderHints, QPainter::renderHints()
 */
 void QWebView::setRenderHint(QPainter::RenderHint hint, bool enabled)
 {

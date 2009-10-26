@@ -2,6 +2,21 @@
 
         Unreviewed documentation fix from David Boddie (Qt Doc Team)
 
+        Removes the check around the RenderHints property documentation
+        that was clearly added to synchronize the source and header files
+        when the #if !defined(Q_OS_SYMBIAN) guards was added to the
+        property.
+
+        The documentation has also been updated to ensure that Symbian
+        users know that there is no actual RenderHints property on their
+        platform.
+
+        * Api/qwebview.cpp:
+
+2009-10-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed documentation fix from David Boddie (Qt Doc Team)
+
         Ensure that qdoc will always see the RenderHints property.
 
         The property was only defined in the header file if the Q_OS_SYMBIAN
