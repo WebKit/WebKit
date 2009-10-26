@@ -34,6 +34,11 @@ module html {
         [Custom] void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
         [Custom] void remove(in unsigned long index);
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        Node item(in unsigned long index); 
+        Node namedItem(in DOMString name); 
+#endif
     };
 
 }
