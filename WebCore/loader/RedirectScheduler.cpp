@@ -255,6 +255,13 @@ void RedirectScheduler::scheduleHistoryNavigation(int steps)
     if (!m_frame->page())
         return;
 
+    // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
+    // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
+    if (!m_frame->page()->canGoBackOrForward(steps)) { 
+        cancel(); 
+        return; 
+    } 
+
     schedule(new ScheduledRedirection(steps));
 }
 
@@ -282,8 +289,7 @@ void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
             }
             // go(i!=0) from a frame navigates into the history of the frame only,
             // in both IE and NS (but not in Mozilla). We can't easily do that.
-            if (m_frame->page()->canGoBackOrForward(redirection->historySteps))
-                m_frame->page()->goBackOrForward(redirection->historySteps);
+            m_frame->page()->goBackOrForward(redirection->historySteps);
             return;
         case ScheduledRedirection::formSubmission:
             // The submitForm function will find a target frame before using the redirection timer.

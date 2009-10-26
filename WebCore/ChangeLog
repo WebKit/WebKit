@@ -1,3 +1,18 @@
+2009-10-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7308952> and http://webkit.org/b/30424 - REGRESSION (r48687): Pages on ucas.com appear blank.
+
+        Test: fast/loader/history-forward-in-head.html
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation): Restore the moved canGoBackOrForward() check.
+          This restores the side effect of an invalid history navigation canceling previous scheduled redirects
+          and also fixes the bug of scheduling an invalid history navigation canceling parsing of the current document.
+        (WebCore::RedirectScheduler::timerFired): Removed the canGoBackOrForward() check as it is now made before
+          the redirect is scheduled.
+
 2009-10-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

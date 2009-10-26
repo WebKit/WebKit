@@ -1,3 +1,12 @@
+2009-10-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7308952> and http://webkit.org/b/30424 - REGRESSION (r48687): Pages on ucas.com appear blank.
+
+        * fast/loader/history-forward-in-head-expected.txt: Added.
+        * fast/loader/history-forward-in-head.html: Added.
+
 2009-10-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
