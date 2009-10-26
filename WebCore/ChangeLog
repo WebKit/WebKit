@@ -1,3 +1,73 @@
+2009-10-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Extract AbstractTimelinePanel that will be a base
+        class for ResourcesPanel and TimelinePanel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30776
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AbstractTimelinePanel.js: Added.
+        (WebInspector.AbstractTimelinePanel):
+        (WebInspector.AbstractTimelinePanel.prototype.get categories):
+        (WebInspector.AbstractTimelinePanel.prototype.showCategory):
+        (WebInspector.AbstractTimelinePanel.prototype.hideCategory):
+        (WebInspector.AbstractTimelinePanel.prototype.createTimelinePanels):
+        (WebInspector.AbstractTimelinePanel.prototype._createFilterPanel.createFilterElement):
+        (WebInspector.AbstractTimelinePanel.prototype._createFilterPanel):
+        (WebInspector.AbstractTimelinePanel.prototype.filter):
+        (WebInspector.AbstractTimelinePanel.prototype._updateFilter):
+        (WebInspector.AbstractTimelinePanel.prototype._createGraph):
+        (WebInspector.AbstractTimelinePanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.AbstractTimelinePanel.prototype._updateSummaryGraph):
+        (WebInspector.AbstractTimelinePanel.prototype._updateDividersLabelBarPosition):
+        (WebInspector.AbstractTimelinePanel.prototype.get needsRefresh):
+        (WebInspector.AbstractTimelinePanel.prototype.set needsRefresh):
+        (WebInspector.AbstractTimelinePanel.prototype.refreshIfNeeded):
+        (WebInspector.AbstractTimelinePanel.prototype.show):
+        (WebInspector.AbstractTimelinePanel.prototype.resize):
+        (WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth):
+        (WebInspector.TimelineCalculator):
+        (WebInspector.TimelineCalculator.prototype.computeSummaryValues):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.TimelineCalculator.prototype.get boundarySpan):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineCalculator.prototype.reset):
+        (WebInspector.TimelineCalculator.prototype._value):
+        (WebInspector.TimelineCalculator.prototype.formatValue):
+        * inspector/front-end/ResourceCategory.js:
+        (WebInspector.ResourceCategory):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.toolbarItemClass.get toolbarItemLabel):
+        (WebInspector.ResourcesPanel.prototype.get statusBarItems):
+        (WebInspector.ResourcesPanel.prototype.get categories):
+        (WebInspector.ResourcesPanel.prototype.showCategory):
+        (WebInspector.ResourcesPanel.prototype.hideCategory):
+        (WebInspector.ResourcesPanel.prototype.isCategoryVisible):
+        (WebInspector.ResourcesPanel.prototype.populateSidebar):
+        (WebInspector.ResourcesPanel.prototype.createPanelEnabler):
+        (WebInspector.ResourcesPanel.prototype.createStatusbarButtons):
+        (WebInspector.ResourcesPanel.prototype.set mainResourceLoadTime):
+        (WebInspector.ResourcesPanel.prototype.set mainResourceDOMContentTime):
+        (WebInspector.ResourcesPanel.prototype.show):
+        (WebInspector.ResourcesPanel.prototype.resize):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.ResourcesPanel.prototype.updateMainViewWidth):
+        (WebInspector.ResourceTimeCalculator):
+        (WebInspector.ResourceTransferSizeCalculator):
+        (WebInspector.ResourceTransferSizeCalculator.prototype.computeBarGraphLabels):
+        * inspector/front-end/SummaryBar.js:
+        (WebInspector.SummaryBar.prototype.update):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2009-10-26  Avi Drissman  <avi@google.com>
 
         Reviewed by Darin Adler.

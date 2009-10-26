@@ -36270,6 +36270,10 @@
 				Name="front-end"
 				>
 				<File
+					RelativePath="..\inspector\front-end\AbstractTimelinePanel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\BottomUpProfileDataGridTree.js"
 					>
 				</File>

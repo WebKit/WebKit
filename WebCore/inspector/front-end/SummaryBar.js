@@ -74,8 +74,7 @@ WebInspector.SummaryBar.prototype = {
             if (!size)
                 continue;
 
-            var color = this.categories[category].color;
-            var colorString = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
+            var colorString = this.categories[category].color;
 
             var fillSegment = {color: colorString, value: size};
             fillSegments.push(fillSegment);

@@ -26,10 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceCategory = function(title, name)
+WebInspector.ResourceCategory = function(name, title, color)
 {
     this.name = name;
     this.title = title;
+    this.color = color;
     this.resources = [];
 }
 

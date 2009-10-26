@@ -3587,6 +3587,7 @@
         'webinspector_files': [
 
             'inspector/front-end/inspector.html',
+            'inspector/front-end/AbstractTimelinePanel.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
             'inspector/front-end/Breakpoint.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
