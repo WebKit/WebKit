@@ -151,7 +151,7 @@ fast/encoding/mailto-always-utf-8.html
 fast/loader/fragment-after-redirect-gets-back-entry.html
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 
 # Missing layoutTestController.setUseDashboardCompatibilityMode()
 http/tests/xmlhttprequest/default-content-type-dashboard.html
