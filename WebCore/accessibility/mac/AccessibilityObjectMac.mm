@@ -40,6 +40,11 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     
     return [attachment accessibilityIsIgnored];
 }
+
+bool AccessibilityObject::accessibilityPlatformIncludesObject() const
+{
+    return false;
+}
     
 } // WebCore
 

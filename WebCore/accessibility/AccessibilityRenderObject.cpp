@@ -1258,6 +1258,10 @@ bool AccessibilityRenderObject::ariaIsHidden() const
 
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
+    // is the platform is interested in this object?
+    if (accessibilityPlatformIncludesObject())
+        return false;
+
     // ignore invisible element
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return true;

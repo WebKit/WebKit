@@ -459,6 +459,13 @@ public:
     bool accessibilityIgnoreAttachment() const { return true; }
 #endif
 
+    // gives platforms the opportunity to indicate that an object shouldn't be ignored
+#if HAVE(ACCESSIBILITY)
+    bool accessibilityPlatformIncludesObject() const;
+#else
+    bool accessibilityPlatformIncludesObject() const { return false; }
+#endif
+
     // allows for an AccessibilityObject to update its render tree or perform
     // other operations update type operations
     virtual void updateBackingStore() { }
