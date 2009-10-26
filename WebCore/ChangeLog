@@ -1,3 +1,15 @@
+2009-10-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        crash with AX on when an image map contains an anchor tag
+        https://bugs.webkit.org/show_bug.cgi?id=30739
+
+        Tests: accessibility/crashing-a-tag-in-map.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addChildren):
+
 2009-10-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

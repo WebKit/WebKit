@@ -1,3 +1,13 @@
+2009-10-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        crash with AX on when an image map contains an anchor tag
+        https://bugs.webkit.org/show_bug.cgi?id=30739
+
+        * accessibility/crashing-a-tag-in-map-expected.txt: Added.
+        * accessibility/crashing-a-tag-in-map.html: Added.
+
 2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Tor Arne Vestbø.
