@@ -1,3 +1,33 @@
+2009-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=30765
+        REGRESSION (r48701): Removing an event listener causes the one added just after it not to fire
+        
+        and related bugs.
+
+        If the event listener being removed is prior to the current firing event
+        iterator, we need to decrement the current firing event iterator in
+        addition to the endpoint. (Otherwise, shrinking the event listener vector
+        by one implicity moves the current firing event iterator forward by one.
+        It's like relativity, only without the planets.)
+        
+        Also took the opportunity to change some pointers to references, since
+        they can't be null.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::removeAllEventListeners): Update iterator in addition
+        to end, if need be.
+        (WebCore::EventTarget::fireEventListeners): Updated for interface changes.
+        Added a comment to explain a behavior that was implicit enough to be
+        confusing.
+
+        * dom/EventTarget.h:
+        (WebCore::FiringEventIterator::FiringEventIterator):
+        (WebCore::EventTarget::isFiringEventListeners): Updated for interface changes.
+
 2009-10-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

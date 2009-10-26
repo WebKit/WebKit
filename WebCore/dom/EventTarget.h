@@ -61,24 +61,26 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    struct FiringEventEndIterator {
-        FiringEventEndIterator(const AtomicString* eventType, size_t* value)
+    struct FiringEventIterator {
+        FiringEventIterator(const AtomicString& eventType, size_t& iterator, size_t& end)
             : eventType(eventType)
-            , value(value)
+            , iterator(iterator)
+            , end(end)
         {
         }
-        
-        const AtomicString* eventType;
-        size_t* value;
+
+        const AtomicString& eventType;
+        size_t& iterator;
+        size_t& end;
     };
-    typedef Vector<FiringEventEndIterator, 1> FiringEventEndIteratorVector;
+    typedef Vector<FiringEventIterator, 1> FiringEventIteratorVector;
 
     typedef Vector<RegisteredEventListener, 1> EventListenerVector;
     typedef HashMap<AtomicString, EventListenerVector> EventListenerMap;
 
     struct EventTargetData {
         EventListenerMap eventListenerMap;
-        FiringEventEndIteratorVector firingEventEndIterators;
+        FiringEventIteratorVector firingEventIterators;
     };
 
     class EventTarget {
@@ -209,7 +211,7 @@ namespace WebCore {
         EventTargetData* d = eventTargetData();
         if (!d)
             return false;
-        return d->firingEventEndIterators.size() != 0;
+        return d->firingEventIterators.size() != 0;
     }
 
     inline bool EventTarget::hasEventListeners()

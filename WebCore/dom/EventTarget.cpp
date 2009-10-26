@@ -192,9 +192,16 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
 
     // Notify firing events planning to invoke the listener at 'index' that
     // they have one less listener to invoke.
-    for (size_t i = 0; i < d->firingEventEndIterators.size(); ++i) {
-        if (eventType == *d->firingEventEndIterators[i].eventType && index < *d->firingEventEndIterators[i].value)
-            --*d->firingEventEndIterators[i].value;
+    for (size_t i = 0; i < d->firingEventIterators.size(); ++i) {
+        if (eventType != d->firingEventIterators[i].eventType)
+            continue;
+
+        if (index >= d->firingEventIterators[i].end)
+            continue;
+
+        --d->firingEventIterators[i].end;
+        if (index <= d->firingEventIterators[i].iterator)
+            --d->firingEventIterators[i].iterator;
     }
 
     return true;
@@ -263,9 +270,15 @@ bool EventTarget::fireEventListeners(Event* event)
 
     RefPtr<EventTarget> protect = this;
 
+    // Fire all listeners registered for this event. Don't fire listeners removed
+    // during event dispatch. Also, don't fire event listeners added during event
+    // dispatch. Conveniently, all new event listeners will be added after 'end',
+    // so iterating to 'end' naturally excludes new event listeners.
+
+    size_t i = 0;
     size_t end = entry.size();
-    d->firingEventEndIterators.append(FiringEventEndIterator(&event->type(), &end));
-    for (size_t i = 0; i < end; ++i) {
+    d->firingEventIterators.append(FiringEventIterator(event->type(), i, end));
+    for ( ; i < end; ++i) {
         RegisteredEventListener& registeredListener = entry[i];
         if (event->eventPhase() == Event::CAPTURING_PHASE && !registeredListener.useCapture)
             continue;
@@ -275,7 +288,7 @@ bool EventTarget::fireEventListeners(Event* event)
         // event listeners, even though that violates some versions of the DOM spec.
         registeredListener.listener->handleEvent(scriptExecutionContext(), event);
     }
-    d->firingEventEndIterators.removeLast();
+    d->firingEventIterators.removeLast();
 
     return !event->defaultPrevented();
 }
@@ -302,8 +315,10 @@ void EventTarget::removeAllEventListeners()
 
     // Notify firing events planning to invoke the listener at 'index' that
     // they have one less listener to invoke.
-    for (size_t i = 0; i < d->firingEventEndIterators.size(); ++i)
-        *d->firingEventEndIterators[i].value = 0;
+    for (size_t i = 0; i < d->firingEventIterators.size(); ++i) {
+        d->firingEventIterators[i].iterator = 0;
+        d->firingEventIterators[i].end = 0;
+    }
 }
 
 } // namespace WebCore

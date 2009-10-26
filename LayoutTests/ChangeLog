@@ -1,3 +1,16 @@
+2009-10-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=30765
+        REGRESSION (r48701): Removing an event listener causes one added after it to not fire
+
+        * fast/events/event-listener-list-mutation-expected.txt: Added.
+        * fast/events/event-listener-list-mutation.html: Added.
+        * fast/events/script-tests/event-listener-list-mutation.js: Added.
+        (TestMutation.listeners):
+        (TestMutation.mutateList):
+
 2009-10-26  Xan Lopez  <xlopez@igalia.com>
 
         Skip test fast/loader/opaque-base-url.html with a reference to the
