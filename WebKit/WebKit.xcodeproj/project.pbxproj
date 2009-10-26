@@ -330,6 +330,7 @@
 		BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */; };
 		BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */ = {isa = PBXBuildFile; fileRef = BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */; };
 		BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */; };
+		BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC97E7E110963D260010D361 /* WebViewEventHandling.mm */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
@@ -604,6 +605,7 @@
 		BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewData.mm; sourceTree = "<group>"; };
 		BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDelegateImplementationCaching.h; sourceTree = "<group>"; };
 		BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDelegateImplementationCaching.mm; sourceTree = "<group>"; };
+		BC97E7E110963D260010D361 /* WebViewEventHandling.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewEventHandling.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSURLExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1144,6 +1146,7 @@
 				BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
+				BC97E7E110963D260010D361 /* WebViewEventHandling.mm */,
 				0FD3B0F61076C3F700039B96 /* WebWindowAnimation.h */,
 				0FD3B0F71076C3F700039B96 /* WebWindowAnimation.m */,
 			);
@@ -1849,6 +1852,7 @@
 				0FD3B0F51076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */,
+				BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

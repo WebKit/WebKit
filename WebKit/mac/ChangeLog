@@ -1,3 +1,24 @@
+2009-10-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move some WebView event handling code into its own file, WebViewEventHandling.mm
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView _selectedOrMainFrame]):
+        * WebView/WebViewEventHandling.mm: Added.
+        (-[WebView _closingEventHandling]):
+        (-[WebView _setMouseDownEvent:]):
+        (-[WebView mouseDown:]):
+        (-[WebView mouseUp:]):
+        (+[WebView _updateMouseoverWithEvent:]):
+        (-[WebView _updateMouseoverWithFakeEvent]):
+        (_updateMouseoverWithEvent:fakeEvent::if):
+        (-[WebView _stopAutoscrollTimer]):
+        (-[WebView _setToolTip:]):
+        * WebView/WebViewInternal.h:
+
 2009-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
