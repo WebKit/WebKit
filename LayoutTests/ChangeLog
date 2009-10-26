@@ -539,6 +539,26 @@
 
 2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
 
+        Storage events should use Document::url() rather than documentURI()
+        https://bugs.webkit.org/show_bug.cgi?id=30535
+
+        Storage events should use Document::url() rather than Document::documentURI()
+        per http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-October/023703.html
+
+        Add a test for this.  Since storage events are sync, re-order when
+        evalAndLog logs and evaluates instructions.
+
+        * fast/js/resources/js-test-pre.js:
+        (evalAndLog):
+        * storage/domstorage/documentURI-expected.txt: Added.
+        * storage/domstorage/documentURI.html: Added.
+        * storage/domstorage/script-tests/documentURI.js: Added.
+        (test):
+        (firstEvent):
+        (secondEvent):
+
+2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Darin Adler.
 
         Combine local and session storage tests into one and use script-tests properly

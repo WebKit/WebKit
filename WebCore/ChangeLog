@@ -1,3 +1,18 @@
+2009-10-21  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Storage events should use Document::url() rather than documentURI()
+        https://bugs.webkit.org/show_bug.cgi?id=30535
+
+        Storage events should use Document::url() rather than Document::documentURI()
+        per http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2009-October/023703.html
+
+        Test: storage/domstorage/documentURI.html
+
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2009-10-26  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

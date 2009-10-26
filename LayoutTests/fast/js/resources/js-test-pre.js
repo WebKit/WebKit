@@ -76,18 +76,16 @@ function evalAndLog(_a)
 {
   if (typeof _a != "string")
     debug("WARN: tryAndLog() expects a string argument");
-  var exception;
+
+  // Log first in case things go horribly wrong or this causes a sync event.
+  debug(_a);
+
   var _av;
   try {
      _av = eval(_a);
   } catch (e) {
-     exception = e;
+    testFailed(_a + " threw exception " + e);
   }
-
-  if (exception)
-    testFailed(_a + " threw exception " + exception);
-  else
-    debug(_a);
 }
 
 function shouldBe(_a, _b)
