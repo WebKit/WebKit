@@ -552,7 +552,7 @@ body.drawer-visible #drawer {
     margin-right: 4px;
     text-align: left;
     font-size: 11px;
-    font-family: Helvetia, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     text-shadow: none;
     color: white;
@@ -3011,7 +3011,7 @@ body.inactive .sidebar-tree-item .disclosure-button:active {
     padding: 1px 4px;
     text-align: center;
     font-size: 11px;
-    font-family: Helvetia, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     text-shadow: none;
     color: white;
