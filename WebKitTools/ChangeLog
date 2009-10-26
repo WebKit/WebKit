@@ -1,3 +1,9 @@
+2009-10-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Make sure isQt() doesn't return true if --wx was passed to build-webkit.
+
+        * Scripts/webkitdirs.pm:
+
 2009-10-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Darin Adler.

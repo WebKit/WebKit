@@ -810,7 +810,7 @@ sub determineIsQt()
     }
 
     # The presence of QTDIR only means Qt if --gtk is not on the command-line
-    if (isGtk()) {
+    if (isGtk() || isWx()) {
         $isQt = 0;
         return;
     }
