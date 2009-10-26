@@ -1,3 +1,27 @@
+2009-10-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Adds feature ENABLE guards to V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=30697
+
+        This adds guards for the following features to the V8 bindings,
+        to allow builds with V8 to succeed when these features are not enabled.
+        - DATABASE
+        - WORKERS
+        - SHARED_WORKERS
+        - SVG
+        - XPATH
+        - XSLT
+        - INSPECTOR
+
+        This is a build fix only, no new tests required.
+
+        * bindings/v8/DOMObjectsInclude.h: Modified.
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Modified.
+        * bindings/v8/V8Index.cpp: Modified.
+        * bindings/v8/V8Index.h: Modified.
+
 2009-10-26  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

@@ -65,7 +65,6 @@
 #include "V8CSSVariablesRule.h"
 #include "V8DataGridColumn.h"
 #include "V8DataGridColumnList.h"
-#include "V8Database.h"
 #include "V8Document.h"
 #include "V8DocumentFragment.h"
 #include "V8DocumentType.h"
@@ -144,7 +143,6 @@
 #include "V8HTMLTitleElement.h"
 #include "V8HTMLUListElement.h"
 #include "V8ImageData.h"
-#include "V8InspectorBackend.h"
 #include "V8Media.h"
 #include "V8MediaList.h"
 #include "V8MessageChannel.h"
@@ -192,26 +190,16 @@
 #include "V8Range.h"
 #include "V8RangeException.h"
 #include "V8Rect.h"
-#include "V8SQLError.h"
-#include "V8SQLResultSet.h"
-#include "V8SQLResultSetRowList.h"
-#include "V8SQLTransaction.h"
 #include "V8NodeIterator.h"
 #include "V8TextMetrics.h"
 #include "V8TreeWalker.h"
 #include "V8StyleSheetList.h"
 #include "V8DOMImplementation.h"
-#include "V8XPathResult.h"
-#include "V8XPathException.h"
-#include "V8XPathExpression.h"
-#include "V8XPathNSResolver.h"
 #include "V8XMLHttpRequest.h"
 #include "V8XMLHttpRequestException.h"
 #include "V8XMLHttpRequestProgressEvent.h"
 #include "V8XMLHttpRequestUpload.h"
 #include "V8XMLSerializer.h"
-#include "V8XPathEvaluator.h"
-#include "V8XSLTProcessor.h"
 #include "V8RGBColor.h"
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -421,6 +409,30 @@
 #include "V8CanvasUnsignedByteArray.h"
 #include "V8CanvasUnsignedIntArray.h"
 #include "V8CanvasUnsignedShortArray.h"
+#endif
+
+#if ENABLE(DATABASE)
+#include "V8Database.h"
+#include "V8SQLError.h"
+#include "V8SQLResultSet.h"
+#include "V8SQLResultSetRowList.h"
+#include "V8SQLTransaction.h"
+#endif
+
+#if ENABLE(XPATH)
+#include "V8XPathResult.h"
+#include "V8XPathException.h"
+#include "V8XPathExpression.h"
+#include "V8XPathNSResolver.h"
+#include "V8XPathEvaluator.h"
+#endif
+
+#if ENABLE(XSLT)
+#include "V8XSLTProcessor.h"
+#endif
+
+#if ENABLE(INSPECTOR)
+#include "V8InspectorBackend.h"
 #endif
 
 namespace WebCore {
