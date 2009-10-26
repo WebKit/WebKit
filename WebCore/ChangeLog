@@ -1,3 +1,33 @@
+2009-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        background-size: X treated as background-size: X X, not background-size: X auto
+        https://bugs.webkit.org/show_bug.cgi?id=28440
+
+        Updated fast/backgrounds/size/resources/parsing-background-size-values.js
+        and fast/backgrounds/size/resources/parsing-inherit.js
+
+        Reinstated -webkit-background-size and kept its behavior of filling in
+        the second value with the first one; and changed background-size to have
+        the behavior of filling in the second value with 'auto'.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (computedProperties): Re-added CSSPropertyWebkitBackgroundSize.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        (WebCore::CSSParser::parseFillSize): Adapted for the new parsing rule.
+        (WebCore::CSSParser::parseFillProperty): Re-added
+        CSSPropertyWebkitBackgroundSize.
+        (WebCore::cssPropertyID): Removed mapping of -webkit-background-size to
+        background-size.
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in: Re-added -webkit-background-size.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Re-added
+        CSSPropertyWebkitBackgroundSize.
+
 2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

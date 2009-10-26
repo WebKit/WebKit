@@ -160,6 +160,10 @@ zoom
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
+# -webkit-background-size differs from background-size only in the interpretation of
+# a single value: -webkit-background-size: l; is equivalent to background-size: l l;
+# whereas background-size: l; is equivalent to background-size: l auto;
+-webkit-background-size
 -webkit-binding
 -webkit-border-fit
 -webkit-border-horizontal-spacing

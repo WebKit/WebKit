@@ -12,12 +12,15 @@ PASS test("background-size: 50px auto;") is "50px "
 PASS test("background-size: auto auto;") is " "
 PASS test("background-size: 30% 20%;") is "30% 20%"
 PASS test("background-size: 4em auto;") is "4em "
-PASS test("background-size: 5em ;") is "5em 5em"
+PASS test("background-size: 5em;") is "5em "
+PASS test("-webkit-background-size: 5em ;") is "5em 5em"
 PASS test("background-size: 100 100 100;") is null
 PASS test("background-size: coconut;") is null
 PASS test("background-size: 100px,;") is null
-PASS test("background-size: 100px, 50%;") is "100px 100px, 50% 50%"
-PASS test("background-size: 50% 100px, 2em, 100px 50%;") is "50% 100px, 2em 2em, 100px 50%"
+PASS test("background-size: 100px, 50%;") is "100px , 50% "
+PASS test("-webkit-background-size: 100px, 50%;") is "100px 100px, 50% 50%"
+PASS test("background-size: 50% 100px, 2em, 100px 50%;") is "50% 100px, 2em , 100px 50%"
+PASS test("-webkit-background-size: 50% 100px, 2em, 100px 50%;") is "50% 100px, 2em 2em, 100px 50%"
 PASS successfullyParsed is true
 
 TEST COMPLETE

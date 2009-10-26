@@ -83,7 +83,7 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseFillPositionXY(bool& xFound, bool& yFound);
         void parseFillPosition(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-        PassRefPtr<CSSValue> parseFillSize(bool &allowComma);
+        PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
         
         bool parseFillProperty(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         bool parseFillShorthand(int propId, const int* properties, int numProperties, bool important);

@@ -157,6 +157,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBackgroundClip,
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
+    CSSPropertyWebkitBackgroundSize,
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
     CSSPropertyWebkitBorderImage,
@@ -679,7 +680,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->backgroundImage())
                 return style->backgroundImage()->cssValue();
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-        case CSSPropertyBackgroundSize: {
+        case CSSPropertyBackgroundSize:
+        case CSSPropertyWebkitBackgroundSize: {
             EFillSizeType size = style->backgroundSizeType();
             if (size == Contain)
                 return CSSPrimitiveValue::createIdentifier(CSSValueContain);

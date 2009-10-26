@@ -2961,6 +2961,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_BACKGROUND_VALUE(origin, Origin, value)
         return;
     case CSSPropertyBackgroundSize:
+    case CSSPropertyWebkitBackgroundSize:
         HANDLE_BACKGROUND_VALUE(size, Size, value)
         return;
     case CSSPropertyWebkitMaskAttachment:
