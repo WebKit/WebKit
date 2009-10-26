@@ -1,3 +1,12 @@
+2009-10-26  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update no-referrer-reset for https://bugs.webkit.org/show_bug.cgi?id=30781.
+
+        * http/tests/navigation/no-referrer-reset-expected.txt: Expect window.opener to still be set.
+        * http/tests/navigation/no-referrer-reset.html: Update text to reflect what the test actually does.
+
 2009-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

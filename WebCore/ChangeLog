@@ -1,3 +1,13 @@
+2009-10-26  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't set window.opener to 0 for the current FrameLoader if a noreferrer link was clicked, only suppress opener in a new frame.
+        https://bugs.webkit.org/show_bug.cgi?id=30781
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Don't suppress opener in the current frame for noreferrer navigations.
+
 2009-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
