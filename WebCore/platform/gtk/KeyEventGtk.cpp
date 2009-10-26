@@ -200,6 +200,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
         case GDK_Control_R:
             return VK_CONTROL; // (11) CTRL key
         case GDK_Menu:
+            return VK_APPS;  // (5D) Applications key (Natural keyboard)
         case GDK_Alt_L:
         case GDK_Alt_R:
             return VK_MENU; // (12) ALT key
@@ -370,7 +371,6 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_LWIN; // (5B) Left Windows key (Microsoft Natural keyboard)
         case GDK_Meta_R:
             return VK_RWIN; // (5C) Right Windows key (Natural keyboard)
-            // VK_APPS (5D) Applications key (Natural keyboard)
             // VK_SLEEP (5F) Computer Sleep key
             // VK_SEPARATOR (6C) Separator key
             // VK_SUBTRACT (6D) Subtract key
