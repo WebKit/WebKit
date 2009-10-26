@@ -1,3 +1,10 @@
+2009-10-26  Xan Lopez  <xlopez@igalia.com>
+
+        Skip test fast/loader/opaque-base-url.html with a reference to the
+        bug tracking it, https://bugs.webkit.org/show_bug.cgi?id=30724
+
+        * platform/gtk/Skipped:
+
 2009-10-26  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
