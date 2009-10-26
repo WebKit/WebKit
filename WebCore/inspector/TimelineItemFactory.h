@@ -40,8 +40,13 @@ namespace WebCore {
     class TimelineItemFactory {
     public:
         static ScriptObject createGenericTimelineItem(InspectorFrontend*, double startTime);
+
+        static ScriptObject createDOMDispatchTimelineItem(InspectorFrontend*, double startTime, const Event&);
+
+        static ScriptObject createGenericTimerTimelineItem(InspectorFrontend*, double startTime, int timerId);
+
+        static ScriptObject createTimerInstallTimelineItem(InspectorFrontend*, double startTime, int timerId, int timeout, bool singleShot);
         
-        static ScriptObject createDOMDispatchTimelineItem(InspectorFrontend*, double startTime, const Event&);                
     private:
         TimelineItemFactory() { }
     };

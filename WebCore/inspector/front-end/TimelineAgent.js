@@ -38,7 +38,10 @@ WebInspector.TimelineAgent.ItemType = {
     Layout            : 1,
     RecalculateStyles : 2,
     Paint             : 3,
-    ParseHTML         : 4
+    ParseHTML         : 4,
+    TimerInstall      : 5,
+    TimerRemove       : 6,
+    TimerFire         : 7,    
 };
 
 WebInspector.addItemToTimeline = function(record) {

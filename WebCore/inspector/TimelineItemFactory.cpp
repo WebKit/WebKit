@@ -57,6 +57,28 @@ ScriptObject TimelineItemFactory::createDOMDispatchTimelineItem(InspectorFronten
     return item;
 }
 
+// static
+ScriptObject TimelineItemFactory::createGenericTimerTimelineItem(InspectorFrontend* frontend, double startTime, int timerId)
+{
+    ScriptObject item = createGenericTimelineItem(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("timerId", timerId);
+    item.set("data", data);
+    return item;
+}
+
+// static
+ScriptObject TimelineItemFactory::createTimerInstallTimelineItem(InspectorFrontend* frontend, double startTime, int timerId, int timeout, bool singleShot)
+{
+    ScriptObject item = createGenericTimelineItem(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("timerId", timerId);
+    data.set("timeout", timeout);
+    data.set("singleShot", singleShot);
+    item.set("data", data);
+    return item;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

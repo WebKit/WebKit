@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    class InspectorTimelineAgent;
     class ScheduledAction;
 
     class DOMTimer : public TimerBase, public ActiveDOMObject {

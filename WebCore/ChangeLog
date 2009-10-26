@@ -1,3 +1,33 @@
+2009-10-26  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Adds DOMTimer support to InspectorTimelineAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=30467
+
+        * inspector/InspectorTimelineAgent.cpp: Added timer support and fixed some method names.
+        (WebCore::InspectorTimelineAgent::didDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer): Added.
+        (WebCore::InspectorTimelineAgent::didRemoveTimer): Added.
+        (WebCore::InspectorTimelineAgent::willFireTimer): Added.
+        (WebCore::InspectorTimelineAgent::didFireTimer): Added.
+        (WebCore::InspectorTimelineAgent::addItemToTimeline): Added.
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentTimelineItem): Renamed.
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineItemFactory.cpp: Add methods for timer-related ScriptObjects.
+        (WebCore::TimelineItemFactory::createGenericTimerTimelineItem):
+        (WebCore::TimelineItemFactory::createTimerInstallTimelineItem):
+        * inspector/TimelineItemFactory.h:
+        * page/DOMTimer.cpp: Added instrumentation points.
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::removeById):
+        (WebCore::DOMTimer::fired):
+
 2009-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

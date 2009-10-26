@@ -58,7 +58,7 @@ void InspectorTimelineAgent::willDispatchDOMEvent(const Event& event)
 
 void InspectorTimelineAgent::didDispatchDOMEvent()
 {
-    didCompleteCurrentRecord(DOMDispatchTimelineItemType);
+    didCompleteCurrentTimelineItem(DOMDispatchTimelineItemType);
 }
 
 void InspectorTimelineAgent::willLayout()
@@ -68,7 +68,7 @@ void InspectorTimelineAgent::willLayout()
 
 void InspectorTimelineAgent::didLayout()
 {
-    didCompleteCurrentRecord(LayoutTimelineItemType);
+    didCompleteCurrentTimelineItem(LayoutTimelineItemType);
 }
 
 void InspectorTimelineAgent::willRecalculateStyle()
@@ -78,7 +78,7 @@ void InspectorTimelineAgent::willRecalculateStyle()
 
 void InspectorTimelineAgent::didRecalculateStyle()
 {
-    didCompleteCurrentRecord(RecalculateStylesTimelineItemType);
+    didCompleteCurrentTimelineItem(RecalculateStylesTimelineItemType);
 }
 
 void InspectorTimelineAgent::willPaint()
@@ -88,7 +88,7 @@ void InspectorTimelineAgent::willPaint()
 
 void InspectorTimelineAgent::didPaint()
 {
-    didCompleteCurrentRecord(PaintTimelineItemType);
+    didCompleteCurrentTimelineItem(PaintTimelineItemType);
 }
 
 void InspectorTimelineAgent::willWriteHTML()
@@ -98,7 +98,30 @@ void InspectorTimelineAgent::willWriteHTML()
 
 void InspectorTimelineAgent::didWriteHTML()
 {
-    didCompleteCurrentRecord(ParseHTMLTimelineItemType);
+    didCompleteCurrentTimelineItem(ParseHTMLTimelineItemType);
+}
+
+void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
+{
+    addItemToTimeline(TimelineItemFactory::createTimerInstallTimelineItem(m_frontend, currentTimeInMilliseconds(), timerId,
+        timeout, singleShot), TimerInstallTimelineItemType);
+}
+
+void InspectorTimelineAgent::didRemoveTimer(int timerId)
+{
+    addItemToTimeline(TimelineItemFactory::createGenericTimerTimelineItem(m_frontend, currentTimeInMilliseconds(), timerId),
+        TimerRemoveTimelineItemType);
+}
+
+void InspectorTimelineAgent::willFireTimer(int timerId)
+{
+    pushCurrentTimelineItem(TimelineItemFactory::createGenericTimerTimelineItem(m_frontend, currentTimeInMilliseconds(), timerId),
+        TimerFireTimelineItemType); 
+}
+
+void InspectorTimelineAgent::didFireTimer()
+{
+    didCompleteCurrentTimelineItem(TimerFireTimelineItemType);
 }
 
 void InspectorTimelineAgent::reset()
@@ -106,21 +129,26 @@ void InspectorTimelineAgent::reset()
     m_itemStack.clear();
 }
 
-void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineItemType type)
+void InspectorTimelineAgent::addItemToTimeline(ScriptObject item, TimelineItemType type)
 {
+    item.set("type", type);
+    if (m_itemStack.isEmpty())
+        m_frontend->addItemToTimeline(item);
+    else {
+        TimelineItemEntry parent = m_itemStack.last();
+        parent.children.set(parent.children.length(), item);
+    }
+}
+
+void InspectorTimelineAgent::didCompleteCurrentTimelineItem(TimelineItemType type)
+{
+    ASSERT(!m_itemStack.isEmpty());
     TimelineItemEntry entry = m_itemStack.last();
     m_itemStack.removeLast();
     ASSERT(entry.type == type);
-    entry.item.set("type", type);
     entry.item.set("children", entry.children);
     entry.item.set("endTime", currentTimeInMilliseconds());
-    
-    if (m_itemStack.isEmpty()) {
-        m_frontend->addItemToTimeline(entry.item);
-    } else {
-        TimelineItemEntry parent = m_itemStack.last();
-        parent.children.set(parent.children.length(), entry.item);
-    }
+    addItemToTimeline(entry.item, type);
 }
 
 double InspectorTimelineAgent::currentTimeInMilliseconds()

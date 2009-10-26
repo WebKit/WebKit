@@ -27,6 +27,7 @@
 #include "config.h"
 #include "DOMTimer.h"
 
+#include "InspectorTimelineAgent.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/HashSet.h>
@@ -87,6 +88,12 @@ int DOMTimer::install(ScriptExecutionContext* context, ScheduledAction* action, 
     // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
     // or if it is a one-time timer and it has fired (DOMTimer::fired).
     DOMTimer* timer = new DOMTimer(context, action, timeout, singleShot);
+
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(context))
+        timelineAgent->didInstallTimer(timer->m_timeoutId, timeout, singleShot);
+#endif    
+
     return timer->m_timeoutId;
 }
 
@@ -97,6 +104,12 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
     // respectively
     if (timeoutId <= 0)
         return;
+
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(context))
+        timelineAgent->didRemoveTimer(timeoutId);
+#endif
+
     delete context->findTimeout(timeoutId);
 }
 
@@ -104,6 +117,12 @@ void DOMTimer::fired()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     timerNestingLevel = m_nestingLevel;
+
+#if ENABLE(INSPECTOR)
+    InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(context);
+    if (timelineAgent)
+        timelineAgent->willFireTimer(m_timeoutId);
+#endif
 
     // Simple case for non-one-shot timers.
     if (isActive()) {
@@ -115,6 +134,10 @@ void DOMTimer::fired()
 
         // No access to member variables after this point, it can delete the timer.
         m_action->execute(context);
+#if ENABLE(INSPECTOR)
+        if (timelineAgent)
+            timelineAgent->didFireTimer();
+#endif
         return;
     }
 
@@ -125,6 +148,10 @@ void DOMTimer::fired()
     delete this;
 
     action->execute(context);
+#if ENABLE(INSPECTOR)
+    if (timelineAgent)
+        timelineAgent->didFireTimer();
+#endif
     delete action;
     timerNestingLevel = 0;
 }
