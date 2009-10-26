@@ -1,3 +1,9 @@
+2009-10-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Rebaseline test after 49998.
+
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+
 2009-10-25  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Darin Adler.

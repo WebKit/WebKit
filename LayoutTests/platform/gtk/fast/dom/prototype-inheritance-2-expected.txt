@@ -222,6 +222,7 @@ Never found Entity
 Never found EntityReference
 Never found File
 Never found FileList
+Never found HTMLAllCollection
 Never found HTMLBaseElement
 Never found HTMLBaseFontElement
 Never found HTMLBlockquoteElement
