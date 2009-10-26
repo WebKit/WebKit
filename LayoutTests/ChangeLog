@@ -1,3 +1,12 @@
+2009-10-26  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fix for Console not showing repeat count when repeatedly logging an Event
+        https://bugs.webkit.org/show_bug.cgi?id=30324
+
+        * inspector/console-tests-expected.txt:
+
 2009-10-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

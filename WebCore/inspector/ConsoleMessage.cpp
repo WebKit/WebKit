@@ -90,7 +90,12 @@ void ConsoleMessage::addToConsole(InspectorFrontend* frontend)
     jsonObj.set("url", m_url);
     jsonObj.set("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
-    frontend->addMessageToConsole(jsonObj, m_frames, m_wrappedArguments,  m_message);
+    frontend->addConsoleMessage(jsonObj, m_frames, m_wrappedArguments,  m_message);
+}
+
+void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
+{
+    frontend->updateConsoleMessageRepeatCount(m_repeatCount);
 }
 #endif // ENABLE(INSPECTOR)
 

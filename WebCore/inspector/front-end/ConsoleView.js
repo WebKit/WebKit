@@ -201,40 +201,7 @@ WebInspector.ConsoleView.prototype = {
     addMessage: function(msg)
     {
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
-            msg.totalRepeatCount = msg.repeatCount;
-            msg.repeatDelta = msg.repeatCount;
-
-            var messageRepeated = false;
-
-            if (msg.isEqual && msg.isEqual(this.previousMessage)) {
-                // Because sometimes we get a large number of repeated messages and sometimes
-                // we get them one at a time, we need to know the difference between how many
-                // repeats we used to have and how many we have now.
-                msg.repeatDelta -= this.previousMessage.totalRepeatCount;
-
-                if (!isNaN(this.repeatCountBeforeCommand))
-                    msg.repeatCount -= this.repeatCountBeforeCommand;
-
-                if (!this.commandSincePreviousMessage) {
-                    // Recreate the previous message element to reset the repeat count.
-                    var messagesElement = this.currentGroup.messagesElement;
-                    messagesElement.removeChild(messagesElement.lastChild);
-                    messagesElement.appendChild(msg.toMessageElement());
-
-                    messageRepeated = true;
-                }
-            } else
-                delete this.repeatCountBeforeCommand;
-
-            // Increment the error or warning count
-            switch (msg.level) {
-            case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                WebInspector.warnings += msg.repeatDelta;
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.Error:
-                WebInspector.errors += msg.repeatDelta;
-                break;
-            }
+            this._incrementErrorWarningCount(msg);
 
             // Add message to the resource panel
             if (msg.url in WebInspector.resourceURLMap) {
@@ -245,13 +212,9 @@ WebInspector.ConsoleView.prototype = {
 
             this.commandSincePreviousMessage = false;
             this.previousMessage = msg;
-
-            if (messageRepeated)
-                return;
         } else if (msg instanceof WebInspector.ConsoleCommand) {
             if (this.previousMessage) {
                 this.commandSincePreviousMessage = true;
-                this.repeatCountBeforeCommand = this.previousMessage.totalRepeatCount;
             }
         }
 
@@ -279,6 +242,35 @@ WebInspector.ConsoleView.prototype = {
         this.promptElement.scrollIntoView(false);
     },
 
+    updateMessageRepeatCount: function(count) {
+        var msg = this.previousMessage;
+        var prevRepeatCount = msg.totalRepeatCount;
+        
+        if (!this.commandSincePreviousMessage) {
+            msg.repeatDelta = count - prevRepeatCount;
+            msg.repeatCount = msg.repeatCount + msg.repeatDelta;
+            msg.totalRepeatCount = count;
+            msg._updateRepeatCount();
+            this._incrementErrorWarningCount(msg);
+        } else {
+            msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, msg.groupLevel, count - prevRepeatCount);
+            msgCopy.totalRepeatCount = count;
+            msgCopy.setMessageBody(msg.args);
+            this.addMessage(msgCopy);
+        }
+    },
+
+    _incrementErrorWarningCount: function(msg) {
+        switch (msg.level) {
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
+                WebInspector.warnings += msg.repeatDelta;
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
+                WebInspector.errors += msg.repeatDelta;
+                break;
+        }
+    },
+
     clearMessages: function(clearInspectorController)
     {
         if (clearInspectorController)
@@ -296,7 +288,6 @@ WebInspector.ConsoleView.prototype = {
         WebInspector.warnings = 0;
 
         delete this.commandSincePreviousMessage;
-        delete this.repeatCountBeforeCommand;
         delete this.previousMessage;
     },
 
@@ -617,6 +608,8 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLeve
     this.url = url;
     this.groupLevel = groupLevel;
     this.repeatCount = repeatCount;
+    this.repeatDelta = repeatCount;
+    this.totalRepeatCount = repeatCount;
     if (arguments.length > 7)
         this.setMessageBody(Array.prototype.slice.call(arguments, 7));
 }
@@ -624,6 +617,7 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLeve
 WebInspector.ConsoleMessage.prototype = {
     setMessageBody: function(args)
     {
+        this.args = args;
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 var span = document.createElement("span");
@@ -719,12 +713,14 @@ WebInspector.ConsoleMessage.prototype = {
 
     toMessageElement: function()
     {
-        if (this.propertiesSection)
-            return this.propertiesSection.element;
+        if (this._element)
+            return this._element;
 
         var element = document.createElement("div");
         element.message = this;
         element.className = "console-message";
+
+        this._element = element;
 
         switch (this.source) {
             case WebInspector.ConsoleMessage.MessageSource.HTML:
@@ -765,23 +761,13 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
         
-        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
+        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup)
             element.addStyleClass("console-group-title");
-        }
 
         if (this.elementsTreeOutline) {
             element.addStyleClass("outline-disclosure");
             element.appendChild(this.elementsTreeOutline.element);
             return element;
-        }
-
-        if (this.repeatCount > 1) {
-            var messageRepeatCountElement = document.createElement("span");
-            messageRepeatCountElement.className = "bubble";
-            messageRepeatCountElement.textContent = this.repeatCount;
-
-            element.appendChild(messageRepeatCountElement);
-            element.addStyleClass("repeated-message");
         }
 
         if (this.url && this.url !== "undefined") {
@@ -806,7 +792,21 @@ WebInspector.ConsoleMessage.prototype = {
         messageTextElement.appendChild(this.formattedMessage);
         element.appendChild(messageTextElement);
 
+        if (this.repeatCount > 1)
+            this._updateRepeatCount();
+
         return element;
+    },
+
+    _updateRepeatCount: function() {
+        if (!this.repeatCountElement) {
+            this.repeatCountElement = document.createElement("span");
+            this.repeatCountElement.className = "bubble";
+    
+            this._element.insertBefore(this.repeatCountElement, this._element.firstChild);
+            this._element.addStyleClass("repeated-message");
+        }
+        this.repeatCountElement.textContent = this.repeatCount;
     },
 
     toString: function()

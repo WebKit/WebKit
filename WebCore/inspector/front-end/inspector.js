@@ -1174,7 +1174,7 @@ WebInspector.didCommitLoad = function()
     WebInspector.setDocument(null);
 }
 
-WebInspector.addMessageToConsole = function(payload)
+WebInspector.addConsoleMessage = function(payload)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(
         payload.source,
@@ -1186,6 +1186,11 @@ WebInspector.addMessageToConsole = function(payload)
         payload.repeatCount);
     consoleMessage.setMessageBody(Array.prototype.slice.call(arguments, 1));
     this.console.addMessage(consoleMessage);
+}
+
+WebInspector.updateConsoleMessageRepeatCount = function(count)
+{
+    this.console.updateMessageRepeatCount(count);
 }
 
 WebInspector.log = function(message)

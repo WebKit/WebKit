@@ -16,7 +16,7 @@ console-tests.html:9debug console-message console-js-source console-log-level
 console-tests.html:10info console-message console-js-source console-log-level
 console-tests.html:11warn console-message console-js-source console-warning-level
 console-tests.html:12error console-message console-js-source console-error-level
-console-tests.html:14repeated console-message console-js-source console-log-level
+5console-tests.html:14repeated console-message console-js-source console-log-level repeated-message
 console-tests.html:16count: 1 console-message console-js-source console-log-level
 console-tests.html:16count: 2 console-message console-js-source console-log-level
 console-tests.html:17group console-message console-js-source console-log-level console-group-title

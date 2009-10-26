@@ -374,13 +374,14 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
     if (m_previousMessage && m_previousMessage->isEqual(scriptState, consoleMessage)) {
         m_previousMessage->incrementCount();
         delete consoleMessage;
+        if (windowVisible())
+            m_previousMessage->updateRepeatCountInConsole(m_frontend.get());
     } else {
         m_previousMessage = consoleMessage;
         m_consoleMessages.append(consoleMessage);
+        if (windowVisible())
+            m_previousMessage->addToConsole(m_frontend.get());
     }
-
-    if (windowVisible())
-        m_previousMessage->addToConsole(m_frontend.get());
 }
 
 void InspectorController::clearConsoleMessages(bool clearUI)
