@@ -128,7 +128,11 @@ void detachThread(ThreadIdentifier);
 
 #if USE(PTHREADS)
 typedef pthread_mutex_t PlatformMutex;
+#if HAVE(PTHREAD_RWLOCK)
 typedef pthread_rwlock_t PlatformReadWriteLock;
+#else
+typedef void* PlatformReadWriteLock;
+#endif
 typedef pthread_cond_t PlatformCondition;
 #elif PLATFORM(GTK)
 typedef GOwnPtr<GMutex> PlatformMutex;

@@ -1,3 +1,14 @@
+2009-10-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Adds ability to disable ReadWriteLock on platforms (eg Android) that use pthreads but do not support pthread_rwlock.
+        https://bugs.webkit.org/show_bug.cgi?id=30713
+
+        * wtf/Platform.h: Modified. Defines HAVE_PTHREAD_RWLOCK for all platforms currently using pthreads.
+        * wtf/Threading.h: Modified. Use pthread_rwlock_t only when HAVE_PTHREAD_RWLOCK is defined.
+        * wtf/ThreadingPthreads.cpp: Modified. Build ReadWriteLock methods only when HAVE_PTHREAD_RWLOCK is defined.
+
 2009-10-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.
