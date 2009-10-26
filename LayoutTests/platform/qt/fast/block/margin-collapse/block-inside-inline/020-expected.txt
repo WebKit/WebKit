@@ -75,7 +75,7 @@ layer at (0,0) size 800x262
       RenderBlock {P} at (0,209) size 784x21
         RenderText {#text} at (0,0) size 71x21
           text run at (0,0) width 71: "See also: "
-        RenderInline {A} at (0,0) size 84x21 [color=#0000EE]
+        RenderInline {A} at (0,0) size 84x21 [color=#551A8B]
           RenderText {#text} at (71,0) size 84x21
             text run at (71,0) width 84: "prerequisite"
         RenderText {#text} at (155,0) size 4x21

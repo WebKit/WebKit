@@ -1,3 +1,16 @@
+2009-10-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated expected files which expected wrong color values.
+
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/010-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/011-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/012-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/015-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/016-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/020-expected.txt:
+
 2009-10-26  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.
