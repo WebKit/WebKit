@@ -1,3 +1,29 @@
+2009-10-26  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        The thunkReturnAddress is on JITStackFrame on ARM JIT as well
+        https://bugs.webkit.org/show_bug.cgi?id=30782
+
+        Move the thunkReturnAddress from top of the stack into the JITStackFrame
+        structure. This is a requirement for JSValue32_64 support on ARM.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::ret): Return with link register
+        (JSC::MacroAssemblerARM::prepareCall): Store the return address in link register
+        * jit/JIT.h: Remove unused ctiReturnRegister
+        * jit/JITInlineMethods.h: Same as ARMv7
+        (JSC::JIT::restoreArgumentReference): Ditto.
+        (JSC::JIT::restoreArgumentReferenceForTrampoline): Ditto.
+        * jit/JITOpcodes.cpp: Remove ctiReturnRegister related instruction
+        * jit/JITStubs.cpp: Store thunkReturnAddress on JITStackFrame. Use
+        small trampoline functions which handle return addresses for each
+        CTI_STUB_FUNCTION.
+        * jit/JITStubs.h: Store thunkReturnAddress on JITStackFrame
+        (JSC::JITStackFrame::returnAddressSlot): Return with the address of thunkReturnAddress
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter): Remove the unnecessary instruction
+
 2009-10-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

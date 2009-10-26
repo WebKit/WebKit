@@ -65,6 +65,7 @@ public:
     };
 
     static const RegisterID stackPointerRegister = ARMRegisters::sp;
+    static const RegisterID linkRegister = ARMRegisters::lr;
 
     static const Scale ScalePtr = TimesFour;
 
@@ -530,7 +531,7 @@ public:
 
     void ret()
     {
-        pop(ARMRegisters::pc);
+        m_assembler.mov_r(ARMRegisters::pc, linkRegister);
     }
 
     void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
@@ -746,11 +747,9 @@ protected:
 
     void prepareCall()
     {
-        ensureSpace(3 * sizeof(ARMWord), sizeof(ARMWord));
+        ensureSpace(2 * sizeof(ARMWord), sizeof(ARMWord));
 
-        // S0 might be used for parameter passing
-        m_assembler.add_r(ARMRegisters::S1, ARMRegisters::pc, ARMAssembler::OP2_IMM | 0x4);
-        m_assembler.push_r(ARMRegisters::S1);
+        m_assembler.mov_r(linkRegister, ARMRegisters::pc);
     }
 
     void call32(RegisterID base, int32_t offset)

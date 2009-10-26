@@ -535,37 +535,27 @@ asm volatile (
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "stmdb sp!, {r1-r3}" "\n"
     "stmdb sp!, {r4-r8, lr}" "\n"
-    "mov r6, pc" "\n"
-    "add r6, r6, #40" "\n"
-    "sub sp, sp, #32" "\n"
-    "ldr r4, [sp, #60]" "\n"
+    "sub sp, sp, #36" "\n"
+    "mov r4, r2" "\n"
     "mov r5, #512" "\n"
-    // r0 contains the code
-    "add r8, pc, #4" "\n"
-    "str r8, [sp, #-4]!" "\n"
+    "mov lr, pc" "\n"
     "mov pc, r0" "\n"
-    "add sp, sp, #32" "\n"
+    "add sp, sp, #36" "\n"
     "ldmia sp!, {r4-r8, lr}" "\n"
     "add sp, sp, #12" "\n"
     "mov pc, lr" "\n"
-
-    // the return instruction
-    "ldr pc, [sp], #4" "\n"
 );
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "mov r0, sp" "\n"
-    "mov lr, r6" "\n"
-    "add r8, pc, #4" "\n"
-    "str r8, [sp, #-4]!" "\n"
-    "b " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
 
 // Both has the same return sequence
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "add sp, sp, #32" "\n"
+    "add sp, sp, #36" "\n"
     "ldmia sp!, {r4-r8, lr}" "\n"
     "add sp, sp, #12" "\n"
     "mov pc, lr" "\n"
@@ -907,6 +897,22 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         "bx lr" "\n" \
         ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION) \
+
+#elif PLATFORM(ARM_TRADITIONAL) && COMPILER(GCC)
+
+#define DEFINE_STUB_FUNCTION(rtype, op) \
+    extern "C" { \
+        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
+    }; \
+    asm volatile ( \
+        ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        SYMBOL_STRING(cti_##op) ":" "\n" \
+        "str lr, [sp, #32]" "\n" \
+        "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "ldr lr, [sp, #32]" "\n" \
+        "mov pc, lr" "\n" \
+        ); \
+    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 
 #else
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)

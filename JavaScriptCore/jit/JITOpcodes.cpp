@@ -1792,7 +1792,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Setup arg4: This is a plain hack
     move(stackPointerRegister, ARMRegisters::S0);
 
-    move(ctiReturnRegister, ARMRegisters::lr);
     call(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_data)));
 
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
