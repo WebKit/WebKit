@@ -133,23 +133,4 @@ INDEXED_PROPERTY_SETTER(HTMLOptionsCollection)
     return toOptionsCollectionSetter(index, value, base);
 }
 
-CALLBACK_FUNC_DECL(HTMLOptionsCollectionItem)
-{
-    INC_STATS("DOM.HTMLOptionsCollection.item()");
-    HTMLOptionsCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
-    return getItemFromCollection(imp, args[0]);
-}
-
-CALLBACK_FUNC_DECL(HTMLOptionsCollectionNamedItem)
-{
-    INC_STATS("DOM.HTMLOptionsCollection.namedItem()");
-    HTMLOptionsCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
-    v8::Handle<v8::Value> result = getNamedItemsFromCollection(imp, toWebCoreString(args[0]));
-
-    if (result.IsEmpty())
-        return v8::Undefined();
-
-    return result;
-}
-
 } // namespace WebCore
