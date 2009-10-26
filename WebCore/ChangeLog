@@ -1,3 +1,21 @@
+2009-10-21  Steven Knight  <sgk@chromium.org>
+
+        Reviewed by David Levin.
+
+        Refactor gyp for separate webcore_bindings{,_sources} targets.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30447
+
+        Handle long link lines by building .idl-generated bindings in a
+        separate webcore_bindings library target.  Avoid Visual Studio
+        dependency issues by building additional generated .cpp and .h files
+        in a separate webcore_bindings_sources target.
+
+        Chrome should still build and test successfully.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2009-10-26  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Fisher.
