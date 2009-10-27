@@ -1,3 +1,20 @@
+2009-10-27  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Give an ability to WebKit to free statically allocated pointers
+        before quit.
+        https://bugs.webkit.org/show_bug.cgi?id=27980
+
+        No new tests for this as the change does not affect WebKit
+        functionality, but only memory usage.
+
+        * JavaScriptCore/wtf/StdLibExtras.h:
+        Allowed for the override of DEFINE_STATIC_LOCAL via compiler 
+        commandline options or elsewhere in the code. Useful for 
+        implementing custom builds that free resources allocated via
+        DEFINE_STATIC_LOCAL.
+
 2009-10-27  Dumitru Daniliuc  <dumi@chromium.org>
 
         Build fix, no review needed.
