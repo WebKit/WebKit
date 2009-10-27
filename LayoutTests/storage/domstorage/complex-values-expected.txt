@@ -214,11 +214,11 @@ PASS storage.getItem('foo12') is "ÿ찡hello"
 Verify storage events are case sensitive
 storage.foo = 'test'
 Setting event listener
-FAIL eventCounter should be 0. Was 15.
+PASS eventCounter is 0
 storage.foo = 'test'
-FAIL eventCounter should be 0. Was 15.
+PASS eventCounter is 0
 storage.foo = 'TEST'
-FAIL eventCounter should be 1. Was 16.
+PASS eventCounter is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

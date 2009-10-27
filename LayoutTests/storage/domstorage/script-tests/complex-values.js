@@ -84,6 +84,10 @@ function test(storageString)
     shouldBe("eventCounter", "0");
     evalAndLog("storage.foo = 'TEST'");
     shouldBe("eventCounter", "1");
+
+    // Reset the counter for next tests (if any).
+    window.removeEventListener("storage", handleStorageEvent, false);
+    eventCounter = 0;
 }
 
 test("sessionStorage");

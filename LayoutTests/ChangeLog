@@ -1,3 +1,14 @@
+2009-10-27  Kinuko Yasuda  <kinuko@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fixing a test case that yields FAIL results.  Also updating
+        the corresponding expected results.
+        https://bugs.webkit.org/show_bug.cgi?id=30821
+
+        * storage/domstorage/complex-values-expected.txt:
+        * storage/domstorage/script-tests/complex-values.js:
+
 2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
