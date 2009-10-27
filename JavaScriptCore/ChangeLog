@@ -1,5 +1,11 @@
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Mark DateInstaceCache.h private, so other frameworks can see it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: re-readded this file.
 
         * runtime/DateInstanceCache.h: Added.
