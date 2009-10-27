@@ -1,3 +1,15 @@
+2009-10-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] DOM Storage runtime flag should default to on
+        https://bugs.webkit.org/show_bug.cgi?id=30828
+
+        The DOM Storage runtime flag was supposed to default to on.  I accidentally
+        changed the logic to default to false when I moved the flag.
+
+        * bindings/v8/RuntimeEnabledFeatures.cpp:
+
 2009-10-27  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Dimitri Glazkov.
