@@ -1,3 +1,9 @@
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Mac build fix: a forwarding header.
+
+        * ForwardingHeaders/wtf/DateInstanceCache.h: Added.
+
 2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         No Review.
