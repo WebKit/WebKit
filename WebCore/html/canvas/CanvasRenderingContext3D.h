@@ -51,8 +51,8 @@ class WebKitCSSMatrix;
 
     class CanvasRenderingContext3D : public CanvasRenderingContext {
     public:
-        CanvasRenderingContext3D(HTMLCanvasElement*);
-        ~CanvasRenderingContext3D();
+        static PassOwnPtr<CanvasRenderingContext3D> create(HTMLCanvasElement*);
+        virtual ~CanvasRenderingContext3D();
 
         virtual bool is3d() const { return true; }
 
@@ -288,7 +288,7 @@ class WebKitCSSMatrix;
 
         void viewport(long x, long y, unsigned long width, unsigned long height);
 
-        GraphicsContext3D* graphicsContext3D() { return &m_context; }
+        GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     
         void reshape(int width, int height);
 
@@ -300,18 +300,21 @@ class WebKitCSSMatrix;
         
     private:
         friend class CanvasObject;
+
+        CanvasRenderingContext3D(HTMLCanvasElement*, PassOwnPtr<GraphicsContext3D>);
+
         void addObject(CanvasObject*);
         void detachAndRemoveAllObjects();
 
         void markContextChanged();
         void cleanupAfterGraphicsCall(bool changed)
         {
-            m_context.checkError();
+            m_context->checkError();
             if (changed)
                 markContextChanged();
         }
         
-        GraphicsContext3D m_context;
+        OwnPtr<GraphicsContext3D> m_context;
         bool m_needsUpdate;
         bool m_markedCanvasDirty;
         // FIXME: I think this is broken -- it does not increment any

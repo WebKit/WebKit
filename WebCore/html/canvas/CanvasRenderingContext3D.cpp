@@ -42,12 +42,23 @@
 
 namespace WebCore {
 
-CanvasRenderingContext3D::CanvasRenderingContext3D(HTMLCanvasElement* canvas)
-    : CanvasRenderingContext(canvas)
+PassOwnPtr<CanvasRenderingContext3D> CanvasRenderingContext3D::create(HTMLCanvasElement* canvas)
+{
+    OwnPtr<GraphicsContext3D> context(GraphicsContext3D::create());
+    if (!context)
+        return 0;
+        
+    return new CanvasRenderingContext3D(canvas, context.release());
+}
+
+CanvasRenderingContext3D::CanvasRenderingContext3D(HTMLCanvasElement* passedCanvas, PassOwnPtr<GraphicsContext3D> context)
+    : CanvasRenderingContext(passedCanvas)
+    , m_context(context)
     , m_needsUpdate(true)
     , m_markedCanvasDirty(false)
 {
-    m_context.reshape(m_canvas->width(), m_canvas->height());
+    ASSERT(m_context);
+    m_context->reshape(canvas()->width(), canvas()->height());
 }
 
 CanvasRenderingContext3D::~CanvasRenderingContext3D()
@@ -58,14 +69,14 @@ CanvasRenderingContext3D::~CanvasRenderingContext3D()
 void CanvasRenderingContext3D::markContextChanged()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_canvas->renderBox() && m_canvas->renderBox()->hasLayer()) {
-        m_canvas->renderBox()->layer()->rendererContentChanged();
+    if (canvas()->renderBox() && canvas()->renderBox()->hasLayer()) {
+        canvas()->renderBox()->layer()->rendererContentChanged();
     } else {
 #endif
         if (!m_markedCanvasDirty) {
             // Make sure the canvas's image buffer is allocated.
-            m_canvas->buffer();
-            m_canvas->willDraw(FloatRect(0, 0, m_canvas->width(), m_canvas->height()));
+            canvas()->buffer();
+            canvas()->willDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
             m_markedCanvasDirty = true;
         }
 #if USE(ACCELERATED_COMPOSITING)
@@ -76,7 +87,7 @@ void CanvasRenderingContext3D::markContextChanged()
 void CanvasRenderingContext3D::beginPaint()
 {
     if (m_markedCanvasDirty) {
-        m_context.beginPaint(this);
+        m_context->beginPaint(this);
     }
 }
 
@@ -84,7 +95,7 @@ void CanvasRenderingContext3D::endPaint()
 {
     if (m_markedCanvasDirty) {
         m_markedCanvasDirty = false;
-        m_context.endPaint();
+        m_context->endPaint();
     }
 }
 
@@ -92,18 +103,18 @@ void CanvasRenderingContext3D::reshape(int width, int height)
 {
     if (m_needsUpdate) {
 #if USE(ACCELERATED_COMPOSITING)
-        if (m_canvas->renderBox() && m_canvas->renderBox()->hasLayer())
-            m_canvas->renderBox()->layer()->rendererContentChanged();
+        if (canvas()->renderBox() && canvas()->renderBox()->hasLayer())
+            canvas()->renderBox()->layer()->rendererContentChanged();
 #endif
         m_needsUpdate = false;
     }
     
-    m_context.reshape(width, height);
+    m_context->reshape(width, height);
 }
 
 int CanvasRenderingContext3D::sizeInBytes(int type, ExceptionCode& ec)
 {
-    int result = m_context.sizeInBytes(type);
+    int result = m_context->sizeInBytes(type);
     if (result <= 0) {
         ec = SYNTAX_ERR;
     }
@@ -112,7 +123,7 @@ int CanvasRenderingContext3D::sizeInBytes(int type, ExceptionCode& ec)
 
 void CanvasRenderingContext3D::activeTexture(unsigned long texture)
 {
-    m_context.activeTexture(texture);
+    m_context->activeTexture(texture);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -120,7 +131,7 @@ void CanvasRenderingContext3D::attachShader(CanvasProgram* program, CanvasShader
 {
     if (!program || !shader)
         return;
-    m_context.attachShader(program, shader);
+    m_context->attachShader(program, shader);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -128,94 +139,94 @@ void CanvasRenderingContext3D::bindAttribLocation(CanvasProgram* program, unsign
 {
     if (!program)
         return;
-    m_context.bindAttribLocation(program, index, name);
+    m_context->bindAttribLocation(program, index, name);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::bindBuffer(unsigned long target, CanvasBuffer* buffer)
 {
-    m_context.bindBuffer(target, buffer);
+    m_context->bindBuffer(target, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
 
 void CanvasRenderingContext3D::bindFramebuffer(unsigned long target, CanvasFramebuffer* buffer)
 {
-    m_context.bindFramebuffer(target, buffer);
+    m_context->bindFramebuffer(target, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::bindRenderbuffer(unsigned long target, CanvasRenderbuffer* renderbuffer)
 {
-    m_context.bindRenderbuffer(target, renderbuffer);
+    m_context->bindRenderbuffer(target, renderbuffer);
     cleanupAfterGraphicsCall(false);
 }
 
 
 void CanvasRenderingContext3D::bindTexture(unsigned long target, CanvasTexture* texture)
 {
-    m_context.bindTexture(target, texture);
+    m_context->bindTexture(target, texture);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::blendColor(double red, double green, double blue, double alpha)
 {
-    m_context.blendColor(red, green, blue, alpha);
+    m_context->blendColor(red, green, blue, alpha);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::blendEquation( unsigned long mode )
 {
-    m_context.blendEquation(mode);
+    m_context->blendEquation(mode);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha)
 {
-    m_context.blendEquationSeparate(modeRGB, modeAlpha);
+    m_context->blendEquationSeparate(modeRGB, modeAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
 
 void CanvasRenderingContext3D::blendFunc(unsigned long sfactor, unsigned long dfactor)
 {
-    m_context.blendFunc(sfactor, dfactor);
+    m_context->blendFunc(sfactor, dfactor);
     cleanupAfterGraphicsCall(false);
 }       
 
 void CanvasRenderingContext3D::blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha)
 {
-    m_context.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+    m_context->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::bufferData(unsigned long target, int size, unsigned long usage)
 {
-    m_context.bufferData(target, size, usage);
+    m_context->bufferData(target, size, usage);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::bufferData(unsigned long target, CanvasArray* data, unsigned long usage)
 {
-    m_context.bufferData(target, data, usage);
+    m_context->bufferData(target, data, usage);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::bufferSubData(unsigned long target, long offset, CanvasArray* data)
 {
-    m_context.bufferSubData(target, offset, data);
+    m_context->bufferSubData(target, offset, data);
     cleanupAfterGraphicsCall(false);
 }
 
 unsigned long CanvasRenderingContext3D::checkFramebufferStatus(unsigned long target)
 {
-    return m_context.checkFramebufferStatus(target);
+    return m_context->checkFramebufferStatus(target);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::clear(unsigned long mask)
 {
-    m_context.clear(mask);
+    m_context->clear(mask);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -229,43 +240,43 @@ void CanvasRenderingContext3D::clearColor(double r, double g, double b, double a
         b = 0;
     if (isnan(a))
         a = 1;
-    m_context.clearColor(r, g, b, a);
+    m_context->clearColor(r, g, b, a);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::clearDepth(double depth)
 {
-    m_context.clearDepth(depth);
+    m_context->clearDepth(depth);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::clearStencil(long s)
 {
-    m_context.clearStencil(s);
+    m_context->clearStencil(s);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::colorMask(bool red, bool green, bool blue, bool alpha)
 {
-    m_context.colorMask(red, green, blue, alpha);
+    m_context->colorMask(red, green, blue, alpha);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::compileShader(CanvasShader* shader)
 {
-    m_context.compileShader(shader);
+    m_context->compileShader(shader);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
 {
-    m_context.copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height)
 {
-    m_context.copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -319,7 +330,7 @@ PassRefPtr<CanvasShader> CanvasRenderingContext3D::createShader(unsigned long ty
 
 void CanvasRenderingContext3D::cullFace(unsigned long mode)
 {
-    m_context.cullFace(mode);
+    m_context->cullFace(mode);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -373,19 +384,19 @@ void CanvasRenderingContext3D::deleteTexture(CanvasTexture* texture)
 
 void CanvasRenderingContext3D::depthFunc(unsigned long func)
 {
-    m_context.depthFunc(func);
+    m_context->depthFunc(func);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::depthMask(bool flag)
 {
-    m_context.depthMask(flag);
+    m_context->depthMask(flag);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::depthRange(double zNear, double zFar)
 {
-    m_context.depthRange(zNear, zFar);
+    m_context->depthRange(zNear, zFar);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -394,58 +405,58 @@ void CanvasRenderingContext3D::detachShader(CanvasProgram* program, CanvasShader
     if (!program || !shader)
         return;
 
-    m_context.detachShader(program, shader);
+    m_context->detachShader(program, shader);
     cleanupAfterGraphicsCall(false);
 }
 
 
 void CanvasRenderingContext3D::disable(unsigned long cap)
 {
-    m_context.disable(cap);
+    m_context->disable(cap);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::disableVertexAttribArray(unsigned long index)
 {
-    m_context.disableVertexAttribArray(index);
+    m_context->disableVertexAttribArray(index);
     cleanupAfterGraphicsCall(false);
 }
 
 
 void CanvasRenderingContext3D::drawArrays(unsigned long mode, long first, long count)
 {
-    m_context.drawArrays(mode, first, count);
+    m_context->drawArrays(mode, first, count);
     cleanupAfterGraphicsCall(true);
 }
 
 void CanvasRenderingContext3D::drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset)
 {
-    m_context.drawElements(mode, count, type, offset);
+    m_context->drawElements(mode, count, type, offset);
     cleanupAfterGraphicsCall(true);
 }
 
 void CanvasRenderingContext3D::enable(unsigned long cap)
 {
-    m_context.enable(cap);
+    m_context->enable(cap);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::enableVertexAttribArray(unsigned long index)
 {
-    m_context.enableVertexAttribArray(index);
+    m_context->enableVertexAttribArray(index);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::finish()
 {
-    m_context.finish();
+    m_context->finish();
     cleanupAfterGraphicsCall(true);
 }
 
 
 void CanvasRenderingContext3D::flush()
 {
-    m_context.flush();
+    m_context->flush();
     cleanupAfterGraphicsCall(true);
 }
 
@@ -454,7 +465,7 @@ void CanvasRenderingContext3D::framebufferRenderbuffer(unsigned long target, uns
     if (!buffer)
         return;
         
-    m_context.framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
+    m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -463,26 +474,26 @@ void CanvasRenderingContext3D::framebufferTexture2D(unsigned long target, unsign
     if (!texture)
         return;
         
-    m_context.framebufferTexture2D(target, attachment, textarget, texture, level);
+    m_context->framebufferTexture2D(target, attachment, textarget, texture, level);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::frontFace(unsigned long mode)
 {
-    m_context.frontFace(mode);
+    m_context->frontFace(mode);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::generateMipmap(unsigned long target)
 {
-    m_context.generateMipmap(target);
+    m_context->generateMipmap(target);
     cleanupAfterGraphicsCall(false);
 }
 
 PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveAttrib(CanvasProgram* program, unsigned long index, ExceptionCode& ec)
 {
     ActiveInfo info;
-    if (!program || program->context() != this || !m_context.getActiveAttrib(program, index, info)) {
+    if (!program || program->context() != this || !m_context->getActiveAttrib(program, index, info)) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -492,7 +503,7 @@ PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveAttrib(CanvasPro
 PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveUniform(CanvasProgram* program, unsigned long index, ExceptionCode& ec)
 {
     ActiveInfo info;
-    if (!program || program->context() != this || !m_context.getActiveUniform(program, index, info)) {
+    if (!program || program->context() != this || !m_context->getActiveUniform(program, index, info)) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -501,251 +512,251 @@ PassRefPtr<CanvasActiveInfo> CanvasRenderingContext3D::getActiveUniform(CanvasPr
 
 int CanvasRenderingContext3D::getAttribLocation(CanvasProgram* program, const String& name)
 {
-    return m_context.getAttribLocation(program, name);
+    return m_context->getAttribLocation(program, name);
 }
 
 bool CanvasRenderingContext3D::getBoolean(unsigned long pname)
 {
-    bool result = m_context.getBoolean(pname);
+    bool result = m_context->getBoolean(pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasUnsignedByteArray> CanvasRenderingContext3D::getBooleanv(unsigned long pname)
 {
-    RefPtr<CanvasUnsignedByteArray> array = m_context.getBooleanv(pname);
+    RefPtr<CanvasUnsignedByteArray> array = m_context->getBooleanv(pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getBufferParameteri(unsigned long target, unsigned long pname)
 {
-    int result = m_context.getBufferParameteri(target, pname);
+    int result = m_context->getBufferParameteri(target, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getBufferParameteriv(unsigned long target, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getBufferParameteriv(target, pname);
+    RefPtr<CanvasIntArray> array = m_context->getBufferParameteriv(target, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 unsigned long CanvasRenderingContext3D::getError()
 {
-    return m_context.getError();
+    return m_context->getError();
 }
 
 float CanvasRenderingContext3D::getFloat(unsigned long pname)
 {
-    float result = m_context.getFloat(pname);
+    float result = m_context->getFloat(pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasFloatArray> CanvasRenderingContext3D::getFloatv(unsigned long pname)
 {
-    RefPtr<CanvasFloatArray> array = m_context.getFloatv(pname);
+    RefPtr<CanvasFloatArray> array = m_context->getFloatv(pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getFramebufferAttachmentParameteri(unsigned long target, unsigned long attachment, unsigned long pname)
 {
-    int result = m_context.getFramebufferAttachmentParameteri(target, attachment, pname);
+    int result = m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getFramebufferAttachmentParameteriv(target, attachment, pname);
+    RefPtr<CanvasIntArray> array = m_context->getFramebufferAttachmentParameteriv(target, attachment, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getInteger(unsigned long pname)
 {
-    float result = m_context.getInteger(pname);
+    float result = m_context->getInteger(pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getIntegerv(unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getIntegerv(pname);
+    RefPtr<CanvasIntArray> array = m_context->getIntegerv(pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getProgrami(CanvasProgram* program, unsigned long pname)
 {
-    int result = m_context.getProgrami(program, pname);
+    int result = m_context->getProgrami(program, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getProgramiv(CanvasProgram* program, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getProgramiv(program, pname);
+    RefPtr<CanvasIntArray> array = m_context->getProgramiv(program, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 String CanvasRenderingContext3D::getProgramInfoLog(CanvasProgram* program)
 {
-    String s = m_context.getProgramInfoLog(program);
+    String s = m_context->getProgramInfoLog(program);
     cleanupAfterGraphicsCall(false);
     return s;
 }
 
 int CanvasRenderingContext3D::getRenderbufferParameteri(unsigned long target, unsigned long pname)
 {
-    int result = m_context.getRenderbufferParameteri(target, pname);
+    int result = m_context->getRenderbufferParameteri(target, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getRenderbufferParameteriv(unsigned long target, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getRenderbufferParameteriv(target, pname);
+    RefPtr<CanvasIntArray> array = m_context->getRenderbufferParameteriv(target, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getShaderi(CanvasShader* shader, unsigned long pname)
 {
-    int result = m_context.getShaderi(shader, pname);
+    int result = m_context->getShaderi(shader, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getShaderiv(CanvasShader* shader, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getShaderiv(shader, pname);
+    RefPtr<CanvasIntArray> array = m_context->getShaderiv(shader, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 String CanvasRenderingContext3D::getShaderInfoLog(CanvasShader* shader)
 {
-    String s = m_context.getShaderInfoLog(shader);
+    String s = m_context->getShaderInfoLog(shader);
     cleanupAfterGraphicsCall(false);
     return s;
 }
 
 String CanvasRenderingContext3D::getShaderSource(CanvasShader* shader)
 {
-    String s = m_context.getShaderSource(shader);
+    String s = m_context->getShaderSource(shader);
     cleanupAfterGraphicsCall(false);
     return s;
 }
 
 String CanvasRenderingContext3D::getString(unsigned long name)
 {
-    return m_context.getString(name);
+    return m_context->getString(name);
 }
 
 float CanvasRenderingContext3D::getTexParameterf(unsigned long target, unsigned long pname)
 {
-    float result = m_context.getTexParameterf(target, pname);
+    float result = m_context->getTexParameterf(target, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasFloatArray> CanvasRenderingContext3D::getTexParameterfv(unsigned long target, unsigned long pname)
 {
-    RefPtr<CanvasFloatArray> array = m_context.getTexParameterfv(target, pname);
+    RefPtr<CanvasFloatArray> array = m_context->getTexParameterfv(target, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 int CanvasRenderingContext3D::getTexParameteri(unsigned long target, unsigned long pname)
 {
-    int result = m_context.getTexParameteri(target, pname);
+    int result = m_context->getTexParameteri(target, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getTexParameteriv(unsigned long target, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getTexParameteriv(target, pname);
+    RefPtr<CanvasIntArray> array = m_context->getTexParameteriv(target, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 float CanvasRenderingContext3D::getUniformf(CanvasProgram* program, long location)
 {
-    float result = m_context.getUniformf(program, location);
+    float result = m_context->getUniformf(program, location);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasFloatArray> CanvasRenderingContext3D::getUniformfv(CanvasProgram* program, long location)
 {
-    RefPtr<CanvasFloatArray> array = m_context.getUniformfv(program, location);
+    RefPtr<CanvasFloatArray> array = m_context->getUniformfv(program, location);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 long CanvasRenderingContext3D::getUniformi(CanvasProgram* program, long location)
 {
-    long result = m_context.getUniformi(program, location);
+    long result = m_context->getUniformi(program, location);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getUniformiv(CanvasProgram* program, long location)
 {
-    RefPtr<CanvasIntArray> array = m_context.getUniformiv(program, location);
+    RefPtr<CanvasIntArray> array = m_context->getUniformiv(program, location);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 long CanvasRenderingContext3D::getUniformLocation(CanvasProgram* program, const String& name)
 {
-    return m_context.getUniformLocation(program, name);
+    return m_context->getUniformLocation(program, name);
 }
 
 float CanvasRenderingContext3D::getVertexAttribf(unsigned long index, unsigned long pname)
 {
-    float result = m_context.getVertexAttribf(index, pname);
+    float result = m_context->getVertexAttribf(index, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasFloatArray> CanvasRenderingContext3D::getVertexAttribfv(unsigned long index, unsigned long pname)
 {
-    RefPtr<CanvasFloatArray> array = m_context.getVertexAttribfv(index, pname);
+    RefPtr<CanvasFloatArray> array = m_context->getVertexAttribfv(index, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 long CanvasRenderingContext3D::getVertexAttribi(unsigned long index, unsigned long pname)
 {
-    long result = m_context.getVertexAttribi(index, pname);
+    long result = m_context->getVertexAttribi(index, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 PassRefPtr<CanvasIntArray> CanvasRenderingContext3D::getVertexAttribiv(unsigned long index, unsigned long pname)
 {
-    RefPtr<CanvasIntArray> array = m_context.getVertexAttribiv(index, pname);
+    RefPtr<CanvasIntArray> array = m_context->getVertexAttribiv(index, pname);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 long CanvasRenderingContext3D::getVertexAttribOffset(unsigned long index, unsigned long pname)
 {
-    long result = m_context.getVertexAttribOffset(index, pname);
+    long result = m_context->getVertexAttribOffset(index, pname);
     cleanupAfterGraphicsCall(false);
     return result;
 }
 
 void CanvasRenderingContext3D::hint(unsigned long target, unsigned long mode)
 {
-    m_context.hint(target, mode);
+    m_context->hint(target, mode);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -754,42 +765,42 @@ bool CanvasRenderingContext3D::isBuffer(CanvasBuffer* buffer)
     if (!buffer)
         return false;
         
-    return m_context.isBuffer(buffer);
+    return m_context->isBuffer(buffer);
 }
 
 bool CanvasRenderingContext3D::isEnabled(unsigned long cap)
 {
-    return m_context.isEnabled(cap);
+    return m_context->isEnabled(cap);
 }
 
 bool CanvasRenderingContext3D::isFramebuffer(CanvasFramebuffer* framebuffer)
 {
-    return m_context.isFramebuffer(framebuffer);
+    return m_context->isFramebuffer(framebuffer);
 }
 
 bool CanvasRenderingContext3D::isProgram(CanvasProgram* program)
 {
-    return m_context.isProgram(program);
+    return m_context->isProgram(program);
 }
 
 bool CanvasRenderingContext3D::isRenderbuffer(CanvasRenderbuffer* renderbuffer)
 {
-    return m_context.isRenderbuffer(renderbuffer);
+    return m_context->isRenderbuffer(renderbuffer);
 }
 
 bool CanvasRenderingContext3D::isShader(CanvasShader* shader)
 {
-    return m_context.isShader(shader);
+    return m_context->isShader(shader);
 }
 
 bool CanvasRenderingContext3D::isTexture(CanvasTexture* texture)
 {
-    return m_context.isTexture(texture);
+    return m_context->isTexture(texture);
 }
 
 void CanvasRenderingContext3D::lineWidth(double width)
 {
-    m_context.lineWidth((float) width);
+    m_context->lineWidth((float) width);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -798,92 +809,92 @@ void CanvasRenderingContext3D::linkProgram(CanvasProgram* program)
     if (!program)
         return;
         
-    m_context.linkProgram(program);
+    m_context->linkProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::pixelStorei(unsigned long pname, long param)
 {
-    m_context.pixelStorei(pname, param);
+    m_context->pixelStorei(pname, param);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::polygonOffset(double factor, double units)
 {
-    m_context.polygonOffset((float) factor, (float) units);
+    m_context->polygonOffset((float) factor, (float) units);
     cleanupAfterGraphicsCall(false);
 }
 
 PassRefPtr<CanvasArray> CanvasRenderingContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
 {
-    RefPtr<CanvasArray> array = m_context.readPixels(x, y, width, height, format, type);
+    RefPtr<CanvasArray> array = m_context->readPixels(x, y, width, height, format, type);
     cleanupAfterGraphicsCall(false);
     return array;
 }
 
 void CanvasRenderingContext3D::releaseShaderCompiler()
 {
-    m_context.releaseShaderCompiler();
+    m_context->releaseShaderCompiler();
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    m_context.renderbufferStorage(target, internalformat, width, height);
+    m_context->renderbufferStorage(target, internalformat, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::sampleCoverage(double value, bool invert)
 {
-    m_context.sampleCoverage((float) value, invert);
+    m_context->sampleCoverage((float) value, invert);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::scissor(long x, long y, unsigned long width, unsigned long height)
 {
-    m_context.scissor(x, y, width, height);
+    m_context->scissor(x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::shaderSource(CanvasShader* shader, const String& string)
 {
-    m_context.shaderSource(shader, string);
+    m_context->shaderSource(shader, string);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilFunc(unsigned long func, long ref, unsigned long mask)
 {
-    m_context.stencilFunc(func, ref, mask);
+    m_context->stencilFunc(func, ref, mask);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask)
 {
-    m_context.stencilFuncSeparate(face, func, ref, mask);
+    m_context->stencilFuncSeparate(face, func, ref, mask);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilMask(unsigned long mask)
 {
-    m_context.stencilMask(mask);
+    m_context->stencilMask(mask);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilMaskSeparate(unsigned long face, unsigned long mask)
 {
-    m_context.stencilMaskSeparate(face, mask);
+    m_context->stencilMaskSeparate(face, mask);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass)
 {
-    m_context.stencilOp(fail, zfail, zpass);
+    m_context->stencilOp(fail, zfail, zpass);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass)
 {
-    m_context.stencilOpSeparate(face, fail, zfail, zpass);
+    m_context->stencilOpSeparate(face, fail, zfail, zpass);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -893,7 +904,7 @@ void CanvasRenderingContext3D::texImage2D(unsigned target, unsigned level, unsig
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texImage2D(target, level, internalformat, width, height,
+    m_context->texImage2D(target, level, internalformat, width, height,
                          border, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
@@ -904,7 +915,7 @@ void CanvasRenderingContext3D::texImage2D(unsigned target, unsigned level, unsig
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texImage2D(target, level, internalformat, width, height,
+    m_context->texImage2D(target, level, internalformat, width, height,
                          border, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
@@ -914,7 +925,7 @@ void CanvasRenderingContext3D::texImage2D(unsigned target, unsigned level, HTMLI
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texImage2D(target, level, image, flipY, premultiplyAlpha);
+    m_context->texImage2D(target, level, image, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -923,7 +934,7 @@ void CanvasRenderingContext3D::texImage2D(unsigned target, unsigned level, HTMLC
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texImage2D(target, level, canvas, flipY, premultiplyAlpha);
+    m_context->texImage2D(target, level, canvas, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -932,19 +943,19 @@ void CanvasRenderingContext3D::texImage2D(unsigned target, unsigned level, HTMLV
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texImage2D(target, level, video, flipY, premultiplyAlpha);
+    m_context->texImage2D(target, level, video, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::texParameterf(unsigned target, unsigned pname, float param)
 {
-    m_context.texParameterf(target, pname, param);
+    m_context->texParameterf(target, pname, param);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::texParameteri(unsigned target, unsigned pname, int param)
 {
-    m_context.texParameteri(target, pname, param);
+    m_context->texParameteri(target, pname, param);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -954,7 +965,7 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -964,7 +975,7 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -974,7 +985,7 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texSubImage2D(target, level, xoffset, yoffset, width, height, image, flipY, premultiplyAlpha);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, image, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -984,7 +995,7 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texSubImage2D(target, level, xoffset, yoffset, width, height, canvas, flipY, premultiplyAlpha);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, canvas, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -994,13 +1005,13 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    m_context.texSubImage2D(target, level, xoffset, yoffset, width, height, video, flipY, premultiplyAlpha);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, video, flipY, premultiplyAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform1f(long location, float x)
 {
-    m_context.uniform1f(location, x);
+    m_context->uniform1f(location, x);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1010,7 +1021,7 @@ void CanvasRenderingContext3D::uniform1fv(long location, CanvasFloatArray* v)
     if (!v)
         return;
         
-    m_context.uniform1fv(location, v->data(), v->length());
+    m_context->uniform1fv(location, v->data(), v->length());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1020,13 +1031,13 @@ void CanvasRenderingContext3D::uniform1fv(long location, float* v, int size)
     if (!v)
         return;
         
-    m_context.uniform1fv(location, v, size);
+    m_context->uniform1fv(location, v, size);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform1i(long location, int x)
 {
-    m_context.uniform1i(location, x);
+    m_context->uniform1i(location, x);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1036,7 +1047,7 @@ void CanvasRenderingContext3D::uniform1iv(long location, CanvasIntArray* v)
     if (!v)
         return;
         
-    m_context.uniform1iv(location, v->data(), v->length());
+    m_context->uniform1iv(location, v->data(), v->length());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1046,13 +1057,13 @@ void CanvasRenderingContext3D::uniform1iv(long location, int* v, int size)
     if (!v)
         return;
         
-    m_context.uniform1iv(location, v, size);
+    m_context->uniform1iv(location, v, size);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform2f(long location, float x, float y)
 {
-    m_context.uniform2f(location, x, y);
+    m_context->uniform2f(location, x, y);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1063,7 +1074,7 @@ void CanvasRenderingContext3D::uniform2fv(long location, CanvasFloatArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context.uniform2fv(location, v->data(), v->length() / 2);
+    m_context->uniform2fv(location, v->data(), v->length() / 2);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1074,13 +1085,13 @@ void CanvasRenderingContext3D::uniform2fv(long location, float* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context.uniform2fv(location, v, size / 2);
+    m_context->uniform2fv(location, v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform2i(long location, int x, int y)
 {
-    m_context.uniform2i(location, x, y);
+    m_context->uniform2i(location, x, y);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1091,7 +1102,7 @@ void CanvasRenderingContext3D::uniform2iv(long location, CanvasIntArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context.uniform2iv(location, v->data(), v->length() / 2);
+    m_context->uniform2iv(location, v->data(), v->length() / 2);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1102,13 +1113,13 @@ void CanvasRenderingContext3D::uniform2iv(long location, int* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context.uniform2iv(location, v, size / 2);
+    m_context->uniform2iv(location, v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform3f(long location, float x, float y, float z)
 {
-    m_context.uniform3f(location, x, y, z);
+    m_context->uniform3f(location, x, y, z);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1119,7 +1130,7 @@ void CanvasRenderingContext3D::uniform3fv(long location, CanvasFloatArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context.uniform3fv(location, v->data(), v->length() / 3);
+    m_context->uniform3fv(location, v->data(), v->length() / 3);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1130,13 +1141,13 @@ void CanvasRenderingContext3D::uniform3fv(long location, float* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context.uniform3fv(location, v, size / 3);
+    m_context->uniform3fv(location, v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform3i(long location, int x, int y, int z)
 {
-    m_context.uniform3i(location, x, y, z);
+    m_context->uniform3i(location, x, y, z);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1147,7 +1158,7 @@ void CanvasRenderingContext3D::uniform3iv(long location, CanvasIntArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context.uniform3iv(location, v->data(), v->length() / 3);
+    m_context->uniform3iv(location, v->data(), v->length() / 3);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1158,13 +1169,13 @@ void CanvasRenderingContext3D::uniform3iv(long location, int* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context.uniform3iv(location, v, size / 3);
+    m_context->uniform3iv(location, v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform4f(long location, float x, float y, float z, float w)
 {
-    m_context.uniform4f(location, x, y, z, w);
+    m_context->uniform4f(location, x, y, z, w);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1175,7 +1186,7 @@ void CanvasRenderingContext3D::uniform4fv(long location, CanvasFloatArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniform4fv(location, v->data(), v->length() / 4);
+    m_context->uniform4fv(location, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1186,13 +1197,13 @@ void CanvasRenderingContext3D::uniform4fv(long location, float* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniform4fv(location, v, size / 4);
+    m_context->uniform4fv(location, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::uniform4i(long location, int x, int y, int z, int w)
 {
-    m_context.uniform4i(location, x, y, z, w);
+    m_context->uniform4i(location, x, y, z, w);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1203,7 +1214,7 @@ void CanvasRenderingContext3D::uniform4iv(long location, CanvasIntArray* v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniform4iv(location, v->data(), v->length() / 4);
+    m_context->uniform4iv(location, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1214,7 +1225,7 @@ void CanvasRenderingContext3D::uniform4iv(long location, int* v, int size)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniform4iv(location, v, size / 4);
+    m_context->uniform4iv(location, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1225,7 +1236,7 @@ void CanvasRenderingContext3D::uniformMatrix2fv(long location, bool transpose, C
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniformMatrix2fv(location, transpose, v->data(), v->length() / 4);
+    m_context->uniformMatrix2fv(location, transpose, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1236,7 +1247,7 @@ void CanvasRenderingContext3D::uniformMatrix2fv(long location, bool transpose, f
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context.uniformMatrix2fv(location, transpose, v, size / 4);
+    m_context->uniformMatrix2fv(location, transpose, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1247,7 +1258,7 @@ void CanvasRenderingContext3D::uniformMatrix3fv(long location, bool transpose, C
         return;
         
     // FIXME: length needs to be a multiple of 9
-    m_context.uniformMatrix3fv(location, transpose, v->data(), v->length() / 9);
+    m_context->uniformMatrix3fv(location, transpose, v->data(), v->length() / 9);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1258,7 +1269,7 @@ void CanvasRenderingContext3D::uniformMatrix3fv(long location, bool transpose, f
         return;
         
     // FIXME: length needs to be a multiple of 9
-    m_context.uniformMatrix3fv(location, transpose, v, size / 9);
+    m_context->uniformMatrix3fv(location, transpose, v, size / 9);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1269,7 +1280,7 @@ void CanvasRenderingContext3D::uniformMatrix4fv(long location, bool transpose, C
         return;
         
     // FIXME: length needs to be a multiple of 16
-    m_context.uniformMatrix4fv(location, transpose, v->data(), v->length() / 16);
+    m_context->uniformMatrix4fv(location, transpose, v->data(), v->length() / 16);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1280,32 +1291,32 @@ void CanvasRenderingContext3D::uniformMatrix4fv(long location, bool transpose, f
         return;
         
     // FIXME: length needs to be a multiple of 16
-    m_context.uniformMatrix4fv(location, transpose, v, size / 16);
+    m_context->uniformMatrix4fv(location, transpose, v, size / 16);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::useProgram(CanvasProgram* program)
 {
-    m_context.useProgram(program);
+    m_context->useProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::validateProgram(CanvasProgram* program)
 {
-    m_context.validateProgram(program);
+    m_context->validateProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib1f(unsigned long indx, float v0)
 {
-    m_context.vertexAttrib1f(indx, v0);
+    m_context->vertexAttrib1f(indx, v0);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib1fv(unsigned long indx, CanvasFloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
-    m_context.vertexAttrib1fv(indx, v->data());
+    m_context->vertexAttrib1fv(indx, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1314,20 +1325,20 @@ void CanvasRenderingContext3D::vertexAttrib1fv(unsigned long indx, float* v, int
     // FIXME: Need to make sure array is big enough for attribute being set
     UNUSED_PARAM(size);
     
-    m_context.vertexAttrib1fv(indx, v);
+    m_context->vertexAttrib1fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib2f(unsigned long indx, float v0, float v1)
 {
-    m_context.vertexAttrib2f(indx, v0, v1);
+    m_context->vertexAttrib2f(indx, v0, v1);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib2fv(unsigned long indx, CanvasFloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
-    m_context.vertexAttrib2fv(indx, v->data());
+    m_context->vertexAttrib2fv(indx, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1336,20 +1347,20 @@ void CanvasRenderingContext3D::vertexAttrib2fv(unsigned long indx, float* v, int
     // FIXME: Need to make sure array is big enough for attribute being set
     UNUSED_PARAM(size);
     
-    m_context.vertexAttrib2fv(indx, v);
+    m_context->vertexAttrib2fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib3f(unsigned long indx, float v0, float v1, float v2)
 {
-    m_context.vertexAttrib3f(indx, v0, v1, v2);
+    m_context->vertexAttrib3f(indx, v0, v1, v2);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib3fv(unsigned long indx, CanvasFloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
-    m_context.vertexAttrib3fv(indx, v->data());
+    m_context->vertexAttrib3fv(indx, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1358,20 +1369,20 @@ void CanvasRenderingContext3D::vertexAttrib3fv(unsigned long indx, float* v, int
     // FIXME: Need to make sure array is big enough for attribute being set
     UNUSED_PARAM(size);
     
-    m_context.vertexAttrib3fv(indx, v);
+    m_context->vertexAttrib3fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib4f(unsigned long indx, float v0, float v1, float v2, float v3)
 {
-    m_context.vertexAttrib4f(indx, v0, v1, v2, v3);
+    m_context->vertexAttrib4f(indx, v0, v1, v2, v3);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttrib4fv(unsigned long indx, CanvasFloatArray* v)
 {
     // FIXME: Need to make sure array is big enough for attribute being set
-    m_context.vertexAttrib4fv(indx, v->data());
+    m_context->vertexAttrib4fv(indx, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1380,13 +1391,13 @@ void CanvasRenderingContext3D::vertexAttrib4fv(unsigned long indx, float* v, int
     // FIXME: Need to make sure array is big enough for attribute being set
     UNUSED_PARAM(size);
     
-    m_context.vertexAttrib4fv(indx, v);
+    m_context->vertexAttrib4fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
 void CanvasRenderingContext3D::vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, unsigned long offset)
 {
-    m_context.vertexAttribPointer(indx, size, type, normalized, stride, offset);
+    m_context->vertexAttribPointer(indx, size, type, normalized, stride, offset);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1400,7 +1411,7 @@ void CanvasRenderingContext3D::viewport(long x, long y, unsigned long width, uns
         width = 100;
     if (isnan(height))
         height = 100;
-    m_context.viewport(x, y, width, height);
+    m_context->viewport(x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 

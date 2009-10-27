@@ -1,3 +1,33 @@
+2009-10-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        Make WebGL context failure more robust and make it succeed in more cases
+        https://bugs.webkit.org/show_bug.cgi?id=30349
+
+        Bubble a failure to get a CGLContext up to HTMLContextElement so it can
+        return null from getContext. Also added a more robust pixel format choosing 
+        mechanism and can render correctly when a SW renderer is chosen.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        * html/canvas/CanvasRenderingContext3D.h:
+        (WebCore::CanvasRenderingContext3D::graphicsContext3D):
+        (WebCore::CanvasRenderingContext3D::cleanupAfterGraphicsCall):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/Canvas3DLayer.mm:
+        (-[Canvas3DLayer copyCGLPixelFormatForDisplayMask:]):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::setPixelFormat):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::ensureContext):
+
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         Mac build fix: a forwarding header.

@@ -50,8 +50,40 @@
 #include "WebKitCSSMatrix.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
+#include <OpenGL/CGLRenderers.h>
 
 namespace WebCore {
+
+static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest)
+{
+    attribs.clear();
+    
+    attribs.append(kCGLPFAColorSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(colorBits));
+    attribs.append(kCGLPFADepthSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(depthBits));
+    
+    if (accelerated)
+        attribs.append(kCGLPFAAccelerated);
+    else {
+        attribs.append(kCGLPFARendererID);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLRendererGenericFloatID));
+    }
+        
+    if (supersample)
+        attribs.append(kCGLPFASupersample);
+        
+    if (closest)
+        attribs.append(kCGLPFAClosestPolicy);
+        
+    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
+}
+
+PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create()
+{
+    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D());
+    return context->m_contextObj ? context.release() : 0;
+}
 
 GraphicsContext3D::GraphicsContext3D()
     : m_contextObj(0)
@@ -59,45 +91,35 @@ GraphicsContext3D::GraphicsContext3D()
     , m_fbo(0)
     , m_depthBuffer(0)
 {
-    CGLPixelFormatAttribute attribs[] =
-    {
-        kCGLPFAClosestPolicy,
-        (CGLPixelFormatAttribute) kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
-        (CGLPixelFormatAttribute) kCGLPFADepthSize, (CGLPixelFormatAttribute) 32,
-        (CGLPixelFormatAttribute) kCGLPFAAccelerated,
-        (CGLPixelFormatAttribute) kCGLPFASupersample,
-        (CGLPixelFormatAttribute) 0
-    };
-    
-    // Make sure to change these constants to match the above list
-    const int superSampleIndex = 6;
-    const int acceleratedIndex = 5;
-    const int depthSizeIndex = 4;
-    
+    Vector<CGLPixelFormatAttribute> attribs;
     CGLPixelFormatObj pixelFormatObj = 0;
     GLint numPixelFormats = 0;
     
-    // We will try for the above format first. If that fails, we will
-    // try for one without supersample. If that fails, we will try for
-    // one that has a 16 bit depth buffer. If that fails, we will try
-    // for a software renderer. If none of that works, we simply fail 
-    // and set m_contextObj to 0.
-    CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+    // We will try:
+    //
+    //  1) 32 bit RGBA/32 bit depth/accelerated/supersampled
+    //  2) 32 bit RGBA/32 bit depth/accelerated
+    //  3) 32 bit RGBA/16 bit depth/accelerated
+    //  4) closest to 32 bit RGBA/16 bit depth/software renderer
+    //
+    //  If none of that works, we simply fail and set m_contextObj to 0.
+    
+    setPixelFormat(attribs, 32, 32, true, true, false);
+    CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
     if (numPixelFormats == 0) {
-        attribs[superSampleIndex] = static_cast<CGLPixelFormatAttribute>(0);
-        CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+        setPixelFormat(attribs, 32, 32, true, false, false);
+        CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
         
         if (numPixelFormats == 0) {
-            attribs[depthSizeIndex] = static_cast<CGLPixelFormatAttribute>(16);
-            CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+            setPixelFormat(attribs, 32, 16, true, false, false);
+            CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
         
             if (numPixelFormats == 0) {
-                attribs[acceleratedIndex] = static_cast<CGLPixelFormatAttribute>(0);
-                CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
+                setPixelFormat(attribs, 32, 16, false, false, true);
+                CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
         
                 if (numPixelFormats == 0) {
                     // Could not find an acceptable renderer - fail
-                    m_contextObj = 0;
                     return;
                 }
             }
@@ -143,12 +165,14 @@ GraphicsContext3D::GraphicsContext3D()
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-    CGLSetCurrentContext(m_contextObj);
-    ::glDeleteRenderbuffersEXT(1, & m_depthBuffer);
-    ::glDeleteTextures(1, &m_texture);
-    ::glDeleteFramebuffersEXT(1, &m_fbo);
-    CGLSetCurrentContext(0);
-    CGLDestroyContext(m_contextObj);
+    if (m_contextObj) {
+        CGLSetCurrentContext(m_contextObj);
+        ::glDeleteRenderbuffersEXT(1, & m_depthBuffer);
+        ::glDeleteTextures(1, &m_texture);
+        ::glDeleteFramebuffersEXT(1, &m_fbo);
+        CGLSetCurrentContext(0);
+        CGLDestroyContext(m_contextObj);
+    }
 }
 
 void GraphicsContext3D::checkError() const
@@ -176,7 +200,7 @@ void GraphicsContext3D::endPaint()
 
 void GraphicsContext3D::reshape(int width, int height)
 {
-    if (width == m_currentWidth && height == m_currentHeight)
+    if (width == m_currentWidth && height == m_currentHeight || !m_contextObj)
         return;
     
     m_currentWidth = width;
@@ -208,6 +232,9 @@ void GraphicsContext3D::reshape(int width, int height)
 
 static inline void ensureContext(CGLContextObj context)
 {
+    if (!context)
+        return;
+        
     CGLContextObj currentContext = CGLGetCurrentContext();
     if (currentContext != context)
         CGLSetCurrentContext(context);

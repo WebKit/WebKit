@@ -38,6 +38,7 @@ namespace WebCore {
         CanvasRenderingContext(HTMLCanvasElement*);
         virtual ~CanvasRenderingContext() { }
         
+        // Ref and deref the m_canvas
         void ref();
         void deref();
         
@@ -46,7 +47,7 @@ namespace WebCore {
         virtual bool is2d() const { return false; }
         virtual bool is3d() const { return false; }
 
-    protected:
+    private:
         HTMLCanvasElement* m_canvas;
     };
 

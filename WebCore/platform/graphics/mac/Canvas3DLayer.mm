@@ -50,19 +50,14 @@ using namespace WebCore;
 
 -(CGLPixelFormatObj)copyCGLPixelFormatForDisplayMask:(uint32_t)mask
 {
-    CGLPixelFormatAttribute attribs[] =
-    {
-        (CGLPixelFormatAttribute) kCGLPFAAccelerated,
-        (CGLPixelFormatAttribute) kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
-        (CGLPixelFormatAttribute) kCGLPFADisplayMask, (CGLPixelFormatAttribute) mask,
-        (CGLPixelFormatAttribute) 0
-    };
-    
-    CGLPixelFormatObj pixelFormatObj;
-    GLint numPixelFormats;
- 
-    CGLChoosePixelFormat(attribs, &pixelFormatObj, &numPixelFormats);
-    return pixelFormatObj;
+    // FIXME: The mask param tells you which display (on a multi-display system)
+    // is to be used. But since we are now getting the pixel format from the 
+    // Canvas CGL context, we don't use it. This seems to do the right thing on
+    // one multi-display system. But there may be cases where this is not the case.
+    // If needed we will have to set the display mask in the Canvas CGLContext and
+    // make sure it matches.
+    UNUSED_PARAM(mask);
+    return CGLRetainPixelFormat(CGLGetPixelFormat(m_contextObj));
 }
 
 -(CGLContextObj)copyCGLContextForPixelFormat:(CGLPixelFormatObj)pixelFormat

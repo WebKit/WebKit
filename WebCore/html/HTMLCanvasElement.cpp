@@ -172,10 +172,11 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
             if (m_context && !m_context->is3d())
                 return 0;
             if (!m_context) {
-                m_context = new CanvasRenderingContext3D(this);
-
-                // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-                setNeedsStyleRecalc(SyntheticStyleChange);
+                m_context = CanvasRenderingContext3D::create(this);
+                if (m_context) {
+                    // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+                    setNeedsStyleRecalc(SyntheticStyleChange);
+                }
             }
             return m_context.get();
         }
