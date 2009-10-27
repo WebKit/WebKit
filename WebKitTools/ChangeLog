@@ -1,3 +1,16 @@
+2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Make .rc files compile on Windows without depending on MFC headers
+        https://bugs.webkit.org/show_bug.cgi?id=30750
+
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc: Use
+        windows.h instead of afxres.h because it exists even when MFC is not 
+        installed, and is all that's needed here.
+
+        * FindSafari/FindSafari.rc: Ditto
+
 2009-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

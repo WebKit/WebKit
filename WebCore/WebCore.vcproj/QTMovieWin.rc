@@ -1,7 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "autoversion.h"
-#include "winres.h"
+#include "winresrc.h"
 
 #ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US

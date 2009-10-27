@@ -1,3 +1,13 @@
+2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Make .rc files compile on Windows without depending on MFC headers
+        https://bugs.webkit.org/show_bug.cgi?id=30750
+
+        * WebKit.vcproj/WebKit.rc: Use winresrc.h because it exists even 
+        when MFC is not installed, and is all that's needed here.
+
 2009-10-26  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.
