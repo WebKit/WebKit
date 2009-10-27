@@ -582,7 +582,8 @@ void XMLTokenizer::parseEndElement()
     n->finishParsingChildren();
 
     if (!n->isElementNode() || !m_view) {
-        popCurrentNode();
+        if (!m_currentNodeStack.isEmpty())
+            popCurrentNode();
         return;
     }
 
