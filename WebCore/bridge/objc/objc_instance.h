@@ -71,7 +71,7 @@ private:
     
     RetainPtr<ObjectStructPtr> _instance;
     mutable ObjcClass *_class;
-    ObjectStructPtr _pool;
+    RetainPtr<ObjectStructPtr> _pool;
     int _beginCount;
 };
 

@@ -91,7 +91,6 @@ ObjcInstance::ObjcInstance(id instance, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
     , _instance(instance)
     , _class(0)
-    , _pool(0)
     , _beginCount(0)
 {
 }
@@ -135,7 +134,7 @@ void ObjcInstance::virtualEnd()
     _beginCount--;
     ASSERT(_beginCount >= 0);
     if (!_beginCount) {
-        [_pool drain];
+        [_pool.get() drain];
         _pool = 0;
     }
 }
