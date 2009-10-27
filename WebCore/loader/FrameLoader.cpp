@@ -1729,10 +1729,13 @@ bool FrameLoader::isComplete() const
 void FrameLoader::completed()
 {
     RefPtr<Frame> protect(m_frame);
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->redirectScheduler()->startTimer();
+
+    for (Frame* descendant = m_frame->tree()->traverseNext(m_frame); descendant; descendant = descendant->tree()->traverseNext(m_frame))
+        descendant->redirectScheduler()->startTimer();
+    
     if (Frame* parent = m_frame->tree()->parent())
         parent->loader()->checkCompleted();
+
     if (m_frame->view())
         m_frame->view()->maintainScrollPositionAtAnchor(0);
 }

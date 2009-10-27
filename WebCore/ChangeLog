@@ -1,3 +1,14 @@
+2009-10-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7289467> and http://webkit.org/b/30798 - REGRESSION (r48687): www.myuhc.com doesn't load.
+
+        Test: fast/loader/grandparent-completion-starts-redirect.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::completed): Notify all descendants that the load completed, not just direct children.
+
 2009-10-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.
