@@ -1,3 +1,10 @@
+2009-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Remove more empty files that didn't get removed earlier.
+
+        * inspector/DOMDispatchTimelineItem.cpp: Removed.
+        * inspector/DOMDispatchTimelineItem.h: Removed.
+
 2009-10-27  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
