@@ -1,3 +1,13 @@
+2009-10-27  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r50131.
+        http://trac.webkit.org/changeset/50131
+
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance):
+        (ObjcInstance::virtualEnd):
+
 2009-10-26  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.
