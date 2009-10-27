@@ -1,5 +1,11 @@
 2009-10-27  Xan Lopez  <xlopez@igalia.com>
 
+        Fix typo in test names.
+
+        * platform/gtk/Skipped:
+
+2009-10-27  Xan Lopez  <xlopez@igalia.com>
+
         Skip a few tests with links to their tracking bugs.
 
         * platform/gtk/Skipped:
