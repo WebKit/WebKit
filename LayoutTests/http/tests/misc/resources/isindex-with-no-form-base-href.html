@@ -1,0 +1,23 @@
+<html>
+<head>
+<base href="http://localhost:8000/misc/resources/isindex-with-no-form-base-href-submit.html">
+<script>
+function test()
+{
+    var isindexElm = document.getElementById("isindex");
+    isindexElm.value = "This is a test";
+    isindexElm.focus();
+
+    if (window.eventSender)
+        eventSender.keyDown(String.fromCharCode(0x0d));
+}
+
+window.onload = test;
+</script>
+</head>
+<body>
+<p>This page tests that we correctly put the value of an <tt>&lt;isindex&gt;</tt> element into the form data.</p>
+<p>If you are running this test by hand, press the enter/return key on your keyboard to submit.</p>
+<isindex id="isindex"></isindex>
+</body>
+</html>

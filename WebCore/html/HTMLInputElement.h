@@ -256,6 +256,8 @@ private:
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
 
+    PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
+
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif
