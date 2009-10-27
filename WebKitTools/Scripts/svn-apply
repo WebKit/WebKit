@@ -302,6 +302,7 @@ sub patch($)
     unless ($patch =~ m|^Index: ([^\r\n]+)|) {
         my $separator = '-' x 67;
         warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
+        die unless $force;
         return;
     }
     my $fullPath = $1;
@@ -421,10 +422,10 @@ sub scmCopy($$)
 {
     my ($source, $destination) = @_;
     if (isSVN()) {
-        system "svn", "copy", $source, $destination;
+        system "svn", "copy", $source, $destination or die;
     } elsif (isGit()) {
-        system "cp", $source, $destination;
-        system "git", "add", $destination;
+        system "cp", $source, $destination or die;
+        system "git", "add", $destination or die;
     }
 }
 
@@ -432,9 +433,9 @@ sub scmAdd($)
 {
     my ($path) = @_;
     if (isSVN()) {
-        system "svn", "add", $path;
+        system "svn", "add", $path or die;
     } elsif (isGit()) {
-        system "git", "add", $path;
+        system "git", "add", $path or die;
     }
 }
 
@@ -452,6 +453,6 @@ sub scmRemove($)
         close SVN;
         print $svnOutput if $svnOutput;
     } elsif (isGit()) {
-        system "git", "rm", "--force", $path;
+        system "git", "rm", "--force", $path or die;
     }
 }
