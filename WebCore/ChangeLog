@@ -1,3 +1,9 @@
+2009-10-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Speculative build fix for Chromium.
+
+        * platform/graphics/GraphicsContext3D.h:
+
 2009-10-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

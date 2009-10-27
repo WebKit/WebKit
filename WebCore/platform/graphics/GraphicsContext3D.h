@@ -29,6 +29,7 @@
 #include "PlatformString.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
 #include <OpenGL/OpenGL.h>
