@@ -234,7 +234,28 @@ def common_configure(conf):
             msvc_version = 'msvc2005'
         
         msvclibs_dir = os.path.join(wklibs_dir, msvc_version, 'win')
-        conf.env.append_value('CXXFLAGS', ['/wd4291','/wd4344','/wd4396','/wd4800'])
+
+        # Disable several warnings which occur many times during the build.
+        # Some of them are harmless (4099, 4344, 4396, 4800) and working around
+        # them in WebKit code is probably just not worth it. We can simply do
+        # nothing about the others (4503). A couple are possibly valid but
+        # there are just too many of them in the code so fixing them is
+        # impossible in practice and just results in tons of distracting output
+        # (4244, 4291). Finally 4996 is actively harmful as it is given for
+        # just about any use of standard C/C++ library facilities.
+        conf.env.append_value('CXXFLAGS', [
+            '/wd4099',  # type name first seen using 'struct' now seen using 'class'
+            '/wd4244',  # conversion from 'xxx' to 'yyy', possible loss of data:
+            '/wd4291',  # no matching operator delete found (for placement new)
+            '/wd4344',  # behaviour change in template deduction
+            '/wd4396',  # inline can't be used in friend declaration
+            '/wd4503',  # decorated name length exceeded, name was truncated
+            '/wd4800',  # forcing value to bool 'true' or 'false'
+            '/wd4996',  # deprecated function
+        ])
+
+        # This one also occurs in C code, so disable it there as well.
+        conf.env.append_value('CCFLAGS', ['/wd4996'])
     
     for use in port_uses[build_port]:
        conf.env.append_value('CXXDEFINES', ['WTF_USE_%s' % use])

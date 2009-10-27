@@ -1,3 +1,9 @@
+2009-10-27  Vadim Zeitlin  <vadim@wxwidgets.org>
+
+        Suppress a huge number of MSVC warnings when building wxWebKit.
+
+        * wx/build/settings.py:
+
 2009-10-26  Eric Seidel  <eric@webkit.org>
 
         No review, just adding Mike Belshe to the committers list.
