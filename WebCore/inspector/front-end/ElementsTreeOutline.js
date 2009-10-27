@@ -838,7 +838,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "script") {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
-                        console.log(node);
+
                         var javascriptSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(null, null);
                         javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
                         

@@ -1,3 +1,11 @@
+2009-10-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Tim Hatcher.
+        
+        Removed an extra console.log from ElementsTreeOutline.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+
 2009-10-27  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.
