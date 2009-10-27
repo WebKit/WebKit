@@ -1085,7 +1085,7 @@ SOURCES += \
     inspector/InspectorFrontend.cpp \
     inspector/InspectorResource.cpp \
     inspector/InspectorTimelineAgent.cpp \
-    inspector/TimelineItemFactory.cpp \
+    inspector/TimelineRecordFactory.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
@@ -1765,7 +1765,7 @@ HEADERS += \
     inspector/JavaScriptDebugServer.h \
     inspector/JavaScriptProfile.h \
     inspector/JavaScriptProfileNode.h \
-    inspector/TimelineItemFactory.h \
+    inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \
     loader/appcache/ApplicationCache.h \
