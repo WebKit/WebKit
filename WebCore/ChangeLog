@@ -1,3 +1,16 @@
+2009-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/30801>.
+        Web Inspector: Control + ]/[ on Windows doesn't change Panels.
+        
+        In my testing, Windows uses "U+00DB" and "U+00DD" to represent
+        [ and ], so we should honor those as well.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

@@ -635,7 +635,9 @@ WebInspector.documentKeyDown = function(event)
 
                 break;
 
-            case "U+005B": // [ key
+            // Windows and Mac have two different definitions of [, so accept both.
+            case "U+005B":
+            case "U+00DB": // [ key
                 if (isMac)
                     var isRotateLeft = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
                 else
@@ -650,7 +652,9 @@ WebInspector.documentKeyDown = function(event)
 
                 break;
 
-            case "U+005D": // ] key
+            // Windows and Mac have two different definitions of ], so accept both.
+            case "U+005D":
+            case "U+00DD":  // ] key
                 if (isMac)
                     var isRotateRight = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
                 else
