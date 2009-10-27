@@ -1,0 +1,11 @@
+<script src="resources/repaint.js"></script>
+<body onload="runRepaintTest()">
+<span style="position: relative; top: 80px;">
+    <div id="target" style="display: inline-block; width: 100px; height: 100px; overflow: hidden; font-family: ahem; font-size: 100px; background: red; color: green;">p</div>
+</span>
+<script>
+    function repaintTest()
+    {
+        document.getElementById("target").firstChild.data = "a";
+    }
+</script>

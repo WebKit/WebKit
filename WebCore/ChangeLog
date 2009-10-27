@@ -1,3 +1,23 @@
+2009-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Incomplete repaint of text field in relative positioned inline at imdb.com
+        https://bugs.webkit.org/show_bug.cgi?id=30047
+
+        Test: fast/repaint/inline-relative-positioned.html
+
+        Implemented offsetFromContainer(), mapLocalToContainer() and
+        mapAbsoluteToLocalPoint() in RenderInline.
+
+        * rendering/RenderBox.h: Fixed argument names in the declaration of
+        mapLocalToContainer().
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::mapAbsoluteToLocalPoint):
+        * rendering/RenderInline.h:
+
 2009-10-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Speculative build fix for Chromium.
