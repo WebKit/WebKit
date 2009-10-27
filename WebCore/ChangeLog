@@ -1,3 +1,29 @@
+2009-10-26  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Windowless Plugins : Print preview shows only part of flash when view is scrolled
+        
+        When printing, QPrinter's preview mode uses a QPicture to capture the output. The
+        QPicture holds a reference to the X Pixmap. As a result, the print preview would
+        update itself when the X Pixmap changes. To prevent the print preview from updating
+        whenever m_drawable is updated (i.e when the view updates), we create a copy.
+        
+        We require that a QPixmap::copy() result in a QPixmap backed by a XPixmap
+        regardless of the graphicssystem. This is taken care of by
+        commit d310f7c710ecb331a9689861f0551eabd38e946e in Qt (4.6)
+        
+        The beauty of this patch is that the newly created X Pixmap is managed by Qt and
+        it will free the Pixmap whenever the user closes the print preview dialog and
+        handles the case of displaying multiple preview dialogs nicely.
+        
+        All credit to Samuel Rødal for suggesting usage of QPixmap::copy().
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30714
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint):
+
 2009-10-26  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Gustavo Noronha.

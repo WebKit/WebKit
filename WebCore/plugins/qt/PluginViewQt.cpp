@@ -186,6 +186,12 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
     ASSERT(drawableDepth == qtDrawable.depth());
 
+    // When printing, Qt uses a QPicture the capture the output in preview mode. The
+    // QPicture holds a reference to the X Pixmap. As a result, the print preview would
+    // update itself when the X Pixmap changes. To prevent this, we create a copy.
+    if (m_element->document()->printing())
+        qtDrawable = qtDrawable.copy();
+
     if (m_isTransparent && drawableDepth != 32) {
         // Attempt content propagation for drawable with no alpha by copying over from the backing store
         QPoint offset;
@@ -221,7 +227,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     XGraphicsExposeEvent& exposeEvent = xevent.xgraphicsexpose;
     exposeEvent.type = GraphicsExpose;
     exposeEvent.display = QX11Info::display();
-    exposeEvent.drawable = m_drawable;
+    exposeEvent.drawable = qtDrawable.handle();
     exposeEvent.x = exposedRect.x();
     exposeEvent.y = exposedRect.y();
     exposeEvent.width = exposedRect.x() + exposedRect.width(); // flash bug? it thinks width is the right in transparent mode
