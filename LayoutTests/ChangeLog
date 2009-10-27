@@ -1,3 +1,14 @@
+2009-10-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Pretty Print all HTML Collection Types like we do for NodeList
+        https://bugs.webkit.org/show_bug.cgi?id=30709
+
+        * inspector/console-format-collections-expected.txt: Added.
+        * inspector/console-format-collections.html: Added.
+        * inspector/evaluate-in-frontend.js: Changed innerHTML to DOM elements instead.
+
 2009-10-27  Adele Peterson  <adele@apple.com>
 
         Test for <rdar://problem/7269075> REGRESSION (Safari 4.0.3-ToT): After pressing Shift-PageDown, pressing Shift-Up 

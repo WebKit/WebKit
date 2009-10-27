@@ -374,6 +374,7 @@ WebInspector.loaded = function()
     document.body.addStyleClass("platform-" + platform);
 
     this._loadPreferences();
+    this.pendingDispatches = 0;
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
@@ -497,8 +498,20 @@ WebInspector.dispatch = function() {
     function delayDispatch()
     {
         WebInspector[methodName].apply(WebInspector, parameters);
+        WebInspector.pendingDispatches--;
     }
+    WebInspector.pendingDispatches++;
     setTimeout(delayDispatch, 0);
+}
+
+WebInspector.runAfterPendingDispatches = function(callback)
+{
+    if (WebInspector.pendingDispatches === 0) {
+        callback();
+        return;
+    }
+
+    setTimeout(WebInspector.runAfterPendingDispatches, 0, callback);
 }
 
 WebInspector.windowUnload = function(event)

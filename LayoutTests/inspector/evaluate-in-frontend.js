@@ -46,7 +46,6 @@ function evaluateInWebInspector(script, callback)
         if (window.layoutTestController)
             layoutTestController.evaluateInWebInspector(callId, script);
     }, 0);
-
 }
 
 function notifyDone()
@@ -62,7 +61,8 @@ function notifyDone()
 function output(text)
 {
     var output = document.getElementById("output");
-    output.innerHTML += text + "<BR>";
+    output.appendChild(document.createTextNode(text));
+    output.appendChild(document.createElement("br"));
 }
 
 window.didEvaluateForTestInFrontend = function(callId, jsonResult)

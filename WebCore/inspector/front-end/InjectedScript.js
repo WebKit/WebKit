@@ -1158,6 +1158,8 @@ Object.type = function(obj)
         return "regexp";
     if (obj instanceof win.NodeList)
         return "array";
+    if (obj instanceof win.HTMLCollection || obj instanceof win.HTMLAllCollection)
+        return "array";
     if (obj instanceof win.Error)
         return "error";
     return type;

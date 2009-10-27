@@ -1,0 +1,79 @@
+<html>
+<head>
+<script src="evaluate-in-frontend.js"></script>
+<script>
+
+function doit()
+{
+    var formElement = document.getElementById("f");
+    var selectElement = document.getElementById("sel");
+    var spanElement = document.getElementById("span");
+
+    // NodeList
+    var nodelist = document.getElementsByTagName("select");
+    console.log(nodelist);
+
+    // HTMLCollection
+    var htmlcollection = document.head.children;
+    console.log(htmlcollection);
+
+    // HTMLOptionsCollection
+    var options = selectElement.options;
+    console.log(options);
+
+    // HTMLAllCollection
+    var all = document.all;
+    console.log(all);
+
+    // HTMLFormControlsCollection (currently shows HTMLCollection)
+    var formControls = formElement.elements;
+    console.log(formControls);
+
+    // RadioNodeList (currently shows NodeList)
+    var radioNodeList = formElement.x;
+    console.log(radioNodeList);
+
+    evaluateInWebInspector("dumpMessages", function(result) {
+        for (var i = 0; i < result.length; ++i)
+            output(result[i]);
+        notifyDone();
+    });
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console nicely formats HTML Collections and NodeLists.
+</p>
+<div style="display:none">
+    <form id="f">
+        <select id="sel" name="sel">
+            <option value="1">one</option>
+            <option value="2">two</option>
+        </select>
+        <input type="radio" name="x" value="x1" /> x1
+        <input type="radio" name="x" value="x2" /> x2
+    </form>
+</div>
+
+<div id="frontend-script" style="display:none">
+function dumpMessages(testController)
+{
+    testController.waitUntilDone();
+    WebInspector.runAfterPendingDispatches(function() {
+        var result = [];
+        var messages = WebInspector.console.messages;
+        for (var i = 0; i < messages.length; ++i)
+            result.push(messages[i].toMessageElement().textContent.replace(/\u200b/g, ""));
+        testController.notifyDone(result);
+    });
+}
+</div>
+
+<div id="output">
+</div>
+
+</body>
+</html>
