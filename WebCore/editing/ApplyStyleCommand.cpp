@@ -334,7 +334,7 @@ static void diffTextDecorations(CSSMutableStyleDeclaration* style, int propertID
     setTextDecorationProperty(style, newTextDecoration.get(), propertID);
 }
 
-bool fontWeightIsBold(CSSStyleDeclaration* style)
+static bool fontWeightIsBold(CSSStyleDeclaration* style)
 {
     ASSERT(style);
     RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight);

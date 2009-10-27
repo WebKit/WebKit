@@ -1,5 +1,14 @@
 2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        No Review.
+
+        Making fontWeightIsBold static to fix Snow Leopard build.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::fontWeightIsBold):
+
+2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         WebKit cannot remove nested bold tags
