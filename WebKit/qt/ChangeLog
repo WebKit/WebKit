@@ -1,5 +1,20 @@
 2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Rubberstamped by Oliver Hunt.
+
+        Change two methods to be internal for DRT use only.
+
+        Part of [Qt] Review all new API in Qt 4.6
+        https://bugs.webkit.org/show_bug.cgi?id=29843#c11
+
+        * Api/qwebsecurityorigin.cpp:
+        (qt_drt_whiteListAccessFromOrigin):
+        (qt_drt_resetOriginAccessWhiteLists):
+        (QWebSecurityOrigin::localSchemes):
+        * Api/qwebsecurityorigin.h:
+
+2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Make sure that initiating a rotation while rotating won't make

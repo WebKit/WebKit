@@ -30,6 +30,16 @@
 
 using namespace WebCore;
 
+void QWEBKIT_EXPORT qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
+{
+    SecurityOrigin::whiteListAccessFromOrigin(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+void QWEBKIT_EXPORT qt_drt_resetOriginAccessWhiteLists()
+{
+    SecurityOrigin::resetOriginAccessWhiteLists();
+}
+
 /*!
     \class QWebSecurityOrigin
     \since 4.5
@@ -238,22 +248,4 @@ QStringList QWebSecurityOrigin::localSchemes()
         list.append(scheme);
     }
     return list;
-}
-
-/*!
-    \since 4.6
-    \internal
-*/
-void QWebSecurityOrigin::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
-{
-    SecurityOrigin::whiteListAccessFromOrigin(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
-}
-
-/*!
-    \since 4.6
-    \internal
-*/
-void QWebSecurityOrigin::resetOriginAccessWhiteLists()
-{
-    SecurityOrigin::resetOriginAccessWhiteLists();
 }

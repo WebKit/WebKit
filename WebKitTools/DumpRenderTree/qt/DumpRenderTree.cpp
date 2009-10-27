@@ -68,6 +68,7 @@ extern void qt_dump_set_accepts_editing(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_drt_clearFrameName(QWebFrame* qFrame);
 extern void qt_drt_overwritePluginDirectories();
+extern void qt_drt_resetOriginAccessWhiteLists();
 
 namespace WebCore {
 
@@ -288,7 +289,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     //WorkQueue::shared()->setFrozen(false);
 
     m_controller->reset();
-    QWebSecurityOrigin::resetOriginAccessWhiteLists();
+    qt_drt_resetOriginAccessWhiteLists();
 
     QLocale qlocale;
     QLocale::setDefault(qlocale); 

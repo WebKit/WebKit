@@ -39,6 +39,7 @@ extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
 extern bool qt_drt_pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern int qt_drt_numberOfActiveAnimations(QWebFrame*);
+extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
@@ -285,7 +286,7 @@ void LayoutTestController::clearAllDatabases()
 
 void LayoutTestController::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    QWebSecurityOrigin::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+    qt_drt_whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void LayoutTestController::waitForPolicyDelegate()
