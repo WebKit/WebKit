@@ -1,5 +1,16 @@
 2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Make sure that initiating a rotation while rotating won't make
+        it end up at rotation positions that are not a multiply of
+        180 degrees.
+
+        * QGVLauncher/main.cpp:
+        (MainView::animatedFlip):
+
+2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Unreviewed Qt build fix.
 
         Update the tests as well to the new API change.

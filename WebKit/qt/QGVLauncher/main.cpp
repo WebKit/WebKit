@@ -164,8 +164,12 @@ public slots:
 
         QPropertyAnimation* animation = new QPropertyAnimation(m_mainWidget, "rotation", this);
         animation->setDuration(1000);
-        animation->setStartValue(m_mainWidget->rotation());
-        animation->setEndValue(m_mainWidget->rotation() + 180);
+
+        int rotation = int(m_mainWidget->rotation());
+
+        animation->setStartValue(rotation);
+        animation->setEndValue(rotation + 180 - (rotation % 180));
+
         animation->start(QAbstractAnimation::DeleteWhenStopped);
 #endif
     }
