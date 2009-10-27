@@ -31,65 +31,28 @@ namespace WebCore {
 class QualifiedName;
 class SVGAnimatedPropertyBase;
 
-struct SynchronizableProperty {
-    SynchronizableProperty()
-        : base(0)
-        , shouldSynchronize(false)
+class SynchronizableProperties {
+public:
+    SynchronizableProperties()
+        : m_shouldSynchronize(false)
     {
     }
 
-    explicit SynchronizableProperty(SVGAnimatedPropertyBase* _base)
-        : base(_base)
-        , shouldSynchronize(false)
+    void setNeedsSynchronization()
     {
+        m_shouldSynchronize = true;
     }
 
-    explicit SynchronizableProperty(WTF::HashTableDeletedValueType)
-        : base(reinterpret_cast<SVGAnimatedPropertyBase*>(-1))
-        , shouldSynchronize(false)
-    {
-    }
+    void addProperty(SVGAnimatedPropertyBase*);
+    void synchronize();
+    void startAnimation();
+    void stopAnimation();
 
-    bool isHashTableDeletedValue() const
-    {
-        return base == reinterpret_cast<SVGAnimatedPropertyBase*>(-1);
-    }
+private:
+    typedef HashSet<SVGAnimatedPropertyBase*> BaseSet;
 
-    bool operator==(const SynchronizableProperty& other) const
-    {
-        return base == other.base && shouldSynchronize == other.shouldSynchronize;
-    }
-
-    SVGAnimatedPropertyBase* base;
-    bool shouldSynchronize;
-};
-
-struct SynchronizablePropertyHash {
-    static unsigned hash(const SynchronizableProperty& key)
-    {
-        return StringImpl::computeHash(reinterpret_cast<const UChar*>(&key), sizeof(SynchronizableProperty) / sizeof(UChar));
-    }
-
-    static bool equal(const SynchronizableProperty& a, const SynchronizableProperty& b)
-    {
-        return a == b;
-    }
-
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-struct SynchronizablePropertyHashTraits : WTF::GenericHashTraits<SynchronizableProperty> {
-    static const bool emptyValueIsZero = true;
-
-    static void constructDeletedValue(SynchronizableProperty& slot)
-    {
-        new (&slot) SynchronizableProperty(WTF::HashTableDeletedValue);
-    }
-
-    static bool isDeletedValue(const SynchronizableProperty& value)
-    {
-        return value.isHashTableDeletedValue();
-    }
+    BaseSet m_bases;
+    bool m_shouldSynchronize;
 };
 
 // Helper class used exclusively by SVGElement to keep track of all animatable properties within a SVGElement,
@@ -110,8 +73,7 @@ private:
     SynchronizablePropertyController();
 
 private:
-    typedef HashSet<SynchronizableProperty, SynchronizablePropertyHash, SynchronizablePropertyHashTraits> Properties;
-    typedef HashMap<String, Properties> PropertyMap;
+    typedef HashMap<String, SynchronizableProperties> PropertyMap;
 
     PropertyMap m_map;
 };

@@ -28,6 +28,52 @@
 
 namespace WebCore {
 
+void SynchronizableProperties::addProperty(SVGAnimatedPropertyBase* base)
+{
+    m_bases.add(base);
+}
+
+void SynchronizableProperties::synchronize()
+{
+    ASSERT(!m_bases.isEmpty());
+    if (m_shouldSynchronize) {
+        BaseSet::iterator it = m_bases.begin();
+        BaseSet::iterator end = m_bases.end();
+
+        for (; it != end; ++it) {
+            SVGAnimatedPropertyBase* base = *it;
+            ASSERT(base);
+            base->synchronize();
+        }
+    }
+}
+
+void SynchronizableProperties::startAnimation()
+{
+    ASSERT(!m_bases.isEmpty());
+    BaseSet::iterator it = m_bases.begin();
+    BaseSet::iterator end = m_bases.end();
+
+    for (; it != end; ++it) {
+        SVGAnimatedPropertyBase* base = *it;
+        ASSERT(base);
+        base->startAnimation();
+    }
+}
+
+void SynchronizableProperties::stopAnimation()
+{
+    ASSERT(!m_bases.isEmpty());
+    BaseSet::iterator it = m_bases.begin();
+    BaseSet::iterator end = m_bases.end();
+
+    for (; it != end; ++it) {
+        SVGAnimatedPropertyBase* base = *it;
+        ASSERT(base);
+        base->stopAnimation();
+    }
+}
+
 SynchronizablePropertyController::SynchronizablePropertyController()
 {
 }
@@ -36,20 +82,15 @@ void SynchronizablePropertyController::registerProperty(const QualifiedName& att
 {
     // 'attrName' is ambigious. For instance in SVGMarkerElement both 'orientType' / 'orientAngle'
     // SVG DOM objects are synchronized with the 'orient' attribute. This why we need a HashSet.
-    SynchronizableProperty property(base);
-
     PropertyMap::iterator it = m_map.find(attrName.localName());
     if (it == m_map.end()) {
-        Properties properties;
-        properties.add(property);
+        SynchronizableProperties properties;
+        properties.addProperty(base);
         m_map.set(attrName.localName(), properties);
         return;
     }
 
-    Properties& properties = it->second;
-    ASSERT(!properties.isEmpty());
-
-    properties.add(property);
+    it->second.addProperty(base);
 }
 
 void SynchronizablePropertyController::setPropertyNeedsSynchronization(const QualifiedName& attrName)
@@ -57,17 +98,7 @@ void SynchronizablePropertyController::setPropertyNeedsSynchronization(const Qua
     PropertyMap::iterator itProp = m_map.find(attrName.localName());
     ASSERT(itProp != m_map.end());
 
-    Properties& properties = itProp->second;
-    ASSERT(!properties.isEmpty());
-
-    Properties::iterator it = properties.begin();
-    Properties::iterator end = properties.end();
-
-    for (; it != end; ++it) {
-        SynchronizableProperty& property = *it;
-        ASSERT(property.base);
-        property.shouldSynchronize = true;
-    }
+    itProp->second.setNeedsSynchronization();
 }
 
 void SynchronizablePropertyController::synchronizeProperty(const String& name)
@@ -76,21 +107,7 @@ void SynchronizablePropertyController::synchronizeProperty(const String& name)
     if (itProp == m_map.end())
         return;
 
-    Properties& properties = itProp->second;
-    ASSERT(!properties.isEmpty());
-
-    Properties::iterator it = properties.begin();
-    Properties::iterator end = properties.end();
-
-    for (; it != end; ++it) {
-        SynchronizableProperty& property = *it;
-        ASSERT(property.base);
-
-        if (!property.shouldSynchronize)
-            continue;
-
-        property.base->synchronize();
-    }
+    itProp->second.synchronize();
 }
 
 void SynchronizablePropertyController::synchronizeAllProperties()
@@ -101,23 +118,8 @@ void SynchronizablePropertyController::synchronizeAllProperties()
     PropertyMap::iterator itProp = m_map.begin();
     PropertyMap::iterator endProp = m_map.end();
 
-    for (; itProp != endProp; ++itProp) {
-        Properties& properties = itProp->second;
-        ASSERT(!properties.isEmpty());
-
-        Properties::iterator it = properties.begin();
-        Properties::iterator end = properties.end();
-
-        for (; it != end; ++it) {
-            SynchronizableProperty& property = *it;
-            ASSERT(property.base);
-
-            if (!property.shouldSynchronize)
-                continue;
-
-            property.base->synchronize();
-        }
-    }
+    for (; itProp != endProp; ++itProp)
+        itProp->second.synchronize();
 }
 
 void SynchronizablePropertyController::startAnimation(const String& name)
@@ -126,17 +128,7 @@ void SynchronizablePropertyController::startAnimation(const String& name)
     if (itProp == m_map.end())
         return;
 
-    Properties& properties = itProp->second;
-    ASSERT(!properties.isEmpty());
-
-    Properties::iterator it = properties.begin();
-    Properties::iterator end = properties.end();
-
-    for (; it != end; ++it) {
-        SynchronizableProperty& property = *it;
-        ASSERT(property.base);
-        property.base->startAnimation();
-    }
+    itProp->second.startAnimation();
 }
 
 void SynchronizablePropertyController::stopAnimation(const String& name)
@@ -145,17 +137,7 @@ void SynchronizablePropertyController::stopAnimation(const String& name)
     if (itProp == m_map.end())
         return;
 
-    Properties& properties = itProp->second;
-    ASSERT(!properties.isEmpty());
-
-    Properties::iterator it = properties.begin();
-    Properties::iterator end = properties.end();
-
-    for (; it != end; ++it) {
-        SynchronizableProperty& property = *it;
-        ASSERT(property.base);
-        property.base->stopAnimation();
-    }
+    itProp->second.stopAnimation();
 }
 
 }

@@ -1,3 +1,31 @@
+2009-10-26  Matt Mueller  <mattm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor synchronizable property handling to store one shouldSynchronize flag per set of properties rather than one per property.
+
+        Fixes reading uninitialized memory in SynchronizableProperty hash function as well as simplifying the code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30658
+
+        Covered by running various svg tests under valgrind, ex:
+        LayoutTests/svg/custom/js-late-mask-and-object-creation.svg
+
+        * svg/SynchronizablePropertyController.cpp:
+        (WebCore::SynchronizableProperties::addProperty):
+        (WebCore::SynchronizableProperties::synchronize):
+        (WebCore::SynchronizableProperties::startAnimation):
+        (WebCore::SynchronizableProperties::stopAnimation):
+        (WebCore::SynchronizablePropertyController::registerProperty):
+        (WebCore::SynchronizablePropertyController::setPropertyNeedsSynchronization):
+        (WebCore::SynchronizablePropertyController::synchronizeProperty):
+        (WebCore::SynchronizablePropertyController::synchronizeAllProperties):
+        (WebCore::SynchronizablePropertyController::startAnimation):
+        (WebCore::SynchronizablePropertyController::stopAnimation):
+        * svg/SynchronizablePropertyController.h:
+        (WebCore::SynchronizableProperties::SynchronizableProperties):
+        (WebCore::SynchronizableProperties::setNeedsSynchronization):
+
 2009-10-26  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.
