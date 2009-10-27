@@ -1,3 +1,10 @@
+2009-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Remove empty files that didn't get removed earlier.
+
+        * inspector/TimelineItem.cpp: Removed.
+        * inspector/TimelineItem.h: Removed.
+
 2009-10-27  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
