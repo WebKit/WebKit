@@ -1,3 +1,15 @@
+2009-10-27  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Re-enable the check that disallows pages with unload handlers in the page cache.
+
+        <rdar://problem/7196485> and http://webkit.org/b/29021 
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+
 2009-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Remove more empty files that didn't get removed earlier.
