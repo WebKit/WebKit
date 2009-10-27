@@ -51,6 +51,8 @@ namespace WebCore {
         TimerInstallTimelineRecordType = 5,
         TimerRemoveTimelineRecordType = 6,
         TimerFireTimelineRecordType = 7,
+        XHRReadyStateChangeRecordType = 8,
+        XHRLoadRecordType = 9,
     };
 
     class InspectorTimelineAgent {
@@ -80,6 +82,11 @@ namespace WebCore {
         void didRemoveTimer(int timerId);
         void willFireTimer(int timerId);
         void didFireTimer();
+
+        void willChangeXHRReadyState(const String&, int);
+        void didChangeXHRReadyState();
+        void willLoadXHR(const String&);
+        void didLoadXHR();
 
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
     private:

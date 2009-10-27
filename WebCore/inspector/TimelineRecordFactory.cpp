@@ -79,6 +79,27 @@ ScriptObject TimelineRecordFactory::createTimerInstallRecord(InspectorFrontend* 
     return record;
 }
 
+// static
+ScriptObject TimelineRecordFactory::createXHRReadyStateChangeTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, int readyState)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("url", url);
+    data.set("readyState", readyState);
+    record.set("data", data);
+    return record;
+}
+
+// static
+ScriptObject TimelineRecordFactory::createXHRLoadTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("url", url);
+    record.set("data", data);
+    return record;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

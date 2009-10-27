@@ -124,6 +124,26 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimerFireTimelineRecordType);
 }
 
+void InspectorTimelineAgent::willChangeXHRReadyState(const String& url, int readyState)
+{
+    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeTimelineRecord(m_frontend, currentTimeInMilliseconds(), url, readyState),
+        XHRReadyStateChangeRecordType);
+}
+
+void InspectorTimelineAgent::didChangeXHRReadyState()
+{
+    didCompleteCurrentRecord(XHRReadyStateChangeRecordType);
+}
+
+void InspectorTimelineAgent::willLoadXHR(const String& url) {
+    pushCurrentRecord(TimelineRecordFactory::createXHRLoadTimelineRecord(m_frontend, currentTimeInMilliseconds(), url), XHRLoadRecordType);
+}
+
+void InspectorTimelineAgent::didLoadXHR()
+{
+    didCompleteCurrentRecord(XHRLoadRecordType);
+}
+
 void InspectorTimelineAgent::reset()
 {
     m_recordStack.clear();
