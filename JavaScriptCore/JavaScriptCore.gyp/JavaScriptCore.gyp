@@ -121,6 +121,7 @@
         # GLib/GTK, even though its name doesn't really indicate.
         ['exclude', '/(GOwnPtr|glib/.*)\\.(cpp|h)$'],
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx)\\.(cpp|mm)$'],
+        ['exclude', 'wtf/CurrentTime\\.cpp$'],
       ],
       'direct_dependent_settings': {
         'include_dirs': [

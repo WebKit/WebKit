@@ -1,3 +1,19 @@
+2009-10-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Ensures that JavaScriptCore/wtf/CurrentTime.cpp is not built in PLATFORM(CHROMIUM) builds.
+
+        Chromium uses a different method to calculate the current time than is used in
+        JavaScriptCore/wtf/CurrentTime.cpp. This can lead to time skew when calls to currentTime() and Chromium's time
+        function are mixed.  In particular, timers can get scheduled in the past which leads to 100% CPU use.
+        See http://code.google.com/p/chromium/issues/detail?id=25892 for an example.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30833
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * wtf/CurrentTime.cpp:
+
 2009-10-27  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Rubber-stamped by Tor Arne Vestbø.
