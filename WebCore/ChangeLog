@@ -1,3 +1,26 @@
+2009-10-27  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25534
+        [GTK] Objects of ROLE_TABLE should implement the accessible table interface
+
+        First part of the implementation of AtkTable.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getCell):
+        (getCellIndex):
+        (webkit_accessible_table_ref_at):
+        (webkit_accessible_table_get_index_at):
+        (webkit_accessible_table_get_n_columns):
+        (webkit_accessible_table_get_n_rows):
+        (webkit_accessible_table_get_column_extent_at):
+        (webkit_accessible_table_get_row_extent_at):
+        (webkit_accessible_table_get_row_header):
+        (atk_table_interface_init):
+        (AtkInterfacesInitFunctions):
+        (GetAtkInterfaceTypeFromWAIType):
+
 2009-10-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Lars Knoll.

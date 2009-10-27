@@ -36,6 +36,10 @@
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityTable.h"
+#include "AccessibilityTableCell.h"
+#include "AccessibilityTableColumn.h"
+#include "AccessibilityTableRow.h"
 #include "AtomicString.h"
 #include "CString.h"
 #include "Document.h"
@@ -44,6 +48,8 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "HTMLNames.h"
+#include "HTMLTableCaptionElement.h"
+#include "HTMLTableElement.h"
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -118,6 +124,11 @@ static AccessibilityObject* core(AtkComponent* component)
 static AccessibilityObject* core(AtkImage* image)
 {
     return core(ATK_OBJECT(image));
+}
+
+static AccessibilityObject* core(AtkTable* table)
+{
+    return core(ATK_OBJECT(table));
 }
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
@@ -1055,6 +1066,110 @@ static void atk_image_interface_init(AtkImageIface* iface)
     iface->get_image_size = webkit_accessible_image_get_image_size;
 }
 
+// Table
+
+static AccessibilityTableCell* cell(AtkTable* table, guint row, guint column)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject())
+        return static_cast<AccessibilityTable*>(accTable)->cellForColumnAndRow(column, row);
+    return 0;
+}
+
+static gint cellIndex(AccessibilityTableCell* AXCell, AccessibilityTable* AXTable)
+{
+    // Calculate the cell's index as if we had a traditional Gtk+ table in
+    // which cells are all direct children of the table, arranged row-first.
+    AccessibilityObject::AccessibilityChildrenVector allCells;
+    AXTable->cells(allCells);
+    AccessibilityObject::AccessibilityChildrenVector::iterator position;
+    position = std::find(allCells.begin(), allCells.end(), AXCell);
+    if (position == allCells.end())
+        return -1;
+    return position - allCells.begin();
+}
+
+static AtkObject* webkit_accessible_table_ref_at(AtkTable* table, gint row, gint column)
+{
+    AccessibilityTableCell* AXCell = cell(table, row, column);
+    if (!AXCell)
+        return 0;
+    return AXCell->wrapper();
+}
+
+static gint webkit_accessible_table_get_index_at(AtkTable* table, gint row, gint column)
+{
+    AccessibilityTableCell* AXCell = cell(table, row, column);
+    AccessibilityTable* AXTable = static_cast<AccessibilityTable*>(core(table));
+    return cellIndex(AXCell, AXTable);
+}
+
+static gint webkit_accessible_table_get_n_columns(AtkTable* table)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject())
+        return static_cast<AccessibilityTable*>(accTable)->columnCount();
+    return 0;
+}
+
+static gint webkit_accessible_table_get_n_rows(AtkTable* table)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject())
+        return static_cast<AccessibilityTable*>(accTable)->rowCount();
+    return 0;
+}
+
+static gint webkit_accessible_table_get_column_extent_at(AtkTable* table, gint row, gint column)
+{
+    AccessibilityTableCell* AXCell = cell(table, row, column);
+    if (AXCell) {
+        pair<int, int> columnRange;
+        AXCell->columnIndexRange(columnRange);
+        return columnRange.second;
+    }
+    return 0;
+}
+
+static gint webkit_accessible_table_get_row_extent_at(AtkTable* table, gint row, gint column)
+{
+    AccessibilityTableCell* AXCell = cell(table, row, column);
+    if (AXCell) {
+        pair<int, int> rowRange;
+        AXCell->rowIndexRange(rowRange);
+        return rowRange.second;
+    }
+    return 0;
+}
+
+static AtkObject* webkit_accessible_table_get_row_header(AtkTable* table, gint row)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject()) {
+        AccessibilityObject::AccessibilityChildrenVector allRowHeaders;
+        static_cast<AccessibilityTable*>(accTable)->rowHeaders(allRowHeaders);
+
+        unsigned rowCount = allRowHeaders.size();
+        for (unsigned k = 0; k < rowCount; ++k) {
+            AccessibilityObject* rowObject = allRowHeaders[k]->parentObject();
+            if (static_cast<AccessibilityTableRow*>(rowObject)->rowIndex() == row)
+                return allRowHeaders[k]->wrapper();
+        }
+    }
+    return 0;
+}
+
+static void atk_table_interface_init(AtkTableIface* iface)
+{
+    iface->ref_at = webkit_accessible_table_ref_at;
+    iface->get_index_at = webkit_accessible_table_get_index_at;
+    iface->get_n_columns = webkit_accessible_table_get_n_columns;
+    iface->get_n_rows = webkit_accessible_table_get_n_rows;
+    iface->get_column_extent_at = webkit_accessible_table_get_column_extent_at;
+    iface->get_row_extent_at = webkit_accessible_table_get_row_extent_at;
+    iface->get_row_header = webkit_accessible_table_get_row_header;
+}
+
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
@@ -1065,6 +1180,8 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_component_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_image_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_table_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL}
 };
 
@@ -1073,7 +1190,8 @@ enum WAIType {
     WAI_EDITABLE_TEXT,
     WAI_TEXT,
     WAI_COMPONENT,
-    WAI_IMAGE
+    WAI_IMAGE,
+    WAI_TABLE
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
@@ -1089,6 +1207,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
       return ATK_TYPE_COMPONENT;
   case WAI_IMAGE:
       return ATK_TYPE_IMAGE;
+  case WAI_TABLE:
+      return ATK_TYPE_TABLE;
   }
 
   return G_TYPE_INVALID;
@@ -1121,6 +1241,10 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Image
     if (coreObject->isImage())
         interfaceMask |= 1 << WAI_IMAGE;
+
+    // Table
+    if (role == TableRole)
+        interfaceMask |= 1 << WAI_TABLE;
 
     return interfaceMask;
 }
