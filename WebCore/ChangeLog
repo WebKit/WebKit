@@ -1,3 +1,19 @@
+2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit cannot remove nested bold tags
+        https://bugs.webkit.org/show_bug.cgi?id=30784
+
+        This patch modifies getPropertiesNotInComputedStyle so that it compares font-weight
+        more flexibly. Instead of comparing cssText, it uses fontWeightIsBold which converts
+        all font weights to either bold or unbold state.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::fontWeightIsBold):
+        (WebCore::getPropertiesNotInComputedStyle): Removes font-weight property
+        if two style have the same value under getFontWeightValue
+
 2009-10-27  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

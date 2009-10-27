@@ -24,6 +24,8 @@ function removeStyleAndExpect(command, content, expected)
 removeStyleAndExpect('bold', '<span id="e"><b>1<b>2</b></b></span>', '<span id="e">12</span>');
 removeStyleAndExpect('bold', '<span id="e"><b id="foo">1<b>2</b></b></span>', '<span id="e"><span id="foo">12</span></span>');
 removeStyleAndExpect('bold', '<span id="e"><b id="foo"><b>1</b>2</b></span>', '<span id="e"><span id="foo">12</span></span>');
+removeStyleAndExpect('bold', '<span id="e"><b><b><b>12</b></b></b></span>', '<span id="e">12</span>');
+removeStyleAndExpect('bold', '<span id="e"><b><b><b>1</b></b>2</b></span>', '<span id="e">12</span>');
 removeStyleAndExpect('italic', '<span id="e"><i>1<i>2</i></i></span>', '<span id="e">12</span>');
 removeStyleAndExpect('strikeThrough', '<span id="e"><s>1<s>2</s></s></span>', '<span id="e">12</span>');
 

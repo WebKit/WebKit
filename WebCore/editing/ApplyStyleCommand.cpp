@@ -334,6 +334,38 @@ static void diffTextDecorations(CSSMutableStyleDeclaration* style, int propertID
     setTextDecorationProperty(style, newTextDecoration.get(), propertID);
 }
 
+bool fontWeightIsBold(CSSStyleDeclaration* style)
+{
+    ASSERT(style);
+    RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight);
+
+    if (!fontWeight)
+        return false;
+    if (!fontWeight->isPrimitiveValue())
+        return false;
+
+    // Because b tag can only bold text, there are only two states in plain html: bold and not bold.
+    // Collapse all other values to either one of these two states for editing purposes.
+    switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
+        case CSSValue100:
+        case CSSValue200:
+        case CSSValue300:
+        case CSSValue400:
+        case CSSValue500:
+        case CSSValueNormal:
+            return false;
+        case CSSValueBold:
+        case CSSValue600:
+        case CSSValue700:
+        case CSSValue800:
+        case CSSValue900:
+            return true;
+    }
+
+    ASSERT_NOT_REACHED(); // For CSSValueBolder and CSSValueLighter
+    return false; // Make compiler happy
+}
+
 RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDeclaration* style, CSSComputedStyleDeclaration* computedStyle)
 {
     ASSERT(style);
@@ -344,6 +376,9 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
     RefPtr<CSSValue> computedTextDecorationsInEffect = computedStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     diffTextDecorations(result.get(), CSSPropertyTextDecoration, computedTextDecorationsInEffect.get());
     diffTextDecorations(result.get(), CSSPropertyWebkitTextDecorationsInEffect, computedTextDecorationsInEffect.get());
+
+    if (fontWeightIsBold(result.get()) == fontWeightIsBold(computedStyle))
+        result->removeProperty(CSSPropertyFontWeight);
 
     return result;
 }

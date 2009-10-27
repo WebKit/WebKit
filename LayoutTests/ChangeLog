@@ -1,3 +1,17 @@
+2009-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit cannot remove nested bold tags
+        https://bugs.webkit.org/show_bug.cgi?id=30784
+
+        Adds two more edge cases to remove-nested-inline-styles.js:
+        <b><b><b>12</b></b></b> and <b><b><b>1</b></b>2</b>
+        WebKit now passes the one existing test used to fail.
+
+        * editing/style/remove-nested-inline-styles-expected.txt: Added two tests.
+        * editing/style/script-tests/remove-nested-inline-styles.js: Added two tests.
+
 2009-10-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
