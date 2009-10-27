@@ -1,3 +1,12 @@
+2009-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Unreviewed - Updating getComputedStyle results for Windows.
+
+        Updating getComputedStyle results for Windows.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-10-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
