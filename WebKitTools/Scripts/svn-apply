@@ -175,8 +175,9 @@ if ($merge) {
     die "--merge is currently only supported for SVN" unless isSVN();
     # How do we handle Git patches applied to an SVN checkout here?
     for my $file (sort keys %versions) {
-        print "Getting version $versions{$file} of $file\n";
-        system "svn", "update", "-r", $versions{$file}, $file;
+        my $version = $versions{$file};
+        print "Getting version $version of $file\n";
+        system("svn", "update", "-r", $version, $file) == 0 or die "Failed to run svn update -r $version $file.";
     }
 }
 
@@ -263,7 +264,7 @@ sub handleBinaryChange($$)
     # The last line is allowed to have up to two '=' characters at the end (to signify padding).
     if ($contents =~ m#((\n[A-Za-z0-9+/]{76})*\n[A-Za-z0-9+/]{2,74}?[A-Za-z0-9+/=]{2}\n)#) {
         # Addition or Modification
-        open FILE, ">", $fullPath or die;
+        open FILE, ">", $fullPath or die "Failed to open $fullPath.";
         print FILE decode_base64($1);
         close FILE;
         if (!scmKnowsOfFile($fullPath)) {
@@ -343,7 +344,7 @@ sub patch($)
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             scmAdd($fullPath);
             # What is this for?
-            system "svn", "stat", "$fullPath.orig" if isSVN() && -e "$fullPath.orig";
+            system("svn", "stat", "$fullPath.orig") if isSVN() && -e "$fullPath.orig";
         }
     }
 }
@@ -422,10 +423,10 @@ sub scmCopy($$)
 {
     my ($source, $destination) = @_;
     if (isSVN()) {
-        system "svn", "copy", $source, $destination or die;
+        system("svn", "copy", $source, $destination) == 0 or die "Failed to svn copy $source $destination.";
     } elsif (isGit()) {
-        system "cp", $source, $destination or die;
-        system "git", "add", $destination or die;
+        system("cp", $source, $destination) == 0 or die "Failed to copy $source $destination.";
+        system("git", "add", $destination) == 0 or die "Failed to git add $destination.";
     }
 }
 
@@ -433,9 +434,9 @@ sub scmAdd($)
 {
     my ($path) = @_;
     if (isSVN()) {
-        system "svn", "add", $path or die;
+        system("svn", "add", $path) == 0 or die "Failed to svn add $path.";
     } elsif (isGit()) {
-        system "git", "add", $path or die;
+        system("git", "add", $path) == 0 or die "Failed to git add $path.";
     }
 }
 
@@ -453,6 +454,6 @@ sub scmRemove($)
         close SVN;
         print $svnOutput if $svnOutput;
     } elsif (isGit()) {
-        system "git", "rm", "--force", $path or die;
+        system("git", "rm", "--force", $path) == 0 or die  "Failed to git rm --force $path.";
     }
 }
