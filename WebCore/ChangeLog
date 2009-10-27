@@ -1,3 +1,27 @@
+2009-10-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Use a pair of maps to store Geolocation watchers.
+        https://bugs.webkit.org/show_bug.cgi?id=29178
+
+        The pair of maps allows us to look up a watcher either by its ID or by its GeoNotifier object.
+        The ability to look up by a watcher by its GeoNotifier object will be required when implementing
+        Geolocation::fatalErrorOccurred. See https://bugs.webkit.org/show_bug.cgi?id=27944
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::Watchers::set): Added. Adds a watcher with the given ID.
+        (WebCore::Geolocation::Watchers::remove): Added. Removes a watcher by ID.
+        (WebCore::Geolocation::Watchers::remove): Added. Removes a watcher by GeoNotifier object.
+        (WebCore::Geolocation::Watchers::clear): Added. Removes all watchers.
+        (WebCore::Geolocation::Watchers::isEmpty): Added. Determines if there are no watchers.
+        (WebCore::Geolocation::Watchers::getNotifiersVector): Added. Gets a vector of the GeoNotifier objects.
+        (WebCore::Geolocation::watchPosition): Modified. Rename watcher identifier static variable.
+        (WebCore::Geolocation::stopTimersForWatchers): Modified. Use Watchers::getNotifiersVector.
+        (WebCore::Geolocation::handleError): Modified. Use Watchers::getNotifiersVector.
+        (WebCore::Geolocation::makeSuccessCallbacks): Modified. Use Watchers::getNotifiersVector.
+        * page/Geolocation.h: Modified. Adds Geolocation::Watchers class.
+
 2009-10-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.
