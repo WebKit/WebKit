@@ -104,8 +104,7 @@ void OriginQuotaManager::markDatabase(Database* database)
 {
     ASSERT(database);
     ASSERT(m_usageRecordGuardLocked);
-    RefPtr<SecurityOrigin> origin = database->securityOriginCopy();
-    OriginUsageRecord* usageRecord = m_usageMap.get(origin);
+    OriginUsageRecord* usageRecord = m_usageMap.get(database->securityOrigin());
     ASSERT(usageRecord);
 
     usageRecord->markDatabase(database->stringIdentifier());

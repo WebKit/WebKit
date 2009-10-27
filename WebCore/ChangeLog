@@ -1,3 +1,46 @@
+2009-10-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Refactoring the Database class to not depend on
+        OriginQuotaManager. Also, adding a SecurityOrigin copy to each
+        Database instance, that is safe to use on the file
+        thread. Finally, adding new simple fields and getters to the
+        Database object for storing/getting the display name and estimated
+        size specified by the user in the openDatabase() call.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30548
+
+        * page/SecurityOrigin.h:
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase): Storing the display name and
+        the estimated size in the Database object.
+        (WebCore::Database::Database): Storing the display name and the
+        estimated size in the Database object, as well as a SecurityOrigin
+        instance that is safe to use on the DB thread.
+        (WebCore::Database::maximumSize): Delegate the call to
+        DatabaseTracker::getMaxSizeForDatabase().
+        (WebCore::Database::databaseThreadSecurityOrigin): Return the
+        SecurityOrigin instance that's safe to use on the DB thread.
+        (WebCore::Database::threadSafeSecurityOrigin): Return the
+        SecurityOrigin instance that's safe to use on the current thread.
+        (WebCore::Database::displayName): Return the display name
+        specified by the user in the openDatabase() call.
+        (WebCore::Database::estimatedSize): Return the estimated size
+        specified by the user in the openDatabase() call.
+        (WebCore::Database::fileName): Return the name of the file where
+        the current Database is tored.
+        * storage/Database.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase): Returns the
+        maximum size for a DB file based on the current size of that file
+        and the space available for that origin.
+        * storage/DatabaseTracker.h:
+        * storage/SQLTransaction.cpp:
+        * storage/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didCommitTransaction): Use the
+        correct SecurityOrigin instance.
+
 2009-10-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

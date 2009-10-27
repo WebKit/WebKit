@@ -128,7 +128,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
         return 0;
     }
 
-    RefPtr<Database> database = adoptRef(new Database(document, name, expectedVersion));
+    RefPtr<Database> database = adoptRef(new Database(document, name, expectedVersion, displayName, estimatedSize));
 
     if (!database->openAndVerifyVersion(e)) {
        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
@@ -147,18 +147,21 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
     return database;
 }
 
-Database::Database(Document* document, const String& name, const String& expectedVersion)
+Database::Database(Document* document, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : m_transactionInProgress(false)
     , m_document(document)
     , m_name(name.crossThreadString())
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
+    , m_displayName(displayName)
+    , m_estimatedSize(estimatedSize)
     , m_deleted(false)
     , m_stopped(false)
     , m_opened(false)
 {
     ASSERT(document);
-    m_securityOrigin = document->securityOrigin();
+    m_mainThreadSecurityOrigin = document->securityOrigin();
+    m_databaseThreadSecurityOrigin = m_mainThreadSecurityOrigin->threadsafeCopy();
 
     if (m_name.isNull())
         m_name = "";
@@ -167,7 +170,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     JSC::initializeThreading();
 #endif
 
-    m_guid = guidForOriginAndName(m_securityOrigin->toString(), name);
+    m_guid = guidForOriginAndName(m_mainThreadSecurityOrigin->toString(), name);
 
     {
         MutexLocker locker(guidMutex());
@@ -183,7 +186,7 @@ Database::Database(Document* document, const String& name, const String& expecte
 
     ASSERT(m_document->databaseThread());
 
-    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.get(), m_name);
+    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_mainThreadSecurityOrigin.get(), m_name);
 
     DatabaseTracker::tracker().addOpenDatabase(this);
     m_document->addOpenDatabase(this);
@@ -366,20 +369,9 @@ void Database::stop()
     }
 }
 
-unsigned long long Database::databaseSize() const
-{
-    return SQLiteFileSystem::getDatabaseFileSize(m_filename);
-}
-
 unsigned long long Database::maximumSize() const
 {
-    // The maximum size for this database is the full quota for this origin, minus the current usage within this origin,
-    // except for the current usage of this database
-
-    OriginQuotaManager& manager(DatabaseTracker::tracker().originQuotaManager());
-    Locker<OriginQuotaManager> locker(manager);
-
-    return DatabaseTracker::tracker().quotaForOrigin(m_securityOrigin.get()) - manager.diskUsage(m_securityOrigin.get()) + databaseSize();
+    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
 }
 
 void Database::disableAuthorizer()
@@ -647,15 +639,36 @@ void Database::setExpectedVersion(const String& version)
     updateGuidVersionMap(m_guid, version);
 }
 
-PassRefPtr<SecurityOrigin> Database::securityOriginCopy() const
+SecurityOrigin* Database::securityOrigin() const
 {
-    return m_securityOrigin->threadsafeCopy();
+    if (isMainThread())
+        return m_mainThreadSecurityOrigin.get();
+    if (currentThread() == document()->databaseThread()->getThreadID())
+        return m_databaseThreadSecurityOrigin.get();
+    return 0;
 }
 
 String Database::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
     return m_name.threadsafeCopy();
+}
+
+String Database::displayName() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_displayName.threadsafeCopy();
+}
+
+unsigned long Database::estimatedSize() const
+{
+    return m_estimatedSize;
+}
+
+String Database::fileName() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_filename.threadsafeCopy();
 }
 
 #endif

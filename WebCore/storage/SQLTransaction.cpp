@@ -40,7 +40,6 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PlatformString.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"

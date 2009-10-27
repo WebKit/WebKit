@@ -127,9 +127,8 @@ namespace WebCore {
         // SecurityOrigin is represented with the string "null".
         String toString() const;
 
-        // Serialize the security origin for storage in the database. This format is
-        // deprecated and should be used only for compatibility with old databases;
-        // use toString() and createFromString() instead.
+        // Serialize the security origin to a string that could be used as part of
+        // file names. This format should be used in storage APIs only.
         String databaseIdentifier() const;
 
         // This method checks for equality between SecurityOrigins, not whether

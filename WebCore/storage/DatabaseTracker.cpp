@@ -33,6 +33,7 @@
 
 #include "ChromeClient.h"
 #include "Database.h"
+#include "DatabaseThread.h"
 #include "DatabaseTrackerClient.h"
 #include "Document.h"
 #include "Logging.h"
@@ -180,6 +181,16 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     statement.bindText(2, databaseIdentifier);
 
     return statement.step() == SQLResultRow;
+}
+
+unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* database)
+{
+    ASSERT(currentThread() == database->document()->databaseThread()->getThreadID());
+    // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
+    // plus the current usage of the given database
+    Locker<OriginQuotaManager> locker(originQuotaManager());
+    SecurityOrigin* origin = database->securityOrigin();
+    return quotaForOrigin(origin) - originQuotaManager().diskUsage(origin) + SQLiteFileSystem::getDatabaseFileSize(database->fileName());
 }
 
 String DatabaseTracker::originPath(SecurityOrigin* origin) const
@@ -409,13 +420,11 @@ void DatabaseTracker::addOpenDatabase(Database* database)
     if (!m_openDatabaseMap)
         m_openDatabaseMap.set(new DatabaseOriginMap);
 
-    RefPtr<SecurityOrigin> origin(database->securityOriginCopy());
     String name(database->stringIdentifier());
-
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
     if (!nameMap) {
         nameMap = new DatabaseNameMap;
-        m_openDatabaseMap->set(origin, nameMap);
+        m_openDatabaseMap->set(database->securityOrigin(), nameMap);
     }
 
     DatabaseSet* databaseSet = nameMap->get(name);
@@ -441,10 +450,8 @@ void DatabaseTracker::removeOpenDatabase(Database* database)
         return;
     }
 
-    RefPtr<SecurityOrigin> origin(database->securityOriginCopy());
     String name(database->stringIdentifier());
-
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
     if (!nameMap) {
         ASSERT_NOT_REACHED();
         return;
@@ -469,7 +476,7 @@ void DatabaseTracker::removeOpenDatabase(Database* database)
     if (!nameMap->isEmpty())
         return;
 
-    m_openDatabaseMap->remove(origin);
+    m_openDatabaseMap->remove(database->securityOrigin());
     delete nameMap;
 }
 

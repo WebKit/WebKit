@@ -89,8 +89,11 @@ public:
     Vector<String> tableNames();
 
     Document* document() const { return m_document.get(); }
-    PassRefPtr<SecurityOrigin> securityOriginCopy() const;
+    SecurityOrigin* securityOrigin() const;
     String stringIdentifier() const;
+    String displayName() const;
+    unsigned long estimatedSize() const;
+    String fileName() const;
 
     bool getVersionFromDatabase(String&);
     bool setVersionInDatabase(const String&);
@@ -121,7 +124,8 @@ public:
     SQLTransactionCoordinator* transactionCoordinator() const;
 
 private:
-    Database(Document* document, const String& name, const String& expectedVersion);
+    Database(Document* document, const String& name, const String& expectedVersion,
+             const String& displayName, unsigned long estimatedSize);
 
     bool openAndVerifyVersion(ExceptionCode&);
 
@@ -136,10 +140,13 @@ private:
     static void deliverPendingCallback(void*);
 
     RefPtr<Document> m_document;
-    RefPtr<SecurityOrigin> m_securityOrigin;
+    RefPtr<SecurityOrigin> m_mainThreadSecurityOrigin;
+    RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
     String m_name;
     int m_guid;
     String m_expectedVersion;
+    String m_displayName;
+    unsigned long long m_estimatedSize;
     String m_filename;
 
     bool m_deleted;
@@ -152,7 +159,7 @@ private:
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 
 #ifndef NDEBUG
-    String databaseDebugName() const { return m_securityOrigin->toString() + "::" + m_name; }
+    String databaseDebugName() const { return m_mainThreadSecurityOrigin->toString() + "::" + m_name; }
 #endif
 };
 
