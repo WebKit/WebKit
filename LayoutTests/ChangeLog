@@ -1,3 +1,16 @@
+2009-10-27  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Missing null check after string conversion in error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=30774
+
+        Test case for toString conversion failure on an error object in
+        stack overflow situations.  Test passes if it doesn't crash.
+        
+        * fast/dom/error-to-string-stack-overflow-expected.txt: Added.
+        * fast/dom/error-to-string-stack-overflow.html: Added.
+
 2009-10-27  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig.

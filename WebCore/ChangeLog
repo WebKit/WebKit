@@ -1,3 +1,19 @@
+2009-10-27  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Missing null check after string conversion in error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=30774
+
+        Add null check after string conversion in error reporting code.
+        ToString conversion can fail for instance when an exception is
+        thrown during conversion.
+
+        Test: fast/dom/error-to-string-stack-overflow.html
+
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::reportException):
+
 2009-10-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

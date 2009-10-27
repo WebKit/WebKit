@@ -135,9 +135,13 @@ void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
 
     // There can be a situation that an exception is thrown without setting a message.
     v8::Local<v8::Message> message = exceptionCatcher.Message();
-    if (message.IsEmpty())
-        errorMessage = toWebCoreString(exceptionCatcher.Exception()->ToString());
-    else {
+    if (message.IsEmpty()) {
+        v8::Local<v8::String> exceptionString = exceptionCatcher.Exception()->ToString();
+        // Conversion of the exception object to string can fail if an
+        // exception is thrown during conversion.
+        if (!exceptionString.IsEmpty())
+            errorMessage = toWebCoreString(exceptionString);
+    } else {
         errorMessage = toWebCoreString(message->Get());
         lineNumber = message->GetLineNumber();
         sourceURL = toWebCoreString(message->GetScriptResourceName());
