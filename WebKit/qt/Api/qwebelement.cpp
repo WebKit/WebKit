@@ -1123,7 +1123,7 @@ QWebElement QWebElement::clone() const
     The element is still valid after removal, and can be inserted into other
     parts of the document.
 
-    \sa removeChildren(), removeFromDocument()
+    \sa removeAllChildren(), removeFromDocument()
 */
 QWebElement &QWebElement::takeFromDocument()
 {
@@ -1139,7 +1139,7 @@ QWebElement &QWebElement::takeFromDocument()
 /*!
     Removes this element from the document and makes it a null element.
 
-    \sa removeChildren(), takeFromDocument()
+    \sa removeAllChildren(), takeFromDocument()
 */
 void QWebElement::removeFromDocument()
 {
@@ -1157,7 +1157,7 @@ void QWebElement::removeFromDocument()
 
     \sa removeFromDocument(), takeFromDocument()
 */
-void QWebElement::removeChildren()
+void QWebElement::removeAllChildren()
 {
     if (!m_element)
         return;

@@ -126,7 +126,7 @@ public:
     QWebElement clone() const;
     QWebElement& takeFromDocument();
     void removeFromDocument();
-    void removeChildren();
+    void removeAllChildren();
 
     QVariant evaluateJavaScript(const QString& scriptSource);
 
