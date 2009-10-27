@@ -501,13 +501,13 @@ double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bo
     return result;
 }
 
+// input is UTC
 void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
-    // input is UTC
     double dstOff = 0.0;
-    const double utcOff = getUTCOffset();
-
-    if (!outputIsUTC) {  // convert to local time
+    double utcOff = 0.0;
+    if (!outputIsUTC) {
+        utcOff = getUTCOffset();
         dstOff = getDSTOffset(ms, utcOff);
         ms += dstOff + utcOff;
     }
@@ -522,8 +522,7 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
     tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
     tm.year     =  year - 1900;
     tm.isDST    =  dstOff != 0.0;
-
-    tm.utcOffset = outputIsUTC ? 0 : static_cast<long>((dstOff + utcOff) / msPerSecond);
+    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
     tm.timeZone = NULL;
 }
 

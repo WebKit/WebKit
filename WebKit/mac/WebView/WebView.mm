@@ -4021,9 +4021,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
         JSObject* object = jsValue.getObject();
         if (object->inherits(&DateInstance::info)) {
             DateInstance* date = static_cast<DateInstance*>(object);
-            double ms = 0;
-            int tzOffset = 0;
-            if (date->getTime(ms, tzOffset)) {
+            double ms = date->internalNumber();
+            if (!isnan(ms)) {
                 CFAbsoluteTime utcSeconds = ms / 1000 - kCFAbsoluteTimeIntervalSince1970;
                 LongDateTime ldt;
                 if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))

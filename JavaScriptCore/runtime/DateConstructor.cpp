@@ -112,9 +112,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         }
     }
 
-    DateInstance* result = new (exec) DateInstance(exec->lexicalGlobalObject()->dateStructure());
-    result->setInternalValue(jsNumber(exec, timeClip(value)));
-    return result;
+    return new (exec) DateInstance(exec, value);
 }
     
 static JSObject* constructWithDateConstructor(ExecState* exec, JSObject*, const ArgList& args)

@@ -1,3 +1,13 @@
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Updated for refactoring in the date code.
+
+        * WebView/WebView.mm:
+        (aeDescFromJSValue): Since we just want a number of milliseconds, do that
+        instead of something more complicated.
+
 2009-10-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

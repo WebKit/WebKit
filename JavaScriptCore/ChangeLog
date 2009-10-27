@@ -1,5 +1,29 @@
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        A little bit of refactoring in the date code.
+
+        * JavaScriptCore.exp: Don't export this unused symbol.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DateInstance.h: Removed some unused functions. Changed the default
+        constructor to ensure that a DateInstance is always initialized.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype): Pass an initializer to our constructor,
+        since it now requires one.
+
+        * wtf/DateMath.cpp:
+        (WTF::msToGregorianDateTime): Only compute our offset from UTC if our
+        output will require it. Otherwise, our offset is 0.
+
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: Mark DateInstaceCache.h private, so other frameworks can see it.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

@@ -34,9 +34,10 @@ namespace JSC {
 
 const ClassInfo DateInstance::info = {"Date", 0, 0, 0};
 
-DateInstance::DateInstance(NonNullPassRefPtr<Structure> structure)
+DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structure)
     : JSWrapperObject(structure)
 {
+    setInternalValue(jsNaN(exec));
 }
 
 DateInstance::DateInstance(ExecState* exec, double time)
@@ -68,48 +69,6 @@ bool DateInstance::getGregorianDateTime(ExecState* exec, bool outputIsUTC, Grego
         t.copyFrom(m_data->m_cachedGregorianDateTime);
     }
 
-    return true;
-}
-
-bool DateInstance::getTime(GregorianDateTime& t, int& offset) const
-{
-    double milli = internalNumber();
-    if (isnan(milli))
-        return false;
-    
-    msToGregorianDateTime(milli, false, t);
-    offset = gmtoffset(t);
-    return true;
-}
-
-bool DateInstance::getUTCTime(GregorianDateTime& t) const
-{
-    double milli = internalNumber();
-    if (isnan(milli))
-        return false;
-    
-    msToGregorianDateTime(milli, true, t);
-    return true;
-}
-
-bool DateInstance::getTime(double& milli, int& offset) const
-{
-    milli = internalNumber();
-    if (isnan(milli))
-        return false;
-    
-    GregorianDateTime t;
-    msToGregorianDateTime(milli, false, t);
-    offset = gmtoffset(t);
-    return true;
-}
-
-bool DateInstance::getUTCTime(double& milli) const
-{
-    milli = internalNumber();
-    if (isnan(milli))
-        return false;
-    
     return true;
 }
 

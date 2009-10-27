@@ -32,14 +32,9 @@ namespace JSC {
     class DateInstance : public JSWrapperObject {
     public:
         DateInstance(ExecState*, double);
-        explicit DateInstance(NonNullPassRefPtr<Structure>);
+        explicit DateInstance(ExecState*, NonNullPassRefPtr<Structure>);
 
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
-
-        bool getTime(WTF::GregorianDateTime&, int& offset) const;
-        bool getUTCTime(WTF::GregorianDateTime&) const;
-        bool getTime(double& milliseconds, int& offset) const;
-        bool getUTCTime(double& milliseconds) const;
 
         static JS_EXPORTDATA const ClassInfo info;
 
