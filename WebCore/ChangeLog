@@ -1,3 +1,19 @@
+2009-10-27  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Rewrote JavaScriptSourceSyntaxHighlighter to be more accurate
+        https://bugs.webkit.org/show_bug.cgi?id=27147
+
+        Tests: LayoutTests/inspector/javascript-syntax-highlight.html
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.JavaScriptSourceSyntaxHighlighter.process): Added. Processes 100 tokens at a time.
+        (WebInspector.JavaScriptSourceSyntaxHighlighter.lex): Added. Scans for a token.
+        (WebInspector.JavaScriptSourceSyntaxHighlighter.appendNonToken): Added. Appends the non-token characters that lex ignored.
+        (WebInspector.JavaScriptSourceSyntaxHighlighter.syntaxHighlightNode): Added. To syntax highlight node in ElementsTreeOutline.
+
 2009-10-27  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.

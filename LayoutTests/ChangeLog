@@ -1,3 +1,13 @@
+2009-10-27  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Tests for JavaScript syntax highlighter.
+        https://bugs.webkit.org/show_bug.cgi?id=27147
+
+        * inspector/javascript-syntax-highlight-expected.txt: Added.
+        * inspector/javascript-syntax-highlight.html: Added.
+
 2009-10-27  Xan Lopez  <xlopez@igalia.com>
 
         Skip a few more tests that are failing on and off.

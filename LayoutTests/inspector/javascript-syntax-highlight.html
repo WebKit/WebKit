@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="evaluate-in-frontend.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        for (var i = 0; i < result.length; ++i)
+            output(result[i]);
+        notifyDone();
+    }
+    evaluateInWebInspector("doitAndDump", callback);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that JavaScriptSourceSyntaxHighlighter detects the tokens.
+</p>
+
+<div id="frontend-script" style="display:none">
+function doitAndDump(testController) {
+    testController.waitUntilDone();
+    setTimeout(function() {
+        var result = [];
+        
+        result.push(dumpSyntaxHighlight("return'foo';"));
+        result.push(dumpSyntaxHighlight("/\\\//g"));
+        result.push(dumpSyntaxHighlight("//ig';"));
+        result.push(dumpSyntaxHighlight("1 / 2 + /a/.test('a');"));
+        result.push(dumpSyntaxHighlight("\"\\\"/\".length / 2"));
+        result.push(dumpSyntaxHighlight("var foo = 1/*/***//2"));
+        result.push(dumpSyntaxHighlight("/*comment*//.*/.test('a')"));
+        result.push(dumpSyntaxHighlight("'f\\\noo';"));
+        result.push(dumpSyntaxHighlight("'\\f\\b\\t';"));
+        result.push(dumpSyntaxHighlight("'/\\\n/';"));
+        result.push(dumpSyntaxHighlight("foo/**\n/\n*/foo"));
+        
+        testController.notifyDone(result);
+        
+    }, 0);
+}
+function dumpSyntaxHighlight(str) {
+    var node = document.createElement("span");
+    node.textContent = str;
+    var javascriptSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(null, null);
+    javascriptSyntaxHighlighter.syntaxHighlightNode(node);
+    var node_parts = [];
+    for (var i = 0; i < node.childNodes.length; i++) {
+        if (node.childNodes[i].getAttribute) {
+            node_parts.push(node.childNodes[i].getAttribute("class"));
+        } else {
+            node_parts.push("*");
+        }
+    }
+    return node_parts.join(",");
+}
+</div>
+
+<div id="output">
+</div>
+
+</body>
+</html>

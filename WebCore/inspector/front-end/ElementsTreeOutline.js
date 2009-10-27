@@ -838,9 +838,9 @@ WebInspector.ElementsTreeElement.prototype = {
                     if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "script") {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
-                        
+                        console.log(node);
                         var javascriptSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(null, null);
-                        javascriptSyntaxHighlighter.syntaxHighlightLine(newNode, null);
+                        javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
                         
                         info.title = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
                     } else if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "style") {
