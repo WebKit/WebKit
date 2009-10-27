@@ -1190,8 +1190,8 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptProfile.h \
 	WebCore/inspector/JavaScriptProfileNode.cpp \
 	WebCore/inspector/JavaScriptProfileNode.h \
-	WebCore/inspector/TimelineItemFactory.cpp \
-	WebCore/inspector/TimelineItemFactory.h \
+	WebCore/inspector/TimelineRecordFactory.cpp \
+	WebCore/inspector/TimelineRecordFactory.h \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/Cache.h \
 	WebCore/loader/CachePolicy.h \

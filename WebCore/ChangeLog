@@ -1,3 +1,56 @@
+2009-10-26  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Renames TimelineItem to TimelineRecord and updates all call sites.
+        https://bugs.webkit.org/show_bug.cgi?id=30785
+
+        * GNUmakefile.am: 
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addRecordToTimeline):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        (WebCore::InspectorTimelineAgent::RecordEntry::RecordEntry):
+        * inspector/TimelineItemFactory.cpp: Removed.
+        * inspector/TimelineItemFactory.h: Removed.
+        * inspector/TimelineRecordFactory.cpp: Added.
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createDOMDispatchRecord):
+        (WebCore::TimelineRecordFactory::createGenericTimerRecord):
+        (WebCore::TimelineRecordFactory::createTimerInstallRecord):
+        * inspector/TimelineRecordFactory.h: Added.
+        (WebCore::TimelineRecordFactory::TimelineRecordFactory):
+        * inspector/front-end/TimelineAgent.js:
+        (WebInspector.addRecordToTimeline):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.getRecordTypeName):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+
 2009-10-26  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Antti Koivisto.

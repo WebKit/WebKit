@@ -71,19 +71,19 @@ WebInspector.TimelinePanel.prototype = {
         this.toggleTimelineButton.toggled = false;
     },
 
-    addItemToTimeline: function(record)
+    addRecordToTimeline: function(record)
     {
-        this._innerAddItemToTimeline(this.recordsTreeElement, record);
+        this._innerAddRecordToTimeline(this.recordsTreeElement, record);
     },
 
-    _innerAddItemToTimeline: function(parentElement, record)
+    _innerAddRecordToTimeline: function(parentElement, record)
     {
         var treeItem = new WebInspector.TimelineRecordTreeElement(this, record);
         parentElement.appendChild(treeItem);
         if (record.children)
             parentElement.expanded = true;
         for (var i = 0; i < record.children.length; ++i)
-            this._innerAddItemToTimeline(treeItem, record.children[i]);
+            this._innerAddRecordToTimeline(treeItem, record.children[i]);
     },
 
     _toggleTimelineButton: function()
@@ -99,17 +99,17 @@ WebInspector.TimelinePanel.prototype = {
         this.timelineView.style.left = width + "px";
     },
 
-    getItemTypeName: function(record)
+    getRecordTypeName: function(record)
     {
-        if (!this._itemTypeNames) {
-            this._itemTypeNames = {};
-            var itemTypes = WebInspector.TimelineAgent.ItemType;
-            this._itemTypeNames[itemTypes.DOMDispatch] = WebInspector.UIString("DOM Event");
-            this._itemTypeNames[itemTypes.Layout] = WebInspector.UIString("Layout");
-            this._itemTypeNames[itemTypes.RecalculateStyles] = WebInspector.UIString("Recalculate Style");
-            this._itemTypeNames[itemTypes.Paint] = WebInspector.UIString("Paint");
-            this._itemTypeNames[itemTypes.Layout] = WebInspector.UIString("Layout");
-            this._itemTypeNames[itemTypes.ParseHTML] = WebInspector.UIString("Parse");
+        if (!this._recordTypeNames) {
+            this._recordTypeNames = {};
+            var recordTypes = WebInspector.TimelineAgent.RecordType;
+            this._recordTypeNames[recordTypes.DOMDispatch] = WebInspector.UIString("DOM Event");
+            this._recordTypeNames[recordTypes.Layout] = WebInspector.UIString("Layout");
+            this._recordTypeNames[recordTypes.RecalculateStyles] = WebInspector.UIString("Recalculate Style");
+            this._recordTypeNames[recordTypes.Paint] = WebInspector.UIString("Paint");
+            this._recordTypeNames[recordTypes.Layout] = WebInspector.UIString("Layout");
+            this._recordTypeNames[recordTypes.ParseHTML] = WebInspector.UIString("Parse");
         }
         return this._itemTypeNames[record.type];
     }
@@ -135,7 +135,7 @@ WebInspector.TimelineRecordTreeElement.prototype = {
 
         var typeElement = document.createElement("span");
         typeElement.className = "type";
-        typeElement.textContent = this._panel.getItemTypeName(this._record);
+        typeElement.textContent = this._panel.getRecordTypeName(this._record);
         this.listItemElement.appendChild(typeElement);
 
         if (this._record.data) {

@@ -42,15 +42,15 @@ namespace WebCore {
     class InspectorFrontend;
 
     // Must be kept in sync with TimelineAgent.js
-    enum TimelineItemType {
-        DOMDispatchTimelineItemType = 0,
-        LayoutTimelineItemType = 1,
-        RecalculateStylesTimelineItemType = 2,
-        PaintTimelineItemType = 3,
-        ParseHTMLTimelineItemType = 4,
-        TimerInstallTimelineItemType = 5,
-        TimerRemoveTimelineItemType = 6,
-        TimerFireTimelineItemType = 7,
+    enum TimelineRecordType {
+        DOMDispatchTimelineRecordType = 0,
+        LayoutTimelineRecordType = 1,
+        RecalculateStylesTimelineRecordType = 2,
+        PaintTimelineRecordType = 3,
+        ParseHTMLTimelineRecordType = 4,
+        TimerInstallTimelineRecordType = 5,
+        TimerRemoveTimelineRecordType = 6,
+        TimerFireTimelineRecordType = 7,
     };
 
     class InspectorTimelineAgent {
@@ -83,24 +83,24 @@ namespace WebCore {
 
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
     private:
-        struct TimelineItemEntry {
-            TimelineItemEntry(ScriptObject item, ScriptArray children, TimelineItemType type) : item(item), children(children), type(type) { }
-            ScriptObject item;
+        struct TimelineRecordEntry {
+            TimelineRecordEntry(ScriptObject record, ScriptArray children, TimelineRecordType type) : record(record), children(children), type(type) { }
+            ScriptObject record;
             ScriptArray children;
-            TimelineItemType type;
+            TimelineRecordType type;
         };
         
-        void pushCurrentTimelineItem(ScriptObject, TimelineItemType);
+        void pushCurrentRecord(ScriptObject, TimelineRecordType);
         
         static double currentTimeInMilliseconds();
 
-        void didCompleteCurrentTimelineItem(TimelineItemType);
+        void didCompleteCurrentRecord(TimelineRecordType);
         
-        void addItemToTimeline(ScriptObject, TimelineItemType);
+        void addRecordToTimeline(ScriptObject, TimelineRecordType);
 
         InspectorFrontend* m_frontend;
         
-        Vector< TimelineItemEntry > m_itemStack;
+        Vector< TimelineRecordEntry > m_recordStack;
     };
 
 inline InspectorTimelineAgent* InspectorTimelineAgent::retrieve(ScriptExecutionContext* context)

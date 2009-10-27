@@ -1193,8 +1193,8 @@
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
-		7553CFE8108F473F00EA281E /* TimelineItemFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineItemFactory.h */; };
-		7553CFE9108F473F00EA281E /* TimelineItemFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineItemFactory.cpp */; };
+		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
+		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
 		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
 		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
@@ -6483,8 +6483,8 @@
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
-		7553CFE6108F473F00EA281E /* TimelineItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineItemFactory.h; sourceTree = "<group>"; };
-		7553CFE7108F473F00EA281E /* TimelineItemFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineItemFactory.cpp; sourceTree = "<group>"; };
+		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
+		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
 		75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEvent.cpp; path = dom/MessageEvent.cpp; sourceTree = SOURCE_ROOT; };
 		75793E810D0CE0B3007FC0AC /* MessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageEvent.h; path = dom/MessageEvent.h; sourceTree = SOURCE_ROOT; };
 		75793E820D0CE0B3007FC0AC /* MessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MessageEvent.idl; path = dom/MessageEvent.idl; sourceTree = SOURCE_ROOT; };
@@ -10388,8 +10388,8 @@
 				1C81B9FC0E9733CB00266E07 /* JavaScriptProfileNode.cpp */,
 				1C81B9FB0E9733CB00266E07 /* JavaScriptProfileNode.h */,
 				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
-				7553CFE6108F473F00EA281E /* TimelineItemFactory.h */,
-				7553CFE7108F473F00EA281E /* TimelineItemFactory.cpp */,
+				7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */,
+				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
 			);
 			path = inspector;
 			sourceTree = "<group>";
@@ -18065,7 +18065,7 @@
 				3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */,
 				973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */,
 				84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */,
-				7553CFE8108F473F00EA281E /* TimelineItemFactory.h in Headers */,
+				7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 			);
@@ -20199,7 +20199,7 @@
 				3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */,
 				973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */,
 				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
-				7553CFE9108F473F00EA281E /* TimelineItemFactory.cpp in Sources */,
+				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,
 				BC97E23B109144950010D361 /* HTMLAllCollection.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,
 				BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */,

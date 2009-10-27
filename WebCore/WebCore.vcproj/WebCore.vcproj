@@ -36259,11 +36259,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\TimelineItemFactory.cpp"
+				RelativePath="..\inspector\TimelineRecordFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\TimelineItemFactory.h"
+				RelativePath="..\inspector\TimelineRecordFactory.h"
 				>
 			</File>
 			<Filter

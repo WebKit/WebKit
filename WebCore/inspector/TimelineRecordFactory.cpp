@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "TimelineItemFactory.h"
+#include "TimelineRecordFactory.h"
 
 #if ENABLE(INSPECTOR)
 
@@ -40,43 +40,43 @@
 namespace WebCore {
 
 // static
-ScriptObject TimelineItemFactory::createGenericTimelineItem(InspectorFrontend* frontend, double startTime)
+ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* frontend, double startTime)
 {
-    ScriptObject item = frontend->newScriptObject();
-    item.set("startTime", startTime);
-    return item;
+    ScriptObject record = frontend->newScriptObject();
+    record.set("startTime", startTime);
+    return record;
 }
 
 // static
-ScriptObject TimelineItemFactory::createDOMDispatchTimelineItem(InspectorFrontend* frontend, double startTime, const Event& event)
+ScriptObject TimelineRecordFactory::createDOMDispatchRecord(InspectorFrontend* frontend, double startTime, const Event& event)
 {
-    ScriptObject item = createGenericTimelineItem(frontend, startTime);
+    ScriptObject record = createGenericRecord(frontend, startTime);
     ScriptObject data = frontend->newScriptObject();
     data.set("type", event.type().string());
-    item.set("data", data);
-    return item;
+    record.set("data", data);
+    return record;
 }
 
 // static
-ScriptObject TimelineItemFactory::createGenericTimerTimelineItem(InspectorFrontend* frontend, double startTime, int timerId)
+ScriptObject TimelineRecordFactory::createGenericTimerRecord(InspectorFrontend* frontend, double startTime, int timerId)
 {
-    ScriptObject item = createGenericTimelineItem(frontend, startTime);
+    ScriptObject record = createGenericRecord(frontend, startTime);
     ScriptObject data = frontend->newScriptObject();
     data.set("timerId", timerId);
-    item.set("data", data);
-    return item;
+    record.set("data", data);
+    return record;
 }
 
 // static
-ScriptObject TimelineItemFactory::createTimerInstallTimelineItem(InspectorFrontend* frontend, double startTime, int timerId, int timeout, bool singleShot)
+ScriptObject TimelineRecordFactory::createTimerInstallRecord(InspectorFrontend* frontend, double startTime, int timerId, int timeout, bool singleShot)
 {
-    ScriptObject item = createGenericTimelineItem(frontend, startTime);
+    ScriptObject record = createGenericRecord(frontend, startTime);
     ScriptObject data = frontend->newScriptObject();
     data.set("timerId", timerId);
     data.set("timeout", timeout);
     data.set("singleShot", singleShot);
-    item.set("data", data);
-    return item;
+    record.set("data", data);
+    return record;
 }
 
 } // namespace WebCore
