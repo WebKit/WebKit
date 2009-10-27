@@ -665,6 +665,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\DateInstanceCache.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\DatePrototype.cpp"
 				>
 			</File>

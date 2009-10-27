@@ -157,6 +157,7 @@
 		148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86D0255597D01FF60F7 /* Nodes.cpp */; };
 		148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */; };
+		14A1563210966365006FA260 /* DateInstanceCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A1563010966365006FA260 /* DateInstanceCache.h */; };
 		14A23D750F4E1ABB0023CDAD /* JITStubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */; };
 		14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */; };
 		14A42E400F4F60EE00599099 /* TimeoutChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -615,6 +616,7 @@
 		148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefPrivate.h; sourceTree = "<group>"; };
 		149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerCallFrame.cpp; sourceTree = "<group>"; };
 		149B24FF0D8AF6D1009CB8C7 /* Register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Register.h; sourceTree = "<group>"; };
+		14A1563010966365006FA260 /* DateInstanceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstanceCache.h; sourceTree = "<group>"; };
 		14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubs.cpp; sourceTree = "<group>"; };
 		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
 		14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeoutChecker.cpp; sourceTree = "<group>"; };
@@ -1416,7 +1418,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -1450,6 +1451,7 @@
 				D21202290AD4310C00ED79B6 /* DateConversion.h */,
 				BC1166000E1997B1008066DD /* DateInstance.cpp */,
 				BC1166010E1997B1008066DD /* DateInstance.h */,
+				14A1563010966365006FA260 /* DateInstanceCache.h */,
 				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
 				BCD203480E17135E002C7E82 /* DatePrototype.h */,
 				BC337BEA0E1B00CB0076918A /* Error.cpp */,
@@ -1513,6 +1515,7 @@
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
+				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
 				F692A8870255597D01FF60F7 /* JSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSValue.h */,
 				BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */,
@@ -1523,6 +1526,9 @@
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
 				F692A8690255597D01FF60F7 /* Lookup.h */,
+				A74B3498102A5F8E0032AB98 /* MarkStack.cpp */,
+				A779558F101A74D500114E55 /* MarkStack.h */,
+				A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */,
 				F692A86A0255597D01FF60F7 /* MathObject.cpp */,
 				F692A86B0255597D01FF60F7 /* MathObject.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
@@ -1543,6 +1549,8 @@
 				BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
 				F692A8780255597D01FF60F7 /* Operations.h */,
+				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
+				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
 				65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
@@ -1583,13 +1591,8 @@
 				14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
-				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
-				A779558F101A74D500114E55 /* MarkStack.h */,
-				A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */,
-				A74B3498102A5F8E0032AB98 /* MarkStack.cpp */,
-				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -1998,6 +2001,7 @@
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
+				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

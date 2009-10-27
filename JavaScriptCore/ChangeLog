@@ -1,3 +1,55 @@
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler and Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30800
+        Cache recently computed date data.
+        
+        SunSpider reports a ~0.5% speedup, mostly from date-format-tofte.js.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new file.
+
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        (JSC::DateInstance::getGregorianDateTime): Use the shared cache.
+
+        * runtime/DateInstance.h: Renamed m_cache to m_data, to avoid the confusion
+        of a "cache cache".
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear): Pass an ExecState to these functions, so they
+        can access the DateInstanceCache.
+
+        * runtime/JSGlobalData.h: Keep a DateInstanceCache.
+
 2009-10-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -194,6 +194,7 @@
             'runtime/DateConversion.h',
             'runtime/DateInstance.cpp',
             'runtime/DateInstance.h',
+            'runtime/DateInstanceCache.h',
             'runtime/DatePrototype.cpp',
             'runtime/DatePrototype.h',
             'runtime/Error.cpp',

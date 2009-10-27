@@ -33,7 +33,6 @@ namespace JSC {
     public:
         DateInstance(ExecState*, double);
         explicit DateInstance(NonNullPassRefPtr<Structure>);
-        virtual ~DateInstance();
 
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
@@ -44,7 +43,7 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo info;
 
-        bool getGregorianDateTime(bool outputIsUTC, WTF::GregorianDateTime&) const;
+        bool getGregorianDateTime(ExecState*, bool outputIsUTC, WTF::GregorianDateTime&) const;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
@@ -57,9 +56,7 @@ namespace JSC {
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 
-
-        struct Cache;
-        mutable Cache* m_cache;
+        mutable RefPtr<DateInstanceData> m_data;
     };
 
     DateInstance* asDateInstance(JSValue);

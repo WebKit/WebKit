@@ -390,6 +390,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/DateConversion.h \
 	JavaScriptCore/runtime/DateInstance.cpp \
 	JavaScriptCore/runtime/DateInstance.h \
+	JavaScriptCore/runtime/DateInstanceCache.h \
 	JavaScriptCore/runtime/DatePrototype.cpp \
 	JavaScriptCore/runtime/DatePrototype.h \
 	JavaScriptCore/runtime/Error.cpp \

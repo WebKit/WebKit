@@ -30,6 +30,7 @@
 #define JSGlobalData_h
 
 #include "Collector.h"
+#include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
 #include "JITStubs.h"
 #include "JSValue.h"
@@ -116,7 +117,8 @@ namespace JSC {
         const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
         SmallStrings smallStrings;
         NumericStrings numericStrings;
-
+        DateInstanceCache dateInstanceCache;
+        
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
 #endif
