@@ -704,7 +704,7 @@ void tst_QWebElement::clear()
 
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("p").count(), 3);
-    body.findFirst("div").removeChildren();
+    body.findFirst("div").removeAllChildren();
     QCOMPARE(body.findAll("div").count(), 1);
     QCOMPARE(body.findAll("p").count(), 2);
 }

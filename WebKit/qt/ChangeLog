@@ -1,5 +1,14 @@
 2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed Qt build fix.
+
+        Update the tests as well to the new API change.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::clear):
+
+2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Tor Arne Vestbø.
 
         [Qt] QWebElement::removeChildren() should be
