@@ -1,3 +1,37 @@
+2009-10-20  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: populate child nodes before sorting them.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29673
+
+        * inspector/front-end/BottomUpProfileDataGridTree.js:
+        (WebInspector.BottomUpProfileDataGridNode): Swapped with BottomUpProfileDataGridTree to be consistent with TopDownProfileDataGridNode.
+        (WebInspector.BottomUpProfileDataGridNode.prototype._takePropertiesFromProfileDataGridNode):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._keepOnlyChild):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._exclude):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._merge):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._sharedPopulate):
+        (WebInspector.BottomUpProfileDataGridTree.prototype.exclude):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.sort): Added missing parentheses.
+        (WebInspector.ProfileDataGridNode.prototype.get _parent):
+        (WebInspector.ProfileDataGridNode.prototype._populate):
+        * inspector/front-end/TopDownProfileDataGridTree.js:
+        (WebInspector.TopDownProfileDataGridNode.prototype._sharedPopulate):
+
+2009-10-20  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove redundant String ref/deref calls in generated V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=30579
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::toString): Fix return type of 'toString' to make it truly a no-op
+            instead of constructing/destructing a String.
+
 2009-10-27  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
