@@ -1,3 +1,9 @@
+2009-10-27  Xan Lopez  <xlopez@igalia.com>
+
+        Skip a few tests with links to their tracking bugs.
+
+        * platform/gtk/Skipped:
+
 2009-10-26  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

@@ -5546,6 +5546,20 @@ fast/dom/Window/window-properties.html
 # https://bugs.webkit.org/show_bug.cgi?id=30620
 fast/xsl/sort-locale.xml
 
+# https://bugs.webkit.org/show_bug.cgi?id=30814
+storage/close-during-stress-test.html -> crashed
+storage/domstorage/documentURI.html -> crashed
+storage/test-authorizer-stderr.txt -> crashed
+
+# https://bugs.webkit.org/show_bug.cgi?id=30815
+http/tests/misc/isindex-with-no-form.html 
+
+# https://bugs.webkit.org/show_bug.cgi?id=30816
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=30818
+fast/css/opacity-float.html 
+
 # Media tests that keep failing on the bot
 media/video-currentTime-set.html
 media/video-play-pause-events.html
