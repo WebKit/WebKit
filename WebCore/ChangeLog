@@ -1,3 +1,11 @@
+2009-10-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Lars Knoll.
+
+        [Qt] Don't lose remainder when computing wheel event deltas
+
+        * platform/qt/WheelEventQt.cpp:
+
 2009-10-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Antti Koivisto.

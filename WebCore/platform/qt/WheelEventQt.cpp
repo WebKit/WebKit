@@ -32,11 +32,11 @@ namespace WebCore {
 void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 {
     if (orientation == Qt::Horizontal) {
-        m_deltaX = (delta / 120);
+        m_deltaX = (delta / 120.0f);
         m_deltaY = 0;
     } else {
         m_deltaX = 0;
-        m_deltaY = (delta / 120);
+        m_deltaY = (delta / 120.0f);
     }
 
     m_wheelTicksX = m_deltaX;
