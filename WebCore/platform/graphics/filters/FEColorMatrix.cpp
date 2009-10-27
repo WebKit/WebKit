@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -92,8 +93,8 @@ inline void saturate(double& red, double& green, double& blue, const float& s)
 
 inline void huerotate(double& red, double& green, double& blue, const float& hue)
 {
-    double cosHue = cos(hue * M_PI / 180); 
-    double sinHue = sin(hue * M_PI / 180); 
+    double cosHue = cos(hue * piDouble / 180); 
+    double sinHue = sin(hue * piDouble / 180); 
     double r = red   * (0.213 + cosHue * 0.787 - sinHue * 0.213) +
                green * (0.715 - cosHue * 0.715 - sinHue * 0.715) +
                blue  * (0.072 - cosHue * 0.072 + sinHue * 0.928);

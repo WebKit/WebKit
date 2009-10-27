@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -69,7 +70,7 @@ void FEGaussianBlur::setStdDeviationY(float y)
 static void boxBlur(CanvasPixelArray*& srcPixelArray, CanvasPixelArray*& dstPixelArray,
                  unsigned dx, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage)
 {
-    int dxLeft = static_cast<int>(floor(dx / 2));
+    int dxLeft = dx / 2;
     int dxRight = dx - dxLeft;
 
     for (int y = 0; y < effectHeight; ++y) {
@@ -110,8 +111,8 @@ void FEGaussianBlur::apply(Filter* filter)
     if (m_x == 0 || m_y == 0)
         return;
 
-    unsigned sdx = static_cast<unsigned>(floor(m_x * 3 * sqrt(2 * M_PI) / 4.f + 0.5f));
-    unsigned sdy = static_cast<unsigned>(floor(m_y * 3 * sqrt(2 * M_PI) / 4.f + 0.5f));
+    unsigned sdx = static_cast<unsigned>(floor(m_x * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
+    unsigned sdy = static_cast<unsigned>(floor(m_y * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
 
     IntRect effectDrawingRect = calculateDrawingIntRect(m_in->subRegion());
     RefPtr<ImageData> srcImageData(m_in->resultImage()->getPremultipliedImageData(effectDrawingRect));

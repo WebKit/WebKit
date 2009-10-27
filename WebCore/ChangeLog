@@ -1,3 +1,20 @@
+2009-10-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Build corrections for ENABLE_FILTERS in Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=30797
+
+        Build correction for ENABLE_FILTERS feature.  No new tests needed.
+
+        * platform/graphics/filters/FEColorMatrix.cpp: Use MathExtras.h and
+          its piDouble constant.
+        * platform/graphics/filters/FEGaussianBlur.cpp: Use MathExtras.h and
+          its piDouble constant.  Remove unnecessary call to floor used in
+          the division of an unsigned, converting to int.
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp: Correct include
+          style for MathExtras.h.
+
 2009-10-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
