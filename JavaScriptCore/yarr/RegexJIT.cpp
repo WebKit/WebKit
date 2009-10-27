@@ -1264,7 +1264,7 @@ class RegexGenerator : private MacroAssembler {
         // complex here in compilation, and in the common case we should end up coallescing the checks.
         //
         // FIXME: a nice improvement here may be to stop trying to match sooner, based on the least
-        // of the minimum-alterantive-lengths.  E.g. if I have two alternatives of length 200 and 150,
+        // of the minimum-alternative-lengths.  E.g. if I have two alternatives of length 200 and 150,
         // and a string of length 100, we'll end up looping index from 0 to 100, checking whether there
         // is sufficient input to run either alternative (constantly failing).  If there had been only
         // one alternative, or if the shorter alternative had come first, we would have terminated

@@ -1490,7 +1490,7 @@ public:
         closeBodyAlternative();
     }
 
-    void alterantiveBodyDisjunction()
+    void alternativeBodyDisjunction()
     {
         int newAlternativeIndex = m_bodyDisjunction->terms.size();
         m_bodyDisjunction->terms[m_currentAlternativeIndex].alternative.next = newAlternativeIndex - m_currentAlternativeIndex;
@@ -1499,7 +1499,7 @@ public:
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    void alterantiveDisjunction()
+    void alternativeDisjunction()
     {
         int newAlternativeIndex = m_bodyDisjunction->terms.size();
         m_bodyDisjunction->terms[m_currentAlternativeIndex].alternative.next = newAlternativeIndex - m_currentAlternativeIndex;
@@ -1515,9 +1515,9 @@ public:
 
             if (alt) {
                 if (disjunction == m_pattern.m_body)
-                    alterantiveBodyDisjunction();
+                    alternativeBodyDisjunction();
                 else
-                    alterantiveDisjunction();
+                    alternativeDisjunction();
             }
 
             PatternAlternative* alternative = disjunction->m_alternatives[alt];

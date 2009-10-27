@@ -1,3 +1,17 @@
+2009-10-27  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Fix typo in RegexInterpreter.cpp and RegexJIT.cpp alterantive to
+        alternative.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::alternativeBodyDisjunction):
+        (JSC::Yarr::ByteCompiler::alternativeDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateDisjunction):
+
 2009-10-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
