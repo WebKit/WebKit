@@ -1,0 +1,55 @@
+<html> 
+<head>
+<script>
+    function runTest()
+    {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+        
+        var ta = document.getElementById('ta');
+        ta.setSelectionRange(3, 14);
+        
+        if (window.eventSender) {
+            eventSender.keyDown("pageDown",["shiftKey"]);
+            eventSender.keyDown("upArrow",["shiftKey"]);
+        }
+        
+        var result;
+        var selectedText = (ta.value).substring(ta.selectionStart, ta.selectionEnd);
+        if (selectedText.indexOf('NO') == -1)
+            result = "SUCCESS: The selection shrunk correctly";
+        else
+            result = "SUCCESS: The selected text is \"" + selectedText + "\".";
+        document.getElementById("result").firstChild.data = result; 
+    }
+</script>
+</head>
+<body onload="runTest()">
+<p>This tests shrinking a selection with shift-up after extending it with shift-PageDown.</p>
+<p style="color:green">
+    This test does not run interactively.
+    It uses the event sender to do mouse clicks.
+    To run it manually, press shift-PagDown.  Then press shift-up.
+    The selection should only include the lines with "YES".
+</p>
+<textarea rows=10 id="ta">
+NO
+YES
+YES
+YES
+YES
+YES
+YES
+YES
+YES
+YES
+NO
+NO
+NO
+NO
+NO
+NO
+NO
+</textarea>
+<p id="result">TEST HAS NOT RUN</p>
+</body>

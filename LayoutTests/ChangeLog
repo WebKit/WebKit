@@ -1,3 +1,12 @@
+2009-10-27  Adele Peterson  <adele@apple.com>
+
+        Test for <rdar://problem/7269075> REGRESSION (Safari 4.0.3-ToT): After pressing Shift-PageDown, pressing Shift-Up 
+        extends the top of the selection upwards (but should shrink the selection instead)
+        https://bugs.webkit.org/show_bug.cgi?id=29981
+
+        * editing/selection/shrink-selection-after-shift-pagedown-expected.txt: Added.
+        * editing/selection/shrink-selection-after-shift-pagedown.html: Added.
+
 2009-10-27  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

@@ -725,6 +725,8 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
     if (userTriggered)
         m_frame->setSelectionGranularity(CharacterGranularity);
 
+    m_lastChangeWasHorizontalExtension = alter == EXTEND;
+
     return true;
 }
 

@@ -1,3 +1,15 @@
+2009-10-27  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (Safari 4.0.3-ToT): After pressing Shift-PageDown, pressing Shift-Up 
+        extends the top of the selection upwards (but should shrink the selection instead)
+        <rdar://problem/7269075>
+        https://bugs.webkit.org/show_bug.cgi?id=29981
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify): Added setting m_lastChangeWasHorizontalExtension.
+
 2009-10-27  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Tim Hatcher.
