@@ -5549,7 +5549,7 @@ fast/xsl/sort-locale.xml
 # https://bugs.webkit.org/show_bug.cgi?id=30814
 storage/close-during-stress-test.html
 storage/domstorage/documentURI.html
-storage/test-authorizer-stderr.txt
+storage/test-authorizer.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30815
 http/tests/misc/isindex-with-no-form.html 
