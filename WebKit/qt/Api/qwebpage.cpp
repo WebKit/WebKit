@@ -263,7 +263,9 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , client(0)
+#if QT_VERSION < 0x040600
     , view(0)
+#endif
     , inspectorFrontend(0)
     , inspector(0)
     , inspectorIsInternalOnly(false)
@@ -381,7 +383,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
 QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMenu,
         const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions)
 {
-    QMenu* menu = new QMenu(view);
+    QMenu* menu = new QMenu(q->view());
     for (int i = 0; i < items->count(); ++i) {
         const ContextMenuItem &item = items->at(i);
         switch (item.type()) {
@@ -762,13 +764,13 @@ void QWebPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    if (view && view->testAttribute(Qt::WA_InputMethodEnabled)
+    if (q->view() && q->view()->testAttribute(Qt::WA_InputMethodEnabled)
         && button == Qt::LeftButton && qApp->autoSipEnabled()) {
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
-            view->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
+            q->view()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
         if (!clickCausedFocus || behavior == QStyle::RSIP_OnMouseClick) {
             QEvent event(QEvent::RequestSoftwareInputPanel);
-            QApplication::sendEvent(view, &event);
+            QApplication::sendEvent(q->view(), &event);
         }
     }
 
@@ -912,8 +914,8 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
     if (!handled) {
         handled = true;
         QFont defaultFont;
-        if (view)
-            defaultFont = view->font();
+        if (q->view())
+            defaultFont = q->view()->font();
         QFontMetrics fm(defaultFont);
         if (!handleScrolling(ev, frame)) {
             switch (ev->key()) {
@@ -1668,7 +1670,7 @@ QWebHistory *QWebPage::history() const
 */
 void QWebPage::setView(QWidget *view)
 {
-    if (d->view != view) {
+    if (this->view() != view) {
         d->view = view;
         setViewportSize(view ? view->size() : QSize(0, 0));
     }
@@ -1681,7 +1683,11 @@ void QWebPage::setView(QWidget *view)
 */
 QWidget *QWebPage::view() const
 {
+#if QT_VERSION < 0x040600
     return d->view;
+#else
+    return d->view.toStrongRef().data();
+#endif
 }
 
 /*!
@@ -1708,7 +1714,7 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
     Q_UNUSED(frame)
 #ifndef QT_NO_MESSAGEBOX
-    QMessageBox::information(d->view, tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), msg, QMessageBox::Ok);
+    QMessageBox::information(view(), tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), msg, QMessageBox::Ok);
 #endif
 }
 
@@ -1724,7 +1730,7 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 #ifdef QT_NO_MESSAGEBOX
     return true;
 #else
-    return QMessageBox::Yes == QMessageBox::information(d->view, tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), msg, QMessageBox::Yes, QMessageBox::No);
+    return QMessageBox::Yes == QMessageBox::information(view(), tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), msg, QMessageBox::Yes, QMessageBox::No);
 #endif
 }
 
@@ -1742,7 +1748,7 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     Q_UNUSED(frame)
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
-    QString x = QInputDialog::getText(d->view, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), msg, QLineEdit::Normal, defaultValue, &ok);
+    QString x = QInputDialog::getText(view(), tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), msg, QLineEdit::Normal, defaultValue, &ok);
     if (ok && result)
         *result = x;
 #endif
@@ -1767,7 +1773,7 @@ bool QWebPage::shouldInterruptJavaScript()
 #ifdef QT_NO_MESSAGEBOX
     return false;
 #else
-    return QMessageBox::Yes == QMessageBox::information(d->view, tr("JavaScript Problem - %1").arg(mainFrame()->url().host()), tr("The script on this page appears to have a problem. Do you want to stop the script?"), QMessageBox::Yes, QMessageBox::No);
+    return QMessageBox::Yes == QMessageBox::information(view(), tr("JavaScript Problem - %1").arg(mainFrame()->url().host()), tr("The script on this page appears to have a problem. Do you want to stop the script?"), QMessageBox::Yes, QMessageBox::No);
 #endif
 }
 
@@ -1784,7 +1790,7 @@ bool QWebPage::shouldInterruptJavaScript()
 */
 QWebPage *QWebPage::createWindow(WebWindowType type)
 {
-    QWebView *webView = qobject_cast<QWebView *>(d->view);
+    QWebView *webView = qobject_cast<QWebView *>(view());
     if (webView) {
         QWebView *newView = webView->createWindow(type);
         if (newView)
@@ -2750,7 +2756,7 @@ bool QWebPage::extension(Extension extension, const ExtensionOption *option, Ext
     if (extension == ChooseMultipleFilesExtension) {
         // FIXME: do not ignore suggestedFiles
         QStringList suggestedFiles = static_cast<const ChooseMultipleFilesExtensionOption*>(option)->suggestedFileNames;
-        QStringList names = QFileDialog::getOpenFileNames(d->view, QString::null);
+        QStringList names = QFileDialog::getOpenFileNames(view(), QString::null);
         static_cast<ChooseMultipleFilesExtensionReturn*>(output)->fileNames = names;
         return true;
     }
@@ -2832,7 +2838,7 @@ QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& suggestedFil
 {
     Q_UNUSED(parentFrame)
 #ifndef QT_NO_FILEDIALOG
-    return QFileDialog::getOpenFileName(d->view, QString::null, suggestedFile);
+    return QFileDialog::getOpenFileName(view(), QString::null, suggestedFile);
 #else
     return QString::null;
 #endif
@@ -3095,8 +3101,8 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 
     // Language
     QLocale locale;
-    if (d->view)
-        locale = d->view->locale();
+    if (view())
+        locale = view()->locale();
     QString name = locale.name();
     name[2] = QLatin1Char('-');
     ua.append(name);

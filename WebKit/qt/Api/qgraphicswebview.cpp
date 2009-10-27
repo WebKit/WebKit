@@ -196,7 +196,11 @@ QGraphicsWebView::QGraphicsWebView(QGraphicsItem* parent)
 QGraphicsWebView::~QGraphicsWebView()
 {
     if (d->page) {
+#if QT_VERSION >= 0x040600
+        d->page->d->view.clear();
+#else
         d->page->d->view = 0;
+#endif
         d->page->d->client = 0; // unset the page client
     }
 

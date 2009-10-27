@@ -135,7 +135,12 @@ public:
 #ifndef QT_NO_UNDOSTACK
     QUndoStack *undoStack;
 #endif
+
+#if QT_VERSION >= 0x040600
+    QWeakPointer<QWidget> view;
+#else
     QWidget* view;
+#endif
 
     bool insideOpenCall;
     quint64 m_totalBytes;
