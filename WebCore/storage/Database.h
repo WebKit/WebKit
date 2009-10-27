@@ -146,7 +146,7 @@ private:
     int m_guid;
     String m_expectedVersion;
     String m_displayName;
-    unsigned long long m_estimatedSize;
+    unsigned long m_estimatedSize;
     String m_filename;
 
     bool m_deleted;

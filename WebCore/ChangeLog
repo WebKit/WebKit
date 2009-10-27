@@ -1,5 +1,16 @@
 2009-10-27  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Build fix, no review needed.
+
+        Fixing the BUILD. m_estimatedSize in Database.h should be of type
+        'unsigned long' instead of 'unsigned long long'.
+
+        No tests required.
+
+        * storage/Database.h:
+
+2009-10-27  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Adam Barth.
 
         Refactoring the Database class to not depend on
