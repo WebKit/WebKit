@@ -57,6 +57,8 @@ namespace WebCore {
 
         virtual void close();
 
+        virtual void disconnect();
+
         virtual void willOpenStream(SocketStreamHandle*, const KURL&);
         virtual void willSendData(SocketStreamHandle*, const char*, int);
         virtual void didOpen(SocketStreamHandle*);

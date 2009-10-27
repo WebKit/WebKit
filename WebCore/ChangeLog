@@ -1,3 +1,33 @@
+2009-10-27  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix crash found in chromium test_shell.
+        https://bugs.webkit.org/show_bug.cgi?id=30808
+
+        When WebSocket is deleted without close, webkit would crash
+        when it handles didClose.
+
+        Check scriptExecutionContext before post task for event.
+        Use WebSocketChannel::disconnect() instead of close() in WebSocket
+        destructor, so that WebSocketChannel should not call deleted WebSocket
+        back in didClose().
+        To make sure WebSocketChannel alive while it is processing WebSocket
+        protocol over SocketStreamHandle, ref() in connect() and deref() in
+        didClose().
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::~WebSocket):
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::disconnect):
+        (WebCore::WebSocketChannel::didClose):
+        (WebCore::WebSocketChannel::didReceiveData):
+        * websockets/WebSocketChannel.h:
+
 2009-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
