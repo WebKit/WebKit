@@ -219,8 +219,18 @@ static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
 
 static gint webkit_accessible_get_index_in_parent(AtkObject* object)
 {
-    // FIXME: This needs to be implemented.
-    notImplemented();
+    AccessibilityObject* coreObject = core(object);
+    AccessibilityObject* parent = coreObject->parentObjectUnignored();
+
+    g_return_val_if_fail(parent, 0);
+
+    AccessibilityObject::AccessibilityChildrenVector children = parent->children();
+    unsigned count = children.size();
+    for (unsigned i = 0; i < count; ++i) {
+        if (children[i] == coreObject)
+            return i;
+    }
+
     return 0;
 }
 
