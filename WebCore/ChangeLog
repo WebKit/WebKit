@@ -1,3 +1,24 @@
+2009-10-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix QtWebKit build for WIN_OS if Netscape plug-in support
+        is turned off and refactor some related code
+        https://bugs.webkit.org/show_bug.cgi?id=30786
+
+        No new tests as there is no new functionality introduced.
+
+        * platform/FileSystem.h: Refactor to make sure that each different
+        type definition is only repeated once.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::compareFileVersion): Move it out from the
+        ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH guard and combine it with the
+        function body from PluginPackageWin.
+
+        * plugins/win/PluginPackageWin.cpp: Remove compareFileVersion as
+        it is now in PluginPackage.cpp.
+
 2009-10-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

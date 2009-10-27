@@ -56,17 +56,6 @@ static String getVersionInfo(const LPVOID versionInfoData, const String& info)
     return String(reinterpret_cast<UChar*>(buffer), bufferLength - 1);
 }
 
-int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
-{
-    // return -1, 0, or 1 if plug-in version is less than, equal to, or greater than
-    // the passed version
-    if (m_moduleVersion.mostSig != compareVersion.mostSig)
-        return m_moduleVersion.mostSig > compareVersion.mostSig ? 1 : -1;
-    if (m_moduleVersion.leastSig != compareVersion.leastSig)
-        return m_moduleVersion.leastSig > compareVersion.leastSig ? 1 : -1;
-    return 0;
-}
-
 bool PluginPackage::isPluginBlacklisted()
 {
     if (name() == "Citrix ICA Client") {
