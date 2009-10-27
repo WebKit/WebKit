@@ -74,15 +74,12 @@ use VCSUtils;
 sub addDirectoriesIfNeeded($);
 sub applyPatch($$;$);
 sub checksum($);
-sub fixChangeLogPatch($);
-sub gitdiff2svndiff($);
 sub handleBinaryChange($$);
 sub isDirectoryEmptyForRemoval($);
 sub patch($);
 sub removeDirectoriesIfNeeded();
 sub setChangeLogDateAndReviewer($$);
 sub removeEOL($);
-sub svnStatus($);
 
 # These should be replaced by an scm class/module:
 sub scmKnowsOfFile($);
@@ -258,74 +255,6 @@ sub checksum($)
     return $checksum;
 }
 
-sub fixChangeLogPatch($)
-{
-    my $patch = shift;
-    my $contextLineCount = 3;
-
-    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\r?\n( .*\r?\n)+(\+.*\r?\n)+( .*\r?\n){$contextLineCount}$/m;
-    my ($oldLineCount, $newLineCount) = ($1, $2);
-    return $patch if $oldLineCount <= $contextLineCount;
-
-    # The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
-    # have lines of context at the top of a patch when the existing entry has the same
-    # date and author as the new entry.  This nifty loop alters a ChangeLog patch so
-    # that the added lines ("+") in the patch always start at the beginning of the
-    # patch and there are no initial lines of context.
-    my $newPatch;
-    my $lineCountInState = 0;
-    my $oldContentLineCountReduction = $oldLineCount - $contextLineCount;
-    my $newContentLineCountWithoutContext = $newLineCount - $oldLineCount - $oldContentLineCountReduction;
-    my ($stateHeader, $statePreContext, $stateNewChanges, $statePostContext) = (1..4);
-    my $state = $stateHeader;
-    foreach my $line (split(/\n/, $patch)) {
-        $lineCountInState++;
-        if ($state == $stateHeader && $line =~ /^@@ -1,$oldLineCount \+1,$newLineCount @\@$/) {
-            $line = "@@ -1,$contextLineCount +1," . ($newLineCount - $oldContentLineCountReduction) . " @@";
-            $lineCountInState = 0;
-            $state = $statePreContext;
-        } elsif ($state == $statePreContext && substr($line, 0, 1) eq " ") {
-            $line = "+" . substr($line, 1);
-            if ($lineCountInState == $oldContentLineCountReduction) {
-                $lineCountInState = 0;
-                $state = $stateNewChanges;
-            }
-        } elsif ($state == $stateNewChanges && substr($line, 0, 1) eq "+") {
-            # No changes to these lines
-            if ($lineCountInState == $newContentLineCountWithoutContext) {
-                $lineCountInState = 0;
-                $state = $statePostContext;
-            }
-        } elsif ($state == $statePostContext) {
-            if (substr($line, 0, 1) eq "+" && $lineCountInState <= $oldContentLineCountReduction) {
-                $line = " " . substr($line, 1);
-            } elsif ($lineCountInState > $contextLineCount && substr($line, 0, 1) eq " ") {
-                next; # Discard
-            }
-        }
-        $newPatch .= $line . "\n";
-    }
-
-    return $newPatch;
-}
-
-sub gitdiff2svndiff($)
-{
-    $_ = shift @_;
-    if (m#^diff --git a/(.+) b/(.+)#) {
-        return "Index: $1";
-    } elsif (m/^new file.*/) {
-        return "";
-    } elsif (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
-        return "===================================================================";
-    } elsif (m#^--- a/(.+)#) {
-        return "--- $1";
-    } elsif (m#^\+\+\+ b/(.+)#) {
-        return "+++ $1";
-    }
-    return $_;
-}
-
 sub handleBinaryChange($$)
 {
     my ($fullPath, $contents) = @_;
@@ -453,38 +382,6 @@ sub removeEOL($)
 
     $line =~ s/[\r\n]+$//g;
     return $line;
-}
-
-sub svnStatus($)
-{
-    my ($fullPath) = @_;
-    my $svnStatus;
-    open SVN, "svn status --non-interactive --non-recursive '$fullPath' |" or die;
-    if (-d $fullPath) {
-        # When running "svn stat" on a directory, we can't assume that only one
-        # status will be returned (since any files with a status below the
-        # directory will be returned), and we can't assume that the directory will
-        # be first (since any files with unknown status will be listed first).
-        my $normalizedFullPath = File::Spec->catdir(File::Spec->splitdir($fullPath));
-        while (<SVN>) {
-            # Input may use a different EOL sequence than $/, so avoid chomp.
-            $_ = removeEOL($_);
-            my $normalizedStatPath = File::Spec->catdir(File::Spec->splitdir(substr($_, 7)));
-            if ($normalizedFullPath eq $normalizedStatPath) {
-                $svnStatus = "$_\n";
-                last;
-            }
-        }
-        # Read the rest of the svn command output to avoid a broken pipe warning.
-        local $/ = undef;
-        <SVN>;
-    }
-    else {
-        # Files will have only one status returned.
-        $svnStatus = removeEOL(<SVN>) . "\n";
-    }
-    close SVN;
-    return $svnStatus;
 }
 
 # This could be made into a more general "status" call, except svn and git

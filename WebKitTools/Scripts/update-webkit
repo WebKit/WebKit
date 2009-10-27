@@ -39,7 +39,6 @@ use VCSUtils;
 use webkitdirs;
 
 sub runSvnUpdate();
-sub normalizePath($);
 
 # Handle options
 my $quiet = '';
@@ -104,11 +103,4 @@ sub runSvnUpdate()
         (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
             or die "Could not open resolve-ChangeLogs script: $!.\n";
     }
-}
-
-sub normalizePath($)
-{
-    my ($path) = @_;
-    $path =~ s/\\/\//g;
-    return $path;
 }

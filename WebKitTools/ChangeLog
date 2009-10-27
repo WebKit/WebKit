@@ -1,3 +1,20 @@
+2009-10-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        svn-* scripts should share code through VCSUtils.pm
+        https://bugs.webkit.org/show_bug.cgi?id=30791
+
+        Just moving code into a shared location.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/prepare-ChangeLog:
+        * Scripts/resolve-ChangeLogs:
+        * Scripts/svn-apply:
+        * Scripts/svn-create-patch:
+        * Scripts/svn-unapply:
+        * Scripts/update-webkit:
+
 2009-10-27  Vadim Zeitlin  <vadim@wxwidgets.org>
 
         Suppress a huge number of MSVC warnings when building wxWebKit.

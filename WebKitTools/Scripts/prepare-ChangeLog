@@ -85,7 +85,6 @@ sub isConflictStatus($);
 sub statusDescription($$$$);
 sub propertyChangeDescription($);
 sub extractLineRange($);
-sub canonicalizePath($);
 sub testListForChangeLog(@);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
@@ -95,7 +94,6 @@ sub method_decl_to_selector($);
 sub processPaths(\@);
 sub reviewerAndDescriptionForGitCommit($);
 sub normalizeLineEndings($$);
-sub normalizePath($);
 sub decodeEntities($);
 
 # Project time zone for Cupertino, CA, US
@@ -429,24 +427,6 @@ if ($openChangeLogs && @logs) {
 # Done.
 exit;
 
-sub canonicalizePath($)
-{
-    my ($file) = @_;
-
-    # Remove extra slashes and '.' directories in path
-    $file = File::Spec->canonpath($file);
-
-    # Remove '..' directories in path
-    my @dirs = ();
-    foreach my $dir (File::Spec->splitdir($file)) {
-        if ($dir eq '..' && $#dirs >= 0 && $dirs[$#dirs] ne '..') {
-            pop(@dirs);
-        } else {
-            push(@dirs, $dir);
-        }
-    }
-    return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
-}
 
 sub changeLogDate($)
 {
@@ -1715,13 +1695,6 @@ sub normalizeLineEndings($$)
     my ($string, $endl) = @_;
     $string =~ s/\r?\n/$endl/g;
     return $string;
-}
-
-sub normalizePath($)
-{
-    my ($path) = @_;
-    $path =~ s/\\/\//g;
-    return $path;
 }
 
 sub decodeEntities($)

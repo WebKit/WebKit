@@ -56,12 +56,10 @@ use Time::gmtime;
 use VCSUtils;
 
 sub binarycmp($$);
-sub canonicalizePath($);
 sub findBaseUrl($);
 sub findMimeType($;$);
 sub findModificationType($);
 sub findSourceFileAndRevision($);
-sub fixChangeLogPatch($);
 sub generateDiff($$);
 sub generateFileList($\%);
 sub isBinaryMimeType($);
@@ -132,25 +130,6 @@ sub binarycmp($$)
     return $fileDataA->{isBinary} <=> $fileDataB->{isBinary};
 }
 
-sub canonicalizePath($)
-{
-    my ($file) = @_;
-
-    # Remove extra slashes and '.' directories in path
-    $file = File::Spec->canonpath($file);
-
-    # Remove '..' directories in path
-    my @dirs = ();
-    foreach my $dir (File::Spec->splitdir($file)) {
-        if ($dir eq '..' && $#dirs >= 0 && $dirs[$#dirs] ne '..') {
-            pop(@dirs);
-        } else {
-            push(@dirs, $dir);
-        }
-    }
-    return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
-}
-
 sub findBaseUrl($)
 {
     my ($infoPath) = @_;
@@ -209,57 +188,6 @@ sub findSourceFileAndRevision($)
     }
     close INFO;
     return ($sourceFile, $sourceRevision);
-}
-
-sub fixChangeLogPatch($)
-{
-    my $patch = shift;
-    my $contextLineCount = 3;
-
-    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\n( .*\n)+(\+.*\n)+( .*\n){$contextLineCount}$/m;
-    my ($oldLineCount, $newLineCount) = ($1, $2);
-    return $patch if $oldLineCount <= $contextLineCount;
-
-    # The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
-    # have lines of context at the top of a patch when the existing entry has the same
-    # date and author as the new entry.  This nifty loop alters a ChangeLog patch so
-    # that the added lines ("+") in the patch always start at the beginning of the
-    # patch and there are no initial lines of context.
-    my $newPatch;
-    my $lineCountInState = 0;
-    my $oldContentLineCountReduction = $oldLineCount - $contextLineCount;
-    my $newContentLineCountWithoutContext = $newLineCount - $oldLineCount - $oldContentLineCountReduction;
-    my ($stateHeader, $statePreContext, $stateNewChanges, $statePostContext) = (1..4);
-    my $state = $stateHeader;
-    foreach my $line (split(/\n/, $patch)) {
-        $lineCountInState++;
-        if ($state == $stateHeader && $line =~ /^@@ -1,$oldLineCount \+1,$newLineCount @\@$/) {
-            $line = "@@ -1,$contextLineCount +1," . ($newLineCount - $oldContentLineCountReduction) . " @@";
-            $lineCountInState = 0;
-            $state = $statePreContext;
-        } elsif ($state == $statePreContext && substr($line, 0, 1) eq " ") {
-            $line = "+" . substr($line, 1);
-            if ($lineCountInState == $oldContentLineCountReduction) {
-                $lineCountInState = 0;
-                $state = $stateNewChanges;
-            }
-        } elsif ($state == $stateNewChanges && substr($line, 0, 1) eq "+") {
-            # No changes to these lines
-            if ($lineCountInState == $newContentLineCountWithoutContext) {
-                $lineCountInState = 0;
-                $state = $statePostContext;
-            }
-        } elsif ($state == $statePostContext) {
-            if (substr($line, 0, 1) eq "+" && $lineCountInState <= $oldContentLineCountReduction) {
-                $line = " " . substr($line, 1);
-            } elsif ($lineCountInState > $contextLineCount && substr($line, 0, 1) eq " ") {
-                next; # Discard
-            }
-        }
-        $newPatch .= $line . "\n";
-    }
-
-    return $newPatch;
 }
 
 sub generateDiff($$)
