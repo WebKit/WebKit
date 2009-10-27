@@ -86,6 +86,7 @@ committers_unable_to_review = [
     Committer("Ryosuke Niwa", "rniwa@webkit.org"),
     Committer("Scott Violet", "sky@chromium.org"),
     Committer("Shinichiro Hamaji", "hamaji@chromium.org"),
+    Committer("Steve Block", "steveblock@google.com"),
     Committer("Tony Chang", "tony@chromium.org"),
     Committer("Yael Aharon", "yael.aharon@nokia.com"),
     Committer("Yong Li", "yong.li@torchmobile.com"),
