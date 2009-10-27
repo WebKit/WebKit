@@ -1,5 +1,11 @@
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Updated for JavaScriptCore export changes.
+
+        * ForwardingHeaders/wtf/DateInstanceCache.h: Added.
+
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Updated for JavaScriptCore export changes.
