@@ -132,15 +132,12 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_playBin(0)
     , m_videoSink(0)
     , m_source(0)
-    , m_rate(1.0f)
     , m_endTime(numeric_limits<float>::infinity())
-    , m_volume(0.5f)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_startedPlaying(false)
     , m_isStreaming(false)
     , m_size(IntSize())
-    , m_visible(true)
     , m_buffer(0)
     , m_paused(true)
     , m_seeking(false)
@@ -257,7 +254,7 @@ void MediaPlayerPrivate::seek(float time)
         return;
 
     LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
-    if (!gst_element_seek( m_playBin, m_rate,
+    if (!gst_element_seek(m_playBin, m_player->rate(),
             GST_FORMAT_TIME,
             (GstSeekFlags)(GST_SEEK_FLAG_FLUSH),
             GST_SEEK_TYPE_SET, sec,
@@ -348,21 +345,10 @@ bool MediaPlayerPrivate::hasAudio() const
 
 void MediaPlayerPrivate::setVolume(float volume)
 {
-    m_volume = volume;
-    LOG_VERBOSE(Media, "Volume to %f", volume);
-
     if (!m_playBin)
         return;
 
-    g_object_set(G_OBJECT(m_playBin), "volume", m_volume, NULL);
-}
-
-void MediaPlayerPrivate::setMuted(bool mute)
-{
-    if (!m_playBin)
-        return;
-
-    g_object_set(G_OBJECT(m_playBin), "mute", mute, NULL);
+    g_object_set(G_OBJECT(m_playBin), "volume", static_cast<double>(volume), NULL);
 }
 
 void MediaPlayerPrivate::setRate(float rate)
@@ -375,7 +361,6 @@ void MediaPlayerPrivate::setRate(float rate)
     if (m_isStreaming)
         return;
 
-    m_rate = rate;
     LOG_VERBOSE(Media, "Set Rate to %f", rate);
     seek(currentTime());
 }
@@ -621,7 +606,6 @@ void MediaPlayerPrivate::setSize(const IntSize& size)
 
 void MediaPlayerPrivate::setVisible(bool visible)
 {
-    m_visible = visible;
 }
 
 void MediaPlayerPrivate::repaint()
@@ -634,7 +618,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     if (context->paintingDisabled())
         return;
 
-    if (!m_visible)
+    if (!m_player->visible())
         return;
     if (!m_buffer)
         return;
@@ -819,7 +803,8 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     g_signal_connect(bus, "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
     gst_object_unref(bus);
 
-    g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(), NULL);
+    g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(),
+        "volume", static_cast<double>(m_player->volume()), NULL);
 
     m_videoSink = webkit_video_sink_new();
 
@@ -827,8 +812,6 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
 
     g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
-
-    setVolume(m_volume);
 }
 
 }

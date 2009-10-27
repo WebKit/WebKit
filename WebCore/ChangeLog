@@ -1,3 +1,22 @@
+2009-10-26  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Don't store properties in the MediaPlayerPrivate class
+
+        Access them via the MediaPlayer class instead.
+        https://bugs.webkit.org/show_bug.cgi?id=30462
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-10-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

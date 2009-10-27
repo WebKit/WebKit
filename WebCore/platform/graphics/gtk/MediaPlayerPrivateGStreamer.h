@@ -73,7 +73,6 @@ namespace WebCore {
 
             void setRate(float);
             void setVolume(float);
-            void setMuted(bool);
 
             int dataRate() const;
 
@@ -125,16 +124,13 @@ namespace WebCore {
             GstElement* m_playBin;
             GstElement* m_videoSink;
             GstElement* m_source;
-            float m_rate;
             float m_endTime;
             bool m_isEndReached;
-            double m_volume;
             MediaPlayer::NetworkState m_networkState;
             MediaPlayer::ReadyState m_readyState;
             bool m_startedPlaying;
             mutable bool m_isStreaming;
             IntSize m_size;
-            bool m_visible;
             GstBuffer* m_buffer;
 
             bool m_paused;
