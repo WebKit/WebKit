@@ -1,3 +1,9 @@
+2009-10-27  Xan Lopez  <xlopez@igalia.com>
+
+        Skip a few more tests that are failing on and off.
+
+        * platform/gtk/Skipped:
+
 2009-10-27  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.
