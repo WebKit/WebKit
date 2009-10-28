@@ -41,7 +41,7 @@ AXRequired: 0
 
 ------------
 AXRole: AXMenu
-AXRoleDescription: (null)
+AXRoleDescription: menu
 AXChildren: <array of size 6>
 AXParent: <AXMenu>
 AXEnabled: 1

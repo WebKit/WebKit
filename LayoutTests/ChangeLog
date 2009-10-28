@@ -1,5 +1,16 @@
 2009-10-27  Chris Fleizach  <cfleizach@apple.com>
 
+        No review.
+
+        ARIA menu/menu item need AXRoleDescription
+        https://bugs.webkit.org/show_bug.cgi?id=30804
+
+        Layout test fix for Tiger/Leopard.
+
+        * platform/mac-leopard/accessibility/table-with-aria-role-expected.txt:
+
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Adele Peterson.
 
         WAI-ARIA: add support for 'presentation' role
