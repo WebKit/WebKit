@@ -1,3 +1,10 @@
+2009-10-28  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium build fix for r50225.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+
 2009-10-28  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
