@@ -242,6 +242,12 @@ void CachedResource::setDecodedSize(unsigned size)
         cache()->insertInLRUList(this);
         
         // Insert into or remove from the live decoded list if necessary.
+        // When inserting into the LiveDecodedResourcesList it is possible
+        // that the m_lastDecodedAccessTime is still zero or smaller than
+        // the m_lastDecodedAccessTime of the current list head. This is a
+        // violation of the invariant that the list is to be kept sorted
+        // by access time. The weakening of the invariant does not pose
+        // a problem. For more details please see: https://bugs.webkit.org/show_bug.cgi?id=30209
         if (m_decodedSize && !m_inLiveDecodedResourcesList && hasClients())
             cache()->insertInLiveDecodedResourcesList(this);
         else if (!m_decodedSize && m_inLiveDecodedResourcesList)

@@ -1,3 +1,30 @@
+2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        Document a feature of the m_liveDecodedResources list.
+        https://bugs.webkit.org/show_bug.cgi?id=30209
+
+        The code made the assumption that the list is sorted by
+        the m_lastDecodedAccessTime property of the CachedResource.
+        The above is not true when CachedResource::setDecodedSize
+        is called and the item is inserted the first time. In this
+        case the m_lastDecodedAccessTime is still zero and the
+        m_liveDecodedResources list becomes unsorted.
+
+        It is impossible that Cache::pruneLiveResources will
+        stop to process the list too early due this feature and
+        the alternatives of updating m_lastDecodedAccessTime in
+        CachedResource::setDecodedSize or changing the insert
+        to search the right position have a negative impact on
+        performance. The best solution for now is to document
+        this feature.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::setDecodedSize):
+
 2009-10-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
