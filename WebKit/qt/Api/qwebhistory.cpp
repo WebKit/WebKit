@@ -226,7 +226,8 @@ bool QWebHistoryItem::isValid() const
   number of items is given by count(), and the history can be cleared with the
   clear() function.
 
-  QWebHistory's state can be saved with saveState() and loaded with restoreState().
+  QWebHistory's state can be saved to a QDataStream using the >> operator and loaded
+  by using the << operator.
 
   \sa QWebHistoryItem, QWebHistoryInterface, QWebPage
 */
@@ -477,77 +478,32 @@ void QWebHistory::setMaximumItemCount(int count)
 /*!
    \enum QWebHistory::HistoryStateVersion
 
-   This enum describes the versions available for QWebHistory's saveState() function:
-
    \value HistoryVersion_1 Version 1 (Qt 4.6)
    \value DefaultHistoryVersion The current default version in 1.
 */
 
 /*!
   \since 4.6
+  \fn QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
+  \relates QWebHistory
 
-  Restores the state of QWebHistory from the given \a buffer. Returns true
-  if the history was successfully restored; otherwise returns false.
+  \brief The operator<< function streams a history into a data stream.
 
-  \sa saveState()
+  It saves the \a history into the specified \a stream.
 */
-bool QWebHistory::restoreState(const QByteArray& buffer)
+
+QDataStream& operator<<(QDataStream& target, const QWebHistory& history)
 {
-    QDataStream stream(buffer);
-    int version;
-    bool result = false;
-    stream >> version;
+    QWebHistoryPrivate* d = history.d;
 
-    switch (version) {
-    case HistoryVersion_1: {
-        int count;
-        int currentIndex;
-        stream >> count >> currentIndex;
-
-        clear();
-        // only if there are elements
-        if (count) {
-            // after clear() is new clear HistoryItem (at the end we had to remove it)
-            WebCore::HistoryItem *nullItem = d->lst->currentItem();
-            for (int i = 0;i < count;i++) {
-                WTF::PassRefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create();
-                item->restoreState(stream, version);
-                d->lst->addItem(item);
-            }
-            d->lst->removeItem(nullItem);
-            goToItem(itemAt(currentIndex));
-            result = stream.status() == QDataStream::Ok;
-        }
-        break;
-    }
-    default: {} // result is false;
-    }
-
-    d->page()->updateNavigationActions();
-
-    return result;
-};
-
-/*!
-  \since 4.6
-  Saves the state of this QWebHistory into a QByteArray.
-
-  Saves the current state of this QWebHistory. The version number, \a version, is
-  stored as part of the data.
-
-  To restore the saved state, pass the return value to restoreState().
-
-  \sa restoreState()
-*/
-QByteArray QWebHistory::saveState(HistoryStateVersion version) const
-{
     QByteArray buffer;
     QDataStream stream(&buffer, QIODevice::WriteOnly);
+    int version = QWebHistory::DefaultHistoryVersion;
     stream << version;
 
     switch (version) {
-    case HistoryVersion_1: {
-        stream << count() << currentItemIndex();
+    case QWebHistory::HistoryVersion_1: {
+        stream << history.count() << history.currentItemIndex();
 
         const WebCore::HistoryItemVector &items = d->lst->entries();
         for (unsigned i = 0; i < items.size(); i++)
@@ -559,29 +515,9 @@ QByteArray QWebHistory::saveState(HistoryStateVersion version) const
     }
     default:
         buffer.clear();
-
     }
 
-    return buffer;
-}
-
-/*!
-  \since 4.6
-  \fn QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
-  \relates QWebHistory
-
-  \brief The operator<< function streams a history into a data stream.
-
-  It saves the \a history into the specified \a stream. This is a
-  convenience function and is equivalent to calling the saveState()
-  method.
-
-  \sa QWebHistory::saveState()
-*/
-
-QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
-{
-    return stream << history.saveState();
+    return target << buffer;
 }
 
 /*!
@@ -592,18 +528,48 @@ QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
   \brief The operator>> function loads a history from a data stream.
 
   Loads a QWebHistory from the specified \a stream into the given \a history.
-  This is a convenience function and it is equivalent to calling the restoreState()
-  method.
-
-  \sa QWebHistory::restoreState()
 */
 
-QDataStream& operator>>(QDataStream& stream, QWebHistory& history)
+QDataStream& operator>>(QDataStream& source, QWebHistory& history)
 {
+    QWebHistoryPrivate* d = history.d;
+
     QByteArray buffer;
-    stream >> buffer;
-    history.restoreState(buffer);
-    return stream;
+    source >> buffer;
+
+    QDataStream stream(buffer);
+    int version;
+    bool result = false;
+    stream >> version;
+
+    switch (version) {
+    case QWebHistory::HistoryVersion_1: {
+        int count;
+        int currentIndex;
+        stream >> count >> currentIndex;
+
+        history.clear();
+        // only if there are elements
+        if (count) {
+            // after clear() is new clear HistoryItem (at the end we had to remove it)
+            WebCore::HistoryItem* nullItem = d->lst->currentItem();
+            for (int i = 0; i < count; i++) {
+                WTF::PassRefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create();
+                item->restoreState(stream, version);
+                d->lst->addItem(item);
+            }
+            d->lst->removeItem(nullItem);
+            history.goToItem(history.itemAt(currentIndex));
+            result = stream.status() == QDataStream::Ok;
+        }
+        break;
+    }
+    default: {} // result is false;
+    }
+
+    d->page()->updateNavigationActions();
+
+    return source;
 }
 
 QWebPagePrivate* QWebHistoryPrivate::page()

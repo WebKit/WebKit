@@ -1,3 +1,27 @@
+2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] QWebHistory::saveState() is inconsistent with the Qt API
+        https://bugs.webkit.org/show_bug.cgi?id=30710
+
+        Remove the QWebHistory::saveState() and ::restoreState() as
+        they are inconsistent with the Qt API.
+
+        Update unittests to reflect the change.
+
+        * Api/qwebhistory.cpp:
+        (operator<<):
+        (operator>>):
+        * Api/qwebhistory.h:
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (saveHistory):
+        (restoreHistory):
+        (tst_QWebHistory::saveAndRestore_crash_1):
+        (tst_QWebHistory::saveAndRestore_crash_2):
+        (tst_QWebHistory::saveAndRestore_crash_3):
+        (tst_QWebHistory::clear):
+
 2009-10-27  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther.
