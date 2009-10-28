@@ -504,16 +504,6 @@ WebInspector.dispatch = function() {
     setTimeout(delayDispatch, 0);
 }
 
-WebInspector.runAfterPendingDispatches = function(callback)
-{
-    if (WebInspector.pendingDispatches === 0) {
-        callback();
-        return;
-    }
-
-    setTimeout(WebInspector.runAfterPendingDispatches, 0, callback);
-}
-
 WebInspector.windowUnload = function(event)
 {
     InspectorController.windowUnloading();

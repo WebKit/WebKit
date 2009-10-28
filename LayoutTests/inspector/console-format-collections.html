@@ -62,7 +62,7 @@ Tests that console nicely formats HTML Collections and NodeLists.
 function dumpMessages(testController)
 {
     testController.waitUntilDone();
-    WebInspector.runAfterPendingDispatches(function() {
+    testController.runAfterPendingDispatches(function() {
         var result = [];
         var messages = WebInspector.console.messages;
         for (var i = 0; i < messages.length; ++i)
