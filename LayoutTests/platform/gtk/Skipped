@@ -1273,6 +1273,8 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/permission-denied.html
+fast/dom/Geolocation/permission-denied-already-error.html
+fast/dom/Geolocation/permission-denied-already-success.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
 fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html

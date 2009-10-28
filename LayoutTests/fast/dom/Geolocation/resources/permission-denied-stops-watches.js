@@ -19,7 +19,7 @@ navigator.geolocation.watchPosition(function(p) {
 
     error = e
     shouldBe('error.code', 'error.PERMISSION_DENIED');
-    shouldBe('error.message', '"User disallowed Geolocation"');
+    shouldBe('error.message', '"User denied Geolocation"');
     shouldBe('error.UNKNOWN_ERROR', '0');
     shouldBe('error.PERMISSION_DENIED', '1');
     shouldBe('error.POSITION_UNAVAILABLE', '2');

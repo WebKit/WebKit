@@ -1,3 +1,26 @@
+2009-10-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        When a Geolocation method is called, immediately calls the error calback asynchronously if permissions
+        have already been denied.
+        https://bugs.webkit.org/show_bug.cgi?id=27944.
+
+        Tests: fast/dom/Geolocation/permission-denied-already-error.html
+               fast/dom/Geolocation/permission-denied-already-success.html
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier): Modified. GeoNotifier takes Geolocation object as constructor argument.
+        (WebCore::Geolocation::GeoNotifier::setFatalError): Added. Sets a fatal error for this notifier, causing it to terminate immediately and call the error callback asynchronously.
+        (WebCore::Geolocation::GeoNotifier::timerFired): Added. Used to call the error callback asynchronously on fatal error.
+        (WebCore::Geolocation::getCurrentPosition): Modified. Calls startRequest.
+        (WebCore::Geolocation::watchPosition): Modified. Calls startRequest.
+        (WebCore::Geolocation::startRequest): Added. Common functionality for starting a one-shot or watch request. Sets a fatal error on the notifier if permissions have already been denied.
+        (WebCore::Geolocation::fatalErrorOccurred): Added. Registers that a notifier has encountered a fatal error and should be destroyed.
+        (WebCore::Geolocation::setIsAllowed): Modified. Uses a standard error message for the error callback when permissions are denied.
+        * page/Geolocation.h: Modified.
+        (WebCore::Geolocation::isDenied): Added. Determines whether permissions have been denied.
+
 2009-10-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,3 +1,22 @@
+2009-10-27  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        When a Geolocation method is called, immediately calls the error calback asynchronously if permissions have already been denied.
+        https://bugs.webkit.org/show_bug.cgi?id=27944.
+
+        * fast/dom/Geolocation/resources/permission-denied-already-error.js: Added. Tests that when permission has already been denied, the error callback is invoked with code PERMISSION_DENIED, when the Geolocation service reports an error.
+        * fast/dom/Geolocation/permission-denied-already-error.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/permission-denied-already-error-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-already-success.js: Added. Tests that when permission has already been denied, the error callback is invoked with code PERMISSION_DENIED, when the Geolocation service has a good position fix.
+        * fast/dom/Geolocation/permission-denied-already-success.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/permission-denied-already-success-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied.js: Modified. Updates error string.
+        * fast/dom/Geolocation/permission-denied-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-stops-watches.js: Modified. Updates error string.
+        * fast/dom/Geolocation/permission-denied-expected-stops-watches.txt: Modified. Expected result for above test.
+        * platform/gtk/Skipped: Modified. Adds above tests to skipped list.
+
 2009-10-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
