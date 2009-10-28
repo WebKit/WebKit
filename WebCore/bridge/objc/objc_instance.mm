@@ -28,9 +28,10 @@
 
 #import "FoundationExtras.h"
 #import "WebScriptObject.h"
-#include <runtime/Error.h>
-#include <runtime/JSLock.h>
-#include <wtf/Assertions.h>
+#import <objc/objc-auto.h>
+#import <runtime/Error.h>
+#import <runtime/JSLock.h>
+#import <wtf/Assertions.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -123,10 +124,22 @@ ObjcInstance::~ObjcInstance()
     [pool drain];
 }
 
+static NSAutoreleasePool* allocateAutoReleasePool()
+{
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
+    // If GC is enabled an autorelease pool is unnecessary, and the
+    // pool cannot be protected from GC so may be collected leading
+    // to a crash when we try to GC.
+    if (objc_collectingEnabled())
+        return nil;
+#endif
+    return [[NSAutoreleasePool alloc] init];
+}
+
 void ObjcInstance::virtualBegin()
 {
     if (!_pool)
-        _pool = [[NSAutoreleasePool alloc] init];
+        _pool = allocateAutoReleasePool();
     _beginCount++;
 }
 

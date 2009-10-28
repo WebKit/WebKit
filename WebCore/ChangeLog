@@ -1,3 +1,19 @@
+2009-10-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash occurs after launching Newsfire 1.6 for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=30807
+
+        We allocate an autorelease pool but then store it off the stack. In a
+        GC environment this led to it being collected, and thus caused badness
+        to ensue.  To work around this we simply avoid using a pool at all in
+        a GC environment as it would be a no-op anyway.
+
+        * bridge/objc/objc_instance.mm:
+        (allocateAutoReleasePool):
+        (ObjcInstance::virtualBegin):
+
 2009-10-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
