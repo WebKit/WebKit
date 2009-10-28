@@ -132,6 +132,8 @@ fast/text/find-hidden-text.html
 # ============================================================================= #
 
 # Missing layoutTestController.showWebInspector()
+inspector/console-format-collections.html
+inspector/javascript-syntax-highlight.html
 inspector/uncaught-dom1-exception.html
 inspector/uncaught-dom3-exception.html
 inspector/uncaught-dom8-exception.html
