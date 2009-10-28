@@ -1,3 +1,16 @@
+2009-10-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7303145> 
+        Can't exit full screen mode or restart movie after pressing command -R.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+        (WebCore::HTMLMediaElement::documentWillBecomeInactive):
+            Exit from fullscreen if necessary.
+        * html/HTMLMediaElement.h:
+
 2009-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed - a trivial fix to get Windows bots running.

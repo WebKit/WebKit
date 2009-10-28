@@ -280,14 +280,21 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 #pragma mark -
 #pragma mark Window callback
 
+- (void)_requestExit
+{
+    if (_mediaElement)
+        _mediaElement->exitFullscreen();
+    _forceDisableAnimation = NO;
+}
+
 - (void)requestExitFullscreenWithAnimation:(BOOL)animation
 {
     if (_isEndingFullscreen)
         return;
 
     _forceDisableAnimation = !animation;
-    _mediaElement->exitFullscreen();
-    _forceDisableAnimation = NO;
+    [self performSelector:@selector(_requestExit) withObject:nil afterDelay:0];
+
 }
 
 - (void)requestExitFullscreen

@@ -1,3 +1,36 @@
+2009-10-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7303145> 
+        Can't exit full screen mode or restart movie after pressing command -R.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController _requestExit]): 
+            New, call media element's exitFullscreen method.
+        (-[WebVideoFullscreenController requestExitFullscreenWithAnimation:]): 
+            Call mediaElement->exitFullscreen() after a delay as it turns around and calls
+            WebVideoFullscreenController:exitFullscreen.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow resignFirstResponder]):
+            New, don't give up responder status.
+        (-[WebVideoFullscreenHUDWindow performKeyEquivalent:]):
+            New, block all command key events.
+        (-[WebVideoFullscreenHUDWindowController exitFullscreen:]):
+            Remember when we are in the process of exiting fullscreen, don't allow recursion.
+
+        * WebView/WebView.mm:
+        (-[WebView _exitFullscreen]):
+            Early return if fullscreen controller is nil.
+
+        * WebView/WebWindowAnimation.h: 
+            Correct comment about _window retain status.
+        * WebView/WebWindowAnimation.m:
+        (-[WebWindowScaleAnimation dealloc]):
+            Don't release _window, we never reatained it.
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

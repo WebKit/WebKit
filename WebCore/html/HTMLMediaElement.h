@@ -57,7 +57,6 @@ public:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
-    virtual void willRemove();
     virtual void removedFromDocument();
     virtual void attach();
     virtual void recalcStyle(StyleChange);

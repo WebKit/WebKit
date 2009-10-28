@@ -117,6 +117,23 @@ using namespace std;
     [[self windowController] fadeWindowIn];
 }
 
+- (BOOL)resignFirstResponder
+{
+    return NO;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)event
+{
+    // Block all command key events while the fullscreen window is up.
+    if ([event type] != NSKeyDown)
+        return NO;
+    
+    if (!([event modifierFlags] & NSCommandKeyMask))
+        return NO;
+    
+    return YES;
+}
+
 @end
 
 //
@@ -604,6 +621,9 @@ static NSString *stringToTimeTextAttributed(NSString *string, NSTextAlignment al
 
 - (void)exitFullscreen:(id)sender
 {
+    if (_isEndingFullscreen)
+        return;
+    _isEndingFullscreen = YES;
     [_delegate requestExitFullscreen]; 
 }
 

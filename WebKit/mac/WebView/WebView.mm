@@ -5544,6 +5544,8 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 
 - (void)_exitFullscreen
 {
+    if (!_private->fullscreenController)
+        return;
     [_private->fullscreenController exitFullscreen];
     [_private->fullscreenController release];
     _private->fullscreenController = nil;

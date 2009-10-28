@@ -80,7 +80,6 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (void) dealloc
 {
-    [_window release];
     [_subAnimation release];
     [super dealloc];
 }
