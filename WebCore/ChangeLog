@@ -1,3 +1,18 @@
+2009-10-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fails new test fast/js/navigator-language.html
+        https://bugs.webkit.org/show_bug.cgi?id=30440
+
+        Reimplement WebCore::defaultLanguage to account for changes in
+        locale done by setLocale.
+
+        Already existing test: fast/js/navigator-language.html
+
+        * platform/gtk/Language.cpp:
+        (WebCore::defaultLanguage):
+
 2009-10-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

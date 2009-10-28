@@ -1460,9 +1460,6 @@ fast/events/drag-and-drop-none.html
 fast/events/drag-and-drop.html
 fast/events/drag-parent-node.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=30440
-fast/js/navigator-language.html
-
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 #   Tests timing out
 fast/loader/null-request-after-willSendRequest.html
