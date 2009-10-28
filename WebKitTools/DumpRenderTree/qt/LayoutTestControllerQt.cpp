@@ -40,6 +40,7 @@ extern bool qt_drt_pauseAnimation(QWebFrame*, const QString& name, double time, 
 extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern int qt_drt_numberOfActiveAnimations(QWebFrame*);
 extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
+extern QString qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
@@ -111,7 +112,7 @@ void LayoutTestController::waitUntilDone()
 
 QString LayoutTestController::counterValueForElementById(const QString& id)
 {
-    return m_drt->webPage()->mainFrame()->counterValueForElementById(id);
+    return qt_drt_counterValueForElementById(m_drt->webPage()->mainFrame(), id);
 }
 
 void LayoutTestController::keepWebHistory()

@@ -1,3 +1,14 @@
+2009-10-28  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] WebFrame::counterValueForElementById must not be exposed
+        https://bugs.webkit.org/show_bug.cgi?id=30882
+
+        * Api/qwebframe.cpp:
+        (qt_drt_counterValueForElementById):
+        * Api/qwebframe.h:
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

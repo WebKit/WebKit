@@ -185,6 +185,17 @@ void QWEBKIT_EXPORT qt_drt_garbageCollector_collectOnAlternateThread(bool waitUn
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
+// Returns the value of counter in the element specified by \a id.
+QString QWEBKIT_EXPORT qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    if (Document* document = frame->document()) {
+        Element* element = document->getElementById(id);
+        return WebCore::counterValueForElement(element);
+    }
+    return QString();
+}
+
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
                              WebCore::HTMLFrameOwnerElement* ownerFrameElement,
                              const WebCore::String& frameName)
@@ -473,19 +484,6 @@ QString QWebFrame::renderTreeDump() const
         d->frame->view()->layout();
 
     return externalRepresentation(d->frame->contentRenderer());
-}
-
-/*!
-    Returns the value of counter in the element specified by \a id.
-*/
-QString QWebFrame::counterValueForElementById(const QString &id) const
-{
-    if (Document *document = d->frame->document()) {
-        Element *element = document->getElementById(id);
-        return WebCore::counterValueForElement(element);
-    }
-    return QString();
-
 }
 
 /*!

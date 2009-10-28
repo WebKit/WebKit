@@ -1,3 +1,13 @@
+2009-10-28  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] WebFrame::counterValueForElementById must not be exposed
+        https://bugs.webkit.org/show_bug.cgi?id=30882
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::counterValueForElementById):
+
 2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Oliver Hunt.
