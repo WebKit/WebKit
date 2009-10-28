@@ -83,6 +83,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginInfoStore.h>
+#include <WebCore/PluginDatabase.h>
 #include <WebCore/PluginView.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleWin.h>
