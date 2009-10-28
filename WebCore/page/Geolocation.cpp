@@ -164,6 +164,9 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
         return 0;
 
     static int nextAvailableWatchId = 1;
+    // In case of overflow, make sure the ID remains positive, but reuse the ID values.
+    if (nextAvailableWatchId < 1)
+        nextAvailableWatchId = 1;
     m_watchers.set(nextAvailableWatchId, notifier.release());
     return nextAvailableWatchId++;
 }

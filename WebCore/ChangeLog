@@ -1,3 +1,15 @@
+2009-10-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Makes sure that Geolocation watch IDs remain positive on overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=30122
+
+        No new tests possible.
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::watchPosition): Modified. Reset the watch ID to 1 on overflow.
+
 2009-10-28  George Staikos  <george.staikos@torchmobile.com>
 
         Attempt to fix the Mac debug build after 50225.
