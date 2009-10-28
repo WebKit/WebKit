@@ -158,6 +158,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(
         /* [retval][out] */ BSTR *result);
 
+    virtual HRESULT STDMETHODCALLTYPE counterValueForElementById(
+        /* [in] */ BSTR id,
+        /* [retval][out] */ BSTR *result);
+
     virtual HRESULT STDMETHODCALLTYPE scrollOffset(
         /* [retval][out] */ SIZE* offset);
 

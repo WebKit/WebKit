@@ -30,6 +30,8 @@
 
 #import <WebKit/WebFrame.h>
 
+@class DOMElement;
+
 @interface WebCoreStatistics : NSObject
 {
 }
@@ -81,4 +83,5 @@
 
 @interface WebFrame (WebKitDebug)
 - (NSString *)renderTreeAsExternalRepresentation;
+- (NSString *)counterValueForElement:(DOMElement*)element;
 @end

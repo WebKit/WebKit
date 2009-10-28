@@ -975,3 +975,23 @@ void LayoutTestController::removeAllVisitedLinks()
 
     sharedHistoryPrivate->removeAllVisitedLinks();
 }
+
+JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return 0;
+
+    wstring idWstring = jsStringRefToWString(id);
+    BSTR idBSTR = SysAllocStringLen((OLECHAR*)idWstring.c_str(), idWstring.length());
+    BSTR counterValueBSTR;
+    if (FAILED(framePrivate->counterValueForElementById(idBSTR, &counterValueBSTR)))
+        return 0;
+
+    wstring counterValue(counterValueBSTR, SysStringLen(counterValueBSTR));
+    SysFreeString(idBSTR);
+    SysFreeString(counterValueBSTR);
+    JSRetainPtr<JSStringRef> counterValueJS(Adopt, JSStringCreateWithCharacters(counterValue.data(), counterValue.length()));
+    return counterValueJS;
+}
+

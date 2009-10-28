@@ -109,6 +109,11 @@ void LayoutTestController::waitUntilDone()
     m_timeoutTimer.start(11000, this);
 }
 
+QString LayoutTestController::counterValueForElementById(const QString& id)
+{
+    return m_drt->webPage()->mainFrame()->counterValueForElementById(id);
+}
+
 void LayoutTestController::keepWebHistory()
 {
     // FIXME: implement
@@ -308,4 +313,3 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
     else if (name == "WebKitDefaultFontSize")
         settings->setFontSize(QWebSettings::DefaultFontSize, value.toInt());
 }
-

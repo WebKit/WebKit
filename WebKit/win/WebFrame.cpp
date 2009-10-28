@@ -824,6 +824,25 @@ HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebFrame::counterValueForElementById(
+    /* [in] */ BSTR id, /* [retval][out] */ BSTR *result)
+{
+    if (!result)
+        return E_POINTER;
+
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    String coreId = String(id, SysStringLen(id));
+
+    Element* element = coreFrame->document()->getElementById(coreId);
+    if (!element)
+        return E_FAIL;
+    *result = BString(counterValueForElement(element)).release();
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebFrame::scrollOffset(
         /* [retval][out] */ SIZE* offset)
 {

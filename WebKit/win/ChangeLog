@@ -1,3 +1,15 @@
+2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to get counter values with layoutTestContoller
+        https://bugs.webkit.org/show_bug.cgi?id=30555
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::counterValueForElementById):
+        * WebFrame.h:
+
 2009-10-28  Joe Mason  <jmason@rim.com>
 
         Reviewed by Adam Treat.

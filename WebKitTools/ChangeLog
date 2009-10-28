@@ -1,3 +1,19 @@
+2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to get counter values with layoutTestContoller
+        https://bugs.webkit.org/show_bug.cgi?id=30555
+
+        Define layoutTestContoller.counterValueForElementById.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (counterValueForElementByIdCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::counterValueForElementById):
+
 2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Oliver Hunt.

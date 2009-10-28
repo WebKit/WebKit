@@ -476,6 +476,19 @@ QString QWebFrame::renderTreeDump() const
 }
 
 /*!
+    Returns the value of counter in the element specified by \a id.
+*/
+QString QWebFrame::counterValueForElementById(const QString &id) const
+{
+    if (Document *document = d->frame->document()) {
+        Element *element = document->getElementById(id);
+        return WebCore::counterValueForElement(element);
+    }
+    return QString();
+
+}
+
+/*!
     \property QWebFrame::title
     \brief the title of the frame as defined by the HTML &lt;title&gt; element
 
@@ -1686,4 +1699,3 @@ QWebFrame *QWebHitTestResult::frame() const
         return 0;
     return d->frame;
 }
-

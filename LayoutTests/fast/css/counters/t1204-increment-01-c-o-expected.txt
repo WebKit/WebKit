@@ -1,0 +1,13 @@
+This is the WebKit version of CSS 2.1 Test Suite: dynamic changes to 'counter-increment'.
+
+Before the dynamic change:
+PASS layoutTestController.counterValueForElementById('one') is '1'
+PASS layoutTestController.counterValueForElementById('two') is '3'
+PASS layoutTestController.counterValueForElementById('three') is '4'
+After the dynamic change:
+PASS layoutTestController.counterValueForElementById('one') is '1'
+PASS layoutTestController.counterValueForElementById('two') is '2'
+PASS layoutTestController.counterValueForElementById('three') is '3'
+
+TEST COMPLETE
+

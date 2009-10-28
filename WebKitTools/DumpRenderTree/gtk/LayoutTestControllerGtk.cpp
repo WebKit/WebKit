@@ -52,6 +52,7 @@ unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)
 void webkit_application_cache_set_maximum_size(unsigned long long size);
 unsigned int webkit_worker_thread_count(void);
 void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
+gchar* webkit_web_frame_counter_value_for_element_by_id(WebKitWebFrame* frame, const gchar* id);
 }
 
 static gchar* copyWebSettingKey(gchar* preferenceKey)
@@ -116,6 +117,17 @@ void LayoutTestController::dispatchPendingLoadRequests()
 void LayoutTestController::display()
 {
     displayWebView();
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
+{
+    gchar* idGChar = JSStringCopyUTF8CString(id);
+    gchar* counterValueGChar = webkit_web_frame_counter_value_for_element_by_id(mainFrame, idGChar);
+    g_free(idGChar);
+    if (!counterValueGChar)
+        return 0;
+    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithUTF8CString(counterValueGChar));
+    return counterValue;
 }
 
 void LayoutTestController::keepWebHistory()

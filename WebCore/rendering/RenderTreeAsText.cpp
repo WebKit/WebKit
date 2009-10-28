@@ -28,6 +28,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CharacterNames.h"
+#include "CString.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -551,6 +552,33 @@ String externalRepresentation(RenderObject* o)
         writeSelection(ts, o);
     }
     return ts.release();
+}
+
+static void writeCounterValuesFromChildren(TextStream& stream, RenderObject* parent)
+{
+    for (RenderObject* child = parent->firstChild(); child; child = child->nextSibling()) {
+        if (child->isCounter()) {
+            String str(toRenderText(child)->text());
+            stream << str;
+        }
+    }
+}
+
+String counterValueForElement(Element* element)
+{
+    // Make sure the element is not freed during the layout.
+    RefPtr<Element> elementRef(element);
+    element->document()->updateLayout();
+    TextStream stream;
+    // The counter renderers should be children of anonymous children
+    // (i.e., :before or :after pseudo-elements).
+    if (RenderObject* renderer = element->renderer()) {
+        for (RenderObject* child = renderer->firstChild(); child; child = child->nextSibling()) {
+            if (child->isAnonymous())
+                writeCounterValuesFromChildren(stream, child);
+        }
+    }
+    return stream.release();
 }
 
 } // namespace WebCore

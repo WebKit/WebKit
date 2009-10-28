@@ -28,6 +28,7 @@
 
 #import "WebCoreStatistics.h"
 
+#import "DOMElementInternal.h"
 #import "WebCache.h"
 #import "WebFrameInternal.h"
 #import <runtime/JSLock.h>
@@ -242,6 +243,11 @@ using namespace WebCore;
 - (NSString *)renderTreeAsExternalRepresentation
 {
     return externalRepresentation(_private->coreFrame->contentRenderer());
+}
+
+- (NSString *)counterValueForElement:(DOMElement*)element
+{
+    return counterValueForElement(core(element));
 }
 
 @end

@@ -1,3 +1,14 @@
+2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to get counter values with layoutTestContoller
+        https://bugs.webkit.org/show_bug.cgi?id=30555
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_counter_value_for_element_by_id):
+
 2009-10-28  Joe Mason  <jmason@rim.com>
 
         Reviewed by Adam Treat.

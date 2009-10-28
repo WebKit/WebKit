@@ -42,6 +42,7 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
@@ -149,6 +150,19 @@ JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
 void LayoutTestController::display()
 {
     displayWebView();
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
+    NSString *idNS = (NSString *)idCF.get();
+
+    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
+    if (!element)
+        return 0;
+
+    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame counterValueForElement:element]));
+    return counterValue;
 }
 
 void LayoutTestController::keepWebHistory()

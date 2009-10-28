@@ -30,6 +30,7 @@
 #define LayoutTestController_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/RefCounted.h>
 #include <string>
 #include <vector>
@@ -51,6 +52,7 @@ public:
     void dispatchPendingLoadRequests();
     void display();
     void execCommand(JSStringRef name, JSStringRef value);
+    JSRetainPtr<JSStringRef> counterValueForElementById(JSStringRef id);
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
     void notifyDone();
