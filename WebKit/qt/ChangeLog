@@ -9,6 +9,21 @@
 
 2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] QWebHistory::saveState() is inconsistent with the Qt API
+        https://bugs.webkit.org/show_bug.cgi?id=30710
+
+        Make the versioning internal and enforce it in the WebCore
+        part. Adjust the comments, as well as remove now dead code.
+
+        * Api/qwebhistory.cpp:
+        (operator<<):
+        (operator>>):
+        * Api/qwebhistory.h:
+
+2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Holger Freyther.
 
         [Qt] QWebHistory::saveState() is inconsistent with the Qt API

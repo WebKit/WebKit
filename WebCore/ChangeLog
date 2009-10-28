@@ -1,3 +1,17 @@
+2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] QWebHistory::saveState() is inconsistent with the Qt API
+        https://bugs.webkit.org/show_bug.cgi?id=30710
+
+        Enforce the versioning, by ignoring any version different
+        from 1.
+
+        * history/qt/HistoryItemQt.cpp:
+        (WebCore::HistoryItem::restoreState):
+        (WebCore::HistoryItem::saveState):
+
 2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up fix to InspectorControllerStub.

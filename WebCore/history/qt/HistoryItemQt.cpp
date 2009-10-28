@@ -23,10 +23,13 @@
 #include "CString.h"
 #include "FormData.h"
 
-bool WebCore::HistoryItem::restoreState(QDataStream& in, int /*version*/)
+bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
 {
-    // there is no different version right now
-    // switch  (version) {
+    // we only support version 1 for now
+
+    if (version != 1)
+        return false;
+
     WebCore::String url;
     WebCore::String title;
     WebCore::String altTitle;
@@ -87,10 +90,12 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int /*version*/)
     return in.status() == QDataStream::Ok;
 }
 
-QDataStream& WebCore::HistoryItem::saveState(QDataStream& out, int /*version*/) const
+QDataStream& WebCore::HistoryItem::saveState(QDataStream& out, int version) const
 {
-    // there is no different version right now
-    // switch  (version) {
+    // we only support version 1 for now.
+    if (version != 1)
+        return out;
+
     out << urlString() << title() << alternateTitle() << lastVisitedTime();
     out << originalURLString() << referrer() << target() << parent();
     out << lastVisitWasHTTPNonGet() << lastVisitWasFailure() << isTargetItem();

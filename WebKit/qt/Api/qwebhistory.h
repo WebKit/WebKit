@@ -70,12 +70,6 @@ private:
 class QWebHistoryPrivate;
 class QWEBKIT_EXPORT QWebHistory {
 public:
-    enum HistoryStateVersion {
-        HistoryVersion_1,
-        /*, HistoryVersion_2, */
-        DefaultHistoryVersion = HistoryVersion_1
-    };
-
     void clear();
 
     QList<QWebHistoryItem> items() const;
