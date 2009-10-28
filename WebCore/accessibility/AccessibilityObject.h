@@ -160,6 +160,7 @@ enum AccessibilityRole {
     DefinitionListDefinitionRole,
     AnnotationRole,
     SliderThumbRole,
+    IgnoredRole,
     
     // ARIA Grouping roles
     LandmarkApplicationRole,

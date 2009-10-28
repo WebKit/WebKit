@@ -1,5 +1,20 @@
 2009-10-27  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        WAI-ARIA: add support for 'presentation' role
+        https://bugs.webkit.org/show_bug.cgi?id=30806
+
+        Test: accessibility/aria-presentational-role.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::RoleEntry::):
+
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         ARIA menu/menu item need AXRoleDescription
