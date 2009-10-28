@@ -1,3 +1,10 @@
+2009-10-28  George Staikos  <george.staikos@torchmobile.com>
+
+        Attempt to fix the Mac debug build after 50225.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+
 2009-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

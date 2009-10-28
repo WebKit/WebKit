@@ -1301,8 +1301,10 @@ ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const S
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return WebCore::ObjectContentImage;
 
+#if !PLATFORM(MAC)  // Mac has no PluginDatabase
     if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return WebCore::ObjectContentNetscapePlugin;
+#endif
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return WebCore::ObjectContentFrame;
