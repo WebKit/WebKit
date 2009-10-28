@@ -1,5 +1,14 @@
 2009-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Rubber-stamped by Holger Freyther.
+
+        [Qt] Remove http/tests/security tests from
+        skiplist, and add only now failing tests.
+
+        * platform/qt/Skipped:
+
+2009-10-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Remove http/tests/misc tests from
         skiplist, and add only now failing tests.
 

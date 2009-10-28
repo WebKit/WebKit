@@ -31,7 +31,6 @@ http/tests/incremental
 http/tests/media
 http/tests/navigation
 http/tests/plugins
-http/tests/security
 http/tests/ssl
 http/tests/webarchive
 http/tests/wml
@@ -59,30 +58,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
-
-# This port doesn't support isolated worlds yet.
-http/tests/security/isolatedWorld/all-window-properties.html
-http/tests/security/isolatedWorld/all-window-prototypes.html
-http/tests/security/isolatedWorld/body-properties.html
-http/tests/security/isolatedWorld/body-prototype.html
-http/tests/security/isolatedWorld/click-event.html
-http/tests/security/isolatedWorld/document-open.html
-http/tests/security/isolatedWorld/document-properties.html
-http/tests/security/isolatedWorld/document-prototype.html
-http/tests/security/isolatedWorld/global-variables.html
-http/tests/security/isolatedWorld/image-properties.html
-http/tests/security/isolatedWorld/image-prototype.html
-http/tests/security/isolatedWorld/location-properties.html
-http/tests/security/isolatedWorld/location-prototype.html
-http/tests/security/isolatedWorld/window-setTimeout-function.html
-http/tests/security/isolatedWorld/window-setTimeout-string.html
-http/tests/security/isolatedWorld/storage-properties.html
-http/tests/security/isolatedWorld/storage-prototype.html
-http/tests/security/isolatedWorld/number-prototype.html
-http/tests/security/isolatedWorld/object-prototype.html
-http/tests/security/isolatedWorld/string-prototype.html
-http/tests/security/isolatedWorld/window-properties.html
-http/tests/security/isolatedWorld/world-reuse.html
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
@@ -165,9 +140,33 @@ http/tests/misc/favicon-loads-with-images-disabled.html
 # Missing layoutTestController.setCustomPolicyDelegate()
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
+http/tests/security/feed-urls-from-remote.html
 
 # Missing layoutTestController.setWillSendRequestReturnsNullOnRedirect()
 http/tests/misc/will-send-request-returns-null-on-redirect.html
+
+# Missing layoutTestController.setXSSAuditorEnabled()
+http/tests/security/xssAuditor
+
+# Missing layoutTestController.evaluateScriptInIsolatedWorld()
+http/tests/security/isolatedWorld
+
+# Missing layoutTestController.dumpFrameLoadCallbacks()
+http/tests/security/mixedContent
+
+# Missing layoutTestController.pathToLocalResource()
+http/tests/security/frame-loading-via-document-write.html
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
+http/tests/security/local-iFrame-from-remote.html
+http/tests/security/local-image-from-remote.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-source-from-remote.html
+http/tests/security/local-video-src-from-remote.html
+
+# Missing layoutTestController.setUserStyleSheetLocation() and layoutTestController.setUserStyleSheetEnabled()
+http/tests/security/local-user-CSS-from-remote.html
+
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
@@ -176,6 +175,7 @@ fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/get-file-upload.html
 fast/events/drag-file-crash.html
+http/tests/security/clipboard/clipboard-file-access.html
 
 # ------- missing eventSender.zoomPageIn
 fast/events/clientXY-in-zoom-and-scroll.html
@@ -4961,6 +4961,74 @@ http/tests/misc/text-refresh.html
 http/tests/misc/timer-vs-loading.html
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/misc/window-dot-stop.html
+
+# Skip failing http/tests/security tests
+http/tests/security/credentials-in-referer.html
+http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
+http/tests/security/cross-frame-access-enumeration.html
+http/tests/security/cross-frame-access-get-custom-property-cached.html
+http/tests/security/cross-frame-access-get-override.html
+http/tests/security/cross-frame-access-get.html
+http/tests/security/cross-frame-access-history-get-override.html
+http/tests/security/cross-frame-access-history-get.html
+http/tests/security/cross-frame-access-location-get-override.html
+http/tests/security/cross-frame-access-location-get.html
+http/tests/security/cross-frame-access-private-browsing.html
+http/tests/security/cross-frame-access-protocol-explicit-domain.html
+http/tests/security/cross-frame-access-protocol.html
+http/tests/security/cross-frame-access-put.html
+http/tests/security/cross-origin-xsl-BLOCKED.html
+http/tests/security/dataTransfer-set-data-file-url.html
+http/tests/security/drag-over-remote-content-iframe.html
+http/tests/security/escape-form-data-field-names.html
+http/tests/security/host-compare-case-insensitive.html
+http/tests/security/window-properties-clear-domain.html
+http/tests/security/window-properties-clear-port.html
+http/tests/security/window-properties-pass.html
+http/tests/security/xss-DENIED-xsl-document-redirect.xml
+http/tests/security/xss-DENIED-xsl-document.xml
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+http/tests/security/XFrameOptions/x-frame-options-deny.html
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
+http/tests/security/aboutBlank/security-context-alias.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
+http/tests/security/frameNavigation/not-opener.html
+http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html
+http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/originHeader/origin-header-for-empty.html
+http/tests/security/originHeader/origin-header-for-https.html
 
 # Skip xmlhttprequest tests
 http/tests/xmlhttprequest/XMLHttpRequestException.html
