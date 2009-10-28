@@ -51,7 +51,7 @@ static void* threadEntryPoint(void* contextData)
 
     setThreadNameInternal(context->name);
 
-    // Block until our creating thread has completed any extra setup work
+    // Block until our creating thread has completed any extra setup work.
     {
         MutexLocker locker(context->creationMutex);
     }

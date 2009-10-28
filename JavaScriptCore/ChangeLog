@@ -1,5 +1,14 @@
 2009-10-28  Dmitry Titov  <dimich@chromium.org>
 
+        Not reviewed, attemp to fix Windows build.
+
+        Touch the cpp file to cause recompile.
+
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint):
+
+2009-10-28  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by David Levin.
 
         https://bugs.webkit.org/show_bug.cgi?id=30805
