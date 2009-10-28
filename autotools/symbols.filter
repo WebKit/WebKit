@@ -1,4 +1,10 @@
 {
+global:
+_ZN3WTF10fastMallocEj;
+_ZN3WTF11fastReallocEPvj;
+_ZN3WTF8fastFreeEPv;
+_ZN3WTF10fastCallocEjj;
+
 local:
 _Z*;
 cti*;

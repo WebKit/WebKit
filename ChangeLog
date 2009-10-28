@@ -1,3 +1,17 @@
+2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Export fastMalloc, fastCalloc, fastRealloc and fastFree
+        https://bugs.webkit.org/show_bug.cgi?id=30769
+
+        Export the FastMalloc functions outside of the libwebkit library
+        to be able to instrument memory allocations. These are C++ symbols
+        but do not require the C++ runtime to be useful and should be of
+        no harm to plain C code.
+
+        * autotools/symbols.filter:
+
 2009-10-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.
