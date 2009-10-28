@@ -152,9 +152,19 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
 
 static const gchar* webkit_accessible_get_description(AtkObject* object)
 {
-    // TODO: the Mozilla MSAA implementation prepends "Description: "
-    // Should we do this too?
-    return returnString(core(object)->accessibilityDescription());
+    AccessibilityObject* coreObject = core(object);
+
+    // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
+    if (coreObject->roleValue() == TableRole && coreObject->ariaRoleAttribute() == UnknownRole) {
+        Node* node = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
+        if (node && node->isHTMLElement()) {
+            String summary = static_cast<HTMLTableElement*>(node)->summary();
+            if (!summary.isEmpty())
+                return returnString(summary);
+        }
+    }
+
+    return returnString(coreObject->accessibilityDescription());
 }
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)

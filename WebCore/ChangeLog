@@ -1,3 +1,15 @@
+2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25534
+        [GTK] Objects of ROLE_TABLE should implement the accessible table interface
+
+        Expose the table summary as the accessible description because there is no summary object.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_description):
+
 2009-10-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.
