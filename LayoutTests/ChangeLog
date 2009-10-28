@@ -1,3 +1,11 @@
+2009-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Changed this test to use -webkit-box-shadow instead of box-shadow after r49003.
+
+        * fast/box-shadow/inset.html:
+
 2009-10-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
