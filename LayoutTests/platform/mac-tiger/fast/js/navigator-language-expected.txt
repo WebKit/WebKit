@@ -1,0 +1,9 @@
+Test for bug 29653: [Qt] Qt-based browser fails to show the right language translation.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL navigator.language.toLowerCase() should be en-us. Was en.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

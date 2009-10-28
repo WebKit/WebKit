@@ -1,3 +1,12 @@
+2009-10-28  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Added special expected test result for Tiger to fix regression tests.
+        https://bugs.webkit.org/show_bug.cgi?id=30811
+
+        * platform/mac-tiger/fast/js/navigator-language-expected.txt: Added.
+
 2009-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Holger Freyther.
