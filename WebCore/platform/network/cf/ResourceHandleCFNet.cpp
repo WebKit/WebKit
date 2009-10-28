@@ -156,7 +156,11 @@ CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfReque
     }
     if (request.isNull())
         request = cfRequest;
-    
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+        request.clearHTTPReferrer();
+
     handle->willSendRequest(request, cfRedirectResponse);
 
     if (request.isNull())

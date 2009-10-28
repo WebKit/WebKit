@@ -634,6 +634,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
     CallbackGuard guard;
     ResourceRequest request = newRequest;
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+        request.clearHTTPReferrer();
+
     m_handle->willSendRequest(request, redirectResponse);
 
     if (!ResourceHandle::didSendBodyDataDelegateExists()) {

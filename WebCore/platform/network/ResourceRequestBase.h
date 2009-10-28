@@ -88,11 +88,11 @@ namespace WebCore {
         
         String httpReferrer() const { return httpHeaderField("Referer"); }
         void setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
-        void clearHTTPReferrer() { m_httpHeaderFields.remove("Referer"); }
+        void clearHTTPReferrer();
         
         String httpOrigin() const { return httpHeaderField("Origin"); }
         void setHTTPOrigin(const String& httpOrigin) { setHTTPHeaderField("Origin", httpOrigin); }
-        void clearHTTPOrigin() { m_httpHeaderFields.remove("Origin"); }
+        void clearHTTPOrigin();
 
         String httpUserAgent() const { return httpHeaderField("User-Agent"); }
         void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }

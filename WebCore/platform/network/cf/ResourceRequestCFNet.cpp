@@ -78,11 +78,16 @@ CFURLRequestRef ResourceRequest::cfURLRequest() const
     return m_cfRequest.get();
 }
 
-static inline void addHeadersFromHashMap(CFMutableURLRequestRef request, const HTTPHeaderMap& requestHeaders) 
+static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHeaderMap& requestHeaders) 
 {
-    if (!requestHeaders.size())
-        return;
-        
+    // Remove existing headers first, as some of them may no longer be present in the map.
+    RetainPtr<CFDictionaryRef> oldHeaderFields(AdoptCF, CFURLRequestCopyAllHTTPHeaderFields(request));
+    CFIndex oldHeaderFieldCount = CFDictionaryGetCount(oldHeaderFields.get());
+    Vector<CFStringRef> oldHeaderFieldNames(oldHeaderFieldCount);
+    CFDictionaryGetKeysAndValues(oldHeaderFields.get(), reinterpret_cast<const void**>(&oldHeaderFieldNames[0]), 0);
+    for (CFIndex i = 0; i < oldHeaderFieldCount; ++i)
+        CFURLRequestSetHTTPHeaderFieldValue(request, oldHeaderFieldNames[i], 0);
+
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
         CFStringRef key = it->first.createCFString();
@@ -112,7 +117,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     RetainPtr<CFStringRef> requestMethod(AdoptCF, httpMethod().createCFString());
     CFURLRequestSetHTTPRequestMethod(cfRequest, requestMethod.get());
 
-    addHeadersFromHashMap(cfRequest, httpHeaderFields());
+    setHeaderFields(cfRequest, httpHeaderFields());
     WebCore::setHTTPBody(cfRequest, httpBody());
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
@@ -150,6 +155,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
+    m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
         CFIndex headerCount = CFDictionaryGetCount(headers);
         Vector<const void*, 128> keys(headerCount);
