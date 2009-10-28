@@ -62,6 +62,7 @@ namespace WebCore {
         ~InspectorTimelineAgent();
 
         void reset();
+        void resetFrontendProxyObject(InspectorFrontend*);
 
         // Methods called from WebCore.
         void willDispatchDOMEvent(const Event&);

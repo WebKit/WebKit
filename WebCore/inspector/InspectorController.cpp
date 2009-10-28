@@ -557,7 +557,8 @@ void InspectorController::setFrontendProxyObject(ScriptState* scriptState, Scrip
     m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
     releaseDOMAgent();
     m_domAgent = InspectorDOMAgent::create(m_frontend.get());
-    m_timelineAgent = 0;
+    if (m_timelineAgent)
+        m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
 }
 
 void InspectorController::show()

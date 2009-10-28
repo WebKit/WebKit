@@ -160,6 +160,13 @@ void InspectorTimelineAgent::reset()
     m_recordStack.clear();
 }
 
+void InspectorTimelineAgent::resetFrontendProxyObject(InspectorFrontend* frontend)
+{
+    ASSERT(frontend);
+    reset();
+    m_frontend = frontend;
+}
+
 void InspectorTimelineAgent::addRecordToTimeline(ScriptObject record, TimelineRecordType type)
 {
     record.set("type", type);

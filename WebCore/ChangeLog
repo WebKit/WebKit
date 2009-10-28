@@ -1,3 +1,17 @@
+2009-10-28  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Resets InspectorFrontend in InspectorTimelineAgent instead of removing it so
+        that it remains active on refreshs and page transitions.
+        https://bugs.webkit.org/show_bug.cgi?id=30874
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontendProxyObject):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::resetFrontendProxyObject):
+        * inspector/InspectorTimelineAgent.h:
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
