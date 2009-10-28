@@ -1,3 +1,14 @@
+2009-10-28  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30805
+        Add MessageQueue::removeIf(Predicate&) to remove certain tasks without pulling them from the queue.
+        Existing Database tests cover this since Database removes tasks when it is stopped.
+
+        * wtf/MessageQueue.h:
+        (WTF::::removeIf):
+
 2009-10-28  Afonso R. Costa Jr.  <afonso.costa@openbossa.org>
 
         Reviewed by Oliver Hunt.

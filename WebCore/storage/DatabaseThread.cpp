@@ -152,22 +152,20 @@ void DatabaseThread::scheduleImmediateTask(PassRefPtr<DatabaseTask> task)
     m_queue.prepend(task);
 }
 
+class SameDatabasePredicate {
+public:
+    SameDatabasePredicate(const Database* database) : m_database(database) { }
+    bool operator()(RefPtr<DatabaseTask>& task) const { return task->database() == m_database; }
+private:
+    const Database* m_database;
+};
+
 void DatabaseThread::unscheduleDatabaseTasks(Database* database)
 {
     // Note that the thread loop is running, so some tasks for the database
     // may still be executed. This is unavoidable.
-
-    Deque<RefPtr<DatabaseTask> > filteredReverseQueue;
-    RefPtr<DatabaseTask> task;
-    while (m_queue.tryGetMessage(task)) {
-        if (task->database() != database)
-            filteredReverseQueue.append(task);
-    }
-
-    while (!filteredReverseQueue.isEmpty()) {
-        m_queue.append(filteredReverseQueue.first());
-        filteredReverseQueue.removeFirst();
-    }
+    SameDatabasePredicate predicate(database);
+    m_queue.removeIf(predicate);
 }
 
 } // namespace WebCore

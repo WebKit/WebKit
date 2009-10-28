@@ -55,9 +55,13 @@ namespace WTF {
         bool waitForMessage(DataType&);
         template<typename Predicate>
         MessageQueueWaitResult waitForMessageFilteredWithTimeout(DataType&, Predicate&, double absoluteTime);
-        void kill();
+
+        template<typename Predicate>
+        void removeIf(Predicate&);
 
         bool tryGetMessage(DataType&);
+
+        void kill();
         bool killed() const;
 
         // The result of isEmpty() is only valid if no other thread is manipulating the queue at the same time.
@@ -146,6 +150,17 @@ namespace WTF {
         result = m_queue.first();
         m_queue.removeFirst();
         return true;
+    }
+
+    template<typename DataType>
+    template<typename Predicate>
+    inline void MessageQueue<DataType>::removeIf(Predicate& predicate)
+    {
+        MutexLocker lock(m_mutex);
+        DequeConstIterator<DataType> found = m_queue.end();
+        while ((found = m_queue.findIf(predicate)) != m_queue.end()) {
+            m_queue.remove(found);
+       }
     }
 
     template<typename DataType>
