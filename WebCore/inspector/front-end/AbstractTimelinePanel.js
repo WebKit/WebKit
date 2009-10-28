@@ -50,6 +50,16 @@ WebInspector.AbstractTimelinePanel.prototype = {
         // Should be implemented by the concrete subclasses.
     },
 
+    populateSidebar: function()
+    {
+        // Should be implemented by the concrete subclasses.
+    },
+
+    refresh: function()
+    {
+        // Should be implemented by the concrete subclasses.
+    },
+
     createInterface: function()
     {
         this._createFilterPanel();
@@ -300,11 +310,11 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
 WebInspector.AbstractTimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.TimelineCalculator = function()
+WebInspector.AbstractTimelineCalculator = function()
 {
 }
 
-WebInspector.TimelineCalculator.prototype = {
+WebInspector.AbstractTimelineCalculator.prototype = {
     computeSummaryValues: function(items)
     {
         var total = 0;

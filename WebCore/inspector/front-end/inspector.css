@@ -3266,22 +3266,121 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 /* Timeline Style */
 
-#timeline-views {
+#timeline-summary {
     position: absolute;
     top: 0;
-    right: 0;
-    left: 200px;
-    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+}
+
+.timeline-clear-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
 .timeline-tree-item {
     height: 18px;
-    padding-left: 24px;
+    padding-left: 10px;
+    padding-top: 2px;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.timeline-tree-item .type {
+    padding-left: 14px;
+}
+
+.timeline-tree-item .timeline-tree-icon {
+    background-image: url(Images/timelineDots.png);
+    margin-top: 2px;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+}
+
+.timeline-tree-item:nth-of-type(2n) {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .timeline-tree-item .data.dimmed {
     color: rgba(0, 0, 0, 0.7);
+}
+
+.timeline-category-loading, .timeline-category-scripting, .timeline-category-rendering {
+    display: none;
+}
+
+.filter-all .timeline-category-loading, .filter-loading .timeline-category-loading,
+.filter-all .timeline-category-scripting, .filter-scripting .timeline-category-scripting,
+.filter-all .timeline-category-rendering, .filter-rendering .timeline-category-rendering {
+    display: list-item;
+}
+
+#timeline-graphs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    max-height: 100%;
+    top: 19px;
+}
+
+.timeline-graph-side {
+    position: relative;
+    height: 18px;
+    padding: 0 5px;
+    white-space: nowrap;
+    margin-top: 0px;
+    border-top: 1px solid transparent;
+    overflow: hidden;
+}
+
+.timeline-graph-bar-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 8px;
+    left: 9px;
+}
+
+.timeline-graph-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto -5px;
+    border-width: 6px 7px;
+    height: 13px;
+    min-width: 14px;
+    opacity: 0.65;
+    -webkit-border-image: url(Images/timelineBarGray.png) 6 7 6 7;
+}
+
+.timeline-graph-side:nth-of-type(2n) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.timeline-category-loading .timeline-graph-bar {
+    -webkit-border-image: url(Images/timelineBarBlue.png) 6 7 6 7;
+}
+
+.timeline-category-scripting .timeline-graph-bar {
+    -webkit-border-image: url(Images/timelineBarOrange.png) 6 7 6 7;
+}
+
+.timeline-category-rendering .timeline-graph-bar {
+    -webkit-border-image: url(Images/timelineBarPurple.png) 6 7 6 7;
+}
+
+.timeline-category-loading .timeline-tree-icon {
+    background-position-y: 0px;
+}
+
+.timeline-category-scripting .timeline-tree-icon {
+    background-position-y: 48px;
+}
+
+.timeline-category-rendering .timeline-tree-icon {
+    background-position-y: 72px;
 }
 
 /* Profiler Style */

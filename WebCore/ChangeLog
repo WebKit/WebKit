@@ -1,3 +1,59 @@
+2009-10-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Initial revision of the Timeline grid.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30834
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.populateSidebar):
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        (WebInspector.AbstractTimelineCalculator):
+        * inspector/front-end/Images/timelineBarBlue.png: Added.
+        * inspector/front-end/Images/timelineBarGray.png: Added.
+        * inspector/front-end/Images/timelineBarGreen.png: Added.
+        * inspector/front-end/Images/timelineBarOrange.png: Added.
+        * inspector/front-end/Images/timelineBarPurple.png: Added.
+        * inspector/front-end/Images/timelineBarRed.png: Added.
+        * inspector/front-end/Images/timelineBarYellow.png: Added.
+        * inspector/front-end/Images/timelineCheckmarks.png: Added.
+        * inspector/front-end/Images/timelineDots.png: Added.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceTimeCalculator):
+        (WebInspector.ResourceTransferSizeCalculator):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype.get categories):
+        (WebInspector.TimelinePanel.prototype.populateSidebar):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype.addItemToTimeline):
+        (WebInspector.TimelinePanel.prototype.refresh):
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClick):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype.showCategory):
+        (WebInspector.TimelinePanel.prototype.hideCategory):
+        (WebInspector.TimelineRecordTreeElement):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        (WebInspector.TimelineCalculator):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.computePercentageFromEventTime):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineCalculator.prototype.formatValue):
+        (WebInspector.TimelineGraph):
+        (WebInspector.TimelineGraph.prototype.get graphElement):
+        (WebInspector.TimelineGraph.prototype.refreshLabelPositions):
+        (WebInspector.TimelineGraph.prototype.refresh):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2009-10-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

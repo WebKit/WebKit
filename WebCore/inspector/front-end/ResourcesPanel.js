@@ -795,7 +795,7 @@ WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.AbstractTimelineP
 
 WebInspector.ResourceTimeCalculator = function(startAtZero)
 {
-    WebInspector.TimelineCalculator.call(this);
+    WebInspector.AbstractTimelineCalculator.call(this);
     this.startAtZero = startAtZero;
 }
 
@@ -956,7 +956,7 @@ WebInspector.ResourceTimeCalculator.prototype = {
     },
 }
 
-WebInspector.ResourceTimeCalculator.prototype.__proto__ = WebInspector.TimelineCalculator.prototype;
+WebInspector.ResourceTimeCalculator.prototype.__proto__ = WebInspector.AbstractTimelineCalculator.prototype;
 
 WebInspector.ResourceTransferTimeCalculator = function()
 {
@@ -1003,7 +1003,7 @@ WebInspector.ResourceTransferDurationCalculator.prototype.__proto__ = WebInspect
 
 WebInspector.ResourceTransferSizeCalculator = function()
 {
-    WebInspector.TimelineCalculator.call(this);
+    WebInspector.AbstractTimelineCalculator.call(this);
 }
 
 WebInspector.ResourceTransferSizeCalculator.prototype = {
@@ -1027,7 +1027,7 @@ WebInspector.ResourceTransferSizeCalculator.prototype = {
     }
 }
 
-WebInspector.ResourceTransferSizeCalculator.prototype.__proto__ = WebInspector.TimelineCalculator.prototype;
+WebInspector.ResourceTransferSizeCalculator.prototype.__proto__ = WebInspector.AbstractTimelineCalculator.prototype;
 
 WebInspector.ResourceSidebarTreeElement = function(resource)
 {
