@@ -1,3 +1,10 @@
+2009-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Qt build fix: migrated away from API that no longer exists.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2009-10-27  Oliver Hunt  <oliver@apple.com>
 
         Fix wording in comment.

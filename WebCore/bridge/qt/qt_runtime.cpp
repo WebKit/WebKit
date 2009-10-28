@@ -458,7 +458,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             if (type == Date) {
                 DateInstance* date = static_cast<DateInstance*>(object);
                 WTF::GregorianDateTime gdt;
-                date->getUTCTime(gdt);
+                WTF::msToGregorianDateTime(date->internalNumber(), true, gdt);
                 if (hint == QMetaType::QDateTime) {
                     ret = QDateTime(QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
                     dist = 0;
