@@ -1,3 +1,73 @@
+2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Pull items collections from resources panel and
+        timeline panel into AbstractTimelinePanel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30875
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel):
+        (WebInspector.AbstractTimelinePanel.prototype.populateSidebar):
+        (WebInspector.AbstractTimelinePanel.prototype.createItemTreeElement):
+        (WebInspector.AbstractTimelinePanel.prototype.createItemGraph):
+        (WebInspector.AbstractTimelinePanel.prototype._showCategory):
+        (WebInspector.AbstractTimelinePanel.prototype._hideCategory):
+        (WebInspector.AbstractTimelinePanel.prototype.filter):
+        (WebInspector.AbstractTimelinePanel.prototype._createGraph):
+        (WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth):
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        (WebInspector.AbstractTimelinePanel.prototype.reset):
+        (WebInspector.AbstractTimelinePanel.prototype.get calculator):
+        (WebInspector.AbstractTimelinePanel.prototype.set calculator):
+        (WebInspector.AbstractTimelinePanel.prototype.addItem):
+        (WebInspector.AbstractTimelinePanel.prototype.removeItem):
+        (WebInspector.AbstractTimelinePanel.prototype.refreshItem):
+        (WebInspector.AbstractTimelinePanel.prototype.revealAndSelectItem):
+        (WebInspector.AbstractTimelinePanel.prototype.sortItems):
+        (WebInspector.AbstractTimelinePanel.prototype.adjustScrollPosition):
+        (WebInspector.AbstractTimelineCategory):
+        (WebInspector.AbstractTimelineCategory.prototype.toString):
+        * inspector/front-end/ResourceCategory.js:
+        (WebInspector.ResourceCategory):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.createItemTreeElement):
+        (WebInspector.ResourcesPanel.prototype.createItemGraph):
+        (WebInspector.ResourcesPanel.prototype.isCategoryVisible):
+        (WebInspector.ResourcesPanel.prototype.populateSidebar):
+        (WebInspector.ResourcesPanel.prototype.get searchableViews):
+        (WebInspector.ResourcesPanel.prototype.get searchResultsSortFunction.sortFuction):
+        (WebInspector.ResourcesPanel.prototype.get searchResultsSortFunction):
+        (WebInspector.ResourcesPanel.prototype.searchMatchFound):
+        (WebInspector.ResourcesPanel.prototype.searchCanceled):
+        (WebInspector.ResourcesPanel.prototype.performSearch):
+        (WebInspector.ResourcesPanel.prototype.refresh):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.removeResource):
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource):
+        (WebInspector.ResourcesPanel.prototype.clearMessages):
+        (WebInspector.ResourcesPanel.prototype.refreshResource):
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded):
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        (WebInspector.ResourcesPanel.prototype._sortResourcesIfNeeded):
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources):
+        (WebInspector.ResourcesPanel.prototype._toggleResourceTracking):
+        (WebInspector.ResourcesPanel.prototype.get _resources):
+        (WebInspector.ResourceTimeCalculator.prototype._upperBound):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get categories):
+        (WebInspector.TimelinePanel.prototype.populateSidebar):
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.createItemTreeElement):
+        (WebInspector.TimelinePanel.prototype.createItemGraph):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelineCategory):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-10-28  Kelly Norton  <knorton@google.com>
 
         Reviewed by Pavel Feldman.

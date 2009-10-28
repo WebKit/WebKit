@@ -30,6 +30,7 @@
 WebInspector.ResourcesPanel = function()
 {
     WebInspector.AbstractTimelinePanel.call(this);
+
     this.element.addStyleClass("resources");
 
     this._createPanelEnabler();
@@ -65,23 +66,19 @@ WebInspector.ResourcesPanel.prototype = {
         return WebInspector.resourceCategories;
     },
 
-    showCategory: function(category)
+    createItemTreeElement: function(item)
     {
-        var filterClass = "filter-" + category.toLowerCase();
-        this.resourcesGraphsElement.addStyleClass(filterClass);
-        this.resourcesTreeElement.childrenListElement.addStyleClass(filterClass);
+        return new WebInspector.ResourceSidebarTreeElement(item);
     },
-    
-    hideCategory: function(category)
+
+    createItemGraph: function(item)
     {
-        var filterClass = "filter-" + category.toLowerCase();
-        this.resourcesGraphsElement.removeStyleClass(filterClass);
-        this.resourcesTreeElement.childrenListElement.removeStyleClass(filterClass);
+        return new WebInspector.ResourceGraph(item);
     },
 
     isCategoryVisible: function(categoryName)
     {
-        return (this.resourcesGraphsElement.hasStyleClass("filter-all") || this.resourcesGraphsElement.hasStyleClass("filter-" + categoryName.toLowerCase()));
+        return (this.itemsGraphsElement.hasStyleClass("filter-all") || this.itemsGraphsElement.hasStyleClass("filter-" + categoryName.toLowerCase()));
     },
 
     populateSidebar: function()
@@ -119,10 +116,10 @@ WebInspector.ResourcesPanel.prototype = {
         this.graphsTreeElement.appendChild(sizeGraphItem);
         this.graphsTreeElement.expand();
 
-        this.resourcesTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RESOURCES"), {}, true);
-        this.sidebarTree.appendChild(this.resourcesTreeElement);
+        this.itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RESOURCES"), {}, true);
+        this.sidebarTree.appendChild(this.itemsTreeElement);
 
-        this.resourcesTreeElement.expand();
+        this.itemsTreeElement.expand();
     },
 
     _createPanelEnabler: function()
@@ -229,7 +226,7 @@ WebInspector.ResourcesPanel.prototype = {
         var resourcesLength = this._resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             var resource = this._resources[i];
-            if (!resource._resourcesTreeElement)
+            if (!resource._itemsTreeElement)
                 continue;
             var resourceView = this.resourceViewForResource(resource);
             if (!resourceView.performSearch || resourceView === visibleView)
@@ -246,7 +243,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         function sortFuction(a, b)
         {
-            return resourceTreeElementSortFunction(a.resource._resourcesTreeElement, b.resource._resourcesTreeElement);
+            return resourceTreeElementSortFunction(a.resource._itemsTreeElement, b.resource._itemsTreeElement);
         }
 
         return sortFuction;
@@ -254,7 +251,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     searchMatchFound: function(view, matches)
     {
-        view.resource._resourcesTreeElement.searchMatches = matches;
+        view.resource._itemsTreeElement.searchMatches = matches;
     },
 
     searchCanceled: function(startingNewSearch)
@@ -266,8 +263,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
-            if (resource._resourcesTreeElement)
-                resource._resourcesTreeElement.updateErrorsAndWarnings();
+            if (resource._itemsTreeElement)
+                resource._itemsTreeElement.updateErrorsAndWarnings();
         }
     },
 
@@ -275,8 +272,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
-            if (resource._resourcesTreeElement)
-                resource._resourcesTreeElement.resetBubble();
+            if (resource._itemsTreeElement)
+                resource._itemsTreeElement.resetBubble();
         }
 
         WebInspector.Panel.prototype.performSearch.call(this, query);
@@ -287,23 +284,6 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleResource)
             return this.visibleResource._resourcesView;
         return null;
-    },
-
-    get calculator()
-    {
-        return this._calculator;
-    },
-
-    set calculator(x)
-    {
-        if (!x || this._calculator === x)
-            return;
-
-        this._calculator = x;
-        this._calculator.reset();
-
-        this._staleResources = this._resources;
-        this.refresh();
     },
 
     get sortingFunction()
@@ -319,40 +299,8 @@ WebInspector.ResourcesPanel.prototype = {
 
     refresh: function()
     {
-        this.needsRefresh = false;
+        WebInspector.AbstractTimelinePanel.prototype.refresh.call(this);
 
-        var staleResourcesLength = this._staleResources.length;
-        var boundariesChanged = false;
-
-        for (var i = 0; i < staleResourcesLength; ++i) {
-            var resource = this._staleResources[i];
-            if (!resource._resourcesTreeElement) {
-                // Create the resource tree element and graph.
-                resource._resourcesTreeElement = new WebInspector.ResourceSidebarTreeElement(resource);
-                resource._resourcesTreeElement._resourceGraph = new WebInspector.ResourceGraph(resource);
-
-                this.resourcesTreeElement.appendChild(resource._resourcesTreeElement);
-                this.resourcesGraphsElement.appendChild(resource._resourcesTreeElement._resourceGraph.graphElement);
-            }
-
-            resource._resourcesTreeElement.refresh();
-
-            if (this.calculator.updateBoundaries(resource))
-                boundariesChanged = true;
-        }
-
-        if (boundariesChanged) {
-            // The boundaries changed, so all resource graphs are stale.
-            this._staleResources = this._resources;
-            staleResourcesLength = this._staleResources.length;
-        }
-
-        for (var i = 0; i < staleResourcesLength; ++i)
-            this._staleResources[i]._resourcesTreeElement._resourceGraph.refresh(this.calculator);
-
-        this._staleResources = [];
-
-        this.updateGraphDividersIfNeeded();
         this._sortResourcesIfNeeded();
         this._updateSummaryGraph();
     },
@@ -376,13 +324,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.closeVisibleResource();
 
-        this.containerElement.scrollTop = 0;
-
         delete this.currentQuery;
         this.searchCanceled();
-
-        if (this._calculator)
-            this._calculator.reset();
 
         if (this._resources) {
             var resourcesLength = this._resources.length;
@@ -392,23 +335,18 @@ WebInspector.ResourcesPanel.prototype = {
                 resource.warnings = 0;
                 resource.errors = 0;
 
-                delete resource._resourcesTreeElement;
                 delete resource._resourcesView;
             }
         }
 
-        this._resources = [];
-        this._staleResources = [];
+        WebInspector.AbstractTimelinePanel.prototype.reset.call(this);
         
         this.mainResourceLoadTime = -1;
         this.mainResourceDOMContentTime = -1;
-
-        this.resourcesTreeElement.removeChildren();
+ 
         this.viewsContainerElement.removeChildren();
-        this.resourcesGraphsElement.removeChildren();
-        this.summaryBar.reset();
 
-        this.updateGraphDividersIfNeeded(true);
+        this.summaryBar.reset();
 
         if (InspectorController.resourceTrackingEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Resource tracking enabled. Click to disable.");
@@ -436,20 +374,12 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleView === resource._resourcesView)
             this.closeVisibleResource();
 
-        this._resources.remove(resource, true);
-
-        if (resource._resourcesTreeElement) {
-            this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
-            this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph.graphElement);
-        }
+        this.removeItem(resource);
 
         resource.warnings = 0;
         resource.errors = 0;
 
-        delete resource._resourcesTreeElement;
         delete resource._resourcesView;
-
-        this._adjustScrollPosition();
     },
 
     addMessageToResource: function(resource, msg)
@@ -466,8 +396,8 @@ WebInspector.ResourcesPanel.prototype = {
             break;
         }
 
-        if (!this.currentQuery && resource._resourcesTreeElement)
-            resource._resourcesTreeElement.updateErrorsAndWarnings();
+        if (!this.currentQuery && resource._itemsTreeElement)
+            resource._itemsTreeElement.updateErrorsAndWarnings();
 
         var view = this.resourceViewForResource(resource);
         if (view.addMessage)
@@ -482,8 +412,8 @@ WebInspector.ResourcesPanel.prototype = {
             resource.warnings = 0;
             resource.errors = 0;
 
-            if (!this.currentQuery && resource._resourcesTreeElement)
-                resource._resourcesTreeElement.updateErrorsAndWarnings();
+            if (!this.currentQuery && resource._itemsTreeElement)
+                resource._itemsTreeElement.updateErrorsAndWarnings();
 
             var view = resource._resourcesView;
             if (!view || !view.clearMessages)
@@ -494,8 +424,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     refreshResource: function(resource)
     {
-        this._staleResources.push(resource);
-        this.needsRefresh = true;
+        this.refreshItem(resource);
     },
 
     recreateViewForResourceIfNeeded: function(resource)
@@ -510,8 +439,8 @@ WebInspector.ResourcesPanel.prototype = {
         resource.warnings = 0;
         resource.errors = 0;
 
-        if (!this.currentQuery && resource._resourcesTreeElement)
-            resource._resourcesTreeElement.updateErrorsAndWarnings();
+        if (!this.currentQuery && resource._itemsTreeElement)
+            resource._itemsTreeElement.updateErrorsAndWarnings();
 
         var oldView = resource._resourcesView;
 
@@ -547,10 +476,7 @@ WebInspector.ResourcesPanel.prototype = {
                 view.highlightLine(line);
         }
 
-        if (resource._resourcesTreeElement) {
-            resource._resourcesTreeElement.reveal();
-            resource._resourcesTreeElement.select(true);
-        }
+        this.revealAndSelectItem(resource);
 
         this.visibleResource = resource;
 
@@ -607,24 +533,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _sortResourcesIfNeeded: function()
     {
-        var sortedElements = [].concat(this.resourcesTreeElement.children);
-        sortedElements.sort(this.sortingFunction);
-
-        var sortedElementsLength = sortedElements.length;
-        for (var i = 0; i < sortedElementsLength; ++i) {
-            var treeElement = sortedElements[i];
-            if (treeElement === this.resourcesTreeElement.children[i])
-                continue;
-
-            var wasSelected = treeElement.selected;
-            this.resourcesTreeElement.removeChild(treeElement);
-            this.resourcesTreeElement.insertChild(treeElement, i);
-            if (wasSelected)
-                treeElement.select(true);
-
-            var graphElement = treeElement._resourceGraph.graphElement;
-            this.resourcesGraphsElement.insertBefore(graphElement, this.resourcesGraphsElement.children[i]);
-        }
+        this.sortItems(this.sortingFunction);
     },
 
     updateGraphDividersIfNeeded: function(force)
@@ -701,30 +610,23 @@ WebInspector.ResourcesPanel.prototype = {
 
     _toggleLargerResources: function()
     {
-        if (!this.resourcesTreeElement._childrenListNode)
+        if (!this.itemsTreeElement._childrenListNode)
             return;
 
-        this.resourcesTreeElement.smallChildren = !this.resourcesTreeElement.smallChildren;
+        this.itemsTreeElement.smallChildren = !this.itemsTreeElement.smallChildren;
         Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
         InspectorController.setSetting("resources-large-rows", Preferences.resourcesLargeRows);
 
-        if (this.resourcesTreeElement.smallChildren) {
-            this.resourcesGraphsElement.addStyleClass("small");
+        if (this.itemsTreeElement.smallChildren) {
+            this.itemsGraphsElement.addStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this.largerResourcesButton.toggled = false;
-            this._adjustScrollPosition();
+            this.adjustScrollPosition();
         } else {
-            this.resourcesGraphsElement.removeStyleClass("small");
+            this.itemsGraphsElement.removeStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
             this.largerResourcesButton.toggled = true;
         }
-    },
-
-    _adjustScrollPosition: function()
-    {
-        // Prevent the container from being scrolled off the end.
-        if ((this.containerElement.scrollTop + this.containerElement.offsetHeight) > this.sidebarElement.offsetHeight)
-            this.containerElement.scrollTop = (this.sidebarElement.offsetHeight - this.containerElement.offsetHeight);
     },
 
     _changeSortingFunction: function()
@@ -788,6 +690,11 @@ WebInspector.ResourcesPanel.prototype = {
             this.sortingSelectElement.visible = true;
             InspectorController.enableResourceTracking(!!optionalAlways);
         }
+    },
+
+    get _resources()
+    {
+        return this._items;
     }
 }
 
@@ -953,7 +860,7 @@ WebInspector.ResourceTimeCalculator.prototype = {
     _upperBound: function(resource)
     {
         return 0;
-    },
+    }
 }
 
 WebInspector.ResourceTimeCalculator.prototype.__proto__ = WebInspector.AbstractTimelineCalculator.prototype;

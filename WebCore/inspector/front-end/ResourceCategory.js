@@ -28,17 +28,11 @@
 
 WebInspector.ResourceCategory = function(name, title, color)
 {
-    this.name = name;
-    this.title = title;
-    this.color = color;
+    WebInspector.AbstractTimelineCategory.call(this, name, title, color);
     this.resources = [];
 }
 
 WebInspector.ResourceCategory.prototype = {
-    toString: function()
-    {
-        return this.title;
-    },
 
     addResource: function(resource)
     {
@@ -67,3 +61,5 @@ WebInspector.ResourceCategory.prototype = {
         this.resources = [];
     }
 }
+
+WebInspector.ResourceCategory.prototype.__proto__ = WebInspector.AbstractTimelineCategory.prototype;
