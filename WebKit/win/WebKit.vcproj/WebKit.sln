@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitGUID", "WebKitGUID.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Interfaces", "Interfaces.vcproj", "{91762BE2-87EF-4F5A-A480-48B90EB3F406}"
 	ProjectSection(ProjectDependencies) = postProject
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166} = {62C897BE-E207-4BC4-B37D-6F9F9116F166}
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6} = {1C16337B-ACF3-4D03-AA90-851C5B5EADA6}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "..\..\..\WebCore\WebCore.vcproj\WebCore.vcproj", "{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
@@ -57,11 +57,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiff", "..\..\..\WebKi
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InterfacesGenerated", "InterfacesGenerated.vcproj", "{62C897BE-E207-4BC4-B37D-6F9F9116F166}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6} = {1C16337B-ACF3-4D03-AA90-851C5B5EADA6}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCoreGenerated", "..\..\..\WebCore\WebCore.vcproj\WebCoreGenerated.vcproj", "{0A324352-B3B6-496C-9E5B-4C7E923E628B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -239,18 +234,6 @@ Global
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release_Cairo|Win32.Build.0 = all|Win32
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release|Win32.ActiveCfg = all|Win32
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_All|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_All|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_Cairo|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_Cairo|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_Internal|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug_Internal|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Debug|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Release_Cairo|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Release_Cairo|Win32.Build.0 = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Release|Win32.ActiveCfg = all|Win32
-		{62C897BE-E207-4BC4-B37D-6F9F9116F166}.Release|Win32.Build.0 = all|Win32
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_All|Win32.ActiveCfg = all|Win32
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_All|Win32.Build.0 = all|Win32
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Debug_Cairo|Win32.ActiveCfg = all|Win32

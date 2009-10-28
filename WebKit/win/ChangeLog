@@ -1,3 +1,16 @@
+2009-10-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam "Horatio" Weinig.
+
+        Should not generate/build COM DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=30880
+
+        * Interfaces/WebKit.idl: Remove generated interfaces.
+        * WebKit.vcproj/InterfacesGenerated.vcproj: Removed.
+        * WebKit.vcproj/WebKit.sln: Remove InterfacesGenerated.vcproj.
+        * WebKit.vcproj/WebKit.submit.sln: Remove InterfacesGenerated.vcproj.
+        * WebKit.vcproj/WebKit.vcproj: Remove generated interfaces.
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
