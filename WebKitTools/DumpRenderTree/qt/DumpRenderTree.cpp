@@ -596,7 +596,8 @@ void DumpRenderTree::initializeFonts()
         exit(1);
     }
     char currentPath[PATH_MAX+1];
-    getcwd(currentPath, PATH_MAX);
+    if (!getcwd(currentPath, PATH_MAX))
+        qFatal("Couldn't get current working directory");
     QByteArray configFile = currentPath;
     FcConfig *config = FcConfigCreate();
     configFile += "/WebKitTools/DumpRenderTree/qt/fonts.conf";

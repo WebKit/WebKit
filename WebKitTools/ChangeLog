@@ -1,3 +1,18 @@
+2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Oliver Hunt.
+
+        Fix the warning:
+
+        "warning: ignoring return value of 'char* getcwd(char*, size_t)',
+        declared with attribute warn_unused_result".
+
+        by actually checking the result. In the case it is null, an
+        error has occoured, so treat it as the other fatal errors.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::initializeFonts):
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
