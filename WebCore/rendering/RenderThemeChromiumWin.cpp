@@ -611,21 +611,11 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
                                                     const IntRect& r,
                                                     bool drawEdges)
 {
-    // Nasty hack to make us not paint the border on text fields with a
-    // border-radius. Webkit paints elements with border-radius for us.
-    // FIXME: Get rid of this if-check once we can properly clip rounded
-    // borders: http://b/1112604 and http://b/1108635
-    // FIXME: make sure we do the right thing if css background-clip is set.
-    if (o->style()->hasBorderRadius())
-        return false;
-
-    const ThemeData& themeData = getThemeData(o);
-
     // Fallback to white if the specified color object is invalid.
+    // (Note ChromiumBridge::paintTextField duplicates this check).
     Color backgroundColor(Color::white);
-    if (o->style()->backgroundColor().isValid()) {
+    if (o->style()->backgroundColor().isValid())
         backgroundColor = o->style()->backgroundColor();
-    }
 
     // If we have background-image, don't fill the content area to expose the
     // parent's background. Also, we shouldn't fill the content area if the
@@ -634,17 +624,32 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
     // Note that we should paint the content area white if we have neither the
     // background color nor background image explicitly specified to keep the
     // appearance of select element consistent with other browsers.
-    bool fillContentArea = !o->style()->hasBackgroundImage() && backgroundColor.alpha() != 0;
+    bool fillContentArea = !o->style()->hasBackgroundImage() && backgroundColor.alpha();
 
-    WebCore::ThemePainter painter(i.context, r);
-    ChromiumBridge::paintTextField(painter.context(),
-                                   themeData.m_part,
-                                   themeData.m_state,
-                                   themeData.m_classicState,
-                                   painter.drawRect(),
-                                   backgroundColor,
-                                   fillContentArea,
-                                   drawEdges);
+    if (o->style()->hasBorderRadius()) {
+        // If the style has rounded borders, setup the context to clip the
+        // background (themed or filled) appropriately.
+        // FIXME: make sure we do the right thing if css background-clip is set.
+        i.context->save();
+        IntSize topLeft, topRight, bottomLeft, bottomRight;
+        o->style()->getBorderRadiiForRect(r, topLeft, topRight, bottomLeft, bottomRight);
+        i.context->addRoundedRectClip(r, topLeft, topRight, bottomLeft, bottomRight);
+    }
+    {
+        const ThemeData& themeData = getThemeData(o);
+        WebCore::ThemePainter painter(i.context, r);
+        ChromiumBridge::paintTextField(painter.context(),
+                                       themeData.m_part,
+                                       themeData.m_state,
+                                       themeData.m_classicState,
+                                       painter.drawRect(),
+                                       backgroundColor,
+                                       fillContentArea,
+                                       drawEdges);
+        // End of block commits the painter before restoring context.
+    }
+    if (o->style()->hasBorderRadius())
+        i.context->restore();
     return false;
 }
 

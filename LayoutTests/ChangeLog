@@ -1,3 +1,15 @@
+2009-10-28  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 30547: (Chromium) searchbox not rendered properly due to the css property -webkit-border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=30547
+
+        * fast/css/text-input-with-webkit-border-radius-expected.checksum: Added.
+        * fast/css/text-input-with-webkit-border-radius-expected.png: Added.
+        * fast/css/text-input-with-webkit-border-radius-expected.txt: Added.
+        * fast/css/text-input-with-webkit-border-radius.html: Added.
+
 2009-10-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
