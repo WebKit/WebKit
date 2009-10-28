@@ -1,3 +1,19 @@
+2009-10-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGStyledElement::getPresentationAttribute() can return a shared CSSValue (some SVG tests randomly fail on the bot, and in release builds)
+        https://bugs.webkit.org/show_bug.cgi?id=29620
+
+        SVG was modifying CSSValues cached of off CSSMappedAttributeDeclarations.
+        This patch fixes the check to make sure that a new CSSMappedAttributeDeclaration is
+        created before returning a CSSValue that JavaScript can modify.
+
+        Test: svg/dom/getPresentationAttribute-cache-corruption.svg
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2009-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

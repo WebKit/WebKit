@@ -245,20 +245,23 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
     if (!mappedAttributes())
         return 0;
 
-    Attribute* attr = mappedAttributes()->getAttributeItem(QualifiedName(nullAtom, name, nullAtom));
+    QualifiedName attributeName(nullAtom, name, nullAtom);
+    Attribute* attr = mappedAttributes()->getAttributeItem(attributeName);
     if (!attr || !attr->isMappedAttribute() || !attr->style())
         return 0;
 
     MappedAttribute* cssSVGAttr = static_cast<MappedAttribute*>(attr);
-
-    // FIXME: Is it possible that the style will not be shared at the time this
-    // is called, but a later addition to the DOM will make it shared?
-    if (!cssSVGAttr->style()->hasOneRef()) {
+    // This function returns a pointer to a CSSValue which can be mutated from JavaScript.
+    // If the associated MappedAttribute uses the same CSSMappedAttributeDeclaration
+    // as StyledElement's mappedAttributeDecls cache, create a new CSSMappedAttributeDeclaration
+    // before returning so that any modifications to the CSSValue will not affect other attributes.
+    MappedAttributeEntry entry;
+    mapToEntry(attributeName, entry);
+    if (getMappedAttributeDecl(entry, cssSVGAttr) == cssSVGAttr->decl()) {
         cssSVGAttr->setDecl(0);
         int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(cssSVGAttr->name());
         addCSSProperty(cssSVGAttr, propId, cssSVGAttr->value());
     }
-
     return cssSVGAttr->style()->getPropertyCSSValue(name);
 }
 
