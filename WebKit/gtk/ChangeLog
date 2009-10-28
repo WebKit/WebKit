@@ -1,3 +1,19 @@
+2009-10-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [Gtk] Extraneous object of ROLE_PANEL in hierarchy for entries
+        https://bugs.webkit.org/show_bug.cgi?id=25897
+
+        Update test to also check that entries implement the AtkText
+        interface.
+
+        * tests/testatk.c:
+        (run_get_text_tests):
+        (test_webkit_atk_get_text_at_offset_forms):
+        (test_webkit_atk_get_text_at_offset):
+        (main):
+
 2009-10-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Update documentation control files for 1.1.16.

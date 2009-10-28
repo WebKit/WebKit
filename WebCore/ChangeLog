@@ -1,3 +1,17 @@
+2009-10-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [Gtk] Extraneous object of ROLE_PANEL in hierarchy for entries
+        https://bugs.webkit.org/show_bug.cgi?id=25897
+
+        Make text controls always implement the text interface, and the
+        editable text interface when they are not read only. This is what
+        ATK-users expect.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2009-10-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Fraser.

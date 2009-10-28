@@ -50,36 +50,9 @@ static void test_get_text_function(AtkText* text_obj, AtkGetTextFunction fn, Atk
     g_free(text);
 }
 
-static void test_webkit_atk_get_text_at_offset(void)
+static void run_get_text_tests(AtkText* text_obj)
 {
-    WebKitWebView* webView;
-    AtkObject *obj;
-    GMainLoop* loop;
-    AtkText* text_obj;
-    char* text;
-
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(webView);
-    GtkAllocation alloc = { 0, 0, 800, 600 };
-    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
-    webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
-    loop = g_main_loop_new(NULL, TRUE);
-
-    g_timeout_add(100, (GSourceFunc)bail_out, loop);
-    g_main_loop_run(loop);
-
-    /* Get to the inner AtkText object */
-    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
-    g_assert(obj);
-    obj = atk_object_ref_accessible_child(obj, 0);
-    g_assert(obj);
-    obj = atk_object_ref_accessible_child(obj, 0);
-    g_assert(obj);
-
-    text_obj = ATK_TEXT(obj);
-    g_assert(ATK_IS_TEXT(text_obj));
-
-    text = atk_text_get_text(text_obj, 0, -1);
+    char* text = atk_text_get_text(text_obj, 0, -1);
     g_assert_cmpstr(text, ==, "This is a test. This is the second sentence. And this the third.");
     g_free(text);
 
@@ -218,6 +191,70 @@ static void test_webkit_atk_get_text_at_offset(void)
     /* ATK_TEXT_BOUNDARY_LINE_END */
     test_get_text_function(text_obj, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
                            0, "This is a test. This is the second sentence. And this the third.", 0, 64);
+}
+
+static void test_webkit_atk_get_text_at_offset_forms(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    GMainLoop* loop;
+    AtkText* text_obj;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    /* Get to the inner AtkText object */
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+    obj = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj);
+    obj = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj);
+
+    text_obj = ATK_TEXT(obj);
+    g_assert(ATK_IS_TEXT(text_obj));
+
+    run_get_text_tests(text_obj);
+
+    g_object_unref(webView);
+}
+
+static void test_webkit_atk_get_text_at_offset(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    GMainLoop* loop;
+    AtkText* text_obj;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    /* Get to the inner AtkText object */
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+    obj = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj);
+    obj = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj);
+
+    text_obj = ATK_TEXT(obj);
+    g_assert(ATK_IS_TEXT(text_obj));
+
+    run_get_text_tests(text_obj);
 
     g_object_unref(webView);
 }
@@ -229,6 +266,7 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/atk/get_text_at_offset", test_webkit_atk_get_text_at_offset);
+    g_test_add_func("/webkit/atk/get_text_at_offset_forms", test_webkit_atk_get_text_at_offset_forms);
     return g_test_run ();
 }
 
