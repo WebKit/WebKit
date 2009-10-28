@@ -100,6 +100,17 @@ ScriptObject TimelineRecordFactory::createXHRLoadTimelineRecord(InspectorFronten
     return record;
 }
 
+// static
+ScriptObject TimelineRecordFactory::createEvaluateScriptTagTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, double lineNumber) 
+{
+    ScriptObject item = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("url", url);
+    data.set("lineNumber", lineNumber);
+    item.set("data", data);
+    return item;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

@@ -1,3 +1,30 @@
+2009-10-28  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Adds InspectorTimelineAgent  instrumentation for encountering a
+        <SCRIPT> tag when parsing an HTML document. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=30861
+
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::startLine):
+        (WebCore::ScriptSourceCode::url):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::willScriptTag):
+        (WebCore::InspectorTimelineAgent::didScriptTag):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createScriptTagTimelineRecord):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+
 2009-10-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

@@ -100,7 +100,7 @@ void InspectorTimelineAgent::didWriteHTML()
 {
     didCompleteCurrentRecord(ParseHTMLTimelineRecordType);
 }
-
+   
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
 {
     addRecordToTimeline(TimelineRecordFactory::createTimerInstallRecord(m_frontend, currentTimeInMilliseconds(), timerId,
@@ -135,13 +135,24 @@ void InspectorTimelineAgent::didChangeXHRReadyState()
     didCompleteCurrentRecord(XHRReadyStateChangeRecordType);
 }
 
-void InspectorTimelineAgent::willLoadXHR(const String& url) {
+void InspectorTimelineAgent::willLoadXHR(const String& url) 
+{
     pushCurrentRecord(TimelineRecordFactory::createXHRLoadTimelineRecord(m_frontend, currentTimeInMilliseconds(), url), XHRLoadRecordType);
 }
 
 void InspectorTimelineAgent::didLoadXHR()
 {
     didCompleteCurrentRecord(XHRLoadRecordType);
+}
+
+void InspectorTimelineAgent::willEvaluateScriptTag(const String& url, int lineNumber)
+{
+    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptTagTimelineRecord(m_frontend, currentTimeInMilliseconds(), url, lineNumber), EvaluateScriptTagTimelineRecordType);
+}
+    
+void InspectorTimelineAgent::didEvaluateScriptTag()
+{
+    didCompleteCurrentRecord(EvaluateScriptTagTimelineRecordType);
 }
 
 void InspectorTimelineAgent::reset()

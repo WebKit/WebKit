@@ -416,13 +416,13 @@ HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State
 
     return state;
 }
-
+    
 HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 {
     // We are inside a <script>
     bool doScriptExec = false;
     int startLine = m_currentScriptTagStartLineNumber + 1; // Script line numbers are 1 based, HTMLTokenzier line numbers are 0 based
-
+    
     // Reset m_currentScriptTagStartLineNumber to indicate that we've finished parsing the current script element
     m_currentScriptTagStartLineNumber = 0;
 
@@ -551,7 +551,13 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
     if (m_fragment || !m_doc->frame())
         return state;
     m_executingScript++;
-
+    
+#if ENABLE(INSPECTOR)
+    InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willEvaluateScriptTag(sourceCode.url().isNull() ? String() : sourceCode.url().string(), sourceCode.startLine());
+#endif
+    
     SegmentedString* savedPrependingSrc = m_currentPrependingSrc;
     SegmentedString prependingSrc;
     m_currentPrependingSrc = &prependingSrc;
@@ -608,7 +614,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const ScriptSourceCode& sour
     }
 
     m_currentPrependingSrc = savedPrependingSrc;
-
+    
+#if ENABLE(INSPECTOR)
+    if (timelineAgent)
+        timelineAgent->didEvaluateScriptTag();
+#endif
+    
     return state;
 }
 
@@ -1613,7 +1624,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
     processedCount++;
     return true;
 }
-
+    
 void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 {
     if (!m_buffer)
