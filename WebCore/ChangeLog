@@ -1,3 +1,13 @@
+2009-10-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed - a trivial fix to get Windows bots running.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30841
+        <rdar://problem/7342730> WebKit should not pass Referer header through a redirect to a non-secure site
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: (WebCore::setHeaderFields): Don't try to
+        access empty vector's data.
+
 2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

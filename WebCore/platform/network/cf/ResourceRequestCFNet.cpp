@@ -83,10 +83,12 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
     // Remove existing headers first, as some of them may no longer be present in the map.
     RetainPtr<CFDictionaryRef> oldHeaderFields(AdoptCF, CFURLRequestCopyAllHTTPHeaderFields(request));
     CFIndex oldHeaderFieldCount = CFDictionaryGetCount(oldHeaderFields.get());
-    Vector<CFStringRef> oldHeaderFieldNames(oldHeaderFieldCount);
-    CFDictionaryGetKeysAndValues(oldHeaderFields.get(), reinterpret_cast<const void**>(&oldHeaderFieldNames[0]), 0);
-    for (CFIndex i = 0; i < oldHeaderFieldCount; ++i)
-        CFURLRequestSetHTTPHeaderFieldValue(request, oldHeaderFieldNames[i], 0);
+    if (oldHeaderFieldCount) {
+        Vector<CFStringRef> oldHeaderFieldNames(oldHeaderFieldCount);
+        CFDictionaryGetKeysAndValues(oldHeaderFields.get(), reinterpret_cast<const void**>(&oldHeaderFieldNames[0]), 0);
+        for (CFIndex i = 0; i < oldHeaderFieldCount; ++i)
+            CFURLRequestSetHTTPHeaderFieldValue(request, oldHeaderFieldNames[i], 0);
+    }
 
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
