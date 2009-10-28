@@ -1,3 +1,19 @@
+2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Glue subsequent timeline records with same category
+        and title together.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30885
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        (WebInspector.TimelineRecordTreeElement.prototype.refresh):
+
 2009-10-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

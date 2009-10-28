@@ -143,10 +143,8 @@ var WebInspector = {
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.profiles.registerProfileType(new WebInspector.CPUProfileType());
         }
-
-        // Uncomment this when timeline is ready.
-        // if (hiddenPanels.indexOf("timeline") === -1 && hiddenPanels.indexOf("timeline") === -1)
-        //     this.panels.timeline = new WebInspector.TimelinePanel();
+        if (hiddenPanels.indexOf("timeline") === -1 && hiddenPanels.indexOf("timeline") === -1)
+            this.panels.timeline = new WebInspector.TimelinePanel();
 
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();

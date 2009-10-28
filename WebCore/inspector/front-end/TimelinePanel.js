@@ -99,10 +99,23 @@ WebInspector.TimelinePanel.prototype = {
 
     addRecordToTimeline: function(record)
     {
-        this.addItem(this._formatRecord(record));
+        var formattedRecord = this._formatRecord(record);
+        // Glue subsequent records with same category and title together if they are closer than 100ms to each other.
+        if (this._lastRecord && (!record.children || !record.children.length) &&
+                this._lastRecord.category == formattedRecord.category &&
+                this._lastRecord.title == formattedRecord.title &&
+                this._lastRecord.details == formattedRecord.details &&
+                formattedRecord.startTime - this._lastRecord.endTime < 0.1) {
+            this._lastRecord.endTime = formattedRecord.endTime;
+            this._lastRecord.count++;
+            this.refreshItem(this._lastRecord);
+        } else {
+            this.addItem(formattedRecord);
 
-        for (var i = 0; record.children && i < record.children.length; ++i)
-            this.addRecordToTimeline(record.children[i]);
+            for (var i = 0; record.children && i < record.children.length; ++i)
+                this.addRecordToTimeline(record.children[i]);
+            this._lastRecord = record.children && record.children.length ? null : formattedRecord;
+        }
     },
 
     createItemTreeElement: function(item)
@@ -138,6 +151,7 @@ WebInspector.TimelinePanel.prototype = {
             this._recordStyles[recordTypes.TimerFire] = { title: WebInspector.UIString("Timer Fired"), category: this.categories.scripting };
             this._recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: this.categories.scripting };
             this._recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: this.categories.scripting };
+            this._recordStyles[recordTypes.EvaluateScriptTag] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
             this._recordStyles["Other"] = { title: WebInspector.UIString("Other"), icon: 0, category: this.categories.other };
         }
 
@@ -150,8 +164,35 @@ WebInspector.TimelinePanel.prototype = {
         formattedRecord.title = style.title;
         formattedRecord.startTime = record.startTime / 1000;
         formattedRecord.data = record.data;
+        formattedRecord.count = 1;
+        formattedRecord.type = record.type;
+        formattedRecord.details = this._getRecordDetails(record);
         formattedRecord.endTime = (typeof record.endTime !== "undefined") ? record.endTime / 1000 : formattedRecord.startTime;
         return formattedRecord;
+    },
+    
+    _getRecordDetails: function(record)
+    {
+        switch (record.type) {
+        case WebInspector.TimelineAgent.RecordType.DOMDispatch:
+            return record.data.type;
+        case WebInspector.TimelineAgent.RecordType.TimerInstall:
+        case WebInspector.TimelineAgent.RecordType.TimerRemove:
+        case WebInspector.TimelineAgent.RecordType.TimerFire:
+            return record.data.timerId;
+        case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
+        case WebInspector.TimelineAgent.RecordType.XHRLoad:
+        case WebInspector.TimelineAgent.RecordType.EvaluateScriptTag:
+            return record.data.url;
+        default:
+            return "";
+        }
+    },
+
+    reset: function()
+    {
+        WebInspector.AbstractTimelinePanel.prototype.reset.call(this);
+        this._lastRecord = null;
     }
 }
 
@@ -188,23 +229,29 @@ WebInspector.TimelineRecordTreeElement.prototype = {
         iconElement.className = "timeline-tree-icon";
         this.listItemElement.appendChild(iconElement);
 
-        var typeElement = document.createElement("span");
-        typeElement.className = "type";
-        typeElement.textContent = this._record.title;
-        this.listItemElement.appendChild(typeElement);
+        this.typeElement = document.createElement("span");
+        this.typeElement.className = "type";
+        this.typeElement.textContent = this._record.title;
+        this.listItemElement.appendChild(this.typeElement);
 
-        if (this._record.data && this._record.data.type) {
+        if (this._record.details) {
             var separatorElement = document.createElement("span");
             separatorElement.className = "separator";
             separatorElement.textContent = " ";
 
             var dataElement = document.createElement("span");
             dataElement.className = "data";
-            dataElement.textContent = "(" + this._record.data.type + ")";
+            dataElement.textContent = "(" + this._record.details + ")";
             dataElement.addStyleClass("dimmed");
             this.listItemElement.appendChild(separatorElement);
             this.listItemElement.appendChild(dataElement);
         }
+    },
+
+    refresh: function()
+    {
+        if (this._record.count > 1)
+            this.typeElement.textContent = this._record.title + " x " + this._record.count;
     }
 }
 
