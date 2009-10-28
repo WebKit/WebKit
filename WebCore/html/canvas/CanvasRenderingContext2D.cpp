@@ -1042,7 +1042,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     if (!buffer)
         return;
 
-    if (!canvas()->originClean())
+    if (!sourceCanvas->originClean())
         canvas()->setOriginTainted();
 
     c->drawImage(buffer->image(), destRect, sourceRect, state().m_globalComposite);
