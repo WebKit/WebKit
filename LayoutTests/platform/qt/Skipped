@@ -29,7 +29,6 @@ http/tests/globalhistory
 http/tests/history
 http/tests/incremental
 http/tests/media
-http/tests/misc
 http/tests/navigation
 http/tests/plugins
 http/tests/security
@@ -159,6 +158,16 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 # Missing layoutTestController.setUseDashboardCompatibilityMode()
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+
+# Missing layoutTestController.setIconDatabaseEnabled()
+http/tests/misc/favicon-loads-with-images-disabled.html
+
+# Missing layoutTestController.setCustomPolicyDelegate()
+http/tests/misc/policy-delegate-called-twice.html
+http/tests/misc/redirect-to-external-url.html
+
+# Missing layoutTestController.setWillSendRequestReturnsNullOnRedirect()
+http/tests/misc/will-send-request-returns-null-on-redirect.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
@@ -4935,6 +4944,23 @@ http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
 http/tests/xmlhttprequest/workers/shared-worker-methods.html
+
+# Skip failing http/tests/misc tests
+http/tests/misc/acid3.html
+http/tests/misc/empty-file-formdata.html
+http/tests/misc/image-blocked-src-change.html
+http/tests/misc/image-blocked-src-no-change.html
+http/tests/misc/isindex-with-no-form-base-href.html
+http/tests/misc/isindex-with-no-form.html
+http/tests/misc/meta-refresh-stray-single-quote.html
+http/tests/misc/redirect-with-quotes.php
+http/tests/misc/referrer.html
+http/tests/misc/refresh-headers.php
+http/tests/misc/refresh-meta-with-newline.html
+http/tests/misc/text-refresh.html
+http/tests/misc/timer-vs-loading.html
+http/tests/misc/will-send-request-returns-null-on-redirect.html
+http/tests/misc/window-dot-stop.html
 
 # Skip xmlhttprequest tests
 http/tests/xmlhttprequest/XMLHttpRequestException.html

@@ -1,5 +1,12 @@
 2009-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Remove http/tests/misc tests from
+        skiplist, and add only now failing tests.
+
+        * platform/qt/Skipped:
+
+2009-10-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Holger Freyther.
 
         Put tests into skiplist added in r50168 and r50162 because
