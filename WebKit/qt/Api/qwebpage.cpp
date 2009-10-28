@@ -1686,7 +1686,7 @@ QWidget *QWebPage::view() const
 #if QT_VERSION < 0x040600
     return d->view;
 #else
-    return d->view.toStrongRef().data();
+    return d->view.data();
 #endif
 }
 

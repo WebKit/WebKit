@@ -1,3 +1,17 @@
+2009-10-27  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Complementary fix to bug 30779.
+
+        By mistake I used QWeakPointer's toStrongRef() method which docs
+        explicitly say to not be used in this situation (when the tracked
+        pointer is devired from QObject). Instead QWeakPointer's data()
+        is recommended.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::view):
+
 2009-10-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Fraser.
