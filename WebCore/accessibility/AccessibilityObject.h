@@ -189,6 +189,12 @@ enum AccessibilityOrientation {
     AccessibilityOrientationHorizontal,
 };
     
+enum AccessibilityObjectPlatformInclusion {
+    IncludeObject,
+    IgnoreObject,
+    DefaultBehavior,
+};
+
 struct VisiblePositionRange {
 
     VisiblePosition start;
@@ -460,11 +466,11 @@ public:
     bool accessibilityIgnoreAttachment() const { return true; }
 #endif
 
-    // gives platforms the opportunity to indicate that an object shouldn't be ignored
+    // gives platforms the opportunity to indicate if and how an object should be included
 #if HAVE(ACCESSIBILITY)
-    bool accessibilityPlatformIncludesObject() const;
+    AccessibilityObjectPlatformInclusion accessibilityPlatformIncludesObject() const;
 #else
-    bool accessibilityPlatformIncludesObject() const { return false; }
+    AccessibilityObjectPlatformInclusion accessibilityPlatformIncludesObject() const { return DefaultBehavior; }
 #endif
 
     // allows for an AccessibilityObject to update its render tree or perform

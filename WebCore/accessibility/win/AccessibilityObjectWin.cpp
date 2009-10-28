@@ -35,9 +35,9 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     return false;
 }
 
-bool AccessibilityObject::accessibilityPlatformIncludesObject() const
+AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
-    return false;
+    return DefaultBehavior;
 }
 
 } // namespace WebCore

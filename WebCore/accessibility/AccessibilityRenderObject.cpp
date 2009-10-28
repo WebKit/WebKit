@@ -1259,8 +1259,12 @@ bool AccessibilityRenderObject::ariaIsHidden() const
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
     // is the platform is interested in this object?
-    if (accessibilityPlatformIncludesObject())
+    AccessibilityObjectPlatformInclusion decision = accessibilityPlatformIncludesObject();
+    if (decision == IncludeObject)
         return false;
+    if (decision == IgnoreObject)
+        return true;
+    // the decision must, therefore, be DefaultBehavior.
 
     // ignore invisible element
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)

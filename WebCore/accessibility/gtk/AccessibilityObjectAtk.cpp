@@ -32,17 +32,17 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     return false;
 }
 
-bool AccessibilityObject::accessibilityPlatformIncludesObject() const
+AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
     // When a list item is made up entirely of children (e.g. paragraphs)
     // the list item gets ignored. We need it.
     if (isGroup()) {
         AccessibilityObject* parent = parentObject();
         if (parent && parent->isList())
-            return true;
+            return IncludeObject;
     }
 
-    return false;
+    return DefaultBehavior;
 }
 
 AccessibilityObjectWrapper* AccessibilityObject::wrapper() const
