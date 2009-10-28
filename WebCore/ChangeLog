@@ -1,3 +1,15 @@
+2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25897
+        [Gtk] Extraneous object of ROLE_PANEL in hierarchy for entries
+
+        Remove the extraneous object of ROLE_PANEL.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2009-10-28  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Eric Seidel.
