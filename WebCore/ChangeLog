@@ -1,3 +1,34 @@
+2009-10-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Fraser.
+
+        Change HitTestResult methods to use (3d) transformation aware methods
+        https://bugs.webkit.org/show_bug.cgi?id=27347
+
+        The current HitTestResult methods are not using the (3d)
+        transformation aware routines. This can lead to an assertion
+        SVGRenderBase::mapLocalToContainer method.
+
+        Change HitTestResult::imageRect to use the (3d) transformation
+        aware RenderBox::absoluteContentQuad to avoid running into
+        an assertion with SVG content.
+
+        Remove HitTestResult::boundingBox() as it is only used in
+        two places and conceptually doesn't belong into a HitTest
+        which is operating on points.
+
+        A classic test case is not possible as the methods are not excercised
+        from within HTML/SVG but from the WebKit API Layer. A unittest
+        for Qt/Gtk+/Mac would need to be written but Qt/Gtk+ currently
+        do not support 3d transformations making it impossible to write
+        a reliable test case and the Mac port is currently not doing
+        unit testing.
+
+
+        * rendering/HitTestResult.cpp: Remove boundingBox() method
+        (WebCore::HitTestResult::imageRect): Use transformation aware method
+        * rendering/HitTestResult.h: Remove boundingBox()
+
 2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Eric Seidel.

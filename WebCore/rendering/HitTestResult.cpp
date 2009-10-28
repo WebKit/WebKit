@@ -123,17 +123,6 @@ Frame* HitTestResult::targetFrame() const
     return frame->tree()->find(m_innerURLElement->target());
 }
 
-IntRect HitTestResult::boundingBox() const
-{
-    if (m_innerNonSharedNode) {
-        RenderObject* renderer = m_innerNonSharedNode->renderer();
-        if (renderer)
-            return renderer->absoluteBoundingBoxRect();
-    }
-    
-    return IntRect();
-}
-
 bool HitTestResult::isSelected() const
 {
     if (!m_innerNonSharedNode)
@@ -246,7 +235,7 @@ IntRect HitTestResult::imageRect() const
 {
     if (!image())
         return IntRect();
-    return m_innerNonSharedNode->renderBox()->absoluteContentBox();
+    return m_innerNonSharedNode->renderBox()->absoluteContentQuad().enclosingBoundingBox();
 }
 
 KURL HitTestResult::absoluteImageURL() const

@@ -1,3 +1,19 @@
+2009-10-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Fraser.
+
+        Change HitTestResult methods to use (3d) transformation aware methods
+        https://bugs.webkit.org/show_bug.cgi?id=27347
+
+        The HitTestResult::boundingBox method was removed. The
+        RenderObject must be used directly. In contrast to the
+        old HitTestResult::boundingBox method this code must use
+        a (3d) transformation aware method to not run into an
+        assert in SVGRenderBase::mapLocalToContainer.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+
 2009-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Oliver Hunt.
