@@ -1,5 +1,12 @@
 2009-10-27  Oliver Hunt  <oliver@apple.com>
 
+        Fix wording in comment.
+
+        * bridge/objc/objc_instance.mm:
+        (allocateAutoReleasePool):
+
+2009-10-27  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler.
 
         Crash occurs after launching Newsfire 1.6 for the first time
