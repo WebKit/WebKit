@@ -1,3 +1,14 @@
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ARIA menu/menu item need AXRoleDescription
+        https://bugs.webkit.org/show_bug.cgi?id=30804
+
+        * platform/mac/accessibility/aria-menu-role-descriptions-expected.txt: Added.
+        * platform/mac/accessibility/aria-menu-role-descriptions.html: Added.
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+
 2009-10-27  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

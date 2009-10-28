@@ -1102,21 +1102,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     
-    // FIXME 3447564: It would be better to call some AppKit API to get these strings
-    // (which would be the best way to localize them)
-    
     NSString* axRole = [self role];
-    if ([axRole isEqualToString:NSAccessibilityButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, [self subrole]);
-    
-    if ([axRole isEqualToString:NSAccessibilityPopUpButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityPopUpButtonRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityStaticTextRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityStaticTextRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityImageRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityImageRole, [self subrole]);
     
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
         switch (m_object->roleValue()) {
@@ -1157,42 +1143,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
     }        
     
-    if ([axRole isEqualToString:NSAccessibilityCheckBoxRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityRadioButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityRadioGroupRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityRadioGroupRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityTextFieldRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityTextAreaRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityTextAreaRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityListRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityListRole, [self subrole]);
-    
-    if ([axRole isEqualToString:NSAccessibilityTableRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityTableRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityRowRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityRowRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityColumnRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityColumnRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityCellRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityCellRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilitySliderRole])
-        return NSAccessibilityRoleDescription(NSAccessibilitySliderRole, [self subrole]);
-
-    if ([axRole isEqualToString:NSAccessibilityValueIndicatorRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityValueIndicatorRole, [self subrole]);
-
     if ([axRole isEqualToString:@"AXWebArea"])
         return AXWebAreaText();
     
@@ -1207,20 +1157,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([axRole isEqualToString:@"AXHeading"])
         return AXHeadingText();
-        
-    if ([axRole isEqualToString:(NSString*)kAXMenuBarItemRole] ||
-        [axRole isEqualToString:NSAccessibilityMenuRole])
-        return nil;
 
-    if ([axRole isEqualToString:NSAccessibilityMenuButtonRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityMenuButtonRole, [self subrole]);
-    
-    if ([axRole isEqualToString:NSAccessibilityToolbarRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityToolbarRole, [self subrole]);
+    // We should try the system default role description for all other roles.
+    // If we get the same string back, then as a last resort, return unknown.
+    NSString* defaultRoleDescription = NSAccessibilityRoleDescription(axRole, [self subrole]);
+    if (![defaultRoleDescription isEqualToString:axRole])
+        return defaultRoleDescription;
 
-    if ([axRole isEqualToString:NSAccessibilitySplitterRole])
-        return NSAccessibilityRoleDescription(NSAccessibilitySplitterRole, [self subrole]);
-    
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 

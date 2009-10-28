@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="menu" tabindex="0" id="menu">
+<div role="menuitem" tabindex="0" id="menuitem">menu item</div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that AXMenu and AXMenuItem have role descriptions.");
+
+    if (window.accessibilityController) {
+
+          var menu = document.getElementById("menu");
+          menu.focus();
+
+          menu = accessibilityController.focusedElement;
+          var menuRole = menu.attributeValue("AXRoleDescription");
+          shouldBe("menuRole.length > 0", "true");
+
+          var menuItem = menu.childAtIndex(0);
+          var menuItemRole = menuItem.attributeValue("AXRoleDescription");
+          shouldBe("menuItemRole.length > 0", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

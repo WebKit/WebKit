@@ -1,3 +1,18 @@
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ARIA menu/menu item need AXRoleDescription
+        https://bugs.webkit.org/show_bug.cgi?id=30804
+
+        Make sure that role descriptions will default to the system's first, before
+        returning an unknown role.
+
+        Test: platform/mac/accessibility/aria-menu-role-descriptions.html
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper roleDescription]):
+
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         Qt build fix: migrated away from API that no longer exists.
