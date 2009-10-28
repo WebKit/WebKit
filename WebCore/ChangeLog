@@ -1,3 +1,72 @@
+2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Add InspectorController stub in order to
+        support opening in standalone mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30866
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/InspectorControllerStub.js: Added.
+        (.WebInspector.InspectorControllerStub):
+        (.WebInspector.InspectorControllerStub.prototype.wrapCallback):
+        (.WebInspector.InspectorControllerStub.prototype.isWindowVisible):
+        (.WebInspector.InspectorControllerStub.prototype.platform):
+        (.WebInspector.InspectorControllerStub.prototype.closeWindow):
+        (.WebInspector.InspectorControllerStub.prototype.attach):
+        (.WebInspector.InspectorControllerStub.prototype.detach):
+        (.WebInspector.InspectorControllerStub.prototype.storeLastActivePanel):
+        (.WebInspector.InspectorControllerStub.prototype.clearMessages):
+        (.WebInspector.InspectorControllerStub.prototype.searchingForNode):
+        (.WebInspector.InspectorControllerStub.prototype.search):
+        (.WebInspector.InspectorControllerStub.prototype.toggleNodeSearch):
+        (.WebInspector.InspectorControllerStub.prototype.setAttachedWindowHeight):
+        (.WebInspector.InspectorControllerStub.prototype.moveByUnrestricted):
+        (.WebInspector.InspectorControllerStub.prototype.addResourceSourceToFrame):
+        (.WebInspector.InspectorControllerStub.prototype.addSourceToFrame):
+        (.WebInspector.InspectorControllerStub.prototype.getResourceDocumentNode):
+        (.WebInspector.InspectorControllerStub.prototype.highlightDOMNode):
+        (.WebInspector.InspectorControllerStub.prototype.hideDOMNodeHighlight):
+        (.WebInspector.InspectorControllerStub.prototype.inspectedWindow):
+        (.WebInspector.InspectorControllerStub.prototype.loaded):
+        (.WebInspector.InspectorControllerStub.prototype.localizedStringsURL):
+        (.WebInspector.InspectorControllerStub.prototype.windowUnloading):
+        (.WebInspector.InspectorControllerStub.prototype.hiddenPanels):
+        (.WebInspector.InspectorControllerStub.prototype.debuggerEnabled):
+        (.WebInspector.InspectorControllerStub.prototype.enableResourceTracking):
+        (.WebInspector.InspectorControllerStub.prototype.disableResourceTracking):
+        (.WebInspector.InspectorControllerStub.prototype.resourceTrackingEnabled):
+        (.WebInspector.InspectorControllerStub.prototype.enableDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.disableDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.addBreakpoint):
+        (.WebInspector.InspectorControllerStub.prototype.removeBreakpoint):
+        (.WebInspector.InspectorControllerStub.prototype.updateBreakpoint):
+        (.WebInspector.InspectorControllerStub.prototype.pauseInDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.pauseOnExceptions):
+        (.WebInspector.InspectorControllerStub.prototype.setPauseOnExceptions):
+        (.WebInspector.InspectorControllerStub.prototype.resumeDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.profilerEnabled):
+        (.WebInspector.InspectorControllerStub.prototype.enableProfiler):
+        (.WebInspector.InspectorControllerStub.prototype.disableProfiler):
+        (.WebInspector.InspectorControllerStub.prototype.startProfiling):
+        (.WebInspector.InspectorControllerStub.prototype.stopProfiling):
+        (.WebInspector.InspectorControllerStub.prototype.getProfileHeaders):
+        (.WebInspector.InspectorControllerStub.prototype.getProfile):
+        (.WebInspector.InspectorControllerStub.prototype.takeHeapSnapshot):
+        (.WebInspector.InspectorControllerStub.prototype.databaseTableNames):
+        (.WebInspector.InspectorControllerStub.prototype.stepIntoStatementInDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.stepOutOfFunctionInDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.stepOverStatementInDebugger):
+        (.WebInspector.InspectorControllerStub.prototype.setSetting):
+        (.WebInspector.InspectorControllerStub.prototype.dispatchOnInjectedScript):
+        (.WebInspector.InspectorControllerStub.prototype.releaseWrapperObjectGroup):
+        (.WebInspector.InspectorControllerStub.prototype.setting):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.UIString):
+
 2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Jan Alonzo.

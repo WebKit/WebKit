@@ -3611,6 +3611,7 @@
             'inspector/front-end/EventListenersSidebarPane.js',
             'inspector/front-end/FontView.js',
             'inspector/front-end/ImageView.js',
+            'inspector/front-end/InspectorControllerStub.js',
             'inspector/front-end/InjectedScript.js',
             'inspector/front-end/InjectedScriptAccess.js',
             'inspector/front-end/inspector.js',

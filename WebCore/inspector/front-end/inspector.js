@@ -1560,7 +1560,8 @@ WebInspector.UIString = function(string)
         string = window.localizedStrings[string];
     else {
         if (!(string in this.missingLocalizedStrings)) {
-            console.error("Localized string \"" + string + "\" not found.");
+            if (!WebInspector.InspectorControllerStub)
+                console.error("Localized string \"" + string + "\" not found.");
             this.missingLocalizedStrings[string] = true;
         }
 
