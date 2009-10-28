@@ -34,6 +34,7 @@
 #include "HostWindow.h"
 
 namespace WebCore {
+    class FramelessScrollView;
 
     class FramelessScrollViewClient : public HostWindow {
     public:

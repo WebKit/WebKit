@@ -1,3 +1,12 @@
+2009-10-27  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add missing forward declaration of FramelessScrollView.
+        https://bugs.webkit.org/show_bug.cgi?id=30824
+
+        * platform/chromium/FramelessScrollViewClient.h:
+
 2009-10-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Adele Peterson.
