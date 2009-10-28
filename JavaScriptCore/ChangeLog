@@ -1,3 +1,22 @@
+2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Export fastMalloc, fastCalloc, fastRealloc and fastFree on GCC/Unix
+        https://bugs.webkit.org/show_bug.cgi?id=30769
+
+        When using -fvisibility=hidden to hide all internal symbols by default
+        the malloc symbols will be hidden as well. For memory instrumentation
+        it is needed to provide an instrumented version of these symbols and
+        override the normal routines and by changing the visibility back to
+        default this becomes possible.
+
+        The only other solution would be to use system malloc instead of the
+        TCmalloc implementation but this will not allow to analyze memory
+        behavior with the default allocator.
+
+        * wtf/FastMalloc.h: Define WTF_FAST_MALLOC_EXPORT for GCC and !darwin
+
 2009-10-27  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Samuel Q. Weinig.
