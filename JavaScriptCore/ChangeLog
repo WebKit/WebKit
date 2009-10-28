@@ -1,3 +1,11 @@
+2009-10-28  Jan-Arve Sæther <jan-arve.saether@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Build-fix for 64-bit Windows
+
+        * wtf/Platform.h: Make sure to use WTF_USE_JSVALUE64
+
 2009-10-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix!).
