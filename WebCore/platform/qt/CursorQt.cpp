@@ -2,7 +2,7 @@
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Charles Samuels <charles@kde.org>
- * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2008, 2009 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -92,14 +92,14 @@ protected:
         , SplitVCursor(Qt::SplitVCursor)
         , NoDropCursor(Qt::ForbiddenCursor)
         , BlankCursor(Qt::BlankCursor)
-        , ZoomInCursor(QPixmap(QLatin1String(":/webkit/resources/zoomInCursor.png")))
-        , ZoomOutCursor(QPixmap(QLatin1String(":/webkit/resources/zoomOutCursor.png")))
-        , VerticalTextCursor(QPixmap(QLatin1String(":/webkit/resources/verticalTextCursor.png")))
-        , CellCursor(QPixmap(QLatin1String(":/webkit/resources/cellCursor.png")))
-        , ContextMenuCursor(QPixmap(QLatin1String(":/webkit/resources/contextMenuCursor.png")))
-        , CopyCursor(QPixmap(QLatin1String(":/webkit/resources/copyCursor.png")))
-        , ProgressCursor(QPixmap(QLatin1String(":/webkit/resources/progressCursor.png")))
-        , AliasCursor(QPixmap(QLatin1String(":/webkit/resources/aliasCursor.png")))
+        , ZoomInCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/zoomInCursor.png")), 7, 7))
+        , ZoomOutCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/zoomOutCursor.png")), 7, 7))
+        , VerticalTextCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/verticalTextCursor.png")), 7, 7))
+        , CellCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/cellCursor.png")), 7, 7))
+        , ContextMenuCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/contextMenuCursor.png")), 3, 2))
+        , CopyCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/copyCursor.png")), 3, 2))
+        , ProgressCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/progressCursor.png")), 3, 2))
+        , AliasCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/aliasCursor.png")), 11, 3))
 
 #endif
     {

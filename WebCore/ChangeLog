@@ -1,3 +1,16 @@
+2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Custom Cursor doesn't use hotspot.
+        https://bugs.webkit.org/show_bug.cgi?id=30820
+
+        Cursors loaded from a QPixmap didn't specifiy the
+        hotspot. Take the hotspot values from the mac
+        implementation.
+
+        * platform/qt/CursorQt.cpp:
+
 2009-10-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
