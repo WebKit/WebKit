@@ -1,5 +1,14 @@
 2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: follow up fix to InspectorControllerStub.
+        Define it after inspector.js due to namespace
+
+        https://bugs.webkit.org/show_bug.cgi?id=30866
+
+        * inspector/front-end/inspector.html:
+
+2009-10-28  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Add InspectorController stub in order to
