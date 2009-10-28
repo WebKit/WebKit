@@ -1,3 +1,25 @@
+2009-10-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Adds ScriptController::intializeThreading(), with both JSC and V8 implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=30678
+
+        This new method is used from common code, rather than calling JSC::initializeThreading() (or the V8 equivalent) directly.
+
+        Build fix, no new tests required.
+
+        * bindings/js/ScriptController.cpp: Modified.
+        (WebCore::ScriptController::initializeThreading): Added.
+        * bindings/js/ScriptController.h: Modified. Adds ScriptController::initializeThreading().
+        * bindings/v8/ScriptController.cpp: Modified.
+        (WebCore::ScriptController::initializeThreading): Added.
+        * bindings/v8/ScriptController.h: Modified. Adds ScriptController::initializeThreading().
+        * loader/icon/IconDatabase.cpp: Modified.
+        (WebCore::iconDatabase): Call ScriptController::initializeThreading(), rather than JSC::initializeThreading().
+        * storage/Database.cpp: Modified.
+        (WebCore::Database::Database): Call ScriptController::initializeThreading(), rather than JSC::initializeThreading().
+
 2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

@@ -39,11 +39,17 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <debugger/Debugger.h>
+#include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+void ScriptController::initializeThreading()
+{
+    JSC::initializeThreading();
+}
 
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)

@@ -36,10 +36,10 @@
 #include "IconRecord.h"
 #include "IntSize.h"
 #include "Logging.h"
+#include "ScriptController.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SuddenTermination.h"
-#include <runtime/InitializeThreading.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -93,7 +93,7 @@ static IconDatabaseClient* defaultClient()
 IconDatabase* iconDatabase()
 {
     if (!sharedIconDatabase) {
-        JSC::initializeThreading();
+        ScriptController::initializeThreading();
         sharedIconDatabase = new IconDatabase;
     }
     return sharedIconDatabase;

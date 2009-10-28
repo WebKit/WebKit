@@ -55,6 +55,15 @@
 
 namespace WebCore {
 
+void ScriptController::initializeThreading()
+{
+    static bool initializedThreading = false;
+    if (!initializedThreading) {
+        WTF::initializeThreading();
+        initializedThreading = true;
+    }
+}
+
 void ScriptController::setFlags(const char* string, int length)
 {
     v8::V8::SetFlagsFromString(string, length);

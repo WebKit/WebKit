@@ -66,6 +66,9 @@ namespace WebCore {
         // Returns true if argument is a JavaScript URL.
         bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
 
+        // This function must be called from the main thread. It is safe to call it repeatedly.
+        static void initializeThreading();
+
         // Evaluate a script file in the environment of this proxy.
         // If succeeded, 'succ' is set to true and result is returned
         // as a string.
