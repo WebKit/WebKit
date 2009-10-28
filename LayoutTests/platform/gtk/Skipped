@@ -3571,15 +3571,6 @@ http/tests/webarchive/test-css-url-encoding-utf-8.html
 http/tests/webarchive/test-css-url-encoding.html
 http/tests/webarchive/test-preload-resources.html
 
-# Tests in inspector/ directory
-#   Tests failing
-inspector/console-dir.html
-inspector/console-dirxml.html
-inspector/console-format.html
-inspector/console-tests.html
-inspector/elements-panel-structure.html
-inspector/evaluate-in-frontend.html
-
 # Tests in media/ directory
 #   Tests failing
 media/video-controls-transformed.html

@@ -60,6 +60,12 @@ webkit_web_inspector_get_web_view(WebKitWebInspector* web_inspector);
 WEBKIT_API const gchar*
 webkit_web_inspector_get_inspected_uri(WebKitWebInspector* web_inspector);
 
+WEBKIT_API void
+webkit_web_inspector_inspect_coordinates(WebKitWebInspector* web_inspector, gdouble x, gdouble y);
+
+WEBKIT_API void
+webkit_web_inspector_close(WebKitWebInspector* webInspector);
+
 G_END_DECLS
 
 #endif /* webkitwebinspector_h */
