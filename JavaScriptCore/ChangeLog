@@ -1,3 +1,9 @@
+2009-10-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix!).
+
+        * jit/JIT.h:
+
 2009-10-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Darin Adler.
