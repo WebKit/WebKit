@@ -1,3 +1,18 @@
+2009-10-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Samuel Q. Weinig.
+
+        Make the asserts protecting the offsets in the JIT more descriptive.
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -38,6 +38,8 @@
 #define JIT_CLASS_ALIGNMENT
 #endif
 
+#define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" shoud be %d, not %d.\n", #expected, actual, expected);
+
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JITCode.h"
