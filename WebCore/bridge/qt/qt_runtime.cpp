@@ -834,9 +834,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         dt.isDST = -1;
         double ms = WTF::gregorianDateTimeToMS(dt, time.msec(), /*inputIsUTC*/ false);
 
-        DateInstance* instance = new (exec) DateInstance(exec->lexicalGlobalObject()->dateStructure());
-        instance->setInternalValue(jsNumber(exec, trunc(ms)));
-        return instance;
+        return new (exec) DateInstance(exec, trunc(ms));
     }
 
     if (type == QMetaType::QByteArray) {
