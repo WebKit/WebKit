@@ -1,3 +1,19 @@
+2009-10-28  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Adam Treat.
+
+        Add FrameLoader::defaultObjectContentType, containing common code for
+        implementing FrameLoaderClient::objectContentType.  (Currently the gtk
+        and win ports have copied this code, and the qt port uses similar code
+        with a few extra clauses.  Moving this to a utility function cuts down
+        on copied code.)   This causes no behavioural change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30868
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+        * loader/FrameLoader.h:
+
 2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

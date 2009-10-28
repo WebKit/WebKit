@@ -1,3 +1,14 @@
+2009-10-28  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Adam Treat.
+
+        Call the shared FrameLoader::defaultObjectContentType instead of
+        copying code into FrameLoaderClient::objectContentType.  This causes no
+        behavioural change.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::objectContentType):
+
 2009-10-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

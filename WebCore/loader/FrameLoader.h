@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -324,6 +325,8 @@ public:
     void continueLoadAfterWillSubmitForm();
     
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
+
+    static ObjectContentType defaultObjectContentType(const KURL& url, const String& mimeType);
 
 private:
     bool canCachePageContainingThisFrame();

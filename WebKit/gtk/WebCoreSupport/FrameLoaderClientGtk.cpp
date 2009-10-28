@@ -4,6 +4,7 @@
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *  Copyright (C) 2008, 2009 Collabora Ltd.  All rights reserved.
  *  Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
+ *  Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -490,24 +491,7 @@ PassRefPtr<Widget> FrameLoaderClient::createJavaAppletWidget(const IntSize&, HTM
 
 ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
-    String type = mimeType;
-    // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure
-    if (type.isEmpty())
-        type = MIMETypeRegistry::getMIMETypeForExtension(url.path().substring(url.path().reverseFind('.') + 1));
-
-    if (type.isEmpty())
-        return WebCore::ObjectContentFrame;
-
-    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
-        return WebCore::ObjectContentImage;
-
-    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
-        return WebCore::ObjectContentNetscapePlugin;
-
-    if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
-        return WebCore::ObjectContentFrame;
-
-    return WebCore::ObjectContentNone;
+    return FrameLoader::defaultObjectContentType(url, mimeType);
 }
 
 String FrameLoaderClient::overrideMediaType() const
