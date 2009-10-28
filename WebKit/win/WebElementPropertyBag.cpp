@@ -37,6 +37,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Image.h>
 #include <WebCore/KURL.h>
+#include <WebCore/RenderObject.h>
 #pragma warning(pop)
 
 using namespace WebCore;
