@@ -419,11 +419,67 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
     return result;
 }
 
-QString DumpRenderTree::dumpBackForwardList()
+static QString dumpHistoryItem(const QWebHistoryItem& item, int indent, bool current)
 {
     QString result;
+
+    int start = 0;
+    if (current) {
+        result.append(QLatin1String("curr->"));
+        start = 6;
+    }
+    for (int i = start; i < indent; i++)
+        result.append(' ');
+
+    QString url = item.url().toString();
+    if (url.contains("file://")) {
+        static QString layoutTestsString("/LayoutTests/");
+        static QString fileTestString("(file test):");
+
+        QString res = url.mid(url.indexOf(layoutTestsString) + layoutTestsString.length());
+        if (res.isEmpty())
+            return result;
+
+        result.append(fileTestString);
+        result.append(res);
+
+        // FIXME: Wrong, need (private?) API for determining this.
+        result.append(QLatin1String("  **nav target**"));
+    }
+    result.append(QLatin1String("\n"));
+
+    return result;
+}
+
+QString DumpRenderTree::dumpBackForwardList()
+{
+    QWebHistory* history = webPage()->history();
+
+    QString result;
     result.append(QLatin1String("\n============== Back Forward List ==============\n"));
-    result.append(QLatin1String("FIXME: Unimplemented!\n"));
+
+    // FORMAT:
+    // "        (file test):fast/loader/resources/click-fragment-link.html  **nav target**"
+    // "curr->  (file test):fast/loader/resources/click-fragment-link.html#testfragment  **nav target**"
+
+    int maxItems = history->maximumItemCount();
+
+    foreach (const QWebHistoryItem item, history->backItems(maxItems)) {
+        if (!item.isValid())
+            continue;
+        result.append(dumpHistoryItem(item, 8, false));
+    }
+
+    QWebHistoryItem item = history->currentItem();
+    if (item.isValid())
+        result.append(dumpHistoryItem(item, 8, true));
+
+    foreach (const QWebHistoryItem item, history->forwardItems(maxItems)) {
+        if (!item.isValid())
+            continue;
+        result.append(dumpHistoryItem(item, 8, false));
+    }
+
     result.append(QLatin1String("===============================================\n"));
     return result;
 }

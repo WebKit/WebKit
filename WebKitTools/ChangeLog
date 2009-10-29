@@ -12,6 +12,16 @@
 
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Implement the Qt version of DRT dumpBackForwardList().
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::dumpHistoryItem):
+        (WebCore::DumpRenderTree::dumpBackForwardList):
+
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Adam Roben.
 
         Implement DRT functionality for Qt introduced in

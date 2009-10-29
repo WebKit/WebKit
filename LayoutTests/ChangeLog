@@ -32,6 +32,15 @@
 
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Removed test that passes after implementing the Qt DRT version
+        of dumpBackForwardList().
+
+        * platform/qt/Skipped:
+
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Adam Roben.
 
         Remove two tests that pass on the buildbot.

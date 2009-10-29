@@ -130,9 +130,6 @@ fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 # layoutTestController.waitForPolicyDelegate() does not report the origin node
 fast/encoding/mailto-always-utf-8.html
 
-# Missing layoutTestController.dumpBackForwardList()
-fast/loader/fragment-after-redirect-gets-back-entry.html
-
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 
