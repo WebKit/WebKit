@@ -1,3 +1,12 @@
+2009-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Adjust the project files to sync up with
+        http://trac.webkit.org/changeset/50259
+
+        * WebCore.gypi: Renamed and added files.
+
 2009-10-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
