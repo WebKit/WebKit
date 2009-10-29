@@ -1,5 +1,11 @@
 2009-10-29  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: deploy Web Inspector's images in WebCore.gypi.
+
+        * WebCore.gypi:
+
+2009-10-29  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: get rid of timelineProfilerEnabled method.

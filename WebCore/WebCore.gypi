@@ -3687,6 +3687,7 @@
             'inspector/front-end/Images/enableSolidButtonGlyph.png',
             'inspector/front-end/Images/errorIcon.png',
             'inspector/front-end/Images/errorMediumIcon.png',
+            'inspector/front-end/Images/errorRedDot.png',            
             'inspector/front-end/Images/excludeButtonGlyph.png',
             'inspector/front-end/Images/focusButtonGlyph.png',
             'inspector/front-end/Images/forward.png',
@@ -3749,6 +3750,7 @@
             'inspector/front-end/Images/statusbarResizerHorizontal.png',
             'inspector/front-end/Images/statusbarResizerVertical.png',
             'inspector/front-end/Images/storageIcon.png',
+            'inspector/front-end/Images/successGreenDot.png',
             'inspector/front-end/Images/timelineHollowPillBlue.png',
             'inspector/front-end/Images/timelineHollowPillGray.png',
             'inspector/front-end/Images/timelineHollowPillGreen.png',
@@ -3789,6 +3791,7 @@
             'inspector/front-end/Images/userInputPreviousIcon.png',
             'inspector/front-end/Images/userInputResultIcon.png',
             'inspector/front-end/Images/warningIcon.png',
+            'inspector/front-end/Images/warningOrangeDot.png',
             'inspector/front-end/Images/warningMediumIcon.png',
             'inspector/front-end/Images/warningsErrors.png',
             'inspector/front-end/Images/whiteConnectorPoint.png'
