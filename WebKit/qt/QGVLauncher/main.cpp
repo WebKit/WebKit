@@ -50,6 +50,20 @@
 #include <qwebsettings.h>
 #include <qwebview.h>
 
+static QUrl urlFromUserInput(const QString& string)
+{
+    QString input(string);
+    QFileInfo fi(input);
+    if (fi.exists() && fi.isRelative())
+        input = fi.absoluteFilePath();
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    return QUrl::fromUserInput(input);
+#else
+    return QUrl(input);
+#endif
+}
+
 class WebView : public QGraphicsWebView {
     Q_OBJECT
     Q_PROPERTY(qreal yRotation READ yRotation WRITE setYRotation)
@@ -93,7 +107,7 @@ public:
 private:
     void applyProxy()
     {
-        QUrl proxyUrl = QWebView::guessUrlFromString(qgetenv("http_proxy"));
+        QUrl proxyUrl = urlFromUserInput(qgetenv("http_proxy"));
 
         if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
             int proxyPort = (proxyUrl.port() > 0) ? proxyUrl.port() : 8080;
@@ -278,23 +292,13 @@ public:
 
     void load(const QString& url)
     {
-        QUrl deducedUrl = guessUrlFromString(url);
+        QUrl deducedUrl = urlFromUserInput(url);
         if (!deducedUrl.isValid())
             deducedUrl = QUrl("http://" + url + "/");
 
         urlEdit->setText(deducedUrl.toEncoded());
         scene->webView()->load(deducedUrl);
         scene->webView()->setFocus(Qt::OtherFocusReason);
-    }
-
-    QUrl guessUrlFromString(const QString& string)
-    {
-        QString input(string);
-        QFileInfo fi(input);
-        if (fi.exists() && fi.isRelative())
-            input = fi.absoluteFilePath();
-
-        return QWebView::guessUrlFromString(input);
     }
 
     QWebPage* page() const

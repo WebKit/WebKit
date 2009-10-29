@@ -1,3 +1,22 @@
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Remove QWebView::guessUrlFromString() and replace its use
+        with the new QUrl::fromUserInput() if using Qt 4.6 or newer.
+
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+        * QGVLauncher/main.cpp:
+        (urlFromUserInput):
+        (WebPage::applyProxy):
+        (MainWindow::load):
+        * QtLauncher/main.cpp:
+        (urlFromUserInput):
+        (MainWindow::MainWindow):
+        (MainWindow::changeLocation):
+        * tests/qwebview/tst_qwebview.cpp:
+
 2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

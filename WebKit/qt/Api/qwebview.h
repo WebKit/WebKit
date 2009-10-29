@@ -65,8 +65,6 @@ public:
     QWebPage* page() const;
     void setPage(QWebPage* page);
 
-    static QUrl guessUrlFromString(const QString& string);
-
     void load(const QUrl& url);
 #if QT_VERSION < 0x040400 && !defined(qdoc)
     void load(const QWebNetworkRequest& request);

@@ -58,6 +58,15 @@
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
 
+static QUrl urlFromUserInput(const QString& input)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    return QUrl::fromUserInput(input);
+#else
+    return QUrl(input);
+#endif
+}
+
 class WebPage : public QWebPage
 {
 public:
@@ -106,7 +115,8 @@ public:
         setupUI();
 
         // set the proxy to the http_proxy env variable - if present
-        QUrl proxyUrl = view->guessUrlFromString(qgetenv("http_proxy"));
+        QUrl proxyUrl = urlFromUserInput(qgetenv("http_proxy"));
+
         if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
             int proxyPort = (proxyUrl.port() > 0)  ? proxyUrl.port() : 8080;
             page->networkAccessManager()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyUrl.host(), proxyPort));
@@ -116,7 +126,7 @@ public:
         if (fi.exists() && fi.isRelative())
             url = fi.absoluteFilePath();
 
-        QUrl qurl = view->guessUrlFromString(url);
+        QUrl qurl = urlFromUserInput(url);
         if (qurl.isValid()) {
             urlEdit->setText(qurl.toEncoded());
             view->load(qurl);
@@ -141,7 +151,7 @@ protected slots:
 
     void changeLocation() {
         QString string = urlEdit->text();
-        QUrl url = view->guessUrlFromString(string);
+        QUrl url = urlFromUserInput(string);
         if (!url.isValid())
             url = QUrl("http://" + string + "/");
         urlEdit->setText(url.toEncoded());
