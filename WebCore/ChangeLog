@@ -1,5 +1,18 @@
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        64-bit Leopard build fix after r50259
+        
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        Declared ATSUTextInserted in 64-bit.
+        (WebCore::fontHasMirroringInfo): Use %d format and cast to int.
+        (WebCore::disableLigatures): Ditto.
+        (WebCore::initializeATSUStyle): Ditto.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Ditto.
+
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
         Tiger build fix after r50259
 
         * platform/graphics/mac/ComplexTextController.h:
