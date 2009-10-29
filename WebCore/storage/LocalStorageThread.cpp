@@ -40,6 +40,7 @@ PassRefPtr<LocalStorageThread> LocalStorageThread::create()
 
 LocalStorageThread::LocalStorageThread()
     : m_threadID(0)
+    , m_terminated(false)
 {
     m_selfRef = this;
 }
@@ -108,11 +109,11 @@ void LocalStorageThread::terminate()
     if (!m_threadID)
         return;
 
-    MutexLocker locker(m_terminateLock);
-
     m_queue.append(LocalStorageTask::createTerminate(this));
 
-    m_terminateCondition.wait(m_terminateLock);
+    MutexLocker locker(m_terminateLock);
+    while (!m_terminated)
+        m_terminateCondition.wait(m_terminateLock);
 }
 
 void LocalStorageThread::performTerminate()
@@ -122,6 +123,7 @@ void LocalStorageThread::performTerminate()
     m_queue.kill();
 
     MutexLocker locker(m_terminateLock);
+    m_terminated = true;
     m_terminateCondition.signal();
 }
 

@@ -1,3 +1,20 @@
+2009-10-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        DOM Storage's condition variable needs to handle spurious wakeups
+        https://bugs.webkit.org/show_bug.cgi?id=30920
+
+        Add a boolean to keep track of whether it's been terminated.  Clean
+        up the locking code a tiny bit to make it easier to read.  There's
+        no way to reproduce this reliably in a LayoutTest.
+
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::LocalStorageThread):
+        (WebCore::LocalStorageThread::terminate):
+        (WebCore::LocalStorageThread::performTerminate):
+        * storage/LocalStorageThread.h:
+
 2009-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
