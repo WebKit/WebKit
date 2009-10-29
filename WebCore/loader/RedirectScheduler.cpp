@@ -267,7 +267,8 @@ void RedirectScheduler::scheduleHistoryNavigation(int steps)
 
 void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
 {
-    ASSERT(m_frame->page());
+    if (!m_frame->page())
+        return;
 
     if (m_frame->page()->defersLoading())
         return;

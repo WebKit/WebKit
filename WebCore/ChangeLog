@@ -1,3 +1,15 @@
+2009-10-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: crashes in WebCore::RedirectScheduler::timerFired(WebCore::Timer<WebCore::RedirectScheduler>*)
+        https://bugs.webkit.org/show_bug.cgi?id=30839
+
+        Added null check for the case when the frame is detached from the page.
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::timerFired):
+
 2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
