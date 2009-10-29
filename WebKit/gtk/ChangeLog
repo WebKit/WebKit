@@ -1,3 +1,10 @@
+2009-10-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Trivial fix - move public API declaration into the
+        public subsection of the doc.
+
+        * docs/webkitgtk-sections.txt:
+
 2009-10-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.
