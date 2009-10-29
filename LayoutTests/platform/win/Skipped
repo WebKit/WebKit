@@ -668,3 +668,7 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 
 # This test has never passed on Windows (https://bugs.webkit.org/show_bug.cgi?id=30234)
 platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
+
+# Windows Release bots are having problems in xmlhttprequest tests, Skipping them temporarily
+# to see if this eliminates the problem, and it is a test causing httpd problems.
+http/tests/xmlhttprequest

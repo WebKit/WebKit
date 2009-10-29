@@ -1,3 +1,12 @@
+2009-10-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Windows Release bots are having problems in xmlhttprequest tests, Skipping them temporarily
+        to see if this eliminates the problem, and it is a test causing httpd problems.
+
+        * platform/win/Skipped:
+
 2009-10-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
