@@ -1,3 +1,15 @@
+2009-10-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Use the GTK+ main loop instead of rolling our own mini-version of
+        it.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        (webViewLoadFinished):
+
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Roben.
