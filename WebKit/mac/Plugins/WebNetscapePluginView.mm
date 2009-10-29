@@ -849,7 +849,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-        [_pluginPackage.get() pluginFuncs]->setvalue(plugin, NPNVprivateModeBool, &value);
+        if ([_pluginPackage.get() pluginFuncs]->setvalue)
+            [_pluginPackage.get() pluginFuncs]->setvalue(plugin, NPNVprivateModeBool, &value);
     }
     [self didCallPlugInFunction];
 }

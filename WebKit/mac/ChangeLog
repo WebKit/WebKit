@@ -1,3 +1,17 @@
+2009-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30932
+        <rdar://problem/7350269>
+        
+        REGRESSION: Crash when turning on Private Browsing on site with flash.
+        
+        Null check setValue.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView privateBrowsingModeDidChange]):
+
 2009-10-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Kevin Decker.
