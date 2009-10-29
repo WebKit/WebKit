@@ -1,5 +1,21 @@
 2009-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        [V8] Remove random crashes by removing retrieval of V8 context during garbage collection.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30919
+
+        Unfortunately, I haven't been able to trigger this crash explicitly, so no test :(.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::jsWrapperForDOMObject): Added new "assume-it's-there" getter.
+        * bindings/v8/V8DOMWrapper.h: Added getter decl.
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCPrologueVisitor::visitDOMWrapper): Changed to use explicit getter.
+
+2009-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, build fix.
 
         [Chromium] Adjust the project files to sync up with

@@ -279,6 +279,10 @@ namespace WebCore {
 
         // Checks whether a DOM object has a JS wrapper.
         static bool domObjectHasJSWrapper(void*);
+        // Get JS wrapper of an existing DOM object, assuming that the wrapper
+        // exists.
+        static v8::Persistent<v8::Object> jsWrapperForDOMObject(void*);
+        static v8::Persistent<v8::Object> jsWrapperForActiveDOMObject(void*);
         // Set JS wrapper of a DOM object, the caller in charge of increase ref.
         static void setJSWrapperForDOMObject(void*, v8::Persistent<v8::Object>);
         static void setJSWrapperForActiveDOMObject(void*, v8::Persistent<v8::Object>);

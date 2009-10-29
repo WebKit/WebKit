@@ -154,6 +154,20 @@ bool V8DOMWrapper::domObjectHasJSWrapper(void* object)
     return getDOMObjectMap().contains(object) || getActiveDOMObjectMap().contains(object);
 }
 
+v8::Persistent<v8::Object> V8DOMWrapper::jsWrapperForDOMObject(void* object)
+{
+    v8::Persistent<v8::Object> wrapper = getDOMObjectMap().get(object);
+    ASSERT(!wrapper.IsEmpty());
+    return wrapper;
+}
+
+v8::Persistent<v8::Object> V8DOMWrapper::jsWrapperForActiveDOMObject(void* object)
+{
+    v8::Persistent<v8::Object> wrapper = getActiveDOMObjectMap().get(object);
+    ASSERT(!wrapper.IsEmpty());
+    return wrapper;
+}
+
 // The caller must have increased obj's ref count.
 void V8DOMWrapper::setJSWrapperForDOMObject(void* object, v8::Persistent<v8::Object> wrapper)
 {
