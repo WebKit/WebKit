@@ -1,5 +1,16 @@
 2009-10-29  Adam Barth  <abarth@webkit.org>
 
+        No review, rolling out r50296.
+        http://trac.webkit.org/changeset/50296
+
+        * bindings/v8/V8IsolatedWorld.cpp:
+        (WebCore::V8IsolatedWorld::V8IsolatedWorld):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::evaluateInNewContext):
+
+2009-10-29  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         [V8] Out-of-memory crash in isolated worlds
