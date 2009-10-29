@@ -4945,8 +4945,6 @@ http/tests/xmlhttprequest/workers/shared-worker-methods.html
 # Skip failing http/tests/misc tests
 http/tests/misc/acid3.html
 http/tests/misc/empty-file-formdata.html
-http/tests/misc/image-blocked-src-change.html
-http/tests/misc/image-blocked-src-no-change.html
 http/tests/misc/isindex-with-no-form-base-href.html
 http/tests/misc/isindex-with-no-form.html
 http/tests/misc/meta-refresh-stray-single-quote.html
