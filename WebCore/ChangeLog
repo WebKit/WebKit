@@ -1,3 +1,17 @@
+2009-10-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't run JavaScript URLs in view source mode
+        https://bugs.webkit.org/show_bug.cgi?id=30881
+
+        Just say no.
+
+        Test: http/tests/security/view-source-no-javascript-url.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+
 2009-10-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Fixes style problems pointed out by Evan Martin.
@@ -169,7 +183,7 @@
         * xml/XPathFunctions.cpp:
         (WebCore::XPath::createFunctionMap):  Fix struct visibiity warning.
 
-2009-10-28  Adam Barth  <abarth@webkit.org>
+2009-10-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
 

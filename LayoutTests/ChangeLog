@@ -1,3 +1,19 @@
+2009-10-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't run JavaScript URLs in view source mode
+        https://bugs.webkit.org/show_bug.cgi?id=30881
+
+        Test that we don't run JavaScript URLs in view source mode.
+
+        This test actually passes before this change.  I don't know how to
+        actually run JavaScript URLs in view source frames using DRT, but it's
+        possible in an abitrary embedding of WebKit.
+
+        * http/tests/security/view-source-no-javascript-url-expected.txt: Added.
+        * http/tests/security/view-source-no-javascript-url.html: Added.
+
 2009-10-28  Dan Bernstein  <mitz@apple.com>
 
         Removed Leopard-specific result after changing ATSUI missing-glyph behavior to match the
