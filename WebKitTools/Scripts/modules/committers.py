@@ -84,6 +84,7 @@ committers_unable_to_review = [
     Committer("Pam Greene", "pam@chromium.org"),
     Committer("Peter Kasting", "pkasting@google.com"),
     Committer("Pierre d'Herbemont", "pdherbemont@free.fr"),
+    Committer("Roland Steiner", "rolandsteiner@chromium.org"),
     Committer("Ryosuke Niwa", "rniwa@webkit.org"),
     Committer("Scott Violet", "sky@chromium.org"),
     Committer("Shinichiro Hamaji", "hamaji@chromium.org"),
