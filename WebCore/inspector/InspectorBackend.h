@@ -97,7 +97,6 @@ public:
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
-    bool timelineProfilerEnabled() const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void startProfiling();

@@ -63,7 +63,6 @@ module core {
         DOMString platform();
         void startTimelineProfiler();
         void stopTimelineProfiler();
-        boolean timelineProfilerEnabled();
         [ImplementationFunction=moveWindowBy] void moveByUnrestricted(in float x, in float y);
         void setAttachedWindowHeight(in unsigned long height);
         [Custom] DOMObject wrapCallback(in DOMObject callback);

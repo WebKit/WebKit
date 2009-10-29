@@ -346,6 +346,7 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
             m_attachDebuggerWhenShown = true;
 #endif
         resetScriptObjects();
+        stopTimelineProfiler();
     }
     m_showAfterVisible = CurrentPanel;
 }
@@ -1118,14 +1119,6 @@ void InspectorController::stopTimelineProfiler()
     m_timelineAgent = 0;
     if (m_frontend)
         m_frontend->timelineProfilerWasStopped();
-}
-
-bool InspectorController::timelineProfilerEnabled() const
-{
-    if (!enabled())
-        return false;
-
-    return m_timelineAgent;
 }
 
 #if ENABLE(DATABASE)

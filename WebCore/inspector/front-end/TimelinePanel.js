@@ -130,7 +130,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _toggleTimelineButtonClicked: function()
     {
-        if (InspectorController.timelineProfilerEnabled())
+        if (this.toggleTimelineButton.toggled)
             InspectorController.stopTimelineProfiler();
         else
             InspectorController.startTimelineProfiler();

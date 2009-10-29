@@ -230,7 +230,6 @@ public:
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
-    bool timelineProfilerEnabled() const;
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
     void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
