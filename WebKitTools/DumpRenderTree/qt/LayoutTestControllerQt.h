@@ -99,6 +99,7 @@ public slots:
     int windowCount();
     void display() {}
     void clearBackForwardList();
+    QString pathToLocalResource(const QString& url);
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     QString encodeHostName(const QString& host);
     QString decodeHostName(const QString& host);

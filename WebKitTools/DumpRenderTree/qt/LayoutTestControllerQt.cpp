@@ -32,6 +32,7 @@
 #include "DumpRenderTree.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
+#include <QDir>
 
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
@@ -140,6 +141,12 @@ int LayoutTestController::windowCount()
 void LayoutTestController::clearBackForwardList()
 {
     m_drt->webPage()->history()->clear();
+}
+
+QString LayoutTestController::pathToLocalResource(const QString& url)
+{
+    // Function introduced in r28690.
+    return QLatin1String("file://") + QUrl(url).toLocalFile();
 }
 
 void LayoutTestController::dumpEditingCallbacks()

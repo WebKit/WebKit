@@ -1,3 +1,22 @@
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Implement DRT functionality for Qt introduced in
+        r28690 and r28705.
+
+        - Implemented pathToLocalResource which exposes the functionality of
+        converting a given unix path to the correct location on Windows.
+        - Implemented a way to remove machine-dependent information from paths
+        in layout test results.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::urlSuitableForTestResult):
+        (WebCore::WebPage::javaScriptConsoleMessage):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::pathToLocalResource):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2009-10-28  Roland Steiner  <rolandsteiner@chromium.org>
 
         Adding myself to the committers list.

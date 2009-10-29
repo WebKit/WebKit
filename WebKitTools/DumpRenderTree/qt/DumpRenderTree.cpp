@@ -46,6 +46,7 @@
 #include <QScrollArea>
 #include <QApplication>
 #include <QUrl>
+#include <QFileInfo>
 #include <QFocusEvent>
 #include <QFontDatabase>
 #include <QNetworkRequest>
@@ -156,9 +157,27 @@ void WebPage::javaScriptAlert(QWebFrame*, const QString& message)
     fprintf(stdout, "ALERT: %s\n", message.toUtf8().constData());
 }
 
+static QString urlSuitableForTestResult(const QString& url)
+{
+    if (url.isEmpty() || !url.startsWith(QLatin1String("file://")))
+        return url;
+
+    return QFileInfo(url).fileName();
+}
+
 void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, const QString&)
 {
-    fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.toUtf8().constData());
+    QString newMessage;
+    if (!message.isEmpty()) {
+        newMessage = message;
+
+        size_t fileProtocol = newMessage.indexOf(QLatin1String("file://"));
+        if (fileProtocol != -1) {
+            newMessage = newMessage.left(fileProtocol) + urlSuitableForTestResult(newMessage.mid(fileProtocol));
+        }
+    }
+
+    fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, newMessage.toUtf8().constData());
 }
 
 bool WebPage::javaScriptConfirm(QWebFrame*, const QString& msg)
