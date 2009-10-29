@@ -1,5 +1,13 @@
 2009-10-28  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        Fixed typos in color names.
+
+        * inspector/front-end/Color.js:
+
+2009-10-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         Share code between the ATSUI- and Core Text-based Font implementations by doing the
