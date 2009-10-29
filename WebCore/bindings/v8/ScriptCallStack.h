@@ -55,8 +55,8 @@ namespace WebCore {
         ScriptState* state() const { return m_scriptState.get(); }
 
     private:
-        OwnPtr<ScriptState> m_scriptState;
         ScriptCallFrame m_lastCaller;
+        OwnPtr<ScriptState> m_scriptState;
     };
 
 } // namespace WebCore

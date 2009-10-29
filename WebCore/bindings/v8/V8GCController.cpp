@@ -327,7 +327,6 @@ public:
             Vector<v8::Persistent<v8::Value> > group;
             group.reserveCapacity(nextKeyIndex - i);
             for (; i < nextKeyIndex; ++i) {
-                Node* node = m_grouper[i].node();
                 v8::Persistent<v8::Value> wrapper = m_grouper[i].wrapper();
                 if (!wrapper.IsEmpty())
                     group.append(wrapper);

@@ -1,3 +1,34 @@
+2009-10-28  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix GCC compiler warnings in WebCore, and enable -Wall and -Werror for Chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=30716
+
+        * WebCore.gyp/WebCore.gyp:  Enable "chromium_code" flag, just on Mac build for now.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::createARIARoleMap):  Fix struct visibiity warning.
+        * bindings/v8/ScriptCallStack.h:  Fix out-of-order member initialization warning.
+        * bindings/v8/V8Collection.h:
+        (WebCore::getV8Object):  Function in header should not be 'static' (fixes unused-static warning.)
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):  Fix signed/unsigned comparison warning.
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ObjectGrouperVisitor::applyGrouping):  Fix unused-variable warning.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):  Enable ListButtonPart case to avoid
+            warning about missing cases in 'switch' statement.
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):  Fix struct visibiity warning.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):  Fix out-of-order member initialization warning.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::shouldRenderMediaControlPart):  Add empty 'default' case in
+            'switch' statement to avoid missing-case warning.
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):  Ditto.
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::createFunctionMap):  Fix struct visibiity warning.
+
 2009-10-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

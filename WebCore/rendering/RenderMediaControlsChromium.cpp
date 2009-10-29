@@ -240,6 +240,8 @@ bool RenderMediaControlsChromium::shouldRenderMediaControlPart(ControlPart part,
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
         return true;
+    default:
+        ;
     }
     return false;
 }
@@ -270,6 +272,9 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaCurrentTimeDisplay:
     case MediaTimeRemainingDisplay:
     case MediaControlsPanel:
+    case MediaRewindButton:
+    case MediaReturnToRealtimeButton:
+    case MediaStatusDisplay:
         ASSERT_NOT_REACHED();
         break;
     }

@@ -667,12 +667,13 @@ Value FunRound::evaluate() const
     return round(arg(0)->evaluate().toNumber());
 }
 
+struct FunctionMapping {
+    const char* name;
+    FunctionRec function;
+};
+
 static void createFunctionMap()
 {
-    struct FunctionMapping {
-        const char *name;
-        FunctionRec function;
-    };
     static const FunctionMapping functions[] = {
         { "boolean", { &createFunBoolean, 1 } },
         { "ceiling", { &createFunCeiling, 1 } },

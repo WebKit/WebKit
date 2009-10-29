@@ -41,7 +41,7 @@ namespace WebCore {
     // FIXME: These functions should be named using to* since they return the item (get* is used for method that take a ref param).
     // See https://bugs.webkit.org/show_bug.cgi?id=24664.
 
-    static v8::Handle<v8::Value> getV8Object(void* implementation, v8::Local<v8::Value> implementationType)
+    inline v8::Handle<v8::Value> getV8Object(void* implementation, v8::Local<v8::Value> implementationType)
     {
         if (!implementation)
             return v8::Handle<v8::Value>();

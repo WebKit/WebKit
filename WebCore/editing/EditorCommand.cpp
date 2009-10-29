@@ -1291,10 +1291,10 @@ static String valueForeColor(Frame* frame, Event*)
 
 // Map of functions
 
+struct CommandEntry { const char* name; EditorInternalCommand command; };
+
 static const CommandMap& createCommandMap()
 {
-    struct CommandEntry { const char* name; EditorInternalCommand command; };
-    
     static const CommandEntry commands[] = {
         { "AlignCenter", { executeJustifyCenter, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "AlignJustified", { executeJustifyFull, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
