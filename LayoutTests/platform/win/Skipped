@@ -359,6 +359,7 @@ accessibility/aria-label.html
 accessibility/aria-labelledby-on-input.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
+accessibility/aria-presentational-role.html
 accessibility/aria-readonly.html
 accessibility/aria-roles.html
 accessibility/aria-tables.html

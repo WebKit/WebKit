@@ -1,3 +1,11 @@
+2009-10-28  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Ada Chan.
+
+        Add accessibility test to the list of Windows Skipped tests.
+
+        * platform/win/Skipped:
+
 2009-10-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.
