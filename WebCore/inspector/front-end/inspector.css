@@ -1957,6 +1957,7 @@ body.inactive .sidebar {
 .data-grid td {
     vertical-align: top;
     height: 12px;
+    line-height: 12px;
     padding: 2px 4px;
     white-space: nowrap;
     border-right: 1px solid #aaa;
