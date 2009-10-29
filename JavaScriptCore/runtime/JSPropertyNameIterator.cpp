@@ -43,7 +43,12 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 
     PropertyNameArray propertyNames(exec);
     o->getPropertyNames(exec, propertyNames);
-    JSPropertyNameIterator* jsPropertyNameIterator = new (exec) JSPropertyNameIterator(exec, propertyNames.data());
+    size_t numCacheableSlots = 0;
+    if (!o->structure()->hasNonEnumerableProperties() && !o->structure()->hasAnonymousSlots() &&
+        !o->structure()->isUncacheableDictionary() && !o->structure()->typeInfo().overridesGetPropertyNames())
+        numCacheableSlots = o->structure()->propertyStorageSize();
+
+    JSPropertyNameIterator* jsPropertyNameIterator = new (exec) JSPropertyNameIterator(exec, propertyNames.data(), numCacheableSlots);
 
     if (o->structure()->isDictionary())
         return jsPropertyNameIterator;

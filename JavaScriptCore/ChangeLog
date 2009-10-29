@@ -1,3 +1,59 @@
+2009-10-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Improve for..in enumeration performance
+        https://bugs.webkit.org/show_bug.cgi?id=30887
+
+        Improve indexing of an object with a for..in iterator by
+        identifying cases where get_by_val is being used with a iterator
+        as the subscript and replace it with a new get_by_pname
+        bytecode.  get_by_pname then optimizes lookups that directly access
+        the base object.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::pushOptimisedForIn):
+        (JSC::BytecodeGenerator::popOptimisedForIn):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::emitSlow_op_get_by_pname):
+        * parser/Nodes.cpp:
+        (JSC::ForInNode::emitBytecode):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::getOffset):
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::addAnonymousSlotsTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+          Track the existence (or not) of non-enumerable properties.
+        * runtime/Structure.h:
+        (JSC::Structure::propertyStorageCapacity):
+        (JSC::Structure::propertyStorageSize):
+        (JSC::Structure::hasNonEnumerableProperties):
+        (JSC::Structure::hasAnonymousSlots):
+
 2009-10-28  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, attemp to fix Windows build.

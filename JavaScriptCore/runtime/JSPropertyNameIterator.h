@@ -54,6 +54,14 @@ namespace JSC {
 
         virtual void markChildren(MarkStack&);
 
+        bool getOffset(size_t i, int& offset)
+        {
+            if (i >= m_numCacheableSlots)
+                return false;
+            offset = i;
+            return true;
+        }
+
         JSValue get(ExecState*, JSObject*, size_t i);
         size_t size() { return m_jsStringsSize; }
 
@@ -64,17 +72,19 @@ namespace JSC {
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:
-        JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData);
+        JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);
 
         Structure* m_cachedStructure;
         RefPtr<StructureChain> m_cachedPrototypeChain;
-        size_t m_jsStringsSize;
+        uint32_t m_numCacheableSlots;
+        uint32_t m_jsStringsSize;
         OwnArrayPtr<JSValue> m_jsStrings;
     };
 
-inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData)
+inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
     : JSCell(exec->globalData().propertyNameIteratorStructure.get())
     , m_cachedStructure(0)
+    , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
     , m_jsStrings(new JSValue[m_jsStringsSize])
 {

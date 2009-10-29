@@ -2417,6 +2417,33 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_del_by_id);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_by_pname) {
+        int dst = vPC[1].u.operand;
+        int base = vPC[2].u.operand;
+        int property = vPC[3].u.operand;
+        int expected = vPC[4].u.operand;
+        int iter = vPC[5].u.operand;
+        int i = vPC[6].u.operand;
+
+        JSValue baseValue = callFrame->r(base).jsValue();
+        JSPropertyNameIterator* it = callFrame->r(iter).propertyNameIterator();
+        JSValue subscript = callFrame->r(property).jsValue();
+        JSValue expectedSubscript = callFrame->r(expected).jsValue();
+        int index = callFrame->r(i).i() - 1;
+        JSValue result;
+        int offset = 0;
+        if (subscript == expectedSubscript && baseValue.isCell() && (baseValue.asCell()->structure() == it->cachedStructure()) && it->getOffset(index, offset)) {
+            callFrame->r(dst) = asObject(baseValue)->getDirectOffset(offset);
+            vPC += OPCODE_LENGTH(op_get_by_pname);
+            NEXT_INSTRUCTION();
+        }
+        Identifier propertyName(callFrame, subscript.toString(callFrame));
+        result = baseValue.get(callFrame, propertyName);
+        CHECK_FOR_EXCEPTION();
+        callFrame->r(dst) = result;
+        vPC += OPCODE_LENGTH(op_get_by_pname);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_get_by_val) {
         /* get_by_val dst(r) base(r) property(r)
 

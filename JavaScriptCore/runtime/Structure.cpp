@@ -375,6 +375,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
     transition->m_specificValueInPrevious = specificValue;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
@@ -417,6 +418,7 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
 
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -433,6 +435,7 @@ PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structur
 
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -464,6 +467,7 @@ PassRefPtr<Structure> Structure::addAnonymousSlotsTransition(Structure* structur
     transition->m_specificValueInPrevious = 0;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
@@ -492,6 +496,7 @@ PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
     RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo());
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -510,6 +515,7 @@ PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, Di
     transition->m_dictionaryKind = kind;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
+    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
     
     structure->materializePropertyMapIfNecessary();
     transition->m_propertyTable = structure->copyPropertyTable();
@@ -550,6 +556,9 @@ size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, u
     materializePropertyMapIfNecessary();
 
     m_isPinnedPropertyTable = true;
+    if (attributes & DontEnum)
+        m_hasNonEnumerableProperties = true;
+
     size_t offset = put(propertyName, attributes, specificValue);
     if (propertyStorageSize() > propertyStorageCapacity())
         growPropertyStorageCapacity();

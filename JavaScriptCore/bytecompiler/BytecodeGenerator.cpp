@@ -1281,6 +1281,19 @@ RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base,
 
 RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
+    for (size_t i = m_forInContextStack.size(); i > 0; i--) {
+        ForInContext& context = m_forInContextStack[i - 1];
+        if (context.propertyRegister == property) {
+            emitOpcode(op_get_by_pname);
+            instructions().append(dst->index());
+            instructions().append(base->index());
+            instructions().append(property->index());
+            instructions().append(context.expectedSubscriptRegister->index());
+            instructions().append(context.iterRegister->index());
+            instructions().append(context.indexRegister->index());
+            return dst;
+        }
+    }
     emitOpcode(op_get_by_val);
     instructions().append(dst->index());
     instructions().append(base->index());
