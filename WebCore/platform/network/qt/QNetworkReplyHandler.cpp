@@ -140,6 +140,10 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
         m_method = QNetworkAccessManager::PostOperation;
     else if (r.httpMethod() == "PUT")
         m_method = QNetworkAccessManager::PutOperation;
+#if QT_VERSION >= 0x040600
+    else if (r.httpMethod() == "DELETE")
+        m_method = QNetworkAccessManager::DeleteOperation;
+#endif
     else
         m_method = QNetworkAccessManager::UnknownOperation;
 
@@ -398,6 +402,12 @@ void QNetworkReplyHandler::start()
             putDevice->setParent(m_reply);
             break;
         }
+#if QT_VERSION >= 0x040600
+        case QNetworkAccessManager::DeleteOperation: {
+            m_reply = manager->deleteResource(m_request);
+            break;
+        }
+#endif
         case QNetworkAccessManager::UnknownOperation: {
             m_reply = 0;
             ResourceHandleClient* client = m_resourceHandle->client();

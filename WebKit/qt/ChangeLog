@@ -1,3 +1,19 @@
+2009-10-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Implement DELETE HTTP method for XmlHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=30894
+
+        No new tests as this functionality is already tested by the
+        xmlhttprequest LayoutTests. As this patch depends on an unreleased
+        version of the dependent QtNetwork library and the tests will be
+        enabled later once the dependent library is released (and the
+        buildbot is updated).
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
