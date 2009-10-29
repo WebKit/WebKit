@@ -1,3 +1,16 @@
+2009-10-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Refactor some duplicate plug-in clean up code into shared functions.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController stopOnePlugin:]): New, stop a plug-in.
+        (-[WebPluginController destroyOnePlugin:]): New, destroy plug-in.
+        (-[WebPluginController stopAllPlugins]): Call stopOnePlugin.
+        (-[WebPluginController destroyPlugin:]): Call stopOnePlugin and destroyOnePlugin.
+        (-[WebPluginController destroyAllPlugins]): Call destroyOnePlugin.
+
 2009-10-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

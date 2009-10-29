@@ -135,6 +135,28 @@ static NSMutableSet *pluginViews = nil;
     [super dealloc];
 }
 
+- (void)stopOnePlugin:(NSView *)view
+{
+    if ([view respondsToSelector:@selector(webPlugInStop)]) {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        [view webPlugInStop];
+    } else if ([view respondsToSelector:@selector(pluginStop)]) {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        [view pluginStop];
+    }
+}
+
+- (void)destroyOnePlugin:(NSView *)view
+{
+    if ([view respondsToSelector:@selector(webPlugInDestroy)]) {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        [view webPlugInDestroy];
+    } else if ([view respondsToSelector:@selector(pluginDestroy)]) {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        [view pluginDestroy];
+    }
+}
+
 - (void)startAllPlugins
 {
     if (_started)
@@ -167,16 +189,9 @@ static NSMutableSet *pluginViews = nil;
     }
     
     int i, count = [_views count];
-    for (i = 0; i < count; i++) {
-        id aView = [_views objectAtIndex:i];
-        if ([aView respondsToSelector:@selector(webPlugInStop)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [aView webPlugInStop];
-        } else if ([aView respondsToSelector:@selector(pluginStop)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [aView pluginStop];
-        }
-    }
+    for (i = 0; i < count; i++)
+        [self stopOnePlugin:[_views objectAtIndex:i]];
+
     _started = NO;
 }
 
@@ -228,23 +243,9 @@ static NSMutableSet *pluginViews = nil;
 - (void)destroyPlugin:(NSView *)view
 {
     if ([_views containsObject:view]) {
-        if (_started) {
-            if ([view respondsToSelector:@selector(webPlugInStop)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-                [view webPlugInStop];
-            } else if ([view respondsToSelector:@selector(pluginStop)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-                [view pluginStop];
-            }
-        }
-        
-        if ([view respondsToSelector:@selector(webPlugInDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [view webPlugInDestroy];
-        } else if ([view respondsToSelector:@selector(pluginDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [view pluginDestroy];
-        }
+        if (_started)
+            [self stopOnePlugin:view];
+        [self destroyOnePlugin:view];
         
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if (Frame* frame = core([self webFrame]))
@@ -290,13 +291,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
-        if ([aView respondsToSelector:@selector(webPlugInDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [aView webPlugInDestroy];
-        } else if ([aView respondsToSelector:@selector(pluginDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-            [aView pluginDestroy];
-        }
+        [self destroyOnePlugin:aView];
         
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if (Frame* frame = core([self webFrame]))
