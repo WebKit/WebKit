@@ -29,6 +29,14 @@
 #include "Font.h"
 #include "ShapeArabic.h"
 
+#ifdef BUILDING_ON_TIGER
+#ifdef __LP64__
+#define URefCon void*
+#else
+#define URefCon UInt32
+#endif
+#endif
+
 using namespace WTF::Unicode;
 
 namespace WebCore {

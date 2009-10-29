@@ -1,3 +1,9 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Tiger build fix after r50259
+
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+
 2009-10-28  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by Mark Rowe.
