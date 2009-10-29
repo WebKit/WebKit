@@ -202,7 +202,7 @@ float MediaPlayerPrivate::duration() const
     GstFormat timeFormat = GST_FORMAT_TIME;
     gint64 timeLength = 0;
 
-    if (!gst_element_query_duration(m_playBin, &timeFormat, &timeLength) || timeFormat != GST_FORMAT_TIME || timeLength == GST_CLOCK_TIME_NONE) {
+    if (!gst_element_query_duration(m_playBin, &timeFormat, &timeLength) || timeFormat != GST_FORMAT_TIME || static_cast<guint64>(timeLength) == GST_CLOCK_TIME_NONE) {
         LOG_VERBOSE(Media, "Time duration query failed.");
         return numeric_limits<float>::infinity();
     }
