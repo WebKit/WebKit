@@ -731,7 +731,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (!parseElement.hasAttributes()) {
             this.representedObject.removeAttribute(attributeName);
-            this._updateTitle();
             moveToNextAttributeIfNeeded.call(this);
             return;
         }
@@ -747,8 +746,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (!foundOriginalAttribute)
             this.representedObject.removeAttribute(attributeName);
-
-        this._updateTitle();
 
         this.treeOutline.focusedNodeChanged(true);
 
@@ -768,18 +765,24 @@ WebInspector.ElementsTreeElement.prototype = {
             textNode = this.representedObject;
 
         textNode.nodeValue = newText;
-        this._updateTitle();
+
+        // No need to call _updateTitle here, it will be called after the nodeValue is committed.
     },
 
     _editingCancelled: function(element, context)
     {
         delete this._editing;
 
-        this._updateTitle();
+        // No need to call _updateTitle here, the editing code will revert to the original text.
     },
 
     _updateTitle: function()
     {
+        // If we are editing, return early to prevent canceling the edit.
+        // After editing is committed _updateTitle will be called.
+        if (this._editing)
+            return;
+
         var title = this._nodeTitleInfo(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
         this.title = "<span class=\"highlight\">" + title + "</span>";
         delete this.selectionElement;

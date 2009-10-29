@@ -1,3 +1,18 @@
+2009-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Fix tabbing through element attributes in the Web Insector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30429
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted): Don't call _updateTitle,
+        it is called for us when removeAttribute succeeds in the back-end.
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted): Ditto except for nodeValue.
+        (WebInspector.ElementsTreeElement.prototype._editingCancelled): Don't call _updateTitle, editing code reverts.
+        (WebInspector.ElementsTreeElement.prototype._updateTitle): Return early if we are editing.
+
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
