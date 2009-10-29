@@ -43,6 +43,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         if (!coreObject->isCheckboxOrRadio())
             return;
         g_signal_emit_by_name(coreObject->wrapper(), "state-change", "checked", coreObject->isChecked());
+    } else if (notification == AXSelectedChildrenChanged) {
+        if (!coreObject->isListBox())
+            return;
+        g_signal_emit_by_name(coreObject->wrapper(), "selection-changed");
     }
 }
 

@@ -35,6 +35,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
+#include "AccessibilityListBoxOption.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
@@ -104,6 +105,11 @@ static AccessibilityObject* core(AtkObject* object)
 static AccessibilityObject* core(AtkAction* action)
 {
     return core(ATK_OBJECT(action));
+}
+
+static AccessibilityObject* core(AtkSelection* selection)
+{
+    return core(ATK_OBJECT(selection));
 }
 
 static AccessibilityObject* core(AtkText* text)
@@ -607,6 +613,145 @@ static void atk_action_interface_init(AtkActionIface* iface)
     iface->get_description = webkit_accessible_action_get_description;
     iface->get_keybinding = webkit_accessible_action_get_keybinding;
     iface->get_name = webkit_accessible_action_get_name;
+}
+
+// Selection (for controls)
+
+static AccessibilityObject* optionFromList(AtkSelection* selection, gint i)
+{
+    AccessibilityObject* coreSelection = core(selection);
+    if (!coreSelection || i < 0)
+        return 0;
+
+    AccessibilityRenderObject::AccessibilityChildrenVector options = core(selection)->children();
+    if (i < static_cast<gint>(options.size()))
+        return options.at(i).get();
+
+    return 0;
+}
+
+static AccessibilityObject* optionFromSelection(AtkSelection* selection, gint i)
+{
+    // i is the ith selection as opposed to the ith child.
+
+    AccessibilityObject* coreSelection = core(selection);
+    if (!coreSelection || i < 0)
+        return 0;
+
+    AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+    if (coreSelection->isListBox())
+        static_cast<AccessibilityListBox*>(coreSelection)->selectedChildren(selectedItems);
+
+    // TODO: Combo boxes
+
+    if (i < static_cast<gint>(selectedItems.size()))
+        return selectedItems.at(i).get();
+
+    return 0;
+}
+
+static gboolean webkit_accessible_selection_add_selection(AtkSelection* selection, gint i)
+{
+    AccessibilityObject* option = optionFromList(selection, i);
+    if (option && core(selection)->isListBox()) {
+        AccessibilityListBoxOption* listBoxOption = static_cast<AccessibilityListBoxOption*>(option);
+        listBoxOption->setSelected(true);
+        return listBoxOption->isSelected();
+    }
+
+    return false;
+}
+
+static gboolean webkit_accessible_selection_clear_selection(AtkSelection* selection)
+{
+    AccessibilityObject* coreSelection = core(selection);
+    if (!coreSelection)
+        return false;
+
+    AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+    if (coreSelection->isListBox()) {
+        // Set the list of selected items to an empty list; then verify that it worked.
+        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
+        listBox->setSelectedChildren(selectedItems);
+        listBox->selectedChildren(selectedItems);
+        return selectedItems.size() == 0;
+    }
+    return false;
+}
+
+static AtkObject* webkit_accessible_selection_ref_selection(AtkSelection* selection, gint i)
+{
+    AccessibilityObject* option = optionFromSelection(selection, i);
+    if (option) {
+        AtkObject* child = option->wrapper();
+        g_object_ref(child);
+        return child;
+    }
+
+    return 0;
+}
+
+static gint webkit_accessible_selection_get_selection_count(AtkSelection* selection)
+{
+    AccessibilityObject* coreSelection = core(selection);
+    if (coreSelection && coreSelection->isListBox()) {
+        AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+        static_cast<AccessibilityListBox*>(coreSelection)->selectedChildren(selectedItems);
+        return static_cast<gint>(selectedItems.size());
+    }
+
+    return 0;
+}
+
+static gboolean webkit_accessible_selection_is_child_selected(AtkSelection* selection, gint i)
+{
+    AccessibilityObject* option = optionFromList(selection, i);
+    if (option && core(selection)->isListBox())
+        return static_cast<AccessibilityListBoxOption*>(option)->isSelected();
+
+    return false;
+}
+
+static gboolean webkit_accessible_selection_remove_selection(AtkSelection* selection, gint i)
+{
+    // TODO: This is only getting called if i == 0. What is preventing the rest?
+    AccessibilityObject* option = optionFromSelection(selection, i);
+    if (option && core(selection)->isListBox()) {
+        AccessibilityListBoxOption* listBoxOption = static_cast<AccessibilityListBoxOption*>(option);
+        listBoxOption->setSelected(false);
+        return !listBoxOption->isSelected();
+    }
+
+    return false;
+}
+
+static gboolean webkit_accessible_selection_select_all_selection(AtkSelection* selection)
+{
+    AccessibilityObject* coreSelection = core(selection);
+    if (!coreSelection || !coreSelection->isMultiSelect())
+        return false;
+
+    AccessibilityRenderObject::AccessibilityChildrenVector children = coreSelection->children();
+    if (coreSelection->isListBox()) {
+        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
+        listBox->setSelectedChildren(children);
+        AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+        listBox->selectedChildren(selectedItems);
+        return selectedItems.size() == children.size();
+    }
+
+    return false;
+}
+
+static void atk_selection_interface_init(AtkSelectionIface* iface)
+{
+    iface->add_selection = webkit_accessible_selection_add_selection;
+    iface->clear_selection = webkit_accessible_selection_clear_selection;
+    iface->ref_selection = webkit_accessible_selection_ref_selection;
+    iface->get_selection_count = webkit_accessible_selection_get_selection_count;
+    iface->is_child_selected = webkit_accessible_selection_is_child_selected;
+    iface->remove_selection = webkit_accessible_selection_remove_selection;
+    iface->select_all_selection = webkit_accessible_selection_select_all_selection;
 }
 
 // Text
@@ -1177,6 +1322,8 @@ static void atk_table_interface_init(AtkTableIface* iface)
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_selection_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_editable_text_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_text_interface_init,
@@ -1191,6 +1338,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
 
 enum WAIType {
     WAI_ACTION,
+    WAI_SELECTION,
     WAI_EDITABLE_TEXT,
     WAI_TEXT,
     WAI_COMPONENT,
@@ -1203,6 +1351,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
   switch (type) {
   case WAI_ACTION:
       return ATK_TYPE_ACTION;
+  case WAI_SELECTION:
+      return ATK_TYPE_SELECTION;
   case WAI_EDITABLE_TEXT:
       return ATK_TYPE_EDITABLE_TEXT;
   case WAI_TEXT:
@@ -1228,6 +1378,10 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Action
     if (!coreObject->actionVerb().isEmpty())
         interfaceMask |= 1 << WAI_ACTION;
+
+    // Selection
+    if (coreObject->isListBox())
+        interfaceMask |= 1 << WAI_SELECTION;
 
     // Text & Editable Text
     AccessibilityRole role = coreObject->roleValue();
