@@ -68,6 +68,7 @@ public:
 private:
     HTMLElement* m_optionElement;
     
+    virtual bool canHaveChildren() const { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;

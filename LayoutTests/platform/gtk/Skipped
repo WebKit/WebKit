@@ -59,6 +59,7 @@ accessibility/input-slider.html
 accessibility/language-attribute.html
 accessibility/media-element.html
 accessibility/onclick-handlers.html
+accessibility/aria-option-role.html  
 accessibility/placeholder.html
 accessibility/radio-button-title-label.html
 accessibility/secure-textfield-title-ui.html

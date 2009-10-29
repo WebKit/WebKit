@@ -145,6 +145,18 @@
 
 2009-10-27  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Darin Adler.
+
+        WAI-ARIA: add support for 'option' role
+        https://bugs.webkit.org/show_bug.cgi?id=30843
+
+        * accessibility/aria-option-role.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/accessibility/aria-option-role-expected.txt: Added.
+        * platform/win/Skipped:
+
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
         No review.
 
         ARIA menu/menu item need AXRoleDescription

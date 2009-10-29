@@ -383,6 +383,7 @@ accessibility/nochildren-elements.html
 accessibility/non-data-table-cell-title-ui-element.html
 accessibility/non-native-image-crash.html
 accessibility/onclick-handlers.html
+accessibility/aria-option-role.html
 accessibility/placeholder.html
 accessibility/plugin.html
 accessibility/radio-button-checkbox-size.html

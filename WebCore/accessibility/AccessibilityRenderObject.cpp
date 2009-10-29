@@ -2289,6 +2289,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "menuitemradio", MenuItemRole },
         { "note", DocumentNoteRole },
         { "navigation", LandmarkNavigationRole },
+        { "option", ListBoxOptionRole },
         { "presentation", IgnoredRole },
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
@@ -2535,6 +2536,8 @@ bool AccessibilityRenderObject::canHaveChildren() const
         case PopUpButtonRole:
         case CheckBoxRole:
         case RadioButtonRole:
+        case StaticTextRole:
+        case ListBoxOptionRole:
             return false;
         default:
             return true;

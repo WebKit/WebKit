@@ -1,3 +1,18 @@
+2009-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA: add support for 'option' role
+        https://bugs.webkit.org/show_bug.cgi?id=30843
+
+        Test: accessibility/aria-option-role.html
+
+        * accessibility/AccessibilityListBoxOption.h:
+        (WebCore::AccessibilityListBoxOption::canHaveChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::RoleEntry::):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+
 2009-10-28  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Eric Seidel.
