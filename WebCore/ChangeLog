@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's RareData
+        https://bugs.webkit.org/show_bug.cgi?id=30858
+
+        Inherits RareData struct from Noncopyable because it is
+        instantiated by 'new' in WebCore/css/CSSSelector.h:259 and 
+        it is no need to be copyable.
+
+        * css/CSSSelector.h:
+
+2009-10-29  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's ShorthandScope
         https://bugs.webkit.org/show_bug.cgi?id=30859
 
