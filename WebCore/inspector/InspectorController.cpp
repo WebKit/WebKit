@@ -1791,6 +1791,8 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return ResourcesPanel;
     else if (panelName == "scripts")
         return ScriptsPanel;
+    else if (panelName == "timeline")
+        return TimelinePanel;
     else if (panelName == "profiles")
         return ProfilesPanel;
     else if (panelName == "storage" || panelName == "databases")
