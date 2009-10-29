@@ -37,6 +37,8 @@
 #include "PassRefPtr.h"
 #include "PasteboardPrivate.h"
 
+#include <wtf/Vector.h>
+
 typedef struct NPObject NPObject;
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
@@ -58,6 +60,7 @@ namespace WebCore {
     class String;
     class Widget;
 
+    struct Cookie;
     struct PluginInfo;
 
     // An interface to the embedding layer, which has the ability to answer
@@ -82,6 +85,8 @@ namespace WebCore {
         // Cookies ------------------------------------------------------------
         static void setCookies(const KURL& url, const KURL& firstPartyForCookies, const String& value);
         static String cookies(const KURL& url, const KURL& firstPartyForCookies);
+        static bool rawCookies(const KURL& url, const KURL& firstPartyForCookies, Vector<Cookie>*);
+        static void deleteCookie(const KURL& url, const String& cookieName);
 
         // DNS ----------------------------------------------------------------
         static void prefetchDNS(const String& hostname);
