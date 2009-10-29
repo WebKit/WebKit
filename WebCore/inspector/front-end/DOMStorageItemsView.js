@@ -65,22 +65,12 @@ WebInspector.DOMStorageItemsView.prototype = {
         this.domStorage.getEntries(callback);
     },
 
-    _showDOMStorageEntries: function(entries) 
+    _showDOMStorageEntries: function(entries)
     {
-        if (entries.length > 0) {
-            this._dataGrid = this._dataGridForDOMStorageEntries(entries);
-            this.element.appendChild(this._dataGrid.element);
-            this._dataGrid.updateWidths();
-            this.deleteButton.visible = true;
-        } else {
-            var emptyMsgElement = document.createElement("div");
-            emptyMsgElement.className = "storage-table-empty";
-            if (this.domStorage)
-                emptyMsgElement.textContent = WebInspector.UIString("This storage is empty.");
-            this.element.appendChild(emptyMsgElement);
-            this._dataGrid = null;
-            this.deleteButton.visible = false;
-        }
+        this._dataGrid = this._dataGridForDOMStorageEntries(entries);
+        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.updateWidths();
+        this.deleteButton.visible = true;
     },
 
     resize: function()

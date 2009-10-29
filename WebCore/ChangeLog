@@ -1,3 +1,19 @@
+2009-10-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Part of <http://webkit.org/b/30483>.
+        Web Inspector: Always show the Local and Session Storage Views.
+        
+        Even if the length of the DOM Storage entry array is 0, still
+        generate the Datagrid because users can add things storage items
+        through the UI, so we should allow them to even if there isn't
+        anything there currently.
+
+        * English.lproj/localizedStrings.js: Removed "This Storage is Empty".
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._showDOMStorageEntries):
+
 2009-10-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
