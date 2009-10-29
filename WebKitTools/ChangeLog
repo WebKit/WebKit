@@ -1,3 +1,9 @@
+2009-10-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Adding myself to the committers list.
+
+        * Scripts/modules/committers.py:
+
 2009-10-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.

@@ -53,6 +53,7 @@ committers_unable_to_review = [
     Committer("Antonio Gomes", "tonikitoo@webkit.org"),
     Committer("Anthony Ricaud", "rik@webkit.org"),
     Committer("Ben Murdoch", "benm@google.com"),
+    Committer("Chris Fleizach", "cfleizach@apple.com"),
     Committer("Brent Fulgham", "bfulgham@webkit.org"),
     Committer("Brian Weinstein", "bweinstein@apple.com"),
     Committer("Cameron McCormack", "cam@webkit.org"),
