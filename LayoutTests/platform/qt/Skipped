@@ -1,9 +1,13 @@
 # Failing tests due to disabled Phonon support in Buildbot's Qt
-# Skip these until a proper solution for the Phonon related craches and timeouts is found
+# Skip these until a proper solution for the Phonon related craches and
+# timeouts is found
 fast/dom/dom-constructors.html
 fast/dom/Window/custom-constructors.html
 fast/dom/beforeload/video-before-load.html
-fast/js/instanceof-operator.html 
+fast/js/instanceof-operator.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-source-from-remote.html
+http/tests/security/local-video-src-from-remote.html
 
 # =========================================================================== #
 #      Failing tests introduced by changing the default font sizes to         #

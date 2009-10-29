@@ -6,6 +6,15 @@
 
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed Qt buildbot fix.
+
+        Add some files to skipped that depend on phonon support,
+        which is disabled on the Qt buildbot for now.
+
+        * platform/qt/Skipped:
+
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Adam Roben.
 
         Remove tests that pass after the change introduced in r50289.
