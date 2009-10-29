@@ -1,3 +1,14 @@
+2009-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Serialize directly to the stream, and not first to an QByteArray,
+        that is later serialized. That is slower and also uses more bytes.
+
+        * Api/qwebhistory.cpp:
+        (operator<<):
+        (operator>>):
+
 2009-10-28  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -494,22 +494,16 @@ QDataStream& operator<<(QDataStream& target, const QWebHistory& history)
 {
     QWebHistoryPrivate* d = history.d;
 
-    QByteArray buffer;
-    QDataStream stream(&buffer, QIODevice::WriteOnly);
-
     int version = DefaultHistoryVersion;
 
-    stream << version;
-    stream << history.count() << history.currentItemIndex();
+    target << version;
+    target << history.count() << history.currentItemIndex();
 
     const WebCore::HistoryItemVector &items = d->lst->entries();
     for (unsigned i = 0; i < items.size(); i++)
-        items[i].get()->saveState(stream, version);
+        items[i].get()->saveState(target, version);
 
-    if (stream.status() != QDataStream::Ok)
-        buffer = QByteArray();  // make buffer isNull()==true and isEmpty()==true
-
-    return target << buffer;
+    return target;
 }
 
 /*!
@@ -526,18 +520,14 @@ QDataStream& operator>>(QDataStream& source, QWebHistory& history)
 {
     QWebHistoryPrivate* d = history.d;
 
-    QByteArray buffer;
-    source >> buffer;
-
-    QDataStream stream(buffer);
     int version;
 
-    stream >> version;
+    source >> version;
 
     if (version == 1) {
         int count;
         int currentIndex;
-        stream >> count >> currentIndex;
+        source >> count >> currentIndex;
 
         history.clear();
         // only if there are elements
@@ -546,7 +536,7 @@ QDataStream& operator>>(QDataStream& source, QWebHistory& history)
             WebCore::HistoryItem* nullItem = d->lst->currentItem();
             for (int i = 0; i < count; i++) {
                 WTF::PassRefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create();
-                item->restoreState(stream, version);
+                item->restoreState(source, version);
                 d->lst->addItem(item);
             }
             d->lst->removeItem(nullItem);
