@@ -1,3 +1,22 @@
+2009-10-29  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30308
+        
+        Add support for ARGB videos.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+        Create the Cairo image surface for ARGB32 or RGB24
+        depending on the buffer's caps.
+        
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_timeout_func):
+        (webkit_video_sink_render):
+        Handle ARGB video and convert GStreamer's ARGB to
+        Cairo's for displaying.
+
 2009-10-29  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by David Levin.

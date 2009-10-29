@@ -37,9 +37,9 @@ static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
                                                                    GST_PAD_SINK, GST_PAD_ALWAYS,
 // CAIRO_FORMAT_RGB24 used to render the video buffers is little/big endian dependant.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_BGRx)
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_BGRx ";" GST_VIDEO_CAPS_BGRA)
 #else
-                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_xRGB)
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_ARGB)
 #endif
 );
 
@@ -129,11 +129,6 @@ webkit_video_sink_timeout_func(gpointer data)
         return FALSE;
     }
 
-    if (G_UNLIKELY(!GST_BUFFER_CAPS(buffer))) {
-        buffer = gst_buffer_make_metadata_writable(buffer);
-        gst_buffer_set_caps(buffer, GST_PAD_CAPS(GST_BASE_SINK_PAD(sink)));
-    }
-
     g_signal_emit(sink, webkit_video_sink_signals[REPAINT_REQUESTED], 0, buffer);
     gst_buffer_unref(buffer);
     g_cond_signal(priv->data_cond);
@@ -156,6 +151,71 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     }
 
     priv->buffer = gst_buffer_ref(buffer);
+
+    // For the unlikely case where the buffer has no caps, the caps
+    // are implicitely the caps of the pad. This shouldn't happen.
+    if (G_UNLIKELY(!GST_BUFFER_CAPS(buffer))) {
+        buffer = priv->buffer = gst_buffer_make_metadata_writable(priv->buffer);
+        gst_buffer_set_caps(priv->buffer, GST_PAD_CAPS(GST_BASE_SINK_PAD(bsink)));
+    }
+
+    GstCaps *caps = GST_BUFFER_CAPS(buffer);
+    GstVideoFormat format;
+    int width, height;
+    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height))) {
+        gst_buffer_unref(buffer);
+        g_mutex_unlock(priv->buffer_mutex);
+        return GST_FLOW_ERROR;
+    }
+
+    // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
+    // Here we convert to Cairo's ARGB.
+    if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA) {
+        // Because GstBaseSink::render() only owns the buffer reference in the
+        // method scope we can't use gst_buffer_make_writable() here. Also
+        // The buffer content should not be changed here because the same buffer
+        // could be passed multiple times to this method (in theory)
+        GstBuffer *newBuffer = gst_buffer_try_new_and_alloc(GST_BUFFER_SIZE(buffer));
+
+        // Check if allocation failed
+        if (G_UNLIKELY(!newBuffer)) {
+            gst_buffer_unref(buffer);
+            g_mutex_unlock(priv->buffer_mutex);
+            return GST_FLOW_ERROR;
+        }
+
+        gst_buffer_copy_metadata(newBuffer, buffer, (GstBufferCopyFlags) GST_BUFFER_COPY_ALL);
+
+        // We don't use Color::premultipliedARGBFromColor() here because
+        // one function call per video pixel is just too expensive:
+        // For 720p/PAL for example this means 1280*720*25=23040000
+        // function calls per second!
+        unsigned short alpha;
+        const guint8 *source = GST_BUFFER_DATA(buffer);
+        guint8 *destination = GST_BUFFER_DATA(newBuffer);
+
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < width; y++) {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                alpha = source[3];
+                destination[0] = (source[0] * alpha + 128) / 255;
+                destination[1] = (source[1] * alpha + 128) / 255;
+                destination[2] = (source[2] * alpha + 128) / 255;
+                destination[3] = alpha;
+#else
+                alpha = source[0];
+                destination[0] = alpha;
+                destination[1] = (source[1] * alpha + 128) / 255;
+                destination[2] = (source[2] * alpha + 128) / 255;
+                destination[3] = (source[3] * alpha + 128) / 255;
+#endif
+                source += 4;
+                destination += 4;
+            }
+        }
+        gst_buffer_unref(buffer);
+        buffer = priv->buffer = newBuffer;
+    }
 
     // Use HIGH_IDLE+20 priority, like Gtk+ for redrawing operations.
     priv->timeout_id = g_timeout_add_full(G_PRIORITY_HIGH_IDLE + 20, 0,

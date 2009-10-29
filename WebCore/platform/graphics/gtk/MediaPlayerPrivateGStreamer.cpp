@@ -631,11 +631,12 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     double displayWidth;
     double displayHeight;
     double scale, gapHeight, gapWidth;
+    GstVideoFormat format;
 
     GstCaps *caps = gst_buffer_get_caps(m_buffer);
 
-    if (!gst_video_format_parse_caps(caps, NULL, &width, &height) ||
-        !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator)) {
+    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height) ||
+        !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator))) {
       gst_caps_unref(caps);
       return;
     }
@@ -645,9 +646,15 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     doublePixelAspectRatioNumerator = pixelAspectRatioNumerator;
     doublePixelAspectRatioDenominator = pixelAspectRatioDenominator;
 
+    cairo_format_t cairoFormat;
+    if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA)
+        cairoFormat = CAIRO_FORMAT_ARGB32;
+    else
+        cairoFormat = CAIRO_FORMAT_RGB24;
+
     cairo_t* cr = context->platformContext();
     cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(m_buffer),
-                                                               CAIRO_FORMAT_RGB24,
+                                                               cairoFormat,
                                                                width, height,
                                                                4 * width);
 
