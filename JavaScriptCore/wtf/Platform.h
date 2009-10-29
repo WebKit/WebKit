@@ -730,8 +730,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
 #elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
-    /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */
-    #define ENABLE_JIT 0
+    #define ENABLE_JIT 1
     #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
 /* The JIT is tested & working on x86 Windows */
 #elif PLATFORM(X86) && PLATFORM(WIN)
@@ -797,8 +796,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
 #if (PLATFORM(X86) && PLATFORM(MAC)) \
  || (PLATFORM(X86_64) && PLATFORM(MAC)) \
- /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */ \
- || (PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE) && 0) \
+ || (PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)) \
  || (PLATFORM(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1

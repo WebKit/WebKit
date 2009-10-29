@@ -1,3 +1,38 @@
+2009-10-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        JSC JIT on ARMv7 cannot link jumps >16Mb range
+        https://bugs.webkit.org/show_bug.cgi?id=30891
+
+        Start planing all relative jumps as move-32-bit-immediate-to-register-BX.
+        In the cases where the jump would fall within a relative jump range, use a relative jump.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::~ARMv7Assembler):
+        (JSC::ARMv7Assembler::LinkRecord::LinkRecord):
+        (JSC::ARMv7Assembler::):
+        (JSC::ARMv7Assembler::executableCopy):
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::relinkJump):
+        (JSC::ARMv7Assembler::setInt32):
+        (JSC::ARMv7Assembler::isB):
+        (JSC::ARMv7Assembler::isBX):
+        (JSC::ARMv7Assembler::isMOV_imm_T3):
+        (JSC::ARMv7Assembler::isMOVT):
+        (JSC::ARMv7Assembler::isNOP_T1):
+        (JSC::ARMv7Assembler::isNOP_T2):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+        (JSC::ARMv7Assembler::twoWordOp5i6Imm4Reg4EncodedImmFirst):
+        (JSC::ARMv7Assembler::twoWordOp5i6Imm4Reg4EncodedImmSecond):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp5i6Imm4Reg4EncodedImm):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::makeJump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        * jit/JIT.h:
+        * wtf/Platform.h:
+
 2009-10-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

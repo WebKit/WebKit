@@ -586,26 +586,26 @@ namespace JSC {
 #elif PLATFORM(ARM_THUMB2)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdExternalLoad = 20;
+        static const int patchOffsetPutByIdExternalLoad = 26;
         static const int patchLengthPutByIdExternalLoad = 12;
-        static const int patchOffsetPutByIdPropertyMapOffset = 40;
+        static const int patchOffsetPutByIdPropertyMapOffset = 46;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
-        static const int patchOffsetGetByIdBranchToSlowCase = 20;
-        static const int patchOffsetGetByIdExternalLoad = 20;
+        static const int patchOffsetGetByIdBranchToSlowCase = 26;
+        static const int patchOffsetGetByIdExternalLoad = 26;
         static const int patchLengthGetByIdExternalLoad = 12;
-        static const int patchOffsetGetByIdPropertyMapOffset = 40;
-        static const int patchOffsetGetByIdPutResult = 44;
+        static const int patchOffsetGetByIdPropertyMapOffset = 46;
+        static const int patchOffsetGetByIdPutResult = 50;
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 0; // FIMXE
 #else
         static const int patchOffsetGetByIdSlowCaseCall = 28;
 #endif
-        static const int patchOffsetOpCallCompareToJump = 10;
+        static const int patchOffsetOpCallCompareToJump = 16;
 
-        static const int patchOffsetMethodCheckProtoObj = 18;
-        static const int patchOffsetMethodCheckProtoStruct = 28;
-        static const int patchOffsetMethodCheckPutFunction = 46;
+        static const int patchOffsetMethodCheckProtoObj = 24;
+        static const int patchOffsetMethodCheckProtoStruct = 34;
+        static const int patchOffsetMethodCheckPutFunction = 58;
 #elif PLATFORM(ARM_TRADITIONAL)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 4;

@@ -407,6 +407,11 @@ register writeback
 
 class ARMv7Assembler {
 public:
+    ~ARMv7Assembler()
+    {
+        ASSERT(m_jumpsToLink.isEmpty());
+    }
+
     typedef ARMRegisters::RegisterID RegisterID;
     typedef ARMRegisters::FPRegisterID FPRegisterID;
 
@@ -476,6 +481,17 @@ public:
     };
 
 private:
+
+    struct LinkRecord {
+        LinkRecord(intptr_t from, intptr_t to)
+            : from(from)
+            , to(to)
+        {
+        }
+
+        intptr_t from;
+        intptr_t to;
+    };
 
     // ARMv7, Appx-A.6.3
     bool BadReg(RegisterID reg)
@@ -574,6 +590,7 @@ private:
         OP_SUB_SP_imm_T1    = 0xB080,
         OP_BKPT             = 0xBE00,
         OP_IT               = 0xBF00,
+        OP_NOP_T1           = 0xBF00,
     } OpcodeID;
 
     typedef enum {
@@ -608,6 +625,7 @@ private:
         OP_MOV_imm_T3   = 0xF240,
         OP_SUB_imm_T4   = 0xF2A0,
         OP_MOVT         = 0xF2C0,
+        OP_NOP_T2a      = 0xF3AF,
         OP_LDRH_reg_T2  = 0xF830,
         OP_LDRH_imm_T3  = 0xF830,
         OP_STR_imm_T4   = 0xF840,
@@ -626,6 +644,7 @@ private:
 
     typedef enum {
         OP_B_T4b        = 0x9000,
+        OP_NOP_T2b      = 0x8000,
     } OpcodeID2;
 
     struct FourFours {
@@ -1481,6 +1500,15 @@ public:
     void* executableCopy(ExecutablePool* allocator)
     {
         void* copy = m_formatter.executableCopy(allocator);
+
+        unsigned jumpCount = m_jumpsToLink.size();
+        for (unsigned i = 0; i < jumpCount; ++i) {
+            uint16_t* location = reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(copy) + m_jumpsToLink[i].from);
+            uint16_t* target = reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(copy) + m_jumpsToLink[i].to);
+            linkJumpAbsolute(location, target);
+        }
+        m_jumpsToLink.clear();
+
         ASSERT(copy);
         return copy;
     }
@@ -1503,11 +1531,7 @@ public:
     {
         ASSERT(to.m_offset != -1);
         ASSERT(from.m_offset != -1);
-
-        uint16_t* location = reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(m_formatter.data()) + from.m_offset);
-        intptr_t relative = to.m_offset - from.m_offset;
-
-        linkWithOffset(location, relative);
+        m_jumpsToLink.append(LinkRecord(from.m_offset, to.m_offset));
     }
 
     static void linkJump(void* code, JmpSrc from, void* to)
@@ -1515,9 +1539,7 @@ public:
         ASSERT(from.m_offset != -1);
         
         uint16_t* location = reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(code) + from.m_offset);
-        intptr_t relative = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(location);
-
-        linkWithOffset(location, relative);
+        linkJumpAbsolute(location, to);
     }
 
     // bah, this mathod should really be static, since it is used by the LinkBuffer.
@@ -1541,10 +1563,9 @@ public:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 1));
 
-        intptr_t relative = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from);
-        linkWithOffset(reinterpret_cast<uint16_t*>(from), relative);
+        linkJumpAbsolute(reinterpret_cast<uint16_t*>(from), to);
 
-        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(from) - 2, 2 * sizeof(uint16_t));
+        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 5 * sizeof(uint16_t));
     }
     
     static void relinkCall(void* from, void* to)
@@ -1613,14 +1634,14 @@ private:
     static void setInt32(void* code, uint32_t value)
     {
         uint16_t* location = reinterpret_cast<uint16_t*>(code);
+        ASSERT(isMOV_imm_T3(location - 4) && isMOVT(location - 2));
 
-        uint16_t lo16 = value;
-        uint16_t hi16 = value >> 16;
-
-        spliceHi5(location - 4, lo16);
-        spliceLo11(location - 3, lo16);
-        spliceHi5(location - 2, hi16);
-        spliceLo11(location - 1, hi16);
+        ARMThumbImmediate lo16 = ARMThumbImmediate::makeUInt16(static_cast<uint16_t>(value));
+        ARMThumbImmediate hi16 = ARMThumbImmediate::makeUInt16(static_cast<uint16_t>(value >> 16));
+        location[-4] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOV_imm_T3, lo16);
+        location[-3] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-3] >> 8) & 0xf, lo16);
+        location[-2] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16);
+        location[-1] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-1] >> 8) & 0xf, hi16);
 
         ExecutableAllocator::cacheFlush(location - 4, 4 * sizeof(uint16_t));
     }
@@ -1630,41 +1651,89 @@ private:
         setInt32(code, reinterpret_cast<uint32_t>(value));
     }
 
-    // Linking & patching:
-    // This method assumes that the JmpSrc being linked is a T4 b instruction.
-    static void linkWithOffset(uint16_t* instruction, intptr_t relative)
+    static bool isB(void* address)
     {
-        // Currently branches > 16m = mostly deathy.
-        if (((relative << 7) >> 7) != relative) {
-            // FIXME: This CRASH means we cannot turn the JIT on by default on arm-v7.
-            fprintf(stderr, "Error: Cannot link T4b.\n");
-            CRASH();
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return ((instruction[0] & 0xf800) == OP_B_T4a) && ((instruction[1] & 0xd000) == OP_B_T4b);
+    }
+
+    static bool isBX(void* address)
+    {
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return (instruction[0] & 0xff87) == OP_BX;
+    }
+
+    static bool isMOV_imm_T3(void* address)
+    {
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return ((instruction[0] & 0xFBF0) == OP_MOV_imm_T3) && ((instruction[1] & 0x8000) == 0);
+    }
+
+    static bool isMOVT(void* address)
+    {
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return ((instruction[0] & 0xFBF0) == OP_MOVT) && ((instruction[1] & 0x8000) == 0);
+    }
+
+    static bool isNOP_T1(void* address)
+    {
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return instruction[0] == OP_NOP_T1;
+    }
+
+    static bool isNOP_T2(void* address)
+    {
+        uint16_t* instruction = static_cast<uint16_t*>(address);
+        return (instruction[0] == OP_NOP_T2a) && (instruction[1] == OP_NOP_T2b);
+    }
+
+    static void linkJumpAbsolute(uint16_t* instruction, void* target)
+    {
+        // FIMXE: this should be up in the MacroAssembler layer. :-(
+        const uint16_t JUMP_TEMPORARY_REGISTER = ARMRegisters::ip;
+
+        ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
+        ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
+
+        ASSERT( (isMOV_imm_T3(instruction - 5) && isMOVT(instruction - 3) && isBX(instruction - 1))
+            || (isNOP_T1(instruction - 5) && isNOP_T2(instruction - 4) && isB(instruction - 2)) );
+
+        intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
+        if (((relative << 7) >> 7) == relative) {
+            // ARM encoding for the top two bits below the sign bit is 'peculiar'.
+            if (relative >= 0)
+                relative ^= 0xC00000;
+
+            // All branch offsets should be an even distance.
+            ASSERT(!(relative & 1));
+            // There may be a better way to fix this, but right now put the NOPs first, since in the
+            // case of an conditional branch this will be coming after an ITTT predicating *three*
+            // instructions!  Looking backwards to modify the ITTT to an IT is not easy, due to
+            // variable wdith encoding - the previous instruction might *look* like an ITTT but
+            // actually be the second half of a 2-word op.
+            instruction[-5] = OP_NOP_T1;
+            instruction[-4] = OP_NOP_T2a;
+            instruction[-3] = OP_NOP_T2b;
+            instruction[-2] = OP_B_T4a | ((relative & 0x1000000) >> 14) | ((relative & 0x3ff000) >> 12);
+            instruction[-1] = OP_B_T4b | ((relative & 0x800000) >> 10) | ((relative & 0x400000) >> 11) | ((relative & 0xffe) >> 1);
+        } else {
+            ARMThumbImmediate lo16 = ARMThumbImmediate::makeUInt16(static_cast<uint16_t>(reinterpret_cast<uint32_t>(target) + 1));
+            ARMThumbImmediate hi16 = ARMThumbImmediate::makeUInt16(static_cast<uint16_t>(reinterpret_cast<uint32_t>(target) >> 16));
+            instruction[-5] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOV_imm_T3, lo16);
+            instruction[-4] = twoWordOp5i6Imm4Reg4EncodedImmSecond(JUMP_TEMPORARY_REGISTER, lo16);
+            instruction[-3] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16);
+            instruction[-2] = twoWordOp5i6Imm4Reg4EncodedImmSecond(JUMP_TEMPORARY_REGISTER, hi16);
+            instruction[-1] = OP_BX | (JUMP_TEMPORARY_REGISTER << 3);
         }
-        
-        // ARM encoding for the top two bits below the sign bit is 'peculiar'.
-        if (relative >= 0)
-            relative ^= 0xC00000;
-
-        // All branch offsets should be an even distance.
-        ASSERT(!(relative & 1));
-
-        int word1 = ((relative & 0x1000000) >> 14) | ((relative & 0x3ff000) >> 12);
-        int word2 = ((relative & 0x800000) >> 10) | ((relative & 0x400000) >> 11) | ((relative & 0xffe) >> 1);
-
-        instruction[-2] = OP_B_T4a | word1;
-        instruction[-1] = OP_B_T4b | word2;
     }
 
-    // These functions can be used to splice 16-bit immediates back into previously generated instructions.
-    static void spliceHi5(uint16_t* where, uint16_t what)
+    static uint16_t twoWordOp5i6Imm4Reg4EncodedImmFirst(uint16_t op, ARMThumbImmediate imm)
     {
-        uint16_t pattern = (what >> 12) | ((what & 0x0800) >> 1);
-        *where = (*where & 0xFBF0) | pattern;
+        return op | (imm.m_value.i << 10) | imm.m_value.imm4;
     }
-    static void spliceLo11(uint16_t* where, uint16_t what)
+    static uint16_t twoWordOp5i6Imm4Reg4EncodedImmSecond(uint16_t rd, ARMThumbImmediate imm)
     {
-        uint16_t pattern = ((what & 0x0700) << 4) | (what & 0x00FF);
-        *where = (*where & 0x8F00) | pattern;
+        return (imm.m_value.imm3 << 12) | (rd << 8) | imm.m_value.imm8;
     }
 
     class ARMInstructionFormatter {
@@ -1723,8 +1792,11 @@ private:
 
         void twoWordOp5i6Imm4Reg4EncodedImm(OpcodeID1 op, int imm4, RegisterID rd, ARMThumbImmediate imm)
         {
-            m_buffer.putShort(op | (imm.m_value.i << 10) | imm4);
-            m_buffer.putShort((imm.m_value.imm3 << 12) | (rd << 8) | imm.m_value.imm8);
+            ARMThumbImmediate newImm = imm;
+            newImm.m_value.imm4 = imm4;
+
+            m_buffer.putShort(ARMv7Assembler::twoWordOp5i6Imm4Reg4EncodedImmFirst(op, newImm));
+            m_buffer.putShort(ARMv7Assembler::twoWordOp5i6Imm4Reg4EncodedImmSecond(rd, newImm));
         }
 
         void twoWordOp12Reg4Reg4Imm12(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm)
@@ -1749,6 +1821,8 @@ private:
     private:
         AssemblerBuffer m_buffer;
     } m_formatter;
+
+    Vector<LinkRecord> m_jumpsToLink;
 };
 
 } // namespace JSC
