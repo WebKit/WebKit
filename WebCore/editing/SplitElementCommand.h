@@ -42,6 +42,8 @@ private:
 
     virtual void doApply();
     virtual void doUnapply();
+    virtual void doReapply();
+    void executeApply();
 
     RefPtr<Element> m_element1;
     RefPtr<Element> m_element2;

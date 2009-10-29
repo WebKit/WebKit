@@ -1,3 +1,34 @@
+2009-10-29  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(3.2.3 - 4.0.2): Message composing: when I undo a color change to text in Mail, undo/redo behaves strangely
+        <rdar://problem/7067033>
+        https://bugs.webkit.org/show_bug.cgi?id=30892
+
+        This problem shows in any scenario where it is necessary to split a text
+        node to apply a style. SplitElementCommand and WrapContentsInDummySpanCommand both
+        have member variables initialized in the constructor to keep reference to elements
+        they need to operate upon. These reference are not updated when reapplying the command.
+        For this reason it is necessary to guarantee that unapply doesn not delete the references
+        and that these commands implement doReapply to correctly reuse the existing
+        elements.
+
+        Test: editing/undo/redo-style.html
+
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply): Added.
+        (WebCore::SplitElementCommand::doApply): Modified to call executeApply. 
+        (WebCore::SplitElementCommand::doUnapply): Doesn't release m_element1.
+        (WebCore::SplitElementCommand::doReapply): Added.
+        * editing/SplitElementCommand.h: Added doReapply and executeApply.
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::executeApply): Added.
+        (WebCore::WrapContentsInDummySpanCommand::doApply): Modified to call executeApply.
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply): Doesn't release m_dummySpan.
+        (WebCore::WrapContentsInDummySpanCommand::doReapply): Added.
+        * editing/WrapContentsInDummySpanCommand.h: Added doReapply and executeApply.
+
 2009-10-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

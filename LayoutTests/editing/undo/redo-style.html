@@ -1,0 +1,45 @@
+<html>
+<body>
+This tests applying a background color at the beginning, the middle and the end of one sentence, then undo and redo.
+<p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=30892">Bug 30892</a>
+</p>
+<div contenteditable="true">
+<div id="test1">Hello!</div>
+<div id="test2">Hello!</div>
+<div id="test3">Hello!</div>
+</div>
+<br>
+<ul>
+<li>Test 1: <span id="c1"></span></li>
+<li>Test 2: <span id="c2"></span></li>
+<li>Test 3: <span id="c3"></span></li>
+</ul>
+
+<script type="text/javascript">
+function runTest(elem, node)
+{
+    var e = document.getElementById(node);
+    var before = e.innerHTML;
+    document.execCommand("hilitecolor", false, "#FF0000");
+    var after = e.innerHTML;
+    document.execCommand("undo");
+    var afterundo = e.innerHTML;
+    document.execCommand("redo");
+
+    document.getElementById(elem).appendChild(document.createTextNode(((before == afterundo) && (after == e.innerHTML))? "PASSED": "FAILED"));
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var s = window.getSelection();
+s.setBaseAndExtent(document.getElementById('test1').firstChild, 0, document.getElementById('test1').firstChild, 2);
+runTest('c1', 'test1');
+s.setBaseAndExtent(document.getElementById('test2').firstChild, 2, document.getElementById('test2').firstChild, 4);
+runTest('c2', 'test2');
+s.setBaseAndExtent(document.getElementById('test3').firstChild, 4, document.getElementById('test3').firstChild, 6);
+runTest('c3', 'test3');
+</script>
