@@ -1,3 +1,13 @@
+2009-10-29  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Add cacheFlush support for Thumb-2 on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=30865
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+
 2009-10-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -189,6 +189,22 @@ public:
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
     }
+#elif PLATFORM(ARM_THUMB2) && PLATFORM(LINUX)
+    static void cacheFlush(void* code, size_t size)
+    {
+        asm volatile (
+            "push    {r7}\n"
+            "mov     r0, %0\n"
+            "mov     r1, %1\n"
+            "movw    r7, #0x2\n"
+            "movt    r7, #0xf\n"
+            "movs    r2, #0x0\n"
+            "svc     0x0\n"
+            "pop     {r7}\n"
+            :
+            : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
+            : "r0", "r1");
+    }
 #elif PLATFORM(SYMBIAN)
     static void cacheFlush(void* code, size_t size)
     {
