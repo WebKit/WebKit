@@ -1,3 +1,16 @@
+2009-10-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] Threading problems with some of the tests
+        https://bugs.webkit.org/show_bug.cgi?id=30814
+
+        Create strings shared among threads with crossThreadString
+        constructor method.
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+
 2009-10-29  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.
