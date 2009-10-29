@@ -185,13 +185,7 @@ static gpointer webkit_accessible_parent_class = NULL;
 
 static AtkObject* webkit_accessible_get_parent(AtkObject* object)
 {
-    // To work around bogus additional objects in the ancestry, we set the
-    // parent when we ref the child. If the child knows its parent, use that.
-    AtkObject* parent = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->get_parent(object);
-    if (parent)
-        return parent;
-
-    AccessibilityObject* coreParent = core(object)->parentObject();
+    AccessibilityObject* coreParent = core(object)->parentObjectUnignored();
 
     // The top level web view claims to not have a parent. This makes it
     // impossible for assistive technologies to ascend the accessible

@@ -1,3 +1,16 @@
+2009-10-28  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30817
+        Use parentObjectUnignored instead of parentObject in webkit_accessible_get_parent
+
+        Also removes the hack I had originally added to solve bug 25411, because
+        the fix here is what I should have done in the first place.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_parent):
+
 2009-10-28  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
