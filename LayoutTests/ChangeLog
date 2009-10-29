@@ -1,3 +1,15 @@
+2009-10-28  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix video-pause-immediately.html to avoid using setTimeout().
+
+        This also addresses the flakiness on Windows, where 200ms was not enough time to advance the clock past zero.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30889
+
+        * media/video-pause-immediately.html: Replace setTimeout() with timeupdate events.
+
 2009-10-28  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Ada Chan.

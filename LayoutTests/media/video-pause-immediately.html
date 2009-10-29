@@ -22,13 +22,15 @@
 
             function playing()
             {
-                setTimeout(pauseVideo, 200);
+                video.addEventListener("timeupdate", timeupdate);
             }
 
-            function pauseVideo()
+            function timeupdate()
             {
-                video.pause();
-                timeAfterPause = video.currentTime;
+                if (video.currentTime > 0) {
+                    video.pause();
+                    timeAfterPause = video.currentTime;
+                }
             }
 
             function pause()
