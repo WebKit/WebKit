@@ -891,6 +891,7 @@
 
             # Use native Mac font code from WebCore.
             ['include', 'platform/(graphics/)?mac/[^/]*Font[^/]*\\.(cpp|mm?)$'],
+            ['include', 'platform/graphics/mac/ComplexText[^/]*\\.(cpp|h)$'],
 
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see

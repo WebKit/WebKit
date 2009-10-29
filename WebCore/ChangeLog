@@ -1,3 +1,11 @@
+2009-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Include ComplextTextController into Chromium Mac project.
+
+        * WebCore.gyp/WebCore.gyp: Added include rule for ComplextText* files.
+
 2009-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Fix tabbing through element attributes in the Web Insector.
