@@ -59,6 +59,9 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
 
+# Failing security tests
+http/tests/security/frame-loading-via-document-write.html
+
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
@@ -153,16 +156,6 @@ http/tests/security/isolatedWorld
 
 # Missing layoutTestController.dumpFrameLoadCallbacks()
 http/tests/security/mixedContent
-
-# Missing layoutTestController.pathToLocalResource()
-http/tests/security/frame-loading-via-document-write.html
-http/tests/security/local-CSS-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
-http/tests/security/local-iFrame-from-remote.html
-http/tests/security/local-image-from-remote.html
-http/tests/security/local-video-poster-from-remote.html
-http/tests/security/local-video-source-from-remote.html
-http/tests/security/local-video-src-from-remote.html
 
 # Missing layoutTestController.setUserStyleSheetLocation() and layoutTestController.setUserStyleSheetEnabled()
 http/tests/security/local-user-CSS-from-remote.html

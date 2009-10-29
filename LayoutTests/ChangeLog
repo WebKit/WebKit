@@ -1,3 +1,11 @@
+2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Adam Roben.
+
+        Remove tests that pass after the change introduced in r50289.
+
+        * platform/qt/Skipped:
+
 2009-10-29  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Steve Falkenburg.
