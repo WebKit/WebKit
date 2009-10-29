@@ -1,3 +1,9 @@
+2009-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Remove some tests that now pass.
+
+        * platform/qt/Skipped:
+
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -126,7 +126,6 @@ fast/forms/input-maxlength-ime-completed.html
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
-fast/loader/frames-with-unload-handlers-in-page-cache.html
 
 # layoutTestController.waitForPolicyDelegate() does not report the origin node
 fast/encoding/mailto-always-utf-8.html
@@ -210,7 +209,6 @@ fast/text/international/japanese-kana-letters.html
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
 editing/execCommand/enabling-and-selection-2.html
-editing/execCommand/italicizeByCharacter.html
 editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html
 editing/input/emacs-ctrl-o.html
@@ -1031,9 +1029,7 @@ storage/domstorage/sessionstorage/iframe-events.html
 storage/change-version.html
 
 # Tests that currently fail but perhaps used to work at some point.
-fast/dom/css-cached-import-rule.html
 fast/dom/open-and-close-by-DOM.html
-fast/dom/HTMLScriptElement/script-load-events.html
 fast/dom/Window/new-window-opener.html
 fast/events/onerror-bubbling.html
 fast/forms/001.html
@@ -1068,12 +1064,10 @@ editing/deleting/smart-delete-004.html
 editing/execCommand/4920488.html
 editing/execCommand/4920742-1.html
 editing/execCommand/create-list-with-hr.html
-editing/execCommand/modifyForeColorByCharacter.html
 editing/execCommand/print.html
 editing/execCommand/remove-formatting-2.html
 editing/execCommand/remove-formatting.html
 editing/execCommand/selectAll.html
-editing/execCommand/strikethroughSelection.html
 editing/inserting/4278698.html
 editing/inserting/editable-html-element.html
 editing/inserting/editing-empty-divs.html
@@ -1110,10 +1104,6 @@ editing/selection/select-line.html
 editing/style/apple-style-editable-mix.html
 editing/style/create-block-for-style-012.html
 editing/style/font-family-with-space.html
-editing/style/remove-underline-across-paragraph-in-bold.html
-editing/style/remove-underline-across-paragraph.html
-editing/style/remove-underline-after-paragraph-in-bold.html
-editing/style/remove-underline-after-paragraph.html
 fast/clip/outline-overflowClip.html
 fast/css-generated-content/012.html
 fast/css-generated-content/hover-style-change.html
@@ -1127,7 +1117,6 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/set-frame-src-while-running-script-in-frame.html
 fast/dom/wrapper-classes.html
 fast/dom/HTMLDocument/hasFocus.html
-fast/dom/Document/CaretRangeFromPoint/basic.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/Range/range-expand.html
 fast/dynamic/move-node-with-selection.html
@@ -1157,7 +1146,6 @@ fast/forms/slider-onchange-event.html
 fast/forms/textarea-rows-cols.html
 fast/forms/textfield-onchange-deletion.html
 fast/frames/onlyCommentInIFrame.html
-fast/history/subframe-is-visited.html
 fast/inline/positionedLifetime.html
 fast/invalid/junk-data.xml
 fast/layers/layer-visibility.html
@@ -1172,7 +1160,6 @@ fast/loader/text-document-wrapping.html
 fast/media/mq-js-stylesheet-media-03.html
 fast/media/mq-js-stylesheet-media-04.html
 fast/overflow/005.html
-fast/parser/empty-text-resource.html
 fast/regex/test1.html
 fast/regex/test4.html
 fast/repaint/inline-outline-repaint.html
@@ -1558,7 +1545,6 @@ css3/css3-modsel-33.html
 css3/css3-modsel-35.html
 css3/css3-modsel-36.html
 css3/css3-modsel-37.html
-dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 dom/xhtml/level3/core/documentgetinputencoding03.xhtml
 dom/xhtml/level3/core/entitygetinputencoding02.xhtml
 dom/xhtml/level3/core/entitygetxmlversion02.xhtml
@@ -2144,7 +2130,6 @@ editing/style/typing-style-001.html
 editing/style/typing-style-002.html
 editing/style/typing-style-003.html
 editing/style/unbold-in-bold.html
-editing/style/underline.html
 editing/undo/4063751.html
 editing/undo/5378473.html
 editing/undo/redo-typing-001.html
@@ -3157,8 +3142,6 @@ fast/multicol/column-rules-stacking.html
 fast/multicol/columns-shorthand-parsing.html
 fast/multicol/float-avoidance.html
 fast/multicol/float-multicol.html
-fast/multicol/negativeColumnWidth.html
-fast/multicol/zeroColumnCount.html
 fast/overflow/001.html
 fast/overflow/002.html
 fast/overflow/004.html
@@ -4792,18 +4775,14 @@ editing/deleting/smart-editing-disabled.html
 editing/execCommand/19089.html
 editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
-editing/pasteboard/copy-crash.html
 editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/paste-plaintext-user-select-none.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/extend-selection-bidi.html
-editing/selection/extend-selection.html
 editing/selection/hit-test-anonymous.html
-editing/selection/home-end.html
 editing/selection/user-drag-element-and-user-select-none.html
 editing/style/apply-through-end-of-document.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
@@ -4853,8 +4832,6 @@ fast/loading/subframe-removes-itself.html
 fast/parser/xml-declaration-missing-ending-mark.html
 fast/replaced/table-percent-height-text-controls.html
 fast/xmlhttprequest/xmlhttprequest-gc.html
-fast/xmlhttprequest/xmlhttprequest-get.xhtml
-fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 platform/qt/fast/events/event-sender-keydown-frame.html
 plugins/netscape-plugin-setwindow-size-2.html
 security/set-form-autocomplete-attribute.html
@@ -4863,7 +4840,6 @@ svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
 svg/dom/length-list-parser.html
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
-transforms/2d/transform-2d.html
 editing/selection/extend-selection-after-double-click.html
 
 # Audio related tests are failing on buildbot
