@@ -1,3 +1,23 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Problem editing or selecting text containing ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=30025
+
+        Test: platform/mac/fast/text/ligature-subdivision.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Initialize
+        m_characterInCurrentGlyph.
+        (WebCore::ComplexTextController::offsetForPosition): If the hit glyph spans multiple
+        characters, compute the hit character based on dividing the glyph’s total advance into
+        a number of equal intervals equal to the number of characters and assigning the hit to the
+        character corresponding to the hit interval.
+        (WebCore::ComplexTextController::advance): If the final offset occurs mid-glyph, advance
+        by a fraction of the glyph’s total advance.
+        * platform/graphics/mac/ComplexTextController.h: Added m_characterInCurrentGlyph.
+
 2009-10-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

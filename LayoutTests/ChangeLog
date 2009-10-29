@@ -1,3 +1,16 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Problem editing or selecting text containing ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=30025
+
+        * platform/mac/fast/text/ligature-subdivision-expected.txt: Added.
+        * platform/mac/fast/text/ligature-subdivision.html: Added.
+        * platform/mac/fast/text/script-tests: Added.
+        * platform/mac/fast/text/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/js/script-tests/TEMPLATE.html.
+        * platform/mac/fast/text/script-tests/ligature-subdivision.js: Added.
+
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Adam Roben.
