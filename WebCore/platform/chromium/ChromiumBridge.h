@@ -140,6 +140,11 @@ namespace WebCore {
         // LayoutTestMode -----------------------------------------------------
         static bool layoutTestMode();
 
+        // Memory -------------------------------------------------------------
+        // Returns the current space allocated for the pagefile, in MB.
+        // That is committed size for Windows and virtual memory size for POSIX
+        static int memoryUsageMB();
+
         // MimeType -----------------------------------------------------------
         static bool isSupportedImageMIMEType(const String& mimeType);
         static bool isSupportedJavaScriptMIMEType(const String& mimeType);
