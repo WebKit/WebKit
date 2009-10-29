@@ -1,3 +1,16 @@
+2009-10-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fast/css/counters/invalidate-cached-counter-node can be dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=30931
+
+        * fast/css/counters/invalidate-cached-counter-node-expected.txt: Added.
+        * fast/css/counters/invalidate-cached-counter-node.html:
+        * platform/mac/fast/css/counters/invalidate-cached-counter-node-expected.checksum: Removed.
+        * platform/mac/fast/css/counters/invalidate-cached-counter-node-expected.png: Removed.
+        * platform/mac/fast/css/counters/invalidate-cached-counter-node-expected.txt: Removed.
+
 2009-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Remove some tests that now pass.
