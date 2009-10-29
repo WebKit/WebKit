@@ -94,6 +94,9 @@ private:
         ComplexTextRun(const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
 
 #if USE(ATSUI)
+#ifdef BUILDING_ON_TIGER
+        typedef UInt32 URefCon;
+#endif
         static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef, URefCon, void*, ATSULayoutOperationCallbackStatus*);
 #endif
 
