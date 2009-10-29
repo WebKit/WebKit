@@ -287,7 +287,7 @@ namespace WebCore {
     int cssPropertyID(const String&);
     int cssValueKeywordID(const CSSParserString&);
 
-    class ShorthandScope {
+    class ShorthandScope : public FastAllocBase {
     public:
         ShorthandScope(CSSParser* parser, int propId) : m_parser(parser)
         {
