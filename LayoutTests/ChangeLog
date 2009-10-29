@@ -1,3 +1,9 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Updated expected result for Tiger
+
+        * platform/mac-tiger/fast/text/international/thai-line-breaks-expected.txt:
+
 2009-10-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Adam Roben.
