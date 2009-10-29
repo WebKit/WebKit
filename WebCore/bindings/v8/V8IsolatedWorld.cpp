@@ -58,6 +58,8 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
 
     v8::HandleScope scope;
     m_context = SharedPersistent<v8::Context>::create(proxy->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
+    if (m_context.IsEmpty())
+        return;
 
     // Run code in the new context.
     v8::Context::Scope context_scope(m_context->get());

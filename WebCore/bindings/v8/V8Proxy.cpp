@@ -282,6 +282,11 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
             world = iter->second;
         } else {
             world = new V8IsolatedWorld(this, extensionGroup);
+            if (world->context().IsEmpty()) {
+                delete world;
+                return;
+            }
+
             m_isolatedWorlds.set(worldID, world);
 
             // Setup context id for JS debugger.
@@ -289,6 +294,10 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
         }
     } else {
         world = new V8IsolatedWorld(this, extensionGroup);
+        if (world->context().IsEmpty()) {
+            delete world;
+            return;
+        }
     }
 
     v8::Local<v8::Context> context = v8::Local<v8::Context>::New(world->context());
@@ -314,6 +323,9 @@ void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int 
     ASSERT(V8DOMWrapper::convertDOMWrapperToNative<DOMWindow>(windowWrapper) == m_frame->domWindow());
 
     v8::Persistent<v8::Context> context = createNewContext(v8::Handle<v8::Object>(), extensionGroup);
+    if (context.IsEmpty())
+        return;
+
     v8::Context::Scope contextScope(context);
 
     // Setup context id for JS debugger.
