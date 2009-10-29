@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,32 +10,24 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "CoreTextController.h"
-
-#if USE(CORE_TEXT)
+#include "ComplexTextController.h"
 
 #include "CharacterNames.h"
 #include "Font.h"
-#include "FontCache.h"
-#include "SimpleFontData.h"
 #include "TextBreakIterator.h"
-#include <wtf/MathExtras.h>
-
-using namespace std;
 
 namespace WebCore {
 
@@ -53,54 +45,7 @@ static inline CGFloat ceilCGFloat(CGFloat f)
     return static_cast<CGFloat>(ceil(f));
 }
 
-CoreTextController::CoreTextRun::CoreTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
-    : m_CTRun(ctRun)
-    , m_fontData(fontData)
-    , m_characters(characters)
-    , m_stringLocation(stringLocation)
-    , m_stringLength(stringLength)
-{
-    m_glyphCount = CTRunGetGlyphCount(ctRun);
-    m_indices = CTRunGetStringIndicesPtr(ctRun);
-    if (!m_indices) {
-        m_indicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
-        CFDataIncreaseLength(m_indicesData.get(), m_glyphCount * sizeof(CFIndex));
-        m_indices = reinterpret_cast<const CFIndex*>(CFDataGetMutableBytePtr(m_indicesData.get()));
-        CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), const_cast<CFIndex*>(m_indices));
-    }
-}
-
-// Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
-// glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-CoreTextController::CoreTextRun::CoreTextRun(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_fontData(fontData)
-    , m_characters(characters)
-    , m_stringLocation(stringLocation)
-    , m_stringLength(stringLength)
-{
-    Vector<CFIndex, 16> indices;
-    unsigned r = 0;
-    while (r < stringLength) {
-        indices.append(r);
-        if (U_IS_SURROGATE(characters[r])) {
-            ASSERT(r + 1 < stringLength);
-            ASSERT(U_IS_SURROGATE_LEAD(characters[r]));
-            ASSERT(U_IS_TRAIL(characters[r + 1]));
-            r += 2;
-        } else
-            r++;
-    }
-    m_glyphCount = indices.size();
-    if (!ltr) {
-        for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
-            std::swap(indices[r], indices[end]);
-    }
-    m_indicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
-    CFDataAppendBytes(m_indicesData.get(), reinterpret_cast<const UInt8*>(indices.data()), m_glyphCount * sizeof(CFIndex));
-    m_indices = reinterpret_cast<const CFIndex*>(CFDataGetBytePtr(m_indicesData.get()));
-}
-
-CoreTextController::CoreTextController(const Font* font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const SimpleFontData*>* fallbackFonts)
+ComplexTextController::ComplexTextController(const Font* font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const SimpleFontData*>* fallbackFonts)
     : m_font(*font)
     , m_run(run)
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
@@ -130,11 +75,11 @@ CoreTextController::CoreTextController(const Font* font, const TextRun& run, boo
             m_padPerSpace = ceilf(m_run.padding() / numSpaces);
     }
 
-    collectCoreTextRuns();
+    collectComplexTextRuns();
     adjustGlyphsAndAdvances();
 }
 
-int CoreTextController::offsetForPosition(int h, bool includePartialGlyphs)
+int ComplexTextController::offsetForPosition(int h, bool includePartialGlyphs)
 {
     // FIXME: For positions occurring within a ligature, we should return the closest "ligature caret" or
     // approximate it by dividing the width of the ligature by the number of characters it encompasses.
@@ -147,17 +92,17 @@ int CoreTextController::offsetForPosition(int h, bool includePartialGlyphs)
 
     CGFloat x = h;
 
-    size_t runCount = m_coreTextRuns.size();
+    size_t runCount = m_complexTextRuns.size();
     size_t offsetIntoAdjustedGlyphs = 0;
 
     for (size_t r = 0; r < runCount; ++r) {
-        const CoreTextRun& coreTextRun = m_coreTextRuns[r];
-        for (unsigned j = 0; j < coreTextRun.glyphCount(); ++j) {
+        const ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
+        for (unsigned j = 0; j < complexTextRun.glyphCount(); ++j) {
             CGFloat adjustedAdvance = m_adjustedAdvances[offsetIntoAdjustedGlyphs + j].width;
             if (x <= adjustedAdvance) {
-                CFIndex hitIndex = coreTextRun.indexAt(j);
-                int stringLength = coreTextRun.stringLength();
-                TextBreakIterator* cursorPositionIterator = cursorMovementIterator(coreTextRun.characters(), stringLength);
+                CFIndex hitIndex = complexTextRun.indexAt(j);
+                int stringLength = complexTextRun.stringLength();
+                TextBreakIterator* cursorPositionIterator = cursorMovementIterator(complexTextRun.characters(), stringLength);
                 int clusterStart;
                 if (isTextBreak(cursorPositionIterator, hitIndex))
                     clusterStart = hitIndex;
@@ -168,45 +113,45 @@ int CoreTextController::offsetForPosition(int h, bool includePartialGlyphs)
                 }
 
                 if (!includePartialGlyphs)
-                    return coreTextRun.stringLocation() + clusterStart;
+                    return complexTextRun.stringLocation() + clusterStart;
 
                 int clusterEnd = textBreakFollowing(cursorPositionIterator, hitIndex);
                 if (clusterEnd == TextBreakDone)
                     clusterEnd = stringLength;
 
                 CGFloat clusterWidth = adjustedAdvance;
-                // FIXME: The search stops at the boundaries of coreTextRun. In theory, it should go on into neighboring CoreTextRuns
+                // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns
                 // derived from the same CTLine. In practice, we do not expect there to be more than one CTRun in a CTLine, as no
                 // reordering and on font fallback should occur within a CTLine.
                 if (clusterEnd - clusterStart > 1) {
                     int firstGlyphBeforeCluster = j - 1;
-                    while (firstGlyphBeforeCluster >= 0 && coreTextRun.indexAt(firstGlyphBeforeCluster) >= clusterStart && coreTextRun.indexAt(firstGlyphBeforeCluster) < clusterEnd) {
+                    while (firstGlyphBeforeCluster >= 0 && complexTextRun.indexAt(firstGlyphBeforeCluster) >= clusterStart && complexTextRun.indexAt(firstGlyphBeforeCluster) < clusterEnd) {
                         CGFloat width = m_adjustedAdvances[offsetIntoAdjustedGlyphs + firstGlyphBeforeCluster].width;
                         clusterWidth += width;
                         x += width;
                         firstGlyphBeforeCluster--;
                     }
                     unsigned firstGlyphAfterCluster = j + 1;
-                    while (firstGlyphAfterCluster < coreTextRun.glyphCount() && coreTextRun.indexAt(firstGlyphAfterCluster) >= clusterStart && coreTextRun.indexAt(firstGlyphAfterCluster) < clusterEnd) {
+                    while (firstGlyphAfterCluster < complexTextRun.glyphCount() && complexTextRun.indexAt(firstGlyphAfterCluster) >= clusterStart && complexTextRun.indexAt(firstGlyphAfterCluster) < clusterEnd) {
                         clusterWidth += m_adjustedAdvances[offsetIntoAdjustedGlyphs + firstGlyphAfterCluster].width;
                         firstGlyphAfterCluster++;
                     }
                 }
                 if (x <= clusterWidth / 2)
-                    return coreTextRun.stringLocation() + (m_run.ltr() ? clusterStart : clusterEnd);
+                    return complexTextRun.stringLocation() + (m_run.ltr() ? clusterStart : clusterEnd);
                 else
-                    return coreTextRun.stringLocation() + (m_run.ltr() ? clusterEnd : clusterStart);
+                    return complexTextRun.stringLocation() + (m_run.ltr() ? clusterEnd : clusterStart);
             }
             x -= adjustedAdvance;
         }
-        offsetIntoAdjustedGlyphs += coreTextRun.glyphCount();
+        offsetIntoAdjustedGlyphs += complexTextRun.glyphCount();
     }
 
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-void CoreTextController::collectCoreTextRuns()
+void ComplexTextController::collectComplexTextRuns()
 {
     if (!m_end)
         return;
@@ -227,7 +172,7 @@ void CoreTextController::collectCoreTextRuns()
     static const UChar hyphen = '-';
 
     if (hasTrailingSoftHyphen && m_run.rtl()) {
-        collectCoreTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
+        collectComplexTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
         indexOfFontTransition--;
         curr--;
     }
@@ -290,7 +235,7 @@ void CoreTextController::collectCoreTextRuns()
         if (nextGlyphData.fontData != glyphData.fontData || nextIsSmallCaps != isSmallCaps || !nextGlyphData.glyph != !glyphData.glyph) {
             int itemStart = m_run.rtl() ? index + 1 : indexOfFontTransition;
             int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
-            collectCoreTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, glyphData.glyph ? glyphData.fontData : 0);
+            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, glyphData.glyph ? glyphData.fontData : 0);
             indexOfFontTransition = index;
         }
     }
@@ -298,14 +243,14 @@ void CoreTextController::collectCoreTextRuns()
     int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : m_end - indexOfFontTransition - (hasTrailingSoftHyphen ? 1 : 0);
     if (itemLength) {
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
-        collectCoreTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextGlyphData.glyph ? nextGlyphData.fontData : 0);
+        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextGlyphData.glyph ? nextGlyphData.fontData : 0);
     }
 
     if (hasTrailingSoftHyphen && m_run.ltr())
-        collectCoreTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
+        collectComplexTextRunsForCharacters(&hyphen, 1, m_end - 1, m_font.glyphDataForCharacter(hyphen, false).fontData);
 }
 
-void CoreTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
+void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 {
     // FIXME: For offsets falling inside a ligature, we should advance only as far as the appropriate "ligature caret"
     // or divide the width of the ligature by the number of offsets it encompasses and make an advance proportional
@@ -319,21 +264,21 @@ void CoreTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
     m_currentCharacter = offset;
 
-    size_t runCount = m_coreTextRuns.size();
+    size_t runCount = m_complexTextRuns.size();
 
     bool ltr = m_run.ltr();
 
     unsigned k = ltr ? m_numGlyphsSoFar : m_adjustedGlyphs.size() - 1 - m_numGlyphsSoFar;
     while (m_currentRun < runCount) {
-        const CoreTextRun& coreTextRun = m_coreTextRuns[ltr ? m_currentRun : runCount - 1 - m_currentRun];
-        size_t glyphCount = coreTextRun.glyphCount();
+        const ComplexTextRun& complexTextRun = *m_complexTextRuns[ltr ? m_currentRun : runCount - 1 - m_currentRun];
+        size_t glyphCount = complexTextRun.glyphCount();
         unsigned g = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
         while (m_glyphInCurrentRun < glyphCount) {
-            if (coreTextRun.indexAt(g) + coreTextRun.stringLocation() >= m_currentCharacter)
+            if (complexTextRun.indexAt(g) + complexTextRun.stringLocation() >= m_currentCharacter)
                 return;
             CGSize adjustedAdvance = m_adjustedAdvances[k];
             if (glyphBuffer)
-                glyphBuffer->add(m_adjustedGlyphs[k], coreTextRun.fontData(), adjustedAdvance);
+                glyphBuffer->add(m_adjustedGlyphs[k], complexTextRun.fontData(), adjustedAdvance);
             m_runWidthSoFar += adjustedAdvance.width;
             m_numGlyphsSoFar++;
             m_glyphInCurrentRun++;
@@ -352,100 +297,35 @@ void CoreTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         m_runWidthSoFar += m_finalRoundingWidth;
 }
 
-void CoreTextController::collectCoreTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
+void ComplexTextController::adjustGlyphsAndAdvances()
 {
-    if (!fontData) {
-        // Create a run of missing glyphs from the primary font.
-        m_coreTextRuns.append(CoreTextRun(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
-        return;
-    }
-
-    if (m_fallbackFonts && fontData != m_font.primaryFont())
-        m_fallbackFonts->add(fontData);
-
-    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(NULL, cp, length, kCFAllocatorNull));
-
-    RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(NULL, string.get(), fontData->getCFStringAttributes(m_font.fontDescription().textRenderingMode())));
-
-    RetainPtr<CTTypesetterRef> typesetter;
-
-    if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
-        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
-        static const void* ltrOptionValues[] = { kCFBooleanFalse };
-        static const void* rtlOptionValues[] = { kCFBooleanTrue };
-        static CFDictionaryRef ltrTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        typesetter.adoptCF(CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
-    } else
-        typesetter.adoptCF(CTTypesetterCreateWithAttributedString(attributedString.get()));
-
-    RetainPtr<CTLineRef> line(AdoptCF, CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
-
-    CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
-
-    CFIndex runCount = CFArrayGetCount(runArray);
-
-    for (CFIndex r = 0; r < runCount; r++) {
-        CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, r));
-        ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
-        m_coreTextRuns.append(CoreTextRun(ctRun, fontData, cp, stringLocation, length));
-    }
-}
-
-void CoreTextController::adjustGlyphsAndAdvances()
-{
-    size_t runCount = m_coreTextRuns.size();
+    size_t runCount = m_complexTextRuns.size();
     for (size_t r = 0; r < runCount; ++r) {
-        const CoreTextRun& coreTextRun = m_coreTextRuns[r];
-        unsigned glyphCount = coreTextRun.glyphCount();
-        const SimpleFontData* fontData = coreTextRun.fontData();
+        const ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
+        unsigned glyphCount = complexTextRun.glyphCount();
+        const SimpleFontData* fontData = complexTextRun.fontData();
 
-        Vector<CGGlyph, 256> glyphsVector;
-        const CGGlyph* glyphs;
-
-        Vector<CGSize, 256> advancesVector;
-        const CGSize* advances;
-
-        if (coreTextRun.ctRun()) {
-            glyphs = CTRunGetGlyphsPtr(coreTextRun.ctRun());
-            if (!glyphs) {
-                glyphsVector.grow(glyphCount);
-                CTRunGetGlyphs(coreTextRun.ctRun(), CFRangeMake(0, 0), glyphsVector.data());
-                glyphs = glyphsVector.data();
-            }
-
-            advances = CTRunGetAdvancesPtr(coreTextRun.ctRun());
-            if (!advances) {
-                advancesVector.grow(glyphCount);
-                CTRunGetAdvances(coreTextRun.ctRun(), CFRangeMake(0, 0), advancesVector.data());
-                advances = advancesVector.data();
-            }
-        } else {
-            // Synthesize a run of missing glyphs.
-            glyphsVector.fill(0, glyphCount);
-            glyphs = glyphsVector.data();
-            advancesVector.fill(CGSizeMake(fontData->widthForGlyph(0), 0), glyphCount);
-            advances = advancesVector.data();
-        }
+        const CGGlyph* glyphs = complexTextRun.glyphs();
+        const CGSize* advances = complexTextRun.advances();
 
         bool lastRun = r + 1 == runCount;
-        const UChar* cp = coreTextRun.characters();
+        const UChar* cp = complexTextRun.characters();
         CGFloat roundedSpaceWidth = roundCGFloat(fontData->spaceWidth());
         bool roundsAdvances = !m_font.isPrinterFont() && fontData->platformData().roundsGlyphAdvances();
         bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_padding) && !m_run.spacingDisabled();
 
 
         for (unsigned i = 0; i < glyphCount; i++) {
-            CFIndex characterIndex = coreTextRun.indexAt(i);
+            CFIndex characterIndex = complexTextRun.indexAt(i);
             UChar ch = *(cp + characterIndex);
             bool lastGlyph = lastRun && i + 1 == glyphCount;
             UChar nextCh;
             if (lastGlyph)
                 nextCh = ' ';
             else if (i + 1 < glyphCount)
-                nextCh = *(cp + coreTextRun.indexAt(i + 1));
+                nextCh = *(cp + complexTextRun.indexAt(i + 1));
             else
-                nextCh = *(m_coreTextRuns[r + 1].characters() + m_coreTextRuns[r + 1].indexAt(0));
+                nextCh = *(m_complexTextRuns[r + 1]->characters() + m_complexTextRuns[r + 1]->indexAt(0));
 
             bool treatAsSpace = Font::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
@@ -533,5 +413,3 @@ void CoreTextController::adjustGlyphsAndAdvances()
 }
 
 } // namespace WebCore
-
-#endif // USE(CORE_TEXT)

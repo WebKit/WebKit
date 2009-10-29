@@ -1,3 +1,77 @@
+2009-10-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Share code between the ATSUI- and Core Text-based Font implementations by doing the
+        following:
+        - Generalize CoreTextController as ComplexTextController, keeping the Core Text-specific
+          parts in ComplexTextControllerCoreText.cpp.
+        - Generalize FontMacCoreText as FontComplexTextMac using ComplexTextController
+        - Implement ATSUI-specific parts of ComplexTextController in ComplexTextControllerATSUI.
+        - Remove FontMacATSUI.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed CoreTextController.{cpp,h}, FontMacATSUI.mm,
+        and FontMacCoreText.cpp, and added ComplexTextController.{cpp,h},
+        ComplexTextControllerATSUI.cpp, ComplexTextControllerCoreText.cpp, and
+        FontComplexTextMac.cpp.
+
+        * platform/graphics/mac/ComplexTextController.cpp: Copied from CoreTextController.cpp and
+        kept the non-Core Text-specific bits.
+        (WebCore::ComplexTextController::ComplexTextController): Updated for renames, including
+        its own.
+        (WebCore::ComplexTextController::offsetForPosition): Updated for renames and for
+        m_complexTextRuns holding references instead of objects.
+        (WebCore::ComplexTextController::collectComplexTextRuns): Updated for renames, including
+        its own.
+        (WebCore::ComplexTextController::advance): Updated for renames.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Updated for renames and for
+        m_complexTextRuns holding references instead of objects, and changed to use the glyphs()
+        and advances() accessors.
+
+        * platform/graphics/mac/ComplexTextController.h: Copied from CoreTextController.h and
+        renamed CoreTextController to ComplexTextController and CoreTextRun to ComplexTextRun. Made
+        the latter RefCounted, added ATSUI-specific members to it, and made some other members
+        Core Text-specific. Renamed m_coreTextRuns to m_complexTextRuns and made it hold references
+        rather than objects.
+        (WebCore::ComplexTextController::ComplexTextRun::create):
+        (WebCore::ComplexTextController::ComplexTextRun::glyphs):
+        (WebCore::ComplexTextController::ComplexTextRun::advances):
+
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp: Added. Includes ATSUI-specific
+        parts of the ComplexTextController implementation. 
+        (WebCore::ComplexTextController::ComplexTextRun::overrideLayoutOperation): This ATSUI
+        callback populates the ComplexTextRun’s glyphs, advances and indices vectors. It is invoked
+        when the ComplexTextRun constructor calls ATSUGetGlyphBounds().
+        (WebCore::isArabicLamWithAlefLigature): Helper function, copied from FontMacATSUI.mm.
+        (WebCore::shapeArabic): Helper function, adapted from FontMacATSUI.mm.
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Sets up the
+        ATSUTextLayout, substituting the text buffer if necessary for things like shaping Arabic,
+        mirroring glyphs or directionality overrides, then calls ATSUGetGlyphBounds() in order to
+        get the glyphs, advances and indices vectors populated.
+        (WebCore::fontHasMirroringInfo): Helper function, copied from FontMacATSUI.mm.
+        (WebCore::disableLigatures): Ditto.
+        (WebCore::initializeATSUStyle): Ditto, somewhat cleaned up and simplified.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Constructs
+        ComplexTextRuns, either missing-glyphs ones or ATSUTextLayout-based ones.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp: Copied from
+        CoreTextController.cpp and kept the Core Text-specific bits.
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Updated for renames,
+        including its own, and moved the code to initialize m_glyphs and m_advances here. Previously
+        this was done in adjustGlyphsAndAdvances().
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Updated for renames,
+        including its own.
+        * platform/graphics/mac/CoreTextController.cpp: Removed.
+        * platform/graphics/mac/CoreTextController.h: Removed.
+        * platform/graphics/mac/FontComplexTextMac.cpp: Renamed FontMacCoreText.cpp to this.
+        (WebCore::Font::selectionRectForComplexText): Changed to use ComplexTextController instead
+        of CoreTextController.
+        (WebCore::Font::drawComplexText): Ditto.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Ditto.
+        * platform/graphics/mac/FontMacATSUI.mm: Removed.
+        * platform/graphics/mac/FontMacCoreText.cpp: Removed.
+
 2009-10-27  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
