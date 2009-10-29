@@ -1,3 +1,10 @@
+2009-10-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Fixes style problems pointed out by Evan Martin.
+
+        * platform/gtk/Language.cpp:
+        (WebCore::defaultLanguage):
+
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

@@ -43,12 +43,12 @@ String defaultLanguage()
     GOwnPtr<gchar> normalizedDefault(g_ascii_strdown(localeDefault, -1));
     char* ptr = strchr(normalizedDefault.get(), '_');
 
-    if(ptr)
+    if (ptr)
         *ptr = '-';
 
     ptr = strchr(normalizedDefault.get(), '.');
 
-    if(ptr)
+    if (ptr)
         *ptr = '\0';
 
     return String(normalizedDefault.get());
