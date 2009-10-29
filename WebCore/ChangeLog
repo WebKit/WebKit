@@ -1,3 +1,13 @@
+2009-10-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30899
+        WebKit fails to build release on 32-bit Windows systems
+
+        * WebCore.vcproj/WebCore.vcproj: Excluded files from project.
+        * bindings/js/JSBindingsAllInOne.cpp: Added.
+
 2009-10-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt.
