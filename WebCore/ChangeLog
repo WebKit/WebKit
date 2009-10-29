@@ -1,3 +1,16 @@
+2009-10-29  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for WebCore's AXObjectCache
+        https://bugs.webkit.org/show_bug.cgi?id=30848
+
+        Inherits AXObjectCache class from FastAllocBase because it is
+        instantiated by 'new' in WebCore/dom/Document.cpp:1537 and                                
+        it is no need to be copyable.
+
+        * accessibility/AXObjectCache.h:
+
 2009-10-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
