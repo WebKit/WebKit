@@ -1,3 +1,17 @@
+2009-10-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix Web Inspector crash on the errors/warnings counter click
+
+        RenderObject::createVisiblePosition(const Position& position)
+        understands "null Positions", so we can construct such a Position manually.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30499
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+
 2009-10-30  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
