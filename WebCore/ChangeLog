@@ -1,3 +1,14 @@
+2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        If the owner widget of the page has a palette set, we
+        should use that one. This was only working when the
+        owner was a QWebView. This patch fixes that.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::applyTheme):
+
 2009-10-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Wire CookieJarChromium to the cookies
