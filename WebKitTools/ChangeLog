@@ -2,6 +2,20 @@
 
         Unreviewed potential buildbot fix.
 
+        Second try: Reset page history before running each test.
+
+        Apparently the QWebHistory::clear() keeps the current page
+        in history which is not what we want, so we not additionally
+        sets the history capacity to 0 (forces removing everything)
+        and then sets it back to its original value.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
+2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed potential buildbot fix.
+
         Reset page history before running each test.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
