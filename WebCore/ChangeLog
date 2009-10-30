@@ -1,3 +1,11 @@
+2009-10-30  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+        Add some comments to explain what is happening here.
+
 2009-10-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
