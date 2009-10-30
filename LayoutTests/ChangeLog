@@ -1,5 +1,12 @@
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
+        Updated Tiger-specific result now that Tiger matches current behavior. A Tiger-specific
+        result is still needed because of the difference in Thai fonts.
+
+        * platform/mac-tiger/fast/text/atsui-multiple-renderers-expected.txt:
+
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         Updated a test to account for font metric differences between Mac OS X versions. Removed
