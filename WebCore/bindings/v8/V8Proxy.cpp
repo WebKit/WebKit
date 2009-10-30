@@ -207,7 +207,6 @@ static void reportFatalErrorInV8(const char* location, const char* message)
 
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
-    , m_listenerGuard(V8ListenerGuard::create())
     , m_inlineCode(false)
     , m_timerCallback(false)
     , m_recursion(0)
@@ -609,7 +608,6 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
 
 void V8Proxy::disconnectFrame()
 {
-    disconnectEventListeners();
 }
 
 bool V8Proxy::isEnabled()
@@ -744,12 +742,6 @@ void V8Proxy::releaseStorageMutex()
         page->group().localStorage()->unlock();
 }
 
-void V8Proxy::disconnectEventListeners()
-{
-    m_listenerGuard->disconnectListeners();
-    m_listenerGuard = V8ListenerGuard::create();
-}
-    
 void V8Proxy::resetIsolatedWorlds()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
@@ -773,7 +765,6 @@ void V8Proxy::clearForClose()
 
 void V8Proxy::clearForNavigation()
 {
-    disconnectEventListeners();
     resetIsolatedWorlds();
 
     if (!m_context.IsEmpty()) {

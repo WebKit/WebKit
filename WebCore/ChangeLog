@@ -1,3 +1,44 @@
+2009-10-30  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] More cleanup after r49949: remove ListenerGuard.
+        ListenerGuard is no longer needed since EventListeners do not depend on frame or v8 context.
+        https://bugs.webkit.org/show_bug.cgi?id=30943
+
+        Covered by fast/events/add-event-without-document.html which will now pass in Chromium.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::handleEvent):
+        * bindings/v8/V8AbstractEventListener.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getEventListener):
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findOrCreateWrapper):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::disconnectFrame):
+        (WebCore::V8Proxy::clearForNavigation):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::V8WorkerContextEventListener):
+        (WebCore::V8WorkerContextEventListener::handleEvent):
+        (WebCore::V8WorkerContextEventListener::reportError):
+        * bindings/v8/V8WorkerContextEventListener.h:
+        (WebCore::V8WorkerContextEventListener::create):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::dispose):
+        (WebCore::WorkerContextExecutionProxy::findOrCreateEventListener):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+        * bindings/v8/custom/V8CustomEventListener.h:
+        (WebCore::V8EventListener::create):
+
 2009-10-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

@@ -44,16 +44,16 @@ namespace WebCore {
 
     class V8WorkerContextEventListener : public V8EventListener {
     public:
-        static PassRefPtr<V8WorkerContextEventListener> create(PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isInline)
+        static PassRefPtr<V8WorkerContextEventListener> create(v8::Local<v8::Object> listener, bool isInline)
         {
-            return adoptRef(new V8WorkerContextEventListener(guard, listener, isInline));
+            return adoptRef(new V8WorkerContextEventListener(listener, isInline));
         }
 
         virtual void handleEvent(ScriptExecutionContext*, Event*);
         virtual bool reportError(ScriptExecutionContext*, const String& message, const String& url, int lineNumber);
 
     private:
-        V8WorkerContextEventListener(PassRefPtr<V8ListenerGuard>, v8::Local<v8::Object> listener, bool isInline);
+        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline);
 
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
         v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);

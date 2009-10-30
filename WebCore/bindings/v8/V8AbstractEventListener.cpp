@@ -50,11 +50,10 @@ static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter
     listener->disposeListenerObject();
 }
 
-V8AbstractEventListener::V8AbstractEventListener(PassRefPtr<V8ListenerGuard> guard, bool isAttribute)
+V8AbstractEventListener::V8AbstractEventListener(bool isAttribute)
     : EventListener(JSEventListenerType)
     , m_isWeak(true)
     , m_isAttribute(isAttribute)
-    , m_guard(guard)
 {
 }
 
@@ -70,10 +69,6 @@ V8AbstractEventListener::~V8AbstractEventListener()
 
 void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)
 {
-    // EventListener could be disconnected from the frame.
-    if (disconnected())
-        return;
-
     // The callback function on XMLHttpRequest can clear the event listener and destroys 'this' object. Keep a local reference to it.
     // See issue 889829.
     RefPtr<V8AbstractEventListener> protect(this);
