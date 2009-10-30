@@ -1,3 +1,16 @@
+2009-10-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        counterValueForElementById should return space-separated string for multiple counters
+        https://bugs.webkit.org/show_bug.cgi?id=30939
+
+        Test: fast/css/counters/counterValueForElementById.html
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeCounterValuesFromChildren):
+        (WebCore::counterValueForElement):
+
 2009-10-30  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.
