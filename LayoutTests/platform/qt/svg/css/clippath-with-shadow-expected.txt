@@ -1,0 +1,8 @@
+KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M 0 0L 200 0L 200 200L 0 200L 0 0]]]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 400x200
+    RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0L 200 0L 200 200L 0 200L 0 0"]
+    RenderPath {rect} at (0,0) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-200.00,0.00)}] [data="M 200 0L 400 0L 400 200L 200 200L 200 0"]
+    RenderPath {rect} at (0,0) size 400x200 [fill={[type=SOLID] [color=#008000]}] [clip path="clip"] [data="M 0 0L 400 0L 400 200L 0 200L 0 0"]

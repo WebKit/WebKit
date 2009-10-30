@@ -1,3 +1,19 @@
+2009-10-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        [Qt] Add expected files for new svg tests we pass.
+        Compared to the Mac expected png files.
+
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt: Added.
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt: Added.
+        * platform/qt/svg/css/mask-with-shadow-expected.txt: Added.
+        * platform/qt/svg/css/path-with-shadow-expected.txt: Added.
+        * platform/qt/svg/css/stars-with-shadow-expected.txt: Added.
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt: Added.
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt: Added.
+
 2009-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (200,200) size 300x300
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (200,200) size 300x300 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M 200 200L 500 200L 500 500L 200 500L 200 200"]
