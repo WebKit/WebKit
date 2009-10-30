@@ -1238,6 +1238,20 @@ static gint cellIndex(AccessibilityTableCell* AXCell, AccessibilityTable* AXTabl
     return position - allCells.begin();
 }
 
+static AccessibilityTableCell* cellAtIndex(AtkTable* table, gint index)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject()) {
+        AccessibilityObject::AccessibilityChildrenVector allCells;
+        static_cast<AccessibilityTable*>(accTable)->cells(allCells);
+        if (0 <= index && static_cast<unsigned>(index) < allCells.size()) {
+            AccessibilityObject* accCell = allCells.at(index).get();
+            return static_cast<AccessibilityTableCell*>(accCell);
+        }
+    }
+    return 0;
+}
+
 static AtkObject* webkit_accessible_table_ref_at(AtkTable* table, gint row, gint column)
 {
     AccessibilityTableCell* AXCell = cell(table, row, column);
@@ -1251,6 +1265,28 @@ static gint webkit_accessible_table_get_index_at(AtkTable* table, gint row, gint
     AccessibilityTableCell* AXCell = cell(table, row, column);
     AccessibilityTable* AXTable = static_cast<AccessibilityTable*>(core(table));
     return cellIndex(AXCell, AXTable);
+}
+
+static gint webkit_accessible_table_get_column_at_index(AtkTable* table, gint index)
+{
+    AccessibilityTableCell* axCell = cellAtIndex(table, index);
+    if (axCell){
+        pair<int, int> columnRange;
+        axCell->columnIndexRange(columnRange);
+        return columnRange.first;
+    }
+    return -1;
+}
+
+static gint webkit_accessible_table_get_row_at_index(AtkTable* table, gint index)
+{
+    AccessibilityTableCell* axCell = cellAtIndex(table, index);
+    if (axCell){
+        pair<int, int> rowRange;
+        axCell->rowIndexRange(rowRange);
+        return rowRange.first;
+    }
+    return -1;
 }
 
 static gint webkit_accessible_table_get_n_columns(AtkTable* table)
@@ -1308,15 +1344,32 @@ static AtkObject* webkit_accessible_table_get_row_header(AtkTable* table, gint r
     return 0;
 }
 
+static AtkObject* webkit_accessible_table_get_caption(AtkTable* table)
+{
+    AccessibilityObject* accTable = core(table);
+    if (accTable->isAccessibilityRenderObject()) {
+        Node* node = static_cast<AccessibilityRenderObject*>(accTable)->renderer()->node();
+        if (node && node->hasTagName(HTMLNames::tableTag)) {
+            HTMLTableCaptionElement* caption = static_cast<HTMLTableElement*>(node)->caption();
+            if (caption)
+                return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->node())->wrapper();
+        }
+    }
+    return 0;
+}
+
 static void atk_table_interface_init(AtkTableIface* iface)
 {
     iface->ref_at = webkit_accessible_table_ref_at;
     iface->get_index_at = webkit_accessible_table_get_index_at;
+    iface->get_column_at_index = webkit_accessible_table_get_column_at_index;
+    iface->get_row_at_index = webkit_accessible_table_get_row_at_index;
     iface->get_n_columns = webkit_accessible_table_get_n_columns;
     iface->get_n_rows = webkit_accessible_table_get_n_rows;
     iface->get_column_extent_at = webkit_accessible_table_get_column_extent_at;
     iface->get_row_extent_at = webkit_accessible_table_get_row_extent_at;
     iface->get_row_header = webkit_accessible_table_get_row_header;
+    iface->get_caption = webkit_accessible_table_get_caption;
 }
 
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
