@@ -65,7 +65,7 @@ class StyleSheetList;
 class StyledElement;
 class WebKitCSSKeyframesRule;
 
-class MediaQueryResult {
+class MediaQueryResult : public Noncopyable {
 public:
     MediaQueryResult(const MediaQueryExp& expr, bool result)
         : m_expression(expr)
