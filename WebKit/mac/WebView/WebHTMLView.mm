@@ -2666,7 +2666,10 @@ WEBCORE_COMMAND(yankAndSelect)
     
     if (action == @selector(_lookUpInDictionaryFromMenu:))
         return [self _hasSelection];
-    
+
+    if (action == @selector(stopSpeaking:))
+        return [NSApp isSpeaking];
+
 #ifndef BUILDING_ON_TIGER
     if (action == @selector(toggleGrammarChecking:)) {
         // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 

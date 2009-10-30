@@ -1,3 +1,12 @@
+2009-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Validate the stopSpeaking: selector so that is not always enabled when a WebView is first responder.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+
 2009-10-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
