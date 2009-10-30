@@ -651,7 +651,6 @@ class CheckTreeStatus(Command):
 class LandPatchesFromCommitQueue(Command):
     def __init__(self):
         options = [
-            make_option("--is-relaunch", action="store_true", dest="is_relaunch", default=False, help="Internal: Used by the queue to indicate that it's relaunching itself."),
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
         ]
@@ -683,25 +682,16 @@ class LandPatchesFromCommitQueue(Command):
         wake_time = datetime.now() + timedelta(seconds=cls.seconds_to_sleep)
         return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(cls.log_date_format), cls.sleep_duration_text)
 
-    def _sleep(self, message):
-        log(self._sleep_message(message))
-        time.sleep(self.seconds_to_sleep)
-        self._next_patch()
+    @classmethod
+    def _sleep(cls, message):
+        log(cls._sleep_message(message))
+        time.sleep(cls.seconds_to_sleep)
 
     def _update_status_and_sleep(self, message):
         status_message = self._sleep_message(message)
         self.status_bot.update_status(status_message)
         log(status_message)
         time.sleep(self.seconds_to_sleep)
-        self._next_patch()
-
-    def _next_patch(self):
-        # Re-exec this script to catch any updates to the script.
-        # Make sure that the re-execed commit-queue does not wait for the user.
-        args = sys.argv[:]
-        if args.count("--is-relaunch") == 0:
-            args.append("--is-relaunch")
-        os.execvp(sys.argv[0], args)
 
     @staticmethod
     def _open_log_file(log_path):
@@ -722,55 +712,58 @@ class LandPatchesFromCommitQueue(Command):
         log_file.close()
 
     def execute(self, options, args, tool):
-        if not options.is_relaunch:
-            log("CAUTION: commit-queue will discard all local changes in %s" % tool.scm().checkout_root)
-            if options.confirm:
-                response = raw_input("Are you sure?  Type 'yes' to continue: ")
-                if (response != 'yes'):
-                    error("User declined.")
+        log("CAUTION: commit-queue will discard all local changes in %s" % tool.scm().checkout_root)
+        if options.confirm:
+            response = raw_input("Are you sure?  Type 'yes' to continue: ")
+            if (response != 'yes'):
+                error("User declined.")
 
         queue_log = self._add_log_to_output_tee(self.queue_log_path)
-        if not options.is_relaunch:
-            log("Running WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))
+        log("Running WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))
 
         self.status_bot = StatusBot(host=options.status_host)
 
-        # Either of these calls could throw URLError which shouldn't stop the queue.
-        # We catch all exceptions just in case.
-        try:
-            # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
-            patches = tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
-            if not len(patches):
-                self._update_status_and_sleep("Empty queue.")
-            patch_ids = map(lambda patch: patch['id'], patches)
-            first_bug_id = patches[0]['bug_id']
-            log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
+        while (True):
+            # Either of these calls could throw URLError which shouldn't stop the queue.
+            # We catch all exceptions just in case.
+            try:
+                # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
+                patches = tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+                if not len(patches):
+                    self._update_status_and_sleep("Empty queue.")
+                    continue
+                patch_ids = map(lambda patch: patch['id'], patches)
+                first_bug_id = patches[0]['bug_id']
+                log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
 
-            red_builders_names = tool.buildbot.red_core_builders_names()
-            if red_builders_names:
-                red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
-                self._update_status_and_sleep("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names))
+                red_builders_names = tool.buildbot.red_core_builders_names()
+                if red_builders_names:
+                    red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
+                    self._update_status_and_sleep("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names))
+                    continue
 
-            self.status_bot.update_status("Landing patches from bug %s." % first_bug_id, bug_id=first_bug_id)
-        except Exception, e:
-            # Don't try tell the status bot, in case telling it causes an exception.
-            self._sleep("Exception while checking queue and bots: %s." % e)
+                self.status_bot.update_status("Landing patches from bug %s." % first_bug_id, bug_id=first_bug_id)
+            except Exception, e:
+                # Don't try tell the status bot, in case telling it causes an exception.
+                self._sleep("Exception while checking queue and bots: %s." % e)
+                continue
 
-        # Try to land patches on the first bug in the queue before looping
-        bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % first_bug_id)
-        bug_log = self._add_log_to_output_tee(bug_log_path)
-        bugzilla_tool_path = __file__ # re-execute this script
-        bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id]
-        try:
-            WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
-        except ScriptError, e:
-            # Unexpected failure!  Mark the patch as commit-queue- and comment in the bug.
-            # exit(2) is a special exit code we use to indicate that the error was already handled by land-patches and we should keep looping anyway.
-            if e.exit_code != 2:
-                tool.bugs.reject_patch_from_commit_queue(patch['id'], "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output())
-        self._remove_log_from_output_tee(bug_log)
-        # self._remove_log_from_output_tee(queue_log) # implicit in the exec()
-        self._next_patch()
+            # Try to land patches on the first bug in the queue before looping
+            bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % first_bug_id)
+            bug_log = self._add_log_to_output_tee(bug_log_path)
+            bugzilla_tool_path = __file__ # re-execute this script
+            bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id]
+            try:
+                WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
+            except ScriptError, e:
+                # Unexpected failure!  Mark the patch as commit-queue- and comment in the bug.
+                # exit(2) is a special exit code we use to indicate that the error was already handled by land-patches and we should keep looping anyway.
+                if e.exit_code != 2:
+                    tool.bugs.reject_patch_from_commit_queue(patch['id'], "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output())
+            self._remove_log_from_output_tee(bug_log)
+
+        log("Finished WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))
+        self._remove_log_from_output_tee(queue_log)
 
 
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
