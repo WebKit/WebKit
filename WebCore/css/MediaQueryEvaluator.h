@@ -49,7 +49,7 @@ class MediaQueryExp;
  * the device characteristics are not known. This can be used to prune the loading
  * of stylesheets to only those which are probable to match.
  */
-class MediaQueryEvaluator {
+class MediaQueryEvaluator : public Noncopyable {
 public:
     /** Creates evaluator which evaluates only simple media queries
      *  Evaluator returns true for "all", and returns value of \mediaFeatureResult
