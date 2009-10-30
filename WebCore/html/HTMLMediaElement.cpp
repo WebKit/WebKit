@@ -582,11 +582,10 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         startProgressEventTimer();
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    m_player.clear();
-    m_player.set(new MediaPlayer(this));
+    m_player = MediaPlayer::create(this);
 #else
     if (!m_player)
-        m_player.set(new MediaPlayer(this));
+        m_player = MediaPlayer::create(this);
 #endif
 
     m_player->setPreservesPitch(m_webkitPreservesPitch);
@@ -1784,7 +1783,7 @@ void HTMLMediaElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
     if (!m_player)
-        m_player.set(new MediaPlayer(this));
+        m_player = MediaPlayer::create(this);
     
     document()->updateStyleIfNeeded();
     if (m_needWidgetUpdate && renderer())

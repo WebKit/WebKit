@@ -1,3 +1,17 @@
+2009-10-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make MediaPlayer constructor private
+        https://bugs.webkit.org/show_bug.cgi?id=30965
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): 
+        (WebCore::HTMLMediaElement::finishParsingChildren): Use MediaPlayer::create.
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::create): New.
+
 2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility of headings is not correct
