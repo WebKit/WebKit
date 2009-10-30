@@ -350,7 +350,7 @@ if (id == propID) { \
     return; \
 }
 
-class CSSRuleSet {
+class CSSRuleSet : public Noncopyable {
 public:
     CSSRuleSet();
     ~CSSRuleSet();

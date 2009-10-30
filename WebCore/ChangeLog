@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's CSSRuleSet
+        https://bugs.webkit.org/show_bug.cgi?id=30852
+
+        Inherits CSSRuleSet class from Noncopyable because it is
+        instantiated by 'new' in WebCore/css/CSSStyleSelector.cpp:455 and
+        it is no need to be copyable.
+
+        * css/CSSStyleSelector.cpp:
+
+2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's CSSRuleData
         https://bugs.webkit.org/show_bug.cgi?id=30851
 
