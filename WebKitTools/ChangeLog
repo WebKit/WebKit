@@ -1,3 +1,14 @@
+2009-10-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch v1 is a dumb default name for patches
+        https://bugs.webkit.org/show_bug.cgi?id=30952
+
+        Let's use "Patch" instead.
+
+        * Scripts/bugzilla-tool:
+
 2009-10-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Unreviewed trivial buildfix.

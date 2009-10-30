@@ -448,7 +448,7 @@ class PostDiffAsPatchToBug(Command):
         diff = tool.scm().create_patch()
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
 
-        description = options.description or "Patch v1"
+        description = options.description or "Patch"
         tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
@@ -590,7 +590,7 @@ class CreateBug(Command):
 
         diff = tool.scm().create_patch_from_local_commit(commit_id)
         diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
         if bug_id and len(commit_ids) > 1:
             options.bug_id = bug_id
@@ -610,7 +610,7 @@ class CreateBug(Command):
 
         diff = tool.scm().create_patch()
         diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = raw_input("Bug title: ")
