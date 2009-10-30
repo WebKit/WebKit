@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-    struct CSSNamespace {
+    struct CSSNamespace : Noncopyable {
         AtomicString m_prefix;
         AtomicString m_uri;
         CSSNamespace* m_parent;
