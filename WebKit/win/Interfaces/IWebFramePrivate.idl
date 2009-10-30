@@ -57,7 +57,6 @@ typedef enum {
 interface IWebFramePrivate : IUnknown
 {
     HRESULT renderTreeAsExternalRepresentation([out, retval] BSTR* result);
-    HRESULT counterValueForElementById([in] BSTR id, [out, retval] BSTR* result);
     HRESULT scrollOffset([out, retval] SIZE* offset);
 
     // FIXME: This shouldn't be needed once IWebDocumentView is implemented.
@@ -98,4 +97,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT stringByEvaluatingJavaScriptInIsolatedWorld([in] unsigned worldID, [in] OLE_HANDLE jsGlobalObject, [in] BSTR script, [out, retval] BSTR* result);
 
     [local] JSGlobalContextRef contextForWorldID([in] unsigned worldID);
+
+    HRESULT counterValueForElementById([in] BSTR id, [out, retval] BSTR* result);
 }

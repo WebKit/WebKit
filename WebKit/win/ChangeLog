@@ -1,3 +1,13 @@
+2009-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        <http://webkit.org/b/30938> REGRESSION(r50233): Windows nightlies crash on launch due to changes
+        to IWebFramePrivate vtable ordering
+
+        * Interfaces/IWebFramePrivate.idl: Move the newly-added method to the end of the interface so that
+        it doesn't affect the ordering of the vtable.
+
 2009-10-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam "Horatio" Weinig.
