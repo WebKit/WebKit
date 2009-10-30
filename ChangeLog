@@ -1,3 +1,17 @@
+2009-10-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Teach git to ignore some files
+        https://bugs.webkit.org/show_bug.cgi?id=30951
+
+        Ignore WebKitBuild because we never want to version that directory.
+        Also, ignore the xcode project files so git clean doesn't blow away
+        your project settings.  Finally, ignore the compiled python files in
+        WebKitTools/Script modules because they clutter up git status.
+
+        * .gitignore: Added.
+
 2009-10-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

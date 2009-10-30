@@ -1,0 +1,6 @@
+*.mode*
+*.pbxuser
+*.perspective*
+*.pyc
+build/
+/WebKitBuild/
