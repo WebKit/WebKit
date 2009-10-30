@@ -616,10 +616,6 @@ ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO=1
 endif
 
-ifeq ($(findstring ENABLE_RUBY,$(FEATURE_DEFINES)), ENABLE_RUBY)
-    HTML_FLAGS := $(HTML_FLAGS) ENABLE_RUBY=1
-endif
-
 ifdef HTML_FLAGS
 
 HTMLElementFactory.cpp HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in

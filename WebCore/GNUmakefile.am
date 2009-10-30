@@ -2349,16 +2349,6 @@ webcore_libadd += \
 endif # END ENABLE_VIDEO
 
 # ----
-# Ruby Support
-# ----
-if ENABLE_RUBY
-
-HTML_FEATURES += ENABLE_RUBY=1
-webcore_cppflags += -DENABLE_RUBY=1
-
-endif # END ENABLE_RUBY
-
-# ----
 # XPath Support
 # ----
 if ENABLE_XPATH
