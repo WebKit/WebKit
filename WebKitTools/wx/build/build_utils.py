@@ -176,7 +176,7 @@ def get_config(wk_root):
     return config
 
 def svn_revision():
-    if os.system("git info") == 0:
+    if os.system("git-svn info") == 0:
         info = commands.getoutput("git-svn info ../..")
     else:
         info = commands.getoutput("svn info")

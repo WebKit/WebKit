@@ -1,3 +1,9 @@
+2009-10-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Fix typo in command name used by wx build system.
+
+        * wx/build/build_utils.py:
+
 2009-10-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
