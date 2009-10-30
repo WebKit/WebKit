@@ -1,3 +1,15 @@
+2009-10-29  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add expected files for GTK and QT builds, for test text-input-webkit-radius.html
+        Expected fils collected from buildbot:
+        http://build.webkit.org/results/Qt%20Linux%20Release/r50286%20(3257)/fast/css/
+        http://build.webkit.org/results/GTK%20Linux%20Release/r50286%20(5308)/fast/css/
+
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt: Added.
+        * platform/qt/fast/css/text-input-with-webkit-border-radius-expected.txt: Added.
+
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
         Updated Tiger-specific result now that Tiger matches current behavior. A Tiger-specific
