@@ -926,6 +926,11 @@ WebInspector.showScriptsPanel = function()
     this.currentPanel = this.panels.scripts;
 }
 
+WebInspector.showTimelinePanel = function()
+{
+    this.currentPanel = this.panels.timeline;
+}
+
 WebInspector.showProfilesPanel = function()
 {
     this.currentPanel = this.panels.profiles;

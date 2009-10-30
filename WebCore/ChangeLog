@@ -1,3 +1,16 @@
+2009-10-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Add TimelinePanel into the panels enum.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30915
+
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::showPanel):
+        * inspector/front-end/inspector.js:
+        (WebInspector.showTimelinePanel):
+
 2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Holger Hans Peter Freyther.

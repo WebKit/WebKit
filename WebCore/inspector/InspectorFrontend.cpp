@@ -163,14 +163,17 @@ void InspectorFrontend::showPanel(int panel)
         case InspectorController::ElementsPanel:
             showFunctionName = "showElementsPanel";
             break;
-        case InspectorController::ProfilesPanel:
-            showFunctionName = "showProfilesPanel";
-            break;
         case InspectorController::ResourcesPanel:
             showFunctionName = "showResourcesPanel";
             break;
         case InspectorController::ScriptsPanel:
             showFunctionName = "showScriptsPanel";
+            break;
+        case InspectorController::TimelinePanel:
+            showFunctionName = "showTimelinePanel";
+            break;
+        case InspectorController::ProfilesPanel:
+            showFunctionName = "showProfilesPanel";
             break;
         case InspectorController::StoragePanel:
             showFunctionName = "showStoragePanel";
