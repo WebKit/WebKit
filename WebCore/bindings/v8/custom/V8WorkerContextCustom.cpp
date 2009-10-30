@@ -100,8 +100,13 @@ CALLBACK_FUNC_DECL(WorkerContextImportScripts)
     if (!args.Length())
         return v8::Undefined();
 
-    String callerURL = V8Proxy::sourceName();
-    int callerLine = V8Proxy::sourceLineNumber() + 1;
+    String callerURL;
+    if (!V8Proxy::sourceName(callerURL))
+        return v8::Undefined();
+    int callerLine;
+    if (!V8Proxy::sourceLineNumber(callerLine))
+        return v8::Undefined();
+    callerLine += 1;
 
     Vector<String> urls;
     for (int i = 0; i < args.Length(); i++) {

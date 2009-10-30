@@ -884,7 +884,10 @@ END
     }
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-        push(@implContentDecls, "    ScriptCallStack callStack(args, $numParameters);\n");
+        push(@implContentDecls,
+"    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, $numParameters));\n".
+"    if (!callStack)\n".
+"        return v8::Undefined();\n");
         $implIncludes{"ScriptCallStack.h"} = 1;
     }
     if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
@@ -1528,7 +1531,7 @@ sub GenerateFunctionCallString()
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         $functionString .= ", " if not $first;
-        $functionString .= "&callStack";
+        $functionString .= "callStack.get()";
         if ($first) { $first = 0; }
     }
 

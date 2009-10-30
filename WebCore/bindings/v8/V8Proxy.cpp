@@ -1286,35 +1286,40 @@ void V8Proxy::createUtilityContext()
     v8::Script::Compile(v8::String::New(frameSourceNameSource))->Run();
 }
 
-int V8Proxy::sourceLineNumber()
+bool V8Proxy::sourceLineNumber(int& result)
 {
     v8::HandleScope scope;
     v8::Handle<v8::Context> v8UtilityContext = V8Proxy::utilityContext();
     if (v8UtilityContext.IsEmpty())
-        return 0;
+        return false;
     v8::Context::Scope contextScope(v8UtilityContext);
     v8::Handle<v8::Function> frameSourceLine;
     frameSourceLine = v8::Local<v8::Function>::Cast(v8UtilityContext->Global()->Get(v8::String::New("frameSourceLine")));
     if (frameSourceLine.IsEmpty())
-        return 0;
-    v8::Handle<v8::Value> result = v8::Debug::Call(frameSourceLine);
-    if (result.IsEmpty())
-        return 0;
-    return result->Int32Value();
+        return false;
+    v8::Handle<v8::Value> value = v8::Debug::Call(frameSourceLine);
+    if (value.IsEmpty())
+        return false;
+    result = value->Int32Value();
+    return true;
 }
 
-String V8Proxy::sourceName()
+bool V8Proxy::sourceName(String& result)
 {
     v8::HandleScope scope;
     v8::Handle<v8::Context> v8UtilityContext = utilityContext();
     if (v8UtilityContext.IsEmpty())
-        return String();
+        return false;
     v8::Context::Scope contextScope(v8UtilityContext);
     v8::Handle<v8::Function> frameSourceName;
     frameSourceName = v8::Local<v8::Function>::Cast(v8UtilityContext->Global()->Get(v8::String::New("frameSourceName")));
     if (frameSourceName.IsEmpty())
-        return String();
-    return toWebCoreString(v8::Debug::Call(frameSourceName));
+        return false;
+    v8::Handle<v8::Value> value = v8::Debug::Call(frameSourceName);
+    if (value.IsEmpty())
+        return false;
+    result = toWebCoreString(value);
+    return true;
 }
 
 void V8Proxy::registerExtensionWithV8(v8::Extension* extension)

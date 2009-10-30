@@ -45,7 +45,7 @@ namespace WebCore {
 
     class ScriptCallStack : public Noncopyable {
     public:
-        ScriptCallStack(const v8::Arguments&, unsigned skipArgumentCount = 0);
+        static ScriptCallStack* create(const v8::Arguments&, unsigned skipArgumentCount = 0);
         ~ScriptCallStack();
 
         const ScriptCallFrame& at(unsigned) const;
@@ -55,6 +55,8 @@ namespace WebCore {
         ScriptState* state() const { return m_scriptState.get(); }
 
     private:
+        ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber);
+    
         ScriptCallFrame m_lastCaller;
         OwnPtr<ScriptState> m_scriptState;
     };
