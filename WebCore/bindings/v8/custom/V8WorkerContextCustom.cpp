@@ -34,7 +34,7 @@
 
 #include "DOMTimer.h"
 #include "ExceptionCode.h"
-#include "NotificationCenter.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -49,7 +49,7 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
 ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications)
 {
-    return NotificationCenter::isAvailable();
+    return RuntimeEnabledFeatures::notificationsEnabled();
 }
 #endif
 

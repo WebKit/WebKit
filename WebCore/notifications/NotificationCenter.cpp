@@ -40,20 +40,6 @@
 
 namespace WebCore {
 
-#if USE(V8)
-static bool notificationCenterAvailable = false;
-
-void NotificationCenter::setIsAvailable(bool available)
-{
-    notificationCenterAvailable = available;
-}
-
-bool NotificationCenter::isAvailable()
-{
-    return notificationCenterAvailable;
-}
-#endif
-
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter) 
     : ActiveDOMObject(context, this)
     , m_scriptExecutionContext(context)

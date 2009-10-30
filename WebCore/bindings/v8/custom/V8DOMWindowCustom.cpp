@@ -46,7 +46,6 @@
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "MediaPlayer.h"
-#include "NotificationCenter.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "RuntimeEnabledFeatures.h"
@@ -304,7 +303,7 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowSessionStorage)
 #if ENABLE(NOTIFICATIONS)
 ACCESSOR_RUNTIME_ENABLER(DOMWindowWebkitNotifications)
 {
-    return NotificationCenter::isAvailable();
+    return RuntimeEnabledFeatures::notificationsEnabled();
 }
 #endif
 

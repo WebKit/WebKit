@@ -36,5 +36,6 @@ namespace WebCore {
 bool RuntimeEnabledFeatures::isDatabaseEnabled = false;
 bool RuntimeEnabledFeatures::isLocalStorageEnabled = true;
 bool RuntimeEnabledFeatures::isSessionStorageEnabled = true;
+bool RuntimeEnabledFeatures::isNotificationsEnabled = false;
 
 } // namespace WebCore
