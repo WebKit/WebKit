@@ -1,3 +1,13 @@
+2009-10-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Removed test for an impossible condition (a glyph in a right-to-left run not having
+        the RTL flag 0x800)
+
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::overrideLayoutOperation):
+
 2009-10-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
