@@ -1,3 +1,16 @@
+2009-10-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Remove the QWebInspector::windowTitleChanged signal,
+        QEvent::WindowTitleChange can be used to achieve the same.
+        https://bugs.webkit.org/show_bug.cgi?id=30927
+
+        * Api/qwebinspector.cpp:
+        * Api/qwebinspector.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::updateWindowTitle):
+
 2009-10-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
