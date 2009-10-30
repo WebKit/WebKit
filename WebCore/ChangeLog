@@ -1,3 +1,15 @@
+2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for WebCore's MediaQueryExp
+        https://bugs.webkit.org/show_bug.cgi?id=30855
+
+        Inherits MediaQueryExp class from FastAllocBase because it is
+        instantiated by 'new' in WebCore/css/CSSParser.cpp:4874.
+
+        * css/MediaQueryExp.h:
+
 2009-10-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

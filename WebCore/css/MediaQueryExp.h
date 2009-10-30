@@ -36,7 +36,7 @@
 namespace WebCore {
 class CSSParserValueList;
 
-class MediaQueryExp {
+class MediaQueryExp : public FastAllocBase {
 public:
     MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
     ~MediaQueryExp();
