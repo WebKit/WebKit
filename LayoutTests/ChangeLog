@@ -1,3 +1,16 @@
+2009-10-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Regression: crash enumerating properties of an object with getters or setters
+        https://bugs.webkit.org/show_bug.cgi?id=30948
+
+        Add test for enumerating getters and setters.
+
+        * fast/js/for-in-cached-expected.txt:
+        * fast/js/script-tests/for-in-cached.js:
+        (forIn5):
+
 2009-10-29  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

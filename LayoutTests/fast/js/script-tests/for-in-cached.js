@@ -55,4 +55,14 @@ shouldBe("forIn4(objectWithArrayAsProto)", "[]");
 objectWithArrayAsProto.__proto__[0]=1;
 shouldBe("forIn4(objectWithArrayAsProto)", "['0']");
 
+function forIn5(o) {
+    for (var i in o)
+        return [i, o[i]];
+}
+
+shouldBe("forIn5({get foo() { return 'called getter'} })", "['foo', 'called getter']");
+shouldBe("forIn5({set foo() { } })", "['foo', undefined]");
+shouldBe("forIn5({get foo() { return 'called getter'}, set foo() { }})", "['foo', 'called getter']");
+
+
 var successfullyParsed = true;

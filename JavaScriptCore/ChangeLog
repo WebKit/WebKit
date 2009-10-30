@@ -1,3 +1,16 @@
+2009-10-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Regression: crash enumerating properties of an object with getters or setters
+        https://bugs.webkit.org/show_bug.cgi?id=30948
+
+        Add a guard to prevent us trying to cache property enumeration on
+        objects with getters or setters.
+
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+
 2009-10-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.
