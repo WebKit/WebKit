@@ -151,10 +151,20 @@ JSStringRef AccessibilityUIElement::role()
     VARIANT vRole;
     if (FAILED(m_element->get_accRole(self(), &vRole)))
         return JSStringCreateWithCharacters(0, 0);
-    ASSERT(V_VT(&vRole) == VT_I4);
-    TCHAR roleText[64] = {0};
-    ::GetRoleText(V_I4(&vRole), roleText, ARRAYSIZE(roleText));
-    return JSStringCreateWithCharacters(roleText, _tcslen(roleText));
+
+    ASSERT(V_VT(&vRole) == VT_I4 || V_VT(&vRole) == VT_BSTR);
+
+    wstring result;
+    if (V_VT(&vRole) == VT_I4) {
+        TCHAR roleText[64] = {0};
+        ::GetRoleText(V_I4(&vRole), roleText, ARRAYSIZE(roleText));
+        result = roleText;
+    } else if (V_VT(&vRole) == VT_BSTR)
+        result = wstring(V_BSTR(&vRole), ::SysStringLen(V_BSTR(&vRole)));
+
+    ::VariantClear(&vRole);
+
+    return JSStringCreateWithCharacters(result.data(), result.length());
 }
 
 JSStringRef AccessibilityUIElement::subrole()
@@ -175,7 +185,7 @@ JSStringRef AccessibilityUIElement::title()
 JSStringRef AccessibilityUIElement::description()
 {
     BSTR descriptionBSTR;
-    if (FAILED(m_element->get_accName(self(), &descriptionBSTR)) || !descriptionBSTR)
+    if (FAILED(m_element->get_accDescription(self(), &descriptionBSTR)) || !descriptionBSTR)
         return JSStringCreateWithCharacters(0, 0);
     wstring description(descriptionBSTR, SysStringLen(descriptionBSTR));
     ::SysFreeString(descriptionBSTR);

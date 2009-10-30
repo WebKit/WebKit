@@ -1,5 +1,19 @@
 2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Test for MSAA: Accessibility of headings is not correct
+
+        https://bugs.webkit.org/show_bug.cgi?id=30937
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::role):
+        Allow the role returned to be a BSTR.
+        (AccessibilityUIElement::description):
+        Fix a copy/paste error.
+
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Test for MSAA: Accessibility of links is wrong
 
         https://bugs.webkit.org/show_bug.cgi?id=30928

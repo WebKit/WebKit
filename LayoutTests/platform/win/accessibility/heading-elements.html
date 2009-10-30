@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+        <script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+        </script>
+    </head>
+    <body id="body">
+        <h1>h1</h1>
+        <h2>h2</h2>
+        <h3>h3</h3>
+        <h4>h4</h4>
+        <h5>h5</h5>
+        <h6>h6</h6>
+
+        <p>
+            This test verifies that, on Windows, heading elements return their
+            tag name for their 'role' property and a positional description of
+            "L#", where # is the heading level, for their description.
+            <br><br>
+            <a href="https://bugs.webkit.org/show_bug.cgi?id=30937">Bug 30937
+            - MSAA: Accessibility of headings is not correct</a>
+        </p>
+
+        <p id="console"></p>
+
+        <script>
+            if (window.accessibilityController) {
+                document.getElementById("body").focus();
+
+                var e = accessibilityController.focusedElement.childAtIndex(0);
+                shouldBe('e.role', '"H1"');
+                shouldBe('e.description', '"L1"');
+
+                e = accessibilityController.focusedElement.childAtIndex(1);
+                shouldBe('e.role', '"H2"');
+                shouldBe('e.description', '"L2"');
+
+                e = accessibilityController.focusedElement.childAtIndex(2);
+                shouldBe('e.role', '"H3"');
+                shouldBe('e.description', '"L3"');
+
+                e = accessibilityController.focusedElement.childAtIndex(3);
+                shouldBe('e.role', '"H4"');
+                shouldBe('e.description', '"L4"');
+
+                e = accessibilityController.focusedElement.childAtIndex(4);
+                shouldBe('e.role', '"H5"');
+                shouldBe('e.description', '"L5"');
+
+                e = accessibilityController.focusedElement.childAtIndex(5);
+                shouldBe('e.role', '"H6"');
+                shouldBe('e.description', '"L6"');
+            }
+        </script>
+    </body>
+</html>

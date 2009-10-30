@@ -1,5 +1,16 @@
 2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Test for MSAA: Accessibility of headings is not correct
+
+        https://bugs.webkit.org/show_bug.cgi?id=30937
+
+        Reviewed by Adam Roben.
+
+        * platform/win/accessibility/heading-elements-expected.txt: Added.
+        * platform/win/accessibility/heading-elements.html: Added.
+
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Test for MSAA: Accessibility of links is wrong
 
         https://bugs.webkit.org/show_bug.cgi?id=30928
