@@ -1,7 +1,7 @@
 2009-10-29  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(3.2.3 - 4.0.2): Message composing: when I undo a color change to text in Mail, undo/redo behaves strangely
-        <rdar://problem/7067033>
+        <rdar://problem/7115041>
         https://bugs.webkit.org/show_bug.cgi?id=30892
 
         * editing/undo/redo-style-expected.txt: Added.

@@ -3,7 +3,7 @@
         Reviewed by Darin Adler.
 
         REGRESSION(3.2.3 - 4.0.2): Message composing: when I undo a color change to text in Mail, undo/redo behaves strangely
-        <rdar://problem/7067033>
+        <rdar://problem/7115041>
         https://bugs.webkit.org/show_bug.cgi?id=30892
 
         This problem shows in any scenario where it is necessary to split a text
