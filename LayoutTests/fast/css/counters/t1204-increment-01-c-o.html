@@ -12,10 +12,8 @@
   <script src="../../js/resources/js-test-pre.js"></script>
   <script type="text/javascript">
 
-  if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
+  if (window.layoutTestController)
       layoutTestController.dumpAsText();
-  }
 
   function checkCounterValuesBeforeChange()
   {
@@ -37,7 +35,6 @@
       // Eliminate confusing messages (counter values won't be dumped by dumpAsText).
       var viewElement = document.getElementById("view");
       viewElement.parentNode.removeChild(viewElement);
-      layoutTestController.notifyDone();
   }
 
   function run()

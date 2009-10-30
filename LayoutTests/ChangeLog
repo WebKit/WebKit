@@ -1,3 +1,13 @@
+2009-10-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        fast/css/counters/t1204* are not asynchronous anymore
+        https://bugs.webkit.org/show_bug.cgi?id=30940
+
+        * fast/css/counters/t1204-increment-00-c-o.html:
+        * fast/css/counters/t1204-increment-01-c-o.html:
+
 2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed layout test fixes.
