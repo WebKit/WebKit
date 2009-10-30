@@ -314,7 +314,7 @@ public:
         CSSRuleData* m_next;
     };
 
-    class CSSRuleDataList {
+    class CSSRuleDataList : public Noncopyable {
     public:
         CSSRuleDataList(unsigned pos, CSSStyleRule* rule, CSSSelector* sel)
             : m_first(new CSSRuleData(pos, rule, sel))

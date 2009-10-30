@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's CSSRuleDataList
+        https://bugs.webkit.org/show_bug.cgi?id=30850
+
+        Inherits CSSRuleDataList class from Noncopyable because it has been
+        instantiated by 'new' in WebCore/css/CSSStyleSelector.cpp:2715 and
+        it is no need to be copyable.
+
+        * css/CSSStyleSelector.h:
+
+2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's CSSNamespace
         https://bugs.webkit.org/show_bug.cgi?id=30849
 
