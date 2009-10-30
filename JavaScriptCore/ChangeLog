@@ -1,3 +1,25 @@
+2009-10-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r50218-r50262): E*TRADE accounts page is missing content
+        https://bugs.webkit.org/show_bug.cgi?id=30947
+        <rdar://problem/7348833>
+
+        The logic for flagging that a structure has non-enumerable properties
+        was in addPropertyWithoutTransition, rather than in the core Structure::put
+        method.  Despite this I was unable to produce a testcase that caused
+        the failure that etrade was experiencing, but the new assertion in
+        getEnumerablePropertyNames triggers on numerous layout tests without
+        the fix, so in effecti all for..in enumeration in any test ends up
+        doing the required consistency check.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::put):
+        (JSC::Structure::getEnumerablePropertyNames):
+        (JSC::Structure::checkConsistency):
+
 2009-10-29  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
