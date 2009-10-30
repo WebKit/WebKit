@@ -286,7 +286,7 @@ public:
         HashMap<CSSMutableStyleDeclaration*, RefPtr<CSSMutableStyleDeclaration> > m_resolvedVariablesDeclarations;
     };
 
-    class CSSRuleData {
+    class CSSRuleData : public Noncopyable {
     public:
         CSSRuleData(unsigned pos, CSSStyleRule* r, CSSSelector* sel, CSSRuleData* prev = 0)
             : m_position(pos)
