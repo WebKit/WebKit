@@ -1,3 +1,16 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Updated a test to account for font metric differences between Mac OS X versions. Removed
+        Leopard-specific results for another test now that Leopard matches current behavior.
+
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.checksum: Removed.
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.png: Removed.
+        * platform/mac-leopard/fast/text/atsui-multiple-renderers-expected.txt: Removed.
+        * platform/mac/fast/text/ligature-subdivision-expected.txt:
+        * platform/mac/fast/text/script-tests/ligature-subdivision.js:
+
 2009-10-29  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(3.2.3 - 4.0.2): Message composing: when I undo a color change to text in Mail, undo/redo behaves strangely

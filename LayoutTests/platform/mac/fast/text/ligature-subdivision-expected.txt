@@ -14,7 +14,7 @@ PASS document.caretRangeFromPoint(x - 20, y).startOffset is 0
 PASS document.caretRangeFromPoint(x - 50, y).startOffset is 1
 PASS document.caretRangeFromPoint(x - 64, y).startOffset is 2
 PASS document.caretRangeFromPoint(x - 90, y).startOffset is 3
-PASS range.getBoundingClientRect().width is 65
+PASS w === 65 || w === 61 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -64,21 +64,33 @@ OSStatus ComplexTextController::ComplexTextRun::overrideLayoutOperation(ATSULayo
     }
 
     complexTextRun->m_glyphCount = count;
-    complexTextRun->m_glyphsVector.grow(count);
-    complexTextRun->m_glyphs = complexTextRun->m_glyphsVector.data();
-    complexTextRun->m_advancesVector.grow(count);
-    complexTextRun->m_advances = complexTextRun->m_advancesVector.data();
-    complexTextRun->m_indices.grow(count);
+    complexTextRun->m_glyphsVector.reserveCapacity(count);
+    complexTextRun->m_advancesVector.reserveCapacity(count);
+    complexTextRun->m_indices.reserveCapacity(count);
 
-    CGFloat lastX = FixedToFloat(layoutRecords[j].realPos);
+    bool atBeginning = true;
+    CGFloat lastX = 0;
 
     for (ItemCount i = 0; i < count; ++i, ++j) {
-        complexTextRun->m_glyphsVector[i] = layoutRecords[j].glyphID;
-        complexTextRun->m_indices[i] = layoutRecords[j].originalOffset / 2 + indexOffset;
-        CGFloat x = FixedToFloat(layoutRecords[j + 1].realPos);
-        complexTextRun->m_advancesVector[i] = CGSizeMake(x - lastX, 0);
+        if (layoutRecords[j].glyphID == kATSDeletedGlyphcode) {
+            if (!complexTextRun->m_ltr && !(layoutRecords[j].flags & 0x800))
+                complexTextRun->m_indices[complexTextRun->m_indices.size() - 1] = layoutRecords[j].originalOffset / 2 + indexOffset;
+            complexTextRun->m_glyphCount--;
+            continue;
+        }
+        complexTextRun->m_glyphsVector.uncheckedAppend(layoutRecords[j].glyphID);
+        complexTextRun->m_indices.uncheckedAppend(layoutRecords[j].originalOffset / 2 + indexOffset);
+        CGFloat x = FixedToFloat(layoutRecords[j].realPos);
+        if (!atBeginning)
+            complexTextRun->m_advancesVector.uncheckedAppend(CGSizeMake(x - lastX, 0));
         lastX = x;
+        atBeginning = false;
     }
+
+    complexTextRun->m_advancesVector.uncheckedAppend(CGSizeMake(FixedToFloat(layoutRecords[j].realPos) - lastX, 0));
+
+    complexTextRun->m_glyphs = complexTextRun->m_glyphsVector.data();
+    complexTextRun->m_advances = complexTextRun->m_advancesVector.data();
 
     status = ATSUDirectReleaseLayoutDataArrayPtr(atsuLineRef, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, reinterpret_cast<void**>(&layoutRecords));
     *callbackStatus = kATSULayoutOperationCallbackStatusContinue;
@@ -135,6 +147,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(ATSUTextLayout atsuTextLay
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_ltr(ltr)
     , m_directionalOverride(directionalOverride)
 {
     OSStatus status;

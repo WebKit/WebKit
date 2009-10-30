@@ -1,3 +1,16 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Complete the fix for hit-testing and selection highlighting in ligatures for the ATSUI
+        code path.
+
+        * platform/graphics/mac/ComplexTextController.h: Added m_ltr member to ComplexTextRun.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::overrideLayoutOperation): Skip over deleted
+        glyphs, but update indexes and advances correctly.
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Initialize m_ltr.
+
 2009-10-29  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
