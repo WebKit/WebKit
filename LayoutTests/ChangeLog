@@ -1,3 +1,19 @@
+2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed layout test fixes.
+
+        The existing excepted results were wrong, due to the visited links not
+        being reset between tests.
+
+        This was fixed in r50329, so updating the results.
+
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/010-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/011-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/012-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/015-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/016-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/020-expected.txt:
+
 2009-10-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Holger Hans Peter Freyther.

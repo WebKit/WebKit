@@ -40,7 +40,7 @@ layer at (0,0) size 800x362
       RenderBlock {P} at (0,309) size 784x21
         RenderText {#text} at (0,0) size 293x21
           text run at (0,0) width 293: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 56x21 [color=#551A8B]
+        RenderInline {A} at (0,0) size 56x21 [color=#0000EE]
           RenderText {#text} at (293,0) size 56x21
             text run at (293,0) width 56: "test 006"
         RenderText {#text} at (349,0) size 4x21
