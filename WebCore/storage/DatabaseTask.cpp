@@ -35,9 +35,33 @@
 
 namespace WebCore {
 
-DatabaseTask::DatabaseTask(Database* database)
+DatabaseTaskSynchronizer::DatabaseTaskSynchronizer()
+    : m_taskCompleted(false)
+{
+}
+
+void DatabaseTaskSynchronizer::waitForTaskCompletion()
+{
+    m_synchronousMutex.lock();
+    if (!m_taskCompleted)
+        m_synchronousCondition.wait(m_synchronousMutex);
+    m_synchronousMutex.unlock();
+}
+
+void DatabaseTaskSynchronizer::taskCompleted()
+{
+    m_synchronousMutex.lock();
+    m_taskCompleted = true;
+    m_synchronousCondition.signal();
+    m_synchronousMutex.unlock();
+}
+
+DatabaseTask::DatabaseTask(Database* database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)
+    , m_synchronizer(synchronizer)
+#ifndef NDEBUG
     , m_complete(false)
+#endif
 {
 }
 
@@ -56,43 +80,19 @@ void DatabaseTask::performTask()
     doPerformTask();
     m_database->performPolicyChecks();
 
-    if (m_synchronousMutex)
-        m_synchronousMutex->lock();
-
-    m_complete = true;
-
-    if (m_synchronousMutex) {
-        m_synchronousCondition->signal();
-        m_synchronousMutex->unlock();
-    }
-}
-
-void DatabaseTask::lockForSynchronousScheduling()
-{
-    // Called from main thread.
-    ASSERT(!m_synchronousMutex);
-    ASSERT(!m_synchronousCondition);
-    m_synchronousMutex.set(new Mutex);
-    m_synchronousCondition.set(new ThreadCondition);
-}
-
-void DatabaseTask::waitForSynchronousCompletion()
-{
-    // Called from main thread.
-    m_synchronousMutex->lock();
-    if (!m_complete)
-        m_synchronousCondition->wait(*m_synchronousMutex);
-    m_synchronousMutex->unlock();
+    if (m_synchronizer)
+        m_synchronizer->taskCompleted();
 }
 
 // *** DatabaseOpenTask ***
 // Opens the database file and verifies the version matches the expected version.
 
-DatabaseOpenTask::DatabaseOpenTask(Database* database)
-    : DatabaseTask(database)
-    , m_code(0)
-    , m_success(false)
+DatabaseOpenTask::DatabaseOpenTask(Database* database, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
+    : DatabaseTask(database, synchronizer)
+    , m_code(code)
+    , m_success(success)
 {
+    ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
 void DatabaseOpenTask::doPerformTask()
@@ -110,8 +110,8 @@ const char* DatabaseOpenTask::debugTaskName() const
 // *** DatabaseCloseTask ***
 // Closes the database.
 
-DatabaseCloseTask::DatabaseCloseTask(Database* database)
-    : DatabaseTask(database)
+DatabaseCloseTask::DatabaseCloseTask(Database* database, DatabaseTaskSynchronizer* synchronizer)
+    : DatabaseTask(database, synchronizer)
 {
 }
 
@@ -131,7 +131,7 @@ const char* DatabaseCloseTask::debugTaskName() const
 // Starts a transaction that will report its results via a callback.
 
 DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransaction> transaction)
-    : DatabaseTask(transaction->database())
+    : DatabaseTask(transaction->database(), 0)
     , m_transaction(transaction)
 {
 }
@@ -159,9 +159,11 @@ const char* DatabaseTransactionTask::debugTaskName() const
 // *** DatabaseTableNamesTask ***
 // Retrieves a list of all tables in the database - for WebInspector support.
 
-DatabaseTableNamesTask::DatabaseTableNamesTask(Database* database)
-    : DatabaseTask(database)
+DatabaseTableNamesTask::DatabaseTableNamesTask(Database* database, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
+    : DatabaseTask(database, synchronizer)
+    , m_tableNames(names)
 {
+    ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
 void DatabaseTableNamesTask::doPerformTask()

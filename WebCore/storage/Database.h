@@ -30,7 +30,6 @@
 #define Database_h
 
 #if ENABLE(DATABASE)
-#include <wtf/MessageQueue.h>
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
@@ -133,9 +132,10 @@ private:
     void scheduleTransactionCallback(SQLTransaction*);
     void scheduleTransactionStep(SQLTransaction* transaction, bool immediately = false);
 
-    MessageQueue<RefPtr<SQLTransaction> > m_transactionQueue;
+    Deque<RefPtr<SQLTransaction> > m_transactionQueue;
     Mutex m_transactionInProgressMutex;
     bool m_transactionInProgress;
+    bool m_isTransactionQueueEnabled;
 
     static void deliverPendingCallback(void*);
 

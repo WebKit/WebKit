@@ -1,3 +1,39 @@
+2009-10-30  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Refactor DatabaseTask in preparation for removing threadsafe refcounting from it.
+        Move the synchronizer object out of the DatabaseTask so there is no need to keep
+        the pointer to Databasetask around after passing it to MessageQueue.
+        Also pass the references to return parameters to the task so it can update them.
+        https://bugs.webkit.org/show_bug.cgi?id=30941
+
+        No new tests, since this is just moving the code around, no change in functionality.
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::openAndVerifyVersion): Use new DatabaseTaskSynchronizer to wait for task completion.
+        (WebCore::Database::markAsDeletedAndClose): Ditto.
+        (WebCore::Database::tableNames): Ditto.
+        (WebCore::Database::stop): Use the boolean flag rather then 'killed' flag built into MessageQueue.
+        (WebCore::Database::scheduleTransaction): Transaction queue is a Deque now, change the way to fetch the transaction.
+        * storage/Database.h: Change the SQLTransaction queue to be a Deque rather then a MessageQueue.
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTaskSynchronizer::DatabaseTaskSynchronizer):
+        (WebCore::DatabaseTaskSynchronizer::waitForTaskCompletion):
+        (WebCore::DatabaseTaskSynchronizer::taskCompleted):
+        (WebCore::DatabaseTask::DatabaseTask): Ctor takes DatabaseTaskSynchronizer which can be 0.
+        (WebCore::DatabaseTask::performTask): Signal completion. m_synchronizer should still be around since main thread is waiting on it.
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask): Pass synchronizer and return parameters via constructor.
+        (WebCore::DatabaseCloseTask::DatabaseCloseTask): Ditto.
+        (WebCore::DatabaseTransactionTask::DatabaseTransactionTask): Ditto.
+        (WebCore::DatabaseTableNamesTask::DatabaseTableNamesTask): Ditto.
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+        (WebCore::DatabaseCloseTask::create):
+        (WebCore::DatabaseTransactionTask::create):
+        (WebCore::DatabaseTableNamesTask::create):
+
 2009-10-30  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
