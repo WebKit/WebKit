@@ -1,3 +1,18 @@
+2009-10-30  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Remove qt/WorkQueue.cpp|h in favor of platform independent WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=30953
+
+        DumpRenderTree/WorkQueue and DumpRenderTree/qt/WorkQueue share mostly the
+        same implementation. Some Q_ASSERTs differ from ASSERTs basically. Patch
+        makes qt DRT to share this implementation (as gtk and mac ports do).
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/WorkQueue.cpp: Removed.
+        * DumpRenderTree/qt/WorkQueue.h: Removed.
+
 2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed potential buildbot fix.

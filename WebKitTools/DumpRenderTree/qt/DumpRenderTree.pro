@@ -1,9 +1,12 @@
 TARGET = DumpRenderTree
 CONFIG  -= app_bundle
 
+BASEDIR = $$PWD/../
+
 include(../../../WebKit.pri)
 INCLUDEPATH += /usr/include/freetype2
 INCLUDEPATH += ../../../JavaScriptCore
+INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../../bin
 
 CONFIG += link_pkgconfig
@@ -12,7 +15,7 @@ PKGCONFIG += fontconfig
 QT = core gui network
 macx: QT += xml
 
-HEADERS = WorkQueue.h \
+HEADERS = $$BASEDIR/WorkQueue.h \
     WorkQueueItem.h \
     DumpRenderTree.h \
     EventSenderQt.h \
@@ -20,7 +23,7 @@ HEADERS = WorkQueue.h \
     LayoutTestControllerQt.h \
     jsobjects.h \
     testplugin.h
-SOURCES = WorkQueue.cpp \
+SOURCES = $$BASEDIR/WorkQueue.cpp \
     DumpRenderTree.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
