@@ -2752,4 +2752,60 @@ String AccessibilityRenderObject::nameForMSAA() const
     return title();
 }
 
+static bool shouldReturnTagNameAsRoleForMSAA(const Element& element)
+{
+    // See "document structure",
+    // https://wiki.mozilla.org/Accessibility/AT-Windows-API
+    // FIXME: Add the other tag names that should be returned as the role.
+    return element.hasTagName(h1Tag) || element.hasTagName(h2Tag) ||
+        element.hasTagName(h3Tag) || element.hasTagName(h4Tag) ||
+        element.hasTagName(h5Tag) || element.hasTagName(h6Tag);
+}
+
+String AccessibilityRenderObject::stringRoleForMSAA() const
+{
+    if (!m_renderer)
+        return String();
+
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return String();
+
+    Element* element = static_cast<Element*>(node);
+    if (!shouldReturnTagNameAsRoleForMSAA(*element))
+        return String();
+
+    return element->tagName();
+}
+
+String AccessibilityRenderObject::positionalDescriptionForMSAA() const
+{
+    // See "positional descriptions",
+    // https://wiki.mozilla.org/Accessibility/AT-Windows-API
+    if (isHeading())
+        return "L" + String::number(headingLevel());
+
+    // FIXME: Add positional descriptions for other elements.
+    return String();
+}
+
+String AccessibilityRenderObject::descriptionForMSAA() const
+{
+    String description = positionalDescriptionForMSAA();
+    if (!description.isEmpty())
+        return description;
+
+    description = accessibilityDescription();
+    if (!description.isEmpty()) {
+        // From the Mozilla MSAA implementation:
+        // "Signal to screen readers that this description is speakable and is not
+        // a formatted positional information description. Don't localize the
+        // 'Description: ' part of this string, it will be parsed out by assistive
+        // technologies."
+        return "Description: " + description;
+    }
+
+    return String();
+}
+
 } // namespace WebCore

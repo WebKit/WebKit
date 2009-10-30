@@ -190,11 +190,9 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, BST
     if (FAILED(hr))
         return hr;
 
-    // TODO: Description, for SELECT subitems, should be a string describing
-    // the position of the item in its group and of the group in the list (see
-    // Firefox).
-    if (*description = BString(wrapper(childObj)->description()).release())
+    if (*description = BString(childObj->descriptionForMSAA()).release())
         return S_OK;
+
     return S_FALSE;
 }
 
@@ -210,6 +208,13 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* p
 
     if (FAILED(hr))
         return hr;
+
+    String roleString = childObj->stringRoleForMSAA();
+    if (!roleString.isEmpty()) {
+        V_VT(pvRole) = VT_BSTR;
+        V_BSTR(pvRole) = BString(roleString).release();
+        return S_OK;
+    }
 
     pvRole->vt = VT_I4;
     pvRole->lVal = wrapper(childObj)->role();
@@ -520,20 +525,6 @@ String AccessibleBase::name() const
 String AccessibleBase::value() const
 {
     return m_object->stringValueForMSAA();
-}
-
-String AccessibleBase::description() const
-{
-    String desc = m_object->accessibilityDescription();
-    if (desc.isNull())
-        return desc;
-
-    // From the Mozilla MSAA implementation:
-    // "Signal to screen readers that this description is speakable and is not
-    // a formatted positional information description. Don't localize the
-    // 'Description: ' part of this string, it will be parsed out by assistive
-    // technologies."
-    return "Description: " + desc;
 }
 
 static long MSAARole(AccessibilityRole role)
