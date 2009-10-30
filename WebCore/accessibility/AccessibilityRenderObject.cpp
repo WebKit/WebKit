@@ -2711,4 +2711,45 @@ void AccessibilityRenderObject::updateBackingStore()
     m_renderer->document()->updateLayoutIgnorePendingStylesheets();
 }
 
+static bool isLinkable(const AccessibilityRenderObject& object)
+{
+    if (!object.renderer())
+        return false;
+
+    // See https://wiki.mozilla.org/Accessibility/AT-Windows-API for the elements
+    // Mozilla considers linkable.
+    return object.isLink() || object.isImage() || object.renderer()->isText();
+}
+
+String AccessibilityRenderObject::stringValueForMSAA() const
+{
+    if (isLinkable(*this)) {
+        Element* anchor = anchorElement();
+        if (anchor && anchor->hasTagName(aTag))
+            return static_cast<HTMLAnchorElement*>(anchor)->href();
+    }
+
+    return stringValue();
+}
+
+bool AccessibilityRenderObject::isLinked() const
+{
+    if (!isLinkable(*this))
+        return false;
+
+    Element* anchor = anchorElement();
+    if (!anchor || !anchor->hasTagName(aTag))
+        return false;
+
+    return !static_cast<HTMLAnchorElement*>(anchor)->href().isEmpty();
+}
+
+String AccessibilityRenderObject::nameForMSAA() const
+{
+    if (m_renderer && m_renderer->isText())
+        return textUnderElement();
+
+    return title();
+}
+
 } // namespace WebCore

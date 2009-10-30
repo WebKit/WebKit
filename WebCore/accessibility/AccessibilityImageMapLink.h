@@ -56,9 +56,13 @@ public:
     virtual Element* actionElement() const;
     virtual KURL url() const;
     virtual bool isLink() const { return true; } 
+    virtual bool isLinked() const { return true; }
     virtual String title() const;
     virtual String accessibilityDescription() const;
-    
+
+    virtual String stringValueForMSAA() const;
+    virtual String nameForMSAA() const;
+
     virtual IntSize size() const;
     virtual IntRect elementRect() const;
 

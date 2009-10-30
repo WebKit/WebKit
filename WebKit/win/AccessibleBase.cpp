@@ -232,7 +232,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
     pvState->vt = VT_I4;
     pvState->lVal = 0;
 
-    if (childObj->isAnchor())
+    if (childObj->isLinked())
         pvState->lVal |= STATE_SYSTEM_LINKED;
 
     if (childObj->isHovered())
@@ -514,12 +514,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT vChild)
 // AccessibleBase
 String AccessibleBase::name() const
 {
-    return m_object->title();
+    return m_object->nameForMSAA();
 }
 
 String AccessibleBase::value() const
 {
-    return m_object->stringValue();
+    return m_object->stringValueForMSAA();
 }
 
 String AccessibleBase::description() const

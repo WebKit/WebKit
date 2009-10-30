@@ -1,3 +1,41 @@
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility of links is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=30928
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::stringValueForMSAA):
+        Return the URL.
+        (WebCore::AccessibilityImageMapLink::nameForMSAA):
+        Return the alt text.
+
+        * accessibility/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::isLinked):
+        Return true.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isLinked):
+        (WebCore::AccessibilityObject::stringValueForMSAA):
+        (WebCore::AccessibilityObject::nameForMSAA):
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::isLinkable):
+        Return true if the element is considered "linkable" with respect to
+        accessibility.
+        (WebCore::AccessibilityRenderObject::stringValueForMSAA):
+        If the element is linkable, check whether it has a parent anchor
+        element. If so, return the anchor element's href.
+        (WebCore::AccessibilityRenderObject::isLinked):
+        Return true if the element is linkable and if it's parent anchor tag's
+        href is non-empty.
+        (WebCore::AccessibilityRenderObject::nameForMSAA):
+        For text nodes, return the text.
+
+        * accessibility/AccessibilityRenderObject.h:
+
 2009-10-30  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

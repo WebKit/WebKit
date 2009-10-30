@@ -1,3 +1,21 @@
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility of links is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=30928
+
+        Reviewed by Darin Adler.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accState):
+        Check whether the element is linked, instead of whether the node is an
+        anchor, so the child "linkable" elements of anchor elements will also
+        be "linked".
+        (AccessibleBase::name):
+        Return the name for MSAA.
+        (AccessibleBase::value):
+        Return the string value for MSAA.
+
 2009-10-30  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

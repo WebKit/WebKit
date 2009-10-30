@@ -284,6 +284,7 @@ public:
     virtual bool isReadOnly() const { return false; };
     virtual bool isVisited() const { return false; };
     virtual bool isRequired() const { return false; };
+    virtual bool isLinked() const { return false; }
 
     virtual bool canSetFocusAttribute() const { return false; };
     virtual bool canSetTextRangeAttributes() const { return false; };
@@ -445,6 +446,9 @@ public:
     String listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&) const;
 
     unsigned doAXLineForIndex(unsigned);
+
+    virtual String stringValueForMSAA() const { return String(); }
+    virtual String nameForMSAA() const { return String(); }
 
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)

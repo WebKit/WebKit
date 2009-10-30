@@ -134,5 +134,15 @@ IntSize AccessibilityImageMapLink::size() const
 {
     return elementRect().size();
 }
-    
+
+String AccessibilityImageMapLink::stringValueForMSAA() const
+{
+    return url();
+}
+
+String AccessibilityImageMapLink::nameForMSAA() const
+{
+    return accessibilityDescription();
+}
+
 } // namespace WebCore
