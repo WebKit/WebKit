@@ -19,6 +19,30 @@
         https://bugs.webkit.org/show_bug.cgi?id=25534
         [GTK] Objects of ROLE_TABLE should implement the accessible table interface
 
+        Third part of the implementation of AtkTable.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (nameFromChildren):
+        (webkit_accessible_get_name):
+        New convenience function to construct an object's name using the name(s) of
+        any children it has.
+
+        (atk_table_interface_init):
+        (webkit_accessible_table_get_column_description):
+        (webkit_accessible_table_get_row_description):
+        Implemented.
+
+        (webkit_accessible_table_get_column_header):
+        Stub function added so that webkit_accessible_table_get_column_description
+        could be implemented in the meantime.
+
+2009-10-30  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25534
+        [GTK] Objects of ROLE_TABLE should implement the accessible table interface
+
         Second part of the implementation of AtkTable.
 
         * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:

@@ -137,21 +137,27 @@ static AccessibilityObject* core(AtkTable* table)
     return core(ATK_OBJECT(table));
 }
 
+static const gchar* nameFromChildren(AccessibilityObject* object)
+{
+    if (!object)
+        return 0;
+
+    AccessibilityRenderObject::AccessibilityChildrenVector children = object->children();
+    // Currently, object->stringValue() should be an empty String. This might not be the case down the road.
+    String name = object->stringValue();
+    for (unsigned i = 0; i < children.size(); ++i)
+        name += children.at(i).get()->stringValue();
+    return returnString(name);
+}
+
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
     if (coreObject->isControl()) {
         AccessibilityRenderObject* renderObject = static_cast<AccessibilityRenderObject*>(coreObject);
         AccessibilityObject* label = renderObject->correspondingLabelForControlElement();
-        if (label) {
-            AccessibilityRenderObject::AccessibilityChildrenVector children = label->children();
-            // Currently, label->stringValue() should be an empty String. This
-            // might not be the case down the road.
-            String name = label->stringValue();
-            for (unsigned i = 0; i < children.size(); ++i)
-                name += children.at(i).get()->stringValue();
-            return returnString(name);
-        }
+        if (label)
+            return returnString(nameFromChildren(label));
     }
     return returnString(coreObject->stringValue());
 }
@@ -1327,6 +1333,13 @@ static gint webkit_accessible_table_get_row_extent_at(AtkTable* table, gint row,
     return 0;
 }
 
+static AtkObject* webkit_accessible_table_get_column_header(AtkTable* table, gint column)
+{
+    // FIXME: This needs to be implemented.
+    notImplemented();
+    return 0;
+}
+
 static AtkObject* webkit_accessible_table_get_row_header(AtkTable* table, gint row)
 {
     AccessibilityObject* accTable = core(table);
@@ -1358,6 +1371,24 @@ static AtkObject* webkit_accessible_table_get_caption(AtkTable* table)
     return 0;
 }
 
+static const gchar* webkit_accessible_table_get_column_description(AtkTable* table, gint column)
+{
+    AtkObject* columnHeader = atk_table_get_column_header(table, column);
+    if (columnHeader)
+        return returnString(nameFromChildren(core(columnHeader)));
+
+    return 0;
+}
+
+static const gchar* webkit_accessible_table_get_row_description(AtkTable* table, gint row)
+{
+    AtkObject* rowHeader = atk_table_get_row_header(table, row);
+    if (rowHeader)
+        return returnString(nameFromChildren(core(rowHeader)));
+
+    return 0;
+}
+
 static void atk_table_interface_init(AtkTableIface* iface)
 {
     iface->ref_at = webkit_accessible_table_ref_at;
@@ -1368,8 +1399,11 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_n_rows = webkit_accessible_table_get_n_rows;
     iface->get_column_extent_at = webkit_accessible_table_get_column_extent_at;
     iface->get_row_extent_at = webkit_accessible_table_get_row_extent_at;
+    iface->get_column_header = webkit_accessible_table_get_column_header;
     iface->get_row_header = webkit_accessible_table_get_row_header;
     iface->get_caption = webkit_accessible_table_get_caption;
+    iface->get_column_description = webkit_accessible_table_get_column_description;
+    iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
