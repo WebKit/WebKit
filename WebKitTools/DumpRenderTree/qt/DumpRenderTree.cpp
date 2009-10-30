@@ -299,6 +299,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     m_page->blockSignals(false);
 
     m_page->mainFrame()->setZoomFactor(1.0);
+    m_page->history()->clear();
 
     static_cast<WebPage*>(m_page)->resetSettings();
     qt_drt_clearFrameName(m_page->mainFrame());

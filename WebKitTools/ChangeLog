@@ -1,3 +1,12 @@
+2009-10-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed potential buildbot fix.
+
+        Reset page history before running each test.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2009-10-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.
