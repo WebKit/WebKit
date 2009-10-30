@@ -1,3 +1,15 @@
+2009-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Test that browser doesn't crash in case of stack overflow
+        inside console.log()
+
+        https://bugs.webkit.org/show_bug.cgi?id=30904
+
+        * fast/dom/console-log-stack-overflow-expected.txt: Added.
+        * fast/dom/console-log-stack-overflow.html: Added.
+
 2009-10-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
