@@ -73,7 +73,6 @@ use VCSUtils;
 sub checksum($);
 sub patch($);
 sub revertDirectories();
-sub removeEOL($);
 sub unapplyPatch($$;$);
 sub unsetChangeLogDate($$);
 
@@ -257,14 +256,6 @@ sub revertDirectories()
             }
         }
     }
-}
-
-sub removeEOL($)
-{
-    my ($line) = @_;
-
-    $line =~ s/[\r\n]+$//g;
-    return $line;
 }
 
 sub unapplyPatch($$;$)

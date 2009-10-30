@@ -79,7 +79,6 @@ sub isDirectoryEmptyForRemoval($);
 sub patch($);
 sub removeDirectoriesIfNeeded();
 sub setChangeLogDateAndReviewer($$);
-sub removeEOL($);
 
 # These should be replaced by an scm class/module:
 sub scmKnowsOfFile($);
@@ -376,14 +375,6 @@ sub setChangeLogDateAndReviewer($$)
         $patch =~ s/NOBODY \(OOPS!\)/$reviewer/;
     }
     return $patch;
-}
-
-sub removeEOL($)
-{
-    my ($line) = @_;
-
-    $line =~ s/[\r\n]+$//g;
-    return $line;
 }
 
 # This could be made into a more general "status" call, except svn and git

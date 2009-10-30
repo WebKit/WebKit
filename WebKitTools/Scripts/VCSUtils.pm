@@ -298,6 +298,14 @@ sub canonicalizePath($)
     return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
 }
 
+sub removeEOL($)
+{
+    my ($line) = @_;
+
+    $line =~ s/[\r\n]+$//g;
+    return $line;
+}
+
 sub svnStatus($)
 {
     my ($fullPath) = @_;

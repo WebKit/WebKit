@@ -1,3 +1,15 @@
+2009-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix “Undefined subroutine” errors in svn-*apply by moving the removeEOL subroutine
+        from the two scripts that define it but don’t use it to the script that uses it but doesn’t
+        define it.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+
 2009-10-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
