@@ -1,3 +1,23 @@
+2009-10-30  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: In Mail, Undo does not restore some characters I have deleted at the end of a line
+        https://bugs.webkit.org/show_bug.cgi?id=30955
+        <rdar://problem/7067033>
+        
+        When the command is deleteWordBackward or deleteWordForward
+        we should not add to the open typing command, but
+        create a new one.
+        
+        Test: editing/undo/undo-deleteWord.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Always start a new command if the granularity is
+        not CharacterGranularity. 
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Always start a new command if the granularity is
+        not CharacterGranularity. 
+
 2009-10-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

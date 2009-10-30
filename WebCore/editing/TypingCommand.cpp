@@ -90,7 +90,7 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
-    if (isOpenForMoreTypingCommand(lastEditCommand)) {
+    if (granularity == CharacterGranularity && isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->deleteKeyPressed(granularity, killRing);
         return;
     }
@@ -109,7 +109,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     ASSERT(frame);
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
-    if (isOpenForMoreTypingCommand(lastEditCommand)) {
+    if (granularity == CharacterGranularity && isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->forwardDeleteKeyPressed(granularity, killRing);
         return;
     }

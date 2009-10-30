@@ -1,3 +1,14 @@
+2009-10-30  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: In Mail, Undo does not restore some characters I have deleted at the end of a line
+        https://bugs.webkit.org/show_bug.cgi?id=30955
+        <rdar://problem/7067033>
+        
+        * editing/undo/undo-deleteWord-expected.txt: Added.
+        * editing/undo/undo-deleteWord.html: Added.
+
 2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Test for MSAA: Accessibility of headings is not correct
