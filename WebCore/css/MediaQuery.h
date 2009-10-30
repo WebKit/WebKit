@@ -34,7 +34,7 @@
 namespace WebCore {
 class MediaQueryExp;
 
-class MediaQuery {
+class MediaQuery : public Noncopyable {
 public:
     enum Restrictor {
         Only, Not, None

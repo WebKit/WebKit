@@ -435,6 +435,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's MediaQuery
+        https://bugs.webkit.org/show_bug.cgi?id=30856
+
+        Inherits MediaQuery class from Noncopyable because it is
+        instantiated by 'new' in WebCore/css/CSSParser.cpp:4905 and
+        it is no need to be copyable.
+
+        * css/CSSStyleSelector.h:
+
+2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's MediaQueryExp
         https://bugs.webkit.org/show_bug.cgi?id=30855
 
