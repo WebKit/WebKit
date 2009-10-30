@@ -5,7 +5,9 @@ BASEDIR = $$PWD/../
 
 include(../../../WebKit.pri)
 INCLUDEPATH += /usr/include/freetype2
+INCLUDEPATH += ../../..
 INCLUDEPATH += ../../../JavaScriptCore
+INCLUDEPATH += ../../../JavaScriptCore/ForwardingHeaders
 INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../../bin
 

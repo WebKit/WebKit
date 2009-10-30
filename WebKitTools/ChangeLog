@@ -1,3 +1,11 @@
+2009-10-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Unreviewed trivial buildfix.
+
+        [Qt] Buildfix for r50333.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2009-10-30  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther.
