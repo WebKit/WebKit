@@ -57,6 +57,8 @@ namespace WebCore {
         bool canTakeFocus(FocusDirection);
         void takeFocus(FocusDirection);
 
+        void focusedNodeChanged(Node*);
+
         Page* createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&);
         Page* createModalDialog(Frame*, const FrameLoadRequest&);
         void show();

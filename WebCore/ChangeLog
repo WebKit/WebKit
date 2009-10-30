@@ -1,3 +1,23 @@
+2009-10-30  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        Notify the chrome when the focused node has changed.
+        https://bugs.webkit.org/show_bug.cgi?id=30832
+
+        This is similar to AX code that is already in place, except that this also informs the
+        chrome when there stops being a focused node. This is needed for a browser to show the
+        anchor for links that have keyboard focus.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::focusedNodeChanged):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::focusedNodeChanged):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
 2009-10-30  Ben Murdoch  <benm@google.com>
 
         Reviewed by David Kilzer.

@@ -111,6 +111,9 @@ void ChromeClientWx::takeFocus(FocusDirection)
     notImplemented();
 }
 
+void ChromeClientWx::focusedNodeChanged(Node*)
+{
+}
 
 Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures&)
 {

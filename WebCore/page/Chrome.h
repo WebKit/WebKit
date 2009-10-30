@@ -42,6 +42,7 @@ namespace WebCore {
     class Geolocation;
     class HitTestResult;
     class IntRect;
+    class Node;
     class Page;
     class String;
 #if ENABLE(NOTIFICATIONS)
@@ -81,6 +82,8 @@ namespace WebCore {
 
         bool canTakeFocus(FocusDirection) const;
         void takeFocus(FocusDirection) const;
+
+        void focusedNodeChanged(Node*) const;
 
         Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) const;
         void show() const;

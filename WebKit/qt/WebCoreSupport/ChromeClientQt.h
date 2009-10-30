@@ -63,6 +63,8 @@ namespace WebCore {
         virtual bool canTakeFocus(FocusDirection);
         virtual void takeFocus(FocusDirection);
 
+        virtual void focusedNodeChanged(Node*);
+
         virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&);
         virtual void show();
 

@@ -76,6 +76,8 @@ public:
     virtual bool canTakeFocus(FocusDirection) { return false; }
     virtual void takeFocus(FocusDirection) { }
 
+    virtual void focusedNodeChanged(Node*) { }
+
     virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) { return 0; }
     virtual void show() { }
 

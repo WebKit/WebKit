@@ -1,3 +1,16 @@
+2009-10-30  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        Notify the chrome when the focused node has changed.
+        https://bugs.webkit.org/show_bug.cgi?id=30832
+
+        Added stub implementation for new ChromeClient function.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::focusedNodeChanged):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2009-10-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Trivial fix - move public API declaration into the
