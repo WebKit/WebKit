@@ -497,15 +497,13 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         currentVersion = "";
     }
 
-    // FIXME: For now, the spec says that if the database has no version, it is valid for any "Expected version" string.  That seems silly and I think it should be
-    // changed, and here's where we would change it
-    if (m_expectedVersion.length()) {
-        if (currentVersion.length() && m_expectedVersion != currentVersion) {
-            LOG(StorageAPI, "page expects version %s from database %s, which actually has version name %s - openDatabase() call will fail", m_expectedVersion.ascii().data(),
-                databaseDebugName().ascii().data(), currentVersion.ascii().data());
-            e = INVALID_STATE_ERR;
-            return false;
-        }
+    // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
+    // If the expected version is the empty string, then we always return with whatever version of the database we have.
+    if (m_expectedVersion.length() && m_expectedVersion != currentVersion) {
+        LOG(StorageAPI, "page expects version %s from database %s, which actually has version name %s - openDatabase() call will fail", m_expectedVersion.ascii().data(),
+            databaseDebugName().ascii().data(), currentVersion.ascii().data());
+        e = INVALID_STATE_ERR;
+        return false;
     }
 
     return true;

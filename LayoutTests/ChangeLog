@@ -1,3 +1,13 @@
+2009-10-30  Ben Murdoch  <benm@google.com>
+
+        Reviewed by David Kilzer.
+
+        openDatabase() with empty version sets db version up incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=28417
+
+        * storage/open-database-set-empty-version-expected.txt: Added.
+        * storage/open-database-set-empty-version.html: Added.
+
 2009-10-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
