@@ -1,3 +1,13 @@
+2009-10-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Wire CookieJarChromium to the cookies
+        backend. This is a final step of a 3-steps raw cookies
+        access implementation in Chromium.
+
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+
 2009-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

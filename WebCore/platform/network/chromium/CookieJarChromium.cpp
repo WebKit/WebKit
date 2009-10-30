@@ -53,16 +53,14 @@ bool cookiesEnabled(const Document*)
     return true;
 }
 
-bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    // FIXME: Not yet implemented
-    rawCookies.clear();
-    return false; // return true when implemented
+    return ChromiumBridge::rawCookies(url, document->firstPartyForCookies(), &rawCookies);
 }
 
-void deleteCookie(const Document*, const KURL&, const String&)
+void deleteCookie(const Document*, const KURL& url, const String& cookieName)
 {
-    // FIXME: Not yet implemented
+    return ChromiumBridge::deleteCookie(url, cookieName);
 }
 
 } // namespace WebCore
