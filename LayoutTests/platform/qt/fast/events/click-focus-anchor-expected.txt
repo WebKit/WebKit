@@ -6,5 +6,6 @@ Result
 
 
 a1 received focus (focusable)
+a3 received focus (focusable on GTK and QT)
 a4 received focus (focusable)
 a5 received focus (focusable)

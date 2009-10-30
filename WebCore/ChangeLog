@@ -1,3 +1,17 @@
+2009-10-29  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make links mouse focusable only on GTK and QT.
+
+        Links are now always mouse focusable on GTK and QT. On other platforms
+        the link needs a tabIndex or it needs to be contentEditable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26856
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isMouseFocusable):
+
 2009-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

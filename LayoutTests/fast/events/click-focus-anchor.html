@@ -7,25 +7,38 @@
 <p>This test ensures that we can click to focus an a element.
 Click on the element below.
 
-<p><a tabindex=0 onfocus="pass('r1')" id=t1>Focusable anchor with tab index</a>
-<p><a onfocus="pass('r2')" id=t2 href="#">Focusable anchor</a>
+<p>The expected result is platform specific. GTK and QT allows all links to be
+mouse focusable.
+
+<div id=test-container>
+<p><a id=a1 tabindex=0 title="focusable">Anchor with tab index</a>
+<p><a id=a2 title="not focusable">Anchor without tab index</a>
+<p><a id=a3 href="#" title="focusable on GTK and QT">Link without tab index</a>
+<p><a id=a4 href="#" tabindex=0 title="focusable">Link with tab index</a>
+<p><a id=a5 href="#" contentEditable title="focusable">Link with contentEditable</a>
+<p contentEditable><a id=a6 href="#" focusable="not focusable">Link inside contentEditable</a>
+</div>
 
 <p>Result
 
-<pre id=r1>FAIL</pre>
-<pre id=r2>FAIL</pre>
+<pre id=out></pre>
 
 <script>
 
-function pass(id)
+function log(s)
 {
-    var el = document.getElementById(id);
-    el.textContent = 'PASS';
+    var el = document.getElementById('out');
+    el.textContent += '\n' + s;
+}
+
+function handleFocus(e)
+{
+    var el = e.target;
+    log(el.id + ' received focus (' + el.title + ')');
 }
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-    layoutTestController.overridePreference('WebKitTabToLinksPreferenceKey', false);
 }
 
 window.onload = function()
@@ -33,15 +46,16 @@ window.onload = function()
     if (!window.layoutTestController)
         return;
 
-    var aElement = document.getElementById('t1');
-    eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
-    eventSender.mouseDown();    
-    eventSender.mouseUp();    
+    for (var i = 1; i <= 6; i++) {
+        var aElement = document.getElementById('a' + i);
+        aElement.onfocus = handleFocus;
+        eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
 
-    aElement = document.getElementById('t2');
-    eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
-    eventSender.mouseDown();    
-    eventSender.mouseUp();    
+    var tc = document.getElementById('test-container');
+    tc.parentNode.removeChild(tc);
 };
 
 </script>

@@ -1,3 +1,20 @@
+2009-10-29  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make links mouse focusable only on GTK and QT.
+
+        Links are now always mouse focusable on GTK and QT. On other platforms
+        the link needs a tabIndex or it needs to be contentEditable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26856
+
+        * fast/events/click-focus-anchor-expected.txt:
+        * fast/events/click-focus-anchor.html:
+        * platform/gtk/fast/events/click-focus-anchor-expected.txt: Added.
+        * platform/mac/fast/events/click-focus-anchor-expected.txt: Removed.
+        * platform/qt/fast/events/click-focus-anchor-expected.txt: Added.
+
 2009-10-29  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Eric Seidel.
