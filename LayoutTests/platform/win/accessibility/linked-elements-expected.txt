@@ -1,0 +1,15 @@
+ 
+link text 
+ 
+This test verifies that, on Windows, linked text, linked images, and anchor elements return the anchor's href attribute for the 'value' property, and text nodes return their text for their 'title' property. 
+
+Bug 30928 - MSAA: Accessibility of links is wrong
+
+PASS e.accessibilityValue.substr(-8) is "img.html"
+PASS e.accessibilityValue.substr(-8) is "img.html"
+PASS e.accessibilityValue.substr(-9) is "text.html"
+PASS e.accessibilityValue.substr(-9) is "text.html"
+PASS e.title is "link text"
+PASS e.accessibilityValue.substr(-10) is "input.html"
+PASS e.accessibilityValue is "input value"
+

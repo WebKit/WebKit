@@ -90,6 +90,7 @@ public:
     JSStringRef title();
     JSStringRef description();
     JSStringRef language();
+    JSStringRef accessibilityValue() const;
     double x();
     double y();
     double width();

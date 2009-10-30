@@ -571,3 +571,9 @@ void AccessibilityUIElement::decrement()
 {
     [m_element accessibilityPerformAction:NSAccessibilityDecrementAction];
 }
+
+JSStringRef AccessibilityUIElement::accessibilityValue() const
+{
+    // FIXME: implement
+    return JSStringCreateWithCharacters(0, 0);
+}

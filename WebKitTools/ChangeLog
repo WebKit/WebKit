@@ -1,3 +1,31 @@
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Test for MSAA: Accessibility of links is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=30928
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getAccessibilityValueCallback):
+        Return the accessibility value.
+        (AccessibilityUIElement::getJSClass):
+        Added "accessibilityValue" value.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::accessibilityValue):
+        Stubbed.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::accessibilityValue):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::accessibilityValue):
+        Get the object's value, and return it as a JS string.
+
 2009-10-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix typo in command name used by wx build system.

@@ -1,3 +1,14 @@
+2009-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Test for MSAA: Accessibility of links is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=30928
+
+        Reviewed by Darin Adler.
+
+        * platform/win/accessibility/linked-elements-expected.txt: Added.
+        * platform/win/accessibility/linked-elements.html: Added.
+
 2009-10-30  Ben Murdoch  <benm@google.com>
 
         Reviewed by David Kilzer.
