@@ -51,7 +51,7 @@ namespace WTF {
     template<typename ValueArg> struct ListHashSetNodeAllocator;
     template<typename ValueArg, typename HashArg> struct ListHashSetNodeHashFunctions;
 
-    template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet {
+    template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet : public FastAllocBase {
     private:
         typedef ListHashSetNode<ValueArg> Node;
         typedef ListHashSetNodeAllocator<ValueArg> NodeAllocator;

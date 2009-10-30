@@ -1,3 +1,15 @@
+2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for JavaScriptCore's ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=30853
+
+        Inherits ListHashSet class from FastAllocBase because it is
+        instantiated by 'new' in WebCore/rendering/RenderBlock.cpp:1813.
+
+        * wtf/ListHashSet.h:
+
 2009-10-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
