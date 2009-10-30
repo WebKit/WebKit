@@ -257,7 +257,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
     const GregorianDateTime* gregorianDateTime = dateObject->gregorianDateTime(exec, outputIsUTC);
     if (!gregorianDateTime)
         return jsNontrivialString(exec, "Invalid Date");
-    return formatLocaleDate(exec, gregorianDateTime, format);
+    return formatLocaleDate(exec, *gregorianDateTime, format);
 }
 
 #endif // !PLATFORM(MAC)

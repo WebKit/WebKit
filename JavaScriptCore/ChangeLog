@@ -1,3 +1,10 @@
+2009-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: update for object-to-pointer change.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2009-10-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
