@@ -1,5 +1,30 @@
 2009-10-31  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Remove obsolete null checks from CanvasRenderingContext3DMac
+        https://bugs.webkit.org/show_bug.cgi?id=30983
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::framebufferTexture2D):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::useProgram):
+        (WebCore::GraphicsContext3D::validateProgram):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderi):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+
+2009-10-31  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Jon Honeycutt.
 
         WebGL allows objects to be used with the wrong context

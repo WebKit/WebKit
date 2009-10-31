@@ -248,16 +248,15 @@ void GraphicsContext3D::activeTexture(unsigned long texture)
 
 void GraphicsContext3D::attachShader(CanvasProgram* program, CanvasShader* shader)
 {
-    if (!program || !shader)
-        return;
+    ASSERT(program)
+    ASSERT(shader);
     ensureContext(m_contextObj);
     ::glAttachShader((GLuint) program->object(), (GLuint) shader->object());
 }
 
 void GraphicsContext3D::bindAttribLocation(CanvasProgram* program, unsigned long index, const String& name)
 {
-    if (!program)
-        return;
+    ASSERT(program);
     ensureContext(m_contextObj);
     ::glBindAttribLocation((GLuint) program->object(), index, name.utf8().data());
 }
@@ -380,9 +379,7 @@ void GraphicsContext3D::colorMask(bool red, bool green, bool blue, bool alpha)
 
 void GraphicsContext3D::compileShader(CanvasShader* shader)
 {
-    if (!shader)
-        return;
-    
+    ASSERT(shader);
     ensureContext(m_contextObj);
     ::glCompileShader((GLuint) shader->object());
 }
@@ -425,9 +422,8 @@ void GraphicsContext3D::depthRange(double zNear, double zFar)
 
 void GraphicsContext3D::detachShader(CanvasProgram* program, CanvasShader* shader)
 {
-    if (!program || !shader)
-        return;
-    
+    ASSERT(program);
+    ASSERT(shader);
     ensureContext(m_contextObj);
     ::glDetachShader((GLuint) program->object(), (GLuint) shader->object());
 }
@@ -482,17 +478,15 @@ void GraphicsContext3D::flush()
 
 void GraphicsContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer* buffer)
 {
-    if (!buffer)
-        return;
-    
+    ASSERT(buffer);
+
     ensureContext(m_contextObj);
     ::glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, (GLuint) buffer->object());
 }
 
 void GraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture* texture, long level)
 {
-    if (!texture)
-        return;
+    ASSERT(texture);
     
     ensureContext(m_contextObj);
     ::glFramebufferTexture2DEXT(target, attachment, textarget, (GLuint) texture->object(), level);
@@ -645,9 +639,7 @@ void GraphicsContext3D::lineWidth(double width)
 
 void GraphicsContext3D::linkProgram(CanvasProgram* program)
 {
-    if (!program)
-        return;
-    
+    ASSERT(program);
     ensureContext(m_contextObj);
     ::glLinkProgram((GLuint) program->object());
 }
@@ -707,8 +699,7 @@ void GraphicsContext3D::scissor(long x, long y, unsigned long width, unsigned lo
 
 void GraphicsContext3D::shaderSource(CanvasShader* shader, const String& string)
 {
-    if (!shader)
-        return;
+    ASSERT(shader);
     
     ensureContext(m_contextObj);
     const CString& cs = string.utf8();
@@ -891,8 +882,7 @@ void GraphicsContext3D::uniformMatrix4fv(long location, bool transpose, float* a
 
 void GraphicsContext3D::useProgram(CanvasProgram* program)
 {
-    if (!program)
-        return;
+    ASSERT(program);
     
     ensureContext(m_contextObj);
     ::glUseProgram((GLuint) program->object());
@@ -900,8 +890,7 @@ void GraphicsContext3D::useProgram(CanvasProgram* program)
 
 void GraphicsContext3D::validateProgram(CanvasProgram* program)
 {
-    if (!program)
-        return;
+    ASSERT(program);
     
     ensureContext(m_contextObj);
     ::glValidateProgram((GLuint) program->object());
@@ -1286,8 +1275,7 @@ PassRefPtr<CanvasIntArray> GraphicsContext3D::getProgramiv(CanvasProgram* progra
 
 String GraphicsContext3D::getProgramInfoLog(CanvasProgram* program)
 {
-    if (!program)
-        return String();
+    ASSERT(program);
     
     ensureContext(m_contextObj);
     GLint length;
@@ -1322,8 +1310,7 @@ PassRefPtr<CanvasIntArray> GraphicsContext3D::getRenderbufferParameteriv(unsigne
 
 int GraphicsContext3D::getShaderi(CanvasShader* shader, unsigned long pname)
 {
-    if (!shader)
-        return 0;
+    ASSERT(shader);
     
     ensureContext(m_contextObj);
     GLint data;
@@ -1333,8 +1320,7 @@ int GraphicsContext3D::getShaderi(CanvasShader* shader, unsigned long pname)
 
 PassRefPtr<CanvasIntArray> GraphicsContext3D::getShaderiv(CanvasShader* shader, unsigned long pname)
 {
-    if (!shader)
-        return 0;
+    ASSERT(shader);
     
     ensureContext(m_contextObj);
     RefPtr<CanvasIntArray> array = CanvasIntArray::create(1);
@@ -1347,8 +1333,7 @@ PassRefPtr<CanvasIntArray> GraphicsContext3D::getShaderiv(CanvasShader* shader, 
 
 String GraphicsContext3D::getShaderInfoLog(CanvasShader* shader)
 {
-    if (!shader)
-        return String();
+    ASSERT(shader);
     
     ensureContext(m_contextObj);
     GLint length;
@@ -1364,9 +1349,8 @@ String GraphicsContext3D::getShaderInfoLog(CanvasShader* shader)
 
 String GraphicsContext3D::getShaderSource(CanvasShader* shader)
 {
-    if (!shader)
-        return String();
-    
+    ASSERT(shader);
+
     ensureContext(m_contextObj);
     GLint length;
     ::glGetShaderiv((GLuint) shader->object(), GL_SHADER_SOURCE_LENGTH, &length);
@@ -1456,8 +1440,7 @@ PassRefPtr<CanvasIntArray> GraphicsContext3D::getUniformiv(CanvasProgram* progra
 
 long GraphicsContext3D::getUniformLocation(CanvasProgram* program, const String& name)
 {
-    if (!program)
-        return -1;
+    ASSERT(program);
     
     ensureContext(m_contextObj);
     return ::glGetUniformLocation((GLuint) program->object(), name.utf8().data());
