@@ -248,7 +248,7 @@ void GraphicsContext3D::activeTexture(unsigned long texture)
 
 void GraphicsContext3D::attachShader(CanvasProgram* program, CanvasShader* shader)
 {
-    ASSERT(program)
+    ASSERT(program);
     ASSERT(shader);
     ensureContext(m_contextObj);
     ::glAttachShader((GLuint) program->object(), (GLuint) shader->object());

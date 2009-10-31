@@ -1,5 +1,12 @@
 2009-10-31  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::attachShader):
+
+2009-10-31  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler.
 
         Remove obsolete null checks from CanvasRenderingContext3DMac
