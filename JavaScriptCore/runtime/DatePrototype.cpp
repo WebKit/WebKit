@@ -860,20 +860,19 @@ static JSValue setNewValueFromDateArgs(ExecState* exec, JSValue thisValue, const
     }      
     
     double milli = thisDateObj->internalNumber();
-    if (numArgsToUse == 3 && isnan(milli)) {
-        JSValue result = jsNumber(exec, 0);
-        thisDateObj->setInternalValue(result);
-        return result;
+    double ms = 0; 
+
+    GregorianDateTime gregorianDateTime; 
+    if (numArgsToUse == 3 && isnan(milli)) 
+        WTF::msToGregorianDateTime(0, true, gregorianDateTime); 
+    else { 
+        ms = milli - floor(milli / msPerSecond) * msPerSecond; 
+        const GregorianDateTime* other = thisDateObj->gregorianDateTime(exec, inputIsUTC);
+        if (!other)
+            return jsNaN(exec);
+        gregorianDateTime.copyFrom(*other);
     }
-
-    const GregorianDateTime* other = thisDateObj->gregorianDateTime(exec, inputIsUTC);
-    if (!other)
-        return jsNaN(exec);
-
-    GregorianDateTime gregorianDateTime;
-    gregorianDateTime.copyFrom(*other);
     
-    double ms = milli - floor(milli / msPerSecond) * msPerSecond;
     if (!fillStructuresUsingDateArgs(exec, args, numArgsToUse, &ms, &gregorianDateTime)) {
         JSValue result = jsNaN(exec);
         thisDateObj->setInternalValue(result);

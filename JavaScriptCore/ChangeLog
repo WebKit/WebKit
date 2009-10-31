@@ -1,5 +1,16 @@
 2009-10-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fixed failing layout test: restore a special case I accidentally deleted.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::setNewValueFromDateArgs): In the case of applying a change to a date
+        that is NaN, reset the date to 0 *and* then apply the change; don't just
+        reset the date to 0.
+
+2009-10-30  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: update for object-to-pointer change.
 
         * runtime/DatePrototype.cpp:
