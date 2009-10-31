@@ -61,12 +61,12 @@ class WebKitCSSMatrix;
         int sizeInBytes(int type, ExceptionCode& ec);
 
         void activeTexture(unsigned long texture);
-        void attachShader(CanvasProgram*, CanvasShader*);
-        void bindAttribLocation(CanvasProgram*, unsigned long index, const String& name);
-        void bindBuffer(unsigned long target, CanvasBuffer*);
-        void bindFramebuffer(unsigned long target, CanvasFramebuffer*);
-        void bindRenderbuffer(unsigned long target, CanvasRenderbuffer*);
-        void bindTexture(unsigned long target, CanvasTexture*);
+        void attachShader(CanvasProgram*, CanvasShader*, ExceptionCode& ec);
+        void bindAttribLocation(CanvasProgram*, unsigned long index, const String& name, ExceptionCode& ec);
+        void bindBuffer(unsigned long target, CanvasBuffer*, ExceptionCode& ec);
+        void bindFramebuffer(unsigned long target, CanvasFramebuffer*, ExceptionCode& ec);
+        void bindRenderbuffer(unsigned long target, CanvasRenderbuffer*, ExceptionCode& ec);
+        void bindTexture(unsigned long target, CanvasTexture*, ExceptionCode& ec);
         void blendColor(double red, double green, double blue, double alpha);
         void blendEquation(unsigned long mode);
         void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
@@ -83,7 +83,7 @@ class WebKitCSSMatrix;
         void clearDepth(double);
         void clearStencil(long);
         void colorMask(bool red, bool green, bool blue, bool alpha);
-        void compileShader(CanvasShader*);
+        void compileShader(CanvasShader*, ExceptionCode& ec);
         
         //void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
         //void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
@@ -110,7 +110,7 @@ class WebKitCSSMatrix;
         void depthFunc(unsigned long);
         void depthMask(bool);
         void depthRange(double zNear, double zFar);
-        void detachShader(CanvasProgram*, CanvasShader*);
+        void detachShader(CanvasProgram*, CanvasShader*, ExceptionCode& ec);
         void disable(unsigned long cap);
         void disableVertexAttribArray(unsigned long index);
         void drawArrays(unsigned long mode, long first, long count);
@@ -120,8 +120,8 @@ class WebKitCSSMatrix;
         void enableVertexAttribArray(unsigned long index);
         void finish();
         void flush();
-        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer*);
-        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
+        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer*, ExceptionCode& ec);
+        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level, ExceptionCode& ec);
         void frontFace(unsigned long mode);
         void generateMipmap(unsigned long target);
 
@@ -143,20 +143,20 @@ class WebKitCSSMatrix;
         PassRefPtr<CanvasIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
         int getInteger(unsigned long pname);
         PassRefPtr<CanvasIntArray> getIntegerv(unsigned long pname);
-        int getProgrami(CanvasProgram*, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getProgramiv(CanvasProgram*, unsigned long pname);
-        String getProgramInfoLog(CanvasProgram*);
+        int getProgrami(CanvasProgram*, unsigned long pname, ExceptionCode& ec);
+        PassRefPtr<CanvasIntArray> getProgramiv(CanvasProgram*, unsigned long pname, ExceptionCode& ec);
+        String getProgramInfoLog(CanvasProgram*, ExceptionCode& ec);
         int getRenderbufferParameteri(unsigned long target, unsigned long pname);
         PassRefPtr<CanvasIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
-        int getShaderi(CanvasShader*, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getShaderiv(CanvasShader*, unsigned long pname);
+        int getShaderi(CanvasShader*, unsigned long pname, ExceptionCode& ec);
+        PassRefPtr<CanvasIntArray> getShaderiv(CanvasShader*, unsigned long pname, ExceptionCode& ec);
 
-        String getShaderInfoLog(CanvasShader*);
+        String getShaderInfoLog(CanvasShader*, ExceptionCode& ec);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        String getShaderSource(CanvasShader*);
+        String getShaderSource(CanvasShader*, ExceptionCode& ec);
         String getString(unsigned long name);
 
         float getTexParameterf(unsigned long target, unsigned long pname);
@@ -164,12 +164,12 @@ class WebKitCSSMatrix;
         int getTexParameteri(unsigned long target, unsigned long pname);
         PassRefPtr<CanvasIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
 
-        float getUniformf(CanvasProgram* program, long location);
-        PassRefPtr<CanvasFloatArray> getUniformfv(CanvasProgram* program, long location);
-        long getUniformi(CanvasProgram* program, long location);
-        PassRefPtr<CanvasIntArray> getUniformiv(CanvasProgram* program, long location);
+        float getUniformf(CanvasProgram* program, long location, ExceptionCode& ec);
+        PassRefPtr<CanvasFloatArray> getUniformfv(CanvasProgram* program, long location, ExceptionCode& ec);
+        long getUniformi(CanvasProgram* program, long location, ExceptionCode& ec);
+        PassRefPtr<CanvasIntArray> getUniformiv(CanvasProgram* program, long location, ExceptionCode& ec);
 
-        long getUniformLocation(CanvasProgram*, const String& name);
+        long getUniformLocation(CanvasProgram*, const String& name, ExceptionCode& ec);
 
         float getVertexAttribf(unsigned long index, unsigned long pname);
         PassRefPtr<CanvasFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
@@ -187,7 +187,7 @@ class WebKitCSSMatrix;
         bool isShader(CanvasShader*);
         bool isTexture(CanvasTexture*);
         void lineWidth(double);
-        void linkProgram(CanvasProgram*);
+        void linkProgram(CanvasProgram*, ExceptionCode& ec);
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
@@ -197,7 +197,7 @@ class WebKitCSSMatrix;
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
         void sampleCoverage(double value, bool invert);
         void scissor(long x, long y, unsigned long width, unsigned long height);
-        void shaderSource(CanvasShader*, const String&);
+        void shaderSource(CanvasShader*, const String&, ExceptionCode& ec);
         void stencilFunc(unsigned long func, long ref, unsigned long mask);
         void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
         void stencilMask(unsigned long);

@@ -1,3 +1,24 @@
+2009-10-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebGL allows objects to be used with the wrong context
+        https://bugs.webkit.org/show_bug.cgi?id=30981
+
+        Add tests for null/missing object parameters and objects being used
+        on the wrong context.
+
+        * fast/canvas/webgl/incorrect-context-object-behaviour-expected.txt: Added.
+        * fast/canvas/webgl/incorrect-context-object-behaviour.html: Added.
+        * fast/canvas/webgl/null-object-behaviour-expected.txt: Added.
+        * fast/canvas/webgl/null-object-behaviour.html: Added.
+        * fast/canvas/webgl/resources/shader-test.js:
+        (loadStandardProgram):
+        (loadStandardVertexShader):
+        (loadStandardFragmentShader):
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js: Added.
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js: Added.
+
 2009-10-30  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

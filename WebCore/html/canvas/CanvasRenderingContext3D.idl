@@ -461,12 +461,12 @@ module html {
         long sizeInBytes(in unsigned long type) raises(DOMException);
 
         void         activeTexture(in unsigned long texture);
-        void         attachShader(in CanvasProgram program, in CanvasShader shader);
-        void         bindAttribLocation(in CanvasProgram program, in unsigned long index, in DOMString name);
-        void         bindBuffer(in unsigned long target, in CanvasBuffer buffer);
-        void         bindFramebuffer(in unsigned long target, in CanvasFramebuffer framebuffer);
-        void         bindRenderbuffer(in unsigned long target, in CanvasRenderbuffer renderbuffer);
-        void         bindTexture(in unsigned long target, in CanvasTexture texture);
+        void         attachShader(in CanvasProgram program, in CanvasShader shader) raises(DOMException);
+        void         bindAttribLocation(in CanvasProgram program, in unsigned long index, in DOMString name) raises(DOMException);
+        void         bindBuffer(in unsigned long target, in CanvasBuffer buffer) raises(DOMException);
+        void         bindFramebuffer(in unsigned long target, in CanvasFramebuffer framebuffer) raises(DOMException);
+        void         bindRenderbuffer(in unsigned long target, in CanvasRenderbuffer renderbuffer) raises(DOMException);
+        void         bindTexture(in unsigned long target, in CanvasTexture texture) raises(DOMException);
         void         blendColor(in double red, in double green, in double blue, in double alpha);
         void         blendEquation( in unsigned long mode );
         void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
@@ -486,7 +486,7 @@ module html {
         void         clearDepth(in double depth);
         void         clearStencil(in long s);
         void         colorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
-        void         compileShader(in CanvasShader shader);
+        void         compileShader(in CanvasShader shader) raises(DOMException);
         
         //void         compressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in unsigned long width, in unsigned long height, in long border, in unsigned long imageSize, const void* data);
         //void         compressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long imageSize, const void* data);
@@ -514,7 +514,7 @@ module html {
         void         depthMask(in boolean flag);
         // FIXME: this differs from the current WebGL spec (depthRangef)
         void         depthRange(in double zNear, in double zFar);
-        void         detachShader(in CanvasProgram program, in CanvasShader shader);
+        void         detachShader(in CanvasProgram program, in CanvasShader shader) raises(DOMException);
         void         disable(in unsigned long cap);
         void         disableVertexAttribArray(in unsigned long index);
         void         drawArrays(in unsigned long mode, in long first, in unsigned long count);
@@ -524,8 +524,8 @@ module html {
         void         enableVertexAttribArray(in unsigned long index);
         void         finish();
         void         flush();
-        void         framebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in CanvasRenderbuffer renderbuffer);
-        void         framebufferTexture2D(in unsigned long target, in unsigned long attachment, in unsigned long textarget, in CanvasTexture texture, in long level);
+        void         framebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in CanvasRenderbuffer renderbuffer) raises(DOMException);
+        void         framebufferTexture2D(in unsigned long target, in unsigned long attachment, in unsigned long textarget, in CanvasTexture texture, in long level) raises(DOMException);
         void         frontFace(in unsigned long mode);
         void         generateMipmap(in unsigned long target);
         
@@ -552,20 +552,20 @@ module html {
         CanvasIntArray getFramebufferAttachmentParameteriv(in unsigned long target, in unsigned long attachment, in unsigned long pname);
         long getInteger(in unsigned long pname);
         CanvasIntArray getIntegerv(in unsigned long pname);
-        long getProgrami(in CanvasProgram program, in unsigned long pname);
-        CanvasIntArray getProgramiv(in CanvasProgram program, in unsigned long pname);
-        DOMString getProgramInfoLog(in CanvasProgram program);
+        long getProgrami(in CanvasProgram program, in unsigned long pname) raises(DOMException);
+        CanvasIntArray getProgramiv(in CanvasProgram program, in unsigned long pname) raises(DOMException);
+        DOMString getProgramInfoLog(in CanvasProgram program) raises(DOMException);
         long getRenderbufferParameteri(in unsigned long target, in unsigned long pname);
         CanvasIntArray getRenderbufferParameteriv(in unsigned long target, in unsigned long pname);
-        long getShaderi(in CanvasShader shader, in unsigned long pname);
-        CanvasIntArray getShaderiv(in CanvasShader shader, in unsigned long pname);
+        long getShaderi(in CanvasShader shader, in unsigned long pname) raises(DOMException);
+        CanvasIntArray getShaderiv(in CanvasShader shader, in unsigned long pname) raises(DOMException);
 
-        DOMString    getShaderInfoLog(in CanvasShader shader);
+        DOMString    getShaderInfoLog(in CanvasShader shader) raises(DOMException);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        DOMString    getShaderSource(in CanvasShader shader);
+        DOMString    getShaderSource(in CanvasShader shader) raises(DOMException);
         DOMString    getString(in unsigned long name);
 
         float getTexParameterf(in unsigned long target, in unsigned long pname);
@@ -573,12 +573,12 @@ module html {
         long getTexParameteri(in unsigned long target, in unsigned long pname);
         CanvasIntArray getTexParameteriv(in unsigned long target, in unsigned long pname);
 
-        float getUniformf(in CanvasProgram program, in long location);
-        CanvasFloatArray getUniformfv(in CanvasProgram program, in long location);
-        long getUniformi(in CanvasProgram program, in long location);
-        CanvasIntArray getUniformiv(in CanvasProgram program, in long location);
+        float getUniformf(in CanvasProgram program, in long location) raises(DOMException);
+        CanvasFloatArray getUniformfv(in CanvasProgram program, in long location) raises(DOMException);
+        long getUniformi(in CanvasProgram program, in long location) raises(DOMException);
+        CanvasIntArray getUniformiv(in CanvasProgram program, in long location) raises(DOMException);
         
-        long getUniformLocation(in CanvasProgram program, in DOMString name);
+        long getUniformLocation(in CanvasProgram program, in DOMString name) raises(DOMException);
 
         float getVertexAttribf(in unsigned long index, in unsigned long pname);
         CanvasFloatArray getVertexAttribfv(in unsigned long index, in unsigned long pname);
@@ -596,17 +596,17 @@ module html {
         boolean      isShader(in CanvasShader shader);
         boolean      isTexture(in CanvasTexture texture);
         void         lineWidth(in double width);
-        void         linkProgram(in CanvasProgram program);
+        void         linkProgram(in CanvasProgram program) raises(DOMException);
         void         pixelStorei(in unsigned long pname, in long param);
         void         polygonOffset(in double factor, in double units);
-        
+
         CanvasArray readPixels(in long x, in long y, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long type);
         
         void         releaseShaderCompiler();
         void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);
         void         sampleCoverage(in double value, in boolean invert);
         void         scissor(in long x, in long y, in unsigned long width, in unsigned long height);
-        void         shaderSource(in CanvasShader shader, in DOMString string);
+        void         shaderSource(in CanvasShader shader, in DOMString string) raises(DOMException);
         void         stencilFunc(in unsigned long func, in long ref, in unsigned long mask);
         void         stencilFuncSeparate(in unsigned long face, in unsigned long func, in long ref, in unsigned long mask);
         void         stencilMask(in unsigned long mask);

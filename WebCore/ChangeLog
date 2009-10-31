@@ -1,3 +1,45 @@
+2009-10-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebGL allows objects to be used with the wrong context
+        https://bugs.webkit.org/show_bug.cgi?id=30981
+
+        Simply add null checks and a few context guards to ensure we don't
+        deref null or attempt to use an object from a different context.
+
+        Tests: fast/canvas/webgl/incorrect-context-object-behaviour.html
+               fast/canvas/webgl/null-object-behaviour.html
+
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::attachShader):
+        (WebCore::CanvasRenderingContext3D::bindAttribLocation):
+        (WebCore::CanvasRenderingContext3D::bindBuffer):
+        (WebCore::CanvasRenderingContext3D::bindFramebuffer):
+        (WebCore::CanvasRenderingContext3D::bindRenderbuffer):
+        (WebCore::CanvasRenderingContext3D::bindTexture):
+        (WebCore::CanvasRenderingContext3D::compileShader):
+        (WebCore::CanvasRenderingContext3D::detachShader):
+        (WebCore::CanvasRenderingContext3D::framebufferRenderbuffer):
+        (WebCore::CanvasRenderingContext3D::framebufferTexture2D):
+        (WebCore::CanvasRenderingContext3D::getProgrami):
+        (WebCore::CanvasRenderingContext3D::getProgramiv):
+        (WebCore::CanvasRenderingContext3D::getProgramInfoLog):
+        (WebCore::CanvasRenderingContext3D::getShaderi):
+        (WebCore::CanvasRenderingContext3D::getShaderiv):
+        (WebCore::CanvasRenderingContext3D::getShaderInfoLog):
+        (WebCore::CanvasRenderingContext3D::getShaderSource):
+        (WebCore::CanvasRenderingContext3D::getUniformf):
+        (WebCore::CanvasRenderingContext3D::getUniformfv):
+        (WebCore::CanvasRenderingContext3D::getUniformi):
+        (WebCore::CanvasRenderingContext3D::getUniformiv):
+        (WebCore::CanvasRenderingContext3D::getUniformLocation):
+        (WebCore::CanvasRenderingContext3D::isBuffer):
+        (WebCore::CanvasRenderingContext3D::linkProgram):
+        (WebCore::CanvasRenderingContext3D::shaderSource):
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasRenderingContext3D.idl:
+
 2009-10-30  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

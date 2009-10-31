@@ -1,0 +1,35 @@
+Tests calling WebGL APIs with objects from other contexts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS contextA.compileShader(shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.linkProgram(programB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.attachShader(programA, shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.attachShader(programB, shaderA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.attachShader(programB, shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.detachShader(programA, shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.detachShader(programB, shaderA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.detachShader(programB, shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.shaderSource(shaderB, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindAttribLocation(programB, 0, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindFramebuffer(0, frameBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindRenderbuffer(0, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindTexture(textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.framebufferRenderbuffer(0, 0, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.framebufferTexture2D(0, 0, textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getProgrami(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getProgramiv(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getProgramInfoLog(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getShaderi(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getShaderiv(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getShaderInfoLog(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getShaderSource(shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniformf(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniformfv(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniformi(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniformiv(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniformLocation(programB, 'u_modelViewProjMatrix') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

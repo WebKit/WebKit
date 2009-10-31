@@ -1,0 +1,36 @@
+Tests calling WebGL APIs without providing the necessary objects
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context.compileShader() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.linkProgram() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.attachShader() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.attachShader(program, undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.attachShader(undefined, shader) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.detachShader(program, undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.detachShader(undefined, shader) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.shaderSource() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.shaderSource(undefined, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindAttribLocation(undefined, 0, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindBuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindFramebuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindRenderbuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindTexture(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.framebufferRenderbuffer(0, 0, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.framebufferTexture2D(0, 0, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getProgrami(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getProgramiv(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getProgramInfoLog(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getShaderi(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getShaderiv(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getShaderInfoLog(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getShaderSource(undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getUniformf(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getUniformfv(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getUniformi(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getUniformiv(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.getUniformLocation(undefined, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
