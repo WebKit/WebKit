@@ -1,3 +1,13 @@
+2009-10-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix an issue that Adam noticed in DRT.
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::role):
+        Get the length of the role text, and create a buffer dynamically.
+
 2009-10-30  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r50105.

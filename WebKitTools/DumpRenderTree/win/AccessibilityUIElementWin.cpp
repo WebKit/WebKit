@@ -156,9 +156,13 @@ JSStringRef AccessibilityUIElement::role()
 
     wstring result;
     if (V_VT(&vRole) == VT_I4) {
-        TCHAR roleText[64] = {0};
-        ::GetRoleText(V_I4(&vRole), roleText, ARRAYSIZE(roleText));
-        result = roleText;
+        unsigned roleTextLength = ::GetRoleText(V_I4(&vRole), 0, 0) + 1;
+
+        Vector<TCHAR> roleText(roleTextLength);
+
+        ::GetRoleText(V_I4(&vRole), roleText.data(), roleTextLength);
+
+        result = roleText.data();
     } else if (V_VT(&vRole) == VT_BSTR)
         result = wstring(V_BSTR(&vRole), ::SysStringLen(V_BSTR(&vRole)));
 
