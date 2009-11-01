@@ -1270,17 +1270,11 @@ WebInspector.JavaScriptSourceSyntaxHighlighter.prototype = {
             var row = rows[this.lineIndex];
             var line = row ? row.cells[1] : null;
             if (line && this.lineFragment) {
-                var messageBubble = null;
-                if (line.lastChild && line.lastChild.nodeType === Node.ELEMENT_NODE && line.lastChild.hasStyleClass("webkit-html-message-bubble")) {
-                    messageBubble = line.lastChild;
-                    line.removeChild(messageBubble);
-                }
-                
                 Element.prototype.removeChildren.call(line);
                 
                 line.appendChild(this.lineFragment);
-                if (messageBubble)
-                    line.appendChild(messageBubble);
+                if (this.messageBubble)
+                    line.appendChild(this.messageBubble);
                 this.lineFragment = null;
             }
             this.lineIndex++;
@@ -1291,6 +1285,13 @@ WebInspector.JavaScriptSourceSyntaxHighlighter.prototype = {
             }
             row = rows[this.lineIndex];
             line = row ? row.cells[1] : null;
+            
+            this.messageBubble = null;
+            if (line.lastChild && line.lastChild.nodeType === Node.ELEMENT_NODE && line.lastChild.hasStyleClass("webkit-html-message-bubble")) {
+                this.messageBubble = line.lastChild;
+                line.removeChild(this.messageBubble);
+            }
+
             this.lineCode = line.textContent;
             this.lineFragment = document.createDocumentFragment();
             this.cursor = 0;

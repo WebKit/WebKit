@@ -1,3 +1,12 @@
+2009-11-01  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fix Web Inspector: Bug with Message Bubble in Syntax Highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=30990
+
+        * inspector/front-end/SourceFrame.js:
+
 2009-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by John Sullivan.
