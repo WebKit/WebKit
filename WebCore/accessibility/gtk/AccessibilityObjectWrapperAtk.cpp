@@ -137,6 +137,11 @@ static AccessibilityObject* core(AtkTable* table)
     return core(ATK_OBJECT(table));
 }
 
+static AccessibilityObject* core(AtkDocument* document)
+{
+    return core(ATK_OBJECT(document));
+}
+
 static const gchar* nameFromChildren(AccessibilityObject* object)
 {
     if (!object)
@@ -1406,6 +1411,34 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
+static const gchar* webkit_accessible_document_get_attribute_value(AtkDocument* document, const gchar* attribute)
+{
+    // FIXME: This needs to be implemented.
+    notImplemented();
+    return 0;
+}
+
+static AtkAttributeSet* webkit_accessible_document_get_attributes(AtkDocument* document)
+{
+    // FIXME: This needs to be implemented.
+    notImplemented();
+    return 0;
+}
+
+static const gchar* webkit_accessible_document_get_locale(AtkDocument* document)
+{
+    // FIXME: This needs to be implemented.
+    notImplemented();
+    return 0;
+}
+
+static void atk_document_interface_init(AtkDocumentIface* iface)
+{
+    iface->get_document_attribute_value = webkit_accessible_document_get_attribute_value;
+    iface->get_document_attributes = webkit_accessible_document_get_attributes;
+    iface->get_document_locale = webkit_accessible_document_get_locale;
+}
+
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
@@ -1420,6 +1453,8 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_image_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_table_interface_init,
+     (GInterfaceFinalizeFunc) NULL, NULL},
+    {(GInterfaceInitFunc)atk_document_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL}
 };
 
@@ -1430,7 +1465,8 @@ enum WAIType {
     WAI_TEXT,
     WAI_COMPONENT,
     WAI_IMAGE,
-    WAI_TABLE
+    WAI_TABLE,
+    WAI_DOCUMENT
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
@@ -1450,6 +1486,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
       return ATK_TYPE_IMAGE;
   case WAI_TABLE:
       return ATK_TYPE_TABLE;
+  case WAI_DOCUMENT:
+      return ATK_TYPE_DOCUMENT;
   }
 
   return G_TYPE_INVALID;
@@ -1488,6 +1526,10 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Table
     if (role == TableRole)
         interfaceMask |= 1 << WAI_TABLE;
+
+    // Document
+    if (role == WebAreaRole)
+        interfaceMask |= 1 << WAI_DOCUMENT;
 
     return interfaceMask;
 }
