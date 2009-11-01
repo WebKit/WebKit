@@ -1,3 +1,13 @@
+2009-11-01  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Double clicking on a breakpoints should not select text
+        https://bugs.webkit.org/show_bug.cgi?id=30950
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._documentMouseDown):
+
 2009-11-01  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.

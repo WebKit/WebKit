@@ -336,6 +336,8 @@ WebInspector.SourceFrame.prototype = {
             WebInspector.panels.scripts.removeBreakpoint(sourceRow._breakpointObject);
         else if (this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
+
+        event.preventDefault();
     },
 
     _editBreakpointCondition: function(eventTarget, sourceRow, breakpoint)
