@@ -1,3 +1,18 @@
+2009-11-01  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 30902: Need a layout test for Bug 28284
+        This change just adds a simple test that calls TextInputController.firstRectForCharacterRange()
+        before and after inserting a Thai character and compare their results.
+        https://bugs.webkit.org/show_bug.cgi?id=30902
+
+        * fast/text/international/thai-cursor-position-expected.txt: Added.
+        * fast/text/international/thai-cursor-position.html: Added.
+        * platform/gtk/Skipped: Skip this test because TextInputController is not implemented.
+        * platform/qt/Skipped: ditto.
+        * platform/win/Skipped: ditto.
+
 2009-11-01  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.

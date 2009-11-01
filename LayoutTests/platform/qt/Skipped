@@ -122,6 +122,7 @@ inspector/uncaught-dom8-exception.html
 # Missing textInputController.setMarkedText()
 fast/forms/input-maxlength-ime-preedit.html
 fast/forms/input-maxlength-ime-completed.html
+fast/text/international/thai-cursor-position.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html

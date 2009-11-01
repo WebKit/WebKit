@@ -5568,6 +5568,7 @@ fast/loader/opaque-base-url.html
 # No TextInputController
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
+fast/text/international/thai-cursor-position.html
 
 # No User Scripts
 userscripts
