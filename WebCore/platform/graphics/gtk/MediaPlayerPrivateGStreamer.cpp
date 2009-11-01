@@ -66,11 +66,15 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
         LOG_VERBOSE(Media, "Error: %d, %s", err->code,  err->message);
 
         error = MediaPlayer::Empty;
-        if (err->domain == GST_CORE_ERROR || err->domain == GST_LIBRARY_ERROR)
-            error = MediaPlayer::DecodeError;
-        else if (err->domain == GST_RESOURCE_ERROR)
+        if (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND ||
+            err->code == GST_STREAM_ERROR_WRONG_TYPE ||
+            err->code == GST_STREAM_ERROR_FAILED ||
+            err->code == GST_CORE_ERROR_MISSING_PLUGIN ||
+            err->code == GST_RESOURCE_ERROR_NOT_FOUND)
             error = MediaPlayer::FormatError;
         else if (err->domain == GST_STREAM_ERROR)
+            error = MediaPlayer::DecodeError;
+        else if (err->domain == GST_RESOURCE_ERROR)
             error = MediaPlayer::NetworkError;
 
         if (mp)

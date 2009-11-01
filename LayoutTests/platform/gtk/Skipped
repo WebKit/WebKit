@@ -5528,9 +5528,6 @@ media/video-played-reset.html
 # https://bugs.webkit.org/show_bug.cgi?id=30680
 media/audio-delete-while-step-button-clicked.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=30586
-media/video-src-empty.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30594
 fast/dom/Window/window-properties.html
 

@@ -1,3 +1,16 @@
+2009-11-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30586
+        [GTK] Failing test media/video-src-empty.html
+
+        Correctly set network/ready state depending on GStreamer errors
+        received on the bus.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+
 2009-10-31  Oliver Hunt  <oliver@apple.com>
 
         Build fix
