@@ -1,3 +1,9 @@
+2009-11-01  Jessie Berlin  <jberlin@webkit.org>
+
+        Adding myself to the committers list.
+
+        * Scripts/modules/committers.py:
+
 2009-10-30  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix an issue that Adam noticed in DRT.
