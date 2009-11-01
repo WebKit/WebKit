@@ -928,7 +928,7 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
             \"resize\", \"scroll\"], \
         _normalizeEventTypes: function(t) { \
             if (typeof t === \"undefined\") \
-                t = _inspectorCommandLineAPI._allEventTypes; \
+                t = console._inspectorCommandLineAPI._allEventTypes; \
             else if (typeof t === \"string\") \
                 t = [t]; \
             var i, te = []; \
@@ -946,18 +946,18 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
         monitorEvent: function(o, t) { \
             if (!o || !o.addEventListener || !o.removeEventListener) \
                 return; \
-            t = _inspectorCommandLineAPI._normalizeEventTypes(t); \
+            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
             for (i = 0; i < t.length; i++) { \
-                o.removeEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
-                o.addEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
+                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
+                o.addEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
             } \
         }, \
         unmonitorEvent: function(o, t) { \
             if (!o || !o.removeEventListener) \
                 return; \
-            t = _inspectorCommandLineAPI._normalizeEventTypes(t); \
+            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
             for (i = 0; i < t.length; i++) { \
-                o.removeEventListener(t[i], _inspectorCommandLineAPI._logEvent, false); \
+                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
             } \
         }, \
         _inspectedNodes: [], \
