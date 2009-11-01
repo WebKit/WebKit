@@ -20,7 +20,7 @@ file:///test	file:///test		/test
 file://localhost	file:		
 file://localhost/	file:///		/
 file://localhost/test	file:///test		/test
-http:	http:/		/
+http:	http:		
 http:/	http:/		/
 http://	http:/		/
 http:///	http:/		/

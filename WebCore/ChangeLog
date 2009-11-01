@@ -1,3 +1,15 @@
+2009-11-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Don't add '/' to the URL path if the it does not include '/' after the protocol component
+        https://bugs.webkit.org/show_bug.cgi?id=30971
+
+        Match IE8 behaviour, that does not add '/' if there is none after the protocol component.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse):
+
 2009-10-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

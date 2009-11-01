@@ -1,3 +1,14 @@
+2009-11-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Don't add '/' to the URL path if the it does not include '/' after the protocol component
+        https://bugs.webkit.org/show_bug.cgi?id=30971
+
+        Updating the expected result to reflect the change.
+
+        * fast/loader/url-parse-1-expected.txt:
+
 2009-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by John Sullivan.
