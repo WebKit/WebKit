@@ -1,3 +1,15 @@
+2009-11-01  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix assertion falure in RenderObjectChildList::updateBeforeAfterContent().
+
+        [Crash (debug)] Combination of list-item and :after causes assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=30944
+
+        * fast/css/list-item-pseudo-nocrash-expected.txt: Added.
+        * fast/css/list-item-pseudo-nocrash.html: Added.
+
 2009-11-01  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.

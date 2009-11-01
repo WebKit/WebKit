@@ -369,9 +369,11 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                     RefPtr<RenderStyle> style = RenderStyle::create();
                     style->inheritFrom(pseudoElementStyle);
                     genChild->setStyle(style.release());
-                } else
-                    // Must be a first-letter container. updateFirstLetter() will take care of it.
-                    ASSERT(genChild->style()->styleType() == FIRST_LETTER);
+                } else {
+                    // RenderListItem may insert a list marker here. We do not need to care about this case.
+                    // Otherwise, genChild must be a first-letter container. updateFirstLetter() will take care of it.
+                    ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER);
+                }
             }
         }
         return; // We've updated the generated content. That's all we needed to do.
