@@ -1,3 +1,20 @@
+2009-10-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix layering violations in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=30986
+
+        Remove uses of HTMLImageElement and HTMLCanvasElement
+
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::texImage2D):
+        (WebCore::CanvasRenderingContext3D::texSubImage2D):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2009-11-01  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Jan Alonzo.

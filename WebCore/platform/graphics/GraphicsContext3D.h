@@ -58,8 +58,7 @@ namespace WebCore {
     class CanvasRenderingContext3D;
     class CanvasShader;
     class CanvasTexture;
-    class HTMLCanvasElement;
-    class HTMLImageElement;
+    class Image;
     class HTMLVideoElement;
     class ImageData;
     class WebKitCSSMatrix;
@@ -236,9 +235,7 @@ namespace WebCore {
         int texImage2D(unsigned target, unsigned level, unsigned internalformat,
                        unsigned width, unsigned height, unsigned border,
                        unsigned format, unsigned type, ImageData* pixels);
-        int texImage2D(unsigned target, unsigned level, HTMLImageElement* image,
-                       bool flipY, bool premultiplyAlpha);
-        int texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas,
+        int texImage2D(unsigned target, unsigned level, Image* image,
                        bool flipY, bool premultiplyAlpha);
         int texImage2D(unsigned target, unsigned level, HTMLVideoElement* video,
                        bool flipY, bool premultiplyAlpha);
@@ -253,10 +250,7 @@ namespace WebCore {
                           unsigned width, unsigned height,
                           unsigned format, unsigned type, ImageData* pixels);
         int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height, HTMLImageElement* image,
-                          bool flipY, bool premultiplyAlpha);
-        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height, HTMLCanvasElement* canvas,
+                          unsigned width, unsigned height, Image* image,
                           bool flipY, bool premultiplyAlpha);
         int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                           unsigned width, unsigned height, HTMLVideoElement* video,
