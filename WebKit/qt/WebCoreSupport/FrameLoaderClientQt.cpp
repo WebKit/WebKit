@@ -145,9 +145,9 @@ namespace WebCore
 FrameLoaderClientQt::FrameLoaderClientQt()
     : m_frame(0)
     , m_webFrame(0)
+    , m_firstData(false)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
-    , m_firstData(false)
     , m_loadError (ResourceError())
 {
 }

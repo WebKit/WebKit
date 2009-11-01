@@ -1,3 +1,17 @@
+2009-11-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Turn on warnings for QtWebKit for gcc
+        https://bugs.webkit.org/show_bug.cgi?id=30958
+
+        No new tests as there is no functional change.
+
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp:
+        (WebCore::RGBA32Buffer::RGBA32Buffer): Reorder 
+        initialization list to fix compiler warnings.
+
+
 2009-11-01  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.

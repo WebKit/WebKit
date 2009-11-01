@@ -29,6 +29,8 @@
 
 #include "DumpRenderTree.h"
 
+#include <wtf/AlwaysInline.h>
+
 #include <qstringlist.h>
 #include <qapplication.h>
 #include <qurl.h>
@@ -86,7 +88,7 @@ QString get_backtrace() {
     return s;
 }
 
-static void crashHandler(int sig)
+static NO_RETURN void crashHandler(int sig)
 {
     fprintf(stderr, "%s\n", strsignal(sig));
     fprintf(stderr, "%s\n", get_backtrace().toLatin1().constData());

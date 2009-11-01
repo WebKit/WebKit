@@ -34,9 +34,9 @@
 namespace WebCore {
 
 RGBA32Buffer::RGBA32Buffer()
-    : m_status(FrameEmpty)
-    , m_hasAlpha(false)
+    : m_hasAlpha(false) 
     , m_size()
+    , m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
 {

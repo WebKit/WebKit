@@ -1,3 +1,13 @@
+2009-11-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Turn on warnings for QtWebKit for gcc
+        https://bugs.webkit.org/show_bug.cgi?id=30958
+
+        * DumpRenderTree/qt/main.cpp: 
+        (crashHandler): Mark function NO_RETURN
+
 2009-11-01  Jessie Berlin  <jberlin@webkit.org>
 
         Adding myself to the committers list.

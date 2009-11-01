@@ -266,11 +266,11 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #if QT_VERSION < 0x040600
     , view(0)
 #endif
+    , clickCausedFocus(false)
+    , viewportSize(QSize(0, 0))
     , inspectorFrontend(0)
     , inspector(0)
     , inspectorIsInternalOnly(false)
-    , viewportSize(QSize(0, 0))
-    , clickCausedFocus(false)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
     JSC::initializeThreading();

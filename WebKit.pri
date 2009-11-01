@@ -47,8 +47,7 @@ BASE_DIR = $$PWD
 INCLUDEPATH += $$PWD/WebKit/qt/Api
 
 CONFIG -= warn_on
-*-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
-#QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
+*-g++*:QMAKE_CXXFLAGS += -Wall -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
 
 # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
 symbian|*-armcc {
