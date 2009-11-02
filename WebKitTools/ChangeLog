@@ -1,3 +1,15 @@
+2009-11-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        buildbots should use --exit-after-N-failures
+        https://bugs.webkit.org/show_bug.cgi?id=30809
+
+        Make the bots exit after 20 failures to prevent never-ending
+        test runs where every test spends a minute crashing.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2009-11-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
