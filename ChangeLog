@@ -1,3 +1,12 @@
+2009-11-02  Xan Lopez  <xlopez@igalia.com>
+
+        Bump version before release (or post-release, depending on your
+        point of view) so that we can make applications depending on
+        unreleased APIs in WebKit svn fail at configure time when the
+        requirements are not met.
+
+        * configure.ac:
+
 2009-11-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
