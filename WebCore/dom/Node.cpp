@@ -1763,23 +1763,22 @@ bool Node::isEqualNode(Node *other) const
     return true;
 }
 
-bool Node::isDefaultNamespace(const AtomicString &namespaceURI) const
+bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
 {
-    // Implemented according to
-    // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/namespaces-algorithms.html#isDefaultNamespaceAlgo
-    
+    const AtomicString& namespaceURI = namespaceURIMaybeEmpty.isEmpty() ? nullAtom : namespaceURIMaybeEmpty;
+
     switch (nodeType()) {
         case ELEMENT_NODE: {
-            const Element *elem = static_cast<const Element *>(this);
+            const Element* elem = static_cast<const Element*>(this);
             
             if (elem->prefix().isNull())
                 return elem->namespaceURI() == namespaceURI;
 
             if (elem->hasAttributes()) {
-                NamedNodeMap *attrs = elem->attributes();
+                NamedNodeMap* attrs = elem->attributes();
                 
                 for (unsigned i = 0; i < attrs->length(); i++) {
-                    Attribute *attr = attrs->attributeItem(i);
+                    Attribute* attr = attrs->attributeItem(i);
                     
                     if (attr->localName() == "xmlns")
                         return attr->value() == namespaceURI;
@@ -1801,7 +1800,7 @@ bool Node::isDefaultNamespace(const AtomicString &namespaceURI) const
         case DOCUMENT_FRAGMENT_NODE:
             return false;
         case ATTRIBUTE_NODE: {
-            const Attr *attr = static_cast<const Attr *>(this);
+            const Attr* attr = static_cast<const Attr*>(this);
             if (attr->ownerElement())
                 return attr->ownerElement()->isDefaultNamespace(namespaceURI);
             return false;

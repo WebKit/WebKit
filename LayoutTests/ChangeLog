@@ -1,3 +1,13 @@
+2009-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30992
+        Node.isDefaultNamespace doesn't convert empty strings to null
+
+        * fast/dom/Node/default-namespace-empty-argument-expected.txt: Added.
+        * fast/dom/Node/default-namespace-empty-argument.html: Added.
+
 2009-11-01  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
