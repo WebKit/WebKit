@@ -143,7 +143,10 @@ Vector<char> FormDataBuilder::generateUniqueBoundaryString()
     // The RFC 2046 spec says the alphanumeric characters plus the
     // following characters are legal for boundaries:  '()+_,-./:=?
     // However the following characters, though legal, cause some sites
-    // to fail: (),./:= (http://bugs.webkit.org/show_bug.cgi?id=13352)
+    // to fail: (),./:=+
+    // Note that our algorithm makes it twice as much likely for 'A' or 'B'
+    // to appear in the boundary string, because 0x41 and 0x42 are present in
+    // the below array twice.
     static const char alphaNumericEncodingMap[64] = {
         0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
         0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
@@ -152,18 +155,7 @@ Vector<char> FormDataBuilder::generateUniqueBoundaryString()
         0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E,
         0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
         0x77, 0x78, 0x79, 0x7A, 0x30, 0x31, 0x32, 0x33,
-        0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x41
-        // FIXME <rdar://problem/5252577> gmail does not accept legal characters in the form boundary
-        // As stated above, some legal characters cause, sites to fail. Specifically
-        // the / character which was the last character in the above array. I have
-        // replaced the last character with another character already in the array
-        // (notice the first and last values are both 0x41, A). Instead of picking
-        // another unique legal character for boundary strings that, because it has
-        // never been tested, may or may not break other sites, I simply
-        // replaced / with A.  This means A is twice as likely to occur in our boundary
-        // strings than any other character but I think this is fine for the time being.
-        // The FIXME here is about restoring the / character once the aforementioned
-        // radar has been resolved.
+        0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42
     };
 
     // Start with an informative prefix.

@@ -1,3 +1,17 @@
+2009-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18539
+        multipart/form-data not being parsed correctly on server due to '+' in boundary string
+
+        No test - the characters that the boundary is made of are not deterministic.
+
+        * platform/network/FormDataBuilder.cpp: (WebCore::FormDataBuilder::generateUniqueBoundaryString):
+        Don't ever put a '+' in boundary string, either. Removed a FIXME to bring '/' back once
+        GMail is fixed - I don't think we'll ever want to allow non-alphanumeric characters, as
+        they cause problems on many web sites.
+
 2009-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
