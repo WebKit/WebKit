@@ -1,3 +1,20 @@
+2009-10-27  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        This is the WebKit-side change needed to fix canvas.getImageData() for
+        Chromium.  The unpremultiply code in Skia assumes that unpremultiplied
+        values should be rounded, while CG does not.  In addition, the fixed
+        point inversion used by Skia introduces slight inaccuracies that make
+        us fail this test.  This change brings Chromium in line with
+        the CG path.
+        https://bugs.webkit.org/show_bug.cgi?id=30825
+
+        Covered by LayoutTests/fast/canvas/canvas-getImageData.html
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+
 2009-11-01  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.

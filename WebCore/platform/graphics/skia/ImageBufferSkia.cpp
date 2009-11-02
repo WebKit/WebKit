@@ -164,11 +164,12 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         for (int x = 0; x < numColumns; ++x) {
             unsigned char* destPixel = &destRow[x * 4];
             if (multiplied == Unmultiplied) {
-                SkColor color = SkPMColorToColor(srcRow[x]);
-                destPixel[0] = SkColorGetR(color);
-                destPixel[1] = SkColorGetG(color);
-                destPixel[2] = SkColorGetB(color);
-                destPixel[3] = SkColorGetA(color);
+                SkColor color = srcRow[x];
+                unsigned a = SkColorGetA(color);
+                destPixel[0] = a ? SkColorGetR(color) * 255 / a : 0;
+                destPixel[1] = a ? SkColorGetG(color) * 255 / a : 0;
+                destPixel[2] = a ? SkColorGetB(color) * 255 / a : 0;
+                destPixel[3] = a;
             } else {
                 // Input and output are both pre-multiplied, we just need to re-arrange the
                 // bytes from the bitmap format to RGBA.
