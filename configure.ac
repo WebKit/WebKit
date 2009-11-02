@@ -588,8 +588,8 @@ if test "$enable_introspection" = "yes"; then
   G_IR_SCANNER="$($PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0)"
   G_IR_COMPILER="$($PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0)"
   G_IR_GENERATE="$($PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0)"
-  GIRDIR="$($PKG_CONFIG --variable=girdir gobject-introspection-1.0)"
-  GIRTYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
+  GIRDIR="$($PKG_CONFIG --define-variable=prefix=$prefix --variable=girdir gobject-introspection-1.0)"
+  GIRTYPELIBDIR="$($PKG_CONFIG --define-variable=prefix=$prefix --variable=typelibdir gobject-introspection-1.0)"
 
   AC_DEFINE([ENABLE_INTROSPECTION],[1],[Define to enable GObject introspection support])
 fi

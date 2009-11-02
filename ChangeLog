@@ -1,3 +1,15 @@
+2009-11-02  Estêvão Samuel Procópio  <tevaum@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [Build] make install ignores --prefix option for gobject-introspection.
+        https://bugs.webkit.org/show_bug.cgi?id=31025
+
+        Make the build system use the --prefix path also when installing
+        gobject-introspection files.
+
+        * configure.ac: use --prefix path in GITDIR and GIRTYPELIBDIR
+
 2009-11-02  Xan Lopez  <xlopez@igalia.com>
 
         Bump version before release (or post-release, depending on your
