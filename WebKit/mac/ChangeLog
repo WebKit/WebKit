@@ -2,6 +2,17 @@
 
         Reviewed by Mark Rowe.
 
+        Made the space bar toggle playing state in full-screen video when
+        modifier keys are down. Made it do so without highlighting the
+        Play/Pause button.
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController keyDown:]):
+
+2009-11-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
         Made the full-screen video HUD respond to the up and down arrow keys by
         increasing and decreasing the volume by 1/10 of the range or, when
         combined with the Option key, all the way up or down.

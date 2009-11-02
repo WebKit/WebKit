@@ -186,23 +186,30 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 
 - (void)keyDown:(NSEvent *)event
 {
-    if ([[event characters] isEqualToString:@" "])
-        [_playButton performClick:self];
-    else {
-        NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
-        if ([charactersIgnoringModifiers length] == 1 && [charactersIgnoringModifiers characterAtIndex:0] == NSUpArrowFunctionKey) {
-            if ([event modifierFlags] & NSAlternateKeyMask)
-                [self setVolume:[self maxVolume]];
-            else
-                [self incrementVolume];
-        } else if ([charactersIgnoringModifiers length] == 1 && [charactersIgnoringModifiers characterAtIndex:0] == NSDownArrowFunctionKey) {
-            if ([event modifierFlags] & NSAlternateKeyMask)
-                [self setVolume:0];
-            else
-                [self decrementVolume];
-        } else
-            [super keyDown:event];
+    NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
+    if ([charactersIgnoringModifiers length] == 1) {
+        switch ([charactersIgnoringModifiers characterAtIndex:0]) {
+            case ' ':
+                [self togglePlaying:nil];
+                return;
+            case NSUpArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask)
+                    [self setVolume:[self maxVolume]];
+                else
+                    [self incrementVolume];
+                return;
+            case NSDownArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask)
+                    [self setVolume:0];
+                else
+                    [self decrementVolume];
+                return;
+            default:
+                break;
+        }
     }
+
+    [super keyDown:event];
 }
 
 - (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
