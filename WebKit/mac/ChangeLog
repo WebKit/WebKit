@@ -1,3 +1,28 @@
+2009-11-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit part of making the appearance of the full-screen video HUD match
+        QuickTime Player X’s HUD.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h: Removed unnecessary
+        #import statements, cleaned up style, and changed _timeline,
+        _volumeSlider and _playButton to have more specific types.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Updated #import
+        statements.
+        (webkit_CGFloor): Added this helper function.
+        (-[WebVideoFullscreenHUDWindowController init]): Cleaned up style.
+        (createTimeTextField): Changed to use the bold system font.
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]): Changed the
+        subviews’ metrics and the text fields’ text alignment.
+        (-[WebVideoFullscreenHUDWindowController updateTime]): Avoid conversion
+        from double to float.
+        (stringToTimeTextAttributed): Removed this useless function that
+        returned an NSAttributedString masquerading as an NSString.
+        (-[WebVideoFullscreenHUDWindowController remainingTimeText]): Removed
+        call to stringToTimeTextAttributed().
+        (-[WebVideoFullscreenHUDWindowController elapsedTimeText]): Ditto.
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

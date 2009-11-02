@@ -25,13 +25,14 @@
 
 #if ENABLE(VIDEO)
 
-#import <Cocoa/Cocoa.h>
-#import <WebCore/HTMLMediaElement.h>
+namespace WebCore {
+    class HTMLMediaElement;
+}
 
 @protocol WebVideoFullscreenHUDWindowControllerDelegate;
 
-@interface WebVideoFullscreenHUDWindowController : NSWindowController {
-@private
+@interface WebVideoFullscreenHUDWindowController : NSWindowController
+{
     id<WebVideoFullscreenHUDWindowControllerDelegate> _delegate;
     NSTimer *_timelineUpdateTimer;
 #if !defined(BUILDING_ON_TIGER)
@@ -40,12 +41,13 @@
     BOOL _mouseIsInHUD;
     BOOL _isEndingFullscreen;
 
-    NSControl *_timeline;
+    NSSlider *_timeline;
     NSTextField *_remainingTimeText;
     NSTextField *_elapsedTimeText;
-    NSControl *_volumeSlider;
-    NSControl *_playButton;
+    NSSlider *_volumeSlider;
+    NSButton *_playButton;
 }
+
 - (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate;
 - (void)setDelegate:(id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate;
 - (void)fadeWindowIn;
