@@ -1,3 +1,13 @@
+2009-11-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Fix for loop to use an size_t instead of unsigned and some spacing
+        style fixes.
+
+        * dom/Node.cpp:
+        (WebCore::eventHasListeners):
+
 2009-11-01  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.

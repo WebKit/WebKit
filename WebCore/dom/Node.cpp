@@ -2446,12 +2446,12 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
-static bool eventHasListeners(const AtomicString& eventType, Node* node, Vector< RefPtr< ContainerNode > >& ancestors)
+static bool eventHasListeners(const AtomicString& eventType, Node* node, Vector<RefPtr<ContainerNode> >& ancestors)
 {
     if (node->hasEventListeners(eventType))
         return true;
 
-    for (unsigned i = 0; i < ancestors.size(); i++) {
+    for (size_t i = 0; i < ancestors.size(); i++) {
         ContainerNode* ancestor = ancestors[i].get();
         if (ancestor->hasEventListeners(eventType))
             return true;
