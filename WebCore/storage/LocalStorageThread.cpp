@@ -69,13 +69,8 @@ void* LocalStorageThread::localStorageThread()
         MutexLocker lock(m_threadCreationMutex);
     }
 
-    while (true) {
-        RefPtr<LocalStorageTask> task;
-        if (!m_queue.waitForMessage(task))
-            break;
-
+    while (OwnPtr<LocalStorageTask> task = m_queue.waitForMessage())
         task->performTask();
-    }
 
     // Detach the thread so its resources are no longer of any concern to anyone else
     detachThread(m_threadID);

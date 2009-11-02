@@ -1,3 +1,102 @@
+2009-11-02  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove threadsafe refcounting from tasks used with WTF::MessageQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=30612
+
+        No new tests since no new functionality. Storage, MessagePorts and Workers tests cover this.
+
+        There are a lot of files but most changes are simply replace RefPtr and PassRefPtr with
+        OwnPtr and PassOwnPtr when dealing with Tasks.
+
+        ScriptExecutionContext::Task, DatabaseTask and WorkerRunLoop::Task are no longer
+        threadsafe refcounted, but simply Noncopyable.
+
+        * dom/Document.cpp:
+        (WebCore::ScriptExecutionContextTaskTimer::ScriptExecutionContextTaskTimer):
+        (WebCore::PerformTaskContext::PerformTaskContext):
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ProcessMessagesSoonTask::create):
+        * dom/ScriptExecutionContext.h:
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::tryGetMessageFromRemote):
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::tryGetMessage):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::appendAndCheckEmpty):
+        * loader/FrameLoader.cpp:
+        (WebCore::HashChangeEventTask::create):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::CallCacheListenerTask::create):
+        * storage/Database.cpp:
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::Database::tableNames):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+        (WebCore::DatabaseCloseTask::create):
+        (WebCore::DatabaseTransactionTask::create):
+        (WebCore::DatabaseTableNamesTask::create):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask):
+        (WebCore::SameDatabasePredicate::operator()):
+        * storage/DatabaseThread.h:
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::createImport):
+        (WebCore::LocalStorageTask::createSync):
+        (WebCore::LocalStorageTask::createTerminate):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::localStorageThread):
+        * storage/LocalStorageThread.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::ProcessWebSocketEventTask::create):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerContext):
+        (WebCore::SharedWorkerConnectTask::create):
+        * workers/GenericWorkerTask.h:
+        (WebCore::GenericWorkerTask1::create):
+        (WebCore::GenericWorkerTask2::create):
+        (WebCore::GenericWorkerTask3::create):
+        (WebCore::GenericWorkerTask4::create):
+        (WebCore::GenericWorkerTask5::create):
+        (WebCore::GenericWorkerTask6::create):
+        (WebCore::GenericWorkerTask7::create):
+        (WebCore::GenericWorkerTask8::create):
+        (WebCore::createCallbackTask):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::postTask):
+        * workers/WorkerContext.h:
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::create):
+        (WebCore::MessageWorkerTask::create):
+        (WebCore::WorkerExceptionTask::create):
+        (WebCore::WorkerContextDestroyedTask::create):
+        (WebCore::WorkerTerminateTask::create):
+        (WebCore::WorkerThreadActivityReportTask::create):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerContext):
+        (WebCore::WorkerMessagingProxy::postTaskToLoader):
+        (WebCore::WorkerMessagingProxy::workerThreadCreated):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::operator()):
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::postTask):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        (WebCore::WorkerRunLoop::Task::create):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        (WebCore::WorkerRunLoop::Task::Task):
+        * workers/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::Task::~Task):
+        (WebCore::WorkerRunLoop::Task::mode):
+
 2009-11-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Jan Alonzo.

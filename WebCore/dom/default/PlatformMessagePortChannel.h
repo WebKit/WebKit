@@ -63,18 +63,14 @@ namespace WebCore {
         public:
             static PassRefPtr<MessagePortQueue> create() { return adoptRef(new MessagePortQueue()); }
 
-            bool tryGetMessage(OwnPtr<MessagePortChannel::EventData>& message)
+            PassOwnPtr<MessagePortChannel::EventData> tryGetMessage()
             {
-                MessagePortChannel::EventData* holder = 0;
-                bool messageAvailable = m_queue.tryGetMessage(holder);
-                if (messageAvailable)
-                    message.set(holder);
-                return messageAvailable;
+                return m_queue.tryGetMessage();
             }
 
             bool appendAndCheckEmpty(PassOwnPtr<MessagePortChannel::EventData> message)
             {
-                return m_queue.appendAndCheckEmpty(message.release());
+                return m_queue.appendAndCheckEmpty(message);
             }
 
             bool isEmpty()
@@ -82,19 +78,10 @@ namespace WebCore {
                 return m_queue.isEmpty();
             }
 
-            ~MessagePortQueue()
-            {
-                // Manually free any items left in the queue, since we can't use OwnPtr internally.
-                MessagePortChannel::EventData* data = 0;
-                while (m_queue.tryGetMessage(data))
-                    delete data;
-            }
         private:
             MessagePortQueue() { }
 
-            // OwnPtr is Noncopyable, so we can't use it as the template type in a MessageQueue. So we just store a pointer to EventData and manually free it in the destructor.
-            // FIXME: Use a lock-free queue implementation to completely eliminate contention when sending/receiving messages.
-            MessageQueue<MessagePortChannel::EventData*> m_queue;
+            MessageQueue<MessagePortChannel::EventData> m_queue;
         };
 
         ~PlatformMessagePortChannel();

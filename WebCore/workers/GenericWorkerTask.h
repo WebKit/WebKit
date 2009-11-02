@@ -70,9 +70,9 @@ namespace WebCore {
         typedef GenericWorkerTask1<P1, MP1> GenericWorkerTask;
         typedef typename GenericWorkerTaskTraits<P1>::ParamType Param1;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1));
+            return new GenericWorkerTask(method, parameter1);
         }
 
     private:
@@ -100,9 +100,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P1>::ParamType Param1;
         typedef typename GenericWorkerTaskTraits<P2>::ParamType Param2;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2));
+            return new GenericWorkerTask(method, parameter1, parameter2);
         }
 
     private:
@@ -133,9 +133,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P2>::ParamType Param2;
         typedef typename GenericWorkerTaskTraits<P3>::ParamType Param3;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3);
         }
 
     private:
@@ -169,9 +169,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P3>::ParamType Param3;
         typedef typename GenericWorkerTaskTraits<P4>::ParamType Param4;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4);
         }
 
     private:
@@ -208,9 +208,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P4>::ParamType Param4;
         typedef typename GenericWorkerTaskTraits<P5>::ParamType Param5;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5);
         }
 
     private:
@@ -250,9 +250,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P5>::ParamType Param5;
         typedef typename GenericWorkerTaskTraits<P6>::ParamType Param6;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6);
         }
 
     private:
@@ -295,9 +295,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P6>::ParamType Param6;
         typedef typename GenericWorkerTaskTraits<P7>::ParamType Param7;
 
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7);
         }
 
     private:
@@ -343,9 +343,9 @@ namespace WebCore {
         typedef typename GenericWorkerTaskTraits<P7>::ParamType Param7;
         typedef typename GenericWorkerTaskTraits<P8>::ParamType Param8;
         
-        static PassRefPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7, Param8 parameter8)
+        static PassOwnPtr<GenericWorkerTask> create(Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5, Param6 parameter6, Param7 parameter7, Param8 parameter8)
         {
-            return adoptRef(new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7, parameter8));
+            return new GenericWorkerTask(method, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6, parameter7, parameter8);
         }
         
     private:
@@ -380,7 +380,7 @@ namespace WebCore {
     };
 
     template<typename P1, typename MP1>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1),
         const P1& parameter1)
     {
@@ -390,7 +390,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2),
         const P1& parameter1, const P2& parameter2)
     {
@@ -400,7 +400,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2, MP3),
         const P1& parameter1, const P2& parameter2, const P3& parameter3)
     {
@@ -411,7 +411,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2, MP3, MP4),
         const P1& parameter1, const P2& parameter2, const P3& parameter3, const P4& parameter4)
     {
@@ -423,7 +423,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2, MP3, MP4, MP5),
         const P1& parameter1, const P2& parameter2, const P3& parameter3, const P4& parameter4, const P5& parameter5)
     {
@@ -436,7 +436,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2, MP3, MP4, MP5, MP6),
         const P1& parameter1, const P2& parameter2, const P3& parameter3, const P4& parameter4, const P5& parameter5, const P6& parameter6)
     {
@@ -449,7 +449,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
         void (*method)(ScriptExecutionContext*, MP1, MP2, MP3, MP4, MP5, MP6, MP7),
         const P1& parameter1, const P2& parameter2, const P3& parameter3, const P4& parameter4, const P5& parameter5, const P6& parameter6, const P7& parameter7)
     {
@@ -464,7 +464,7 @@ namespace WebCore {
     }
 
     template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7, typename P8, typename MP8>
-    PassRefPtr<ScriptExecutionContext::Task> createCallbackTask(
+    PassOwnPtr<ScriptExecutionContext::Task> createCallbackTask(
                                                                 void (*method)(ScriptExecutionContext*, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8),
                                                                 const P1& parameter1, const P2& parameter2, const P3& parameter3, const P4& parameter4, const P5& parameter5, const P6& parameter6, const P7& parameter7, const P8& parameter8)
     {

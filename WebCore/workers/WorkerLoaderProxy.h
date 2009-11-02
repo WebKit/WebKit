@@ -34,7 +34,7 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -50,11 +50,11 @@ namespace WebCore {
         virtual ~WorkerLoaderProxy() { }
 
         // Posts a task to the thread which runs the loading code (normally, the main thread).
-        virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>) = 0;
+        virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>) = 0;
 
         // Posts callbacks from loading code to the WorkerContext. The 'mode' is used to differentiate
         // specific synchronous loading requests so they can be 'nested', per spec.
-        virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String& mode) = 0;
+        virtual void postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode) = 0;
     };
 
 } // namespace WebCore

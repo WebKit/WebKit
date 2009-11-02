@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -65,7 +66,7 @@ private:
     ThreadCondition m_synchronousCondition;
 };
 
-class DatabaseTask : public ThreadSafeShared<DatabaseTask> {
+class DatabaseTask : public Noncopyable {
     friend class Database;
 public:
     virtual ~DatabaseTask();
@@ -91,9 +92,9 @@ private:
 
 class DatabaseOpenTask : public DatabaseTask {
 public:
-    static PassRefPtr<DatabaseOpenTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
+    static PassOwnPtr<DatabaseOpenTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, bool& success)
     {
-        return adoptRef(new DatabaseOpenTask(db, synchronizer, code, success));
+        return new DatabaseOpenTask(db, synchronizer, code, success);
     }
 
 private:
@@ -110,9 +111,9 @@ private:
 
 class DatabaseCloseTask : public DatabaseTask {
 public:
-    static PassRefPtr<DatabaseCloseTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer)
+    static PassOwnPtr<DatabaseCloseTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer)
     { 
-        return adoptRef(new DatabaseCloseTask(db, synchronizer));
+        return new DatabaseCloseTask(db, synchronizer);
     }
 
 private:
@@ -127,9 +128,9 @@ private:
 class DatabaseTransactionTask : public DatabaseTask {
 public:
     // Transaction task is never synchronous, so no 'synchronizer' parameter.
-    static PassRefPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
+    static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
     {
-        return adoptRef(new DatabaseTransactionTask(transaction));
+        return new DatabaseTransactionTask(transaction);
     }
 
     SQLTransaction* transaction() const { return m_transaction.get(); }
@@ -148,9 +149,9 @@ private:
 
 class DatabaseTableNamesTask : public DatabaseTask {
 public:
-    static PassRefPtr<DatabaseTableNamesTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
+    static PassOwnPtr<DatabaseTableNamesTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
     {
-        return adoptRef(new DatabaseTableNamesTask(db, synchronizer, names));
+        return new DatabaseTableNamesTask(db, synchronizer, names);
     }
 
 private:

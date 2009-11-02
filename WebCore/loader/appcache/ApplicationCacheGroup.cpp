@@ -947,9 +947,9 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
 
 class CallCacheListenerTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID)
+    static PassOwnPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID)
     {
-        return adoptRef(new CallCacheListenerTask(loader, eventID));
+        return new CallCacheListenerTask(loader, eventID);
     }
 
     virtual void performTask(ScriptExecutionContext* context)

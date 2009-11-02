@@ -1,3 +1,29 @@
+2009-11-02  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove threadsafe refcounting from tasks used with WTF::MessageQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=30612
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::alwaysTruePredicate):
+        (WTF::MessageQueue::~MessageQueue):
+        (WTF::MessageQueue::append):
+        (WTF::MessageQueue::appendAndCheckEmpty):
+        (WTF::MessageQueue::prepend):
+        (WTF::MessageQueue::waitForMessage):
+        (WTF::MessageQueue::waitForMessageFilteredWithTimeout):
+        (WTF::MessageQueue::tryGetMessage):
+        (WTF::MessageQueue::removeIf):
+        The MessageQueue is changed to act as a queue of OwnPtr<DataType>. It takes ownership
+        of posted tasks and passes it to the new owner (in another thread) when the task is fetched.
+        All methods have arguments of type PassOwnPtr<DataType> and return the same type.
+
+        * wtf/Threading.cpp:
+        (WTF::createThread):
+        Superficial change to trigger rebuild of JSC project on Windows,
+        workaround for https://bugs.webkit.org/show_bug.cgi?id=30890
+
 2009-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -52,9 +52,9 @@ namespace WebCore {
 class ProcessWebSocketEventTask : public ScriptExecutionContext::Task {
 public:
     typedef void (WebSocket::*Method)(Event*);
-    static PassRefPtr<ProcessWebSocketEventTask> create(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
+    static PassOwnPtr<ProcessWebSocketEventTask> create(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
     {
-        return adoptRef(new ProcessWebSocketEventTask(webSocket, event));
+        return new ProcessWebSocketEventTask(webSocket, event);
     }
     virtual void performTask(ScriptExecutionContext*)
     {

@@ -162,7 +162,7 @@ void WorkerContext::scriptImported(unsigned long, const String&)
     notImplemented();
 }
 
-void WorkerContext::postTask(PassRefPtr<Task> task)
+void WorkerContext::postTask(PassOwnPtr<Task> task)
 {
     thread()->runLoop().postTask(task);
 }

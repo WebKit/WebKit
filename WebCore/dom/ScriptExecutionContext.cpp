@@ -44,9 +44,9 @@ namespace WebCore {
 
 class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<ProcessMessagesSoonTask> create()
+    static PassOwnPtr<ProcessMessagesSoonTask> create()
     {
-        return adoptRef(new ProcessMessagesSoonTask);
+        return new ProcessMessagesSoonTask;
     }
 
     virtual void performTask(ScriptExecutionContext* context)

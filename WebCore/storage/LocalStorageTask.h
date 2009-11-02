@@ -28,8 +28,7 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -44,9 +43,9 @@ namespace WebCore {
 
         ~LocalStorageTask();
 
-        static PassRefPtr<LocalStorageTask> createImport(StorageAreaSync* area) { return adoptRef(new LocalStorageTask(AreaImport, area)); }
-        static PassRefPtr<LocalStorageTask> createSync(StorageAreaSync* area) { return adoptRef(new LocalStorageTask(AreaSync, area)); }
-        static PassRefPtr<LocalStorageTask> createTerminate(LocalStorageThread* thread) { return adoptRef(new LocalStorageTask(TerminateThread, thread)); }
+        static PassOwnPtr<LocalStorageTask> createImport(StorageAreaSync* area) { return new LocalStorageTask(AreaImport, area); }
+        static PassOwnPtr<LocalStorageTask> createSync(StorageAreaSync* area) { return new LocalStorageTask(AreaSync, area); }
+        static PassOwnPtr<LocalStorageTask> createTerminate(LocalStorageThread* thread) { return new LocalStorageTask(TerminateThread, thread); }
 
         void performTask();
 

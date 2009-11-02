@@ -74,7 +74,7 @@ namespace WebCore {
         virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
         virtual void scriptImported(unsigned long identifier, const String& sourceString);
 
-        virtual void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
+        virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
 
         // WorkerGlobalScope
         WorkerContext* self() { return this; }
