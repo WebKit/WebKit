@@ -200,6 +200,13 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     request.setURL(newURL);
     request.setHTTPMethod(msg->method);
     fillResponseFromMessage(msg, &response);
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https")) {
+        request.clearHTTPReferrer();
+        soup_message_headers_remove(msg->request_headers, "Referer");
+    }
+
     if (d->client())
         d->client()->willSendRequest(handle, request, response);
 }
