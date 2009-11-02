@@ -136,6 +136,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_playBin(0)
     , m_videoSink(0)
     , m_source(0)
+    , m_seekTime(0)
     , m_endTime(numeric_limits<float>::infinity())
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -225,6 +226,9 @@ float MediaPlayerPrivate::currentTime() const
     if (m_errorOccured)
         return 0;
 
+    if (m_seeking)
+        return m_seekTime;
+
     float ret = 0.0;
 
     GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
@@ -264,8 +268,10 @@ void MediaPlayerPrivate::seek(float time)
             GST_SEEK_TYPE_SET, sec,
             GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE))
         LOG_VERBOSE(Media, "Seek to %f failed", time);
-    else
+    else {
         m_seeking = true;
+        m_seekTime = sec;
+    }
 }
 
 void MediaPlayerPrivate::setEndTime(float time)

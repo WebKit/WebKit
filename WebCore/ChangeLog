@@ -1,3 +1,17 @@
+2009-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Failing media/video-played-reset.html
+        https://bugs.webkit.org/show_bug.cgi?id=30589
+
+        new m_seekTime attribute to keep track of the seek position
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::seek):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-11-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
