@@ -1,3 +1,40 @@
+2009-11-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Made the full-screen video HUD respond to the up and down arrow keys by
+        increasing and decreasing the volume by 1/10 of the range or, when
+        combined with the Option key, all the way up or down.
+
+        Made the volume buttons in the full-screen video HUD match the behavior
+        of their equivalents in the QuickTime Player HUD by turning the volume
+        all the way up or down.
+
+        Made the volume slider update immediately when the keyboard or volume
+        buttons are used to change the volume, rather than at the nearest 1/4
+        second interval.
+
+        Made the elapsed and remaining time displays update immediately when the
+        play head is dragged across the timeline, rather than at 1/4 second
+        intervals.
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController keyDown:]): Handle the up and
+        down arrow keys.
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]): Changed the
+        actions of the volume up and volume down buttons.
+        (-[WebVideoFullscreenHUDWindowController setCurrentTime:]): Call
+        -updateTime.
+        (-[WebVideoFullscreenHUDWindowController setVolumeToZero:]): Added this
+        action for the volume down button.
+        (-[WebVideoFullscreenHUDWindowController setVolumeToMaximum:]): Added
+        this action for the volume up button.
+        (-[WebVideoFullscreenHUDWindowController decrementVolume]): No longer
+        and action method.
+        (-[WebVideoFullscreenHUDWindowController incrementVolume]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController setVolume:]): Call
+        -updateVolume.
+
 2009-10-30  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

@@ -39,18 +39,18 @@ using namespace std;
 
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
-- (void)keyDown:(NSEvent *)event;
-
 - (void)updateTime;
 - (void)timelinePositionChanged:(id)sender;
 - (float)currentTime;
 - (void)setCurrentTime:(float)currentTime;
 - (double)duration;
 
-- (double)maxVolume;
 - (void)volumeChanged:(id)sender;
+- (double)maxVolume;
 - (double)volume;
 - (void)setVolume:(double)volume;
+- (void)decrementVolume;
+- (void)incrementVolume;
 
 - (void)togglePlaying:(id)sender;
 - (BOOL)playing;
@@ -188,8 +188,21 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 {
     if ([[event characters] isEqualToString:@" "])
         [_playButton performClick:self];
-    else
-        [super keyDown:event];
+    else {
+        NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
+        if ([charactersIgnoringModifiers length] == 1 && [charactersIgnoringModifiers characterAtIndex:0] == NSUpArrowFunctionKey) {
+            if ([event modifierFlags] & NSAlternateKeyMask)
+                [self setVolume:[self maxVolume]];
+            else
+                [self incrementVolume];
+        } else if ([charactersIgnoringModifiers length] == 1 && [charactersIgnoringModifiers characterAtIndex:0] == NSDownArrowFunctionKey) {
+            if ([event modifierFlags] & NSAlternateKeyMask)
+                [self setVolume:0];
+            else
+                [self decrementVolume];
+        } else
+            [super keyDown:event];
+    }
 }
 
 - (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
@@ -356,7 +369,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSControl *volumeDownButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeDownButton, NSMakeRect(left, top - kButtonSize / 2 - kButtonMiniSize / 2, kButtonMiniSize, kButtonMiniSize));
     [contentView addSubview:volumeDownButton];
     [volumeDownButton setTarget:self];
-    [volumeDownButton setAction:@selector(decrementVolume:)];
+    [volumeDownButton setAction:@selector(setVolumeToZero:)];
     [volumeDownButton release];
 
     static const int volumeSliderWidth = 50;
@@ -371,7 +384,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     left = kMargin + kButtonMiniSize + volumeSliderWidth + kButtonMiniSize / 2;
     NSControl *volumeUpButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeUpButton, NSMakeRect(left, top - kButtonSize / 2 - kButtonMiniSize / 2, kButtonMiniSize, kButtonMiniSize));
     [volumeUpButton setTarget:self];
-    [volumeUpButton setAction:@selector(incrementVolume:)];
+    [volumeUpButton setAction:@selector(setVolumeToMaximum:)];
     [contentView addSubview:volumeUpButton];
     [volumeUpButton release];
     
@@ -443,6 +456,7 @@ static NSTextField *createTimeTextField(NSRect frame)
         return;
     WebCore::ExceptionCode e;
     [_delegate mediaElement]->setCurrentTime(currentTime, e);
+    [self updateTime];
 }
 
 - (double)duration
@@ -461,7 +475,17 @@ static NSTextField *createTimeTextField(NSRect frame)
     [self setVolume:[_volumeSlider doubleValue]];
 }
 
-- (void)decrementVolume:(id)sender
+- (void)setVolumeToZero:(id)sender
+{
+    [self setVolume:0];
+}
+
+- (void)setVolumeToMaximum:(id)sender
+{
+    [self setVolume:[self maxVolume]];
+}
+
+- (void)decrementVolume
 {
     if (![_delegate mediaElement])
         return;
@@ -470,7 +494,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     [self setVolume:max(volume, 0.)];
 }
 
-- (void)incrementVolume:(id)sender
+- (void)incrementVolume
 {
     if (![_delegate mediaElement])
         return;
@@ -492,6 +516,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     if ([_delegate mediaElement]->muted())
         [_delegate mediaElement]->setMuted(false);
     [_delegate mediaElement]->setVolume(volume / [self maxVolume], e);
+    [self updateVolume];
 }
 
 - (void)updateRate
