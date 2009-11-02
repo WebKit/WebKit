@@ -1,3 +1,14 @@
+2009-11-02  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix a leftover from profiles panel generalization.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31010
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.get searchableViews):
+
 2009-11-02  Kai Koehne  <kai.koehne@nokia.com>
 
         Reviewed by Holger Freyther.

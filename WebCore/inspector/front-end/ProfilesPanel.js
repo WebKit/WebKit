@@ -361,7 +361,8 @@ WebInspector.ProfilesPanel.prototype = {
 
         var profilesLength = this._profiles.length;
         for (var i = 0; i < profilesLength; ++i) {
-            var view = this._profiles[i].viewForProfile();
+            var profile = this._profiles[i];
+            var view = profile.__profilesPanelProfileType.viewForProfile(profile);
             if (!view.performSearch || view === visibleView)
                 continue;
             views.push(view);
