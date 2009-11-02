@@ -1,3 +1,15 @@
+2009-11-02  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30964
+        [Gtk] Implemment AtkDocument
+
+        Provides access to the reported content language.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_document_get_locale):
+
 2009-11-02  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.
