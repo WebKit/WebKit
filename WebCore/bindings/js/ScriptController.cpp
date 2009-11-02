@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "GCController.h"
 #include "HTMLPlugInElement.h"
+#include "InspectorTimelineAgent.h"
 #include "JSDocument.h"
 #include "NP_jsobject.h"
 #include "Page.h"
@@ -117,9 +118,20 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
 
     RefPtr<Frame> protect = m_frame;
 
+#if ENABLE(INSPECTOR)
+    InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
+    if (timelineAgent)
+        timelineAgent->willEvaluateScript(sourceURL, sourceCode.startLine());
+#endif
+
     exec->globalData().timeoutChecker.start();
     Completion comp = WebCore::evaluateInWorld(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, shell, world);
     exec->globalData().timeoutChecker.stop();
+
+#if ENABLE(INSPECTOR)
+    if (timelineAgent)
+        timelineAgent->didEvaluateScript();
+#endif
 
     // Evaluating the JavaScript could cause the frame to be deallocated
     // so we start the keep alive timer here.

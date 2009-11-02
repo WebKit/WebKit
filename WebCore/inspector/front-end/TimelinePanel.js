@@ -151,7 +151,7 @@ WebInspector.TimelinePanel.prototype = {
             this._recordStyles[recordTypes.TimerFire] = { title: WebInspector.UIString("Timer Fired"), category: this.categories.scripting };
             this._recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: this.categories.scripting };
             this._recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: this.categories.scripting };
-            this._recordStyles[recordTypes.EvaluateScriptTag] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
+            this._recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
             this._recordStyles["Other"] = { title: WebInspector.UIString("Other"), icon: 0, category: this.categories.other };
         }
 
@@ -182,7 +182,7 @@ WebInspector.TimelinePanel.prototype = {
             return record.data.timerId;
         case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
         case WebInspector.TimelineAgent.RecordType.XHRLoad:
-        case WebInspector.TimelineAgent.RecordType.EvaluateScriptTag:
+        case WebInspector.TimelineAgent.RecordType.EvaluateScript:
             return record.data.url;
         default:
             return "";

@@ -52,7 +52,7 @@ namespace WebCore {
         static ScriptObject createXHRReadyStateChangeTimelineRecord(InspectorFrontend*, double startTime, const String& url, int readyState);
         static ScriptObject createXHRLoadTimelineRecord(InspectorFrontend*, double startTime, const String& url);
         
-        static ScriptObject createEvaluateScriptTagTimelineRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
+        static ScriptObject createEvaluateScriptTimelineRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
 
     private:
         TimelineRecordFactory() { }

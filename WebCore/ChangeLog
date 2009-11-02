@@ -1,3 +1,31 @@
+2009-11-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Convert script tag event into a more generic
+        script eval event in timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30999
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createEvaluateScriptTimelineRecord):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+
 2009-11-01  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Mark Rowe.

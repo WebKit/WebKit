@@ -101,7 +101,7 @@ ScriptObject TimelineRecordFactory::createXHRLoadTimelineRecord(InspectorFronten
 }
 
 // static
-ScriptObject TimelineRecordFactory::createEvaluateScriptTagTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, double lineNumber) 
+ScriptObject TimelineRecordFactory::createEvaluateScriptTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, double lineNumber) 
 {
     ScriptObject item = createGenericRecord(frontend, startTime);
     ScriptObject data = frontend->newScriptObject();
