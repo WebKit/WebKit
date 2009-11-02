@@ -1,3 +1,104 @@
+2009-11-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 28420 -  Implement HTML5 <ruby> rendering
+        (https://bugs.webkit.org/show_bug.cgi?id=28420)
+
+        First rudimentary implementation of HTML5 ruby rendering support.
+
+        Following the HTML 5 spec, the box object model for a <ruby> element allows several runs of ruby
+        bases with their respective ruby texts looks as follows:
+
+        1 RenderRuby object, corresponding to the whole <ruby> HTML element
+             1+ RenderRubyRun (anonymous)
+                 0 or 1 RenderRubyText - shuffled to the front in order to re-use existing block layouting
+                     0-n inline object(s)
+                 0 or 1 RenderRubyBase - contains the inline objects that make up the ruby base
+                     1-n inline object(s)
+
+        Note: <rp> elements are defined as having 'display:none' and thus normally are not assigned a renderer.
+        
+        New layout tests will be committed in a follow-up patch under fast/ruby.
+
+        Makefiles, etc.
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        CSS
+        * css/html.css: Added <ruby> and <rt>
+
+        Existing render files:
+        * rendering/RenderBlock.cpp: make moveChild a member function moveChildTo
+        (WebCore::RenderBlock::moveChildTo):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): instantiate ruby renderers based on element name
+        * rendering/RenderObject.h: add query methods for ruby renderers
+        (WebCore::RenderObject::isRuby):
+        (WebCore::RenderObject::isRubyBase):
+        (WebCore::RenderObject::isRubyRun):
+        (WebCore::RenderObject::isRubyText):
+
+        New ruby renderers:
+        * rendering/RenderRuby.cpp: Added.
+        (WebCore::lastRubyRun):
+        (WebCore::findRubyRunParent):
+        (WebCore::RenderRubyAsInline::RenderRubyAsInline):
+        (WebCore::RenderRubyAsInline::~RenderRubyAsInline):
+        (WebCore::RenderRubyAsInline::isChildAllowed):
+        (WebCore::RenderRubyAsInline::addChild):
+        (WebCore::RenderRubyAsInline::removeChild):
+        (WebCore::RenderRubyAsBlock::RenderRubyAsBlock):
+        (WebCore::RenderRubyAsBlock::~RenderRubyAsBlock):
+        (WebCore::RenderRubyAsBlock::isChildAllowed):
+        (WebCore::RenderRubyAsBlock::addChild):
+        (WebCore::RenderRubyAsBlock::removeChild):
+        * rendering/RenderRuby.h: Added.
+        (WebCore::RenderRubyAsInline::renderName):
+        (WebCore::RenderRubyAsInline::isRuby):
+        (WebCore::RenderRubyAsBlock::renderName):
+        (WebCore::RenderRubyAsBlock::isRuby):
+        * rendering/RenderRubyBase.cpp: Added.
+        (WebCore::RenderRubyBase::RenderRubyBase):
+        (WebCore::RenderRubyBase::~RenderRubyBase):
+        (WebCore::RenderRubyBase::isChildAllowed):
+        (WebCore::RenderRubyBase::splitToLeft):
+        (WebCore::RenderRubyBase::mergeWithRight):
+        * rendering/RenderRubyBase.h: Added.
+        (WebCore::RenderRubyBase::renderName):
+        (WebCore::RenderRubyBase::isRubyBase):
+        * rendering/RenderRubyRun.cpp: Added.
+        (WebCore::RenderRubyRun::RenderRubyRun):
+        (WebCore::RenderRubyRun::~RenderRubyRun):
+        (WebCore::RenderRubyRun::hasRubyText):
+        (WebCore::RenderRubyRun::hasRubyBase):
+        (WebCore::RenderRubyRun::isEmpty):
+        (WebCore::RenderRubyRun::rubyText):
+        (WebCore::RenderRubyRun::rubyBase):
+        (WebCore::RenderRubyRun::rubyBaseSafe):
+        (WebCore::RenderRubyRun::firstLineBlock):
+        (WebCore::RenderRubyRun::updateFirstLetter):
+        (WebCore::RenderRubyRun::isChildAllowed):
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::removeChild):
+        (WebCore::RenderRubyRun::createRubyBase):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+        * rendering/RenderRubyRun.h: Added.
+        (WebCore::RenderRubyRun::renderName):
+        (WebCore::RenderRubyRun::isRubyRun):
+        * rendering/RenderRubyText.cpp: Added.
+        (WebCore::RenderRubyText::RenderRubyText):
+        (WebCore::RenderRubyText::~RenderRubyText):
+        (WebCore::RenderRubyText::isChildAllowed):
+        * rendering/RenderRubyText.h: Added.
+        (WebCore::RenderRubyText::renderName):
+        (WebCore::RenderRubyText::isRubyText):
+
 2009-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

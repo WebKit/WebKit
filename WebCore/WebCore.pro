@@ -1308,6 +1308,10 @@ SOURCES += \
     rendering/RenderPartObject.cpp \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
+    rendering/RenderRuby.cpp \
+    rendering/RenderRubyBase.cpp \
+    rendering/RenderRubyRun.cpp \
+    rendering/RenderRubyText.cpp \
     rendering/RenderScrollbar.cpp \
     rendering/RenderScrollbarPart.cpp \
     rendering/RenderScrollbarTheme.cpp \
@@ -2022,6 +2026,10 @@ HEADERS += \
     rendering/RenderPath.h \
     rendering/RenderReplaced.h \
     rendering/RenderReplica.h \
+    rendering/RenderRuby.h \
+    rendering/RenderRubyBase.h \
+    rendering/RenderRubyRun.h \
+    rendering/RenderRubyText.h \
     rendering/RenderScrollbar.h \
     rendering/RenderScrollbarPart.h \
     rendering/RenderScrollbarTheme.h \

@@ -140,6 +140,9 @@ public:
     RenderBlock* createAnonymousBlock(bool isFlexibleBox = false) const;
 
 protected:
+    void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
+    void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);
+
     int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
     int maxTopNegMargin() const { return m_maxMargin ? m_maxMargin->m_topNeg : MaxMargin::topNegDefault(this); }
     int maxBottomPosMargin() const { return m_maxMargin ? m_maxMargin->m_bottomPos : MaxMargin::bottomPosDefault(this); }

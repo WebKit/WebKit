@@ -1775,6 +1775,14 @@ webcore_sources += \
 	WebCore/rendering/RenderReplaced.h \
 	WebCore/rendering/RenderReplica.cpp \
 	WebCore/rendering/RenderReplica.h \
+	WebCore/rendering/RenderRuby.cpp \
+	WebCore/rendering/RenderRuby.h \
+	WebCore/rendering/RenderRubyBase.cpp \
+	WebCore/rendering/RenderRubyBase.h \
+	WebCore/rendering/RenderRubyRun.cpp \
+	WebCore/rendering/RenderRubyRun.h \
+	WebCore/rendering/RenderRubyText.cpp \
+	WebCore/rendering/RenderRubyText.h \
 	WebCore/rendering/RenderScrollbar.cpp \
 	WebCore/rendering/RenderScrollbar.h \
 	WebCore/rendering/RenderScrollbarPart.cpp \

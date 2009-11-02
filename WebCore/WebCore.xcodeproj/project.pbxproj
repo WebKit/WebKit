@@ -205,6 +205,14 @@
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAE5109AE37500DED655 /* RenderRuby.cpp */; };
+		1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479FAE6109AE37500DED655 /* RenderRuby.h */; };
+		1479FAEF109AE37500DED655 /* RenderRubyBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAE7109AE37500DED655 /* RenderRubyBase.cpp */; };
+		1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479FAE8109AE37500DED655 /* RenderRubyBase.h */; };
+		1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAE9109AE37500DED655 /* RenderRubyRun.cpp */; };
+		1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479FAEA109AE37500DED655 /* RenderRubyRun.h */; };
+		1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAEB109AE37500DED655 /* RenderRubyText.cpp */; };
+		1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479FAEC109AE37500DED655 /* RenderRubyText.h */; };
 		148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 148AFDA30AF58360008CC700 /* ExceptionHandlers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */; };
 		14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14993BE30B2F2B1C0050497F /* FocusController.cpp */; };
@@ -5368,6 +5376,14 @@
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
 		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
 		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
+		1479FAE5109AE37500DED655 /* RenderRuby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRuby.cpp; sourceTree = "<group>"; };
+		1479FAE6109AE37500DED655 /* RenderRuby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRuby.h; sourceTree = "<group>"; };
+		1479FAE7109AE37500DED655 /* RenderRubyBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRubyBase.cpp; sourceTree = "<group>"; };
+		1479FAE8109AE37500DED655 /* RenderRubyBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRubyBase.h; sourceTree = "<group>"; };
+		1479FAE9109AE37500DED655 /* RenderRubyRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRubyRun.cpp; sourceTree = "<group>"; };
+		1479FAEA109AE37500DED655 /* RenderRubyRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRubyRun.h; sourceTree = "<group>"; };
+		1479FAEB109AE37500DED655 /* RenderRubyText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRubyText.cpp; sourceTree = "<group>"; };
+		1479FAEC109AE37500DED655 /* RenderRubyText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRubyText.h; sourceTree = "<group>"; };
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		148AFDA30AF58360008CC700 /* ExceptionHandlers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExceptionHandlers.h; sourceTree = "<group>"; };
 		148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ExceptionHandlers.mm; sourceTree = "<group>"; };
@@ -15315,6 +15331,14 @@
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
 				BCA846D50DC67A350026C309 /* RenderReplica.h */,
+				1479FAE5109AE37500DED655 /* RenderRuby.cpp */,
+				1479FAE6109AE37500DED655 /* RenderRuby.h */,
+				1479FAE7109AE37500DED655 /* RenderRubyBase.cpp */,
+				1479FAE8109AE37500DED655 /* RenderRubyBase.h */,
+				1479FAE9109AE37500DED655 /* RenderRubyRun.cpp */,
+				1479FAEA109AE37500DED655 /* RenderRubyRun.h */,
+				1479FAEB109AE37500DED655 /* RenderRubyText.cpp */,
+				1479FAEC109AE37500DED655 /* RenderRubyText.h */,
 				BC3BE9900E9C1C7C00835588 /* RenderScrollbar.cpp */,
 				BC3BE9910E9C1C7C00835588 /* RenderScrollbar.h */,
 				BC3BE9AA0E9C242000835588 /* RenderScrollbarPart.cpp */,
@@ -18071,6 +18095,10 @@
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 				37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */,
+				1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */,
+				1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */,
+				1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */,
+				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20207,6 +20235,10 @@
 				BC97E23B109144950010D361 /* HTMLAllCollection.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,
 				BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */,
+				1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */,
+				1479FAEF109AE37500DED655 /* RenderRubyBase.cpp in Sources */,
+				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
+				1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

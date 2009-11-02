@@ -607,6 +607,18 @@ a:-webkit-any-link:active {
     color: -webkit-activelink
 }
 
+/* HTML5 ruby elements */
+
+ruby > rt {
+    display: block;
+    font-size: 60%;         /* make slightly larger than 50% for better readability */
+    text-align: center;
+}
+
+ruby > rp {
+    display: none;
+}
+
 /* other elements */
 
 noframes {

@@ -2,4 +2,6 @@ The following is a test for parsing ruby <rp> and <rt> elements. According to HT
 
 TEST PASSED: Markup was correct
 
-Before base/left rp/text/right rp After
+Before base/
+text/
+ After

@@ -1,3 +1,16 @@
+2009-11-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 28420 -  Implement HTML5 <ruby> rendering
+        (https://bugs.webkit.org/show_bug.cgi?id=28420)
+
+        First rudimentary implementation of HTML5 ruby rendering support.
+
+        Further layout tests will be committed in a follow-up patch under fast/ruby.
+
+        * fast/ruby/parse-rp-expected.txt: result changed due to <rt> being rendered as block within <ruby>
+
 2009-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -41,6 +42,8 @@
 #include "RenderImageGeneratedContent.h"
 #include "RenderInline.h"
 #include "RenderListItem.h"
+#include "RenderRuby.h"
+#include "RenderRubyText.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
@@ -103,46 +106,42 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return image;
     }
 
-    RenderObject* o = 0;
+    if (node->hasTagName(rubyTag)) {
+        if (style->display() == INLINE)
+            return new (arena) RenderRubyAsInline(node);
+        else
+            return new (arena) RenderRubyAsBlock(node);
+    }
+    // treat <rt> as ruby text ONLY if it still has its default treatment of block
+    if (node->hasTagName(rtTag) && style->display() == BLOCK)
+        return new (arena) RenderRubyText(node); 
 
     switch (style->display()) {
         case NONE:
-            break;
+            return 0;
         case INLINE:
-            o = new (arena) RenderInline(node);
-            break;
+            return new (arena) RenderInline(node);
         case BLOCK:
-            o = new (arena) RenderBlock(node);
-            break;
         case INLINE_BLOCK:
-            o = new (arena) RenderBlock(node);
-            break;
-        case LIST_ITEM:
-            o = new (arena) RenderListItem(node);
-            break;
         case RUN_IN:
         case COMPACT:
-            o = new (arena) RenderBlock(node);
-            break;
+            return new (arena) RenderBlock(node);
+        case LIST_ITEM:
+            return new (arena) RenderListItem(node);
         case TABLE:
         case INLINE_TABLE:
-            o = new (arena) RenderTable(node);
-            break;
+            return new (arena) RenderTable(node);
         case TABLE_ROW_GROUP:
         case TABLE_HEADER_GROUP:
         case TABLE_FOOTER_GROUP:
-            o = new (arena) RenderTableSection(node);
-            break;
+            return new (arena) RenderTableSection(node);
         case TABLE_ROW:
-            o = new (arena) RenderTableRow(node);
-            break;
+            return new (arena) RenderTableRow(node);
         case TABLE_COLUMN_GROUP:
         case TABLE_COLUMN:
-            o = new (arena) RenderTableCol(node);
-            break;
+            return new (arena) RenderTableCol(node);
         case TABLE_CELL:
-            o = new (arena) RenderTableCell(node);
-            break;
+            return new (arena) RenderTableCell(node);
         case TABLE_CAPTION:
 #if ENABLE(WCSS)
         // As per the section 17.1 of the spec WAP-239-WCSS-20011026-a.pdf, 
@@ -150,15 +149,13 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         // principal block box ([CSS2] section 9.2.1).
         case WAP_MARQUEE:
 #endif
-            o = new (arena) RenderBlock(node);
-            break;
+            return new (arena) RenderBlock(node);
         case BOX:
         case INLINE_BOX:
-            o = new (arena) RenderFlexibleBox(node);
-            break;
+            return new (arena) RenderFlexibleBox(node);
     }
 
-    return o;
+    return 0;
 }
 
 #ifndef NDEBUG 
