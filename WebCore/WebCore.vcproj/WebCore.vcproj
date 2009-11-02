@@ -27167,6 +27167,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderRuby.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRuby.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyRun.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyRun.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRubyText.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderScrollbar.cpp"
 				>
 			</File>
