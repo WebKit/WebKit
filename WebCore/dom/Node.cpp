@@ -2446,6 +2446,20 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
+static bool eventHasListeners(const AtomicString& eventType, Node* node, Vector< RefPtr< ContainerNode > >& ancestors)
+{
+    if (node->hasEventListeners(eventType))
+        return true;
+
+    for (ssize_t i = (ancestors.size() - 1); i >= 0; --i) {
+        ContainerNode* ancestor = ancestors[i].get();
+        if (ancestor->hasEventListeners(eventType))
+            return true;
+    }
+
+   return false;    
+}
+
 bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
@@ -2454,18 +2468,19 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
 
-#if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
-    if (timelineAgent)
-        timelineAgent->willDispatchDOMEvent(*event);
-#endif
-
     // Make a vector of ancestors to send the event to.
     // If the node is not in a document just send the event to it.
     // Be sure to ref all of nodes since event handlers could result in the last reference going away.
     RefPtr<Node> thisNode(this);
     Vector<RefPtr<ContainerNode> > ancestors;
     eventAncestors(ancestors);
+
+#if ENABLE(INSPECTOR)
+    InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
+    bool timelineAgentIsActive = timelineAgent && eventHasListeners(event->type(), this, ancestors);    
+    if (timelineAgentIsActive)
+        timelineAgent->willDispatchDOMEvent(*event);
+#endif
 
     // Set up a pointer to indicate whether / where to dispatch window events.
     // We don't dispatch load events to the window. That quirk was originally
@@ -2558,7 +2573,7 @@ doneDispatching:
 
 doneWithDefault:
 #if ENABLE(INSPECTOR)
-    if (timelineAgent)
+    if (timelineAgentIsActive)
         timelineAgent->didDispatchDOMEvent();
 #endif
 

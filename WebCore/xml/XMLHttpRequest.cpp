@@ -253,27 +253,29 @@ void XMLHttpRequest::callReadyStateChangeListener()
 
 #if ENABLE(INSPECTOR)
     InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext());
-    if (timelineAgent)
+    bool callTimelineAgentOnReadyStateChange = timelineAgent && hasEventListeners(eventNames().readystatechangeEvent);
+    if (callTimelineAgentOnReadyStateChange)
         timelineAgent->willChangeXHRReadyState(m_url.string(), m_state);
 #endif
 
     dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent));
 
 #if ENABLE(INSPECTOR)
-    if (timelineAgent)
+    if (callTimelineAgentOnReadyStateChange)
         timelineAgent->didChangeXHRReadyState();
 #endif
 
     if (m_state == DONE && !m_error) {
 #if ENABLE(INSPECTOR)
-        if (timelineAgent)
+        bool callTimelineAgentOnLoad = timelineAgent && hasEventListeners(eventNames().loadEvent);
+        if (callTimelineAgentOnLoad)
             timelineAgent->willLoadXHR(m_url.string());
 #endif
 
         dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
 
 #if ENABLE(INSPECTOR)
-        if (timelineAgent)
+        if (callTimelineAgentOnLoad)
             timelineAgent->didLoadXHR();
 #endif
     }

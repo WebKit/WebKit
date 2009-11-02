@@ -1,3 +1,17 @@
+2009-11-01  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Does not send DOM dispatches to the InspectorTimelineAgent if there
+        are no event listeners.
+        https://bugs.webkit.org/show_bug.cgi?id=30995
+
+        * dom/Node.cpp:
+        (WebCore::eventHasListeners):
+        (WebCore::Node::dispatchGenericEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+
 2009-11-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         No review (build fix).
