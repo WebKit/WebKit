@@ -1,3 +1,16 @@
+2009-11-02  Kai Koehne  <kai.koehne@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Remove implementation of ImageDecocerQt::clearFrameBufferCache.
+        The implementation was buggy, and will visually break repeating
+        animations anyway.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31009
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::clearFrameBufferCache):
+
 2009-11-02  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Jan Alonzo.
