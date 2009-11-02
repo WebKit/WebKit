@@ -1,3 +1,13 @@
+2009-11-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by John Sullivan and Mark Rowe.
+
+        <rdar://problem/7356733> Voiceover does not read correct media controller time values
+        
+        Fix localized strings for media controller time values.
+
+        * English.lproj/Localizable.strings:
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

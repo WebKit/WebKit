@@ -198,7 +198,7 @@ String WebCore::localizedMediaControlElementHelpText(const String& name)
 String WebCore::localizedMediaTimeDescription(float time)
 {
     if (!isfinite(time))
-        return String(LPCTSTR_UI_STRING("indefinite time", "string for an indefinite movie time"));
+        return String(LPCTSTR_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value"));
 
     int seconds = (int)fabsf(time);
     int days = seconds / (60 * 60 * 24);
@@ -207,24 +207,24 @@ String WebCore::localizedMediaTimeDescription(float time)
     seconds %= 60;
 
     if (days) {
-        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("date.format.for.days", "string for days, hours, minutes & seconds"));
+        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%1$d days %2$d hours %3$d minutes %4$d seconds", "accessibility help text for media controller time value >= 1 day"));
         RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), days, hours, minutes, seconds));
         return result.get();
     }
 
     if (hours) {
-        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("date.format.for.hours", "string for hours, minutes & seconds"));
+        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%1$d hours %2$d minutes %3$d seconds", "accessibility help text for media controller time value >= 60 minutes"));
         RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), hours, minutes, seconds));
         return result.get();
     }
 
     if (minutes) {
-        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("date.format.for.minutes", "string for minutes & seconds"));
+        static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%1$d minutes %2$d seconds", "accessibility help text for media controller time value >= 60 seconds"));
         RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), minutes, seconds));
         return result.get();
     }
 
-    static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("date.format.for.seconds", "string for seconds"));
+    static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%1$d seconds", "accessibility help text for media controller time value < 60 seconds"));
     RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), seconds));
     return result.get();
 }
