@@ -39,7 +39,6 @@
 #include "ScriptObject.h"
 namespace WebCore {
 
-// static
 ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* frontend, double startTime)
 {
     ScriptObject record = frontend->newScriptObject();
@@ -47,8 +46,7 @@ ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* front
     return record;
 }
 
-// static
-ScriptObject TimelineRecordFactory::createDOMDispatchRecord(InspectorFrontend* frontend, double startTime, const Event& event)
+ScriptObject TimelineRecordFactory::createEventDispatchRecord(InspectorFrontend* frontend, double startTime, const Event& event)
 {
     ScriptObject record = createGenericRecord(frontend, startTime);
     ScriptObject data = frontend->newScriptObject();
@@ -57,7 +55,6 @@ ScriptObject TimelineRecordFactory::createDOMDispatchRecord(InspectorFrontend* f
     return record;
 }
 
-// static
 ScriptObject TimelineRecordFactory::createGenericTimerRecord(InspectorFrontend* frontend, double startTime, int timerId)
 {
     ScriptObject record = createGenericRecord(frontend, startTime);
@@ -67,7 +64,6 @@ ScriptObject TimelineRecordFactory::createGenericTimerRecord(InspectorFrontend* 
     return record;
 }
 
-// static
 ScriptObject TimelineRecordFactory::createTimerInstallRecord(InspectorFrontend* frontend, double startTime, int timerId, int timeout, bool singleShot)
 {
     ScriptObject record = createGenericRecord(frontend, startTime);
@@ -79,7 +75,6 @@ ScriptObject TimelineRecordFactory::createTimerInstallRecord(InspectorFrontend* 
     return record;
 }
 
-// static
 ScriptObject TimelineRecordFactory::createXHRReadyStateChangeTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, int readyState)
 {
     ScriptObject record = createGenericRecord(frontend, startTime);
@@ -90,7 +85,6 @@ ScriptObject TimelineRecordFactory::createXHRReadyStateChangeTimelineRecord(Insp
     return record;
 }
 
-// static
 ScriptObject TimelineRecordFactory::createXHRLoadTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url)
 {
     ScriptObject record = createGenericRecord(frontend, startTime);
@@ -100,7 +94,6 @@ ScriptObject TimelineRecordFactory::createXHRLoadTimelineRecord(InspectorFronten
     return record;
 }
 
-// static
 ScriptObject TimelineRecordFactory::createEvaluateScriptTimelineRecord(InspectorFrontend* frontend, double startTime, const String& url, double lineNumber) 
 {
     ScriptObject item = createGenericRecord(frontend, startTime);

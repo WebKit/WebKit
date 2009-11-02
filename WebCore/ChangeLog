@@ -1,3 +1,28 @@
+2009-11-01  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds window event dispatches to InspectorTimelineAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=31002
+
+        * English.lproj/localizedStrings.js:
+        * dom/Node.cpp: Updated call site to willDispatchEvent and didDispatchEvent.
+        (WebCore::Node::dispatchGenericEvent):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDispatchEvent): Renamed.
+        (WebCore::InspectorTimelineAgent::didDispatchEvent): Renamed.
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createEventDispatchRecord): Renamed.
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+
 2009-11-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

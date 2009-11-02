@@ -141,7 +141,7 @@ WebInspector.TimelinePanel.prototype = {
         if (!this._recordStyles) {
             this._recordStyles = {};
             var recordTypes = WebInspector.TimelineAgent.RecordType;
-            this._recordStyles[recordTypes.DOMDispatch] = { title: WebInspector.UIString("DOM Event"), category: this.categories.scripting };
+            this._recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: this.categories.scripting };
             this._recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: this.categories.rendering };
             this._recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: this.categories.rendering };
             this._recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: this.categories.rendering };
@@ -174,7 +174,7 @@ WebInspector.TimelinePanel.prototype = {
     _getRecordDetails: function(record)
     {
         switch (record.type) {
-        case WebInspector.TimelineAgent.RecordType.DOMDispatch:
+        case WebInspector.TimelineAgent.RecordType.EventDispatch:
             return record.data.type;
         case WebInspector.TimelineAgent.RecordType.TimerInstall:
         case WebInspector.TimelineAgent.RecordType.TimerRemove:

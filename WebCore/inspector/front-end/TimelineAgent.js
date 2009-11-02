@@ -34,7 +34,7 @@ WebInspector.TimelineAgent = function() {
 
 // Must be kept in sync with TimelineItem.h
 WebInspector.TimelineAgent.RecordType = {
-    DOMDispatch         : 0,
+    EventDispatch       : 0,
     Layout              : 1,
     RecalculateStyles   : 2,
     Paint               : 3,

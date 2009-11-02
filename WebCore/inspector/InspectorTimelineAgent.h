@@ -43,7 +43,7 @@ namespace WebCore {
 
     // Must be kept in sync with TimelineAgent.js
     enum TimelineRecordType {
-        DOMDispatchTimelineRecordType = 0,
+        EventDispatchTimelineRecordType = 0,
         LayoutTimelineRecordType = 1,
         RecalculateStylesTimelineRecordType = 2,
         PaintTimelineRecordType = 3,
@@ -65,8 +65,8 @@ namespace WebCore {
         void resetFrontendProxyObject(InspectorFrontend*);
 
         // Methods called from WebCore.
-        void willDispatchDOMEvent(const Event&);
-        void didDispatchDOMEvent();
+        void willDispatchEvent(const Event&);
+        void didDispatchEvent();
 
         void willLayout();
         void didLayout();
