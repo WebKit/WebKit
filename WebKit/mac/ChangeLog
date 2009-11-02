@@ -1,5 +1,28 @@
 2009-11-02  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Made the remaining time display show negative zero at the end of the
+        video.
+
+        Made other cleanup.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h: Reverted the types of
+        _timeline and _volumeSlider to the more generic NSControl.
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]): Cleaned
+        up style.
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]): Added an
+        assertion that the cast to NSButton * is legal. Removed casts.
+        (-[WebVideoFullscreenHUDWindowController updateTime]): Use
+        -setValue:forKey: instead of an NSSlider method.
+        (timeToString): Changed to support only non-negative values and
+        simplified.
+        (-[WebVideoFullscreenHUDWindowController remainingTimeText]): Always
+        prepend a “-” to the time.
+
+2009-11-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         WebKit part of making the appearance of the full-screen video HUD match
