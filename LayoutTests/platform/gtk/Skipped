@@ -49,6 +49,7 @@ accessibility/aria-label.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
 accessibility/aria-readonly.html
+accessibility/aria-tab-roles.html
 accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/editable-webarea-context-menu-point.html

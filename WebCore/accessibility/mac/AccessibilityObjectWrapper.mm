@@ -600,6 +600,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* groupAttrs = nil;
     static NSArray* inputImageAttrs = nil;
     static NSArray* passwordFieldAttrs = nil;
+    static NSArray *tabListAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -794,6 +795,13 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         passwordFieldAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (tabListAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityTabsAttribute];
+        [tempArray addObject:NSAccessibilityContentsAttribute];
+        tabListAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];        
+    }
     
     if (m_object->isPasswordField())
         return passwordFieldAttrs;
@@ -830,6 +838,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     
     if (m_object->isGroup())
         return groupAttrs;
+    if (m_object->isTabList())
+        return tabListAttrs;
     
     if (m_object->isMenu())
         return menuAttrs;
@@ -1001,8 +1011,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DocumentNoteRole, NSAccessibilityGroupRole },
         { DocumentRegionRole, NSAccessibilityGroupRole },
         { UserInterfaceTooltipRole, NSAccessibilityGroupRole },
-        
-
+        { TabRole, NSAccessibilityRadioButtonRole },
+        { TabListRole, NSAccessibilityTabGroupRole },
+        { TabPanelRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1083,6 +1094,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXDocumentRegion";
         case UserInterfaceTooltipRole:
             return @"AXUserInterfaceTooltip";
+        case TabPanelRole:
+            return @"AXTabPanel";
         default:
             return nil;
     }
@@ -1140,6 +1153,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXARIAContentGroupText(@"ARIADocumentRegion");
             case UserInterfaceTooltipRole:
                 return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
+            case TabPanelRole:
+                return AXARIAContentGroupText(@"ARIATabPanel");
         }
     }        
     
@@ -1158,6 +1173,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:@"AXHeading"])
         return AXHeadingText();
 
+    // AppKit also returns AXTab for the role description for a tab item.
+    if (m_object->isTabItem())
+        return NSAccessibilityRoleDescription(@"AXTab", nil);
+    
     // We should try the system default role description for all other roles.
     // If we get the same string back, then as a last resort, return unknown.
     NSString* defaultRoleDescription = NSAccessibilityRoleDescription(axRole, [self subrole]);
@@ -1318,6 +1337,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return radioButton->wrapper();
         }
         
+        if (m_object->isTabList()) {
+            AccessibilityObject* tabItem = m_object->selectedTabItem();
+            if (!tabItem)
+                return nil;
+            return tabItem->wrapper();
+        }
+        
+        if (m_object->isTabItem())
+            return [NSNumber numberWithInt:m_object->isSelected()];
+        
         return m_object->stringValue();
     }
 
@@ -1358,6 +1387,31 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return nil;
         return accessKey;
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityTabsAttribute]) {
+        if (m_object->isTabList()) {
+            AccessibilityObject::AccessibilityChildrenVector tabsChildren;
+            m_object->tabChildren(tabsChildren);
+            return convertToNSArray(tabsChildren);
+        }
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
+        // The contents of a tab list are all the children except the tabs.
+        if (m_object->isTabList()) {
+            AccessibilityObject::AccessibilityChildrenVector children = m_object->children();
+            AccessibilityObject::AccessibilityChildrenVector tabsChildren;
+            m_object->tabChildren(tabsChildren);
+
+            AccessibilityObject::AccessibilityChildrenVector contents;
+            unsigned childrenSize = children.size();
+            for (unsigned k = 0; k < childrenSize; ++k) {
+                if (tabsChildren.find(children[k]) == WTF::notFound)
+                    contents.append(children[k]);
+            }
+            return convertToNSArray(contents);
+        }
+    }    
     
     if (m_object->isDataTable()) {
         // TODO: distinguish between visible and non-visible rows

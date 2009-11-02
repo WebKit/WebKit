@@ -329,6 +329,12 @@ JSStringRef AccessibilityUIElement::description()
     return concatenateAttributeAndValue(@"AXDescription", description);
 }
 
+JSStringRef AccessibilityUIElement::stringValue()
+{
+    id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityValueAttribute], m_element);
+    return concatenateAttributeAndValue(@"AXValue", description);
+}
+
 JSStringRef AccessibilityUIElement::language()
 {
     id description = descriptionOfValue([m_element accessibilityAttributeValue:@"AXLanguage"], m_element);
@@ -428,6 +434,14 @@ bool AccessibilityUIElement::isEnabled()
 bool AccessibilityUIElement::isRequired() const
 {
     id value = [m_element accessibilityAttributeValue:@"AXRequired"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
+bool AccessibilityUIElement::isSelected() const
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilitySelectedAttribute];
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
     return false;

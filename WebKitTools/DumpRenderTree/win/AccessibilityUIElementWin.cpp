@@ -196,6 +196,11 @@ JSStringRef AccessibilityUIElement::description()
     return JSStringCreateWithCharacters(description.data(), description.length());
 }
 
+JSStringRef AccessibilityUIElement::stringValue()
+{
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 JSStringRef AccessibilityUIElement::language()
 {
     return JSStringCreateWithCharacters(0, 0);
@@ -280,6 +285,11 @@ bool AccessibilityUIElement::isEnabled()
 }
 
 bool AccessibilityUIElement::isRequired() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isSelected() const
 {
     return false;
 }

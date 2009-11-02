@@ -1,3 +1,17 @@
+2009-11-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Support ARIA "tab" roles
+        https://bugs.webkit.org/show_bug.cgi?id=30842
+
+        * accessibility/aria-controls-with-tabs-expected.txt: Added.
+        * accessibility/aria-controls-with-tabs.html: Added.
+        * accessibility/aria-tab-roles.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/accessibility/aria-tab-roles-expected.txt: Added.
+        * platform/win/Skipped:
+
 2009-11-02  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dave Hyatt.

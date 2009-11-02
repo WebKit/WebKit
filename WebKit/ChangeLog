@@ -1,3 +1,15 @@
+2009-11-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Support ARIA "tab" roles
+        https://bugs.webkit.org/show_bug.cgi?id=30842
+
+        Add a localizable string for tab panel.
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+
 2009-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -505,6 +505,24 @@ AccessibilityObject* AccessibilityRenderObject::selectedRadioButton()
     }
     return 0;
 }
+
+AccessibilityObject* AccessibilityRenderObject::selectedTabItem()
+{
+    if (!isTabList())
+        return 0;
+    
+    // Find the child tab item that is selected (ie. the intValue == 1).
+    AccessibilityObject::AccessibilityChildrenVector tabs;
+    tabChildren(tabs);
+    
+    int count = tabs.size();
+    for (int i = 0; i < count; ++i) {
+        AccessibilityObject* object = m_children[i].get();
+        if (object->isTabItem() && object->intValue() == 1)
+            return object;
+    }
+    return 0;
+}
     
 const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName& attribute) const
 {
@@ -864,56 +882,67 @@ static String accessibleNameForNode(Node* node)
     return String();
 }
 
-String AccessibilityRenderObject::ariaAccessibilityName(const String& s) const
+String AccessibilityRenderObject::accessibilityDescriptionForElements(Vector<Element*> &elements) const
 {
-    Document* document = m_renderer->document();
-    if (!document)
-        return String();
-
-    String idList = s;
-    idList.replace('\n', ' ');
-    Vector<String> idVector;
-    idList.split(' ', idVector);
-
     Vector<UChar> ariaLabel;
-    unsigned size = idVector.size();
+    unsigned size = elements.size();
     for (unsigned i = 0; i < size; ++i) {
-        String idName = idVector[i];
-        Element* idElement = document->getElementById(idName);
-        if (idElement) {
-            String nameFragment = accessibleNameForNode(idElement);
+        Element* idElement = elements[i];
+        
+        String nameFragment = accessibleNameForNode(idElement);
+        ariaLabel.append(nameFragment.characters(), nameFragment.length());
+        for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement)) {
+            nameFragment = accessibleNameForNode(n);
             ariaLabel.append(nameFragment.characters(), nameFragment.length());
-            for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement)) {
-                nameFragment = accessibleNameForNode(n);
-                ariaLabel.append(nameFragment.characters(), nameFragment.length());
-            }
-            
-            if (i != size - 1)
-                ariaLabel.append(' ');
         }
+            
+        if (i != size - 1)
+            ariaLabel.append(' ');
     }
     return String::adopt(ariaLabel);
 }
 
-String AccessibilityRenderObject::ariaLabeledByAttribute() const
+    
+void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const
 {
     Node* node = m_renderer->node();
-    if (!node)
-        return String();
+    if (!node || !node->isElementNode())
+        return;
 
-    if (!node->isElementNode())
-        return String();
-
-    // The ARIA spec uses the British spelling: "labelled." It seems prudent to support the American
-    // spelling ("labeled") as well.
-    String idList = getAttribute(aria_labeledbyAttr).string();
-    if (idList.isEmpty()) {
-        idList = getAttribute(aria_labelledbyAttr).string();
-        if (idList.isEmpty())
-            return String();
+    Document* document = m_renderer->document();
+    if (!document)
+        return;
+    
+    String idList = getAttribute(attribute).string();
+    if (idList.isEmpty())
+        return;
+    
+    idList.replace('\n', ' ');
+    Vector<String> idVector;
+    idList.split(' ', idVector);
+    
+    unsigned size = idVector.size();
+    for (unsigned i = 0; i < size; ++i) {
+        String idName = idVector[i];
+        Element* idElement = document->getElementById(idName);
+        if (idElement)
+            elements.append(idElement);
     }
-
-    return ariaAccessibilityName(idList);
+}
+    
+void AccessibilityRenderObject::ariaLabeledByElements(Vector<Element*>& elements) const
+{
+    elementsFromAttribute(elements, aria_labeledbyAttr);
+    if (!elements.size())
+        elementsFromAttribute(elements, aria_labelledbyAttr);
+}
+   
+String AccessibilityRenderObject::ariaLabeledByAttribute() const
+{
+    Vector<Element*> elements;
+    ariaLabeledByElements(elements);
+    
+    return accessibilityDescriptionForElements(elements);
 }
 
 static HTMLLabelElement* labelForElement(Element* element)
@@ -990,6 +1019,7 @@ String AccessibilityRenderObject::title() const
         || ariaRole == MenuItemRole
         || ariaRole == MenuButtonRole
         || ariaRole == RadioButtonRole
+        || ariaRole == TabRole
         || isHeading())
         return textUnderElement();
     
@@ -1001,11 +1031,10 @@ String AccessibilityRenderObject::title() const
 
 String AccessibilityRenderObject::ariaDescribedByAttribute() const
 {
-    String idList = getAttribute(aria_describedbyAttr).string();
-    if (idList.isEmpty())
-        return String();
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, aria_describedbyAttr);
     
-    return ariaAccessibilityName(idList);
+    return accessibilityDescriptionForElements(elements);
 }
 
 String AccessibilityRenderObject::accessibilityDescription() const
@@ -1562,9 +1591,55 @@ bool AccessibilityRenderObject::isSelected() const
     if (!node)
         return false;
     
+    if (equalIgnoringCase(getAttribute(aria_selectedAttr).string(), "true"))
+        return true;    
+    
+    if (isTabItem() && isTabItemSelected())
+        return true;
+
     return false;
 }
 
+bool AccessibilityRenderObject::isTabItemSelected() const
+{
+    if (!isTabItem() || !m_renderer)
+        return false;
+    
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return false;
+    
+    // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
+    // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
+    // focus inside of it.
+    AccessibilityObject* focusedElement = focusedUIElement();
+    if (!focusedElement)
+        return false;
+    
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, aria_controlsAttr);
+    
+    unsigned count = elements.size();
+    for (unsigned k = 0; k < count; ++k) {
+        Element* element = elements[k];
+        AccessibilityObject* tabPanel = axObjectCache()->getOrCreate(element->renderer());
+
+        // A tab item should only control tab panels.
+        if (!tabPanel || tabPanel->roleValue() != TabPanelRole)
+            continue;
+        
+        AccessibilityObject* checkFocusElement = focusedElement;
+        // Check if the focused element is a descendant of the element controlled by the tab item.
+        while (checkFocusElement) {
+            if (tabPanel == checkFocusElement)
+                return true;
+            checkFocusElement = checkFocusElement->parentObject();
+        }
+    }
+    
+    return false;
+}
+    
 bool AccessibilityRenderObject::isFocused() const
 {
     if (!m_renderer)
@@ -2302,6 +2377,9 @@ static const ARIARoleMap& createARIARoleMap()
         { "slider", SliderRole },
         { "spinbutton", ProgressIndicatorRole },
         { "status", ApplicationStatusRole },
+        { "tab", TabRole },
+        { "tablist", TabListRole },
+        { "tabpanel", TabPanelRole },
         { "textbox", TextAreaRole },
         { "timer", ApplicationTimerRole },
         { "toolbar", ToolbarRole },
@@ -2536,6 +2614,7 @@ bool AccessibilityRenderObject::canHaveChildren() const
         case PopUpButtonRole:
         case CheckBoxRole:
         case RadioButtonRole:
+        case TabRole:
         case StaticTextRole:
         case ListBoxOptionRole:
             return false;
@@ -2625,7 +2704,7 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildre
         if (childRenderer && ariaRole == ListBoxOptionRole) {
             Element* childElement = static_cast<Element*>(childRenderer->node());
             if (childElement && childElement->isElementNode()) { // do this check to ensure safety of static_cast above
-                String selectedAttrString = childElement->getAttribute("aria-selected").string();
+                String selectedAttrString = childElement->getAttribute(aria_selectedAttr).string();
                 if (equalIgnoringCase(selectedAttrString, "true")) {
                     result.append(child);
                     if (isMultiselectable)
@@ -2673,6 +2752,17 @@ void AccessibilityRenderObject::visibleChildren(AccessibilityChildrenVector& res
     return ariaListboxVisibleChildren(result);
 }
  
+void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
+{
+    ASSERT(roleValue() == TabListRole);
+    
+    unsigned length = m_children.size();
+    for (unsigned i = 0; i < length; ++i) {
+        if (m_children[i]->isTabItem())
+            result.append(m_children[i]);
+    }
+}
+    
 const String& AccessibilityRenderObject::actionVerb() const
 {
     // FIXME: Need to add verbs for select elements.

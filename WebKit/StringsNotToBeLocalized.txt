@@ -111,6 +111,7 @@
 "ARIALandmarkMain"
 "ARIALandmarkNavigation"
 "ARIALandmarkSearch"
+"ARIATabPanel"
 "ARIAUserInterfaceTooltip"
 "AXEnhancedUserInterface"
 "AccessibleBase"

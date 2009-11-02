@@ -14,6 +14,7 @@ alt
 archive
 aria-activedescendant
 aria-checked
+aria-controls
 aria-describedby
 aria-disabled
 aria-hidden
@@ -24,6 +25,7 @@ aria-level
 aria-pressed
 aria-readonly
 aria-required
+aria-selected
 aria-valuemax
 aria-valuemin
 aria-valuenow

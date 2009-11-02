@@ -90,6 +90,7 @@ public:
     JSStringRef title();
     JSStringRef description();
     JSStringRef language();
+    JSStringRef stringValue();
     JSStringRef accessibilityValue() const;
     double x();
     double y();
@@ -103,6 +104,7 @@ public:
     JSStringRef selectedTextRange();
     bool isEnabled();
     bool isRequired() const;
+    bool isSelected() const;
     double clickPointX();
     double clickPointY();
 
