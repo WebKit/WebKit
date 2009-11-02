@@ -120,6 +120,38 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         imageObserver()->didDraw(this);
 }
 
+BitmapImage::BitmapImage(QPixmap* pixmap, ImageObserver* observer)
+    : Image(observer)
+    , m_currentFrame(0)
+    , m_frames(0)
+    , m_frameTimer(0)
+    , m_repetitionCount(cAnimationNone)
+    , m_repetitionCountStatus(Unknown)
+    , m_repetitionsComplete(0)
+    , m_isSolidColor(false)
+    , m_checkedForSolidColor(false)
+    , m_animationFinished(true)
+    , m_allDataReceived(true)
+    , m_haveSize(true)
+    , m_sizeAvailable(true)
+    , m_decodedSize(0)
+    , m_haveFrameCount(true)
+    , m_frameCount(1)
+{
+    initPlatformData();
+
+    int width = pixmap->width();
+    int height = pixmap->height();
+    m_decodedSize = width * height * 4;
+    m_size = IntSize(width, height);
+
+    m_frames.grow(1);
+    m_frames[0].m_frame = pixmap;
+    m_frames[0].m_hasAlpha = pixmap->hasAlpha();
+    m_frames[0].m_haveMetadata = true;
+    checkForSolidColor();
+}
+
 void BitmapImage::initPlatformData()
 {
 }
@@ -180,6 +212,13 @@ void BitmapImage::checkForSolidColor()
     m_isSolidColor = true;
     m_solidColor = QColor::fromRgba(framePixmap->toImage().pixel(0, 0));
 }
+
+#if PLATFORM(WIN_OS)
+PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
+{
+    return BitmapImage::create(new QPixmap(QPixmap::fromWinHBITMAP(hBitmap)));
+}
+#endif
 
 }
 
