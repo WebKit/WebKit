@@ -20,6 +20,7 @@
 */
 
 #include <qtest.h>
+#include "../util.h"
 
 #include <qpainter.h>
 #include <qwebview.h>
@@ -45,6 +46,8 @@ private slots:
 
     void reusePage_data();
     void reusePage();
+
+    void crashTests();
 };
 
 // This will be called before the first test function is executed.
@@ -147,6 +150,46 @@ void tst_QWebView::reusePage()
 
     QDir::setCurrent(QApplication::applicationDirPath());
 }
+
+// Class used in crashTests
+class WebViewCrashTest : public QObject {
+    Q_OBJECT
+    QWebView* m_view;
+public:
+    bool m_executed;
+
+
+    WebViewCrashTest(QWebView* view)
+      : m_view(view)
+      , m_executed(false)
+    {
+        view->connect(view, SIGNAL(loadProgress(int)), this, SLOT(loading(int)));
+    }
+
+private slots:
+    void loading(int progress)
+    {
+        if (progress >= 20 && progress < 90) {
+            QVERIFY(!m_executed);
+            m_view->stop();
+            m_executed = true;
+        }
+    }
+};
+
+
+// Should not crash.
+void tst_QWebView::crashTests()
+{
+    // Test if loading can be stopped in loadProgress handler without crash.
+    // Test page should have frames.
+    QWebView view;
+    WebViewCrashTest tester(&view);
+    QUrl url("qrc:///data/index.html");
+    view.load(url);
+    QTRY_VERIFY(tester.m_executed); // If fail it means that the test wasn't executed.
+}
+
 
 QTEST_MAIN(tst_QWebView)
 #include "tst_qwebview.moc"

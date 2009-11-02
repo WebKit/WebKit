@@ -1,3 +1,23 @@
+2009-11-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        QWebView crash fix.
+
+        The QWebView should not crash if the stop() method is called from
+        a function triggered by the loadProgress signal.
+
+        A null pointer protection was added in the ProgressTracker::incrementProgress.
+
+        New autotest was created.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29425
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (WebViewCrashTest::WebViewCrashTest):
+        (WebViewCrashTest::loading):
+        (tst_QWebView::crashTests):
+
 2009-11-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
