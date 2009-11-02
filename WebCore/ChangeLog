@@ -1,3 +1,16 @@
+2009-11-02  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Each JS execution in console adds extra item into "scripts" combo
+        https://bugs.webkit.org/show_bug.cgi?id=30212
+
+        Added manual test
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * manual-tests/inspector/hidden-evals.html: Added.
+
 2009-11-02  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.

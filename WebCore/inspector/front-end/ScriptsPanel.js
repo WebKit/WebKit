@@ -625,6 +625,14 @@ WebInspector.ScriptsPanel.prototype = {
         var option;
         if (scriptOrResource instanceof WebInspector.Script) {
             option = scriptOrResource.filesSelectOption;
+
+            // hasn't been added yet - happens for stepping in evals,
+            // so use the force option to force the script into the menu.
+            if (!option) {
+                this._addScriptToFilesMenu(scriptOrResource, {force: true});
+                option = scriptOrResource.filesSelectOption;
+            }
+
             console.assert(option);
         } else {
             var url = scriptOrResource.url;
@@ -637,8 +645,13 @@ WebInspector.ScriptsPanel.prototype = {
             this.filesSelectElement.selectedIndex = option.index;
     },
 
-    _addScriptToFilesMenu: function(script)
+    _addScriptToFilesMenu: function(script, options)
     {
+        var force = options && options.force;
+
+        if (!script.sourceURL && !force)
+            return;
+
         if (script.resource && this._scriptsForURLsInFilesSelect[script.sourceURL])
             return;
 
