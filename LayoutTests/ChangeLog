@@ -1,3 +1,13 @@
+2009-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30969
+        A no-prefix XPath node test should not match no-namespace elements in HTML document
+
+        * fast/xpath/null-namespace-in-html-expected.txt: Added.
+        * fast/xpath/null-namespace-in-html.html: Added.
+
 2009-11-02  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

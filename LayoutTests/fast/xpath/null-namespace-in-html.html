@@ -1,0 +1,24 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="xpath-test-pre.js"></script>
+</head>
+<body>
+<p>This tests that XPath expressions with prefixes work correctly.</p>
+<div id="console"></div>
+<script>
+    var xmlString = '<div/>';
+    var doc = (new DOMParser()).parseFromString(xmlString, "text/xml");
+    document.body.insertBefore(document.importNode(doc.documentElement, null), document.body.firstChild);
+
+    var expr = document.createExpression("//div", null);
+    var result = expr.evaluate(document.documentElement, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("//div", result, [document.getElementById("console")]);
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

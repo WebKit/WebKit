@@ -193,9 +193,13 @@ static inline bool nodeMatchesBasicTest(Node* node, Step::Axis axis, const Step:
             if (name == starAtom)
                 return namespaceURI.isEmpty() || namespaceURI == node->namespaceURI();
 
-            if (node->isHTMLElement() && node->document()->isHTMLDocument()) {
-                // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
-                return equalIgnoringCase(static_cast<Element*>(node)->localName(), name) && (namespaceURI.isNull() || namespaceURI == node->namespaceURI());
+            if (node->document()->isHTMLDocument()) {
+                if (node->isHTMLElement()) {
+                    // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
+                    return equalIgnoringCase(static_cast<Element*>(node)->localName(), name) && (namespaceURI.isNull() || namespaceURI == node->namespaceURI());
+                }
+                // An expression without any prefix shouldn't match no-namespace nodes (because HTML5 says so).
+                return static_cast<Element*>(node)->hasLocalName(name) && namespaceURI == node->namespaceURI() && !namespaceURI.isNull();
             }
             return static_cast<Element*>(node)->hasLocalName(name) && namespaceURI == node->namespaceURI();
         }
