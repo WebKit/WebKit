@@ -259,6 +259,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
             this.dividersLabelBarElement.appendChild(divider);
         }
+        return true;
     },
 
     _updateDividersLabelBarPosition: function()

@@ -1,3 +1,14 @@
+2009-11-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: [REGRESSION] No timeline marks on resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31013
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.updateGraphDividersIfNeeded):
+
 2009-11-02  David Levin  <levin@chromium.org>
 
         Reviewed by Dan Bernstein.
