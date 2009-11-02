@@ -1,3 +1,20 @@
+2009-11-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Possible crash in RenderSlider::layout.
+        https://bugs.webkit.org/show_bug.cgi?id=31016
+
+        Fix out of place line of code.
+
+        Test: scrollbars/overflow-scrollbar-combinations.html
+        This crash only seems to repro when WebKit draws the play controls,
+        so the crash repros in chromium running this test but not WebKit
+        nightlies which use QuickTime to draw the controls.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+
 2009-11-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
