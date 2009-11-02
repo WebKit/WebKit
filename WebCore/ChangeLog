@@ -1,3 +1,14 @@
+2009-11-02  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a missed case for InspectorTimeline, DOMWindow dispatch of DOM events.
+        https://bugs.webkit.org/show_bug.cgi?id=31030
+
+        * dom/Node.cpp:
+        (WebCore::eventHasListeners): Checks DOMWindow for listeners.
+        (WebCore::Node::dispatchGenericEvent):
+
 2009-11-02  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

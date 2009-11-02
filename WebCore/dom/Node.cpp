@@ -2446,8 +2446,11 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
-static bool eventHasListeners(const AtomicString& eventType, Node* node, Vector<RefPtr<ContainerNode> >& ancestors)
+static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, Vector<RefPtr<ContainerNode> >& ancestors)
 {
+    if (window && window->hasEventListeners(eventType))
+        return true;
+
     if (node->hasEventListeners(eventType))
         return true;
 
@@ -2475,13 +2478,6 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     Vector<RefPtr<ContainerNode> > ancestors;
     eventAncestors(ancestors);
 
-#if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
-    bool timelineAgentIsActive = timelineAgent && eventHasListeners(event->type(), this, ancestors);    
-    if (timelineAgentIsActive)
-        timelineAgent->willDispatchEvent(*event);
-#endif
-
     // Set up a pointer to indicate whether / where to dispatch window events.
     // We don't dispatch load events to the window. That quirk was originally
     // added because Mozilla doesn't propagate load events to the window object.
@@ -2491,6 +2487,13 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
         if (topLevelContainer->isDocumentNode())
             targetForWindowEvents = static_cast<Document*>(topLevelContainer)->domWindow();
     }
+
+#if ENABLE(INSPECTOR)
+    InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
+    bool timelineAgentIsActive = timelineAgent && eventHasListeners(event->type(), targetForWindowEvents, this, ancestors);
+    if (timelineAgentIsActive)
+        timelineAgent->willDispatchEvent(*event);
+#endif
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     void* data = preDispatchEventHandler(event.get());
