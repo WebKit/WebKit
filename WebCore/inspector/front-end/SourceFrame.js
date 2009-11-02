@@ -731,20 +731,20 @@ WebInspector.SourceFrame.prototype = {
         if (!table)
             return;
 
-        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighligher(table, this);
+        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighlighter(table, this);
         cssSyntaxHighlighter.process();
     }
 }
 
 WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.SourceSyntaxHighligher = function(table, sourceFrame)
+WebInspector.SourceSyntaxHighlighter = function(table, sourceFrame)
 {
     this.table = table;
     this.sourceFrame = sourceFrame;
 }
 
-WebInspector.SourceSyntaxHighligher.prototype = {
+WebInspector.SourceSyntaxHighlighter.prototype = {
     createSpan: function(content, className)
     {
         var span = document.createElement("span");
@@ -753,234 +753,1088 @@ WebInspector.SourceSyntaxHighligher.prototype = {
         return span;
     },
 
-    generateFinder: function(regex, matchNumber, className)
-    {
-        return function(str) {
-            var match = regex.exec(str);
-            if (!match)
-                return null;
-            this.previousMatchLength = match[matchNumber].length;
-            return this.createSpan(match[matchNumber], className);
-        };
-    },
-
     process: function()
     {
         // Split up the work into chunks so we don't block the
         // UI thread while processing.
 
-        var i = 0;
         var rows = this.table.rows;
         var rowsLength = rows.length;
-        var previousCell = null;
-        const linesPerChunk = 10;
-
-        function processChunk()
-        {
-            for (var end = Math.min(i + linesPerChunk, rowsLength); i < end; ++i) {
-                var row = rows[i];
-                if (!row)
-                    continue;
-                var cell = row.cells[1];
-                if (!cell)
-                    continue;
-                this.syntaxHighlightLine(cell, previousCell);
-                if (i < (end - 1))
-                    this.deleteContinueFlags(previousCell);
-                previousCell = cell;
-            }
-
-            if (i >= rowsLength && processChunkInterval) {
-                this.deleteContinueFlags(previousCell);
-                delete this.previousMatchLength;
-                clearInterval(processChunkInterval);
-
-                this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
-            }
-        }
-
+        const tokensPerChunk = 100;
+        const lineLengthLimit = 20000;
+        
         var boundProcessChunk = processChunk.bind(this);
         var processChunkInterval = setInterval(boundProcessChunk, 25);
         boundProcessChunk();
+        
+        function processChunk()
+        {
+            for (var i = 0; i < tokensPerChunk; i++) {
+                if (this.cursor >= this.lineCode.length)
+                    moveToNextLine.call(this);
+                if (this.lineIndex >= rowsLength) {
+                    this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
+                    return;
+                }
+                if (this.cursor > lineLengthLimit) {
+                    var codeFragment = this.lineCode.substring(this.cursor);
+                    this.nonToken += codeFragment;
+                    this.cursor += codeFragment.length;
+                }
+
+                this.lex();
+            }
+        }
+        
+        function moveToNextLine()
+        {
+            this.appendNonToken();
+            
+            var row = rows[this.lineIndex];
+            var line = row ? row.cells[1] : null;
+            if (line && this.lineFragment) {
+                Element.prototype.removeChildren.call(line);
+                
+                line.appendChild(this.lineFragment);
+                if (this.messageBubble)
+                    line.appendChild(this.messageBubble);
+                this.lineFragment = null;
+            }
+            this.lineIndex++;
+            if (this.lineIndex >= rowsLength && processChunkInterval) {
+                clearInterval(processChunkInterval);
+                this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
+                return;
+            }
+            row = rows[this.lineIndex];
+            line = row ? row.cells[1] : null;
+            
+            this.messageBubble = null;
+            if (line.lastChild && line.lastChild.nodeType === Node.ELEMENT_NODE && line.lastChild.hasStyleClass("webkit-html-message-bubble")) {
+                this.messageBubble = line.lastChild;
+                line.removeChild(this.messageBubble);
+            }
+
+            this.lineCode = line.textContent;
+            this.lineFragment = document.createDocumentFragment();
+            this.cursor = 0;
+            if (!line)
+                moveToNextLine();
+        }
+    },
+    
+    lex: function()
+    {
+        var token = null;
+        var codeFragment = this.lineCode.substring(this.cursor);
+        
+        for (var i = 0; i < this.rules.length; i++) {
+            var rule = this.rules[i];
+            var ruleContinueStateCondition = typeof rule.continueStateCondition === "undefined" ? this.ContinueState.None : rule.continueStateCondition;
+            if (this.continueState === ruleContinueStateCondition) {
+                if (typeof rule.lexStateCondition !== "undefined" && this.lexState !== rule.lexStateCondition)
+                    continue;
+                var match = rule.pattern.exec(codeFragment);
+                if (match) {
+                    token = match[0];
+                    if (token) {
+                        if (!rule.dontAppendNonToken)
+                            this.appendNonToken();
+                        return rule.action.call(this, token);
+                    }
+                }
+            }
+        }
+        this.nonToken += codeFragment[0];
+        this.cursor++;
+    },
+    
+    appendNonToken: function ()
+    {
+        if (this.nonToken.length > 0) {
+            this.lineFragment.appendChild(document.createTextNode(this.nonToken));
+            this.nonToken = "";
+        }
+    },
+    
+    syntaxHighlightNode: function(node)
+    {
+        this.lineCode = node.textContent;
+        this.lineFragment = document.createDocumentFragment();
+        this.cursor = 0;
+        while (true) {
+            if (this.cursor >= this.lineCode.length) {
+                var codeFragment = this.lineCode.substring(this.cursor);
+                this.nonToken += codeFragment;
+                this.cursor += codeFragment.length;
+                this.appendNonToken();
+                while (node.firstChild)
+                    node.removeChild(node.firstChild);
+                node.appendChild(this.lineFragment);
+                this.lineFragment =null;
+                return;
+            }
+
+            this.lex();
+        }
     }
 }
 
-WebInspector.CSSSourceSyntaxHighligher = function(table, sourceFrame) {
-    WebInspector.SourceSyntaxHighligher.call(this, table, sourceFrame);
+WebInspector.CSSSourceSyntaxHighlighter = function(table, sourceFrame) {
+    WebInspector.SourceSyntaxHighlighter.call(this, table, sourceFrame);
 
-    this.findNumber = this.generateFinder(/^((-?(\d+|\d*\.\d+))|^(#[a-fA-F0-9]{3,6}))(?:\D|$)/, 1, "webkit-css-number");
-    this.findUnits = this.generateFinder(/^(px|em|pt|in|cm|mm|pc|ex)(?:\W|$)/, 1, "webkit-css-unit");
-    this.findKeyword = this.generateFinder(/^(rgba?|hsla?|var)(?:\W|$)/, 1, "webkit-css-keyword");
-    this.findSingleLineString = this.generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-css-string"); // " this quote keeps Xcode happy
-    this.findSingleLineComment = this.generateFinder(/^\/\*.*?\*\//, 0, "webkit-css-comment");
-    this.findMultilineCommentStart = this.generateFinder(/^\/\*.*$/, 0, "webkit-css-comment");
-    this.findMultilineCommentEnd = this.generateFinder(/^.*?\*\//, 0, "webkit-css-comment");
-    this.findSelector = this.generateFinder(/^([#\.]?[_a-zA-Z].*?)(?:\W|$)/, 1, "webkit-css-selector");
-    this.findProperty = this.generateFinder(/^(-?[_a-z0-9][_a-z0-9-]*\s*)(?:\:)/, 1, "webkit-css-property");
-    this.findGenericIdent = this.generateFinder(/^([@-]?[_a-z0-9][_a-z0-9-]*)(?:\W|$)/, 1, "webkit-css-string");
-}
-
-WebInspector.CSSSourceSyntaxHighligher.prototype = {
-    deleteContinueFlags: function(cell)
+    this.LexState = {
+        Initial: 1,
+        DeclarationProperty: 2,
+        DeclarationValue: 3,
+        AtMedia: 4,
+        AtRule: 5,
+        AtKeyframes: 6
+    };
+    this.ContinueState = {
+        None: 0,
+        Comment: 1
+    };
+    
+    this.nonToken = "";
+    this.cursor = 0;
+    this.lineIndex = -1;
+    this.lineCode = "";
+    this.lineFragment = null;
+    this.lexState = this.LexState.Initial;
+    this.continueState = this.ContinueState.None;
+    
+    const urlPattern = /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i;
+    const stringPattern = /^(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')/i;
+    const identPattern = /^-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*/i;
+    const startBlockPattern = /^{/i;
+    const endBlockPattern = /^}/i;
+    this.rules = [{
+        pattern: /^\/\*[^\*]*\*+([^\/*][^*]*\*+)*\//i,
+        action: commentAction
+    }, {
+        pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*)/i,
+        action: commentStartAction
+    }, {
+        pattern: /^(?:(?:[^\*]|\*[^\/])*\*+\/)/i,
+        action: commentEndAction,
+        continueStateCondition: this.ContinueState.Comment
+    }, {
+        pattern: /^.*/i,
+        action: commentMiddleAction,
+        continueStateCondition: this.ContinueState.Comment
+    }, {
+        pattern: /^(?:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\*)(?:#-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\.-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\[\s*-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*(?:(?:=|~=|\|=)\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*'))\s*)?\]|:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\(\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*)?\)))*|(?:#-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\.-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\[\s*-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*(?:(?:=|~=|\|=)\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*'))\s*)?\]|:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\(\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*)?\)))+)/i,
+        action: selectorAction,
+        lexStateCondition: this.LexState.Initial
+    }, {
+        pattern: startBlockPattern,
+        action: startRulesetBlockAction,
+        lexStateCondition: this.LexState.Initial,
+        dontAppendNonToken: true
+    }, {
+        pattern: identPattern,
+        action: propertyAction,
+        lexStateCondition: this.LexState.DeclarationProperty,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^:/i,
+        action: declarationColonAction,
+        lexStateCondition: this.LexState.DeclarationProperty,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^(?:#(?:[\da-f]{6}|[\da-f]{3})|rgba\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|hsla\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|rgb\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|hsl\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\))/i,
+        action: colorAction,
+        lexStateCondition: this.LexState.DeclarationValue
+    }, {
+        pattern: /^(?:(?:\d+|\d*\.\d+)(?:em|rem|__qem|ex|px|cm|mm|in|pt|pc|deg|rad|grad|turn|ms|s|Hz|kHz|%)?)/i,
+        action: numvalueAction,
+        lexStateCondition: this.LexState.DeclarationValue
+    }, {
+        pattern: urlPattern,
+        action: urlAction,
+        lexStateCondition: this.LexState.DeclarationValue
+    }, {
+        pattern: stringPattern,
+        action: stringAction,
+        lexStateCondition: this.LexState.DeclarationValue
+    }, {
+        pattern: /^!\s*important/i,
+        action: importantAction,
+        lexStateCondition: this.LexState.DeclarationValue
+    }, {
+        pattern: identPattern,
+        action: valueIdentAction,
+        lexStateCondition: this.LexState.DeclarationValue,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^;/i,
+        action: declarationSemicolonAction,
+        lexStateCondition: this.LexState.DeclarationValue,
+        dontAppendNonToken: true
+    }, {
+        pattern: endBlockPattern,
+        action: endRulesetBlockAction,
+        lexStateCondition: this.LexState.DeclarationProperty,
+        dontAppendNonToken: true
+    }, {
+        pattern: endBlockPattern,
+        action: endRulesetBlockAction,
+        lexStateCondition: this.LexState.DeclarationValue,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^@media/i,
+        action: atMediaAction,
+        lexStateCondition: this.LexState.Initial
+    }, {
+        pattern: startBlockPattern,
+        action: startAtMediaBlockAction,
+        lexStateCondition: this.LexState.AtMedia,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^@-webkit-keyframes/i,
+        action: atKeyframesAction,
+        lexStateCondition: this.LexState.Initial
+    }, {
+        pattern: startBlockPattern,
+        action: startAtMediaBlockAction,
+        lexStateCondition: this.LexState.AtKeyframes,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^@-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*/i,
+        action: atRuleAction,
+        lexStateCondition: this.LexState.Initial
+    }, {
+        pattern: /^;/i,
+        action: endAtRuleAction,
+        lexStateCondition: this.LexState.AtRule
+    }, {
+        pattern: urlPattern,
+        action: urlAction,
+        lexStateCondition: this.LexState.AtRule
+    }, {
+        pattern: stringPattern,
+        action: stringAction,
+        lexStateCondition: this.LexState.AtRule
+    }, {
+        pattern: stringPattern,
+        action: stringAction,
+        lexStateCondition: this.LexState.AtKeyframes
+    }, {
+        pattern: identPattern,
+        action: atRuleIdentAction,
+        lexStateCondition: this.LexState.AtRule,
+        dontAppendNonToken: true
+    }, {
+        pattern: identPattern,
+        action: atRuleIdentAction,
+        lexStateCondition: this.LexState.AtMedia,
+        dontAppendNonToken: true
+    }, {
+        pattern: startBlockPattern,
+        action: startAtRuleBlockAction,
+        lexStateCondition: this.LexState.AtRule,
+        dontAppendNonToken: true
+    }];
+    
+    function commentAction(token)
     {
-        if (!cell)
-            return;
-        delete cell._commentContinues;
-        delete cell._inSelector;
-    },
-
-    findPseudoClass: function(str)
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-comment"));
+    }
+    
+    function commentStartAction(token)
     {
-        var match = /^(::?)([_a-z0-9][_a-z0-9-]*)/.exec(str);
-        if (!match)
-            return null;
-        this.previousMatchLength = match[0].length;
-        var span = document.createElement("span");
-        span.appendChild(document.createTextNode(match[1]));
-        span.appendChild(this.createSpan(match[2], "webkit-css-pseudo-class"));
-        return span;
-    },
-
-    findURL: function(str)
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-comment"));
+        this.continueState = this.ContinueState.Comment;
+    }
+    
+    function commentEndAction(token)
     {
-        var match = /^(?:local|url)\(([^\)]*?)\)/.exec(str);
-        if (!match)
-            return null;
-        this.previousMatchLength = match[0].length;
-        var innerUrlSpan = this.createSpan(match[1], "webkit-css-url");
-        var outerSpan = document.createElement("span");
-        outerSpan.appendChild(this.createSpan("url", "webkit-css-keyword"));
-        outerSpan.appendChild(document.createTextNode("("));
-        outerSpan.appendChild(innerUrlSpan);
-        outerSpan.appendChild(document.createTextNode(")"));
-        return outerSpan;
-    },
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-comment"));
+        this.continueState = this.ContinueState.None;
+    }
 
-    findAtRule: function(str)
+    function commentMiddleAction(token)
     {
-        var match = /^@[_a-z0-9][_a-z0-9-]*(?:\W|$)/.exec(str);
-        if (!match)
-            return null;
-        this.previousMatchLength = match[0].length;
-        return this.createSpan(match[0], "webkit-css-at-rule");
-    },
-
-    syntaxHighlightLine: function(line, prevLine)
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-comment"));
+    }
+    
+    function selectorAction(token)
     {
-        var code = line.textContent;
-        while (line.firstChild)
-            line.removeChild(line.firstChild);
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-selector"));
+    }
+    
+    function startRulesetBlockAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.DeclarationProperty;
+    }
+    
+    function endRulesetBlockAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.Initial;
+    }
+    
+    const propertyKeywords = {
+        "background": true,
+        "background-attachment": true,
+        "background-clip": true,
+        "background-color": true,
+        "background-image": true,
+        "background-origin": true,
+        "background-position": true,
+        "background-position-x": true,
+        "background-position-y": true,
+        "background-repeat": true,
+        "background-repeat-x": true,
+        "background-repeat-y": true,
+        "background-size": true,
+        "border": true,
+        "border-bottom": true,
+        "border-bottom-color": true,
+        "border-bottom-left-radius": true,
+        "border-bottom-right-radius": true,
+        "border-bottom-style": true,
+        "border-bottom-width": true,
+        "border-collapse": true,
+        "border-color": true,
+        "border-left": true,
+        "border-left-color": true,
+        "border-left-style": true,
+        "border-left-width": true,
+        "border-radius": true,
+        "border-right": true,
+        "border-right-color": true,
+        "border-right-style": true,
+        "border-right-width": true,
+        "border-spacing": true,
+        "border-style": true,
+        "border-top": true,
+        "border-top-color": true,
+        "border-top-left-radius": true,
+        "border-top-right-radius": true,
+        "border-top-style": true,
+        "border-top-width": true,
+        "border-width": true,
+        "bottom": true,
+        "caption-side": true,
+        "clear": true,
+        "clip": true,
+        "color": true,
+        "content": true,
+        "counter-increment": true,
+        "counter-reset": true,
+        "cursor": true,
+        "direction": true,
+        "display": true,
+        "empty-cells": true,
+        "float": true,
+        "font": true,
+        "font-family": true,
+        "font-size": true,
+        "font-stretch": true,
+        "font-style": true,
+        "font-variant": true,
+        "font-weight": true,
+        "height": true,
+        "left": true,
+        "letter-spacing": true,
+        "line-height": true,
+        "list-style": true,
+        "list-style-image": true,
+        "list-style-position": true,
+        "list-style-type": true,
+        "margin": true,
+        "margin-bottom": true,
+        "margin-left": true,
+        "margin-right": true,
+        "margin-top": true,
+        "max-height": true,
+        "max-width": true,
+        "min-height": true,
+        "min-width": true,
+        "opacity": true,
+        "orphans": true,
+        "outline": true,
+        "outline-color": true,
+        "outline-offset": true,
+        "outline-style": true,
+        "outline-width": true,
+        "overflow": true,
+        "overflow-x": true,
+        "overflow-y": true,
+        "padding": true,
+        "padding-bottom": true,
+        "padding-left": true,
+        "padding-right": true,
+        "padding-top": true,
+        "page": true,
+        "page-break-after": true,
+        "page-break-before": true,
+        "page-break-inside": true,
+        "pointer-events": true,
+        "position": true,
+        "quotes": true,
+        "resize": true,
+        "right": true,
+        "size": true,
+        "src": true,
+        "table-layout": true,
+        "text-align": true,
+        "text-decoration": true,
+        "text-indent": true,
+        "text-line-through": true,
+        "text-line-through-color": true,
+        "text-line-through-mode": true,
+        "text-line-through-style": true,
+        "text-line-through-width": true,
+        "text-overflow": true,
+        "text-overline": true,
+        "text-overline-color": true,
+        "text-overline-mode": true,
+        "text-overline-style": true,
+        "text-overline-width": true,
+        "text-rendering": true,
+        "text-shadow": true,
+        "text-transform": true,
+        "text-underline": true,
+        "text-underline-color": true,
+        "text-underline-mode": true,
+        "text-underline-style": true,
+        "text-underline-width": true,
+        "top": true,
+        "unicode-bidi": true,
+        "unicode-range": true,
+        "vertical-align": true,
+        "visibility": true,
+        "white-space": true,
+        "widows": true,
+        "width": true,
+        "word-break": true,
+        "word-spacing": true,
+        "word-wrap": true,
+        "z-index": true,
+        "zoom": true,
+        "-webkit-animation": true,
+        "-webkit-animation-delay": true,
+        "-webkit-animation-direction": true,
+        "-webkit-animation-duration": true,
+        "-webkit-animation-iteration-count": true,
+        "-webkit-animation-name": true,
+        "-webkit-animation-play-state": true,
+        "-webkit-animation-timing-function": true,
+        "-webkit-appearance": true,
+        "-webkit-backface-visibility": true,
+        "-webkit-background-clip": true,
+        "-webkit-background-composite": true,
+        "-webkit-background-origin": true,
+        "-webkit-background-size": true,
+        "-webkit-binding": true,
+        "-webkit-border-fit": true,
+        "-webkit-border-horizontal-spacing": true,
+        "-webkit-border-image": true,
+        "-webkit-border-radius": true,
+        "-webkit-border-vertical-spacing": true,
+        "-webkit-box-align": true,
+        "-webkit-box-direction": true,
+        "-webkit-box-flex": true,
+        "-webkit-box-flex-group": true,
+        "-webkit-box-lines": true,
+        "-webkit-box-ordinal-group": true,
+        "-webkit-box-orient": true,
+        "-webkit-box-pack": true,
+        "-webkit-box-reflect": true,
+        "-webkit-box-shadow": true,
+        "-webkit-box-sizing": true,
+        "-webkit-column-break-after": true,
+        "-webkit-column-break-before": true,
+        "-webkit-column-break-inside": true,
+        "-webkit-column-count": true,
+        "-webkit-column-gap": true,
+        "-webkit-column-rule": true,
+        "-webkit-column-rule-color": true,
+        "-webkit-column-rule-style": true,
+        "-webkit-column-rule-width": true,
+        "-webkit-column-width": true,
+        "-webkit-columns": true,
+        "-webkit-font-size-delta": true,
+        "-webkit-font-smoothing": true,
+        "-webkit-highlight": true,
+        "-webkit-line-break": true,
+        "-webkit-line-clamp": true,
+        "-webkit-margin-bottom-collapse": true,
+        "-webkit-margin-collapse": true,
+        "-webkit-margin-start": true,
+        "-webkit-margin-top-collapse": true,
+        "-webkit-marquee": true,
+        "-webkit-marquee-direction": true,
+        "-webkit-marquee-increment": true,
+        "-webkit-marquee-repetition": true,
+        "-webkit-marquee-speed": true,
+        "-webkit-marquee-style": true,
+        "-webkit-mask": true,
+        "-webkit-mask-attachment": true,
+        "-webkit-mask-box-image": true,
+        "-webkit-mask-clip": true,
+        "-webkit-mask-composite": true,
+        "-webkit-mask-image": true,
+        "-webkit-mask-origin": true,
+        "-webkit-mask-position": true,
+        "-webkit-mask-position-x": true,
+        "-webkit-mask-position-y": true,
+        "-webkit-mask-repeat": true,
+        "-webkit-mask-repeat-x": true,
+        "-webkit-mask-repeat-y": true,
+        "-webkit-mask-size": true,
+        "-webkit-match-nearest-mail-blockquote-color": true,
+        "-webkit-nbsp-mode": true,
+        "-webkit-padding-start": true,
+        "-webkit-perspective": true,
+        "-webkit-perspective-origin": true,
+        "-webkit-perspective-origin-x": true,
+        "-webkit-perspective-origin-y": true,
+        "-webkit-rtl-ordering": true,
+        "-webkit-text-decorations-in-effect": true,
+        "-webkit-text-fill-color": true,
+        "-webkit-text-security": true,
+        "-webkit-text-size-adjust": true,
+        "-webkit-text-stroke": true,
+        "-webkit-text-stroke-color": true,
+        "-webkit-text-stroke-width": true,
+        "-webkit-transform": true,
+        "-webkit-transform-origin": true,
+        "-webkit-transform-origin-x": true,
+        "-webkit-transform-origin-y": true,
+        "-webkit-transform-origin-z": true,
+        "-webkit-transform-style": true,
+        "-webkit-transition": true,
+        "-webkit-transition-delay": true,
+        "-webkit-transition-duration": true,
+        "-webkit-transition-property": true,
+        "-webkit-transition-timing-function": true,
+        "-webkit-user-drag": true,
+        "-webkit-user-modify": true,
+        "-webkit-user-select": true,
+        "-webkit-variable-declaration-block": true
+    };
+    function propertyAction(token)
+    {
+        this.cursor += token.length;
+        if (token in propertyKeywords) {
+            this.appendNonToken.call(this);
+            this.lineFragment.appendChild(this.createSpan(token, "webkit-css-property"));
+        } else
+            this.nonToken += token;
+    }
+    
+    function declarationColonAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.DeclarationValue;
+    }
 
-        var token;
-        var tmp = 0;
-        var i = 0;
-        this.previousMatchLength = 0;
+    const valueKeywords = {
+        "inherit": true,
+        "initial": true,
+        "none": true,
+        "hidden": true,
+        "inset": true,
+        "groove": true,
+        "ridge": true,
+        "outset": true,
+        "dotted": true,
+        "dashed": true,
+        "solid": true,
+        "double": true,
+        "caption": true,
+        "icon": true,
+        "menu": true,
+        "message-box": true,
+        "small-caption": true,
+        "-webkit-mini-control": true,
+        "-webkit-small-control": true,
+        "-webkit-control": true,
+        "status-bar": true,
+        "italic": true,
+        "oblique": true,
+        "all": true,
+        "small-caps": true,
+        "normal": true,
+        "bold": true,
+        "bolder": true,
+        "lighter": true,
+        "xx-small": true,
+        "x-small": true,
+        "small": true,
+        "medium": true,
+        "large": true,
+        "x-large": true,
+        "xx-large": true,
+        "-webkit-xxx-large": true,
+        "smaller": true,
+        "larger": true,
+        "wider": true,
+        "narrower": true,
+        "ultra-condensed": true,
+        "extra-condensed": true,
+        "condensed": true,
+        "semi-condensed": true,
+        "semi-expanded": true,
+        "expanded": true,
+        "extra-expanded": true,
+        "ultra-expanded": true,
+        "serif": true,
+        "sans-serif": true,
+        "cursive": true,
+        "fantasy": true,
+        "monospace": true,
+        "-webkit-body": true,
+        "aqua": true,
+        "black": true,
+        "blue": true,
+        "fuchsia": true,
+        "gray": true,
+        "green": true,
+        "lime": true,
+        "maroon": true,
+        "navy": true,
+        "olive": true,
+        "orange": true,
+        "purple": true,
+        "red": true,
+        "silver": true,
+        "teal": true,
+        "white": true,
+        "yellow": true,
+        "transparent": true,
+        "-webkit-link": true,
+        "-webkit-activelink": true,
+        "activeborder": true,
+        "activecaption": true,
+        "appworkspace": true,
+        "background": true,
+        "buttonface": true,
+        "buttonhighlight": true,
+        "buttonshadow": true,
+        "buttontext": true,
+        "captiontext": true,
+        "graytext": true,
+        "highlight": true,
+        "highlighttext": true,
+        "inactiveborder": true,
+        "inactivecaption": true,
+        "inactivecaptiontext": true,
+        "infobackground": true,
+        "infotext": true,
+        "match": true,
+        "menutext": true,
+        "scrollbar": true,
+        "threeddarkshadow": true,
+        "threedface": true,
+        "threedhighlight": true,
+        "threedlightshadow": true,
+        "threedshadow": true,
+        "window": true,
+        "windowframe": true,
+        "windowtext": true,
+        "-webkit-focus-ring-color": true,
+        "currentcolor": true,
+        "grey": true,
+        "-webkit-text": true,
+        "repeat": true,
+        "repeat-x": true,
+        "repeat-y": true,
+        "no-repeat": true,
+        "clear": true,
+        "copy": true,
+        "source-over": true,
+        "source-in": true,
+        "source-out": true,
+        "source-atop": true,
+        "destination-over": true,
+        "destination-in": true,
+        "destination-out": true,
+        "destination-atop": true,
+        "xor": true,
+        "plus-darker": true,
+        "plus-lighter": true,
+        "baseline": true,
+        "middle": true,
+        "sub": true,
+        "super": true,
+        "text-top": true,
+        "text-bottom": true,
+        "top": true,
+        "bottom": true,
+        "-webkit-baseline-middle": true,
+        "-webkit-auto": true,
+        "left": true,
+        "right": true,
+        "center": true,
+        "justify": true,
+        "-webkit-left": true,
+        "-webkit-right": true,
+        "-webkit-center": true,
+        "outside": true,
+        "inside": true,
+        "disc": true,
+        "circle": true,
+        "square": true,
+        "decimal": true,
+        "decimal-leading-zero": true,
+        "lower-roman": true,
+        "upper-roman": true,
+        "lower-greek": true,
+        "lower-alpha": true,
+        "lower-latin": true,
+        "upper-alpha": true,
+        "upper-latin": true,
+        "hebrew": true,
+        "armenian": true,
+        "georgian": true,
+        "cjk-ideographic": true,
+        "hiragana": true,
+        "katakana": true,
+        "hiragana-iroha": true,
+        "katakana-iroha": true,
+        "inline": true,
+        "block": true,
+        "list-item": true,
+        "run-in": true,
+        "compact": true,
+        "inline-block": true,
+        "table": true,
+        "inline-table": true,
+        "table-row-group": true,
+        "table-header-group": true,
+        "table-footer-group": true,
+        "table-row": true,
+        "table-column-group": true,
+        "table-column": true,
+        "table-cell": true,
+        "table-caption": true,
+        "-webkit-box": true,
+        "-webkit-inline-box": true,
+        "-wap-marquee": true,
+        "auto": true,
+        "crosshair": true,
+        "default": true,
+        "pointer": true,
+        "move": true,
+        "vertical-text": true,
+        "cell": true,
+        "context-menu": true,
+        "alias": true,
+        "progress": true,
+        "no-drop": true,
+        "not-allowed": true,
+        "-webkit-zoom-in": true,
+        "-webkit-zoom-out": true,
+        "e-resize": true,
+        "ne-resize": true,
+        "nw-resize": true,
+        "n-resize": true,
+        "se-resize": true,
+        "sw-resize": true,
+        "s-resize": true,
+        "w-resize": true,
+        "ew-resize": true,
+        "ns-resize": true,
+        "nesw-resize": true,
+        "nwse-resize": true,
+        "col-resize": true,
+        "row-resize": true,
+        "text": true,
+        "wait": true,
+        "help": true,
+        "all-scroll": true,
+        "-webkit-grab": true,
+        "-webkit-grabbing": true,
+        "ltr": true,
+        "rtl": true,
+        "capitalize": true,
+        "uppercase": true,
+        "lowercase": true,
+        "visible": true,
+        "collapse": true,
+        "above": true,
+        "absolute": true,
+        "always": true,
+        "avoid": true,
+        "below": true,
+        "bidi-override": true,
+        "blink": true,
+        "both": true,
+        "close-quote": true,
+        "crop": true,
+        "cross": true,
+        "embed": true,
+        "fixed": true,
+        "hand": true,
+        "hide": true,
+        "higher": true,
+        "invert": true,
+        "landscape": true,
+        "level": true,
+        "line-through": true,
+        "local": true,
+        "loud": true,
+        "lower": true,
+        "-webkit-marquee": true,
+        "mix": true,
+        "no-close-quote": true,
+        "no-open-quote": true,
+        "nowrap": true,
+        "open-quote": true,
+        "overlay": true,
+        "overline": true,
+        "portrait": true,
+        "pre": true,
+        "pre-line": true,
+        "pre-wrap": true,
+        "relative": true,
+        "scroll": true,
+        "separate": true,
+        "show": true,
+        "static": true,
+        "thick": true,
+        "thin": true,
+        "underline": true,
+        "-webkit-nowrap": true,
+        "stretch": true,
+        "start": true,
+        "end": true,
+        "reverse": true,
+        "horizontal": true,
+        "vertical": true,
+        "inline-axis": true,
+        "block-axis": true,
+        "single": true,
+        "multiple": true,
+        "forwards": true,
+        "backwards": true,
+        "ahead": true,
+        "up": true,
+        "down": true,
+        "slow": true,
+        "fast": true,
+        "infinite": true,
+        "slide": true,
+        "alternate": true,
+        "read-only": true,
+        "read-write": true,
+        "read-write-plaintext-only": true,
+        "element": true,
+        "ignore": true,
+        "intrinsic": true,
+        "min-intrinsic": true,
+        "clip": true,
+        "ellipsis": true,
+        "discard": true,
+        "dot-dash": true,
+        "dot-dot-dash": true,
+        "wave": true,
+        "continuous": true,
+        "skip-white-space": true,
+        "break-all": true,
+        "break-word": true,
+        "space": true,
+        "after-white-space": true,
+        "checkbox": true,
+        "radio": true,
+        "push-button": true,
+        "square-button": true,
+        "button": true,
+        "button-bevel": true,
+        "default-button": true,
+        "list-button": true,
+        "listbox": true,
+        "listitem": true,
+        "media-fullscreen-button": true,
+        "media-mute-button": true,
+        "media-play-button": true,
+        "media-seek-back-button": true,
+        "media-seek-forward-button": true,
+        "media-rewind-button": true,
+        "media-return-to-realtime-button": true,
+        "media-slider": true,
+        "media-sliderthumb": true,
+        "media-volume-slider-container": true,
+        "media-volume-slider": true,
+        "media-volume-sliderthumb": true,
+        "media-controls-background": true,
+        "media-current-time-display": true,
+        "media-time-remaining-display": true,
+        "menulist": true,
+        "menulist-button": true,
+        "menulist-text": true,
+        "menulist-textfield": true,
+        "slider-horizontal": true,
+        "slider-vertical": true,
+        "sliderthumb-horizontal": true,
+        "sliderthumb-vertical": true,
+        "caret": true,
+        "searchfield": true,
+        "searchfield-decoration": true,
+        "searchfield-results-decoration": true,
+        "searchfield-results-button": true,
+        "searchfield-cancel-button": true,
+        "textfield": true,
+        "textarea": true,
+        "caps-lock-indicator": true,
+        "round": true,
+        "border": true,
+        "border-box": true,
+        "content": true,
+        "content-box": true,
+        "padding": true,
+        "padding-box": true,
+        "contain": true,
+        "cover": true,
+        "logical": true,
+        "visual": true,
+        "lines": true,
+        "running": true,
+        "paused": true,
+        "flat": true,
+        "preserve-3d": true,
+        "ease": true,
+        "linear": true,
+        "ease-in": true,
+        "ease-out": true,
+        "ease-in-out": true,
+        "document": true,
+        "reset": true,
+        "visiblePainted": true,
+        "visibleFill": true,
+        "visibleStroke": true,
+        "painted": true,
+        "fill": true,
+        "stroke": true,
+        "antialiased": true,
+        "subpixel-antialiased": true,
+        "optimizeSpeed": true,
+        "optimizeLegibility": true,
+        "geometricPrecision": true
+    };
+    function valueIdentAction(token) {
+        this.cursor += token.length;
+        if (token in valueKeywords) {
+            this.appendNonToken.call(this);
+            this.lineFragment.appendChild(this.createSpan(token, "webkit-css-keyword"));
+        } else
+            this.nonToken += token;
+    }
 
-        if (prevLine) {
-            if (prevLine._commentContinues) {
-                if (!(token = this.findMultilineCommentEnd(code))) {
-                    token = this.createSpan(code, "webkit-javascript-comment");
-                    line._commentContinues = true;
-                }
-            }
-            if (token) {
-                i += this.previousMatchLength ? this.previousMatchLength : code.length;
-                tmp = i;
-                line.appendChild(token);
-            }
+    function numvalueAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-number"));
+    }
+    
+    function declarationSemicolonAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.DeclarationProperty;
+    }
+    
+    function urlAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-url"));
+    }
+    
+    function stringAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-string"));
+    }
+    
+    function colorAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-color"));
+    }
+    
+    function importantAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-important"));
+    }
+    
+    function atMediaAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-at-rule"));
+        this.lexState = this.LexState.AtMedia;
+    }
+    
+    function startAtMediaBlockAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.Initial;
+    }
+    
+    function atKeyframesAction(token)
+    {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-at-rule"));
+        this.lexState = this.LexState.AtKeyframes;
+    }
+    
+    function startAtKeyframesBlockAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.Initial;
+    }
+    
+    function atRuleAction(token) {
+        this.cursor += token.length;
+        this.lineFragment.appendChild(this.createSpan(token, "webkit-css-at-rule"));
+        this.lexState = this.LexState.AtRule;
+    }
+    
+    function endAtRuleAction(token) {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.Initial;
+    }
+    
+    function startAtRuleBlockAction(token)
+    {
+        this.cursor += token.length;
+        this.nonToken += token;
+        this.lexState = this.LexState.DeclarationProperty;
+    }
+    
+    const mediaTypes = ["all", "aural", "braille", "embossed", "handheld", "print", "projection", "screen", "tty", "tv"];
+    function atRuleIdentAction(token) {
+        this.cursor += token.length;
+        if (mediaTypes.indexOf(token) === -1)
+            this.nonToken += token;
+        else {
+            this.appendNonToken.call(this);
+            this.lineFragment.appendChild(this.createSpan(token, "webkit-css-keyword"));
         }
-
-        var inSelector = (prevLine && prevLine._inSelector); // inside a selector, we can now parse properties and values
-        var inAtRuleBlock = (prevLine && prevLine._inAtRuleBlock); // inside an @rule block, but not necessarily inside a selector yet
-        var atRuleStarted = (prevLine && prevLine._atRuleStarted); // we received an @rule, we may stop the @rule at a semicolon or open a block and become inAtRuleBlock
-        var atRuleIsSelector = (prevLine && prevLine._atRuleIsSelector); // when this @rule opens a block it immediately goes into parsing properties and values instead of selectors
-
-        for ( ; i < code.length; ++i) {
-            var codeFragment = code.substr(i);
-            var prevChar = code[i - 1];
-            var currChar = codeFragment[0];
-            token = this.findSingleLineComment(codeFragment);
-            if (!token) {
-                if ((token = this.findMultilineCommentStart(codeFragment)))
-                    line._commentContinues = true;
-                else if (currChar === ";" && !inAtRuleBlock)
-                    atRuleStarted = false;
-                else if (currChar === "}") {
-                    if (inSelector && inAtRuleBlock && atRuleIsSelector) {
-                        inSelector = false;
-                        inAtRuleBlock = false;
-                        atRuleStarted = false;
-                    } else if (inSelector) {
-                        inSelector = false;
-                    } else if (inAtRuleBlock) {
-                        inAtRuleBlock = false;
-                        atRuleStarted = false;
-                    }
-                } else if (currChar === "{") {
-                    if (!atRuleStarted || inAtRuleBlock) {
-                        inSelector = true;
-                    } else if (!inAtRuleBlock && atRuleIsSelector) {
-                        inAtRuleBlock = true;
-                        inSelector = true;
-                    } else if (!inAtRuleBlock) {
-                        inAtRuleBlock = true;
-                        inSelector = false;
-                    }
-                } else if (inSelector) {
-                    if (!prevChar || /^\d/.test(prevChar)) {
-                        token = this.findUnits(codeFragment);
-                    } else if (!prevChar || /^\W/.test(prevChar)) {
-                        token = this.findNumber(codeFragment) ||
-                                this.findKeyword(codeFragment) ||
-                                this.findURL(codeFragment) ||
-                                this.findProperty(codeFragment) ||
-                                this.findAtRule(codeFragment) ||
-                                this.findGenericIdent(codeFragment) ||
-                                this.findSingleLineString(codeFragment);
-                    }
-                } else if (!inSelector) {
-                    if (atRuleStarted && !inAtRuleBlock)
-                        token = this.findURL(codeFragment); // for @import
-                    if (!token) {
-                        token = this.findSelector(codeFragment) ||
-                                this.findPseudoClass(codeFragment) ||
-                                this.findAtRule(codeFragment);
-                    }
-                }
-            }
-
-            if (token) {
-                if (currChar === "@") {
-                    atRuleStarted = true;
-
-                    // The @font-face, @page, and @variables at-rules do not contain selectors like other at-rules
-                    // instead it acts as a selector and contains properties and values.
-                    var text = token.textContent;
-                    atRuleIsSelector = /font-face/.test(text) || /page/.test(text) || /variables/.test(text);
-                }
-
-                if (tmp !== i)
-                    line.appendChild(document.createTextNode(code.substring(tmp, i)));
-                line.appendChild(token);
-                i += this.previousMatchLength - 1;
-                tmp = i + 1;
-            }
-        }
-
-        line._inSelector = inSelector;
-        line._inAtRuleBlock = inAtRuleBlock;
-        line._atRuleStarted = atRuleStarted;
-        line._atRuleIsSelector = atRuleIsSelector;
-
-        if (tmp < code.length)
-            line.appendChild(document.createTextNode(code.substring(tmp, i)));
     }
 }
 
-WebInspector.CSSSourceSyntaxHighligher.prototype.__proto__ = WebInspector.SourceSyntaxHighligher.prototype;
+WebInspector.CSSSourceSyntaxHighlighter.prototype.__proto__ = WebInspector.SourceSyntaxHighlighter.prototype;
 
 WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
-    WebInspector.SourceSyntaxHighligher.call(this, table, sourceFrame);
+    WebInspector.SourceSyntaxHighlighter.call(this, table, sourceFrame);
 
     this.LexState = {
         Initial: 1,
@@ -1003,82 +1857,82 @@ WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
     this.continueState = this.ContinueState.None;
     
     this.rules = [{
-            pattern: /^(?:\/\/.*)/,
-            action: singleLineCommentAction
-        }, {
-            pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*\*+\/)/,
-            action: multiLineSingleLineCommentAction
-        }, {
-            pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*)/,
-            action: multiLineCommentStartAction
-        }, {
-            pattern: /^(?:(?:[^\*]|\*[^\/])*\*+\/)/,
-            action: multiLineCommentEndAction,
-            continueStateCondition: this.ContinueState.Comment
-        }, {
-            pattern: /^.*/,
-            action: multiLineCommentMiddleAction,
-            continueStateCondition: this.ContinueState.Comment
-        }, {
-            pattern: /^(?:(?:0|[1-9]\d*)\.\d+?(?:[eE](?:\d+|\+\d+|-\d+))?|\.\d+(?:[eE](?:\d+|\+\d+|-\d+))?|(?:0|[1-9]\d*)(?:[eE](?:\d+|\+\d+|-\d+))?|0x[0-9a-fA-F]+|0X[0-9a-fA-F]+)/,
-            action: numericLiteralAction
-        }, {
-            pattern: /^(?:"(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*"|'(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*')/,
-            action: stringLiteralAction
-        }, {
-            pattern: /^(?:'(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
-            action: singleQuoteStringStartAction
-        }, {
-            pattern: /^(?:(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*')/,
-            action: singleQuoteStringEndAction,
-            continueStateCondition: this.ContinueState.SingleQuoteString
-        }, {
-            pattern: /^(?:(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
-            action: singleQuoteStringMiddleAction,
-            continueStateCondition: this.ContinueState.SingleQuoteString
-        }, {
-            pattern: /^(?:"(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
-            action: doubleQuoteStringStartAction
-        }, {
-            pattern: /^(?:(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")/,
-            action: doubleQuoteStringEndAction,
-            continueStateCondition: this.ContinueState.DoubleQuoteString
-        }, {
-            pattern: /^(?:(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
-            action: doubleQuoteStringMiddleAction,
-            continueStateCondition: this.ContinueState.DoubleQuoteString
-        }, {
-            pattern: /^(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
-            action: identOrKeywordAction,
-            dontAppendNonToken: true
-        }, {
-            pattern: /^\)/,
-            action: rightParenAction,
-            dontAppendNonToken: true
-        }, {
-            pattern: /^(?:<=|>=|===|==|!=|!==|\+\+|\-\-|<<|>>|>>>|&&|\|\||\+=|\-=|\*=|%=|<<=|>>=|>>>=|&=|\|=|^=|[{}\(\[\]\.;,<>\+\-\*%&\|\^!~\?:=])/,
-            action: punctuatorAction,
-            dontAppendNonToken: true
-        }, {
-            pattern: /^(?:\/=?)/,
-            action: divPunctuatorAction,
-            stateCondition: this.LexState.DivisionAllowed,
-            dontAppendNonToken: true
-        }, {
-            pattern: /^(?:\/(?:(?:\\.)|[^\\*\/])(?:(?:\\.)|[^\\/])*\/(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
-            action: regExpLiteralAction
-        }, {
-            pattern: /^(?:\/(?:(?:\\.)|[^\\*\/])(?:(?:\\.)|[^\\/])*)\\$/,
-            action: regExpStartAction
-        }, {
-            pattern: /^(?:(?:(?:\\.)|[^\\/])*\/(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
-            action: regExpEndAction,
-            continueStateCondition: this.ContinueState.RegExp
-        }, {
-            pattern: /^(?:(?:(?:\\.)|[^\\/])*)\\$/,
-            action: regExpMiddleAction,
-            continueStateCondition: this.ContinueState.RegExp
-        }];
+        pattern: /^(?:\/\/.*)/,
+        action: singleLineCommentAction
+    }, {
+        pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*\*+\/)/,
+        action: multiLineSingleLineCommentAction
+    }, {
+        pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*)/,
+        action: multiLineCommentStartAction
+    }, {
+        pattern: /^(?:(?:[^\*]|\*[^\/])*\*+\/)/,
+        action: multiLineCommentEndAction,
+        continueStateCondition: this.ContinueState.Comment
+    }, {
+        pattern: /^.*/,
+        action: multiLineCommentMiddleAction,
+        continueStateCondition: this.ContinueState.Comment
+    }, {
+        pattern: /^(?:(?:0|[1-9]\d*)\.\d+?(?:[eE](?:\d+|\+\d+|-\d+))?|\.\d+(?:[eE](?:\d+|\+\d+|-\d+))?|(?:0|[1-9]\d*)(?:[eE](?:\d+|\+\d+|-\d+))?|0x[0-9a-fA-F]+|0X[0-9a-fA-F]+)/,
+        action: numericLiteralAction
+    }, {
+        pattern: /^(?:"(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*"|'(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*')/,
+        action: stringLiteralAction
+    }, {
+        pattern: /^(?:'(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
+        action: singleQuoteStringStartAction
+    }, {
+        pattern: /^(?:(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*')/,
+        action: singleQuoteStringEndAction,
+        continueStateCondition: this.ContinueState.SingleQuoteString
+    }, {
+        pattern: /^(?:(?:[^'\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
+        action: singleQuoteStringMiddleAction,
+        continueStateCondition: this.ContinueState.SingleQuoteString
+    }, {
+        pattern: /^(?:"(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
+        action: doubleQuoteStringStartAction
+    }, {
+        pattern: /^(?:(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")/,
+        action: doubleQuoteStringEndAction,
+        continueStateCondition: this.ContinueState.DoubleQuoteString
+    }, {
+        pattern: /^(?:(?:[^"\\]|\\(?:['"\bfnrtv]|[^'"\bfnrtv0-9xu]|0|x[0-9a-fA-F][0-9a-fA-F]|(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*)\\$/,
+        action: doubleQuoteStringMiddleAction,
+        continueStateCondition: this.ContinueState.DoubleQuoteString
+    }, {
+        pattern: /^(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
+        action: identOrKeywordAction,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^\)/,
+        action: rightParenAction,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^(?:<=|>=|===|==|!=|!==|\+\+|\-\-|<<|>>|>>>|&&|\|\||\+=|\-=|\*=|%=|<<=|>>=|>>>=|&=|\|=|^=|[{}\(\[\]\.;,<>\+\-\*%&\|\^!~\?:=])/,
+        action: punctuatorAction,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^(?:\/=?)/,
+        action: divPunctuatorAction,
+        lexStateCondition: this.LexState.DivisionAllowed,
+        dontAppendNonToken: true
+    }, {
+        pattern: /^(?:\/(?:(?:\\.)|[^\\*\/])(?:(?:\\.)|[^\\/])*\/(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
+        action: regExpLiteralAction
+    }, {
+        pattern: /^(?:\/(?:(?:\\.)|[^\\*\/])(?:(?:\\.)|[^\\/])*)\\$/,
+        action: regExpStartAction
+    }, {
+        pattern: /^(?:(?:(?:\\.)|[^\\/])*\/(?:(?:[a-zA-Z]|[$_]|\\(?:u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]))|[0-9])*)/,
+        action: regExpEndAction,
+        continueStateCondition: this.ContinueState.RegExp
+    }, {
+        pattern: /^(?:(?:(?:\\.)|[^\\/])*)\\$/,
+        action: regExpMiddleAction,
+        continueStateCondition: this.ContinueState.RegExp
+    }];
     
     function singleLineCommentAction(token)
     {
@@ -1198,7 +2052,8 @@ WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
         const keywords = ["null", "true", "false", "break", "case", "catch", "const", "default", "finally", "for", "instanceof", "new", "var", "continue", "function", "return", "void", "delete", "if", "this", "do", "while", "else", "in", "switch", "throw", "try", "typeof", "with", "debugger", "class", "enum", "export", "extends", "import", "super", "get", "set"];
         this.cursor += token.length;
         if (keywords.indexOf(token) === -1) {
-            this.nonToken += token;
+            this.appendNonToken();
+            this.lineFragment.appendChild(this.createSpan(token, "webkit-javascript-ident"));
             this.lexState = this.LexState.DivisionAllowed;
         } else {
             this.appendNonToken();
@@ -1229,132 +2084,4 @@ WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
     }
 }
 
-WebInspector.JavaScriptSourceSyntaxHighlighter.prototype = {
-    process: function()
-    {
-        // Split up the work into chunks so we don't block the
-        // UI thread while processing.
-
-        var rows = this.table.rows;
-        var rowsLength = rows.length;
-        const tokensPerChunk = 100;
-        const lineLengthLimit = 20000;
-        
-        var boundProcessChunk = processChunk.bind(this);
-        var processChunkInterval = setInterval(boundProcessChunk, 25);
-        boundProcessChunk();
-        
-        function processChunk()
-        {
-            for (var i = 0; i < tokensPerChunk; i++) {
-                if (this.cursor >= this.lineCode.length)
-                    moveToNextLine.call(this);
-                if (this.lineIndex >= rowsLength) {
-                    this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
-                    return;
-                }
-                if (this.cursor > lineLengthLimit) {
-                    var codeFragment = this.lineCode.substring(this.cursor);
-                    this.nonToken += codeFragment;
-                    this.cursor += codeFragment.length;
-                }
-
-                this.lex();
-            }
-        }
-        
-        function moveToNextLine()
-        {
-            this.appendNonToken();
-            
-            var row = rows[this.lineIndex];
-            var line = row ? row.cells[1] : null;
-            if (line && this.lineFragment) {
-                Element.prototype.removeChildren.call(line);
-                
-                line.appendChild(this.lineFragment);
-                if (this.messageBubble)
-                    line.appendChild(this.messageBubble);
-                this.lineFragment = null;
-            }
-            this.lineIndex++;
-            if (this.lineIndex >= rowsLength && processChunkInterval) {
-                clearInterval(processChunkInterval);
-                this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
-                return;
-            }
-            row = rows[this.lineIndex];
-            line = row ? row.cells[1] : null;
-            
-            this.messageBubble = null;
-            if (line.lastChild && line.lastChild.nodeType === Node.ELEMENT_NODE && line.lastChild.hasStyleClass("webkit-html-message-bubble")) {
-                this.messageBubble = line.lastChild;
-                line.removeChild(this.messageBubble);
-            }
-
-            this.lineCode = line.textContent;
-            this.lineFragment = document.createDocumentFragment();
-            this.cursor = 0;
-            if (!line)
-                moveToNextLine();
-        }
-    },
-    
-    lex: function()
-    {
-        var token = null;
-        var codeFragment = this.lineCode.substring(this.cursor);
-        
-        for (var i = 0; i < this.rules.length; i++) {
-            var rule = this.rules[i];
-            var ruleContinueStateCondition = typeof rule.continueStateCondition === "undefined" ? this.ContinueState.None : rule.continueStateCondition;
-            if (this.continueState === ruleContinueStateCondition) {
-                if (typeof rule.stateCondition !== "undefined" && this.lexState !== rule.stateCondition)
-                    continue;
-                var match = rule.pattern.exec(codeFragment);
-                if (match) {
-                    token = match[0];
-                    if (token) {
-                        if (!rule.dontAppendNonToken)
-                            this.appendNonToken();
-                        return rule.action.call(this, token);
-                    }
-                }
-            }
-        }
-        this.nonToken += codeFragment[0];
-        this.cursor++;
-    },
-    
-    appendNonToken: function ()
-    {
-        if (this.nonToken.length > 0) {
-            this.lineFragment.appendChild(document.createTextNode(this.nonToken));
-            this.nonToken = "";
-        }
-    },
-    
-    syntaxHighlightNode: function(node)
-    {
-        this.lineCode = node.textContent;
-        this.lineFragment = document.createDocumentFragment();
-        this.cursor = 0;
-        while (true) {
-            if (this.cursor >= this.lineCode.length) {
-                var codeFragment = this.lineCode.substring(this.cursor);
-                this.nonToken += codeFragment;
-                this.cursor += codeFragment.length;
-                this.appendNonToken();
-                while (node.firstChild)
-                    node.removeChild(node.firstChild);
-                node.appendChild(this.lineFragment);
-                this.lineFragment =null;
-                return;
-            }
-
-            this.lex();
-        }
-    }
-}
-
-WebInspector.JavaScriptSourceSyntaxHighlighter.prototype.__proto__ = WebInspector.SourceSyntaxHighligher.prototype;
+WebInspector.JavaScriptSourceSyntaxHighlighter.prototype.__proto__ = WebInspector.SourceSyntaxHighlighter.prototype;

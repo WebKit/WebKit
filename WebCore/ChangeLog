@@ -1,3 +1,25 @@
+2009-11-02  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Rewrite CSSSourceSyntaxHighlighter so it shares more code
+        https://bugs.webkit.org/show_bug.cgi?id=30907
+
+        Test: inspector/css-syntax-highlight.html
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.syntaxHighlightCSS):
+        (WebInspector.SourceSyntaxHighlighter):
+        (WebInspector.SourceSyntaxHighlighter.prototype.process.processChunk):
+        (WebInspector.SourceSyntaxHighlighter.prototype.process.moveToNextLine):
+        (WebInspector.SourceSyntaxHighlighter.prototype.process):
+        (WebInspector.SourceSyntaxHighlighter.prototype.lex):
+        (WebInspector.SourceSyntaxHighlighter.prototype.appendNonToken):
+        (WebInspector.SourceSyntaxHighlighter.prototype.syntaxHighlightNode):
+        (WebInspector.CSSSourceSyntaxHighlighter):
+        * inspector/front-end/inspectorSyntaxHighlight.css:
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

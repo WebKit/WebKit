@@ -850,8 +850,8 @@ WebInspector.ElementsTreeElement.prototype = {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
                         
-                        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighligher(null, null);
-                        cssSyntaxHighlighter.syntaxHighlightLine(newNode, null);
+                        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighlighter(null, null);
+                        cssSyntaxHighlighter.syntaxHighlightNode(newNode);
                         
                         info.title = "<span class=\"webkit-html-text-node webkit-html-css-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
                     } else {

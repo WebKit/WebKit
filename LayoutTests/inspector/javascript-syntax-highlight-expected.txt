@@ -3,12 +3,12 @@ Tests that JavaScriptSourceSyntaxHighlighter detects the tokens.
 webkit-javascript-keyword,webkit-javascript-string,*
 webkit-javascript-regexp
 webkit-javascript-comment
-webkit-javascript-number,*,webkit-javascript-number,*,webkit-javascript-regexp,*,webkit-javascript-string,*
-webkit-javascript-string,*,webkit-javascript-number
-webkit-javascript-keyword,*,webkit-javascript-number,webkit-javascript-comment,*,webkit-javascript-number
-webkit-javascript-comment,webkit-javascript-regexp,*,webkit-javascript-string,*
+webkit-javascript-number,*,webkit-javascript-number,*,webkit-javascript-regexp,*,webkit-javascript-ident,*,webkit-javascript-string,*
+webkit-javascript-string,*,webkit-javascript-ident,*,webkit-javascript-number
+webkit-javascript-keyword,*,webkit-javascript-ident,*,webkit-javascript-number,webkit-javascript-comment,*,webkit-javascript-number
+webkit-javascript-comment,webkit-javascript-regexp,*,webkit-javascript-ident,*,webkit-javascript-string,*
 webkit-javascript-string,*
 webkit-javascript-string,*
 webkit-javascript-string,*
-*,webkit-javascript-comment,*
+webkit-javascript-ident,webkit-javascript-comment,webkit-javascript-ident
 

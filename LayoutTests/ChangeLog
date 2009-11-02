@@ -1,3 +1,14 @@
+2009-11-02  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Rewrite CSSSourceSyntaxHighlighter so it shares more code
+        https://bugs.webkit.org/show_bug.cgi?id=30907
+
+        * inspector/css-syntax-highlight-expected.txt: Added.
+        * inspector/css-syntax-highlight.html: Added.
+        * inspector/javascript-syntax-highlight-expected.txt:
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -1,0 +1,11 @@
+Tests that CSSSourceSyntaxHighlighter detects the tokens.
+
+webkit-css-selector
+webkit-css-selector,*,webkit-css-selector
+webkit-css-at-rule,*,webkit-css-url,*
+webkit-css-at-rule,*,webkit-css-url,*,webkit-css-keyword,*,webkit-css-keyword,*
+webkit-css-at-rule,*,webkit-css-keyword,*,webkit-css-selector,*,webkit-css-property,*,webkit-css-keyword,*
+webkit-css-at-rule,*,webkit-css-property,*
+webkit-css-selector,*,webkit-css-property,*,webkit-css-keyword,*
+webkit-css-selector,*,webkit-css-property,*,webkit-css-keyword,*,webkit-css-important,*
+
