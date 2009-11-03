@@ -29,7 +29,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
-#include "Kurl.h"
+#include "KURL.h"
 #include "Language.h"
 #include "MimeTypeArray.h"
 #include "Page.h"

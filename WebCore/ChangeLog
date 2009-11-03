@@ -1,3 +1,11 @@
+2009-11-03  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, Qt build fix.
+
+        Need to use right capitalization for include file.
+
+        * page/Navigator.cpp:
+
 2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
