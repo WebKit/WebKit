@@ -1,3 +1,14 @@
+2009-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash due to double-destroy related to CSS run-in property
+        https://bugs.webkit.org/show_bug.cgi?id=31034
+        rdar://problem/7328458
+
+        * fast/css/run-in-crash-expected.txt: Added.
+        * fast/css/run-in-crash.html: Added.
+
 2009-11-03  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Eric Seidel.

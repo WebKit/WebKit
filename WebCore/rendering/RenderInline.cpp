@@ -52,15 +52,18 @@ RenderInline::RenderInline(Node* node)
 
 void RenderInline::destroy()
 {
-    // Detach our continuation first.
-    if (m_continuation)
-        m_continuation->destroy();
-    m_continuation = 0;
-    
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
     children()->destroyLeftoverChildren();
 
+    // Destroy our continuation before anything other than anonymous children.
+    // The reason we don't destroy it before anonymous children is that they may
+    // have continuations of their own that are anonymous children of our continuation.
+    if (m_continuation) {
+        m_continuation->destroy();
+        m_continuation = 0;
+    }
+    
     if (!documentBeingDestroyed()) {
         if (firstLineBox()) {
             // We can't wait for RenderBoxModelObject::destroy to clear the selection,

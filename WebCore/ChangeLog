@@ -1,3 +1,20 @@
+2009-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash due to double-destroy related to CSS run-in property
+        https://bugs.webkit.org/show_bug.cgi?id=31034
+        rdar://problem/7328458
+
+        Test: fast/css/run-in-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy): Reorder destruction so the
+        continuation is destroyed after anonymous children. See comment
+        in the code for more details of why this is right.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy): Ditto.
+
 2009-11-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
