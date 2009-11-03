@@ -58,7 +58,11 @@ AccessibilityUIElement AccessibilityController::focusedElement()
 AccessibilityUIElement AccessibilityController::rootElement()
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    AtkObject* axObject = gtk_widget_get_accessible(GTK_WIDGET(view));
+
+    // The presumed, desired rootElement is the parent of the web view.
+    GtkWidget* webViewParent = gtk_widget_get_parent(GTK_WIDGET(view));
+    AtkObject* axObject = gtk_widget_get_accessible(webViewParent);
+ 
     return AccessibilityUIElement(axObject);
 }
 

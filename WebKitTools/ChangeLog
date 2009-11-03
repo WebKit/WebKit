@@ -1,3 +1,15 @@
+2009-11-02  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31035
+        [GTK] some accessibility tests hitting assertion in debug builds
+
+        Get the correct Gtk+ object before attempting to turn it into an AtkObject.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::rootElement):
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
