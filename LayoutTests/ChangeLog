@@ -1,3 +1,18 @@
+2009-11-03  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        "http://trac.webkit.org/changeset/50315" makes links mouse
+        focusable only on GTK and QT, so win has same behavior as mac now
+        Remove the win specific expected results for tests failed
+        due to the patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30968
+
+        * platform/win/fast/events/click-focus-anchor-expected.txt: Removed.
+        * platform/win/fast/inline: Removed.
+        * platform/win/fast/inline/dirtyLinesForInline-expected.txt: Removed.
+
 2009-11-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add files to skiplist depend on phonon support,
