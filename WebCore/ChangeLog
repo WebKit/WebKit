@@ -1,3 +1,12 @@
+2009-11-02  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe.
+
+        Fix a typo in Mark's last commit.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+
 2009-11-02  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Brady Eidson.

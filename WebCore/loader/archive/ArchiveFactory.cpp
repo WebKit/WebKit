@@ -60,7 +60,7 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     if (initialized)
         return mimeTypes;
 
-#if PLATFORM(CF) & !PLATFORM(QT)
+#if PLATFORM(CF) && !PLATFORM(QT)
     mimeTypes.set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
 #endif
 
