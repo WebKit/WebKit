@@ -1,3 +1,56 @@
+2009-11-03  Bradley Green  <brg@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Implement window.navigator.registerProtocolHandler in webkit,
+        https://bugs.webkit.org/b/29651
+
+        Also implemented its sister API window.navigator.registerContentHandler.
+
+        These methods are as described in the HTML5 specification which can be
+        found here,
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registerprotocolhandler
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registercontenthandler
+
+        As specified in the document, the behavior of the browser is determined
+        by the current registered handler.  The state of a registered handler
+        can change at any time, with the user clearing a registered handler,
+        registering a different page as handler, or deferring the hander to the
+        OS.  If webkit was to track the state of the currently registered
+        handlers, it would need more APIs and complexity to keep in sync with
+        user actions reported to webkit from the UA.  For simplicity, the state
+        of protocol handlers should be kept isolated from webkit and webkit only
+        notifies the UA that a page has made the call.  The UA is then
+        responsible for correctly handling the registerProtocolHandler call and
+        the redirects which result from registration.
+
+        We do however follow the specification in insuring that the reserved
+        schemes and mimeTypes are not passed to the UA as custom handler
+        registration tests.  We also insure that the "%s" token is present as
+        required by the specification.
+
+        Updated test expectations for window.clientInformation and navigator
+        objects.
+
+        Tests: fast/dom/registerContentHandler.html
+               fast/dom/registerProtocolHandler.html
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::registerProtocolHandler):
+        (WebCore::Chrome::registerContentHandler):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::registerProtocolHandler):
+        (WebCore::ChromeClient::registerContentHandler):
+        * page/Navigator.cpp:
+        (WebCore::verifyCustomHandlerURL):
+        (WebCore::verifyProtocolHandlerScheme):
+        (WebCore::Navigator::registerProtocolHandler):
+        (WebCore::verifyProtocolHandlerMimeType):
+        (WebCore::Navigator::registerContentHandler):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2009-11-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

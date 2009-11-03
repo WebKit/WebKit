@@ -1,0 +1,10 @@
+This test makes sure that navigator.registerProtocolHandler throws the proper exceptions and has no-op default implementation.
+
+Pass: window.navigator.registerProtocolHandler is defined.
+Pass: Invalid protocol "http" threw SECURITY_ERR exception.
+Pass: Invalid protocol "https" threw SECURITY_ERR exception.
+Pass: Invalid protocol "file" threw SECURITY_ERR exception.
+Pass: Invalid url "" threw SYNTAX_ERR exception.
+Pass: Invalid url "%S" threw SYNTAX_ERR exception.
+Pass: Valid call succeeded.
+

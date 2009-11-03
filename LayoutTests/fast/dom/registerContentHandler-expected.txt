@@ -1,0 +1,10 @@
+This test makes sure that navigator.registerContentHandler throws the proper exceptions and has no-op default implementation.
+
+Pass: window.navigator.registerContentHandler is defined.
+Pass: Invalid protocol "text/html" threw SECURITY_ERR exception.
+Pass: Invalid protocol "text/css" threw SECURITY_ERR exception.
+Pass: Invalid protocol "application/x-javascript" threw SECURITY_ERR exception.
+Pass: Invalid url "" threw SYNTAX_ERR exception.
+Pass: Invalid url "%S" threw SYNTAX_ERR exception.
+Pass: Valid call succeeded.
+

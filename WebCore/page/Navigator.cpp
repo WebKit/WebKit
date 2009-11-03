@@ -24,10 +24,12 @@
 #include "Navigator.h"
 
 #include "CookieJar.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
+#include "Kurl.h"
 #include "Language.h"
 #include "MimeTypeArray.h"
 #include "Page.h"
@@ -168,5 +170,94 @@ void Navigator::getStorageUpdates()
         localStorage->unlock();
 }
 #endif
+
+static bool verifyCustomHandlerURL(const String& baseURL, const String& url, ExceptionCode& ec)
+{
+    // The specification requires that it is a SYNTAX_ERR if the the "%s" token is not present.
+    static const char token[] = "%s";
+    int index = url.find(token);
+    if (-1 == index) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    // It is also a SYNTAX_ERR if the custom handler URL, as created by removing
+    // the "%s" token and prepending the base url, does not resolve.
+    String newURL = url;
+    newURL.remove(index, sizeof(token) / sizeof(token[0]));
+
+    KURL base(ParsedURLString, baseURL);
+    KURL kurl(base, newURL);
+
+    if (kurl.isEmpty() || !kurl.isValid()) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    return true;
+}
+
+static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
+{
+    // It is a SECURITY_ERR for these schemes to be handled by a custom handler.
+    if (equalIgnoringCase(scheme, "http") || equalIgnoringCase(scheme, "https") || equalIgnoringCase(scheme, "file")) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return true;
+}
+
+void Navigator::registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode& ec)
+{
+    if (!verifyProtocolHandlerScheme(scheme, ec))
+        return;
+
+    if (!m_frame)
+        return;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    String baseURL = document->baseURL().baseAsString();
+
+    if (!verifyCustomHandlerURL(baseURL, url, ec))
+        return;
+
+    if (Page* page = m_frame->page())
+        page->chrome()->registerProtocolHandler(scheme, baseURL, url, m_frame->displayStringModifiedByEncoding(title));
+}
+
+static bool verifyProtocolHandlerMimeType(const String& type, ExceptionCode& ec)
+{
+    // It is a SECURITY_ERR for these mime types to be assigned to a custom
+    // handler.
+    if (equalIgnoringCase(type, "text/html") || equalIgnoringCase(type, "text/css") || equalIgnoringCase(type, "application/x-javascript")) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return true;
+}
+
+void Navigator::registerContentHandler(const String& mimeType, const String& url, const String& title, ExceptionCode& ec)
+{
+    if (!verifyProtocolHandlerMimeType(mimeType, ec))
+        return;
+
+    if (!m_frame)
+        return;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    String baseURL = document->baseURL().baseAsString();
+
+    if (!verifyCustomHandlerURL(baseURL, url, ec))
+        return;
+
+    if (Page* page = m_frame->page())
+        page->chrome()->registerContentHandler(mimeType, baseURL, url, m_frame->displayStringModifiedByEncoding(title));
+}
 
 } // namespace WebCore

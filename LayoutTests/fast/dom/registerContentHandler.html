@@ -1,0 +1,57 @@
+<html>
+<body>
+<p>This test makes sure that navigator.registerContentHandler throws the proper exceptions and has no-op default implementation.</p>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+ }
+
+function debug(str) {
+    var c = document.getElementById('console');
+    c.appendChild(document.createTextNode(str + '\n'));
+};
+
+// Test availability of the registerContentHandler API
+if(window.navigator.registerContentHandler) {
+    debug('Pass: window.navigator.registerContentHandler is defined.')
+} else {
+    debug('Fail: window.navigator.registerContentHandler is not defined.')
+};
+
+// Test that the API regects secured protocols.
+var invalid_protocols = ['text/html', 'text/css', 'application/x-javascript'];
+invalid_protocols.forEach(function(protocol) {
+    try {
+        window.navigator.registerContentHandler(protocol, "invalid protocol %s", "title");
+        debug('Fail: Invalid protocol "' + protocol + '" allowed.');
+    } catch(e) {
+        if('SECURITY_ERR' == e.name) {
+            debug('Pass: Invalid protocol "' + protocol + '" threw SECURITY_ERR exception.');
+        }
+    };
+});
+
+// Test that the API correctly parses the url for '%s'
+var invalid_urls = ["", "%S"]
+invalid_urls.forEach(function(url) {
+    try {
+        window.navigator.registerContentHandler('myprotocol', url, 'title');
+        debug('Fail: Invalid url "' + url + '" allowed.');
+    } catch(e) {
+        if('SYNTAX_ERR' == e.name) {
+            debug('Pass: Invalid url "' + url + '" threw SYNTAX_ERR exception.');
+        }
+    };
+});
+
+// Test that the API has default no-op implementation.
+try {
+    window.navigator.registerContentHandler('myprotocol', "%s", "title");
+    debug('Pass: Valid call succeeded.');
+} catch(e) {
+    debug('Fail: Valid call did not succeed.');
+};
+</script>
+</body>
+</html>

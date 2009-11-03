@@ -1,3 +1,32 @@
+2009-11-03  Bradley Green  <brg@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Updating test expectations for implementation of
+        window.navigator.registerProtocolHandler and
+        window.navigator.registerContentHandler.
+
+        There is a default implimentation for these APIs, hence all platforms
+        with the navigator-detached-no-crash-expect and
+        window-properties-expected tests needed to be updated.  While
+        isolatedWorlds has a window-properties-expected test, it has no window
+        object and hence does not need to be updaetd.
+
+        We add two fast/dom tests to insure that the proper exceptions are
+        thrown when bad syntax or security violations are made by calling the
+        methods.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/dom/navigator-detached-no-crash.html:
+        * fast/dom/registerContentHandler-expected.txt: Added.
+        * fast/dom/registerContentHandler.html: Added.
+        * fast/dom/registerProtocolHandler-expected.txt: Added.
+        * fast/dom/registerProtocolHandler.html: Added.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2009-11-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson and Beth Dakin.

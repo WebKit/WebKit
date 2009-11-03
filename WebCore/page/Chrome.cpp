@@ -307,6 +307,16 @@ bool Chrome::shouldInterruptJavaScript()
     return m_client->shouldInterruptJavaScript();
 }
 
+void Chrome::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
+{
+    m_client->registerProtocolHandler(scheme, baseURL, url, title);
+}
+
+void Chrome::registerContentHandler(const String& mimeType, const String& baseURL, const String& url, const String& title)
+{
+    m_client->registerContentHandler(mimeType,  baseURL, url,  title);
+}
+
 IntRect Chrome::windowResizerRect() const
 {
     return m_client->windowResizerRect();

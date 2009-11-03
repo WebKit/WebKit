@@ -53,9 +53,14 @@ function check_navigator() {
   var strings = [ ];
   for (p in old_nav) {
     if (typeof old_nav[p] == 'function') {
-      var v = old_nav[p]();
-      // no crash, it is ok
-      strings.push("navigator."+p+"() is OK");
+      try {
+        var v = old_nav[p]();
+        // no crash, it is ok
+        strings.push("navigator."+p+"() is OK");
+      } catch(err) {
+        // navigator.registerXXX will throw on invalid input.
+        strings.push("navigator."+p+"() threw err "+err);
+      }
     } else {
       var v = old_nav[p];
       // no crash, it is ok.

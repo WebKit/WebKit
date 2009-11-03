@@ -13,6 +13,8 @@ navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.registerContentHandler() threw err Error: SYNTAX_ERR: DOM Exception 12
+navigator.registerProtocolHandler() threw err Error: SYNTAX_ERR: DOM Exception 12
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -29,6 +31,8 @@ navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.registerContentHandler() is OK
+navigator.registerProtocolHandler() is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK

@@ -46,6 +46,11 @@ module window {
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         void getStorageUpdates();
 #endif
+
+        void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+            raises(DomException);
+        void registerContentHandler(in DOMString mimeType, in DOMString url, in DOMString title)
+            raises(DomException);
     };
 
 }
