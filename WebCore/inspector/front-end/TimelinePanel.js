@@ -278,6 +278,7 @@ WebInspector.TimelinePanel.prototype = {
     refresh: function()
     {
         WebInspector.AbstractTimelinePanel.prototype.refresh.call(this);
+        this.adjustScrollPosition();
 
         // Clear summary bars.
         var timelines = {};
@@ -398,7 +399,7 @@ WebInspector.TimelinePanel.prototype = {
             this._rightResizeElement.style.left = this.calculator.windowRight*100 + "%";
         }
         this._overviewWindowElement.style.width = (this.calculator.windowRight - this.calculator.windowLeft)*100 + "%";
-        this.refresh();
+        this.needsRefresh = true;
     },
 
     _endWindowDragging: function(event)

@@ -1,3 +1,15 @@
+2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: update timeline content boundaries on timer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31072
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.refresh):
+        (WebInspector.TimelinePanel.prototype._setWindowPosition):
+
 2009-11-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson and Beth Dakin.
