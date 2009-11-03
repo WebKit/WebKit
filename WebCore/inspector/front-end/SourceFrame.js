@@ -2053,12 +2053,45 @@ WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
         this.cursor += token.length;
         if (keywords.indexOf(token) === -1) {
             this.appendNonToken();
-            this.lineFragment.appendChild(this.createSpan(token, "webkit-javascript-ident"));
+            var identElement = this.createSpan(token, "webkit-javascript-ident");
+            identElement.addEventListener("mouseover", showDatatip, false);
+            this.lineFragment.appendChild(identElement);
             this.lexState = this.LexState.DivisionAllowed;
         } else {
             this.appendNonToken();
             this.lineFragment.appendChild(this.createSpan(token, "webkit-javascript-keyword"));
             this.lexState = this.LexState.Initial;
+        }
+    }
+    
+    function showDatatip(event) {
+        if (!WebInspector.panels.scripts || !WebInspector.panels.scripts.paused)
+            return;
+
+        var node = event.target;
+        var parts = [node.textContent];
+        while (node.previousSibling && node.previousSibling.textContent === ".") {
+            node = node.previousSibling.previousSibling;
+            if (!node || !node.hasStyleClass("webkit-javascript-ident"))
+                break;
+            parts.unshift(node.textContent);
+        }
+
+        var expression = parts.join(".");
+
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, "console", callback);
+        function callback(result, exception)
+        {
+            if (exception)
+                return;
+            event.target.setAttribute("title", result.description);
+            event.target.addEventListener("mouseout", onmouseout, false);
+            
+            function onmouseout(event)
+            {
+                event.target.removeAttribute("title");
+                event.target.removeEventListener("mouseout", onmouseout, false);
+            }
         }
     }
     
