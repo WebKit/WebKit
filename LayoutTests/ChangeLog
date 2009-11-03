@@ -1,5 +1,12 @@
 2009-11-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Add files to skiplist depend on phonon support,
+        which is disabled on the Qt buildbot for now.
+
+        * platform/qt/Skipped:
+
+2009-11-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         Remove now passing tests from skiplist.

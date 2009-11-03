@@ -3,7 +3,9 @@
 # timeouts is found
 fast/dom/dom-constructors.html
 fast/dom/Window/custom-constructors.html
+fast/dom/Window/window-properties.html 
 fast/dom/beforeload/video-before-load.html
+fast/dom/prototype-inheritance.html 
 fast/js/instanceof-operator.html
 http/tests/security/local-video-poster-from-remote.html
 http/tests/security/local-video-source-from-remote.html
