@@ -22,7 +22,7 @@
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-#include "qwebplugindatabase.h"
+#include "qwebplugindatabase_p.h"
 
 #include "Cache.h"
 #include "CrossOriginPreflightResultCache.h"
@@ -627,7 +627,7 @@ QIcon QWebSettings::iconForUrl(const QUrl& url)
 
 /*!
     Returns the plugin database object.
-*/
+
 QWebPluginDatabase *QWebSettings::pluginDatabase()
 {
     static QWebPluginDatabase* database = 0;
@@ -635,6 +635,7 @@ QWebPluginDatabase *QWebSettings::pluginDatabase()
         database = new QWebPluginDatabase();
     return database;
 }
+*/
 
 /*!
     Sets \a graphic to be drawn when QtWebKit needs to draw an image of the

@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "qwebplugindatabase.h"
+#include "qwebplugindatabase_p.h"
 
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
@@ -26,6 +26,7 @@
 using namespace WebCore;
 
 /*!
+    \internal
     \typedef QWebPluginInfo::MimeType
     \since 4.6
     \brief Represents a single MIME type supported by a plugin.
@@ -33,6 +34,7 @@ using namespace WebCore;
 
 /*!
     \class QWebPluginInfo
+    \internal
     \since 4.6
     \brief The QWebPluginInfo class represents a single Netscape plugin.
 
@@ -232,6 +234,7 @@ QWebPluginInfo &QWebPluginInfo::operator=(const QWebPluginInfo& other)
 
 /*!
     \class QWebPluginDatabase
+    \internal
     \since 4.6
     \brief The QWebPluginDatabase class provides an interface for managing
     Netscape plugins used by WebKit in QWebPages.

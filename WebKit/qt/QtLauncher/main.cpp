@@ -34,7 +34,6 @@
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebsettings.h>
-#include <qwebplugindatabase.h>
 #include <qwebelement.h>
 #include <qwebinspector.h>
 
@@ -243,6 +242,7 @@ protected slots:
         formatMenuAction->setVisible(on);
     }
 
+    /*
     void dumpPlugins() {
         QList<QWebPluginInfo> plugins = QWebSettings::pluginDatabase()->plugins();
         foreach (const QWebPluginInfo plugin, plugins) {
@@ -252,6 +252,7 @@ protected slots:
             }
         }
     }
+    */
 
     void dumpHtml() {
         qDebug() << "HTML: " << view->page()->mainFrame()->toHtml();
@@ -341,7 +342,7 @@ private:
         zoomTextOnly->setChecked(false);
         viewMenu->addSeparator();
         viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
-        viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
+        //viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
 
         QMenu *formatMenu = new QMenu("F&ormat", this);
         formatMenuAction = menuBar()->addMenu(formatMenu);

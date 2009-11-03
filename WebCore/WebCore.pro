@@ -2332,6 +2332,7 @@ HEADERS += \
     xml/XSLTExtensions.h \
     xml/XSLTProcessor.h \
     xml/XSLTUnicodeSort.h \
+    $$PWD/../WebKit/qt/Api/qwebplugindatabase_p.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/DnsPrefetchHelper.h
 

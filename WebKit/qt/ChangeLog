@@ -1,5 +1,22 @@
 2009-11-03  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Make QWebPluginDatabase private API for now.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30775
+
+        * Api/headers.pri:
+        * Api/qwebplugindatabase.cpp:
+        * Api/qwebplugindatabase_p.h: Renamed from WebKit/qt/Api/qwebplugindatabase.h.
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::setupUI):
+        * tests/tests.pro:
+
+2009-11-03  Simon Hausmann  <hausmann@webkit.org>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         Oops, also remove the API docs of the removed networkRequestStarted() signal.
