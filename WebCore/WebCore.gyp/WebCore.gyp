@@ -273,7 +273,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_csspropertynames.py',
+            'scripts/action_csspropertynames.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)'
@@ -292,7 +292,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_cssvaluekeywords.py',
+            'scripts/action_cssvaluekeywords.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)'
@@ -315,7 +315,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
+            'scripts/action_makenames.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)',
@@ -342,7 +342,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
+            'scripts/action_makenames.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)',
@@ -371,7 +371,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_useragentstylesheets.py',
+            'scripts/action_useragentstylesheets.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)'
@@ -389,7 +389,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
+            'scripts/action_makenames.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)',
@@ -409,7 +409,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_makenames.py',
+            'scripts/action_makenames.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)',
@@ -428,7 +428,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/action_maketokenizer.py',
+            'scripts/action_maketokenizer.py',
             '<@(_outputs)',
             '--',
             '<@(_inputs)'
@@ -446,7 +446,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/rule_bison.py',
+            'scripts/rule_bison.py',
             '<(RULE_INPUT_PATH)',
             '<(SHARED_INTERMEDIATE_DIR)/webkit'
           ],
@@ -469,7 +469,7 @@
           ],
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/rule_gperf.py',
+            'scripts/rule_gperf.py',
             '<(RULE_INPUT_PATH)',
             '<(SHARED_INTERMEDIATE_DIR)/webkit'
           ],
@@ -514,7 +514,7 @@
           # behavior, change the output location.
           'action': [
             'python',
-            '<(chromium_src_dir)/webkit/build/rule_binding.py',
+            'scripts/rule_binding.py',
             '<(RULE_INPUT_PATH)',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
