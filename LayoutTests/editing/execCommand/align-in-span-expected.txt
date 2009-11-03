@@ -1,0 +1,4 @@
+Line 1. 
+Select all text in this line and use justify command.
+Line 3.
+

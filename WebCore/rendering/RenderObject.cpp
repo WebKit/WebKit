@@ -640,7 +640,7 @@ RenderBlock* RenderObject::containingBlock() const
     }
 
     if (!o || !o->isRenderBlock())
-        return 0; // Probably doesn't happen any more, but leave just in case. -dwh
+        return 0; // This can still happen in case of an orphaned tree
 
     return toRenderBlock(o);
 }

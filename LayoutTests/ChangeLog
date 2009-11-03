@@ -1,3 +1,14 @@
+2009-11-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson and Dan Bernstein.
+
+        Safari crashes when calling execCommand on formatted html in special case
+        <rdar://problem/7318656>
+        https://bugs.webkit.org/show_bug.cgi?id=31023
+
+        * editing/execCommand/align-in-span-expected.txt: Added.
+        * editing/execCommand/align-in-span.html: Added.
+
 2009-11-02  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
