@@ -1,3 +1,21 @@
+2009-11-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Extended the conversion of the WebCore ResourceRequest to the
+        QNetworkRequest with a mandatory originating object argument,
+        which is meant to be the QWebFrame the request belongs to.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29975
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/ResourceRequest.h:
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2009-11-03  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.

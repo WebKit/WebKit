@@ -347,8 +347,6 @@ Q_SIGNALS:
     void saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
     void restoreFrameStateRequested(QWebFrame* frame);
 
-    void networkRequestStarted(QWebFrame* frame, QNetworkRequest* request);
-
 protected:
     virtual QWebPage *createWindow(WebWindowType type);
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);

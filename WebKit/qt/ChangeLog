@@ -1,3 +1,22 @@
+2009-11-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Replace the QWebPage::networkRequestStarted() signal with the originatingObject
+        property set to the QWebFrame that belongs to the request.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29975
+
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::loadFinished):
+        (TestNetworkManager::createRequest):
+        (tst_QWebPage::originatingObjectInNetworkRequests):
+
 2009-11-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Adam Barth.

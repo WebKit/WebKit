@@ -946,7 +946,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
 #if QT_VERSION < 0x040400
     QWebNetworkRequest r(request);
 #else
-    QNetworkRequest r(request.toNetworkRequest());
+    QNetworkRequest r(request.toNetworkRequest(m_webFrame));
 #endif
     QWebPage* page = m_webFrame->page();
 
@@ -971,7 +971,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
 #if QT_VERSION < 0x040400
     QWebNetworkRequest r(request);
 #else
-    QNetworkRequest r(request.toNetworkRequest());
+    QNetworkRequest r(request.toNetworkRequest(m_webFrame));
 #endif
     QWebPage*page = m_webFrame->page();
 
@@ -1001,7 +1001,7 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
     if (!m_webFrame)
         return;
 
-    emit m_webFrame->page()->downloadRequested(request.toNetworkRequest());
+    emit m_webFrame->page()->downloadRequested(request.toNetworkRequest(m_webFrame));
 #endif
 }
 

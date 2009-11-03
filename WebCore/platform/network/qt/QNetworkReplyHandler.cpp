@@ -147,7 +147,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     else
         m_method = QNetworkAccessManager::UnknownOperation;
 
-    m_request = r.toNetworkRequest();
+    m_request = r.toNetworkRequest(m_resourceHandle->getInternal()->m_frame);
 
     if (m_loadMode == LoadNormal)
         start();
@@ -327,10 +327,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
         client->willSendRequest(m_resourceHandle, newRequest, response);
         m_redirected = true;
-        m_request = newRequest.toNetworkRequest();
-
-        ResourceHandleInternal* d = m_resourceHandle->getInternal();
-        emit d->m_frame->page()->networkRequestStarted(d->m_frame, &m_request);
+        m_request = newRequest.toNetworkRequest(m_resourceHandle->getInternal()->m_frame);
         return;
     }
 
@@ -371,8 +368,6 @@ void QNetworkReplyHandler::start()
     ResourceHandleInternal* d = m_resourceHandle->getInternal();
 
     QNetworkAccessManager* manager = d->m_frame->page()->networkAccessManager();
-
-    emit d->m_frame->page()->networkRequestStarted(d->m_frame, &m_request);
 
     const QUrl url = m_request.url();
     const QString scheme = url.scheme();

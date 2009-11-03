@@ -129,6 +129,8 @@ private slots:
     void screenshot_data();
     void screenshot();
 
+    void originatingObjectInNetworkRequests();
+
 private:
     QWebView* m_view;
     QWebPage* m_page;
@@ -234,7 +236,6 @@ void tst_QWebPage::loadFinished()
 {
     qRegisterMetaType<QWebFrame*>("QWebFrame*");
     qRegisterMetaType<QNetworkRequest*>("QNetworkRequest*");
-    QSignalSpy spyNetworkRequestStarted(m_page, SIGNAL(networkRequestStarted(QWebFrame*, QNetworkRequest*)));
     QSignalSpy spyLoadStarted(m_view, SIGNAL(loadStarted()));
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
 
@@ -245,7 +246,6 @@ void tst_QWebPage::loadFinished()
 
     QTest::qWait(3000);
 
-    QVERIFY(spyNetworkRequestStarted.count() > 1);
     QVERIFY(spyLoadStarted.count() > 1);
     QVERIFY(spyLoadFinished.count() > 1);
 
@@ -346,9 +346,11 @@ public:
     TestNetworkManager(QObject* parent) : QNetworkAccessManager(parent) {}
 
     QList<QUrl> requestedUrls;
+    QList<QNetworkRequest> requests;
 
 protected:
     virtual QNetworkReply* createRequest(Operation op, const QNetworkRequest &request, QIODevice* outgoingData) {
+        requests.append(request);
         requestedUrls.append(request.url());
         return QNetworkAccessManager::createRequest(op, request, outgoingData);
     }
@@ -1607,6 +1609,26 @@ void tst_QWebPage::screenshot()
     delete view;
 
     QDir::setCurrent(QApplication::applicationDirPath());
+}
+
+void tst_QWebPage::originatingObjectInNetworkRequests()
+{
+    TestNetworkManager* networkManager = new TestNetworkManager(m_page);
+    m_page->setNetworkAccessManager(networkManager);
+    networkManager->requests.clear();
+
+    m_view->setHtml(QString("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
+                            "<head><meta http-equiv='refresh' content='1'></head>foo \">"
+                            "<frame src=\"data:text/html,bar\"></frameset>"), QUrl());
+    QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
+
+    QCOMPARE(networkManager->requests.count(), 2);
+
+    QList<QWebFrame*> childFrames = m_page->mainFrame()->childFrames();
+    QCOMPARE(childFrames.count(), 2);
+
+    for (int i = 0; i < 2; ++i)
+        QVERIFY(qobject_cast<QWebFrame*>(networkManager->requests.at(i).originatingObject()) == childFrames.at(i));
 }
 
 QTEST_MAIN(tst_QWebPage)
