@@ -84,6 +84,7 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityObject()
     , m_renderer(renderer)
     , m_ariaRole(UnknownRole)
+    , m_childrenDirty(false)
 {
     updateAccessibilityRole();
 #ifndef NDEBUG
