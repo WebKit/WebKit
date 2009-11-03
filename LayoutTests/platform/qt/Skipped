@@ -179,11 +179,6 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 # ------- missing eventSender.zoomPageOut
 fast/dom/elementFromPoint-relative-to-viewport.html
 
-# ------- missing WebSoket support in DRT
-fast/dom/Window/window-properties.html
-fast/dom/prototype-inheritance.html
-fast/websockets/websocket-event-target.html
-
 # ------- missing drag-and-drop support
 fast/events/drag-and-drop-none.html
 fast/events/drag-parent-node.html
@@ -2113,7 +2108,6 @@ editing/style/relative-font-size-change-001.html
 editing/style/relative-font-size-change-002.html
 editing/style/relative-font-size-change-003.html
 editing/style/relative-font-size-change-004.html
-editing/style/remove-underline.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
 editing/style/style-3681552-fix-001.html
@@ -2685,7 +2679,6 @@ fast/dom/Element/class-attribute-whitespace.html
 fast/dom/Element/null-offset-parent.html
 fast/dom/HTMLDocument/frameless-location-bugzilla10837.html
 fast/dom/HTMLElement/bdo.html
-fast/dom/HTMLFontElement/size-attribute.html
 fast/dom/HTMLHeadElement/head-link-style-href-check.html
 fast/dom/HTMLHeadElement/textInHead1.html
 fast/dom/HTMLHeadElement/textInHead2.html
@@ -2859,8 +2852,6 @@ fast/forms/input-readonly-empty.html
 fast/forms/input-spaces.html
 fast/forms/input-table.html
 fast/forms/input-text-click-inside.html
-fast/forms/input-text-maxlength.html
-fast/forms/input-text-paste-maxlength.html
 fast/forms/input-text-self-emptying-click.html
 fast/forms/input-text-word-wrap.html
 fast/forms/input-type-change2.html
@@ -3972,7 +3963,6 @@ tables/mozilla/bugs/bug19061-2.html
 tables/mozilla/bugs/bug19356.html
 tables/mozilla/bugs/bug194024.html
 tables/mozilla/bugs/bug19599.html
-tables/mozilla/bugs/bug196870.html
 tables/mozilla/bugs/bug2050.html
 tables/mozilla/bugs/bug20579.html
 tables/mozilla/bugs/bug2065.html
@@ -4140,7 +4130,6 @@ tables/mozilla/bugs/bug55527.html
 tables/mozilla/bugs/bug55545.html
 tables/mozilla/bugs/bug55694.html
 tables/mozilla/bugs/bug55789.html
-tables/mozilla/bugs/bug56201.html
 tables/mozilla/bugs/bug56405.html
 tables/mozilla/bugs/bug56563.html
 tables/mozilla/bugs/bug57300.html
@@ -4750,7 +4739,6 @@ tables/mozilla/other/ms.html
 tables/mozilla/other/nested2.html
 tables/mozilla/other/nestedTables.html
 tables/mozilla/other/padding.html
-tables/mozilla/other/slashlogo.html
 tables/mozilla/other/test3.html
 tables/mozilla/other/test6.html
 tables/mozilla/other/wa_table_thtd_rowspan.html
@@ -4838,7 +4826,6 @@ svg/custom/svg-fonts-in-text-controls.html
 svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
 svg/dom/length-list-parser.html
-svg/dom/SVGScriptElement/script-load-and-error-events.svg
 editing/selection/extend-selection-after-double-click.html
 
 # Audio related tests are failing on buildbot
@@ -4859,7 +4846,6 @@ printing/media-queries-print.html
 # Final four tests before Qt buildbot is green
 # https://bugs.webkit.org/show_bug.cgi?id=27914
 fast/css/positioned-overflow-scroll.html
-fast/forms/select-popup-pagekeys.html
 fast/dom/prototype-inheritance-2.html
 
 # Missing DRT ability to override 'standard' preferences.
