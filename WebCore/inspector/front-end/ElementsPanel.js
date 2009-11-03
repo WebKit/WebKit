@@ -525,7 +525,7 @@ WebInspector.ElementsPanel.prototype = {
     _mouseMovedOutOfCrumbs: function(event)
     {
         var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
-        if (nodeUnderMouse.isDescendant(this.crumbsElement))
+        if (nodeUnderMouse && nodeUnderMouse.isDescendant(this.crumbsElement))
             return;
 
         WebInspector.hoveredDOMNode = null;
