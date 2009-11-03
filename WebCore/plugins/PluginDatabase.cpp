@@ -320,7 +320,7 @@ void PluginDatabase::clear()
     m_preferredPlugins.clear();
 }
 
-#if (!PLATFORM(SYMBIAN)) && (!PLATFORM(WIN_OS) || PLATFORM(WX) || !ENABLE(NETSCAPE_PLUGIN_API))
+#if (!PLATFORM(WINCE)) && (!PLATFORM(SYMBIAN)) && (!PLATFORM(WIN_OS) || PLATFORM(WX) || !ENABLE(NETSCAPE_PLUGIN_API))
 // For Safari/Win the following three methods are implemented
 // in PluginDatabaseWin.cpp, but if we can use WebCore constructs
 // for the logic we should perhaps move it here under XP_WIN?
