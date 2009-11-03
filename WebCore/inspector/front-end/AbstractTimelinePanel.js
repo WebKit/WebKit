@@ -120,14 +120,14 @@ WebInspector.AbstractTimelinePanel.prototype = {
             createFilterElement.call(this, category);
     },
 
-    _showCategory: function(category)
+    showCategory: function(category)
     {
         var filterClass = "filter-" + category.toLowerCase();
         this.itemsGraphsElement.addStyleClass(filterClass);
         this.itemsTreeElement.childrenListElement.addStyleClass(filterClass);
     },
 
-    _hideCategory: function(category)
+    hideCategory: function(category)
     {
         var filterClass = "filter-" + category.toLowerCase();
         this.itemsGraphsElement.removeStyleClass(filterClass);
@@ -144,7 +144,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
                     continue;
 
                 child.removeStyleClass("selected");
-                this._hideCategory(child.category);
+                this.hideCategory(child.category);
             }
         }
 
@@ -160,7 +160,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
             // Something other than All is being selected, so we want to unselect All.
             if (this.filterAllElement.hasStyleClass("selected")) {
                 this.filterAllElement.removeStyleClass("selected");
-                this._hideCategory("all");
+                this.hideCategory("all");
             }
         }
 
@@ -170,7 +170,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
             unselectAll.call(this);
 
             target.addStyleClass("selected");
-            this._showCategory(target.category);
+            this.showCategory(target.category);
             return;
         }
 
@@ -178,12 +178,12 @@ WebInspector.AbstractTimelinePanel.prototype = {
             // If selectMultiple is turned on, and we were selected, we just
             // want to unselect ourselves.
             target.removeStyleClass("selected");
-            this._hideCategory(target.category);
+            this.hideCategory(target.category);
         } else {
             // If selectMultiple is turned on, and we weren't selected, we just
             // want to select ourselves.
             target.addStyleClass("selected");
-            this._showCategory(target.category);
+            this.showCategory(target.category);
         }
     },
 

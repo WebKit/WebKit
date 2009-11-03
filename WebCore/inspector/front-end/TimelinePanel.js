@@ -34,7 +34,6 @@ WebInspector.TimelinePanel = function()
 
     this.element.addStyleClass("timeline");
 
-    this.createFilterPanel();
     this._createOverview();
     this.createInterface();
     this.containerElement.id = "timeline-container";
@@ -44,8 +43,8 @@ WebInspector.TimelinePanel = function()
     this._createStatusbarButtons();
 
     this.calculator = new WebInspector.TimelineCalculator();
-
-    this.filter(this.filterAllElement, false);
+    for (category in this.categories)
+        this.showCategory(category);
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -440,10 +439,25 @@ WebInspector.TimelineCategoryTreeElement.prototype = {
         this.listItemElement.removeChildren();
         this.listItemElement.addStyleClass("timeline-category-tree-item");
 
+        var checkElement = document.createElement("input");
+        checkElement.type = "checkbox";
+        checkElement.className = "timeline-category-checkbox";
+        checkElement.checked = true;
+        checkElement.addEventListener("click", this._onCheckboxClicked.bind(this));
+        this.listItemElement.appendChild(checkElement);
+
         this.typeElement = document.createElement("span");
         this.typeElement.className = "type";
         this.typeElement.textContent = this._category.title;
         this.listItemElement.appendChild(this.typeElement);
+    },
+
+    _onCheckboxClicked: function (event) {
+        if (event.target.checked)
+            WebInspector.panels.timeline.showCategory(this._category.name);
+        else
+            WebInspector.panels.timeline.hideCategory(this._category.name);
+        WebInspector.panels.timeline._categoryGraphs[this._category.name].dimmed = !event.target.checked;
     }
 }
 
@@ -602,6 +616,14 @@ WebInspector.TimelineCategoryGraph.prototype = {
     clearChunks: function()
     {
         this._barAreaElement.removeChildren();
+    },
+
+    set dimmed(dimmed)
+    {
+        if (dimmed)
+            this._barAreaElement.removeStyleClass("timeline-category-" + this._category.name);
+        else
+            this._barAreaElement.addStyleClass("timeline-category-" + this._category.name);
     }
 }
 

@@ -3277,7 +3277,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 #timeline-overview-panel {
     position: absolute;
-    top: 23px;
+    top: 0;
     left: 0;
     right: 0;
     height: 80px;
@@ -3285,7 +3285,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 #timeline-overview-separator {
     position: absolute;
-    top: 103px;
+    top: 80px;
     left: 0;
     right: 0;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
@@ -3338,7 +3338,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 }
 
 .timeline .sidebar-resizer-vertical {
-    top: 113px;
+    top: 90px;
 }
 
 #timeline-overview-grid #resources-graphs {
@@ -3351,7 +3351,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 #timeline-container {
     position: absolute;
-    top: 113px;
+    top: 90px;
     left: 0;
     bottom: 0;
     right: 0;
@@ -3366,12 +3366,19 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-category-tree-item {
     height: 20px;
-    padding-left: 24px;
+    padding-left: 6px;
     padding-top: 2px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     font-weight: bold;
+}
+
+.timeline-tree-item .timeline-category-checkbox {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
 }
 
 .timeline-category-tree-item:nth-of-type(2n) {
