@@ -34,17 +34,13 @@
 #include "ChromiumBridge.h"
 #include "CString.h"
 #include "MediaPlayer.h"
+#include "PluginDataChromium.h"
 
 // NOTE: Unlike other ports, we don't use the shared implementation bits in
 // MIMETypeRegistry.cpp.  Instead, we need to route most functions via the
 // ChromiumBridge to the embedder.
 
 namespace WebCore {
-
-// Checks if any of the plugins handle this extension, and if so returns the
-// plugin's mime type for this extension.  Otherwise returns an empty string.
-// See PluginsChromium.cpp for the implementation of this function.
-String getPluginMimeTypeFromExtension(const String& extension);
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {

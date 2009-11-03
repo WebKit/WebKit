@@ -2776,6 +2776,7 @@
             'platform/Widget.cpp',
             'platform/Widget.h',
             'plugins/chromium/PluginDataChromium.cpp',
+            'plugins/chromium/PluginDataChromium.h',
             'plugins/gtk/PluginDataGtk.cpp',
             'plugins/gtk/PluginPackageGtk.cpp',
             'plugins/gtk/PluginViewGtk.cpp',

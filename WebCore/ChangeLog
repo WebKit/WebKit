@@ -1,3 +1,18 @@
+2009-11-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Actually declare getPluginMimeTypeFromExtension in a header.
+        https://bugs.webkit.org/show_bug.cgi?id=30985
+
+        Our current code does not conform to our style guide.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        * plugins/chromium/PluginDataChromium.cpp:
+        * plugins/chromium/PluginDataChromium.h: Added.
+
 2009-11-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

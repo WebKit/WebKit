@@ -148,6 +148,7 @@
       '../platform/sql',
       '../platform/text',
       '../plugins',
+      '../plugins/chromium',
       '../rendering',
       '../rendering/style',
       '../storage',

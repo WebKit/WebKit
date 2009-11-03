@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "PluginData.h"
+#include "PluginDataChromium.h"
 
 #include "ChromiumBridge.h"
 
