@@ -41,7 +41,7 @@
 #include <wtf/OwnPtr.h>
 #endif
 
-#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
+#if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -206,7 +206,7 @@ public:
 
     StringImpl* impl() const { return m_impl.get(); }
 
-#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
+#if PLATFORM(CF)
     String(CFStringRef);
     CFStringRef createCFString() const;
 #endif

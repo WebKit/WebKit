@@ -2437,7 +2437,9 @@ SOURCES += \
     mac {
         SOURCES += \
             platform/text/cf/StringCF.cpp \
-            platform/text/cf/StringImplCF.cpp
+            platform/text/cf/StringImplCF.cpp \
+            platform/cf/SharedBufferCF.cpp \
+            editing/SmartReplaceCF.cpp
         LIBS_PRIVATE += -framework Carbon -framework AppKit
     }
 

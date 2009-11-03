@@ -37,7 +37,7 @@
 #include <runtime/UString.h>
 #endif
 
-#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
+#if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -168,7 +168,7 @@ public:
 
     WTF::Unicode::Direction defaultWritingDirection();
 
-#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
+#if PLATFORM(CF)
     CFStringRef createCFString();
 #endif
 #ifdef __OBJC__

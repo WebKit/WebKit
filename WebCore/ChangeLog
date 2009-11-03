@@ -1,3 +1,23 @@
+2009-11-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        PLATFORM(CF) should be set when building for Qt on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=23671
+
+        * WebCore.pro: Add SharedBufferCF.cpp and SmartReplaceCF.cpp
+        to the Darwin build.
+        * loader/archive/ArchiveFactory.cpp: Change the support for 
+        legacy WebArchive from all CF platforms to Mac and Chromium 
+        CF platforms.
+        (WebCore::archiveMIMETypes):
+        * platform/text/AtomicString.h: Remove PLATFORM(QT) &&
+        PLATFORM(DARWIN) test as it is redundant now.
+        * platform/text/PlatformString.h: Ditto.
+        * platform/text/StringImpl.h: Ditto.
+        * platform/text/cf/StringCF.cpp: Ditto.
+        * platform/text/cf/StringImplCF.cpp: Ditto.
+
 2009-11-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

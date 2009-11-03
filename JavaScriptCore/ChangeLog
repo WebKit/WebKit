@@ -1,3 +1,13 @@
+2009-11-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        PLATFORM(CF) should be set when building for Qt on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=23671
+
+        * wtf/Platform.h: Turn on CF support if both QT and DARWIN
+        platforms are defined.
+
 2009-11-02  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
