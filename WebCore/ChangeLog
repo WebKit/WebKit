@@ -1,3 +1,21 @@
+2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement timeline summary panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31064
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createOverview):
+        (WebInspector.TimelinePanel.prototype.refresh):
+        (WebInspector.TimelineCategoryGraph):
+        (WebInspector.TimelineCategoryGraph.prototype.get graphElement):
+        (WebInspector.TimelineCategoryGraph.prototype.addChunk):
+        (WebInspector.TimelineCategoryGraph.prototype.clearChunks):
+        (WebInspector.TimelineGraph.prototype.refresh):
+        * inspector/front-end/inspector.css:
+
 2009-11-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

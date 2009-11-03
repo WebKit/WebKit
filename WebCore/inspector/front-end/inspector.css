@@ -3329,6 +3329,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 15px;
     width: 6px;
     margin-left: -3px;
+    margin-right: -3px;
     background-color: rgb(132, 132, 132);
     z-index: 500;
     cursor: col-resize;
@@ -3416,6 +3417,14 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     display: list-item;
 }
 
+#timeline-overview-graphs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 20px;
+}
+
 #timeline-graphs {
     position: absolute;
     left: 0;
@@ -3432,6 +3441,13 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     margin-top: 0px;
     border-top: 1px solid transparent;
     overflow: hidden;
+    pointer-events: none;
+}
+
+.timeline-overview-graph-side {
+    height: 20px;
+    z-index: 170;
+    pointer-events: none;
 }
 
 .timeline-graph-bar-area {
@@ -3440,6 +3456,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0;
     right: 8px;
     left: 9px;
+    pointer-events: none;
 }
 
 .timeline-graph-bar {
@@ -3452,6 +3469,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     min-width: 7px;
     opacity: 0.8;
     -webkit-border-image: url(Images/timelineBarGray.png) 4 4 5 4;
+    pointer-events: none;
 }
 
 .timeline-graph-side:nth-of-type(2n) {

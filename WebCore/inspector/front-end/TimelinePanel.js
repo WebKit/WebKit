@@ -223,6 +223,14 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewGridElement.id = "timeline-overview-grid";
         overviewPanelElement.appendChild(this._overviewGridElement);
         this._overviewGrid = new WebInspector.TimelineGrid(this._overviewGridElement);
+        this._overviewGrid.itemsGraphsElement.id = "timeline-overview-graphs";
+
+        this._categoryGraphs = {};
+        for (var category in this.categories) {
+            var categoryGraph = new WebInspector.TimelineCategoryGraph(this.categories[category]);
+            this._categoryGraphs[category] = categoryGraph;
+            this._overviewGrid.itemsGraphsElement.appendChild(categoryGraph.graphElement);
+        }
         this._overviewGrid.setScrollAndDividerTop(0, 0);
 
         this._overviewWindowElement = document.createElement("div");
@@ -271,6 +279,46 @@ WebInspector.TimelinePanel.prototype = {
     {
         WebInspector.AbstractTimelinePanel.prototype.refresh.call(this);
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
+
+        // Clear summary bars.
+        var timelines = {};
+        for (var category in this.categories) {
+            timelines[category] = [];
+            this._categoryGraphs[category].clearChunks();
+        }
+
+        // Create sparse arrays with 101 cells each to fill with chunks for a given category.
+        for (var i = 0; i < this.items.length; ++i) {
+            var record = this.items[i];
+            this._overviewCalculator.updateBoundaries(record);
+            var percentages = this._overviewCalculator.computeBarGraphPercentages(record);
+            var end = Math.round(percentages.end);
+            var categoryName = record.category.name;
+            for (var j = Math.round(percentages.start); j <= end; ++j)
+                timelines[categoryName][j] = true;
+        }
+
+        // Convert sparse arrays to continuous segments, render graphs for each.
+        for (var category in this.categories) {
+            var timeline = timelines[category];
+            window.timelineSaved = timeline;
+            var chunkStart = -1;
+            for (var j = 0; j < 101; ++j) {
+                if (timeline[j]) {
+                    if (chunkStart === -1)
+                        chunkStart = j;
+                } else {
+                    if (chunkStart !== -1) {
+                        this._categoryGraphs[category].addChunk(chunkStart, j);
+                        chunkStart = -1;
+                    }
+                }
+            }
+            if (chunkStart !== -1) {
+                this._categoryGraphs[category].addChunk(chunkStart, 100);
+                chunkStart = -1;
+            }
+        }
     },
 
     _resizeWindow: function(resizeElement, event)
@@ -449,6 +497,8 @@ WebInspector.TimelineRecordTreeElement.prototype.__proto__ = TreeElement.prototy
 WebInspector.TimelineCalculator = function()
 {
     WebInspector.AbstractTimelineCalculator.call(this);
+    this.windowLeft = 0.0;
+    this.windowRight = 1.0;
 }
 
 WebInspector.TimelineCalculator.prototype = {
@@ -518,6 +568,40 @@ WebInspector.TimelineCalculator.prototype = {
 WebInspector.TimelineCalculator.prototype.__proto__ = WebInspector.AbstractTimelineCalculator.prototype;
 
 
+WebInspector.TimelineCategoryGraph = function(category)
+{
+    this._category = category;
+
+    this._graphElement = document.createElement("div");
+    this._graphElement.className = "timeline-graph-side timeline-overview-graph-side filter-all";
+
+    this._barAreaElement = document.createElement("div");
+    this._barAreaElement.className = "timeline-graph-bar-area timeline-category-" + category.name;
+    this._graphElement.appendChild(this._barAreaElement);
+}
+
+WebInspector.TimelineCategoryGraph.prototype = {
+    get graphElement()
+    {
+        return this._graphElement;
+    },
+
+    addChunk: function(start, end)
+    {
+        var chunk = document.createElement("div");
+        chunk.className = "timeline-graph-bar";
+        this._barAreaElement.appendChild(chunk);
+        chunk.style.setProperty("left", start + "%");
+        chunk.style.setProperty("width", (end - start) + "%");
+    },
+
+    clearChunks: function()
+    {
+        this._barAreaElement.removeChildren();
+    }
+}
+
+
 WebInspector.TimelineGraph = function(record)
 {
     this.record = record;
@@ -554,11 +638,6 @@ WebInspector.TimelineGraph.prototype = {
         this._percentages = percentages;
 
         this._barAreaElement.removeStyleClass("hidden");
-
-        if (!this._graphElement.hasStyleClass("timeline-category-" + this.record.category.name)) {
-            this._graphElement.removeMatchingStyleClasses("timeline-category-\\w+");
-            this._graphElement.addStyleClass("timeline-category-" + this.record.category.name);
-        }
 
         this._barElement.style.setProperty("left", percentages.start + "%");
         this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
