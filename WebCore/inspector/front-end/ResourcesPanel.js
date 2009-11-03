@@ -39,6 +39,7 @@ WebInspector.ResourcesPanel = function()
     this.viewsContainerElement.id = "resource-views";
     this.element.appendChild(this.viewsContainerElement);
 
+    this.createFilterPanel();
     this.createInterface();
 
     this._createStatusbarButtons();
@@ -564,8 +565,8 @@ WebInspector.ResourcesPanel.prototype = {
             loadDividerPadding.style.left = percent + "%";
             loadDividerPadding.title = WebInspector.UIString("Load event fired");
             loadDividerPadding.appendChild(loadDivider);
-            
-            this.eventDividersElement.appendChild(loadDividerPadding);
+
+            this.addEventDivider(loadDividerPadding);
         }
         
         if (this.mainResourceDOMContentTime !== -1) {
@@ -579,8 +580,8 @@ WebInspector.ResourcesPanel.prototype = {
             domContentDividerPadding.style.left = percent + "%";
             domContentDividerPadding.title = WebInspector.UIString("DOMContent event fired");
             domContentDividerPadding.appendChild(domContentDivider);
-            
-            this.eventDividersElement.appendChild(domContentDividerPadding);
+
+            this.addEventDivider(domContentDividerPadding);
         }
     },
 
@@ -694,7 +695,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     get _resources()
     {
-        return this._items;
+        return this.items;
     }
 }
 

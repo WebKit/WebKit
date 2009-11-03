@@ -1,3 +1,58 @@
+2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement Timeline Window, wire it to the bottom timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31056
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.get items):
+        (WebInspector.AbstractTimelinePanel.prototype.createInterface):
+        (WebInspector.AbstractTimelinePanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.AbstractTimelinePanel.prototype._updateDividersLabelBarPosition):
+        (WebInspector.AbstractTimelinePanel.prototype.invalidateAllItems):
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        (WebInspector.AbstractTimelinePanel.prototype.adjustScrollPosition):
+        (WebInspector.AbstractTimelinePanel.prototype.addExtraDivider):
+        (WebInspector.TimelineGrid):
+        (WebInspector.TimelineGrid.prototype.get itemsGraphsElement):
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        (WebInspector.TimelineGrid.prototype.addExtraDivider):
+        (WebInspector.TimelineGrid.prototype.setScrollAndDividerTop):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.ResourcesPanel.prototype.get _resources):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get categories):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype._createOverview):
+        (WebInspector.TimelinePanel.prototype.setSidebarWidth):
+        (WebInspector.TimelinePanel.prototype.updateMainViewWidth):
+        (WebInspector.TimelinePanel.prototype.updateGraphDividersIfNeeded):
+        (WebInspector.TimelinePanel.prototype.refresh):
+        (WebInspector.TimelinePanel.prototype._resizeWindow):
+        (WebInspector.TimelinePanel.prototype._windowResizeDragging):
+        (WebInspector.TimelinePanel.prototype._dragWindow):
+        (WebInspector.TimelinePanel.prototype._windowDragging):
+        (WebInspector.TimelinePanel.prototype._resizeWindowLeft):
+        (WebInspector.TimelinePanel.prototype._resizeWindowRight):
+        (WebInspector.TimelinePanel.prototype._setWindowPosition):
+        (WebInspector.TimelinePanel.prototype._endWindowDragging):
+        (WebInspector.TimelineCategoryTreeElement):
+        (WebInspector.TimelineCategoryTreeElement.prototype.onattach):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.get minimumBoundary):
+        (WebInspector.TimelineCalculator.prototype.get maximumBoundary):
+        (WebInspector.TimelineCalculator.prototype.reset):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineCalculator.prototype.formatValue):
+        * inspector/front-end/inspector.css:
+
 2009-11-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

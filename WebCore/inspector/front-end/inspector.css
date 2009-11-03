@@ -3275,8 +3275,106 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     height: 0;
 }
 
+#timeline-overview-panel {
+    position: absolute;
+    top: 23px;
+    left: 0;
+    right: 0;
+    height: 80px;
+}
+
+#timeline-overview-separator {
+    position: absolute;
+    top: 103px;
+    left: 0;
+    right: 0;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
+    border-top: 1px solid rgb(163, 163, 163);
+    border-bottom: 1px solid rgb(163, 163, 163);
+    height: 10px;
+}
+
+#timeline-overview-sidebar {
+    position: absolute;
+    width: 200px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    background-color: rgb(232, 232, 232);
+    border-right: 1px solid rgb(163, 163, 163);
+}
+
+#timeline-overview-grid {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 200px;
+    right: 0px;
+    background-color: rgb(232, 232, 232);
+}
+
+#timeline-overview-window {
+    background-color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 150;
+}
+
+.timeline-window-resizer {
+    position: absolute;
+    top: 35px;
+    bottom: 15px;
+    width: 6px;
+    margin-left: -3px;
+    background-color: rgb(132, 132, 132);
+    z-index: 500;
+    cursor: col-resize;
+    border: 1px solid white;
+    -webkit-border-radius: 3px;
+}
+
+.timeline .sidebar-resizer-vertical {
+    top: 113px;
+}
+
+#timeline-overview-grid #resources-graphs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+}
+
+#timeline-container {
+    position: absolute;
+    top: 113px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-right: 0 none transparent;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .timeline-clear-status-bar-item .glyph {
     -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
+}
+
+.timeline-category-tree-item {
+    height: 20px;
+    padding-left: 24px;
+    padding-top: 2px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: bold;
+}
+
+.timeline-category-tree-item:nth-of-type(2n) {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .timeline-tree-item {
