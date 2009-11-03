@@ -176,7 +176,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         switch (record.type) {
         case WebInspector.TimelineAgent.RecordType.EventDispatch:
-            return record.data.type;
+            return record.data ? record.data.type : "";
         case WebInspector.TimelineAgent.RecordType.TimerInstall:
         case WebInspector.TimelineAgent.RecordType.TimerRemove:
         case WebInspector.TimelineAgent.RecordType.TimerFire:
@@ -195,6 +195,9 @@ WebInspector.TimelinePanel.prototype = {
         WebInspector.AbstractTimelinePanel.prototype.reset.call(this);
         this._lastRecord = null;
         this._overviewCalculator.reset();
+        for (var category in this.categories)
+            this._categoryGraphs[category].clearChunks();
+        this._setWindowPosition(0, this._overviewGridElement.clientWidth);
     },
 
     _createOverview: function()

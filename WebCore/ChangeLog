@@ -1,3 +1,15 @@
+2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: clear overview on Clear action and panel reset.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31078
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.prototype.reset):
+
 2009-11-03  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
