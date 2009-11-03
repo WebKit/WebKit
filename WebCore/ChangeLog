@@ -1,3 +1,23 @@
+2009-11-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7038305> REGRESSION (Safari 4.0.2 - ToT): After navigating back to a known phishy page, the "Ignore warning" button appears highlighted (along with the "Go Back" button)
+
+        This bug is timing dependent, and not always reproducible.  I could not think of a way to add a 
+        layout test that would demonstrate the problem and fix.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::checkbox): Update style.
+        (WebCore::paintCheckbox): ditto.
+        (WebCore::radio): ditto.
+        (WebCore::paintRadio): ditto.
+        (WebCore::setupButtonCell): Added convenience method.
+        (WebCore::button): Use a separate NSButtonCell for defaultButtons and regular buttons.
+        (WebCore::paintButton): Don't check for the key window here.  Consider that when deciding if the button should have the default style in RenderTheme.
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::isDefault): Only consider a button to be default if the page is active.  This fixes 
+        a problem I noticed where the button would flicker crazily if the page with the default button was in the background.
+
 2009-11-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

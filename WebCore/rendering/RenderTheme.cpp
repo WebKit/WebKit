@@ -701,6 +701,10 @@ bool RenderTheme::isHovered(const RenderObject* o) const
 
 bool RenderTheme::isDefault(const RenderObject* o) const
 {
+    // A button should only have the default appearance if the page is active
+    if (!isActive(o))
+        return false;
+
     if (!o->document())
         return false;
 

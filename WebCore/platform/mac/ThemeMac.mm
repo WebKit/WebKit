@@ -173,9 +173,9 @@ static LengthSize checkboxSize(const Font& font, const LengthSize& zoomedSize, f
     return sizeFromFont(font, zoomedSize, zoomFactor, checkboxSizes());
 }
 
-static NSButtonCell* checkbox(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+static NSButtonCell *checkbox(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
-    static NSButtonCell* checkboxCell;
+    static NSButtonCell *checkboxCell;
     if (!checkboxCell) {
         checkboxCell = [[NSButtonCell alloc] init];
         [checkboxCell setButtonType:NSSwitchButton];
@@ -199,7 +199,7 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // Determine the width and height needed for the control and prepare the cell for painting.
-    NSButtonCell* checkboxCell = checkbox(states, zoomedRect, zoomFactor);
+    NSButtonCell *checkboxCell = checkbox(states, zoomedRect, zoomFactor);
 
     context->save();
 
@@ -254,9 +254,9 @@ static LengthSize radioSize(const Font& font, const LengthSize& zoomedSize, floa
     return sizeFromFont(font, zoomedSize, zoomFactor, radioSizes());
 }
 
-static NSButtonCell* radio(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+static NSButtonCell *radio(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
-    static NSButtonCell* radioCell;
+    static NSButtonCell *radioCell;
     if (!radioCell) {
         radioCell = [[NSButtonCell alloc] init];
         [radioCell setButtonType:NSRadioButton];
@@ -276,7 +276,7 @@ static NSButtonCell* radio(ControlStates states, const IntRect& zoomedRect, floa
 static void paintRadio(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
-    NSButtonCell* radioCell = radio(states, zoomedRect, zoomFactor);
+    NSButtonCell *radioCell = radio(states, zoomedRect, zoomFactor);
 
     context->save();
 
@@ -330,14 +330,14 @@ static const int* buttonMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static NSButtonCell* button(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+static void setupButtonCell(NSButtonCell *&buttonCell, ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
 {
-    static NSButtonCell *buttonCell;
-    static bool defaultButton;
     if (!buttonCell) {
         buttonCell = [[NSButtonCell alloc] init];
         [buttonCell setTitle:nil];
         [buttonCell setButtonType:NSMomentaryPushInButton];
+        if (states & DefaultState)
+            [buttonCell setKeyEquivalent:@"\r"];
     }
 
     // Set the control size based off the rectangle we're painting into.
@@ -357,15 +357,16 @@ static NSButtonCell* button(ControlPart part, ControlStates states, const IntRec
 
     setControlSize(buttonCell, buttonSizes(), zoomedRect.size(), zoomFactor);
 
-    if (defaultButton != (states & DefaultState)) {
-        defaultButton = !defaultButton;
-        [buttonCell setKeyEquivalent:(defaultButton ? @"\r" : @"")];
-    }
-
     // Update the various states we respond to.
     updateStates(buttonCell, states);
+}
     
-    return buttonCell;
+static NSButtonCell *button(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
+    bool isDefault = states & DefaultState;
+    static NSButtonCell *cells[2];
+    setupButtonCell(cells[isDefault], part, states, zoomedRect, zoomFactor);    
+    return cells[isDefault];
 }
 
 static void paintButton(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
@@ -408,7 +409,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
-    if ((states & DefaultState) && [window isKeyWindow]) {
+    if (states & DefaultState) {
         [window setDefaultButtonCell:buttonCell];
         wkAdvanceDefaultButtonPulseAnimation(buttonCell);
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
