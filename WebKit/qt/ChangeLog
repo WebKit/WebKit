@@ -1,5 +1,13 @@
 2009-11-03  Simon Hausmann  <hausmann@webkit.org>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Oops, also remove the API docs of the removed networkRequestStarted() signal.
+
+        * Api/qwebpage.cpp:
+
+2009-11-03  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Replace the QWebPage::networkRequestStarted() signal with the originatingObject

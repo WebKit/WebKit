@@ -3389,16 +3389,6 @@ quint64 QWebPage::bytesReceived() const
 */
 
 /*!
-  \since 4.6
-  \fn void QWebPage::networkRequestStarted(QWebFrame* frame, QNetworkRequest* request);
-  \preliminary
-
-  This signal is emitted when a \a frame of the current page requests a web resource. The application
-  may want to associate the \a request with the \a frame that initiated it by storing the \a frame
-  as an attribute of the \a request.
-*/
-
-/*!
   \fn QWebPagePrivate* QWebPage::handle() const
   \internal
 */
