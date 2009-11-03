@@ -1,6 +1,11 @@
 TARGET = DumpRenderTree
 CONFIG  -= app_bundle
 
+mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+    CONFIG -= debug
+    CONFIG += release
+}
+
 BASEDIR = $$PWD/../
 
 include(../../../WebKit.pri)
