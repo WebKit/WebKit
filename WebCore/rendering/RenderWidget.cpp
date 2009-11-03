@@ -40,6 +40,55 @@ static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
     return *staticWidgetRendererMap;
 }
 
+static size_t widgetHierarchyUpdateSuspendCount;
+
+typedef HashMap<RefPtr<Widget>, FrameView*> WidgetToParentMap;
+
+static WidgetToParentMap& widgetNewParentMap()
+{
+    DEFINE_STATIC_LOCAL(WidgetToParentMap, map, ());
+    return map;
+}
+
+void RenderWidget::suspendWidgetHierarchyUpdates()
+{
+    widgetHierarchyUpdateSuspendCount++;
+}
+
+void RenderWidget::resumeWidgetHierarchyUpdates()
+{
+    ASSERT(widgetHierarchyUpdateSuspendCount);
+    if (widgetHierarchyUpdateSuspendCount == 1) {
+        WidgetToParentMap map = widgetNewParentMap();
+        widgetNewParentMap().clear();
+        WidgetToParentMap::iterator end = map.end();
+        for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
+            Widget* child = it->first.get();
+            ScrollView* currentParent = child->parent();
+            FrameView* newParent = it->second;
+            if (newParent != currentParent) {
+                if (currentParent)
+                    currentParent->removeChild(child);
+                if (newParent)
+                    newParent->addChild(child);
+            }
+        }
+    }
+    widgetHierarchyUpdateSuspendCount--;
+}
+
+static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
+{
+    if (!widgetHierarchyUpdateSuspendCount) {
+        if (parent)
+            parent->addChild(child);
+        else
+            child->removeFromParent();
+        return;
+    }
+    widgetNewParentMap().set(child, parent);
+}
+
 RenderWidget::RenderWidget(Node* node)
     : RenderReplaced(node)
     , m_widget(0)
@@ -59,14 +108,6 @@ void RenderWidget::destroy()
     // So the code below includes copied and pasted contents of
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
-
-    // <rdar://problem/6937089> suggests that node() can be null by the time we call renderArena()
-    // in the end of this function. One way this might happen is if this function was invoked twice
-    // in a row, so bail out and turn a crash into an assertion failure in debug builds and a leak
-    // in release builds.
-    ASSERT(node());
-    if (!node())
-        return;
 
     animation()->cancelAnimations(this);
 
@@ -94,14 +135,6 @@ void RenderWidget::destroy()
         destroyLayer();
     }
 
-    // <rdar://problem/6937089> suggests that node() can be null here. One way this might happen is
-    // if this function was re-entered (and therefore the null check at the beginning did not fail),
-    // so bail out and turn a crash into an assertion failure in debug builds and a leak in release
-    // builds.
-    ASSERT(node());
-    if (!node())
-        return;
-
     // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
     // Clear the node before deref-ing, as this may be deleted when deref is called.
     RenderArena* arena = renderArena();
@@ -117,6 +150,7 @@ RenderWidget::~RenderWidget()
 
 bool RenderWidget::setWidgetGeometry(const IntRect& frame)
 {
+    ASSERT(!widgetHierarchyUpdateSuspendCount);
     if (!node() || m_widget->frameRect() == frame)
         return false;
 
@@ -132,7 +166,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         return;
 
     if (m_widget) {
-        m_widget->removeFromParent();
+        moveWidgetToParentSoon(m_widget.get(), 0);
         widgetRendererMap().remove(m_widget.get());
         clearWidget();
     }
@@ -150,7 +184,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
             else
                 m_widget->show();
         }
-        m_frameView->addChild(m_widget.get());
+        moveWidgetToParentSoon(m_widget.get(), m_frameView);
     }
 }
 

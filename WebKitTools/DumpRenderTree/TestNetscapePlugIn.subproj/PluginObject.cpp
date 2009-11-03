@@ -721,6 +721,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->eventLogging = FALSE;
     newInstance->onStreamLoad = 0;
     newInstance->onStreamDestroy = 0;
+    newInstance->onDestroy = 0;
     newInstance->onURLNotify = 0;
     newInstance->logDestroy = FALSE;
     newInstance->logSetWindow = FALSE;

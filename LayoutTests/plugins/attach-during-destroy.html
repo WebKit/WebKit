@@ -1,0 +1,21 @@
+<p>
+    Test for <i><a href="rdar://problem/7194735">rdar://problem/7194735</a> Crashes at RenderText::RenderText()</i>.
+</p>
+<p>
+    This test should not crash or cause an assertion failure.
+</p>
+<embed type="application/x-webkit-test-netscape" ondestroy="destroyed()">
+<div id="target"></div>
+<script>
+    function destroyed()
+    {
+        var target = document.getElementById("target");
+        target.innerHTML = "text";
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.body.offsetTop;
+    location.href = "data:text/html,Test for rdar://problem/7194735 PASSED.";
+</script>

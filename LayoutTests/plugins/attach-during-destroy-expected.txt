@@ -1,0 +1,6 @@
+Test for rdar://problem/7194735 Crashes at RenderText::RenderText().
+
+This test should not crash or cause an assertion failure.
+
+
+

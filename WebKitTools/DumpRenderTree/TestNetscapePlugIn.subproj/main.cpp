@@ -105,6 +105,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
                     pluginLog(instance, "src: %s", argv[i]);
         } else if (strcasecmp(argn[i], "cleardocumentduringnew") == 0)
             executeScript(obj, "document.body.innerHTML = ''");
+        else if (!strcasecmp(argn[i], "ondestroy"))
+            obj->onDestroy = strdup(argv[i]);
     }
         
 #ifndef NP_NO_CARBON
@@ -140,6 +142,11 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     if (obj) {
+        if (obj->onDestroy) {
+            executeScript(obj, obj->onDestroy);
+            free(obj->onDestroy);
+        }
+
         if (obj->onStreamLoad)
             free(obj->onStreamLoad);
 

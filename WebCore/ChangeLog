@@ -1,3 +1,54 @@
+2009-11-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson and Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31070
+        Fix <rdar://problem/7194735> Crashes at RenderText::RenderText()
+        Fix <rdar://problem/6937089> Crashes at RenderWidget::destroy()
+
+        Tests: plugins/attach-during-destroy.html
+               plugins/destroy-reentry.html
+
+        These crashes were caused by plug-in code running during detach(),
+        causing re-entry into RenderWidget::destroy() in one case and a call
+        into attach() in the other. The fix is to prevent plug-in code from
+        being called at certain unsafe times (during attach(), detach(), and
+        recalcStyle()) by deferring changes to the widget hierarchy.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Suspend widget hierarchy updates
+            during style recalculation.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach): Suspend widget hierarchy updates during
+            attach().
+        (WebCore::Element::detach): Suspend widget hierarchy updates during
+            detach().
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::widgetNewParentMap): Returns a static map of pending changes
+            to the widget hierarchy.
+        (WebCore::RenderWidget::suspendWidgetHierarchyUpdates): Increments the
+            suspend count.
+        (WebCore::RenderWidget::resumeWidgetHierarchyUpdates): Decrements the
+            suspend count. If the count is going to be zero, updates the widget
+            hierarchy by executing the pending changes stored in the map.
+        (WebCore::moveWidgetToParentSoon): Updates the widget hierarchy
+            immediately or makes or updates an entry in the map, depending on
+            whether updates are suspended.
+        (WebCore::RenderWidget::destroy): Removed earlier bandaid fix for
+            <rdar://problem/6937089>.
+        (WebCore::RenderWidget::setWidgetGeometry): Assert that widget updates
+            are not suspended, because this function updates the widget’s
+            bounds, which can result in arbitrary native and JavaScript code
+            execution. I think this assertion is true thanks to some deferred-
+            update mechanisms that have already been deployed in other places
+            in the code.
+        (WebCore::RenderWidget::setWidget): Call moveWidgetToParentSoon instead
+            of changing the widget hierarchy directly.
+        * rendering/RenderWidget.h: Declared suspendWidgetHierarchyUpdates()
+            and resumeWidgetHierarchyUpdates().
+
 2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

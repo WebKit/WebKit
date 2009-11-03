@@ -40,6 +40,7 @@ typedef struct {
     NPStream* stream;
     char* onStreamLoad;
     char* onStreamDestroy;
+    char* onDestroy;
     char* onURLNotify;
     char* firstUrl;
     char* firstHeaders;

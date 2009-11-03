@@ -1,0 +1,22 @@
+<p>
+    Test for <i><a href="rdar://problem/6937089">rdar://problem/6937089</a> Crashes at RenderWidget::destroy()</i>.
+</p>
+<p>
+    This test should not crash or cause an assertion failure.
+</p>
+<div id="target">
+    <embed type="application/x-webkit-test-netscape" ondestroy="destroyed()">
+</div>
+<script>
+    function destroyed()
+    {
+        var target = document.getElementById("target");
+        target.parentNode.removeChild(target);
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.body.offsetTop;
+    location.href = "data:text/html,Test for rdar://problem/6937089 PASSED.";
+</script>

@@ -47,6 +47,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
 
@@ -727,6 +728,7 @@ void Element::removedFromDocument()
 void Element::attach()
 {
     suspendPostAttachCallbacks();
+    RenderWidget::suspendWidgetHierarchyUpdates();
 
     createRendererIfNeeded();
     ContainerNode::attach();
@@ -739,15 +741,20 @@ void Element::attach()
         }
     }
 
+    RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
 }
 
 void Element::detach()
 {
+    RenderWidget::suspendWidgetHierarchyUpdates();
+
     cancelFocusAppearanceUpdate();
     if (hasRareData())
         rareData()->resetComputedStyle();
     ContainerNode::detach();
+
+    RenderWidget::resumeWidgetHierarchyUpdates();
 }
 
 bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
