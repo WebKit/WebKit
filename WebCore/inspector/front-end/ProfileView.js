@@ -83,7 +83,7 @@ WebInspector.CPUProfileView = function(profile)
     var self = this;
     function profileCallback(profile)
     {
-        self.profile.representedObject = profile;
+        self.profile = profile;
         self._assignParentsInProfile();
       
         self.profileDataGridTree = self.bottomUpProfileDataGridTree;
@@ -505,7 +505,7 @@ WebInspector.CPUProfileView.prototype = {
 
     _sortData: function(event)
     {
-        this._sortProfile(this.profile.representedObject);
+        this._sortProfile(this.profile);
     },
 
     _sortProfile: function()
@@ -616,26 +616,3 @@ WebInspector.CPUProfileType.prototype = {
 }
 
 WebInspector.CPUProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
-
-WebInspector.CPUProfile = function(profile)
-{
-    this.representedObject = profile;
-    this.typeId = WebInspector.CPUProfileType.TypeId;
-}
-
-WebInspector.CPUProfile.prototype = {
-    get title()
-    {
-        return this.representedObject.title;
-    },
-
-    get uid()
-    {
-        return this.representedObject.uid;
-    },
-
-    get head()
-    {
-        return this.representedObject.head;
-    }
-}

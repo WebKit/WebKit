@@ -1290,7 +1290,7 @@ WebInspector.log = function(message)
 
 WebInspector.addProfileHeader = function(profile)
 {
-    this.panels.profiles.addProfileHeader(WebInspector.CPUProfileType.TypeId, new WebInspector.CPUProfile(profile));
+    this.panels.profiles.addProfileHeader(profile);
 }
 
 WebInspector.setRecordingProfile = function(isProfiling)

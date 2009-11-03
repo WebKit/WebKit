@@ -210,8 +210,9 @@ WebInspector.ProfilesPanel.prototype = {
         return escape(text) + '/' + escape(profileTypeId);
     },
 
-    addProfileHeader: function(typeId, profile)
+    addProfileHeader: function(profile)
     {
+        var typeId = profile.typeId;
         var profileType = this.getProfileType(typeId);
         var sidebarParent = profileType.treeElement;
         var small = false;
@@ -433,11 +434,12 @@ WebInspector.ProfilesPanel.prototype = {
 
     _populateProfiles: function()
     {
-        // FIXME: This code needs to be adjusted when more profiling types are added.
-        // Currently defaults to CPU profiles.
-        var cpuProfiles = this.getProfileType(WebInspector.CPUProfileType.TypeId).treeElement;
-        if (cpuProfiles.children.length)
-            return;
+        var sidebarTreeChildrenCount = this.sidebarTree.children.length;
+        for (var i = 0; i < sidebarTreeChildrenCount; ++i) {
+            var treeElement = this.sidebarTree.children[i];
+            if (treeElement.children.length)
+                return;
+        }
 
         function populateCallback(profileHeaders) {
             profileHeaders.sort(function(a, b) { return a.uid - b.uid; });

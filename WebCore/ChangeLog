@@ -1,3 +1,25 @@
+2009-11-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Prepare for heap profiles upstreaming:
+        - pass profile type id from InspectorController;
+        - this makes WebInspector.CPUProfile redundant---removed;
+        - support multiple profile types when populating profiles.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31052
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createProfileHeader):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileView.prototype._sortData):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addProfileHeader):
+
 2009-11-03  Dan Kegel  <dank@chromium.org>
 
         Reviewed by Dimitri Glazkov.
