@@ -1,3 +1,12 @@
+2009-11-02  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        Re-enable support for web archives on Windows.  It was mistakenly disabled in r50438.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+
 2009-11-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
