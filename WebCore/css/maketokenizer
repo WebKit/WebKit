@@ -73,30 +73,36 @@ typedef unsigned int flex_uint32_t;
 END
 }
 
-
+# Skip over the flex output prologue: the above typedefs, forward declarations, etc.
+# Stop when we get to the declarations of tables.
 while (<>) {
     last if /YY_NUM_RULES/;
 }
 
+# Dump the generated tables.  /yy_last_accepting/ matches the first declaration after the tables.
 print;
 while (<>) {
     last if /yy_last_accepting/;
     print;
 }
 
-# media query, tokenizer state support
+# Skip down the the declaration of yytext; the body of the flex output begins after it.
 while (<>) {
   last if /yytext/;
 }
+# Dump the definitions of states (INITIAL, media query, tokenizer state support).
 while (<>) {
   last if not (/define/ || /line/) ;
   print;
 }
 
+# Skip to main scanner function.
 while (<>) {
     last if /^YY_DECL/;
 }
 
+# Dump main scanner declarations, substituting in our 16-bit character type.
+# Declarations end with the declaration matching /yy_act/.
 print;
 while (<>) {
     s/char/UChar/;
@@ -104,23 +110,34 @@ while (<>) {
     last if /yy_act/;
 }
 
+# Skip past initialization code, down to main loop.
 while (<>) {
     last if /while \( 1 \)/;
 }
 
+# Dump the main loop, skipping over labels we don't use.
+# Stop before dumping the end-of-buffer handling, because we output our own custom end-of-buffer handling.
 print;
 while (<>) {
     next if /^yy_match:/;
     next if /^do_action:/;
     last if /YY_END_OF_BUFFER/;
+    if (/^case YY_STATE_EOF\(INITIAL\):/) {
+        print "case YY_END_OF_BUFFER:\n";
+        # flex outputs a ton of logic related to end-of-buffer handling; we just want to fall through to
+        # the yyterminate() found in other EOF states.  But we need to be careful to back up to behind
+        # the terminating double-NUL so that subsequent calls to flex will have the pointers in order,
+        # so this logic is a reduction of the normal flex-generated YY_END_OF_BUFFER code.
+        print "\tyy_c_buf_p = yy_cp - 1;\n";
+        print "\tyy_cp = yy_c_buf_p;\n";
+    }
     print;
-    print "case YY_END_OF_BUFFER:\n" if /^case YY_STATE_EOF\(INITIAL\):/;
 }
 
+# Skip over the end-of-buffer handling; dump the rest of the function.
 while (<>) {
     last if /default:/;
 }
-
 print;
 while (<>) {
     print;

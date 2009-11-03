@@ -1,3 +1,14 @@
+2009-11-03  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A test that reproduces a hard-to-trigger memory corruption in the
+        CSS lexer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30827
+
+        * fast/css/end-of-buffer-crash.html: Added.
+
 2009-11-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
