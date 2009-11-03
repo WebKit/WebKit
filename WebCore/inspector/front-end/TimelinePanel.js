@@ -278,7 +278,6 @@ WebInspector.TimelinePanel.prototype = {
     refresh: function()
     {
         WebInspector.AbstractTimelinePanel.prototype.refresh.call(this);
-        this._overviewGrid.updateDividers(true, this._overviewCalculator);
 
         // Clear summary bars.
         var timelines = {};
@@ -319,6 +318,7 @@ WebInspector.TimelinePanel.prototype = {
                 chunkStart = -1;
             }
         }
+        this._overviewGrid.updateDividers(true, this._overviewCalculator);
     },
 
     _resizeWindow: function(resizeElement, event)
@@ -610,7 +610,7 @@ WebInspector.TimelineGraph = function(record)
     this._graphElement.className = "timeline-graph-side";
 
     this._barAreaElement = document.createElement("div");
-    this._barAreaElement.className = "timeline-graph-bar-area hidden";
+    this._barAreaElement.className = "timeline-graph-bar-area";
     this._graphElement.appendChild(this._barAreaElement);
 
     this._barElement = document.createElement("div");
@@ -637,11 +637,15 @@ WebInspector.TimelineGraph.prototype = {
 
         this._percentages = percentages;
 
-        this._barAreaElement.removeStyleClass("hidden");
-
-        this._barElement.style.setProperty("left", percentages.start + "%");
-        this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
-
+        if (percentages.start > 100 || percentages.end < 0) {
+            this._graphElement.addStyleClass("hidden");
+            this.record._itemTreeElement.listItemElement.addStyleClass("hidden");
+        } else {
+            this._barElement.style.setProperty("left", percentages.start + "%");
+            this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
+            this._graphElement.removeStyleClass("hidden");
+            this.record._itemTreeElement.listItemElement.removeStyleClass("hidden");
+        }
         var tooltip = (labels.tooltip || "");
         this._barElement.title = tooltip;
     }

@@ -1,3 +1,17 @@
+2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: only show timeline records that contribute
+        to the current window.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31069
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.refresh):
+        (WebInspector.TimelineGraph):
+        (WebInspector.TimelineGraph.prototype.refresh):
+
 2009-11-03  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.
