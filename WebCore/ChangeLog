@@ -1,3 +1,22 @@
+2009-11-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Minor RenderWidget clean-up in preparation for deferring widget tree
+        mutation when it is not safe.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget): Initialize m_refCount to 1
+        instead of calling ref().
+        (WebCore::RenderWidget::destroy): Call setWidget(0) instead of
+        repeating what it does.
+        (WebCore::RenderWidget::setWidgetGeometry): Now returns a boolean
+        indicating whether the bounds have changed.
+        (WebCore::RenderWidget::setWidget): Replaced all-encompassing if
+        statement with an early return.
+        (WebCore::RenderWidget::updateWidgetPosition): Call setWidgetGeometry().
+        * rendering/RenderWidget.h:
+
 2009-11-02  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
