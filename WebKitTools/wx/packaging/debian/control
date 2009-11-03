@@ -1,0 +1,29 @@
+Source: webkitwx
+Section: Python
+Priority: extra
+Maintainer: Kevin Ollivier <kevino@theolliviers.com>
+Build-Depends: debhelper (>= 5.0.38), python-central (>= 0.6), python-all-dev,
+ libwxgtk2.8-dev (>= 2.8.9.2-1), python-wxgtk2.8, python-wxtools (>= 2.8.9.2-1),
+ wx2.8-headers (>= 2.8.9.2-1), wx2.8-i18n (>= 2.8.9.2-1),
+ flex, bison, gperf, automake, autoconf, libtool, dpatch,
+ libxslt1-dev, libcurl4-openssl-dev,
+ libicu-dev, libjpeg62-dev, libpng12-dev, libsqlite3-dev, libgtk2.0-dev
+Build-Conflicts: python-setuptools
+XS-Python-Version: all
+Standards-Version: 3.7.3
+
+Package: python-webkitwx
+Section: python
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}
+Provides: ${python:Provides}, webkitwx
+XB-Python-Version: ${python:Versions}
+Description: Python binding of wxwebkit
+ This is an experimental packaged release of webkit for wxpython
+
+Package: webkitwx-headers
+Architecture: all
+Description: Python binding of wxwebkit
+ This is an experimental packaged release of webkit for wxpython
+ These are the header files
+

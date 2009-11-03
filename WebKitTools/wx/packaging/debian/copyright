@@ -1,0 +1,18 @@
+This package was debianized by Chris Willing c.willing@uq.edu.au on
+Thu, Sat, 11 Apr 2009 12:54:52 +1000
+
+Upstream Author: Kevin Ollivier kevino@theolliviers.com and others
+
+Copyright: 2009 Kevin Ollivier, Apple Inc., and others
+
+License:
+	LGPL
+
+
+The Debian packaging is (C) 2009, Chris Willing <c.willing@uq.edu.au> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
+

@@ -1,3 +1,15 @@
+
+2009-11-03  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollviier.
+
+        Add packaging scripts for Debian-based Linux distros.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31075
+
+        * wx/packaging/build-debian-installer.py: Added.
+        * wx/packaging/debian: Added.
+
 2009-11-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson and Beth Dakin.
