@@ -4554,7 +4554,7 @@ private:
     OwnPtr<ScriptExecutionContext::Task> m_task;
 };
 
-struct PerformTaskContext {
+struct PerformTaskContext : Noncopyable {
     PerformTaskContext(ScriptExecutionContext* scriptExecutionContext, PassOwnPtr<ScriptExecutionContext::Task> task)
         : scriptExecutionContext(scriptExecutionContext)
         , task(task)

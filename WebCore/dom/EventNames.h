@@ -141,7 +141,7 @@ namespace WebCore {
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
-    class EventNames {
+    class EventNames : public Noncopyable {
         int dummy; // Needed to make initialization macro work.
 
     public:

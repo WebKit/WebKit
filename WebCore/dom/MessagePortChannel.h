@@ -78,7 +78,7 @@ namespace WebCore {
         // Returns true if the proxy currently contains messages for this port.
         bool hasPendingActivity();
 
-        class EventData {
+        class EventData : public Noncopyable {
         public:
             static PassOwnPtr<EventData> create(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
 

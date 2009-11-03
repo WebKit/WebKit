@@ -1,3 +1,30 @@
+2009-11-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for the dom directory of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31053
+
+        Inherits the following classes from Noncopyable because these are
+        instantiated by 'new' and these are no need to be copyable:
+
+        class EventNames - 'new' call: WebCore/platform/ThreadGlobalData.cpp:73
+        struct PerformTaskContext - 'new' call: WebCore/dom/Document.cpp:4581
+        class EventData - 'new' call: WebCore/dom/MessagePortChannel.cpp:38
+        struct NodeListsNodeData - 'new' call: WebCore/dom/NodeRareData.h:51 
+        struct EventTargetData - 'new' call: WebCore/dom/NodeRareData.h:100
+        class NodeRareData - 'new' call: WebCore/dom/Node.cpp:552
+
+        Inherits QualifiedName class from FastAllocBase because it is
+        instantiated by 'new' in WebCore/editing/markup.cpp:319
+
+        * dom/Document.cpp:
+        * dom/EventNames.h:
+        * dom/EventTarget.h:
+        * dom/MessagePortChannel.h:
+        * dom/NodeRareData.h:
+        * dom/QualifiedName.h:
+
 2009-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
