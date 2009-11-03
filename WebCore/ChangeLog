@@ -1,3 +1,19 @@
+2009-11-02  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding Chromium's DatabaseTracker and SQLTransactionClient
+        implementations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30701
+
+        * storage/chromium: Added.
+        * storage/chromium/DatabaseObserver.h: Added.
+        * storage/chromium/DatabaseTrackerChromium.cpp: Added.
+        * storage/chromium/QuotaTracker.cpp: Added.
+        * storage/chromium/QuotaTracker.h: Added.
+        * storage/chromium/SQLTransactionClientChromium.cpp: Added.
+
 2009-11-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson and Dan Bernstein.
