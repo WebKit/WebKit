@@ -44,6 +44,7 @@
 #include "AtomicString.h"
 #include "CString.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -1411,18 +1412,42 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
+static const gchar* documentAttributeValue(AtkDocument* document, const gchar* attribute)
+{
+    Document* coreDocument = core(document)->document();
+    if (!coreDocument)
+        return 0;
+
+    String value = String();
+    if (!g_ascii_strcasecmp(attribute, "DocType") && coreDocument->doctype())
+        value = coreDocument->doctype()->name();
+    else if (!g_ascii_strcasecmp(attribute, "Encoding"))
+        value = coreDocument->charset();
+    else if (!g_ascii_strcasecmp(attribute, "URI"))
+        value = coreDocument->documentURI();
+    if (!value.isEmpty())
+        return returnString(value);
+
+    return 0;
+}
+
 static const gchar* webkit_accessible_document_get_attribute_value(AtkDocument* document, const gchar* attribute)
 {
-    // FIXME: This needs to be implemented.
-    notImplemented();
-    return 0;
+    return documentAttributeValue(document, attribute);
 }
 
 static AtkAttributeSet* webkit_accessible_document_get_attributes(AtkDocument* document)
 {
-    // FIXME: This needs to be implemented.
-    notImplemented();
-    return 0;
+    AtkAttributeSet* attributeSet = 0;
+    const gchar* attributes [] = {"DocType", "Encoding", "URI"};
+
+    for (unsigned i = 0; i < G_N_ELEMENTS(attributes); i++) {
+        const gchar* value = documentAttributeValue(document, attributes[i]);
+        if (value)
+            attributeSet = addAttributeToSet(attributeSet, attributes[i], value);
+    }
+
+    return attributeSet;
 }
 
 static const gchar* webkit_accessible_document_get_locale(AtkDocument* document)
