@@ -1,3 +1,10 @@
+2009-11-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Put test into skiplist added in r50411 because
+        layoutTestController.showWebInspector() is unimplemented now.
+
+        * platform/qt/Skipped: inspector/css-syntax-highlight.html added
+
 2009-11-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
