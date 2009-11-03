@@ -478,18 +478,14 @@ void GraphicsContext3D::flush()
 
 void GraphicsContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer* buffer)
 {
-    ASSERT(buffer);
-
     ensureContext(m_contextObj);
-    ::glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, (GLuint) buffer->object());
+    ::glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, buffer ? (GLuint) buffer->object() : 0);
 }
 
 void GraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture* texture, long level)
 {
-    ASSERT(texture);
-    
     ensureContext(m_contextObj);
-    ::glFramebufferTexture2DEXT(target, attachment, textarget, (GLuint) texture->object(), level);
+    ::glFramebufferTexture2DEXT(target, attachment, textarget, texture ? (GLuint) texture->object() : 0, level);
 }
 
 void GraphicsContext3D::frontFace(unsigned long mode)

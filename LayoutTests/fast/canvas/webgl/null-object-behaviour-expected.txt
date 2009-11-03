@@ -12,12 +12,12 @@ PASS context.detachShader(undefined, shader) threw exception Error: TYPE_MISMATC
 PASS context.shaderSource() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS context.shaderSource(undefined, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS context.bindAttribLocation(undefined, 0, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.bindBuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.bindFramebuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.bindRenderbuffer(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.bindTexture(0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.framebufferRenderbuffer(0, 0, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS context.framebufferTexture2D(0, 0, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS context.bindBuffer(context.ARRAY_BUFFER, 0) is undefined.
+PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) is undefined.
+PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) is undefined.
+PASS context.bindTexture(context.TEXTURE_2D, 0) is undefined.
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0) is undefined.
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0) is undefined.
 PASS context.getProgrami(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS context.getProgramiv(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS context.getProgramInfoLog(undefined, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.

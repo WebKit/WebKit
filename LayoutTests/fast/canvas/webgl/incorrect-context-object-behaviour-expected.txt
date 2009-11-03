@@ -12,11 +12,11 @@ PASS contextA.detachShader(programB, shaderA) threw exception Error: TYPE_MISMAT
 PASS contextA.detachShader(programB, shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.shaderSource(shaderB, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.bindAttribLocation(programB, 0, 'foo') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.bindFramebuffer(0, frameBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.bindRenderbuffer(0, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.bindTexture(textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.framebufferRenderbuffer(0, 0, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.framebufferTexture2D(0, 0, textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindFramebuffer(contextA.FRAMEBUFFER, frameBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindRenderbuffer(contextA.RENDERBUFFER, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.bindTexture(contextA.TEXTURE_2D, textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.framebufferRenderbuffer(contextA.FRAMEBUFFER, contextA.DEPTH_ATTACHMENT, contextA.RENDERBUFFER, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.framebufferTexture2D(contextA.FRAMEBUFFER, contextA.COLOR_ATTACHMENT0, contextA.TEXTURE_2D, textureB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getProgrami(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getProgramiv(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getProgramInfoLog(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.

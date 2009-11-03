@@ -1,3 +1,15 @@
+2009-11-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Revised tests for changes to when exceptions are raised in WebGL content
+        https://bugs.webkit.org/show_bug.cgi?id=31005
+
+        * fast/canvas/webgl/incorrect-context-object-behaviour-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js:
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js:
+
 2009-11-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Jan Alonzo.
