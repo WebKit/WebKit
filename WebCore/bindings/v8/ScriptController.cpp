@@ -40,12 +40,14 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "Node.h"
 #include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
+#include "Settings.h"
 #include "Widget.h"
 #include "XSSAuditor.h"
 
@@ -290,7 +292,8 @@ bool ScriptController::haveInterpreter() const
 
 bool ScriptController::isEnabled() const
 {
-    return m_proxy->isEnabled();
+    Settings* settings = m_proxy->frame()->settings();
+    return m_proxy->frame()->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled());
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)

@@ -1,3 +1,20 @@
+2009-10-30  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Give the FrameLoaderClient the ability to override Settings::isJavaScriptEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=30967
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::isEnabled):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::isEnabled):
+        * bindings/v8/V8Proxy.cpp: Move implementation of isEnabled to ScriptController
+        * bindings/v8/V8Proxy.h: Ditto
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowJavaScript):
+        * platform/chromium/ChromiumBridge.h: Delete uiResourceProtocol function
+
 2009-11-02  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe.

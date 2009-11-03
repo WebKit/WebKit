@@ -323,7 +323,7 @@ bool ScriptController::anyPageIsProcessingUserGesture() const
 bool ScriptController::isEnabled()
 {
     Settings* settings = m_frame->settings();
-    return (settings && settings->isJavaScriptEnabled());
+    return m_frame->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled());
 }
 
 void ScriptController::attachDebugger(JSC::Debugger* debugger)
