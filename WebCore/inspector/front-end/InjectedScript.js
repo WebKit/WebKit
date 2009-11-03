@@ -943,7 +943,7 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
             } \
             return te; \
         }, \
-        monitorEvent: function(o, t) { \
+        monitorEvents: function(o, t) { \
             if (!o || !o.addEventListener || !o.removeEventListener) \
                 return; \
             t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
@@ -952,7 +952,7 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
                 o.addEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
             } \
         }, \
-        unmonitorEvent: function(o, t) { \
+        unmonitorEvents: function(o, t) { \
             if (!o || !o.removeEventListener) \
                 return; \
             t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
