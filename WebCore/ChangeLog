@@ -1,3 +1,16 @@
+2009-11-03  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Watch expression editor should stay open after Add button was clicked
+        https://bugs.webkit.org/show_bug.cgi?id=31049
+
+        No new tests, was a regression, use existing manual test.
+
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        (WebInspector.WatchExpressionsSection.prototype.addExpression):
+
 2009-11-03  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

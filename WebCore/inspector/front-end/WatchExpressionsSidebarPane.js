@@ -112,8 +112,19 @@ WebInspector.WatchExpressionsSection.prototype = {
             // method to get all the properties refreshed at once.
             properties.push(property);
             
-            if (properties.length == propertyCount)
+            if (properties.length == propertyCount) {
                 this.updateProperties(properties, WebInspector.WatchExpressionTreeElement, WebInspector.WatchExpressionsSection.CompareProperties);
+
+                // check to see if we just added a new watch expression,
+                // which will always be the last property
+                if (this._newExpressionAdded) {
+                    delete this._newExpressionAdded;
+
+                    treeElement = this.findAddedTreeElement();
+                    if (treeElement)
+                        treeElement.startEditing();
+                }
+            }
         }
 
         InspectorController.releaseWrapperObjectGroup(this._watchObjectGroupId)
@@ -150,14 +161,9 @@ WebInspector.WatchExpressionsSection.prototype = {
 
     addExpression: function()
     {
+        this._newExpressionAdded = true;
         this.watchExpressions.push(WebInspector.WatchExpressionsSection.NewWatchExpression);
         this.update();
-
-        // After update(), the new empty expression to be edited
-        // will be in the tree, but we have to find it.
-        treeElement = this.findAddedTreeElement();
-        if (treeElement)
-            treeElement.startEditing();
     },
 
     updateExpression: function(element, value)
