@@ -206,6 +206,7 @@ private:
 
     friend class RenderWidget;
     bool useSlowRepaints() const;
+    bool useSlowRepaintsIfNotOverlapped() const;
 
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
 

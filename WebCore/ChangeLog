@@ -1,3 +1,20 @@
+2009-11-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Allow a frame to go back to copy-on-scroll when it ceases being overlapped
+
+        The code was not testing slow-scrolling frames for overlappedness, thinking the answer
+        would not matter. That is not the case if the only reason for the slow-scrolling is
+        being overlapped.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaintsIfNotOverlapped): Added. Returns whether there is any
+        reason besides being overlapped that the frame would need to fully repaint on scroll.
+        * page/FrameView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): Use useSlowRepaintsIfNotOverlapped().
+
 2009-11-03  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, Qt build fix.
