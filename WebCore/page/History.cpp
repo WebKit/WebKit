@@ -28,6 +28,7 @@
 
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "Page.h"
 
 namespace WebCore {
 

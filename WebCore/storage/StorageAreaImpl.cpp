@@ -30,6 +30,7 @@
 
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "Page.h"
 #include "Settings.h"
 #include "StorageAreaSync.h"
 #include "StorageEventDispatcher.h"

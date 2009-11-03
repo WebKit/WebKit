@@ -35,6 +35,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
+#include "Page.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
 

@@ -39,6 +39,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "HTMLFormElement.h"
+#include "Page.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

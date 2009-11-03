@@ -1,3 +1,22 @@
+2009-11-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31079 - Remove #include "Page.h" from Document.h
+
+        No new tests. (No change in functionality)
+
+        * dom/Document.cpp:
+        (WebCore::Document::inspectorTimelineAgent): Moved from Document.h
+        * dom/Document.h:
+
+        Include "Page.h" directly:
+        * html/HTMLVideoElement.cpp:
+        * loader/RedirectScheduler.cpp:
+        * page/History.cpp:
+        * rendering/MediaControlElements.cpp:
+        * storage/StorageAreaImpl.cpp:
+
 2009-11-03  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

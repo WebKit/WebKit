@@ -4639,4 +4639,11 @@ bool Document::isXHTMLMPDocument() const
 }
 #endif
 
+#if ENABLE(INSPECTOR)
+InspectorTimelineAgent* Document::inspectorTimelineAgent() const 
+{
+    return page() ? page()->inspectorTimelineAgent() : 0;
+}
+#endif
+
 } // namespace WebCore
