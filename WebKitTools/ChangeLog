@@ -1,5 +1,11 @@
 2009-11-03  Eric Seidel  <eric@webkit.org>
 
+        No review, adding commonly known committers missing from the file.
+
+        * Scripts/modules/committers.py: Add committers found by looking at SVN records.
+
+2009-11-03  Eric Seidel  <eric@webkit.org>
+
         No review, just sort-order cleanup.
 
         * Scripts/modules/committers.py: Sort committers/reviewers alphabetically.
