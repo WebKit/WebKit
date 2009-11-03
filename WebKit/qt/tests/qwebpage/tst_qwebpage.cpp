@@ -1627,8 +1627,10 @@ void tst_QWebPage::originatingObjectInNetworkRequests()
     QList<QWebFrame*> childFrames = m_page->mainFrame()->childFrames();
     QCOMPARE(childFrames.count(), 2);
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     for (int i = 0; i < 2; ++i)
         QVERIFY(qobject_cast<QWebFrame*>(networkManager->requests.at(i).originatingObject()) == childFrames.at(i));
+#endif
 }
 
 QTEST_MAIN(tst_QWebPage)
