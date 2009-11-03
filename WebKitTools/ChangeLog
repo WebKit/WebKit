@@ -1,5 +1,15 @@
 2009-11-03  Eric Seidel  <eric@webkit.org>
 
+        No review, just changing wording of log message.
+
+        Change log string to say "failed" instead of "rejected"
+        when a commit fails due to an out of date checkout.
+        This makes grepping the commit-queue log for rejected patches easier.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-03  Eric Seidel  <eric@webkit.org>
+
         No review, adding commonly known committers missing from the file.
 
         * Scripts/modules/committers.py: Add committers found by looking at SVN records.
