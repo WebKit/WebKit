@@ -29,8 +29,8 @@
 #include "config.h"
 #include "AccessibilityImageMapLink.h"
 
-#include "AccessibilityRenderObject.h"
 #include "AXObjectCache.h"
+#include "AccessibilityRenderObject.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "IntRect.h"

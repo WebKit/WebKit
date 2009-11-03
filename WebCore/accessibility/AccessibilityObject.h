@@ -228,7 +228,7 @@ struct PlainTextRange {
         , length(l)
     { }
     
-    bool isNull() const { return start == 0 && length == 0; }
+    bool isNull() const { return !start && !length; }
 };
 
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
@@ -240,67 +240,67 @@ public:
         
     typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
     
-    virtual bool isAccessibilityRenderObject() const { return false; };
-    virtual bool isAnchor() const { return false; };
-    virtual bool isAttachment() const { return false; };
-    virtual bool isHeading() const { return false; };
-    virtual bool isLink() const { return false; };
-    virtual bool isImage() const { return false; };
-    virtual bool isNativeImage() const { return false; };
-    virtual bool isImageButton() const { return false; };
-    virtual bool isPasswordField() const { return false; };
-    virtual bool isTextControl() const { return false; };
-    virtual bool isNativeTextControl() const { return false; };
-    virtual bool isWebArea() const { return false; };
-    virtual bool isCheckboxOrRadio() const { return false; };
-    virtual bool isListBox() const { return roleValue() == ListBoxRole; };
+    virtual bool isAccessibilityRenderObject() const { return false; }
+    virtual bool isAnchor() const { return false; }
+    virtual bool isAttachment() const { return false; }
+    virtual bool isHeading() const { return false; }
+    virtual bool isLink() const { return false; }
+    virtual bool isImage() const { return false; }
+    virtual bool isNativeImage() const { return false; }
+    virtual bool isImageButton() const { return false; }
+    virtual bool isPasswordField() const { return false; }
+    virtual bool isTextControl() const { return false; }
+    virtual bool isNativeTextControl() const { return false; }
+    virtual bool isWebArea() const { return false; }
+    virtual bool isCheckboxOrRadio() const { return false; }
+    virtual bool isListBox() const { return roleValue() == ListBoxRole; }
     virtual bool isMediaTimeline() const { return false; }
     virtual bool isMenuRelated() const { return false; }
     virtual bool isMenu() const { return false; }
     virtual bool isMenuBar() const { return false; }
     virtual bool isMenuButton() const { return false; }
     virtual bool isMenuItem() const { return false; }
-    virtual bool isFileUploadButton() const { return false; };
+    virtual bool isFileUploadButton() const { return false; }
     virtual bool isInputImage() const { return false; }
-    virtual bool isProgressIndicator() const { return false; };
-    virtual bool isSlider() const { return false; };
-    virtual bool isControl() const { return false; };
-    virtual bool isList() const { return false; };
-    virtual bool isDataTable() const { return false; };
-    virtual bool isTableRow() const { return false; };
-    virtual bool isTableColumn() const { return false; };
-    virtual bool isTableCell() const { return false; };
-    virtual bool isFieldset() const { return false; };
-    virtual bool isGroup() const { return false; };
+    virtual bool isProgressIndicator() const { return false; }
+    virtual bool isSlider() const { return false; }
+    virtual bool isControl() const { return false; }
+    virtual bool isList() const { return false; }
+    virtual bool isDataTable() const { return false; }
+    virtual bool isTableRow() const { return false; }
+    virtual bool isTableColumn() const { return false; }
+    virtual bool isTableCell() const { return false; }
+    virtual bool isFieldset() const { return false; }
+    virtual bool isGroup() const { return false; }
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
     
-    virtual bool isChecked() const { return false; };
-    virtual bool isEnabled() const { return false; };
-    virtual bool isSelected() const { return false; };
-    virtual bool isFocused() const { return false; };
-    virtual bool isHovered() const { return false; };
-    virtual bool isIndeterminate() const { return false; };
-    virtual bool isLoaded() const { return false; };
-    virtual bool isMultiSelect() const { return false; };
-    virtual bool isOffScreen() const { return false; };
-    virtual bool isPressed() const { return false; };
-    virtual bool isReadOnly() const { return false; };
-    virtual bool isVisited() const { return false; };
-    virtual bool isRequired() const { return false; };
+    virtual bool isChecked() const { return false; }
+    virtual bool isEnabled() const { return false; }
+    virtual bool isSelected() const { return false; }
+    virtual bool isFocused() const { return false; }
+    virtual bool isHovered() const { return false; }
+    virtual bool isIndeterminate() const { return false; }
+    virtual bool isLoaded() const { return false; }
+    virtual bool isMultiSelect() const { return false; }
+    virtual bool isOffScreen() const { return false; }
+    virtual bool isPressed() const { return false; }
+    virtual bool isReadOnly() const { return false; }
+    virtual bool isVisited() const { return false; }
+    virtual bool isRequired() const { return false; }
     virtual bool isLinked() const { return false; }
 
-    virtual bool canSetFocusAttribute() const { return false; };
-    virtual bool canSetTextRangeAttributes() const { return false; };
-    virtual bool canSetValueAttribute() const { return false; };
+    virtual bool canSetFocusAttribute() const { return false; }
+    virtual bool canSetTextRangeAttributes() const { return false; }
+    virtual bool canSetValueAttribute() const { return false; }
     virtual bool canSetSelectedAttribute() const { return false; }
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     
-    virtual bool hasIntValue() const { return false; };
+    virtual bool hasIntValue() const { return false; }
 
-    bool accessibilityShouldUseUniqueId() const { return true; };
-    virtual bool accessibilityIsIgnored() const  { return true; };
+    bool accessibilityShouldUseUniqueId() const { return true; }
+    virtual bool accessibilityIsIgnored() const  { return true; }
 
     virtual int headingLevel() const { return 0; }
     virtual int intValue() const { return 0; }

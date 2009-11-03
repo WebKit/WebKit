@@ -29,11 +29,11 @@
 #include "config.h"
 #include "AccessibilityARIAGrid.h"
 
+#include "AXObjectCache.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
-#include "AXObjectCache.h"
 #include "RenderObject.h"
 
 using namespace std;
@@ -137,7 +137,7 @@ AccessibilityTableCell* AccessibilityARIAGrid::cellForColumnAndRow(unsigned colu
     if (column >= columnCount() || row >= rowCount())
         return 0;
     
-    AccessibilityObject *tableRow = m_rows[row].get();
+    AccessibilityObject* tableRow = m_rows[row].get();
     if (!tableRow)
         return 0;
     

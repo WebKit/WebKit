@@ -29,15 +29,15 @@
 #include "config.h"
 #include "AccessibilityTable.h"
 
+#include "AXObjectCache.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
-#include "AXObjectCache.h"
 #include "HTMLNames.h"
-#include "HTMLTableElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
+#include "HTMLTableElement.h"
 #include "RenderObject.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -149,8 +149,8 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             HTMLTableCellElement* cellElement = static_cast<HTMLTableCellElement*>(cellNode);
             
             // in this case, the developer explicitly assigned a "data" table attribute
-            if (!cellElement->headers().isEmpty() || !cellElement->abbr().isEmpty() || 
-                !cellElement->axis().isEmpty() || !cellElement->scope().isEmpty())
+            if (!cellElement->headers().isEmpty() || !cellElement->abbr().isEmpty()
+                || !cellElement->axis().isEmpty() || !cellElement->scope().isEmpty())
                 return true;
             
             RenderStyle* renderStyle = cell->style();
@@ -158,15 +158,15 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
                 continue;
 
             // a cell needs to have matching bordered sides, before it can be considered a bordered cell.
-            if ((cell->borderTop() > 0 && cell->borderBottom() > 0) ||
-                (cell->borderLeft() > 0 && cell->borderRight() > 0))
+            if ((cell->borderTop() > 0 && cell->borderBottom() > 0)
+                || (cell->borderLeft() > 0 && cell->borderRight() > 0))
                 borderedCellCount++;
             
             // if the cell has a different color from the table and there is cell spacing,
             // then it is probably a data table cell (spacing and colors take the place of borders)
             Color cellColor = renderStyle->backgroundColor();
-            if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0 && 
-                tableBGColor != cellColor && cellColor.alpha() != 1)
+            if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0
+                && tableBGColor != cellColor && cellColor.alpha() != 1)
                 backgroundDifferenceCellCount++;
             
             // if we've found 10 "good" cells, we don't need to keep searching

@@ -43,7 +43,7 @@ public:
     virtual ~AccessibilityListBox();
     
     virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
-    virtual bool isListBox() const { return true; };
+    virtual bool isListBox() const { return true; }
     
     virtual bool canSetFocusAttribute() const { return true; }
     virtual bool canSetSelectedChildrenAttribute() const;

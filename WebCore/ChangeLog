@@ -1,3 +1,148 @@
+2009-11-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Levin.
+
+        fix accessibility webkit-style-check errors
+        https://bugs.webkit.org/show_bug.cgi?id=29672
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::platformGenerateAXID):
+        (WebCore::AXObjectCache::removeAXID):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::enableAccessibility):
+        (WebCore::AXObjectCache::enableEnhancedUserInterfaceAccessibility):
+        (WebCore::AXObjectCache::accessibilityEnabled):
+        (WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled):
+        (WebCore::AXObjectCache::isIDinUse):
+        (WebCore::AXObjectCache::objectFromAXID):
+        (WebCore::AXObjectCache::):
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        (WebCore::AXObjectCache::handleScrolledToAnchor):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::cellForColumnAndRow):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        * accessibility/AccessibilityList.h:
+        (WebCore::AccessibilityList::isList):
+        * accessibility/AccessibilityListBox.cpp:
+        * accessibility/AccessibilityListBox.h:
+        (WebCore::AccessibilityListBox::isListBox):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        * accessibility/AccessibilityListBoxOption.h:
+        (WebCore::AccessibilityListBoxOption::isListBoxOption):
+        * accessibility/AccessibilityMediaControls.h:
+        (WebCore::AccessibilityMediaControl::~AccessibilityMediaControl):
+        (WebCore::AccessibilityMediaTimeline::~AccessibilityMediaTimeline):
+        (WebCore::AccessibilityMediaTimeline::isMediaTimeline):
+        (WebCore::AccessibilityMediaControlsContainer::~AccessibilityMediaControlsContainer):
+        (WebCore::AccessibilityMediaControlsContainer::roleValue):
+        (WebCore::AccessibilityMediaControlsContainer::accessibilityIsIgnored):
+        (WebCore::AccessibilityMediaTimeDisplay::~AccessibilityMediaTimeDisplay):
+        (WebCore::AccessibilityMediaTimeDisplay::roleValue):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::parentObjectUnignored):
+        (WebCore::AccessibilityObject::rightLineVisiblePositionRange):
+        (WebCore::replacedNodeNeedsCharacter):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange):
+        (WebCore::AccessibilityObject::actionVerb):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::PlainTextRange::isNull):
+        (WebCore::AccessibilityObject::isAccessibilityRenderObject):
+        (WebCore::AccessibilityObject::isAnchor):
+        (WebCore::AccessibilityObject::isAttachment):
+        (WebCore::AccessibilityObject::isHeading):
+        (WebCore::AccessibilityObject::isLink):
+        (WebCore::AccessibilityObject::isImage):
+        (WebCore::AccessibilityObject::isNativeImage):
+        (WebCore::AccessibilityObject::isImageButton):
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::isTextControl):
+        (WebCore::AccessibilityObject::isNativeTextControl):
+        (WebCore::AccessibilityObject::isWebArea):
+        (WebCore::AccessibilityObject::isCheckboxOrRadio):
+        (WebCore::AccessibilityObject::isListBox):
+        (WebCore::AccessibilityObject::isFileUploadButton):
+        (WebCore::AccessibilityObject::isProgressIndicator):
+        (WebCore::AccessibilityObject::isSlider):
+        (WebCore::AccessibilityObject::isControl):
+        (WebCore::AccessibilityObject::isList):
+        (WebCore::AccessibilityObject::isDataTable):
+        (WebCore::AccessibilityObject::isTableRow):
+        (WebCore::AccessibilityObject::isTableColumn):
+        (WebCore::AccessibilityObject::isTableCell):
+        (WebCore::AccessibilityObject::isFieldset):
+        (WebCore::AccessibilityObject::isGroup):
+        (WebCore::AccessibilityObject::isChecked):
+        (WebCore::AccessibilityObject::isEnabled):
+        (WebCore::AccessibilityObject::isSelected):
+        (WebCore::AccessibilityObject::isFocused):
+        (WebCore::AccessibilityObject::isHovered):
+        (WebCore::AccessibilityObject::isIndeterminate):
+        (WebCore::AccessibilityObject::isLoaded):
+        (WebCore::AccessibilityObject::isMultiSelect):
+        (WebCore::AccessibilityObject::isOffScreen):
+        (WebCore::AccessibilityObject::isPressed):
+        (WebCore::AccessibilityObject::isReadOnly):
+        (WebCore::AccessibilityObject::isVisited):
+        (WebCore::AccessibilityObject::isRequired):
+        (WebCore::AccessibilityObject::canSetFocusAttribute):
+        (WebCore::AccessibilityObject::canSetTextRangeAttributes):
+        (WebCore::AccessibilityObject::canSetValueAttribute):
+        (WebCore::AccessibilityObject::hasIntValue):
+        (WebCore::AccessibilityObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::isMenuRelated):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::isFocused):
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::doAXRangeForLine):
+        (WebCore::AccessibilityRenderObject::doAXStringForRange):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::isPresentationalChildOfAriaRole):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        (WebCore::AccessibilityRenderObject::actionVerb):
+        (WebCore::shouldReturnTagNameAsRoleForMSAA):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::isAccessibilityRenderObject):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::orientation):
+        * accessibility/AccessibilitySlider.h:
+        (WebCore::AccessibilitySlider::~AccessibilitySlider):
+        (WebCore::AccessibilitySlider::roleValue):
+        (WebCore::AccessibilitySlider::accessibilityIsIgnored):
+        (WebCore::AccessibilitySlider::isSlider):
+        (WebCore::AccessibilitySlider::canSetValueAttribute):
+        (WebCore::AccessibilitySliderThumb::~AccessibilitySliderThumb):
+        (WebCore::AccessibilitySliderThumb::roleValue):
+        (WebCore::AccessibilitySliderThumb::accessibilityIsIgnored):
+        (WebCore::AccessibilitySliderThumb::setParentObject):
+        (WebCore::AccessibilitySliderThumb::parentObject):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        * accessibility/AccessibilityTableColumn.cpp:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/AccessibilityTableRow.cpp:
+        * accessibility/mac/AccessibilityObjectWrapper.h:
+
 2009-11-02  Darin Fisher  <darin@chromium.org>
 
         Fixing JSC build bustage.

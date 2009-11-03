@@ -68,18 +68,18 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     
     ControlPart styleAppearance = style->appearance();
     switch (styleAppearance) {
-        case SliderThumbHorizontalPart:
-        case SliderHorizontalPart:
-        case MediaSliderPart:
-            return AccessibilityOrientationHorizontal;
+    case SliderThumbHorizontalPart:
+    case SliderHorizontalPart:
+    case MediaSliderPart:
+        return AccessibilityOrientationHorizontal;
+    
+    case SliderThumbVerticalPart: 
+    case SliderVerticalPart:
+    case MediaVolumeSliderPart:
+        return AccessibilityOrientationVertical;
         
-        case SliderThumbVerticalPart: 
-        case SliderVerticalPart:
-        case MediaVolumeSliderPart:
-            return AccessibilityOrientationVertical;
-            
-        default:
-            return AccessibilityOrientationHorizontal;
+    default:
+        return AccessibilityOrientationHorizontal;
     }
 }
     

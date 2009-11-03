@@ -37,77 +37,77 @@
 
 namespace WebCore {
 
-    class AccessibilityMediaControl : public AccessibilityRenderObject {
+class AccessibilityMediaControl : public AccessibilityRenderObject {
 
-    public:
-        static PassRefPtr<AccessibilityObject> create(RenderObject*);
-        virtual ~AccessibilityMediaControl() { }
+public:
+    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    virtual ~AccessibilityMediaControl() { }
 
-        virtual AccessibilityRole roleValue() const;
-        virtual bool accessibilityIsIgnored() const;
+    virtual AccessibilityRole roleValue() const;
+    virtual bool accessibilityIsIgnored() const;
 
-        virtual String title() const;
-        virtual String accessibilityDescription() const;
-        virtual String helpText() const;
+    virtual String title() const;
+    virtual String accessibilityDescription() const;
+    virtual String helpText() const;
 
-    protected:
-        AccessibilityMediaControl(RenderObject*);
-        MediaControlElementType controlType() const;
-        String controlTypeName() const;
-    };
-
-
-    class AccessibilityMediaTimeline : public AccessibilitySlider {
-
-    public:
-        static PassRefPtr<AccessibilityObject> create(RenderObject*);
-        virtual ~AccessibilityMediaTimeline() { }
-
-        virtual bool isMediaTimeline() const { return true; }
-
-        virtual String helpText() const;
-        virtual String valueDescription() const;
-        const AtomicString& getAttribute(const QualifiedName& attribute) const;
-
-    private:
-        AccessibilityMediaTimeline(RenderObject*);
-    };
+protected:
+    AccessibilityMediaControl(RenderObject*);
+    MediaControlElementType controlType() const;
+    String controlTypeName() const;
+};
 
 
-    class AccessibilityMediaControlsContainer : public AccessibilityMediaControl {
+class AccessibilityMediaTimeline : public AccessibilitySlider {
 
-    public:
-        static PassRefPtr<AccessibilityObject> create(RenderObject*);
-        virtual ~AccessibilityMediaControlsContainer() { }
+public:
+    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    virtual ~AccessibilityMediaTimeline() { }
 
-        virtual AccessibilityRole roleValue() const { return ToolbarRole; }
-        virtual bool accessibilityIsIgnored() const { return false; }
+    virtual bool isMediaTimeline() const { return true; }
 
-        virtual String helpText() const;
-        virtual String accessibilityDescription() const;
+    virtual String helpText() const;
+    virtual String valueDescription() const;
+    const AtomicString& getAttribute(const QualifiedName& attribute) const;
 
-    private:
-        AccessibilityMediaControlsContainer(RenderObject*);
-        bool controllingVideoElement() const;
-        const String elementTypeName() const;
-    };
+private:
+    AccessibilityMediaTimeline(RenderObject*);
+};
 
 
-    class AccessibilityMediaTimeDisplay : public AccessibilityMediaControl {
+class AccessibilityMediaControlsContainer : public AccessibilityMediaControl {
 
-    public:
-        static PassRefPtr<AccessibilityObject> create(RenderObject*);
-        virtual ~AccessibilityMediaTimeDisplay() { }
+public:
+    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    virtual ~AccessibilityMediaControlsContainer() { }
 
-        virtual AccessibilityRole roleValue() const { return StaticTextRole; }
-        virtual bool accessibilityIsIgnored() const;
+    virtual AccessibilityRole roleValue() const { return ToolbarRole; }
+    virtual bool accessibilityIsIgnored() const { return false; }
 
-        virtual String stringValue() const;
-        virtual String accessibilityDescription() const;
+    virtual String helpText() const;
+    virtual String accessibilityDescription() const;
 
-    private:
-        AccessibilityMediaTimeDisplay(RenderObject*);
-    };
+private:
+    AccessibilityMediaControlsContainer(RenderObject*);
+    bool controllingVideoElement() const;
+    const String elementTypeName() const;
+};
+
+
+class AccessibilityMediaTimeDisplay : public AccessibilityMediaControl {
+
+public:
+    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    virtual ~AccessibilityMediaTimeDisplay() { }
+
+    virtual AccessibilityRole roleValue() const { return StaticTextRole; }
+    virtual bool accessibilityIsIgnored() const;
+
+    virtual String stringValue() const;
+    virtual String accessibilityDescription() const;
+
+private:
+    AccessibilityMediaTimeDisplay(RenderObject*);
+};
 
 
 } // namespace WebCore

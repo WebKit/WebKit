@@ -29,8 +29,8 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
-#include "AccessibilityRenderObject.h"
 #include "AXObjectCache.h"
+#include "AccessibilityRenderObject.h"
 #include "CharacterNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -85,8 +85,9 @@ void AccessibilityObject::detach()
 AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     AccessibilityObject* parent;
-    for (parent = parentObject(); parent && parent->accessibilityIsIgnored(); parent = parent->parentObject())
-        ;
+    for (parent = parentObject(); parent && parent->accessibilityIsIgnored(); parent = parent->parentObject()) {
+    }
+    
     return parent;
 }
 
@@ -275,7 +276,7 @@ VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const Vi
     VisiblePosition startPosition = startOfLine(nextVisiblePos);
 
     // fetch for a valid line start position
-    if (startPosition.isNull() ) {
+    if (startPosition.isNull()) {
         startPosition = visiblePos;
         nextVisiblePos = nextVisiblePos.next();
     } else
@@ -381,9 +382,8 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
-    if (!replacedNode || !replacedNode->renderer() || !replacedNode->renderer()->isReplaced() || replacedNode->isTextNode()) {
+    if (!replacedNode || !replacedNode->renderer() || !replacedNode->renderer()->isReplaced() || replacedNode->isTextNode())
         return false;
-    }
 
     // create an AX object, but skip it if it is not supposed to be seen
     AccessibilityObject* object = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode->renderer());
@@ -445,7 +445,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
     for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.length() != 0) {
+        if (it.length()) {
             // Add a textual representation for list marker text
             String listMarkerText = listMarkerTextForNodeAndPosition(it.node(), visiblePositionRange.start);
             if (!listMarkerText.isEmpty())
@@ -459,9 +459,8 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             ASSERT(node == it.range()->endContainer(exception));
             int offset = it.range()->startOffset(exception);
 
-            if (replacedNodeNeedsCharacter(node->childNode(offset))) {
+            if (replacedNodeNeedsCharacter(node->childNode(offset)))
                 resultVector.append(objectReplacementCharacter);
-            }
         }
     }
 
@@ -478,9 +477,9 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
     for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.length() != 0) {
+        if (it.length())
             length += it.length();
-        } else {
+        else {
             // locate the node and starting offset for this replaced range
             int exception = 0;
             Node* node = it.range()->startContainer(exception);
@@ -766,20 +765,20 @@ const String& AccessibilityObject::actionVerb() const
     DEFINE_STATIC_LOCAL(const String, noAction, ());
 
     switch (roleValue()) {
-        case ButtonRole:
-            return buttonAction;
-        case TextFieldRole:
-        case TextAreaRole:
-            return textFieldAction;
-        case RadioButtonRole:
-            return radioButtonAction;
-        case CheckBoxRole:
-            return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
-        case LinkRole:
-        case WebCoreLinkRole:
-            return linkAction;
-        default:
-            return noAction;
+    case ButtonRole:
+        return buttonAction;
+    case TextFieldRole:
+    case TextAreaRole:
+        return textFieldAction;
+    case RadioButtonRole:
+        return radioButtonAction;
+    case CheckBoxRole:
+        return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
+    case LinkRole:
+    case WebCoreLinkRole:
+        return linkAction;
+    default:
+        return noAction;
     }
 }
  
