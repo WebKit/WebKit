@@ -6,6 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS foundNewPrototypeProperty is true
 PASS foundRemovedPrototypeProperty is false
 PASS calledNewPrototypeSetter is true
+PASS getTestProperty(test4) is "on prototype"
+PASS getTestProperty(test4) is "on self"
+PASS getTestProperty(test5) is "on prototype's prototype"
+PASS getTestProperty(test5) is "on self"
 PASS successfullyParsed is true
 
 TEST COMPLETE

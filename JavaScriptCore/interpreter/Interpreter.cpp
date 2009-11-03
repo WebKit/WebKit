@@ -1029,6 +1029,11 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
+    if (structure->isDictionary()) {
+        vPC[0] = getOpcode(op_get_by_id_generic);
+        return;
+    }
+
     if (slot.slotBase() == structure->prototypeForLookup(callFrame)) {
         ASSERT(slot.slotBase().isObject());
 
@@ -1038,6 +1043,8 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         // should not be treated as a dictionary.
         if (baseObject->structure()->isDictionary())
             baseObject->setStructure(Structure::fromDictionaryTransition(baseObject->structure()));
+
+        ASSERT(!baseObject->structure()->isUncacheableDictionary());
 
         vPC[0] = getOpcode(op_get_by_id_proto);
         vPC[5] = baseObject->structure();
@@ -2134,6 +2141,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                     int offset = vPC[6].u.operand;
 
                     ASSERT(protoObject->get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
+                    ASSERT(baseValue.get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == protoObject->getDirectOffset(offset));
                     callFrame->r(dst) = JSValue(protoObject->getDirectOffset(offset));
 
                     vPC += OPCODE_LENGTH(op_get_by_id_proto);
@@ -2189,6 +2197,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                         int offset = vPC[7].u.operand;
 
                         ASSERT(baseObject->get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
+                        ASSERT(baseValue.get(callFrame, callFrame->codeBlock()->identifier(vPC[3].u.operand)) == baseObject->getDirectOffset(offset));
                         callFrame->r(dst) = JSValue(baseObject->getDirectOffset(offset));
 
                         vPC += OPCODE_LENGTH(op_get_by_id_chain);

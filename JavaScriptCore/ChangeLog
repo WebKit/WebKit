@@ -1,3 +1,20 @@
+2009-11-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION (r48573): JSC may incorrectly cache chain lookups with a dictionary at the head of the chain
+        https://bugs.webkit.org/show_bug.cgi?id=31045
+
+        Add guards to prevent caching of prototype chain lookups with dictionaries at the
+        head of the chain.  Also add a few tighter assertions to cached prototype lookups
+        to catch this in future.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+
 2009-11-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

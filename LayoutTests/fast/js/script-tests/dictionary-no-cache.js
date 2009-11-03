@@ -60,4 +60,32 @@ var test4 = new Test();
 update(test4);
 shouldBeTrue('calledNewPrototypeSetter');
 
+var test4 = {__proto__:{prop:"on prototype"}};
+for (var i = 0; i < 200; i++)
+    test4[i]=[i];
+
+var test5 = {__proto__:{__proto__:{prop:"on prototype's prototype"}}};
+for (var i = 0; i < 200; i++)
+    test5[i]=[i];
+
+getTestProperty = function(o) {
+    return o.prop;
+}
+
+getTestProperty(test4);
+getTestProperty(test4);
+shouldBe("getTestProperty(test4)", '"on prototype"');
+test4.prop = "on self";
+shouldBe("getTestProperty(test4)", '"on self"');
+
+getTestProperty = function(o) {
+    return o.prop;
+}
+
+getTestProperty(test5);
+getTestProperty(test5);
+shouldBe("getTestProperty(test5)", '"on prototype\'s prototype"');
+test5.prop = "on self";
+shouldBe("getTestProperty(test5)", '"on self"');
+
 successfullyParsed = true;
