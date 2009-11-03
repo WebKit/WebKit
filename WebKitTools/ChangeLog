@@ -1,3 +1,11 @@
+2009-11-03  Stephen White  <senorblanco@chromium.org>
+
+        (Unreviewed).
+
+        Add myself to committers.py.
+
+        * Scripts/modules/committers.py:
+
 
 2009-11-03  Robin Dunn  <robin@alldunn.com>
 
