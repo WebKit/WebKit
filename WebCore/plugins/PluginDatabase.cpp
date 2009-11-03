@@ -380,7 +380,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     // Add paths specific to each port
 #if PLATFORM(QT)
     Vector<String> qtPaths;
-    String qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
+    String qtPath(qgetenv("QTWEBKIT_PLUGIN_PATH").constData());
     qtPath.split(UChar(':'), /* allowEmptyEntries */ false, qtPaths);
     paths.append(qtPaths);
 #endif

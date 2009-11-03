@@ -1,3 +1,11 @@
+2009-11-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Antti Koivisto.
+
+        [Qt] Build fix for Windows CE
+
+        * plugins/PluginDatabase.cpp:
+
 2009-11-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Levin.
