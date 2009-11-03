@@ -1,3 +1,9 @@
+2009-11-03  Eric Seidel  <eric@webkit.org>
+
+        No review, just sort-order cleanup.
+
+        * Scripts/modules/committers.py: Sort committers/reviewers alphabetically.
+
 2009-11-03  Stephen White  <senorblanco@chromium.org>
 
         (Unreviewed).
@@ -5,7 +11,6 @@
         Add myself to committers.py.
 
         * Scripts/modules/committers.py:
-
 
 2009-11-03  Robin Dunn  <robin@alldunn.com>
 
