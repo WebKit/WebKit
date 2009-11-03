@@ -345,6 +345,8 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         if (debuggerWasEnabled)
             m_attachDebuggerWhenShown = true;
 #endif
+        if (m_searchingForNode)
+            toggleSearchForNodeInPage();
         resetScriptObjects();
         stopTimelineProfiler();
     }
