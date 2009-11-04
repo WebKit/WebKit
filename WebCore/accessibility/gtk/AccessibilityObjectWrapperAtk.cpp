@@ -234,11 +234,11 @@ static gint webkit_accessible_get_n_children(AtkObject* object)
 static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
 {
     AccessibilityObject* coreObject = core(object);
+    AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
+    if (index < 0 || index >= children.size())
+        return 0;
 
-    g_return_val_if_fail(index >= 0, NULL);
-    g_return_val_if_fail(static_cast<size_t>(index) < coreObject->children().size(), NULL);
-
-    AccessibilityObject* coreChild = coreObject->children().at(index).get();
+    AccessibilityObject* coreChild = children.at(index).get();
 
     if (!coreChild)
         return NULL;
