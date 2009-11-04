@@ -63,7 +63,9 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "MouseEventWithHitTestResults.h"
+#include "Pasteboard.h"
 #include "PasteboardHelper.h"
+#include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
@@ -1001,12 +1003,6 @@ static void webkit_web_view_dispose(GObject* object)
 
         g_object_unref(priv->imContext);
         priv->imContext = NULL;
-
-        gtk_target_list_unref(priv->copy_target_list);
-        priv->copy_target_list = NULL;
-
-        gtk_target_list_unref(priv->paste_target_list);
-        priv->paste_target_list = NULL;
     }
 
     if (priv->mainResource) {
@@ -2572,17 +2568,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->zoomFullContent = FALSE;
 
-    GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
-    /* Targets for copy */
-    priv->copy_target_list = gtk_target_list_new(NULL, 0);
-    gtk_target_list_add(priv->copy_target_list, textHtml, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
-    gtk_target_list_add_text_targets(priv->copy_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
-
-    /* Targets for pasting */
-    priv->paste_target_list = gtk_target_list_new(NULL, 0);
-    gtk_target_list_add(priv->paste_target_list, textHtml, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
-    gtk_target_list_add_text_targets(priv->paste_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
-
     priv->webSettings = webkit_web_settings_new();
     webkit_web_view_update_settings(webView);
     g_signal_connect(priv->webSettings, "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
@@ -3386,10 +3371,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
  **/
 GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    return priv->copy_target_list;
+    return pasteboardHelperInstance()->targetList();
 }
 
 /**
@@ -3406,10 +3388,7 @@ GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
  **/
 GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    return priv->paste_target_list;
+    return pasteboardHelperInstance()->targetList();
 }
 
 /**

@@ -70,6 +70,7 @@ class DownloadClient;
 namespace WebKit {
 
     class DocumentLoader;
+    class PasteboardHelperGtk;
 
     WebKitWebView* getViewFromFrame(WebKitWebFrame*);
 
@@ -97,6 +98,8 @@ namespace WebKit {
     WebCore::SecurityOrigin* core(WebKitSecurityOrigin*);
 
     WebKitHitTestResult* kit(const WebCore::HitTestResult&);
+
+    WebKit::PasteboardHelperGtk* pasteboardHelperInstance();
 }
 
 typedef struct {
@@ -128,9 +131,6 @@ extern "C" {
         HashSet<GtkWidget*> children;
         bool editable;
         GtkIMContext* imContext;
-
-        GtkTargetList* copy_target_list;
-        GtkTargetList* paste_target_list;
 
         gboolean transparent;
 

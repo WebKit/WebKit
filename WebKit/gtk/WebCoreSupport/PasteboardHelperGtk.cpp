@@ -31,6 +31,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static GdkAtom gdkMarkupAtom = gdk_atom_intern("text/html", FALSE);
+
+PasteboardHelperGtk::PasteboardHelperGtk()
+    : m_targetList(gtk_target_list_new(0, 0))
+{
+    gtk_target_list_add_text_targets(m_targetList, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
+    gtk_target_list_add(m_targetList, gdkMarkupAtom, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+}
+
+PasteboardHelperGtk::~PasteboardHelperGtk()
+{
+    gtk_target_list_unref(m_targetList);
+}
+
 GtkClipboard* PasteboardHelperGtk::getCurrentTarget(Frame* frame) const
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
@@ -55,16 +69,9 @@ GtkClipboard* PasteboardHelperGtk::getPrimary(Frame* frame) const
                                     GDK_SELECTION_PRIMARY);
 }
 
-GtkTargetList* PasteboardHelperGtk::getCopyTargetList(Frame* frame) const
+GtkTargetList* PasteboardHelperGtk::targetList() const
 {
-    WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
-    return webkit_web_view_get_copy_target_list(webView);
-}
-
-GtkTargetList* PasteboardHelperGtk::getPasteTargetList(Frame* frame) const
-{
-    WebKitWebView* webView = webkit_web_frame_get_web_view(kit(frame));
-    return webkit_web_view_get_paste_target_list(webView);
+    return m_targetList;
 }
 
 gint PasteboardHelperGtk::getWebViewTargetInfoHtml() const

@@ -1,3 +1,27 @@
+2009-11-04  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Move handling of target list to PasteboardHelperGtk.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::PasteboardHelperGtk::PasteboardHelperGtk):
+        (WebKit::PasteboardHelperGtk::~PasteboardHelperGtk):
+        (WebKit::PasteboardHelperGtk::fullTargetList):
+        * WebCoreSupport/PasteboardHelperGtk.h:
+        * webkit/webkitprivate.cpp:
+        (WebKit::pasteboardHelperInstance):
+        (webkit_init):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+        (webkit_web_view_init):
+        (webkit_web_view_get_copy_target_list):
+        (webkit_web_view_get_paste_target_list):
+
 2009-10-30  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.
