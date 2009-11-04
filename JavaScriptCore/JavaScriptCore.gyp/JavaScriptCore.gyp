@@ -80,10 +80,6 @@
           }],
           ['OS=="mac"', {
             'defines': [
-              # Ensure that only Leopard features are used when doing the
-              # Mac build.
-              'BUILDING_ON_LEOPARD',
-
               # Use USE_NEW_THEME on Mac.
               'WTF_USE_NEW_THEME=1',
             ],
