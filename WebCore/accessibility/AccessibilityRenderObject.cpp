@@ -1575,6 +1575,29 @@ bool AccessibilityRenderObject::isVisited() const
     return m_renderer->style()->pseudoState() == PseudoVisited;
 }
     
+void AccessibilityRenderObject::expandObject() const
+{
+    // Combo boxes can be expanded (in different ways on different platforms).
+    // That action translates into setting the aria-expanded attribute to true
+    if (roleValue() != ComboBoxRole || !m_renderer)
+        return;
+    
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return;
+
+    Element* element = static_cast<Element*>(node);
+    element->setAttribute(aria_expandedAttr, "true");
+}
+    
+bool AccessibilityRenderObject::isExpanded() const
+{
+    if (equalIgnoringCase(getAttribute(aria_expandedAttr).string(), "true"))
+        return true;
+    
+    return false;  
+}
+    
 bool AccessibilityRenderObject::isRequired() const
 {
     if (equalIgnoringCase(getAttribute(aria_requiredAttr).string(), "true"))
@@ -2343,6 +2366,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "grid", TableRole },
         { "gridcell", CellRole },
         { "columnheader", ColumnHeaderRole },
+        { "combobox", ComboBoxRole },
         { "definition", DefinitionListDefinitionRole },
         { "document", DocumentRole },
         { "rowheader", RowHeaderRole },

@@ -80,6 +80,7 @@ public:
     JSStringRef parameterizedAttributeNames();
     void increment();
     void decrement();
+    void showMenu();
 
     // Attributes - platform-independent implementations
     JSStringRef attributeValue(JSStringRef attribute);
@@ -105,6 +106,7 @@ public:
     bool isEnabled();
     bool isRequired() const;
     bool isSelected() const;
+    bool isExpanded() const;
     double clickPointX();
     double clickPointY();
 

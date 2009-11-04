@@ -601,6 +601,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* inputImageAttrs = nil;
     static NSArray* passwordFieldAttrs = nil;
     static NSArray *tabListAttrs = nil;
+    static NSArray *comboBoxAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -740,6 +741,12 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         controlAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (comboBoxAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
+        [tempArray addObject:NSAccessibilityExpandedAttribute];
+        comboBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];        
+    }
     if (tableAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityRowsAttribute];
@@ -827,6 +834,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isListBox() || m_object->isList())
         return listBoxAttrs;
 
+    if (m_object->isComboBox())
+        return comboBoxAttrs;
+    
     if (m_object->isProgressIndicator() || m_object->isSlider())
         return rangeAttrs;
 
@@ -1558,6 +1568,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityLanguageAttribute]) 
         return m_object->language();
     
+    if ([attributeName isEqualToString:NSAccessibilityExpandedAttribute])
+        return [NSNumber numberWithBool:m_object->isExpanded()];
+    
     if ([attributeName isEqualToString:NSAccessibilityRequiredAttribute])
         return [NSNumber numberWithBool:m_object->isRequired()];
 
@@ -1790,9 +1803,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformShowMenuAction
 {
-    // This needs to be performed in an iteration of the run loop that did not start from an AX call. 
-    // If it's the same run loop iteration, the menu open notification won't be sent
-    [self performSelector:@selector(accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
+    if (m_object->roleValue() == ComboBoxRole)
+        m_object->expandObject();
+    else {
+        // This needs to be performed in an iteration of the run loop that did not start from an AX call. 
+        // If it's the same run loop iteration, the menu open notification won't be sent
+        [self performSelector:@selector(accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
+    }
 }
 
 - (void)accessibilityShowContextMenu

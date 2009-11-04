@@ -17,6 +17,7 @@ aria-checked
 aria-controls
 aria-describedby
 aria-disabled
+aria-expanded
 aria-hidden
 aria-label
 aria-labeledby

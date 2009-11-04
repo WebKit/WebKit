@@ -1,3 +1,15 @@
+2009-11-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Need to implement ARIA role="combobox"
+        https://bugs.webkit.org/show_bug.cgi?id=31096
+
+        * accessibility/aria-combobox.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/accessibility/aria-combobox-expected.txt: Added.
+        * platform/win/Skipped:
+
 2009-11-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Put test into skiplist added in r50489 because

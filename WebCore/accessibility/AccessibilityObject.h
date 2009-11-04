@@ -275,6 +275,7 @@ public:
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
+    bool isComboBox() const { return roleValue() == ComboBoxRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -290,6 +291,7 @@ public:
     virtual bool isVisited() const { return false; }
     virtual bool isRequired() const { return false; }
     virtual bool isLinked() const { return false; }
+    virtual bool isExpanded() const { return false; }
 
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
@@ -386,10 +388,11 @@ public:
     virtual void makeRangeVisible(const PlainTextRange&) { }
     virtual bool press() const;
     bool performDefaultAction() const { return press(); }
-
+    virtual void expandObject() const { }
+    
     virtual AccessibilityOrientation orientation() const;
-    virtual void increment() { };
-    virtual void decrement() { };
+    virtual void increment() { }
+    virtual void decrement() { }
 
     virtual void childrenChanged() { }
     virtual const AccessibilityChildrenVector& children() { return m_children; }

@@ -447,6 +447,14 @@ bool AccessibilityUIElement::isSelected() const
     return false;
 }
 
+bool AccessibilityUIElement::isExpanded() const
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityExpandedAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {
@@ -584,6 +592,11 @@ void AccessibilityUIElement::increment()
 void AccessibilityUIElement::decrement()
 {
     [m_element accessibilityPerformAction:NSAccessibilityDecrementAction];
+}
+
+void AccessibilityUIElement::showMenu()
+{
+    [m_element accessibilityPerformAction:NSAccessibilityShowMenuAction];
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const

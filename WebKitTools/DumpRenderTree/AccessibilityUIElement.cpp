@@ -254,6 +254,11 @@ static JSValueRef decrementCallback(JSContextRef context, JSObjectRef function, 
     return 0;
 }
 
+static JSValueRef showMenuCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    toAXElement(thisObject)->showMenu();
+    return 0;
+}
 
 // Static Value Getters
 
@@ -369,6 +374,11 @@ static JSValueRef getIsSelectedCallback(JSContextRef context, JSObjectRef thisOb
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isSelected());
 }
 
+static JSValueRef getIsExpandedCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isExpanded());
+}
+
 static JSValueRef getValueDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> valueDescription(Adopt, toAXElement(thisObject)->valueDescription());
@@ -420,6 +430,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isRequired", getIsRequiredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSelected", getIsSelectedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isExpanded", getIsExpandedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "valueDescription", getValueDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
@@ -453,6 +464,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "parentElement", parentElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "increment", incrementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "decrement", decrementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "showMenu", showMenuCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

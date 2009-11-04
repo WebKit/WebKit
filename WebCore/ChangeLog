@@ -1,3 +1,29 @@
+2009-11-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Need to implement ARIA role="combobox"
+        https://bugs.webkit.org/show_bug.cgi?id=31096
+
+        Test: accessibility/aria-combobox.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isComboBox):
+        (WebCore::AccessibilityObject::isExpanded):
+        (WebCore::AccessibilityObject::expandObject):
+        (WebCore::AccessibilityObject::increment):
+        (WebCore::AccessibilityObject::decrement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::expandObject):
+        (WebCore::AccessibilityRenderObject::isExpanded):
+        (WebCore::createARIARoleMap):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
+        * html/HTMLAttributeNames.in:
+
 2009-11-04  Kelly Norton  <knorton@google.com>
 
         Reviewed by Pavel Feldman.

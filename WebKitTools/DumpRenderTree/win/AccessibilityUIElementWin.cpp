@@ -252,6 +252,15 @@ JSStringRef AccessibilityUIElement::valueDescription()
 {
     return 0;
 }
+bool AccessibilityUIElement::isSelected() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isExpanded() const
+{
+    return false;
+}
 
 double AccessibilityUIElement::intValue()
 {
@@ -289,10 +298,6 @@ bool AccessibilityUIElement::isRequired() const
     return false;
 }
 
-bool AccessibilityUIElement::isSelected() const
-{
-    return false;
-}
 
 int AccessibilityUIElement::insertionPointLineNumber()
 {
@@ -388,6 +393,10 @@ void AccessibilityUIElement::increment()
 }
 
 void AccessibilityUIElement::decrement()
+{
+}
+
+void AccessibilityUIElement::showMenu()
 {
 }
 

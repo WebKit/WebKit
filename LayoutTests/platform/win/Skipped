@@ -352,6 +352,7 @@ http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 
 # Accessibility tests without results or with Mac-specific results.
+accessibility/aria-combobox.html
 accessibility/aria-describedby-on-input.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html

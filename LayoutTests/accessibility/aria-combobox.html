@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="combo" tabindex=0 role="combobox" aria-expanded="false" aria-label="Test">
+<div role="listbox">
+<div role="option">option 1</div>
+<div role="option">option 2</div>
+</div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria roles for combobox and aria-expanded work correctly in conjunction.");
+
+    if (window.accessibilityController) {
+
+          var combobox = document.getElementById("combo");
+          combobox.focus();
+
+          combobox = accessibilityController.focusedElement;
+
+          shouldBe("combobox.role", "'AXRole: AXComboBox'");
+          shouldBe("combobox.isExpanded", "false");
+    
+          combobox.showMenu();
+
+          shouldBe("combobox.isExpanded", "true");
+
+          var firstChild = combobox.childAtIndex(0);
+          shouldBe("firstChild.role", "'AXRole: AXList'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
