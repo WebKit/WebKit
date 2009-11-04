@@ -120,8 +120,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     RefPtr<Frame> protect = m_frame;
 
 #if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
-    if (timelineAgent)
+    if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
         timelineAgent->willEvaluateScript(sourceURL, sourceCode.startLine());
 #endif
 
@@ -130,7 +129,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     exec->globalData().timeoutChecker.stop();
 
 #if ENABLE(INSPECTOR)
-    if (timelineAgent)
+    if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
         timelineAgent->didEvaluateScript();
 #endif
 
@@ -277,15 +276,15 @@ bool ScriptController::processingUserGestureEvent() const
 
         const AtomicString& type = event->type();
         if ( // mouse events
-            type == eventNames().clickEvent || type == eventNames().mousedownEvent ||
-            type == eventNames().mouseupEvent || type == eventNames().dblclickEvent ||
+            type == eventNames().clickEvent || type == eventNames().mousedownEvent 
+            || type == eventNames().mouseupEvent || type == eventNames().dblclickEvent 
             // keyboard events
-            type == eventNames().keydownEvent || type == eventNames().keypressEvent ||
-            type == eventNames().keyupEvent ||
+            || type == eventNames().keydownEvent || type == eventNames().keypressEvent
+            || type == eventNames().keyupEvent
             // other accepted events
-            type == eventNames().selectEvent || type == eventNames().changeEvent ||
-            type == eventNames().focusEvent || type == eventNames().blurEvent ||
-            type == eventNames().submitEvent)
+            || type == eventNames().selectEvent || type == eventNames().changeEvent
+            || type == eventNames().focusEvent || type == eventNames().blurEvent
+            || type == eventNames().submitEvent)
             return true;
     }
     

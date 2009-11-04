@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="evaluate-in-frontend.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result) {
+        output("Timeline started");
+        notifyDone();
+    }
+    evaluateInWebInspector("startTimeline()", callback);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p> 
+Trivial use of inspector frontend tests 
+</p>
+
+<div id="frontend-script" style="display:none">
+
+function startTimeline() {
+    /* This test seems silly, but originally it tickled bug 31080 */
+    InspectorController.startTimelineProfiler();
+    return true;
+}
+
+</div>
+
+<div id="output">
+</div>
+
+</body>
+</html>

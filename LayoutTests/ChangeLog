@@ -1,3 +1,16 @@
+2009-11-03  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a test for turning on the timeline profiler.  This caused
+        a crash because profiling was enabled in the middle of processing
+        an event.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31080
+
+        * inspector/timeline-trivial-expected.txt: Added.
+        * inspector/timeline-trivial.html: Added.
+
 2009-11-03  Bradley Green  <brg@chromium.org>
 
         Reviewed by Dmitry Titov.

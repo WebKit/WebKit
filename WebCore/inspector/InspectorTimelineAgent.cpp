@@ -181,13 +181,16 @@ void InspectorTimelineAgent::addRecordToTimeline(ScriptObject record, TimelineRe
 
 void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
 {
-    ASSERT(!m_recordStack.isEmpty());
-    TimelineRecordEntry entry = m_recordStack.last();
-    m_recordStack.removeLast();
-    ASSERT(entry.type == type);
-    entry.record.set("children", entry.children);
-    entry.record.set("endTime", currentTimeInMilliseconds());
-    addRecordToTimeline(entry.record, type);
+    // An empty stack could merely mean that the timeline agent was turned on in the middle of
+    // an event.  Don't treat as an error.
+    if (!m_recordStack.isEmpty()) {
+        TimelineRecordEntry entry = m_recordStack.last();
+        m_recordStack.removeLast();
+        ASSERT(entry.type == type);
+        entry.record.set("children", entry.children);
+        entry.record.set("endTime", currentTimeInMilliseconds());
+        addRecordToTimeline(entry.record, type);
+    }
 }
 
 double InspectorTimelineAgent::currentTimeInMilliseconds()
