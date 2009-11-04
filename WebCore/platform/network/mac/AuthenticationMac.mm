@@ -131,6 +131,11 @@ NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
         case ProtectionSpaceAuthenticationSchemeHTMLForm:
             method = NSURLAuthenticationMethodHTMLForm;
             break;
+#ifndef BUILDING_ON_TIGER
+        case ProtectionSpaceAuthenticationSchemeNTLM:
+            method = NSURLAuthenticationMethodNTLM;
+            break;
+#endif
         default:
             ASSERT_NOT_REACHED();
     }
@@ -218,6 +223,10 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
         scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
     else if ([method isEqualToString:NSURLAuthenticationMethodHTMLForm])
         scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
+#ifndef BUILDING_ON_TIGER
+    else if ([method isEqualToString:NSURLAuthenticationMethodNTLM])
+        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
+#endif
     else
         ASSERT_NOT_REACHED();
         

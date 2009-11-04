@@ -1,3 +1,12 @@
+2009-11-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix an assertion failure in core(NSURLProtectionSpace *) by handling NTLM
+        authentication in AuthenticationMac
+
+        * platform/network/mac/AuthenticationMac.mm:
+
 2009-11-03  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Timothy Hatcher.
