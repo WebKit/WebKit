@@ -1,5 +1,12 @@
 2009-11-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Put test into skiplist added in r50489 because
+        layoutTestController.showWebInspector() is unimplemented now.
+
+        * platform/qt/Skipped: inspector/timeline-trivial.html added.
+
+2009-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed rollout.
 
         Revert r50496 because it broke all layout tests on QtBuildBot.
