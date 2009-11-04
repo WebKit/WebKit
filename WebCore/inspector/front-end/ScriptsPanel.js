@@ -281,8 +281,13 @@ WebInspector.ScriptsPanel.prototype = {
             var breakpointsLength = breakpoints.length;
             for (var i = 0; i < breakpointsLength; ++i) {
                 var breakpoint = breakpoints[i];
+
                 if (startingLine <= breakpoint.line) {
+                    // remove and add the breakpoint, to clean up things like the sidebar
+                    this.removeBreakpoint(breakpoint);
                     breakpoint.sourceID = sourceID;
+                    this.addBreakpoint(breakpoint);
+                    
                     if (breakpoint.enabled)
                         InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
                 }
