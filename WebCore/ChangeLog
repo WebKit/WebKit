@@ -1,3 +1,13 @@
+2009-11-04  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        [gtk] Use gst_element_class_set_details_simple()
+
+        Cosmetic change, just code simplification
+
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_base_init):
 2009-11-04  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.
