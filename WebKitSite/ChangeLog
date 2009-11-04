@@ -1,3 +1,28 @@
+2009-11-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Adding images for an upcoming blog post.
+
+        * blog-files/inspector/breakpoints.png: Added.
+        * blog-files/inspector/colors.png: Added.
+        * blog-files/inspector/cookies.png: Added.
+        * blog-files/inspector/css_selectors.png: Added.
+        * blog-files/inspector/css_syntax_highlight.png: Added.
+        * blog-files/inspector/dom_storage.png: Added.
+        * blog-files/inspector/edit_attributes.png: Added.
+        * blog-files/inspector/enable.png: Added.
+        * blog-files/inspector/event_listeners.png: Added.
+        * blog-files/inspector/form_data.png: Added.
+        * blog-files/inspector/inline_highlight.png: Added.
+        * blog-files/inspector/inorder.png: Added.
+        * blog-files/inspector/inspect_inspector.png: Added.
+        * blog-files/inspector/inspect_inspector_small.png: Added.
+        * blog-files/inspector/load_lines.png: Added.
+        * blog-files/inspector/nodelist.png: Added.
+        * blog-files/inspector/scope_bar.png: Added.
+        * blog-files/inspector/watched_expression.png: Added.
+
 2009-10-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
