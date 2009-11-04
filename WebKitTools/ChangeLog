@@ -1,3 +1,18 @@
+2009-11-04  Adam Roben  <aroben@apple.com>
+
+        Make run-webkit-tests work for the Debug_Internal Windows
+        configuration
+
+        In Debug_Internal, DumpRenderTree.exe and ImageDiff.exe have no _debug
+        suffix.
+
+        Fixes <http://webkit.org/b/31123>.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-webkit-tests: Don't add the _debug suffix in
+        Debug_Internal, either.
+
 2009-11-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

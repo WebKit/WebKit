@@ -351,12 +351,12 @@ if (!defined($root)) {
 }
 
 my $dumpToolName = "DumpRenderTree";
-$dumpToolName .= "_debug" if isCygwin() && $configuration ne "Release";
+$dumpToolName .= "_debug" if isCygwin() && configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
 my $dumpTool = "$productDir/$dumpToolName";
 die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;
 
 my $imageDiffTool = "$productDir/ImageDiff";
-$imageDiffTool .= "_debug" if isCygwin() && $configuration ne "Release";
+$imageDiffTool .= "_debug" if isCygwin() && configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks() unless isCygwin();
