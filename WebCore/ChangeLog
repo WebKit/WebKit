@@ -1,3 +1,10 @@
+2009-11-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Restore removed string conversion after cleanup.
+
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::computeHash):
+
 2009-11-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
