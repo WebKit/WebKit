@@ -1,3 +1,16 @@
+2009-11-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31143
+        Assertion failure in CredentialStorage::set() when proxy credentials are being set
+
+        No test, cannot test proxy behavior.
+
+        * platform/network/CredentialStorage.cpp: (WebCore::CredentialStorage::set): Account for the
+        possibility of null url. Release mode changes are likely inconsequential - e.g. we used to
+        add "://" to origin set, which is weird, but safe.
+
 2009-11-04  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.
