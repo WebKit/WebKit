@@ -28,6 +28,7 @@
     <file>InjectedScript.js</file>
     <file>InjectedScriptAccess.js</file>
     <file>inspector.js</file>
+    <file>InspectorControllerStub.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
@@ -161,6 +162,15 @@
     <file>Images/statusbarResizerVertical.png</file>
     <file>Images/storageIcon.png</file>
     <file>Images/successGreenDot.png</file>
+    <file>Images/timelineBarBlue.png</file>
+    <file>Images/timelineBarGray.png</file>
+    <file>Images/timelineBarGreen.png</file>
+    <file>Images/timelineBarOrange.png</file>
+    <file>Images/timelineBarPurple.png</file>
+    <file>Images/timelineBarRed.png</file>
+    <file>Images/timelineBarYellow.png</file>
+    <file>Images/timelineCheckmarks.png</file>
+    <file>Images/timelineDots.png</file>
     <file>Images/timelineHollowPillBlue.png</file>
     <file>Images/timelineHollowPillGray.png</file>
     <file>Images/timelineHollowPillGreen.png</file>
@@ -168,6 +178,7 @@
     <file>Images/timelineHollowPillPurple.png</file>
     <file>Images/timelineHollowPillRed.png</file>
     <file>Images/timelineHollowPillYellow.png</file>
+    <file>Images/timelineIcon.png</file>
     <file>Images/timelinePillBlue.png</file>
     <file>Images/timelinePillGray.png</file>
     <file>Images/timelinePillGreen.png</file>
