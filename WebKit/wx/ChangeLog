@@ -1,3 +1,18 @@
+2009-11-04  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Fix an assert on shutdown when wxWebView has captured the mouse,
+        and make sure wxWebView's right click handling is only active when 
+        the WebCore popup menu is used.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31131
+
+        * WebView.cpp:
+        (wxWebView::~wxWebView):
+        (wxWebView::OnContextMenuEvents):
+        (wxWebView::OnMenuSelectEvents):
+
 2009-11-04  Vadim Zeitlin  <vadim@wxwidgets.org>
 
         Reviewed by Eric Seidel.
