@@ -1,3 +1,15 @@
+2009-11-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue is crashing when trying to reject patches after unknown failures
+        https://bugs.webkit.org/show_bug.cgi?id=31091
+
+        * Scripts/bugzilla-tool:
+         - patch['id'] was a copy/paste mistake.  This code has no 'patch' variable
+           so we have to find out what the current patch is by asking bugzilla again.
+         - Discovered that this code was also leaking file descriptors, so fixed that.
+
 2009-11-04  Adam Roben  <aroben@apple.com>
 
         Make run-webkit-tests work for the Debug_Internal Windows
