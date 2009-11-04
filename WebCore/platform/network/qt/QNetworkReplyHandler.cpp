@@ -259,7 +259,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (m_shouldSendResponse)
         return;
 
-    if (m_reply->error())
+    if (m_reply->error() && !ignoreHttpError(m_reply, m_responseDataSent))
         return;
 
     if (m_responseSent || !m_resourceHandle)
