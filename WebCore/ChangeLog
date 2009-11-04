@@ -1,3 +1,29 @@
+2009-11-04  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fixes naming inconsistencies in TimelineRecordFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=31132
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createXHRReadyStateChangeRecord):
+        (WebCore::TimelineRecordFactory::createXHRLoadRecord):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptRecord):
+        (WebCore::TimelineRecordFactory::createMarkTimelineRecord):
+        (WebCore::TimelineRecordFactory::createResourceSendRequestRecord):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseRecord):
+        (WebCore::TimelineRecordFactory::createResourceFinishRecord):
+        (WebCore::TimelineRecordFactory::createPaintRecord):
+        * inspector/TimelineRecordFactory.h:
+
 2009-11-04  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
