@@ -1,3 +1,6 @@
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+
 function getShaderSource(file) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", file, false);
