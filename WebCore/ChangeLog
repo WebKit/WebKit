@@ -1,3 +1,49 @@
+2009-11-02  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Handle fonts like the other ports
+
+        Remove FontFallbackListQt and rely on the common FontFallbackList
+        to handle the fonts. FontCache and FontPlatformData have been
+        updated to work with the common FontFallbackList.
+
+        In the previous implementation, FontPlatformDataCacheKey
+        was a clone of FontPlatformData with the hashing
+        capabilities added in order to use it as a key in the cache's
+        hashmap. FontPlatformData has been modified to handle the hashing
+        function directly so the data are not copied twice in memory.
+
+        FontFallbackList::fontDataAt() from FontFallbackListQt was a copy of
+        code from FontCache::getFontData() and FontFallbackList::fontDataAt().
+        The behavior is similar except currFamily->family().length() was
+        not tested and the fallback fonts selector were not used.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29856
+
+        Test: svg/text/text-font-invalid.html
+
+        * WebCore.pro:
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        Removed. We now use the implementation from FontFallbackList.cpp
+        * platform/graphics/qt/FontPlatformData.h:
+        Add hashing capabilities to be able to use the data with the FontCache.
+        This was previously done in FontCacheQt.cpp
+        (WebCore::FontPlatformData::FontPlatformData):
+        Added a boolean to identify deleted value in the hash table.
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2009-11-03  Dan Bernstein  <mitz@apple.com>
 
         Leopard build fix
