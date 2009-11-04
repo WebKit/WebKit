@@ -3,7 +3,7 @@ This test checks that on a successful drop we can access event.dataTransfer.type
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS event.dataTransfer.types[0] is "text"
+PASS event.dataTransfer.types contains format "text/plain"
 
 TEST COMPLETE
 

@@ -13,7 +13,7 @@
     var consoleElm;
     var event;
     
-    var FORMAT_TYPE = 'text';
+    var FORMAT_TYPE = 'text/plain';
     var ALLOWED_EFFECT = 'copy';
     var DROP_EFFECT = 'copy';
     
@@ -85,7 +85,10 @@
     {
         event = e;
         var formatTypes = e.dataTransfer.types; // This line causes the crash.
-        shouldBeEqualToString('event.dataTransfer.types[0]', FORMAT_TYPE);
+        if (event.dataTransfer.types.indexOf(FORMAT_TYPE) == -1)
+            testFailed('event.dataTransfer.types should contain format "' + FORMAT_TYPE + '", but it does not.');
+        else
+            testPassed('event.dataTransfer.types contains format "' + FORMAT_TYPE + '"');
     }
 
     function runTest()
