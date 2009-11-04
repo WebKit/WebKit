@@ -1,3 +1,83 @@
+2009-11-04  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 28420 -  Implement HTML5 <ruby> rendering
+        (https://bugs.webkit.org/show_bug.cgi?id=28420)
+
+        First rudimentary implementation of HTML5 ruby rendering support - layout tests.
+
+        New layout tests: basic rendering:
+        * fast/ruby/ruby-empty-rt.html: Added.
+        * fast/ruby/ruby-length.html: Added.
+        * fast/ruby/ruby-run-break.html: Added.
+        * fast/ruby/ruby-runs-spans.html: Added.
+        * fast/ruby/ruby-runs.html: Added.
+        * fast/ruby/ruby-simple-rp.html: Added.
+        * fast/ruby/ruby-simple.html: Added.
+        * fast/ruby/ruby-trailing.html: Added.
+        
+        New layout tests: DOM manipulation within <ruby>
+        * fast/ruby/rubyDOM-insert-rt.html: Added.
+        * fast/ruby/rubyDOM-insert-text1.html: Added.
+        * fast/ruby/rubyDOM-insert-text2.html: Added.
+        * fast/ruby/rubyDOM-insert-text3.html: Added.
+        * fast/ruby/rubyDOM-remove-rt1.html: Added.
+        * fast/ruby/rubyDOM-remove-rt2.html: Added.
+        * fast/ruby/rubyDOM-remove-text1.html: Added.
+        * fast/ruby/rubyDOM-remove-text2.html: Added.
+        
+        New layout tests results:
+        * platform/mac/fast/ruby: Added.
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-length-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-length-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-length-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-run-break-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-run-break-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-run-break-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-runs-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-runs-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-runs-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-simple-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-simple-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-simple-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.txt: Added.
+        * platform/mac/fast/ruby/ruby-trailing-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-trailing-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-trailing-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.txt: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.checksum: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.png: Added.
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.txt: Added.
+
 2009-11-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

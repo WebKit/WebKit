@@ -1,0 +1,21 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function test()
+{
+    var ruby = document.getElementById('r');
+    var k = document.getElementById('rt');
+    ruby.removeChild(rt);    
+}
+</script>
+</head>
+<body onload="test()">
+<p>The following is a test for DOM manipulation within &lt;ruby&gt;: Removing the last &lt;rt&gt;, forcing a merge with the right neighbour run</p>
+<p>Both lines should look identical (the first line is the one manipulated).</p>
+<br>
+<br>
+<p>準太郎は<ruby id="r">工業<rt id="rt">Shouldn't show</rt>大学<rt>こうぎょうだいがく</rt></ruby>から卒業しました。</p>
+<p>準太郎は<ruby>工業大学<rt>こうぎょうだいがく</rt></ruby>から卒業しました。</p>
+</body>
+</html>

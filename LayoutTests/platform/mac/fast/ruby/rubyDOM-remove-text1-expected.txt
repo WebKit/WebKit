@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 762x18
+          text run at (0,0) width 762: "The following is a test for DOM manipulation within <ruby>: Removing a ruby base object, leaving the base non-empty."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 436x18
+          text run at (0,0) width 436: "Both lines should look identical (the first line is the one manipulated)."
+      RenderBlock (anonymous) at (0,68) size 784x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderBlock {P} at (0,120) size 784x34
+        RenderText {#text} at (0,16) size 64x18
+          text run at (0,16) width 64: "\x{6E96}\x{592A}\x{90CE}\x{306F}"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x18
+          RenderRubyRun (anonymous) at (64,0) size 40x34
+            RenderRubyText {RT} at (0,0) size 40x13
+              RenderText {#text} at (0,0) size 40x13
+                text run at (0,0) width 40: "\x{3060}\x{3044}\x{304C}\x{304F}"
+            RenderRubyBase (anonymous) at (0,13) size 40x21
+              RenderInline {SPAN} at (0,0) size 32x18
+                RenderText {#text} at (4,3) size 32x18
+                  text run at (4,3) width 32: "\x{5927}\x{5B66}"
+        RenderText {#text} at (104,16) size 144x18
+          text run at (104,16) width 144: "\x{304B}\x{3089}\x{5352}\x{696D}\x{3057}\x{307E}\x{3057}\x{305F}\x{3002}"
+      RenderBlock {P} at (0,170) size 784x34
+        RenderText {#text} at (0,16) size 64x18
+          text run at (0,16) width 64: "\x{6E96}\x{592A}\x{90CE}\x{306F}"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x18
+          RenderRubyRun (anonymous) at (64,0) size 40x34
+            RenderRubyText {RT} at (0,0) size 40x13
+              RenderText {#text} at (0,0) size 40x13
+                text run at (0,0) width 40: "\x{3060}\x{3044}\x{304C}\x{304F}"
+            RenderRubyBase (anonymous) at (0,13) size 40x21
+              RenderInline {SPAN} at (0,0) size 32x18
+                RenderText {#text} at (4,3) size 32x18
+                  text run at (4,3) width 32: "\x{5927}\x{5B66}"
+        RenderText {#text} at (104,16) size 144x18
+          text run at (104,16) width 144: "\x{304B}\x{3089}\x{5352}\x{696D}\x{3057}\x{307E}\x{3057}\x{305F}\x{3002}"

@@ -1,0 +1,21 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function test()
+{
+    var ruby = document.getElementById('r');
+    var k = document.getElementById('k');
+    ruby.removeChild(k);    
+}
+</script>
+</head>
+<body onload="test()">
+<p>The following is a test for DOM manipulation within &lt;ruby&gt;: Removing a ruby base object, leaving the base non-empty.</p>
+<p>Both lines should look identical (the first line is the one manipulated).</p>
+<br>
+<br>
+<p>準太郎は<ruby id="r"><span id="k">工業</span><span>大学</span><rt>だいがく</rt></ruby>から卒業しました。</p>
+<p>準太郎は<ruby><span>大学</span><rt>だいがく</rt></ruby>から卒業しました。</p>
+</body>
+</html>

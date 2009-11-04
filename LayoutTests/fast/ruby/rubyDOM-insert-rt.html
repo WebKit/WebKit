@@ -1,0 +1,24 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function test()
+{
+    var ruby = document.getElementById('R');
+    var span = document.getElementById('D');
+    var newRT = document.createElement('rt');
+    var newRTText = document.createTextNode('こうぎょう');
+    newRT.appendChild(newRTText);
+    ruby.insertBefore(newRT, span);    
+}
+</script>
+</head>
+<body onload="test()">
+<p>The following is a test for DOM manipulation within &lt;ruby&gt;: Inserting a new &lt;rt&gt; element</p>
+<p>Both lines should look identical (the first line is the one manipulated).</p>
+<br>
+<br>
+<p>準太郎は<ruby id="R"><span id="T">東京</span><rt>とうきょう</rt><span id="K">工業</span><span id="D">大学</span><rt>だいがく</rt></ruby>から卒業しました。</p>
+<p>準太郎は<ruby><span>東京</span><rt>とうきょう</rt><span>工業</span><rt>こうぎょう</rt><span>大学</span><rt>だいがく</rt></ruby>から卒業しました。</p>
+</body>
+</html>
