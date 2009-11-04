@@ -95,11 +95,11 @@ public:
     };
 
     enum DoubleCondition {
-        DoubleEqual = ARMv7Assembler::ConditionEQ,
+        DoubleEqualOrUnordered = ARMv7Assembler::ConditionEQ,
         DoubleGreaterThan = ARMv7Assembler::ConditionGT,
         DoubleGreaterThanOrEqual = ARMv7Assembler::ConditionGE,
-        DoubleLessThan = ARMv7Assembler::ConditionLO,
-        DoubleLessThanOrEqual = ARMv7Assembler::ConditionLS,
+        DoubleLessThanOrUnordered = ARMv7Assembler::ConditionLO,
+        DoubleLessThanOrEqualOrUnordered = ARMv7Assembler::ConditionLS,
     };
 
     static const RegisterID stackPointerRegister = ARMRegisters::sp;

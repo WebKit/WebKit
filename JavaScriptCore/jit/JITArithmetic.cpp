@@ -829,11 +829,11 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 break;
             case op_jnless:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT0, fpRegT2), dst);
+                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT0, fpRegT2), dst);
                 break;
             case op_jnlesseq:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleLessThan, fpRegT0, fpRegT2), dst);
+                addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT0, fpRegT2), dst);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -882,11 +882,11 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 break;
             case op_jnless:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT1, fpRegT0), dst);
+                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
             case op_jnlesseq:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThan, fpRegT1, fpRegT0), dst);
+                addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1000,20 +1000,11 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     divDouble(fpRegT1, fpRegT0);
 
     JumpList doubleResult;
-    if (!isOperandConstantImmediateInt(op1) || getConstantOperand(op1).asInt32() > 1) {
-        m_assembler.cvttsd2si_rr(fpRegT0, regT0);
-        convertInt32ToDouble(regT0, fpRegT1);
-        m_assembler.ucomisd_rr(fpRegT1, fpRegT0);
+    branchConvertDoubleToInt32(fpRegT0, regT0, doubleResult, fpRegT1);
 
-        doubleResult.append(m_assembler.jne());
-        doubleResult.append(m_assembler.jp());
-        
-        doubleResult.append(branchTest32(Zero, regT0));
-
-        // Int32 result.
-        emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
-        end.append(jump());
-    }
+    // Int32 result.
+    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+    end.append(jump());
 
     // Double result.
     doubleResult.link(this);
@@ -1365,7 +1356,7 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
             move(Imm32(op2imm), regT1);
             convertInt32ToDouble(regT1, fpRegT1);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqual, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
@@ -1406,7 +1397,7 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
             move(Imm32(op1imm), regT0);
             convertInt32ToDouble(regT0, fpRegT0);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqual, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
@@ -1452,7 +1443,7 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
             loadDouble(Address(regT1, OBJECT_OFFSETOF(JSNumberCell, m_value)), fpRegT1);
 #endif
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqual, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
 
@@ -1550,7 +1541,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             move(Imm32(op2imm), regT1);
             convertInt32ToDouble(regT1, fpRegT1);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThan, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -1591,7 +1582,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             move(Imm32(op1imm), regT0);
             convertInt32ToDouble(regT0, fpRegT0);
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThan, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -1637,7 +1628,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
             loadDouble(Address(regT1, OBJECT_OFFSETOF(JSNumberCell, m_value)), fpRegT1);
 #endif
 
-            emitJumpSlowToHot(branchDouble(DoubleLessThan, fpRegT1, fpRegT0), target);
+            emitJumpSlowToHot(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), target);
 
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnlesseq));
 
@@ -2160,27 +2151,10 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     }
     divDouble(fpRegT1, fpRegT0);
 
-    JumpList doubleResult;
-    Jump end;
-    bool attemptIntConversion = (!isOperandConstantImmediateInt(op1) || getConstantOperand(op1).asInt32() > 1) && isOperandConstantImmediateInt(op2);
-    if (attemptIntConversion) {
-        m_assembler.cvttsd2si_rr(fpRegT0, regT0);
-        doubleResult.append(branchTest32(Zero, regT0));
-        m_assembler.ucomisd_rr(fpRegT1, fpRegT0);
-        
-        doubleResult.append(m_assembler.jne());
-        doubleResult.append(m_assembler.jp());
-        emitFastArithIntToImmNoCheck(regT0, regT0);
-        end = jump();
-    }
-
     // Double result.
-    doubleResult.link(this);
     moveDoubleToPtr(fpRegT0, regT0);
     subPtr(tagTypeNumberRegister, regT0);
 
-    if (attemptIntConversion)
-        end.link(this);
     emitPutVirtualRegister(dst, regT0);
 }
 

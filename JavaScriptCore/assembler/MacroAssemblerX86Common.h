@@ -36,6 +36,10 @@
 namespace JSC {
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
+    static const int DoubleConditionBitInvert = 0x10;
+    static const int DoubleConditionBitSpecial = 0x20;
+    static const int DoubleConditionBits = DoubleConditionBitInvert | DoubleConditionBitSpecial;
+
 public:
 
     enum Condition {
@@ -56,13 +60,24 @@ public:
     };
 
     enum DoubleCondition {
-        DoubleEqual = X86Assembler::ConditionE,
+        // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
+        DoubleEqual = X86Assembler::ConditionE | DoubleConditionBitSpecial,
         DoubleNotEqual = X86Assembler::ConditionNE,
         DoubleGreaterThan = X86Assembler::ConditionA,
         DoubleGreaterThanOrEqual = X86Assembler::ConditionAE,
-        DoubleLessThan = X86Assembler::ConditionB,
-        DoubleLessThanOrEqual = X86Assembler::ConditionBE,
+        DoubleLessThan = X86Assembler::ConditionA | DoubleConditionBitInvert,
+        DoubleLessThanOrEqual = X86Assembler::ConditionAE | DoubleConditionBitInvert,
+        // If either operand is NaN, these conditions always evaluate to true.
+        DoubleEqualOrUnordered = X86Assembler::ConditionE,
+        DoubleNotEqualOrUnordered = X86Assembler::ConditionNE | DoubleConditionBitSpecial,
+        DoubleGreaterThanOrUnordered = X86Assembler::ConditionB | DoubleConditionBitInvert,
+        DoubleGreaterThanOrEqualOrUnordered = X86Assembler::ConditionBE | DoubleConditionBitInvert,
+        DoubleLessThanOrUnordered = X86Assembler::ConditionB,
+        DoubleLessThanOrEqualOrUnordered = X86Assembler::ConditionBE,
     };
+    COMPILE_ASSERT(
+        !((X86Assembler::ConditionE | X86Assembler::ConditionNE | X86Assembler::ConditionA | X86Assembler::ConditionAE | X86Assembler::ConditionB | X86Assembler::ConditionBE) & DoubleConditionBits),
+        DoubleConditionBits_should_not_interfere_with_X86Assembler_Condition_codes);
 
     static const RegisterID stackPointerRegister = X86Registers::esp;
 
@@ -416,20 +431,35 @@ public:
 
     void convertInt32ToDouble(Address src, FPRegisterID dest)
     {
+        ASSERT(isSSE2Present());
         m_assembler.cvtsi2sd_mr(src.offset, src.base, dest);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
         ASSERT(isSSE2Present());
-        m_assembler.ucomisd_rr(right, left);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
-    }
 
-    Jump branchDouble(DoubleCondition cond, FPRegisterID left, Address right)
-    {
-        m_assembler.ucomisd_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomisd_rr(left, right);
+        else
+            m_assembler.ucomisd_rr(right, left);
+
+        if (cond == DoubleEqual) {
+            Jump isUnordered(m_assembler.jp());
+            Jump result = Jump(m_assembler.je());
+            isUnordered.link(this);
+            return result;
+        } else if (cond == DoubleNotEqualOrUnordered) {
+            Jump isUnordered(m_assembler.jp());
+            Jump isEqual(m_assembler.je());
+            isUnordered.link(this);
+            Jump result = jump();
+            isEqual.link(this);
+            return result;
+        }
+
+        ASSERT(!(cond & DoubleConditionBitSpecial));
+        return Jump(m_assembler.jCC(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits)));
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
@@ -441,6 +471,25 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.cvttsd2si_rr(src, dest);
         return branch32(Equal, dest, Imm32(0x80000000));
+    }
+
+    // Convert 'src' to an integer, and places the resulting 'dest'.
+    // If the result is not representable as a 32 bit value, branch.
+    // May also branch for some values that are representable in 32 bits
+    // (specifically, in this case, 0).
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvttsd2si_rr(src, dest);
+
+        // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
+        failureCases.append(branchTest32(Zero, dest));
+
+        // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
+        convertInt32ToDouble(dest, fpTemp);
+        m_assembler.ucomisd_rr(fpTemp, src);
+        failureCases.append(m_assembler.jp());
+        failureCases.append(m_assembler.jne());
     }
 
     void zeroDouble(FPRegisterID srcDest)
@@ -885,11 +934,6 @@ public:
 
 protected:
     X86Assembler::Condition x86Condition(Condition cond)
-    {
-        return static_cast<X86Assembler::Condition>(cond);
-    }
-
-    X86Assembler::Condition x86Condition(DoubleCondition cond)
     {
         return static_cast<X86Assembler::Condition>(cond);
     }

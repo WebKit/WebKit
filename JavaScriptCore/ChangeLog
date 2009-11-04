@@ -1,3 +1,32 @@
+2009-11-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31104
+        Refactor x86-specific behaviour out of the JIT.
+
+        - Add explicit double branch conditions for ordered and unordered comparisons (presently the brehaviour is a mix).
+        - Refactor double to int conversion out into the MacroAssembler.
+        - Remove broken double to int conversion for !JSVALUE32_64 builds - this code was broken and slowing us down, fixing it showed it not to be an improvement.
+        - Remove exclusion of double to int conversion from (1 % X) cases in JSVALUE32_64 builds - if this was of benefit this is no longer the case; simplify.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::):
+        (JSC::MacroAssemblerX86Common::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+
 2009-11-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -786,7 +786,7 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
         zeroDouble(fpRegT0);
         emitLoadDouble(cond, fpRegT1);
-        addJump(branchDouble(DoubleEqual, fpRegT0, fpRegT1), target);
+        addJump(branchDouble(DoubleEqualOrUnordered, fpRegT0, fpRegT1), target);
     } else
         addSlowCase(isNotInteger);
 
