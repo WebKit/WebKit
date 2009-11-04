@@ -30,7 +30,6 @@ FontPlatformData::FontPlatformData(const FontDescription& description, int wordS
     : m_size(0.0f)
     , m_bold(false)
     , m_oblique(false)
-    , m_isDeletedValue(false)
 {
     QString familyName;
     const FontFamily* family = &description.family();
@@ -56,11 +55,10 @@ FontPlatformData::FontPlatformData(const FontDescription& description, int wordS
 }
 
 FontPlatformData::FontPlatformData(const QFont& font, bool bold)
-    : m_font(font)
-    , m_size(font.pointSize())
+    : m_size(font.pointSize())
     , m_bold(bold)
     , m_oblique(false)
-    , m_isDeletedValue(false)
+    , m_font(font)
 {
 }
 
@@ -69,16 +67,14 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
     : m_size(size)
     , m_bold(bold)
     , m_oblique(oblique)
-    , m_isDeletedValue(false)
 {
 }
 #endif
 
 FontPlatformData::FontPlatformData()
-    : m_size(m_font.pointSize())
+    : m_size(0.0f)
     , m_bold(false)
     , m_oblique(false)
-    , m_isDeletedValue(false)
 {
 }
 

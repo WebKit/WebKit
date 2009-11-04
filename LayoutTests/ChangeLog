@@ -1,3 +1,14 @@
+2009-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout.
+
+        Revert r50496 because it broke all layout tests on QtBuildBot.
+
+        * svg/text/resources: Removed.
+        * svg/text/resources/text-font-invalid.svg: Removed.
+        * svg/text/text-font-invalid-expected.txt: Removed.
+        * svg/text/text-font-invalid.html: Removed.
+
 2009-11-03  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Mark Rowe.

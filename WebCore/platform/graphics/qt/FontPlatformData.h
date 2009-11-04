@@ -26,7 +26,6 @@
 
 #include "FontDescription.h"
 #include <QFont>
-#include <QHash>
 
 namespace WebCore {
 
@@ -41,13 +40,6 @@ public:
     FontPlatformData();
     FontPlatformData(const FontDescription&, int wordSpacing = 0, int letterSpacing = 0);
     FontPlatformData(const QFont&, bool bold);
-
-    FontPlatformData(WTF::HashTableDeletedValueType)
-        : m_isDeletedValue(true)
-    {
-    }
-
-    bool isHashTableDeletedValue() const { return m_isDeletedValue; }
 
     static inline QFont::Weight toQFontWeight(FontWeight fontWeight)
     {
@@ -77,34 +69,15 @@ public:
     bool italic() const { return m_font.italic(); }
     bool smallCaps() const { return m_font.capitalization() == QFont::SmallCaps; }
     int pixelSize() const { return m_font.pixelSize(); }
-    unsigned hash() const
-    {
-        float size = m_size;
-        return qHash(m_isDeletedValue)
-               ^ qHash(m_bold)
-               ^ qHash(m_oblique)
-               ^ qHash(*reinterpret_cast<quint32*>(&size))
-               ^ qHash(m_font.toString());
-    }
-
-    bool operator==(const FontPlatformData& other) const
-    {
-        return (m_isDeletedValue && m_isDeletedValue == other.m_isDeletedValue)
-                || (m_bold == other.m_bold
-                    && m_oblique == other.m_oblique
-                    && m_size == other.m_size
-                    && m_font == m_font);
-    }
 
 #ifndef NDEBUG
     String description() const;
 #endif
 
-    QFont m_font;
     float m_size;
-    bool m_bold : 1;
-    bool m_oblique : 1;
-    bool m_isDeletedValue : 1;
+    bool m_bold;
+    bool m_oblique;
+    QFont m_font;
 };
 
 } // namespace WebCore

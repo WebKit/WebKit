@@ -1,3 +1,47 @@
+2009-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout.
+
+        Revert r50496 because it broke all layout tests on QtBuildBot.
+
+        * WebCore.pro:
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::fontCache):
+        (WebCore::FontCache::FontCache):
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue):
+        (WebCore::FontPlatformDataCacheKey::):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::FontPlatformDataCacheKey::hash):
+        (WebCore::FontPlatformDataCacheKey::computeHash):
+        (WebCore::FontPlatformDataCacheKey::hashTableDeletedSize):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontPlatformDataCacheKeyHash::equal):
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::constructDeletedValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::isDeletedValue):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::getCachedFontData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::releaseFontData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::addClient):
+        (WebCore::FontCache::removeClient):
+        (WebCore::FontCache::invalidate):
+        * platform/graphics/qt/FontFallbackListQt.cpp: Added.
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::releaseFontData):
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+        (WebCore::FontFallbackList::setPlatformFont):
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformData::pixelSize):
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2009-11-04  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Jan Alonzo.
