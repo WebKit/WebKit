@@ -44,6 +44,7 @@ module window {
         [CustomArgumentHandling] void trace();
         [CustomArgumentHandling, ImplementationFunction=assertCondition] void assert(in boolean condition);
         [CustomArgumentHandling] void count();
+        [CustomArgumentHandling] void markTimeline();
 
 #if defined(ENABLE_WML) && ENABLE_WML
         [DontEnum] DOMString lastWMLErrorMessage();

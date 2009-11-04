@@ -1,3 +1,32 @@
+2009-11-04  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds API to the console object for annotating the
+        inspector timeline. This allows developers to mark logical
+        checkpoints in their apps and have them overlaid in the event
+        record tree.
+
+        tests updated: LayoutTests/fast/dom/Window/window-properties.html
+        https://bugs.webkit.org/show_bug.cgi?id=31082
+
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::markTimeline):
+        * inspector/InspectorController.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createMarkTimelineRecord):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+        * page/Console.cpp:
+        (WebCore::Console::markTimeline):
+        * page/Console.h:
+        * page/Console.idl:
+
 2009-11-03  Simon Hausmann  <hausmann@webkit.org>
 
         Unreviewed build fix for WebInspector with Qt build.

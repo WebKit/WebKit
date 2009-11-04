@@ -104,6 +104,15 @@ ScriptObject TimelineRecordFactory::createEvaluateScriptTimelineRecord(Inspector
     return item;
 }
 
+ScriptObject TimelineRecordFactory::createMarkTimelineRecord(InspectorFrontend* frontend, double startTime, const String& message) 
+{
+    ScriptObject item = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("message", message);
+    item.set("data", data);
+    return item;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

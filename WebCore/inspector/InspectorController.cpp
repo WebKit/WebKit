@@ -417,6 +417,12 @@ void InspectorController::endGroup(MessageSource source, unsigned lineNumber, co
     addConsoleMessage(0, new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
 }
 
+void InspectorController::markTimeline(const String& message)
+{
+    if (timelineAgent())
+        timelineAgent()->didMarkTimeline(message);
+}
+
 static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)
 {
     return roundf(max(minimumAttachedHeight, min<float>(preferredHeight, totalWindowHeight * maximumAttachedHeightRatio)));

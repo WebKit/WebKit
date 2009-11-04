@@ -44,7 +44,8 @@ WebInspector.TimelineAgent.RecordType = {
     TimerFire           : 7,
     XHRReadyStateChange : 8,
     XHRLoad             : 9,
-    EvaluateScript      : 10
+    EvaluateScript      : 10,
+    MarkTimeline        : 11
 };
 
 WebInspector.addRecordToTimeline = function(record) {

@@ -156,6 +156,11 @@ void InspectorTimelineAgent::didEvaluateScript()
     didCompleteCurrentRecord(EvaluateScriptTimelineRecordType);
 }
 
+void InspectorTimelineAgent::didMarkTimeline(const String& message)
+{
+    addRecordToTimeline(TimelineRecordFactory::createMarkTimelineRecord(m_frontend, currentTimeInMilliseconds(), message), MarkTimelineRecordType);
+}
+
 void InspectorTimelineAgent::reset()
 {
     m_recordStack.clear();

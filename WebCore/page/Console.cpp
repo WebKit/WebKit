@@ -270,6 +270,23 @@ void Console::count(ScriptCallStack* callStack)
 #endif
 }
 
+void Console::markTimeline(ScriptCallStack* callStack)
+{
+#if ENABLE(INSPECTOR)
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    String message;
+    getFirstArgumentAsString(callStack->state(), lastCaller, message);
+
+    page->inspectorController()->markTimeline(message);
+#else
+    UNUSED_PARAM(callStack);
+#endif
+}
+
 #if ENABLE(WML)
 String Console::lastWMLErrorMessage() const
 {

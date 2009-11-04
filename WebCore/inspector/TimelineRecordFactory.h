@@ -54,6 +54,8 @@ namespace WebCore {
         
         static ScriptObject createEvaluateScriptTimelineRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
 
+        static ScriptObject createMarkTimelineRecord(InspectorFrontend*, double startTime, const String&);
+
     private:
         TimelineRecordFactory() { }
     };
