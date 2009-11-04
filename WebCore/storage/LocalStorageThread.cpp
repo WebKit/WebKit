@@ -33,70 +33,93 @@
 
 namespace WebCore {
 
-PassOwnPtr<LocalStorageThread> LocalStorageThread::create()
+PassRefPtr<LocalStorageThread> LocalStorageThread::create()
 {
-    return new LocalStorageThread;
+    return adoptRef(new LocalStorageThread);
 }
 
 LocalStorageThread::LocalStorageThread()
     : m_threadID(0)
+    , m_terminated(false)
 {
-}
-
-LocalStorageThread::~LocalStorageThread()
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_threadID);
+    m_selfRef = this;
 }
 
 bool LocalStorageThread::start()
 {
-    ASSERT(isMainThread());
-    if (!m_threadID)
-        m_threadID = createThread(LocalStorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
+    MutexLocker lock(m_threadCreationMutex);
+
+    if (m_threadID)
+        return true;
+
+    m_threadID = createThread(LocalStorageThread::localStorageThreadStart, this, "WebCore: LocalStorage");
+
     return m_threadID;
 }
 
-void* LocalStorageThread::threadEntryPointCallback(void* thread)
+void* LocalStorageThread::localStorageThreadStart(void* thread)
 {
-    return static_cast<LocalStorageThread*>(thread)->threadEntryPoint();
+    return static_cast<LocalStorageThread*>(thread)->localStorageThread();
 }
 
-void* LocalStorageThread::threadEntryPoint()
+void* LocalStorageThread::localStorageThread()
 {
-    ASSERT(!isMainThread());
+    {
+        // Wait for LocalStorageThread::start() to complete.
+        MutexLocker lock(m_threadCreationMutex);
+    }
+
     while (OwnPtr<LocalStorageTask> task = m_queue.waitForMessage())
         task->performTask();
+
+    // Detach the thread so its resources are no longer of any concern to anyone else
+    detachThread(m_threadID);
+    m_threadID = 0;
+
+    // Clear the self refptr, possibly resulting in deletion
+    m_selfRef = 0;
 
     return 0;
 }
 
-void LocalStorageThread::scheduleTask(PassRefPtr<LocalStorageTask> task)
+void LocalStorageThread::scheduleImport(StorageAreaSync* area)
 {
-    ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_threadID);
-    m_queue.append(task);
+    m_queue.append(LocalStorageTask::createImport(area));
+}
+
+void LocalStorageThread::scheduleSync(StorageAreaSync* area)
+{
+    ASSERT(!m_queue.killed() && m_threadID);
+    m_queue.append(LocalStorageTask::createSync(area));
 }
 
 void LocalStorageThread::terminate()
 {
     ASSERT(isMainThread());
+
+    // Ideally we'd never be killing a thread that wasn't live, so ASSERT it.
+    // But if we do in a release build, make sure to not wait on a condition that will never get signalled
     ASSERT(!m_queue.killed() && m_threadID);
-    // Even in weird, exceptional cases, don't wait on a nonexistent thread to terminate.
     if (!m_threadID)
         return;
 
-    void* returnValue;
     m_queue.append(LocalStorageTask::createTerminate(this));
-    waitForThreadCompletion(m_threadID, &returnValue);
-    ASSERT(m_queue.killed());
-    m_threadID = 0;
+
+    MutexLocker locker(m_terminateLock);
+    while (!m_terminated)
+        m_terminateCondition.wait(m_terminateLock);
 }
 
 void LocalStorageThread::performTerminate()
 {
     ASSERT(!isMainThread());
+
     m_queue.kill();
+
+    MutexLocker locker(m_terminateLock);
+    m_terminated = true;
+    m_terminateCondition.signal();
 }
 
 }

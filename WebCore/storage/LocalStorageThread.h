@@ -30,7 +30,6 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -40,27 +39,35 @@ namespace WebCore {
     class LocalStorageTask;
 
     // FIXME: Rename this class to StorageThread
-    class LocalStorageThread : public Noncopyable {
+    class LocalStorageThread : public ThreadSafeShared<LocalStorageThread> {
     public:
-        static PassOwnPtr<LocalStorageThread> create();
-        ~LocalStorageThread();
+        static PassRefPtr<LocalStorageThread> create();
 
         bool start();
-        void terminate();
-        void scheduleTask(PassRefPtr<LocalStorageTask>);
 
-        // Background thread part of the terminate procedure.
+        void scheduleImport(StorageAreaSync*);
+        void scheduleSync(StorageAreaSync*);
+
+        // Called from the main thread to synchronously shut down this thread
+        void terminate();
+        // Background thread part of the terminate procedure
         void performTerminate();
 
     private:
         LocalStorageThread();
 
-        // Called on background thread.
-        static void* threadEntryPointCallback(void*);
-        void* threadEntryPoint();
+        static void* localStorageThreadStart(void*);
+        void* localStorageThread();
 
+        Mutex m_threadCreationMutex;
         ThreadIdentifier m_threadID;
+        RefPtr<LocalStorageThread> m_selfRef;
+
         MessageQueue<LocalStorageTask> m_queue;
+
+        Mutex m_terminateLock;
+        ThreadCondition m_terminateCondition;
+        bool m_terminated;
     };
 
 } // namespace WebCore
