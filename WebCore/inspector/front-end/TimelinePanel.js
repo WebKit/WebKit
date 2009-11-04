@@ -45,6 +45,7 @@ WebInspector.TimelinePanel = function()
     this.calculator = new WebInspector.TimelineCalculator();
     for (category in this.categories)
         this.showCategory(category);
+    this._resourceURLs = {};
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -139,9 +140,9 @@ WebInspector.TimelinePanel.prototype = {
 
     _formatRecord: function(record)
     {
+        var recordTypes = WebInspector.TimelineAgent.RecordType;
         if (!this._recordStyles) {
             this._recordStyles = {};
-            var recordTypes = WebInspector.TimelineAgent.RecordType;
             this._recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: this.categories.scripting };
             this._recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: this.categories.rendering };
             this._recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: this.categories.rendering };
@@ -153,6 +154,10 @@ WebInspector.TimelinePanel.prototype = {
             this._recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: this.categories.scripting };
             this._recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: this.categories.scripting };
             this._recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
+            this._recordStyles[recordTypes.MarkTimeline] = { title: WebInspector.UIString("Mark"), category: this.categories.scripting };
+            this._recordStyles[recordTypes.ResourceSendRequest] = { title: WebInspector.UIString("Send Request"), category: this.categories.loading };
+            this._recordStyles[recordTypes.ResourceReceiveResponse] = { title: WebInspector.UIString("Receive Response"), category: this.categories.loading };
+            this._recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: this.categories.loading };
         }
 
         var style = this._recordStyles[record.type];
@@ -176,6 +181,8 @@ WebInspector.TimelinePanel.prototype = {
         switch (record.type) {
         case WebInspector.TimelineAgent.RecordType.EventDispatch:
             return record.data ? record.data.type : "";
+        case WebInspector.TimelineAgent.RecordType.Paint:
+            return record.data.width + " x " + record.data.height;
         case WebInspector.TimelineAgent.RecordType.TimerInstall:
         case WebInspector.TimelineAgent.RecordType.TimerRemove:
         case WebInspector.TimelineAgent.RecordType.TimerFire:
@@ -183,7 +190,14 @@ WebInspector.TimelinePanel.prototype = {
         case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
         case WebInspector.TimelineAgent.RecordType.XHRLoad:
         case WebInspector.TimelineAgent.RecordType.EvaluateScript:
-            return record.data.url;
+        case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
+            this._resourceURLs[record.data.identifier] = record.data.url;
+            return WebInspector.displayNameForURL(record.data.url);
+        case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
+        case WebInspector.TimelineAgent.RecordType.ResourceFinish:
+            return WebInspector.displayNameForURL(this._resourceURLs[record.data.identifier]);
+        case WebInspector.TimelineAgent.RecordType.MarkTimeline:
+            return record.data.message;
         default:
             return "";
         }
@@ -197,6 +211,7 @@ WebInspector.TimelinePanel.prototype = {
         for (var category in this.categories)
             this._categoryGraphs[category].clearChunks();
         this._setWindowPosition(0, this._overviewGridElement.clientWidth);
+        this._resourceURLs = {};
     },
 
     _createOverview: function()
@@ -455,8 +470,10 @@ WebInspector.TimelineCategoryTreeElement.prototype = {
     _onCheckboxClicked: function (event) {
         if (event.target.checked)
             WebInspector.panels.timeline.showCategory(this._category.name);
-        else
+        else {
             WebInspector.panels.timeline.hideCategory(this._category.name);
+            WebInspector.panels.timeline.adjustScrollPosition();
+        }
         WebInspector.panels.timeline._categoryGraphs[this._category.name].dimmed = !event.target.checked;
     }
 }
@@ -496,6 +513,7 @@ WebInspector.TimelineRecordTreeElement.prototype = {
             var dataElement = document.createElement("span");
             dataElement.className = "data";
             dataElement.textContent = "(" + this._record.details + ")";
+            dataElement.title = this._record.details;
             dataElement.addStyleClass("dimmed");
             this.listItemElement.appendChild(separatorElement);
             this.listItemElement.appendChild(dataElement);

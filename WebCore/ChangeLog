@@ -1,3 +1,23 @@
+2009-11-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Add basic support for resource events and marks.
+        Couple of drive-by fixes. Enabling the panel!
+
+        https://bugs.webkit.org/show_bug.cgi?id=31130
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelineCategoryTreeElement.prototype._onCheckboxClicked):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2009-11-03  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
