@@ -1,3 +1,14 @@
+2009-11-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        WebActionModifierFlagsKey should return an unsigned, because
+        flags imply a bitmask, and that is what other classes expect from
+        it.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+
 2009-11-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by John Sullivan and Mark Rowe.
