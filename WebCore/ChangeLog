@@ -1,3 +1,31 @@
+2009-11-04  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Followon to bug 31080, which protects Timeline
+        instrumentation in the case where InspectorTimelineAgent
+        is enabled or disabled during an event dispatch.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31121
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::inspectorTimelineAgent):
+        (WebCore::DOMWindow::dispatchEvent):
+        * page/DOMWindow.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+
 2009-11-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert 50519 while I work out what went wrong.

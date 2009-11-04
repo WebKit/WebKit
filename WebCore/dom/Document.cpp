@@ -1231,8 +1231,7 @@ void Document::recalcStyle(StyleChange change)
         return; // Guard against re-entrancy. -dwh
 
 #if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
-    if (timelineAgent)
+    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent())
         timelineAgent->willRecalculateStyle();
 #endif
 
@@ -1312,7 +1311,7 @@ bail_out:
     }
 
 #if ENABLE(INSPECTOR)
-    if (timelineAgent)
+    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent())
         timelineAgent->didRecalculateStyle();
 #endif
 }

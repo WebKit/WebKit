@@ -2576,7 +2576,7 @@ doneDispatching:
 
 doneWithDefault:
 #if ENABLE(INSPECTOR)
-    if (timelineAgentIsActive)
+    if (timelineAgentIsActive && (timelineAgent = document()->inspectorTimelineAgent()))
         timelineAgent->didDispatchEvent();
 #endif
 
