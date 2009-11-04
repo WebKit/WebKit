@@ -1,3 +1,36 @@
+2009-11-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Simplify LocalStorageThread
+        https://bugs.webkit.org/show_bug.cgi?id=30935
+
+        On LocalStoragethread: Remove reference counting. Get rid of locking. Make some
+        of the method names a bit more clear. Assert proper thread usage. Join rather
+        than detaching the thread and doing an ad-hoc form of join. Avoid touching
+        variables on the background thread when simple to do so.  Also create a generic
+        scheduleTask function rather than one for each task.
+
+        No behavior should have changed.
+
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::create):
+        (WebCore::LocalStorageThread::LocalStorageThread):
+        (WebCore::LocalStorageThread::~LocalStorageThread):
+        (WebCore::LocalStorageThread::start):
+        (WebCore::LocalStorageThread::threadEntryPointCallback):
+        (WebCore::LocalStorageThread::threadEntryPoint):
+        (WebCore::LocalStorageThread::scheduleTask):
+        (WebCore::LocalStorageThread::terminate):
+        (WebCore::LocalStorageThread::performTerminate):
+        * storage/LocalStorageThread.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        (WebCore::StorageSyncManager::~StorageSyncManager):
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        * storage/StorageSyncManager.h:
+
 2009-11-04  Vadim Zeitlin  <vadim@wxwidgets.org>
 
         Reviewed by Eric Seidel.
