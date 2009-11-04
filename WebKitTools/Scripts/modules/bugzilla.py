@@ -228,10 +228,10 @@ class Bugzilla:
         return None
 
     def _validate_reviewer(self, patch, reject_invalid_patches):
-        return self._validate_setter_email(patch, 'reviewer', self.committers.reviewer_by_bugzilla_email, self.reject_patch_from_review_queue, reject_invalid_patches)
+        return self._validate_setter_email(patch, 'reviewer', self.committers.reviewer_by_email, self.reject_patch_from_review_queue, reject_invalid_patches)
 
     def _validate_committer(self, patch, reject_invalid_patches):
-        return self._validate_setter_email(patch, 'committer', self.committers.committer_by_bugzilla_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
+        return self._validate_setter_email(patch, 'committer', self.committers.committer_by_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
 
     def fetch_reviewed_patches_from_bug(self, bug_id, reject_invalid_patches=False):
         reviewed_patches = []

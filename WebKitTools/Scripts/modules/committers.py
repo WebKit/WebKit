@@ -29,17 +29,20 @@
 # WebKit's Python module for committer and reviewer validation
 
 class Committer:
-    def __init__(self, name, email):
+    def __init__(self, name, email_or_emails):
         self.full_name = name
-        self.bugzilla_email = email
+        if isinstance(email_or_emails, str):
+            self.emails = [email_or_emails]
+        else:
+            self.emails = email_or_emails
         self.can_review = False
 
     def __str__(self):
-        return '"%s" <%s>' % (self.full_name, self.bugzilla_email)
+        return '"%s" <%s>' % (self.full_name, self.emails[0])
 
 class Reviewer(Committer):
-    def __init__(self, name, email):
-        Committer.__init__(self, name, email)
+    def __init__(self, name, email_or_emails):
+        Committer.__init__(self, name, email_or_emails)
         self.can_review = True
 
 # This is intended as a cannonical, machine-readable list of all non-reviewer committers for WebKit.
@@ -181,17 +184,21 @@ class CommitterList:
     def committers(self):
         return self._committers
 
+    def reviewers(self):
+        return self._reviewers
+
     def _email_to_committer_map(self):
         if not len(self._committers_by_email):
             for committer in self._committers:
-                self._committers_by_email[committer.bugzilla_email] = committer
+                for email in committer.emails:
+                    self._committers_by_email[email] = committer
         return self._committers_by_email
 
-    def committer_by_bugzilla_email(self, bugzilla_email):
-        return self._email_to_committer_map().get(bugzilla_email)
+    def committer_by_email(self, email):
+        return self._email_to_committer_map().get(email)
 
-    def reviewer_by_bugzilla_email(self, bugzilla_email):
-        committer = self.committer_by_bugzilla_email(bugzilla_email)
+    def reviewer_by_email(self, email):
+        committer = self.committer_by_email(email)
         if committer and not committer.can_review:
             return None
         return committer

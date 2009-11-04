@@ -1,3 +1,17 @@
+2009-11-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        committers.py needs a way to store non-bugzilla email addresses
+        https://bugs.webkit.org/show_bug.cgi?id=31037
+
+        Make Committer and Reviewer constructors take a single email or a list of emails.
+        Change committer_by_bugzilla_email functions to committer_by_email to support lookup by any email.
+        Expose reviewers(), used by validate-committer-lists on bug 30970.
+
+        * Scripts/modules/committers.py:
+        * Scripts/modules/committers_unittest.py: Added tests for the new code.
+
 2009-11-03  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by David Levin.
