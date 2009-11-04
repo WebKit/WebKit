@@ -35,6 +35,7 @@
 
 #include "Event.h"
 #include "InspectorFrontend.h"
+#include "IntRect.h"
 #include "TimelineRecordFactory.h"
 
 #include <wtf/CurrentTime.h>
@@ -82,9 +83,10 @@ void InspectorTimelineAgent::didRecalculateStyle()
     didCompleteCurrentRecord(RecalculateStylesTimelineRecordType);
 }
 
-void InspectorTimelineAgent::willPaint()
+void InspectorTimelineAgent::willPaint(const IntRect& rect)
 {
-    pushCurrentRecord(TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds()), PaintTimelineRecordType);
+    pushCurrentRecord(TimelineRecordFactory::createPaintTimelineRecord(m_frontend, currentTimeInMilliseconds(), rect),
+        PaintTimelineRecordType);
 }
 
 void InspectorTimelineAgent::didPaint()

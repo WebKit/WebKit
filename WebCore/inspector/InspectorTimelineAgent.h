@@ -40,6 +40,7 @@
 namespace WebCore {
     class Event;
     class InspectorFrontend;
+    class IntRect;
 
     // Must be kept in sync with TimelineAgent.js
     enum TimelineRecordType {
@@ -75,7 +76,7 @@ namespace WebCore {
         void willRecalculateStyle();
         void didRecalculateStyle();
 
-        void willPaint();
+        void willPaint(const IntRect&);
         void didPaint();
 
         void willWriteHTML();

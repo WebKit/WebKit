@@ -35,6 +35,7 @@
 
 #include "Event.h"
 #include "InspectorFrontend.h"
+#include "IntRect.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
 namespace WebCore {
@@ -111,6 +112,18 @@ ScriptObject TimelineRecordFactory::createMarkTimelineRecord(InspectorFrontend* 
     data.set("message", message);
     item.set("data", data);
     return item;
+}
+
+ScriptObject TimelineRecordFactory::createPaintTimelineRecord(InspectorFrontend* frontend, double startTime, const IntRect& rect)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("x", rect.x());
+    data.set("y", rect.y());
+    data.set("width", rect.width());
+    data.set("height", rect.height());
+    record.set("data", data);
+    return record;
 }
 
 } // namespace WebCore

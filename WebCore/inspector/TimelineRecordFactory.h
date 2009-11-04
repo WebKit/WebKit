@@ -37,6 +37,7 @@ namespace WebCore {
 
     class Event;
     class InspectorFrontend;
+    class IntRect;
     class ScriptObject;
 
     class TimelineRecordFactory {
@@ -53,6 +54,8 @@ namespace WebCore {
         static ScriptObject createXHRLoadTimelineRecord(InspectorFrontend*, double startTime, const String& url);
         
         static ScriptObject createEvaluateScriptTimelineRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
+        
+        static ScriptObject createPaintTimelineRecord(InspectorFrontend*, double startTime, const IntRect&);
 
         static ScriptObject createMarkTimelineRecord(InspectorFrontend*, double startTime, const String&);
 

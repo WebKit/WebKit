@@ -1617,7 +1617,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 #if ENABLE(INSPECTOR)
     InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
     if (timelineAgent)
-        timelineAgent->willPaint();
+        timelineAgent->willPaint(rect);
 #endif
 
     Document* document = frame()->document();
