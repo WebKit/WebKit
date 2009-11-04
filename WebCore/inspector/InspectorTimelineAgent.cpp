@@ -36,6 +36,8 @@
 #include "Event.h"
 #include "InspectorFrontend.h"
 #include "IntRect.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "TimelineRecordFactory.h"
 
 #include <wtf/CurrentTime.h>
@@ -156,6 +158,31 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 void InspectorTimelineAgent::didEvaluateScript()
 {
     didCompleteCurrentRecord(EvaluateScriptTimelineRecordType);
+}
+
+void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, bool isMainResource,
+    const ResourceRequest& request)
+{
+    ScriptObject record = TimelineRecordFactory::createResourceSendRequestTimelineRecord(m_frontend, currentTimeInMilliseconds(),
+        identifier, isMainResource, request);
+    record.set("type", ResourceSendRequestTimelineRecordType);
+    m_frontend->addRecordToTimeline(record);
+}
+
+void InspectorTimelineAgent::didReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
+{
+    ScriptObject record = TimelineRecordFactory::createResourceReceiveResponseTimelineRecord(m_frontend, currentTimeInMilliseconds(),
+        identifier, response);
+    record.set("type", ResourceReceiveResponseTimelineRecordType);
+    m_frontend->addRecordToTimeline(record);
+}
+
+void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail)
+{
+    ScriptObject record = TimelineRecordFactory::createResourceFinishTimelineRecord(m_frontend, currentTimeInMilliseconds(),
+        identifier, didFail);
+    record.set("type", ResourceFinishTimelineRecordType);
+    m_frontend->addRecordToTimeline(record);
 }
 
 void InspectorTimelineAgent::didMarkTimeline(const String& message)

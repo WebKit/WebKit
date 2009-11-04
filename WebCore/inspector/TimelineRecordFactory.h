@@ -38,6 +38,8 @@ namespace WebCore {
     class Event;
     class InspectorFrontend;
     class IntRect;
+    class ResourceRequest;
+    class ResourceResponse;
     class ScriptObject;
 
     class TimelineRecordFactory {
@@ -55,9 +57,16 @@ namespace WebCore {
         
         static ScriptObject createEvaluateScriptTimelineRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
         
-        static ScriptObject createPaintTimelineRecord(InspectorFrontend*, double startTime, const IntRect&);
-
         static ScriptObject createMarkTimelineRecord(InspectorFrontend*, double startTime, const String&);
+
+        static ScriptObject createResourceSendRequestTimelineRecord(InspectorFrontend*, double startTime,
+            unsigned long identifier, bool isMainResource, const ResourceRequest&);
+        static ScriptObject createResourceReceiveResponseTimelineRecord(InspectorFrontend*, double startTime,
+            unsigned long identifier, const ResourceResponse&);
+        static ScriptObject createResourceFinishTimelineRecord(InspectorFrontend*, double startTime,
+            unsigned long identifier, bool didFail);
+
+        static ScriptObject createPaintTimelineRecord(InspectorFrontend*, double startTime, const IntRect&);
 
     private:
         TimelineRecordFactory() { }

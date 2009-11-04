@@ -36,8 +36,11 @@
 #include "Event.h"
 #include "InspectorFrontend.h"
 #include "IntRect.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
+
 namespace WebCore {
 
 ScriptObject TimelineRecordFactory::createGenericRecord(InspectorFrontend* frontend, double startTime)
@@ -112,6 +115,44 @@ ScriptObject TimelineRecordFactory::createMarkTimelineRecord(InspectorFrontend* 
     data.set("message", message);
     item.set("data", data);
     return item;
+}
+
+
+ScriptObject TimelineRecordFactory::createResourceSendRequestTimelineRecord(InspectorFrontend* frontend, double startTime,
+    unsigned long identifier, bool isMainResource, const ResourceRequest& request)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("identifier", static_cast<long long>(identifier));
+    data.set("url", request.url().string());
+    data.set("requestMethod", request.httpMethod());
+    data.set("isMainResource", isMainResource);
+    record.set("data", data);
+    return record;
+}
+
+ScriptObject TimelineRecordFactory::createResourceReceiveResponseTimelineRecord(InspectorFrontend* frontend, double startTime,
+    unsigned long identifier, const ResourceResponse& response)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("identifier", static_cast<long long>(identifier));
+    data.set("statusCode", response.httpStatusCode());
+    data.set("mimeType", response.mimeType());
+    data.set("expectedContentLength", response.expectedContentLength());
+    record.set("data", data);
+    return record;
+}
+
+ScriptObject TimelineRecordFactory::createResourceFinishTimelineRecord(InspectorFrontend* frontend, double startTime,
+    unsigned long identifier, bool didFail)
+{
+    ScriptObject record = createGenericRecord(frontend, startTime);
+    ScriptObject data = frontend->newScriptObject();
+    data.set("identifier", static_cast<long long>(identifier));
+    data.set("didFail", didFail);
+    record.set("data", data);
+    return record;
 }
 
 ScriptObject TimelineRecordFactory::createPaintTimelineRecord(InspectorFrontend* frontend, double startTime, const IntRect& rect)

@@ -41,6 +41,8 @@ namespace WebCore {
     class Event;
     class InspectorFrontend;
     class IntRect;
+    class ResourceRequest;
+    class ResourceResponse;
 
     // Must be kept in sync with TimelineAgent.js
     enum TimelineRecordType {
@@ -56,6 +58,9 @@ namespace WebCore {
         XHRLoadRecordType = 9,
         EvaluateScriptTimelineRecordType = 10,
         MarkTimelineRecordType = 11,
+        ResourceSendRequestTimelineRecordType = 12,
+        ResourceReceiveResponseTimelineRecordType = 13,
+        ResourceFinishTimelineRecordType = 14,
     };
 
     class InspectorTimelineAgent {
@@ -96,6 +101,10 @@ namespace WebCore {
         void didEvaluateScript();
 
         void didMarkTimeline(const String&);
+
+        void willSendResourceRequest(unsigned long, bool isMainResource, const ResourceRequest&);
+        void didReceiveResourceResponse(unsigned long, const ResourceResponse&);
+        void didFinishLoadingResource(unsigned long, bool didFail);
 
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
     private:
