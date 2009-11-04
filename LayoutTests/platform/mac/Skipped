@@ -92,3 +92,7 @@ fast/dom/Window/slow_unload_handler.html
 
 # Skipped until we have a fix for <rdar://problem/6563117> WebKit should tell QuickTime to exclude the text importer
 media/video-empty-source.html
+
+# Ruby layout tests somehow cause http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html to fail
+fast/ruby
+

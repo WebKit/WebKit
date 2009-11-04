@@ -1,3 +1,15 @@
+2009-11-03  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Mark Rowe.
+        (on IRC)
+
+        add ruby layout tests to the Skipped list on mac, since they somehow cause
+        http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html to fail.
+        
+        no new tests.
+
+        * platform/mac/Skipped:
+
 2009-11-02  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
