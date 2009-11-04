@@ -1,3 +1,18 @@
+2009-11-03  Darin Adler  <darin@apple.com>
+
+        Set the MIME type for all PNG files in this directory.
+
+        * css3-2d-transforms/compound_transform.png: Modified property svn:mime-type.
+        * css3-2d-transforms/transform1.png: Modified property svn:mime-type.
+        * css3-2d-transforms/transform2.png: Modified property svn:mime-type.
+        * css3-3d-transforms/compound_transform.png: Modified property svn:mime-type.
+        * css3-3d-transforms/transform1.png: Modified property svn:mime-type.
+        * css3-3d-transforms/transform2.png: Modified property svn:mime-type.
+        * css3-animations/animation1.png: Modified property svn:mime-type.
+        * css3-animations/sandwich.png: Modified property svn:mime-type.
+        * css3-transitions/TimingFunction.png: Modified property svn:mime-type.
+        * css3-transitions/transition1.png: Modified property svn:mime-type.
+
 2009-06-16  Chris Marrin  <cmarrin@apple.com>
 
         Added spec directories from http://dev.w3.org/cvsweb/csswg/
