@@ -1,3 +1,17 @@
+2009-11-03  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Levin.
+
+        Start/Stop Web Socket and Web Socket Secure servers for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=27491
+
+        The test path determination logic is changed to handle websocket and websocket/ssl cases.
+        The logic for non-http (and now also non-websocket) tests is moved toward the end of the if-elsif statement.
+
+        Functions to start or stop Web Socket servers are added.
+
+        * Scripts/run-webkit-tests:
+
 2009-11-03  Eric Seidel  <eric@webkit.org>
 
         No review, just changing wording of log message.

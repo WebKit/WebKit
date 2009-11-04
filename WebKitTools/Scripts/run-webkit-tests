@@ -76,6 +76,7 @@ sub buildPlatformTestHierarchy(@);
 sub closeCygpaths();
 sub closeDumpTool();
 sub closeHTTPD();
+sub closeWebSocketServer();
 sub countAndPrintLeaks($$$);
 sub countFinishedTest($$$$);
 sub deleteExpectedAndActualResults($);
@@ -91,6 +92,7 @@ sub openDiffTool();
 sub openDumpTool();
 sub openHTTPDIfNeeded();
 sub parseLeaksandPrintUniqueLeaks();
+sub openWebSocketServerIfNeeded();
 sub pathcmp($$);
 sub printFailureMessageForTest($$);
 sub processIgnoreTests($$);
@@ -117,6 +119,8 @@ my $guardMalloc = '';
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
 my $ignoreMetrics = 0;
+my $webSocketPort = 8880;
+my $webSocketSecurePort = 9323;
 my $ignoreTests = '';
 my $iterations = 1;
 my $launchSafari = 1;
@@ -485,6 +489,9 @@ my $atLineStart = 1;
 my $lastDirectory = "";
 
 my $isHttpdOpen = 0;
+my $isWebSocketServerOpen = 0;
+my $webSocketServerPID = 0;
+my $webSocketSecureServerPID = 0;
 
 sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
@@ -577,15 +584,7 @@ for my $test (@tests) {
         }
     }
 
-    if ($test !~ /^http\//) {
-        my $testPath = "$testDirectory/$test";
-        if (isCygwin()) {
-            $testPath = toWindowsPath($testPath);
-        } else {
-            $testPath = canonpath($testPath);
-        }
-        print OUT "$testPath$suffixExpectedHash\n";
-    } else {
+    if ($test =~ /^http\//) {
         openHTTPDIfNeeded();
         if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
@@ -604,6 +603,32 @@ for my $test (@tests) {
             }
             print OUT "$testPath$suffixExpectedHash\n";
         }
+    } elsif ($test =~ /^websocket\//) {
+        if ($test =~ /^websocket\/tests\/local\//) {
+            my $testPath = "$testDirectory/$test";
+            if (isCygwin()) {
+                $testPath = toWindowsPath($testPath);
+            } else {
+                $testPath = canonpath($testPath);
+            }
+            print OUT "$testPath\n";
+        } else {
+            openWebSocketServerIfNeeded();
+            my $path = canonpath($test);
+            if ($test =~ /^websocket\/tests\/ssl\//) {
+                print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
+            } else {
+                print OUT "http://127.0.0.1:$webSocketPort/$path\n";
+            }
+        }
+    } else {
+        my $testPath = "$testDirectory/$test";
+        if (isCygwin()) {
+            $testPath = toWindowsPath($testPath);
+        } else {
+            $testPath = canonpath($testPath);
+        }
+        print OUT "$testPath$suffixExpectedHash\n";
     }
 
     # DumpRenderTree is expected to dump two "blocks" to stdout for each test.
@@ -892,6 +917,7 @@ printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 !$isDumpToolOpen || die "Failed to close $dumpToolName.\n";
 
 closeHTTPD();
+closeWebSocketServer();
 
 # Because multiple instances of this script are running concurrently we cannot 
 # safely delete this symlink.
@@ -1371,6 +1397,64 @@ sub closeHTTPD()
     kill 15, `cat /tmp/WebKit/httpd.pid` if -f "/tmp/WebKit/httpd.pid";
 
     $isHttpdOpen = 0;
+}
+
+sub openWebSocketServerIfNeeded()
+{
+    return if $isWebSocketServerOpen;
+
+    my $webSocketServerPath = "/usr/bin/python";
+    my $webSocketPythonPath = "WebKitTools/pywebsocket";
+    my $webSocketHandlerDir = "$testDirectory";
+    my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
+    my @args = (
+        "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+        "-p", "$webSocketPort",
+        "-d", "$webSocketHandlerDir",
+        "-s", "$webSocketHandlerScanDir",
+    );
+    my @argsSecure = (
+        "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+        "-p", "$webSocketSecurePort",
+        "-d", "$webSocketHandlerDir",
+        "-t",
+        "-k", "$sslCertificate",
+        "-c", "$sslCertificate",
+    );
+
+    $ENV{"PYTHONPATH"} = $webSocketPythonPath;
+    $webSocketServerPID = open3(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, \*WEBSOCKETSERVER_ERR, $webSocketServerPath, @args);
+    $webSocketSecureServerPID = open3(\*WEBSOCKETSECURESERVER_IN, \*WEBSOCKETSECURESERVER_OUT, \*WEBSOCKETSECURESERVER_ERR, $webSocketServerPath, @argsSecure);
+
+    my @listen = ("http://127.0.0.1:$webSocketPort", "https://127.0.0.1:$webSocketSecurePort");
+    for (my $i = 0; $i < @listen; $i++) {
+        my $retryCount = 10;
+        while (system("/usr/bin/curl -k -q --silent --stderr - --output /dev/null $listen[$i]") && $retryCount) {
+            sleep 1;
+            --$retryCount;
+        }
+        die "Timed out waiting for WebSocketServer to start" unless $retryCount;
+    }
+
+    $isWebSocketServerOpen = 1;
+}
+
+sub closeWebSocketServer()
+{
+    return if !$isWebSocketServerOpen;
+
+    close WEBSOCKETSERVER_IN;
+    close WEBSOCKETSERVER_OUT;
+    close WEBSOCKETSERVER_ERR;
+    kill 15, $webSocketServerPID;
+
+    close WEBSOCKETSECURESERVER_IN;
+    close WEBSOCKETSECURESERVER_OUT;
+    close WEBSOCKETSECURESERVER_ERR;
+    kill 15, $webSocketSecureServerPID;
+
+    $isWebSocketServerOpen = 0;
 }
 
 sub fileNameWithNumber($$)
