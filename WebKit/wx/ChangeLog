@@ -1,3 +1,13 @@
+2009-11-04  Vadim Zeitlin  <vadim@wxwidgets.org>
+
+        Reviewed by Eric Seidel.
+
+        [wx] Small cleanup: avoid unnecessary wxString::mb_str() calls.
+
+        * WebFrame.cpp:
+        (wxWebFrame::SetPageSource):
+        (wxWebFrame::LoadURL):
+
 2009-10-30  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

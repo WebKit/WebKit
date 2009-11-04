@@ -146,9 +146,9 @@ wxString wxWebFrame::GetPageSource()
 void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
-        WebCore::KURL url(WebCore::KURL(), static_cast<const char*>(baseUrl.mb_str(wxConvUTF8)));
+        WebCore::KURL url(WebCore::KURL(), baseUrl);
 
-        wxCharBuffer charBuffer(source.mb_str(wxConvUTF8));
+        const wxCharBuffer charBuffer(source.utf8_str());
         const char* contents = charBuffer;
 
         WTF::PassRefPtr<WebCore::SharedBuffer> sharedBuffer = WebCore::SharedBuffer::create(contents, strlen(contents));
@@ -206,7 +206,7 @@ bool wxWebFrame::FindString(const wxString& string, bool forward, bool caseSensi
 void wxWebFrame::LoadURL(const wxString& url)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
-        WebCore::KURL kurl = WebCore::KURL(WebCore::KURL(), static_cast<const char*>(url.mb_str(wxConvUTF8)), WebCore::UTF8Encoding());
+        WebCore::KURL kurl = WebCore::KURL(WebCore::KURL(), url, WebCore::UTF8Encoding());
         // NB: This is an ugly fix, but CURL won't load sub-resources if the
         // protocol is omitted; sadly, it will not emit an error, either, so
         // there's no way for us to catch this problem the correct way yet.
