@@ -32,11 +32,8 @@
 #include "qprinter.h"
 #include "qdir.h"
 #include "qfile.h"
-#if defined(Q_WS_X11)
-#include <QX11Info>
-#endif
 
-class QWebViewPrivate : public QWebPageClient {
+class QWebViewPrivate {
 public:
     QWebViewPrivate(QWebView *view)
         : view(view)
@@ -46,24 +43,6 @@ public:
         Q_ASSERT(view);
     }
 
-    virtual void scroll(int dx, int dy, const QRect&);
-    virtual void update(const QRect& dirtyRect);
-    virtual void setInputMethodEnabled(bool enable);
-#if QT_VERSION >= 0x040600
-    virtual void setInputMethodHint(Qt::InputMethodHint hint, bool enable);
-#endif
-
-#ifndef QT_NO_CURSOR
-    virtual QCursor cursor() const;
-    virtual void updateCursor(const QCursor& cursor);
-#endif
-
-    virtual QPalette palette() const;
-    virtual int screenNumber() const;
-    virtual QWidget* ownerWidget() const;
-
-    virtual QObject* pluginParent() const;
-
     void _q_pageDestroyed();
 
     QWebView *view;
@@ -71,66 +50,6 @@ public:
 
     QPainter::RenderHints renderHints;
 };
-
-void QWebViewPrivate::scroll(int dx, int dy, const QRect& rectToScroll)
-{
-    view->scroll(qreal(dx), qreal(dy), rectToScroll);
-}
-
-void QWebViewPrivate::update(const QRect & dirtyRect)
-{
-    view->update(dirtyRect);
-}
-
-void QWebViewPrivate::setInputMethodEnabled(bool enable)
-{
-    view->setAttribute(Qt::WA_InputMethodEnabled, enable);
-}
-#if QT_VERSION >= 0x040600
-void QWebViewPrivate::setInputMethodHint(Qt::InputMethodHint hint, bool enable)
-{
-    if (enable)
-        view->setInputMethodHints(view->inputMethodHints() | hint);
-    else
-        view->setInputMethodHints(view->inputMethodHints() & ~hint);
-}
-#endif
-#ifndef QT_NO_CURSOR
-QCursor QWebViewPrivate::cursor() const
-{
-    return view->cursor();
-}
-
-void QWebViewPrivate::updateCursor(const QCursor& cursor)
-{
-    view->setCursor(cursor);
-}
-#endif
-
-QPalette QWebViewPrivate::palette() const
-{
-    return view->palette();
-}
-
-int QWebViewPrivate::screenNumber() const
-{
-#if defined(Q_WS_X11)
-    if (view)
-        return view->x11Info().screen();
-#endif
-
-    return 0;
-}
-
-QWidget* QWebViewPrivate::ownerWidget() const
-{
-    return view;
-}
-
-QObject* QWebViewPrivate::pluginParent() const
-{
-    return view;
-}
 
 void QWebViewPrivate::_q_pageDestroyed()
 {
@@ -251,6 +170,7 @@ QWebView::~QWebView()
 #else
         d->page->d->view = 0;
 #endif
+        delete d->page->d->client;
         d->page->d->client = 0;
     }
 
@@ -296,7 +216,6 @@ void QWebView::setPage(QWebPage* page)
     d->page = page;
     if (d->page) {
         d->page->setView(this);
-        d->page->d->client = d; // set the page client
         d->page->setPalette(palette());
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
@@ -728,7 +647,7 @@ bool QWebView::event(QEvent *e)
             // WebCore.
             // FIXME: Add a QEvent::CursorUnset or similar to Qt.
             if (cursor().shape() == Qt::ArrowCursor)
-                d->resetCursor();
+                d->page->d->client->resetCursor();
 #endif
 #endif
         } else if (e->type() == QEvent::Leave)

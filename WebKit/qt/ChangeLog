@@ -1,3 +1,31 @@
+2009-11-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] REGRESSION: Allow applications to use their own QWidget bypassing QWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=30979
+
+        Decouple QWebViewPrivate from QWebPageClient, and automatically create
+        QWebPageWidgetClient whenever the view is QWidget based.
+
+        * Api/qwebpage.cpp:
+        (QWebPageWidgetClient::QWebPageWidgetClient):
+        (QWebPageWidgetClient::scroll):
+        (QWebPageWidgetClient::update):
+        (QWebPageWidgetClient::setInputMethodEnabled):
+        (QWebPageWidgetClient::setInputMethodHint):
+        (QWebPageWidgetClient::cursor):
+        (QWebPageWidgetClient::updateCursor):
+        (QWebPageWidgetClient::palette):
+        (QWebPageWidgetClient::screenNumber):
+        (QWebPageWidgetClient::ownerWidget):
+        (QWebPageWidgetClient::pluginParent):
+        (QWebPage::setView):
+        * Api/qwebview.cpp:
+        (QWebView::~QWebView):
+        (QWebView::setPage):
+        (QWebView::event):
+
 2009-11-03  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
