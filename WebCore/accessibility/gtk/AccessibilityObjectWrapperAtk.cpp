@@ -201,7 +201,7 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
 
 static gpointer webkit_accessible_parent_class = NULL;
 
-static AtkObject* webkit_accessible_get_parent(AtkObject* object)
+static AtkObject* atkParentOfWebView(AtkObject* object)
 {
     AccessibilityObject* coreParent = core(object)->parentObjectUnignored();
 
@@ -221,7 +221,19 @@ static AtkObject* webkit_accessible_get_parent(AtkObject* object)
     }
 
     if (!coreParent)
-        return NULL;
+        return 0;
+
+    return coreParent->wrapper();
+}
+
+static AtkObject* webkit_accessible_get_parent(AtkObject* object)
+{
+    AccessibilityObject* coreParent = core(object)->parentObjectUnignored();
+    if (!coreParent && core(object)->isWebArea())
+        return atkParentOfWebView(object);
+
+    if (!coreParent)
+        return 0;
 
     return coreParent->wrapper();
 }
@@ -255,7 +267,20 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* parent = coreObject->parentObjectUnignored();
 
-    g_return_val_if_fail(parent, 0);
+    if (!parent && core(object)->isWebArea()) {
+        AtkObject* atkParent = atkParentOfWebView(object);
+        if (!atkParent)
+            return -1;
+
+        unsigned count = atk_object_get_n_accessible_children(atkParent);
+        for (unsigned i = 0; i < count; ++i) {
+            AtkObject* child = atk_object_ref_accessible_child(atkParent, i);
+            bool childIsObject = child == object;
+            g_object_unref(child);
+            if (childIsObject)
+                return i;
+        }
+    }
 
     AccessibilityObject::AccessibilityChildrenVector children = parent->children();
     unsigned count = children.size();
@@ -264,7 +289,7 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
             return i;
     }
 
-    return 0;
+    return -1;
 }
 
 static AtkAttributeSet* addAttributeToSet(AtkAttributeSet* attributeSet, const char* name, const char* value)
