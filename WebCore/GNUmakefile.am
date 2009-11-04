@@ -1640,8 +1640,6 @@ webcore_sources += \
 	WebCore/platform/text/TextBreakIteratorInternalICU.h \
 	WebCore/platform/text/TextCodec.cpp \
 	WebCore/platform/text/TextCodec.h \
-	WebCore/platform/text/TextCodecICU.cpp \
-	WebCore/platform/text/TextCodecICU.h \
 	WebCore/platform/text/TextCodecLatin1.cpp \
 	WebCore/platform/text/TextCodecLatin1.h \
 	WebCore/platform/text/TextCodecUTF16.cpp \
@@ -2020,6 +2018,26 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/ResourceResponse.h \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
 	WebCore/workers/SharedWorkerRepository.h
+
+# ----
+# icu unicode backend
+# ----
+if USE_ICU_UNICODE
+webcoregtk_sources += \
+	WebCore/platform/text/TextCodecICU.cpp \
+	WebCore/platform/text/TextCodecICU.h
+
+endif
+
+# ----
+# glib unicode backend
+# ----
+if USE_GLIB_UNICODE
+webcoregtk_sources += \
+	WebCore/platform/text/gtk/TextCodecGtk.cpp \
+	WebCore/platform/text/gtk/TextCodecGtk.h
+endif
+
 
 # ---
 # Channel mesaging support

@@ -32,10 +32,13 @@
 #include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
-#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
+#if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
 #elif USE(QT4_UNICODE)
 #include <QString>
+#elif USE(GLIB_UNICODE)
+#include <glib.h>
+#include <wtf/GOwnPtr.h>
 #endif
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -84,7 +87,7 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
     if (!length)
         return "";
 
-#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
+#if USE(ICU_UNICODE)
     // FIXME: What's the right place to do normalization?
     // It's a little strange to do it inside the encode function.
     // Perhaps normalization should be an explicit step done before calling encode.
@@ -114,6 +117,18 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
     QString str(reinterpret_cast<const QChar*>(characters), length);
     str = str.normalized(QString::NormalizationForm_C);
     return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), handling);
+#elif USE(GLIB_UNICODE)
+    GOwnPtr<char> UTF8Source;
+    UTF8Source.set(g_utf16_to_utf8(characters, length, 0, 0, 0));
+
+    GOwnPtr<char> UTF8Normalized;
+    UTF8Normalized.set(g_utf8_normalize(UTF8Source.get(), -1, G_NORMALIZE_NFC));
+
+    long UTF16Length;
+    GOwnPtr<UChar> UTF16Normalized;
+    UTF16Normalized.set(g_utf8_to_utf16(UTF8Normalized.get(), -1, 0, &UTF16Length, 0));
+
+    return newTextCodec(*this)->encode(UTF16Normalized.get(), UTF16Length, handling);
 #elif PLATFORM(WINCE)
     // normalization will be done by Windows CE API
     OwnPtr<TextCodec> textCodec = newTextCodec(*this);
