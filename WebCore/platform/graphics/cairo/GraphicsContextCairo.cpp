@@ -941,7 +941,6 @@ void GraphicsContext::clipOut(const Path& path)
     if (paintingDisabled())
         return;
 
-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,4,0)
     cairo_t* cr = m_data->cr;
     double x1, y1, x2, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
@@ -952,9 +951,6 @@ void GraphicsContext::clipOut(const Path& path)
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
-#else
-    notImplemented();
-#endif
 }
 
 void GraphicsContext::rotate(float radians)
@@ -980,7 +976,6 @@ void GraphicsContext::clipOut(const IntRect& r)
     if (paintingDisabled())
         return;
 
-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,4,0)
     cairo_t* cr = m_data->cr;
     double x1, y1, x2, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
@@ -990,9 +985,6 @@ void GraphicsContext::clipOut(const IntRect& r)
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
-#else
-    notImplemented();
-#endif
 }
 
 void GraphicsContext::clipOutEllipseInRect(const IntRect& r)

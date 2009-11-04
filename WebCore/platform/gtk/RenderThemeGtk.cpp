@@ -188,7 +188,6 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
     GtkTextDirection direction = gtkTextDirection(o->style()->direction());
 
-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,4,0)
     // Find the clip rectangle
     cairo_t *cr = i.context->platformContext();
     double clipX1, clipX2, clipY1, clipY2;
@@ -202,9 +201,6 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
     gdkClipRect.y = clipPos.y();
 
     gdk_rectangle_intersect(&gdkRect, &gdkClipRect, &gdkClipRect);
-#else
-    GdkRectangle gdkClipRect = gdkRect;
-#endif
 
     return moz_gtk_widget_paint(type, i.context->gdkDrawable(), &gdkRect, &gdkClipRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
 }

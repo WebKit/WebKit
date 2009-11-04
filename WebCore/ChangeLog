@@ -1,3 +1,27 @@
+2009-11-04  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Update Cairo requirement to 1.6.
+
+        Also remove all conditional code and workarounds for older versions of
+        Cairo.
+        In particular, gain image quality by removing the use of
+        CAIRO_FILTER_NEAREST when rendering images and use the default
+        bilinear filter instead.
+        https://bugs.webkit.org/show_bug.cgi?id=19266
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::boundingRect):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozWidget):
+
 2009-11-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Restore removed string conversion after cleanup.

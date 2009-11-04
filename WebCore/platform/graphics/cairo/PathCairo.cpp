@@ -78,15 +78,7 @@ void Path::clear()
 
 bool Path::isEmpty() const
 {
-    cairo_t* cr = platformPath()->m_cr;
-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,5,10)
-    return !cairo_has_current_point(cr);
-#else
-    cairo_path_t* p = cairo_copy_path(cr);
-    bool hasData = p->num_data;
-    cairo_path_destroy(p);
-    return !hasData;
-#endif
+    return !cairo_has_current_point(platformPath()->m_cr);
 }
 
 bool Path::hasCurrentPoint() const
@@ -256,11 +248,7 @@ FloatRect Path::boundingRect() const
 {
     cairo_t* cr = platformPath()->m_cr;
     double x0, x1, y0, y1;
-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 6, 0)
     cairo_path_extents(cr, &x0, &y0, &x1, &y1);
-#else
-    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
-#endif
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
