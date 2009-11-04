@@ -94,7 +94,7 @@ body.attached #toolbar {
     padding-left: 0;
 }
 
-body.attached.platform-qt #toolbar {
+body.attached.port-qt #toolbar {
     cursor: auto;
 }
 
@@ -237,7 +237,7 @@ body.detached .toolbar-item.close-left, body.detached .toolbar-item.close-right 
     display: none;
 }
 
-body.attached.platform-qt .toolbar-item.close-left, body.attached.platform-qt .toolbar-item.close-right {
+body.attached.port-qt .toolbar-item.close-left, body.attached.port-qt .toolbar-item.close-right {
     display: none;
 }
 
@@ -392,7 +392,7 @@ body.detached #dock-status-bar-item .glyph {
     -webkit-mask-image: url(Images/dockButtonGlyph.png);
 }
 
-body.platform-qt #dock-status-bar-item {
+body.port-qt #dock-status-bar-item {
     display: none
 }
 

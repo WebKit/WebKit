@@ -370,6 +370,8 @@ WebInspector.loaded = function()
 {
     var platform = InspectorController.platform();
     document.body.addStyleClass("platform-" + platform);
+    var port = InspectorController.port();
+    document.body.addStyleClass("port-" + port);
 
     this._loadPreferences();
     this.pendingDispatches = 0;
@@ -821,7 +823,7 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
-    if ((!WebInspector.attached && InspectorController.platform() !== "mac-leopard") || InspectorController.platform() == "qt")
+    if ((!WebInspector.attached && InspectorController.platform() !== "mac-leopard") || InspectorController.port() == "qt")
         return;
 
     var target = event.target;

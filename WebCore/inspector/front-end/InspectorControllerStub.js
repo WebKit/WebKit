@@ -58,6 +58,11 @@ WebInspector.InspectorControllerStub.prototype = {
         return "mac-leopard";
     },
 
+    port: function()
+    {
+        return "unknown";
+    },
+
 
     closeWindow: function()
     {

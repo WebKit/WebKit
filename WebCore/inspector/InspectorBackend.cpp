@@ -245,17 +245,27 @@ const String& InspectorBackend::platform() const
 #endif
 #elif PLATFORM(WIN_OS)
     DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
-#elif PLATFORM(QT)
-    DEFINE_STATIC_LOCAL(const String, platform, ("qt"));
-#elif PLATFORM(GTK)
-    DEFINE_STATIC_LOCAL(const String, platform, ("gtk"));
-#elif PLATFORM(WX)
-    DEFINE_STATIC_LOCAL(const String, platform, ("wx"));
 #else
     DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));
 #endif
 
     return platform;
+}
+
+
+const String& InspectorBackend::port() const
+{
+#if PLATFORM(QT)
+    DEFINE_STATIC_LOCAL(const String, port, ("qt"));
+#elif PLATFORM(GTK)
+    DEFINE_STATIC_LOCAL(const String, port, ("gtk"));
+#elif PLATFORM(WX)
+    DEFINE_STATIC_LOCAL(const String, port, ("wx"));
+#else
+    DEFINE_STATIC_LOCAL(const String, port, ("unknown"));
+#endif
+
+    return port;
 }
 
 void InspectorBackend::startTimelineProfiler()

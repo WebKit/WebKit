@@ -94,6 +94,7 @@ public:
     void closeWindow();
 
     const String& platform() const;
+    const String& port() const;
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
