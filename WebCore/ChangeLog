@@ -1,5 +1,13 @@
 2009-11-03  Dan Bernstein  <mitz@apple.com>
 
+        Leopard build fix
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        (WebCore::core):
+
+2009-11-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Fix an assertion failure in core(NSURLProtectionSpace *) by handling NTLM

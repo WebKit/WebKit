@@ -131,7 +131,7 @@ NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
         case ProtectionSpaceAuthenticationSchemeHTMLForm:
             method = NSURLAuthenticationMethodHTMLForm;
             break;
-#ifndef BUILDING_ON_TIGER
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
         case ProtectionSpaceAuthenticationSchemeNTLM:
             method = NSURLAuthenticationMethodNTLM;
             break;
@@ -223,7 +223,7 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
         scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
     else if ([method isEqualToString:NSURLAuthenticationMethodHTMLForm])
         scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
-#ifndef BUILDING_ON_TIGER
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     else if ([method isEqualToString:NSURLAuthenticationMethodNTLM])
         scheme = ProtectionSpaceAuthenticationSchemeNTLM;
 #endif
