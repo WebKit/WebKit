@@ -1,3 +1,16 @@
+2009-11-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Hang in Mail on attempting to change indent level
+        <rdar://problem/7131805>
+        https://bugs.webkit.org/show_bug.cgi?id=31127
+        
+        Added test to cover all the different code paths.
+
+        * editing/execCommand/outdent-multiparagraph-list-expected.txt: Added.
+        * editing/execCommand/outdent-multiparagraph-list.html: Added.
+
 2009-11-04  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

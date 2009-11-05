@@ -1,3 +1,27 @@
+2009-11-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Hang in Mail on attempting to change indent level.
+        <rdar://problem/7131805>
+        https://bugs.webkit.org/show_bug.cgi?id=31127
+
+        The hang was caused by an infinite loop inside outdentRegion.
+        The code did not account for the fact that, when a list item
+        cointains multiple paragraphs, outdent moves all paragraphs at
+        once, invalidating some of the position we keep track of in the loop.
+        Some code refactoring has also been done to minimize duplicate code.
+        
+        Test: editing/execCommand/outdent-multiparagraph-list.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion): Moved code in common with
+        outdentRegion to doApply.
+        (WebCore::IndentOutdentCommand::outdentRegion): Fixed endless loop.
+        (WebCore::IndentOutdentCommand::doApply): Some code refactoring.
+        * editing/IndentOutdentCommand.h: Added VisiblePosition parameters to
+        indentRegion and outdentRegion.
+
 2009-11-04  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.

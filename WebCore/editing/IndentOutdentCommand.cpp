@@ -129,17 +129,8 @@ void IndentOutdentCommand::indentIntoBlockquote(const VisiblePosition& endOfCurr
         targetBlockquote = 0;
 }
 
-void IndentOutdentCommand::indentRegion()
+void IndentOutdentCommand::indentRegion(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection)
 {
-    VisibleSelection selection = selectionForParagraphIteration(endingSelection());
-    VisiblePosition startOfSelection = selection.visibleStart();
-    VisiblePosition endOfSelection = selection.visibleEnd();
-    int startIndex = indexForVisiblePosition(startOfSelection);
-    int endIndex = indexForVisiblePosition(endOfSelection);
-
-    ASSERT(!startOfSelection.isNull());
-    ASSERT(!endOfSelection.isNull());
-
     // Special case empty unsplittable elements because there's nothing to split
     // and there's nothing to move.
     Position start = startOfSelection.deepEquivalent().downstream();
@@ -169,14 +160,7 @@ void IndentOutdentCommand::indentRegion()
             return;
         }
         endOfCurrentParagraph = endOfNextParagraph;
-    }
-    
-    updateLayout();
-    
-    RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0, true);
-    RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0, true);
-    if (startRange && endRange)
-        setEndingSelection(VisibleSelection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
+    }   
 }
 
 void IndentOutdentCommand::outdentParagraph()
@@ -242,36 +226,40 @@ void IndentOutdentCommand::outdentParagraph()
     moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), VisiblePosition(Position(placeholder.get(), 0)), true);
 }
 
-void IndentOutdentCommand::outdentRegion()
+void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection)
 {
-    VisiblePosition startOfSelection = endingSelection().visibleStart();
-    VisiblePosition endOfSelection = endingSelection().visibleEnd();
     VisiblePosition endOfLastParagraph = endOfParagraph(endOfSelection);
-
-    ASSERT(!startOfSelection.isNull());
-    ASSERT(!endOfSelection.isNull());
 
     if (endOfParagraph(startOfSelection) == endOfLastParagraph) {
         outdentParagraph();
         return;
     }
-
+    
     Position originalSelectionEnd = endingSelection().end();
-    setEndingSelection(endingSelection().visibleStart());
-    outdentParagraph();
-    Position originalSelectionStart = endingSelection().start();
-    VisiblePosition endOfCurrentParagraph = endOfParagraph(endOfParagraph(endingSelection().visibleStart()).next(true));
+    VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
+
     while (endOfCurrentParagraph != endAfterSelection) {
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         if (endOfCurrentParagraph == endOfLastParagraph)
             setEndingSelection(VisibleSelection(originalSelectionEnd, DOWNSTREAM));
         else
             setEndingSelection(endOfCurrentParagraph);
+        
         outdentParagraph();
+        
+        // outdentParagraph could move more than one paragraph if the paragraph
+        // is in a list item. As a result, endAfterSelection and endOfNextParagraph
+        // could refer to positions no longer in the document.
+        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().node()->inDocument())
+            break;
+            
+        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().node()->inDocument()) {
+            endOfCurrentParagraph = endingSelection().end();
+            endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
+        }
         endOfCurrentParagraph = endOfNextParagraph;
     }
-    setEndingSelection(VisibleSelection(originalSelectionStart, endingSelection().end(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::doApply()
@@ -295,10 +283,27 @@ void IndentOutdentCommand::doApply()
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
         setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
 
+    VisibleSelection selection = selectionForParagraphIteration(endingSelection());
+    VisiblePosition startOfSelection = selection.visibleStart();
+    VisiblePosition endOfSelection = selection.visibleEnd();
+    
+    int startIndex = indexForVisiblePosition(startOfSelection);
+    int endIndex = indexForVisiblePosition(endOfSelection);
+    
+    ASSERT(!startOfSelection.isNull());
+    ASSERT(!endOfSelection.isNull());
+    
     if (m_typeOfAction == Indent)
-        indentRegion();
+        indentRegion(startOfSelection, endOfSelection);
     else
-        outdentRegion();
+        outdentRegion(startOfSelection, endOfSelection);
+
+    updateLayout();
+    
+    RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0, true);
+    RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0, true);
+    if (startRange && endRange)
+        setEndingSelection(VisibleSelection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
 }
 
 }

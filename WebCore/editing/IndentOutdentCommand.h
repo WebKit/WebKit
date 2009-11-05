@@ -46,8 +46,8 @@ private:
     virtual void doApply();
     virtual EditAction editingAction() const { return m_typeOfAction == Indent ? EditActionIndent : EditActionOutdent; }
 
-    void indentRegion();
-    void outdentRegion();
+    void indentRegion(const VisiblePosition&, const VisiblePosition&);
+    void outdentRegion(const VisiblePosition&, const VisiblePosition&);
     void outdentParagraph();
     bool tryIndentingAsListItem(const VisiblePosition&);
     void indentIntoBlockquote(const VisiblePosition&, const VisiblePosition&, RefPtr<Element>&);
