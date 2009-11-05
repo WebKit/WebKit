@@ -1,3 +1,15 @@
+2009-11-04  Dan Kegel  <dank@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix buffer overrun in WebCore::Page::userStyleSheetLocationChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=31138
+
+        Test: LayoutTests/platform/mac/fast/loader/user-stylesheet-fast-path.html in Valgrind
+
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+
 2009-11-04  Timothy Hatcher  <timothy@apple.com>
 
         Update the Web Inspector Timeline panel to better match the mock-up.

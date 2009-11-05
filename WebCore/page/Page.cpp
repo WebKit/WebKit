@@ -542,7 +542,7 @@ void Page::userStyleSheetLocationChanged()
 
         Vector<char> styleSheetAsUTF8;
         if (base64Decode(encodedData, styleSheetAsUTF8))
-            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data());
+            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data(), styleSheetAsUTF8.size());
     }
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
