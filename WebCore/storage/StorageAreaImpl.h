@@ -56,9 +56,8 @@ namespace WebCore {
         PassRefPtr<StorageAreaImpl> copy();
         void close();
 
-        // Could be called from a background thread.
+        // Only called from a background thread.
         void importItem(const String& key, const String& value);
-        SecurityOrigin* securityOrigin();
 
     private:
         StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);

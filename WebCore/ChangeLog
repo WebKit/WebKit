@@ -1,3 +1,28 @@
+2009-11-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION Clean up security origin usage in DOM Storage.
+        https://bugs.webkit.org/show_bug.cgi?id=31188
+
+        Clean up security origin usage in DOM Storage.  This fixes a bug in my
+        refactoring here: https://bugs.webkit.org/show_bug.cgi?id=31149
+
+        Instead of having StorageAreaSync's constructor (which is called in the
+        constructor for StorageAreaImpl) calling a method on StoargeAreaImpl to get the
+        database identifier, simply have StorageAreaImpl pass the identifier into
+        StorageAreaSync.
+
+        No test because there's no change in externally observable behavior.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::create):
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        * storage/StorageAreaSync.h:
+
 2009-11-05  Scott Violet  <sky@google.com>
 
         Reviewed by Dimitri Glazkov.

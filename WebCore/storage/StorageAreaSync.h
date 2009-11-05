@@ -42,7 +42,7 @@ namespace WebCore {
 
     class StorageAreaSync : public RefCounted<StorageAreaSync> {
     public:
-        static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea);
+        static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, String databaseIdentifier);
         ~StorageAreaSync();
 
         void scheduleFinalSync();
@@ -52,7 +52,7 @@ namespace WebCore {
         void scheduleClear();
 
     private:
-        StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea);
+        StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, String databaseIdentifier);
 
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
