@@ -90,7 +90,9 @@ void QGraphicsWebViewPrivate::update(const QRect & dirtyRect)
 
 void QGraphicsWebViewPrivate::setInputMethodEnabled(bool enable)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     q->setFlag(QGraphicsItem::ItemAcceptsInputMethod, enable);
+#endif
 }
 
 #if QT_VERSION >= 0x040600

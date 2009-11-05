@@ -1,3 +1,11 @@
+2009-11-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Prospective build fix against Qt 4.5 (build bot)
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::setInputMethodEnabled): Guard the
+        use of Qt 4.6 specific API with #ifdefs.
+
 2009-11-01  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Kenneth Christiansen.
