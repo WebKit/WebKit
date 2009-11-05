@@ -118,7 +118,7 @@ ARMWord ARMAssembler::getOp2(ARMWord imm)
     if ((imm & 0x00ffffff) == 0)
         return OP2_IMM | (imm >> 24) | (rol << 8);
 
-    return 0;
+    return INVALID_IMM;
 }
 
 int ARMAssembler::genInt(int reg, ARMWord imm, bool positive)
@@ -236,25 +236,18 @@ ARMWord ARMAssembler::getImm(ARMWord imm, int tmpReg, bool invert)
 
     // Do it by 1 instruction
     tmp = getOp2(imm);
-    if (tmp)
+    if (tmp != INVALID_IMM)
         return tmp;
 
     tmp = getOp2(~imm);
-    if (tmp) {
+    if (tmp != INVALID_IMM) {
         if (invert)
             return tmp | OP2_INV_IMM;
         mvn_r(tmpReg, tmp);
         return tmpReg;
     }
 
-    // Do it by 2 instruction
-    if (genInt(tmpReg, imm, true))
-        return tmpReg;
-    if (genInt(tmpReg, ~imm, false))
-        return tmpReg;
-
-    ldr_imm(tmpReg, imm);
-    return tmpReg;
+    return encodeComplexImm(imm, tmpReg);
 }
 
 void ARMAssembler::moveImm(ARMWord imm, int dest)
@@ -263,24 +256,43 @@ void ARMAssembler::moveImm(ARMWord imm, int dest)
 
     // Do it by 1 instruction
     tmp = getOp2(imm);
-    if (tmp) {
+    if (tmp != INVALID_IMM) {
         mov_r(dest, tmp);
         return;
     }
 
     tmp = getOp2(~imm);
-    if (tmp) {
+    if (tmp != INVALID_IMM) {
         mvn_r(dest, tmp);
         return;
     }
 
+    encodeComplexImm(imm, dest);
+}
+
+ARMWord ARMAssembler::encodeComplexImm(ARMWord imm, int dest)
+{
+    ARMWord tmp;
+
+#if ARM_ARCH_VERSION >= 7
+    tmp = getImm16Op2(imm);
+    if (tmp != INVALID_IMM) {
+        movw_r(dest, tmp);
+        return dest;
+    }
+    movw_r(dest, getImm16Op2(imm & 0xffff));
+    movt_r(dest, getImm16Op2(imm >> 16));
+    return dest;
+#else
     // Do it by 2 instruction
     if (genInt(dest, imm, true))
-        return;
+        return dest;
     if (genInt(dest, ~imm, false))
-        return;
+        return dest;
 
     ldr_imm(dest, imm);
+    return dest;
+#endif
 }
 
 // Memory load/store helpers

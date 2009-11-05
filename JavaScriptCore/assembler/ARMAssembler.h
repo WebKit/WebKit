@@ -139,6 +139,10 @@ namespace JSC {
             CLZ = 0x016f0f10,
             BKPT = 0xe120070,
 #endif
+#if ARM_ARCH_VERSION >= 7
+            MOVW = 0x03000000,
+            MOVT = 0x03400000,
+#endif
         };
 
         enum {
@@ -174,6 +178,8 @@ namespace JSC {
             padForAlign16 = 0x0000,
             padForAlign32 = 0xee120070,
         };
+
+        static const ARMWord INVALID_IMM = 0xf0000000;
 
         class JmpSrc {
             friend class ARMAssembler;
@@ -332,6 +338,20 @@ namespace JSC {
         {
             emitInst(static_cast<ARMWord>(cc) | MOV, rd, ARMRegisters::r0, op2);
         }
+
+#if ARM_ARCH_VERSION >= 7
+        void movw_r(int rd, ARMWord op2, Condition cc = AL)
+        {
+            ASSERT((op2 | 0xf0fff) == 0xf0fff);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | MOVW | RD(rd) | op2);
+        }
+
+        void movt_r(int rd, ARMWord op2, Condition cc = AL)
+        {
+            ASSERT((op2 | 0xf0fff) == 0xf0fff);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | MOVT | RD(rd) | op2);
+        }
+#endif
 
         void movs_r(int rd, ARMWord op2, Condition cc = AL)
         {
@@ -708,8 +728,18 @@ namespace JSC {
         }
 
         static ARMWord getOp2(ARMWord imm);
+
+#if ARM_ARCH_VERSION >= 7
+        static ARMWord getImm16Op2(ARMWord imm)
+        {
+            if (imm <= 0xffff)
+                return (imm & 0xf000) << 4 | (imm & 0xfff);
+            return INVALID_IMM;
+        }
+#endif
         ARMWord getImm(ARMWord imm, int tmpReg, bool invert = false);
         void moveImm(ARMWord imm, int dest);
+        ARMWord encodeComplexImm(ARMWord imm, int dest);
 
         // Memory load/store helpers
 

@@ -1,3 +1,24 @@
+2009-11-05  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Use ARMv7 specific encoding for immediate constants on ARMv7 target
+        https://bugs.webkit.org/show_bug.cgi?id=31060
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::getOp2): Use INVALID_IMM
+        (JSC::ARMAssembler::getImm): Use encodeComplexImm for complex immediate
+        (JSC::ARMAssembler::moveImm): Ditto.
+        (JSC::ARMAssembler::encodeComplexImm): Encode a constant by one or two
+        instructions or a PC relative load.
+        * assembler/ARMAssembler.h: Use INVALID_IMM if a constant cannot be
+        encoded as an immediate constant.
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::movw_r): 16-bit immediate load
+        (JSC::ARMAssembler::movt_r): High halfword 16-bit immediate load
+        (JSC::ARMAssembler::getImm16Op2): Encode immediate constant for
+        movw_r and mowt_r
+
 2009-11-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Mark Rowe.
