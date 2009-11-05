@@ -429,6 +429,7 @@ $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
 	     --pkg gobject-2.0 \
 	     --pkg gtk+-2.0 \
 	     --output $@ \
+	     --add-include-path $(top_srcdir)/WebKit/gtk \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
 	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
@@ -442,7 +443,7 @@ typelibsdir = $(GIRTYPELIBDIR)
 typelibs_DATA = $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(G_IR_COMPILER)
-	$(AM_V_GEN)$(G_IR_COMPILER) $< -o $@
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(top_srcdir)/WebKit/gtk $< -o $@
 
 EXTRA_DIST += $(JSCORE_GIRSOURCES)
 CLEANFILES += $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
