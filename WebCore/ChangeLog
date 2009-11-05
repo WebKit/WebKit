@@ -1,3 +1,26 @@
+2009-11-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25439
+        Deleting when in front of a block image removes character from previous paragraph
+
+        Added editing/deleting/25439-{1,2,3}.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Block images, tables and HRs cannot 
+        be made inline with other content.  Instead of merging, just move the caret to just before 
+        the selection we deleted.
+        * editing/htmlediting.cpp:
+        (WebCore::firstInSpecialElement): Added a FIXME.  This function begins iterating up from pos.node(), which 
+        doesn't necessarily contain pos (suppose pos was [img, 0]).
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::isRenderedAsNonInlineTableImageOrHR): Moved from visible_units.cpp.  Added a check for non-inline images.
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Use moved/renamed function.  Removed FIXME.  The problem causing 
+        5027702 is now squarely in first/lastInSpecialElement
+        (WebCore::endOfParagraph): Ditto.
 2009-11-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
@@ -8,9 +31,9 @@
 
         The hang was caused by an infinite loop inside outdentRegion.
         The code did not account for the fact that, when a list item
-        cointains multiple paragraphs, outdent moves all paragraphs at
-        once, invalidating some of the position we keep track of in the loop.
-        Some code refactoring has also been done to minimize duplicate code.
+        contains multiple paragraphs, outdent moves all paragraphs at
+        once, invalidating some of the positions we keep track of in the loop.
+        Some code refactoring has also been done to minimize duplicated code.
         
         Test: editing/execCommand/outdent-multiparagraph-list.html
 

@@ -494,6 +494,7 @@ bool validBlockTag(const AtomicString& blockTag)
 
 static Node* firstInSpecialElement(const Position& pos)
 {
+    // FIXME: This begins at pos.node(), which doesn't necessarily contain pos (suppose pos was [img, 0]).  See <rdar://problem/5027702>.
     Node* rootEditableElement = pos.node()->rootEditableElement();
     for (Node* n = pos.node(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
@@ -509,6 +510,7 @@ static Node* firstInSpecialElement(const Position& pos)
 
 static Node* lastInSpecialElement(const Position& pos)
 {
+    // FIXME: This begins at pos.node(), which doesn't necessarily contain pos (suppose pos was [img, 0]).  See <rdar://problem/5027702>.
     Node* rootEditableElement = pos.node()->rootEditableElement();
     for (Node* n = pos.node(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
@@ -1075,6 +1077,14 @@ bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
     // If the node starts and ends at where selectedRange starts and ends, the node is contained within
     return visiblePositionBeforeNode(node) == selectedRange->startPosition()
         && visiblePositionAfterNode(node) == selectedRange->endPosition();
+}
+
+bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
+{
+    if (!node)
+        return false;
+    RenderObject* renderer = node->renderer();
+    return renderer && ((renderer->isTable() && !renderer->isInline()) || renderer->isImage() && !renderer->isInline() || renderer->isHR());
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
