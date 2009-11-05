@@ -222,8 +222,7 @@ Element.prototype.query = function(query)
 
 Element.prototype.removeChildren = function()
 {
-    while (this.firstChild) 
-        this.removeChild(this.firstChild);        
+    this.innerHTML = "";
 }
 
 Element.prototype.isInsertionCaretInside = function()
