@@ -1,3 +1,15 @@
+2009-11-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert 50569 since it broke QT.  Build fix and just a revert, so no review.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSessionStorageEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::sessionStorageEnabled):
+
 2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
