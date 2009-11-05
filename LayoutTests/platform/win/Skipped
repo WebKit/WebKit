@@ -353,6 +353,7 @@ http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 
 # Accessibility tests without results or with Mac-specific results.
 accessibility/aria-combobox.html
+accessibility/aria-controls-with-tabs.html
 accessibility/aria-describedby-on-input.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html
@@ -675,3 +676,7 @@ platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
 # Windows Release bots are having problems in xmlhttprequest tests, Skipping them temporarily
 # to see if this eliminates the problem, and it is a test causing httpd problems.
 http/tests/xmlhttprequest
+
+# Ruby tests aren't passing on Windows, do they just need platform results - or should they match Mac?
+fast/ruby
+

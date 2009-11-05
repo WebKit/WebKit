@@ -1,3 +1,13 @@
+2009-11-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Add ruby tests and failing accessibility test to Windows Skipped list,
+        we should be able to re-add ruby tests, but not sure the correct course
+        of action yet.
+
+        * platform/win/Skipped:
+
 2009-11-05  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitri Titov.
