@@ -1,3 +1,27 @@
+2009-11-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix dumping of constants in bytecode so that they aren't printed as large positive register numbers.
+
+        We do this by having the registerName function return information about the constant if the register
+        number corresponds to a constant.  This requires that registerName, and several functions that call it,
+        be converted to member functions of CodeBlock so that the constant value can be retrieved.  The
+        ExecState also needs to be threaded down through these functions so that it can be passed on to
+        constantName when needed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::constantName):
+        (JSC::CodeBlock::registerName):
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isConstantRegisterIndex):
+
 2009-11-04  Pavel Heimlich  <tropikhajma@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
