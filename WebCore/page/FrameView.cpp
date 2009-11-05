@@ -1450,6 +1450,7 @@ void FrameView::valueChanged(Scrollbar* bar)
     ScrollView::valueChanged(bar);
     if (offset != scrollOffset())
         frame()->eventHandler()->sendScrollEvent();
+    frame()->loader()->client()->didChangeScrollOffset();
 }
 
 void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)

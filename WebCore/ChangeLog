@@ -1,3 +1,19 @@
+2009-11-05  Scott Violet  <sky@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Need notification of scrolling frame
+        https://bugs.webkit.org/show_bug.cgi?id=31145
+
+        Adds FrameLoaderClient::didChangeScrollOffset that is called when
+        the frame scrolls. This will be used to know when history state
+        needs to be updated.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::didChangeScrollOffset):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::valueChanged):
+
 2009-11-05  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

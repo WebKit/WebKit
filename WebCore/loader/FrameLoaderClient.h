@@ -247,6 +247,8 @@ namespace WebCore {
         virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const { return false; }
         virtual bool shouldLoadMediaElementURL(const KURL&) const { return true; }
 
+        virtual void didChangeScrollOffset() { }
+
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
     };
 
