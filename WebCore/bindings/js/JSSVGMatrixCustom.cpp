@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +25,29 @@
 
 #include "TransformationMatrix.h"
 #include "SVGException.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+JSValue JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 1)
+        return throwError(exec, SyntaxError, "Not enough arguments");
+
+    if (!args.at(0).inherits(&JSSVGMatrix::s_info))
+        return throwError(exec, TypeError, "secondMatrix argument was not a SVGMatrix");
+
+    JSSVGMatrix* matrixObj = static_cast<JSSVGMatrix*>(asObject(args.at(0)));
+
+    TransformationMatrix m1(*impl());
+    TransformationMatrix m2(*(matrixObj->impl()));
+
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)).get(), m_context.get());
+
+    return result;
+}
 
 JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 {

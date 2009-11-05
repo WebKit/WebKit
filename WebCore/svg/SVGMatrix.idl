@@ -34,7 +34,7 @@ module svg {
         attribute double e;
         attribute double f;
 
-        [Immutable] SVGMatrix multiply(in SVGMatrix secondMatrix);
+        [Custom] SVGMatrix multiply(in SVGMatrix secondMatrix);
         [Custom] SVGMatrix inverse()
             raises(SVGException);
         [Immutable] SVGMatrix translate(in float x, in float y);
