@@ -64,11 +64,9 @@ void tst_QGraphicsWebView::qgraphicswebview()
     item.icon();
     item.zoomFactor();
     item.isInteractive();
-    item.progress();
     item.toHtml();
     item.history();
     item.settings();
-    item.status();
     item.page();
     item.setPage(0);
     item.page();

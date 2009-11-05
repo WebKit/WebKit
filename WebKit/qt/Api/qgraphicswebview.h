@@ -40,11 +40,9 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor NOTIFY zoomFactorChanged)
-    Q_PROPERTY(QString status READ status NOTIFY statusChanged)
 
     Q_PROPERTY(QString html READ toHtml WRITE setHtml)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
 
     Q_PROPERTY(bool interactive READ isInteractive WRITE setInteractive NOTIFY interactivityChanged)
 
@@ -67,8 +65,6 @@ public:
     bool isInteractive() const;
     void setInteractive(bool);
 
-    qreal progress() const;
-
     void load(const QUrl &url);
     void load(const QNetworkRequest& request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray& body = QByteArray());
 
@@ -79,8 +75,6 @@ public:
 
     QWebHistory* history() const;
     QWebSettings* settings() const;
-
-    QString status() const;
 
     virtual void setGeometry(const QRectF& rect);
     virtual void updateGeometry();
@@ -98,12 +92,12 @@ Q_SIGNALS:
     void loadStarted();
     void loadFinished(bool);
 
-    void progressChanged(qreal);
+    void loadProgress(int progress);
     void interactivityChanged();
     void urlChanged(const QUrl&);
     void titleChanged(const QString&);
     void iconChanged();
-    void statusChanged();
+    void statusBarMessage(const QString& message);
     void zoomFactorChanged();
 
 protected:
@@ -133,9 +127,7 @@ protected:
     virtual bool sceneEvent(QEvent*);
 
 private:
-    Q_PRIVATE_SLOT(d, void _q_doLoadProgress(int progress))
     Q_PRIVATE_SLOT(d, void _q_doLoadFinished(bool success))
-    Q_PRIVATE_SLOT(d, void _q_setStatusBarMessage(const QString& message))
 
     QGraphicsWebViewPrivate* const d;
     friend class QGraphicsWebViewPrivate;
