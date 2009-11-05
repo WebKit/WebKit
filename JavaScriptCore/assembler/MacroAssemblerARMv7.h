@@ -93,13 +93,21 @@ public:
         Zero = ARMv7Assembler::ConditionEQ,
         NonZero = ARMv7Assembler::ConditionNE
     };
-
     enum DoubleCondition {
-        DoubleEqualOrUnordered = ARMv7Assembler::ConditionEQ,
+        // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
+        DoubleEqual = ARMv7Assembler::ConditionEQ,
+        DoubleNotEqual = ARMv7Assembler::ConditionVC, // Not the right flag! check for this & handle differently.
         DoubleGreaterThan = ARMv7Assembler::ConditionGT,
         DoubleGreaterThanOrEqual = ARMv7Assembler::ConditionGE,
-        DoubleLessThanOrUnordered = ARMv7Assembler::ConditionLO,
-        DoubleLessThanOrEqualOrUnordered = ARMv7Assembler::ConditionLS,
+        DoubleLessThan = ARMv7Assembler::ConditionLO,
+        DoubleLessThanOrEqual = ARMv7Assembler::ConditionLS,
+        // If either operand is NaN, these conditions always evaluate to true.
+        DoubleEqualOrUnordered = ARMv7Assembler::ConditionVS, // Not the right flag! check for this & handle differently.
+        DoubleNotEqualOrUnordered = ARMv7Assembler::ConditionNE,
+        DoubleGreaterThanOrUnordered = ARMv7Assembler::ConditionHI,
+        DoubleGreaterThanOrEqualOrUnordered = ARMv7Assembler::ConditionHS,
+        DoubleLessThanOrUnordered = ARMv7Assembler::ConditionLT,
+        DoubleLessThanOrEqualOrUnordered = ARMv7Assembler::ConditionLE,
     };
 
     static const RegisterID stackPointerRegister = ARMRegisters::sp;
@@ -531,6 +539,23 @@ public:
     {
         m_assembler.vcmp_F64(left, right);
         m_assembler.vmrs_APSR_nzcv_FPSCR();
+
+        if (cond == DoubleNotEqual) {
+            // ConditionNE jumps if NotEqual *or* unordered - force the unordered cases not to jump.
+            Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
+            Jump result = makeBranch(ARMv7Assembler::ConditionNE);
+            unordered.link(this);
+            return result;
+        }
+        if (cond == DoubleEqualOrUnordered) {
+            Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
+            Jump notEqual = makeBranch(ARMv7Assembler::ConditionNE);
+            unordered.link(this);
+            // We get here if either unordered, or equal.
+            Jump result = makeJump();
+            notEqual.link(this);
+            return result;
+        }
         return makeBranch(cond);
     }
 

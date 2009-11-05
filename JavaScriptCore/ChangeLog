@@ -1,5 +1,25 @@
 2009-11-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31151
+        Fix branchDouble behaviour on ARM THUMB2 JIT.
+
+        The ARMv7 JIT is currently using ARMv7Assembler::ConditionEQ to branch
+        for DoubleEqualOrUnordered, however this is incorrect – ConditionEQ won't
+        branch on unordered operands.  Similarly, DoubleLessThanOrUnordered &
+        DoubleLessThanOrEqualOrUnordered use ARMv7Assembler::ConditionLO &
+        ARMv7Assembler::ConditionLS, whereas they should be using
+        ARMv7Assembler::ConditionLT & ARMv7Assembler::ConditionLE.
+
+        Fix these, and fill out the missing DoubleConditions.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::):
+        (JSC::MacroAssemblerARMv7::branchDouble):
+
+2009-11-04  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber Stamped by Oliver Hunt.
 
         Enable native call optimizations on ARMv7.  (Existing ARM_TRADITIONAL
