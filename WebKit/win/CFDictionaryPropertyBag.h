@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CFDictionaryPropertyBag_H
-#define CFDictionaryPropertyBag_H
+#ifndef CFDictionaryPropertyBag_h
+#define CFDictionaryPropertyBag_h
 
-#include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/COMPtr.h>
 #include <wtf/RetainPtr.h>
 
-class CFDictionaryPropertyBag : public IPropertyBag
-{
-public:
-    static CFDictionaryPropertyBag* createInstance();
-protected:
-    CFDictionaryPropertyBag();
-    ~CFDictionaryPropertyBag();
+typedef struct __CFDictionary* CFMutableDictionaryRef;
 
+class CFDictionaryPropertyBag : public IPropertyBag {
 public:
+    static COMPtr<CFDictionaryPropertyBag> createInstance();
+
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
-
-    // IPropertyBag
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [out][in] */ VARIANT *pVar,
-        /* [in] */ IErrorLog *pErrorLog);
-        
-    virtual HRESULT STDMETHODCALLTYPE Write( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [in] */ VARIANT *pVar);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     void setDictionary(CFMutableDictionaryRef dictionary);
     CFMutableDictionaryRef dictionary() const;
 
 private:
+    CFDictionaryPropertyBag();
+    ~CFDictionaryPropertyBag();
+
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+
+    // IPropertyBag
+    virtual HRESULT STDMETHODCALLTYPE Read(LPCOLESTR pszPropName, VARIANT*, IErrorLog*);
+    virtual HRESULT STDMETHODCALLTYPE Write(LPCOLESTR pszPropName, VARIANT*);
+
     RetainPtr<CFMutableDictionaryRef> m_dictionary;
     ULONG m_refCount;
 };
 
-#endif
+#endif // CFDictionaryPropertyBag_h

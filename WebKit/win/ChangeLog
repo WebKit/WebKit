@@ -1,3 +1,75 @@
+2009-11-05  Adam Roben  <aroben@apple.com>
+
+        Make CFDictionaryPropertyBag::createInstance return a COMPtr
+
+        I also cleaned up CFDictionaryPropertyBag's class declaration a little
+        while I was at it.
+
+        Part of <http://webkit.org/b/25294> <rdar://problem/6803127> All
+        WebKit/win classes should return COMPtrs from their static constructor
+        members
+
+        Reviewed by Steve Falkenburg.
+
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::CFDictionaryPropertyBag): Changed to
+        initialize m_refCount to 0. m_refCount gets increased to 1 by
+        createInstance.
+        (CFDictionaryPropertyBag::createInstance): Changed to return a COMPtr.
+
+        * CFDictionaryPropertyBag.h:
+          - Updated copyright years
+          - Fixed header guard to match current style
+          - Replaced #include of CoreFoundation.h with forward-declaration of
+            CFMutableDictionaryRef
+          - Added #include of COMPtr.h
+          - Fixed opening brace placement in class declaration
+          - Made createInstance return a COMPtr
+          - Made constructor/destructor private
+          - Made QueryInterface and IPropertyBag functions private
+          - Removed unnecessary parameter names and MIDL comments
+
+        * WebCache.cpp:
+        (WebCache::statistics): Updated for change to
+        CFDictionaryPropertyBag::createInstance. Now uses releaseRef to place
+        the IPropertyBag pointers into the s array.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebFrame.cpp:
+        (WebFrame::createJavaAppletWidget):
+        Updated for change to CFDictionaryPropertyBag::createInstance.
+
+        * WebHistory.cpp: Removed releaseUserInfo, which is no longer needed.
+        That function was also doing an unnecessary call to setDictionary(0).
+        (createUserInfoFromArray):
+        (createUserInfoFromHistoryItem):
+        Changed to return COMPtr.
+
+        (WebHistory::loadFromURL): Updated for change to
+        CFDictionaryPropertyBag::createInstance.
+
+        (WebHistory::removeAllItems): Updated for change to
+        CFDictionaryPropertyBag::createInstance, which fixed a leak! We had
+        forgotten to call releaseUserInfo here.
+
+        (WebHistory::removeItem):
+        (WebHistory::addItem):
+        (WebHistory::visitedURL):
+        * WebIconDatabase.cpp:
+        (postDidAddIconNotification):
+        Updated for change to CFDictionaryPropertyBag::createInstance.
+
+        * WebKitClassFactory.cpp:
+        (releaseRefFromCreateInstance): Added this overloaded function
+        template to abstract away the difference between createInstance
+        functions that return a ref'd pointer and createInstance functions
+        that return a COMPtr.
+        (WebKitClassFactory::CreateInstance): Changed to use
+        releaseRefFromCreateInstance.
+
 2009-11-03  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.

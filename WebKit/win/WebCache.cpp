@@ -129,9 +129,9 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.count));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
-    CFDictionaryPropertyBag* propBag = CFDictionaryPropertyBag::createInstance();
+    COMPtr<CFDictionaryPropertyBag> propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[0] = propBag;
+    s[0] = propBag.releaseRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -153,7 +153,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[1] = propBag;
+    s[1] = propBag.releaseRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -175,7 +175,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[2] = propBag;
+    s[2] = propBag.releaseRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[3] = propBag;
+    s[3] = propBag.releaseRef();
 
     return S_OK;
 }

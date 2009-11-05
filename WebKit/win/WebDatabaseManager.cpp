@@ -364,7 +364,7 @@ void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const
     RetainPtr<CFStringRef> str(AdoptCF, databaseName.createCFString());
     CFDictionarySetValue(userInfo.get(), databaseNameKey, str.get());
 
-    COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
+    COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
     userInfoBag->setDictionary(userInfo.get());
 
     notifyCenter->postNotificationName(databaseDidModifyOriginName, securityOrigin.get(), userInfoBag.get());
