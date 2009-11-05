@@ -1,5 +1,13 @@
 2009-11-05  Simon Hausmann  <hausmann@webkit.org>
 
+        Last Qt 4.5 build fix (*sigh*)
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (inputMethodHints): inputMethodHints() is only used for 
+        Qt 4.6, so guard the whole function.
+
+2009-11-05  Simon Hausmann  <hausmann@webkit.org>
+
         Another prospective build fix against Qt 4.5 (build bot)
 
         Don't compile & run the QGraphicsWebView portion of the
