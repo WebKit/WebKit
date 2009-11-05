@@ -1,5 +1,14 @@
 2009-11-04  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Remove bogus op_ prefix on dumped version of three opcodes.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+
+2009-11-04  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix dumping of constants in bytecode so that they aren't printed as large positive register numbers.

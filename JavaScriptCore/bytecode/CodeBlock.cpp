@@ -810,7 +810,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_method_check: {
-            printf("[%4d] op_method_check\n", location);
+            printf("[%4d] method_check\n", location);
             break;
         }
         case op_del_by_id: {
@@ -1018,13 +1018,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int count = (++it)->u.operand;
-            printf("[%4d] op_strcat\t %s, %s, %d\n", location, registerName(exec, r0).c_str(), registerName(exec, r1).c_str(), count);
+            printf("[%4d] strcat\t\t %s, %s, %d\n", location, registerName(exec, r0).c_str(), registerName(exec, r1).c_str(), count);
             break;
         }
         case op_to_primitive: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            printf("[%4d] op_to_primitive\t %s, %s\n", location, registerName(exec, r0).c_str(), registerName(exec, r1).c_str());
+            printf("[%4d] to_primitive\t %s, %s\n", location, registerName(exec, r0).c_str(), registerName(exec, r1).c_str());
             break;
         }
         case op_get_pnames: {
