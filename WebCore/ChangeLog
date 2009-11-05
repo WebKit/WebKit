@@ -1,3 +1,21 @@
+2009-11-05  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        If high memory usage is detected, hint to V8 that it might be due
+        to external objects retained by V8 objects.
+        https://bugs.webkit.org/show_bug.cgi?id=31051
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GetMemoryUsageInMB):
+        (WebCore::V8GCController::gcEpilogue):
+        (WebCore::V8GCController::checkMemoryUsage):
+        * bindings/v8/V8GCController.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate):
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+
 2009-11-05  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Simon Fraser.
