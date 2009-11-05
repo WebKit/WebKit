@@ -596,6 +596,22 @@ void QGraphicsWebView::setInteractive(bool allowed)
 }
 
 /*!
+    \property QGraphicsWebView::modified
+    \brief whether the document was modified by the user
+
+    Parts of HTML documents can be editable for example through the
+    \c{contenteditable} attribute on HTML elements.
+
+    By default, this property is false.
+*/
+bool QGraphicsWebView::isModified() const
+{
+    if (d->page)
+        return d->page->isModified();
+    return false;
+}
+
+/*!
     Returns a pointer to the view/page specific settings object.
 
     It is equivalent to

@@ -76,6 +76,7 @@ void tst_QGraphicsWebView::qgraphicswebview()
     item.load(QUrl());
     item.setHtml(QString());
     item.setContent(QByteArray());
+    item.isModified();
 }
 
 class WebPage : public QWebPage

@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Christiansen.
 
+        Added QGraphicsWebView::modified property, for consistency
+        with QWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::isModified):
+        * Api/qgraphicswebview.h:
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::qgraphicswebview):
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
         Removed status and progress properties of QGraphicsWebView.
         Added loadProgress and statusBarMessage signals instead,
         after API review.
