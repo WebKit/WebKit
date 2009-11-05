@@ -35,6 +35,8 @@ import subprocess
 import tempfile
 import unittest
 import urllib
+
+from datetime import date
 from modules.scm import detect_scm_system, SCM, ScriptError, CheckoutNeedsUpdate, ignore_error, commit_error_handler
 
 
@@ -203,6 +205,105 @@ class SCMTest(unittest.TestCase):
 
 
 class SVNTest(SCMTest):
+
+    @staticmethod
+    def _set_date_and_reviewer(changelog_entry):
+        # Joe Cool matches the reviewer set in SCMTest._create_patch
+        changelog_entry = changelog_entry.replace('REVIEWER_HERE', 'Joe Cool')
+        # svn-apply will update ChangeLog entries with today's date.
+        return changelog_entry.replace('DATE_HERE', date.today().isoformat())
+
+    def test_svn_apply(self):
+        first_entry = """2009-10-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Foo Bar.
+
+        Most awesome change ever.
+
+        * scm_unittest.py:
+"""
+        intermediate_entry = """2009-10-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Baz Bar.
+
+        A more awesomer change yet!
+
+        * scm_unittest.py:
+"""
+        one_line_overlap_patch = """Index: ChangeLog
+===================================================================
+--- ChangeLog	(revision 5)
++++ ChangeLog	(working copy)
+@@ -1,5 +1,13 @@
+ 2009-10-26  Eric Seidel  <eric@webkit.org>
+
++        Reviewed by NOBODY (OOPS!).
++
++        Second most awsome change ever.
++
++        * scm_unittest.py:
++
++2009-10-26  Eric Seidel  <eric@webkit.org>
++
+         Reviewed by Foo Bar.
+
+         Most awesome change ever.
+"""
+        one_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by REVIEWER_HERE.
+
+        Second most awsome change ever.
+
+        * scm_unittest.py:
+"""
+        two_line_overlap_patch = """Index: ChangeLog
+===================================================================
+--- ChangeLog	(revision 5)
++++ ChangeLog	(working copy)
+@@ -2,6 +2,14 @@
+
+         Reviewed by Foo Bar.
+
++        Second most awsome change ever.
++
++        * scm_unittest.py:
++
++2009-10-26  Eric Seidel  <eric@webkit.org>
++
++        Reviewed by Foo Bar.
++
+         Most awesome change ever.
+
+         * scm_unittest.py:
+"""
+        two_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Foo Bar.
+
+        Second most awsome change ever.
+
+        * scm_unittest.py:
+"""
+        write_into_file_at_path('ChangeLog', first_entry)
+        run(['svn', 'add', 'ChangeLog'])
+        run(['svn', 'commit', '--quiet', '--message', 'ChangeLog commit'])
+
+        # Patch files were created against just 'first_entry'.
+        # Add a second commit to make svn-apply have to apply the patches with fuzz.
+        changelog_contents = "%s\n%s" % (intermediate_entry, first_entry)
+        write_into_file_at_path('ChangeLog', changelog_contents)
+        run(['svn', 'commit', '--quiet', '--message', 'Intermediate commit'])
+
+        self._setup_webkittools_scripts_symlink(self.scm)
+        self.scm.apply_patch(self._create_patch(one_line_overlap_patch))
+        expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(one_line_overlap_entry), changelog_contents)
+        self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
+
+        self.scm.revert_files(['ChangeLog'])
+        self.scm.apply_patch(self._create_patch(two_line_overlap_patch))
+        expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(two_line_overlap_entry), changelog_contents)
+        self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
 
     def setUp(self):
         SVNTestRepository.setup(self)

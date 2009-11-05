@@ -355,56 +355,64 @@ sub gitdiff2svndiff($)
     return $_;
 }
 
+# The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
+# have lines of context at the top of a patch when the existing entry has the same
+# date and author as the new entry.  Alter the ChangeLog patch so
+# that the added lines ("+") in the patch always start at the beginning of the
+# patch and there are no initial lines of context.
 sub fixChangeLogPatch($)
 {
-    my $patch = shift;
-    my $contextLineCount = 3;
+    my $patch = shift; # $patch will only contain patch fragments for ChangeLog.
 
-    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\n( .*\n)+(\+.*\n)+( .*\n){$contextLineCount}$/m;
-    my ($oldLineCount, $newLineCount) = ($1, $2);
-    return $patch if $oldLineCount <= $contextLineCount;
+    $patch =~ /(\r?\n)/;
+    my $lineEnding = $1;
+    my @patchLines = split(/$lineEnding/, $patch);
 
-    # The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
-    # have lines of context at the top of a patch when the existing entry has the same
-    # date and author as the new entry.  This nifty loop alters a ChangeLog patch so
-    # that the added lines ("+") in the patch always start at the beginning of the
-    # patch and there are no initial lines of context.
-    my $newPatch;
-    my $lineCountInState = 0;
-    my $oldContentLineCountReduction = $oldLineCount - $contextLineCount;
-    my $newContentLineCountWithoutContext = $newLineCount - $oldLineCount - $oldContentLineCountReduction;
-    my ($stateHeader, $statePreContext, $stateNewChanges, $statePostContext) = (1..4);
-    my $state = $stateHeader;
-    foreach my $line (split(/\n/, $patch)) {
-        $lineCountInState++;
-        if ($state == $stateHeader && $line =~ /^@@ -1,$oldLineCount \+1,$newLineCount @\@$/) {
-            $line = "@@ -1,$contextLineCount +1," . ($newLineCount - $oldContentLineCountReduction) . " @@";
-            $lineCountInState = 0;
-            $state = $statePreContext;
-        } elsif ($state == $statePreContext && substr($line, 0, 1) eq " ") {
-            $line = "+" . substr($line, 1);
-            if ($lineCountInState == $oldContentLineCountReduction) {
-                $lineCountInState = 0;
-                $state = $stateNewChanges;
+    # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
+    my $dateLineRegexpString = '^\+(\d{4}-\d{2}-\d{2})' # Consume the leading '+' and the date.
+                             . '\s+(.+)\s+' # Consume the name.
+                             . '<([^<>]+)>$'; # And finally the email address.
+
+    # Figure out where the patch contents start and stop.
+    my $patchHeaderIndex;
+    my $firstContentIndex;
+    my $trailingContextIndex;
+    my $dateIndex;
+    my $patchEndIndex = scalar(@patchLines);
+    for (my $index = 0; $index < @patchLines; ++$index) {
+        my $line = $patchLines[$index];
+        if ($line =~ /^\@\@ -\d+,\d+ \+\d+,\d+ \@\@$/) { # e.g. @@ -1,5 +1,18 @@
+            if ($patchHeaderIndex) {
+                $patchEndIndex = $index; # We only bother to fix up the first patch fragment.
+                last;
             }
-        } elsif ($state == $stateNewChanges && substr($line, 0, 1) eq "+") {
-            # No changes to these lines
-            if ($lineCountInState == $newContentLineCountWithoutContext) {
-                $lineCountInState = 0;
-                $state = $statePostContext;
-            }
-        } elsif ($state == $statePostContext) {
-            if (substr($line, 0, 1) eq "+" && $lineCountInState <= $oldContentLineCountReduction) {
-                $line = " " . substr($line, 1);
-            } elsif ($lineCountInState > $contextLineCount && substr($line, 0, 1) eq " ") {
-                next; # Discard
-            }
+            $patchHeaderIndex = $index;
         }
-        $newPatch .= $line . "\n";
+        $firstContentIndex = $index if ($patchHeaderIndex && !$firstContentIndex && $line =~ /^\+[^+]/); # Only match after finding patchHeaderIndex, otherwise we'd match "+++".
+        $dateIndex = $index if ($line =~ /$dateLineRegexpString/);
+        $trailingContextIndex = $index if ($firstContentIndex && !$trailingContextIndex && $line =~ /^ /);
     }
+    my $contentLineCount = $trailingContextIndex - $firstContentIndex;
+    my $trailingContextLineCount = $patchEndIndex - $trailingContextIndex;
 
-    return $newPatch;
+    # If we didn't find a date line in the content then this is not a patch we should try and fix.
+    return $patch if (!$dateIndex);
+
+    # We only need to do anything if the date line is not the first content line.
+    return $patch if ($dateIndex == $firstContentIndex);
+
+    # Write the new patch.
+    my $totalNewContentLines = $contentLineCount + $trailingContextLineCount;
+    $patchLines[$patchHeaderIndex] = "@@ -1,$trailingContextLineCount +1,$totalNewContentLines @@"; # Write a new header.
+    my @repeatedLines = splice(@patchLines, $dateIndex, $trailingContextIndex - $dateIndex); # The date line and all the content after it that diff saw as repeated.
+    splice(@patchLines, $firstContentIndex, 0, @repeatedLines); # Move the repeated content to the top.
+    foreach my $line (@repeatedLines) {
+        $line =~ s/^\+/ /;
+    }
+    splice(@patchLines, $trailingContextIndex, $patchEndIndex, @repeatedLines); # Replace trailing context with the repeated content.
+    splice(@patchLines, $patchHeaderIndex + 1, $firstContentIndex - $patchHeaderIndex - 1); # Remove any leading context.
+
+    return join($lineEnding, @patchLines) . "\n"; # patch(1) expects an extra trailing newline.
 }
-
 
 1;
