@@ -1,3 +1,19 @@
+2009-11-04  Adam Roben  <aroben@apple.com>
+
+        Remove bogus else clause in bugzilla-tool
+
+        Fixes <http://webkit.org/b/31125> REGRESSION (r47121): bugzilla-tool
+        create-bug raises exception after entering bug description
+
+        Reviewed by David Kilzer.
+
+        * Scripts/bugzilla-tool:
+        (CreateBug): else clauses are only hit if no exception is raised, so
+        it makes no sense to try to re-raise the exception in an else clause.
+        The exception will automatically be re-raised if it doesn't match any
+        of the except clauses, so we don't have to do anything special here at
+        all to get the desired behavior.
+
 2009-11-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.

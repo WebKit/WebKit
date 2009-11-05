@@ -624,8 +624,6 @@ class CreateBug(Command):
             # FIXME: Figure out a way to get avoid the exception in the first
             # place.
             pass
-        else:
-            raise
         comment_text = ''.join(lines)
         return (bug_title, comment_text)
 
