@@ -37,7 +37,7 @@ namespace WebCore {
     class LocalStorageThread;
 
     // FIXME: Rename this class to StorageTask
-    class LocalStorageTask : public ThreadSafeShared<LocalStorageTask> {
+    class LocalStorageTask : public Noncopyable {
     public:
         enum Type { AreaImport, AreaSync, TerminateThread };
 
