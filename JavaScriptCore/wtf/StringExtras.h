@@ -85,7 +85,7 @@ inline int strcasecmp(const char* s1, const char* s2)
 
 #endif
 
-#if PLATFORM(WIN_OS) || PLATFORM(LINUX)
+#if PLATFORM(WIN_OS) || PLATFORM(LINUX) || PLATFORM(SOLARIS)
 
 inline char* strnstr(const char* buffer, const char* target, size_t bufferLength)
 {

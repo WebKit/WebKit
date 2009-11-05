@@ -1,3 +1,12 @@
+2009-11-04  Pavel Heimlich  <tropikhajma@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30647
+        Solaris build failure due to strnstr.
+
+        * wtf/StringExtras.h: Enable strnstr on Solaris, too.
+
 2009-11-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
