@@ -1,3 +1,37 @@
+2009-11-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Clean up StorageAreaSync
+        https://bugs.webkit.org/show_bug.cgi?id=31100
+
+        Major fixes: Break the ref count cycle for StorageArea on the main
+        thread, not the background thread since the latter is not safe.
+        Length() needs to block on the import completing.
+
+        Small fixes: setItem needs to handle the copy on write case even if it
+        has an exception.  setItem and removeItem should just bail from the
+        the function if the value hasn't changed rather than wrapping the end
+        in an if block.  Clear should only send an event if it wasn't already
+        cleared.  StorageAreaSync should assert that the final sync was
+        scheduled.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::length):
+          Forgot to block on the import.
+        (WebCore::StorageAreaImpl::key):
+        (WebCore::StorageAreaImpl::setItem):
+          Handle the copy on write case even when there's an exception.
+        (WebCore::StorageAreaImpl::removeItem):
+        (WebCore::StorageAreaImpl::clear):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::~StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::performImport):
+        (WebCore::StorageAreaSync::markImported):
+        (WebCore::StorageAreaSync::blockUntilImportComplete):
+        * storage/StorageAreaSync.h:
+
 2009-11-05  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

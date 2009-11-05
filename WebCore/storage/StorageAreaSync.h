@@ -46,7 +46,7 @@ namespace WebCore {
         ~StorageAreaSync();
 
         void scheduleFinalSync();
-        void blockUntilImportComplete() const;
+        void blockUntilImportComplete();
 
         void scheduleItemForSync(const String& key, const String& value);
         void scheduleClear();

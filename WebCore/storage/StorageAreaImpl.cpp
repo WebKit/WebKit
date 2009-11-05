@@ -107,6 +107,8 @@ static bool privateBrowsingEnabled(Frame* frame)
 unsigned StorageAreaImpl::length() const
 {
     ASSERT(!m_isShutdown);
+    blockUntilImportComplete();
+
     return m_storageMap->length();
 }
 
@@ -114,6 +116,7 @@ String StorageAreaImpl::key(unsigned index) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
+
     return m_storageMap->key(index);
 }
 
@@ -139,21 +142,20 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
     String oldValue;
     bool quotaException;
     RefPtr<StorageMap> newMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+    if (newMap)
+        m_storageMap = newMap.release();
 
     if (quotaException) {
         ec = QUOTA_EXCEEDED_ERR;
         return;
     }
 
-    if (newMap)
-        m_storageMap = newMap.release();
+    if (oldValue == value)
+        return;
 
-    // Only notify the client if an item was actually changed
-    if (oldValue != value) {
-        if (m_storageAreaSync)
-            m_storageAreaSync->scheduleItemForSync(key, value);
-        StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
-    }
+    if (m_storageAreaSync)
+        m_storageAreaSync->scheduleItemForSync(key, value);
+    StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
 }
 
 void StorageAreaImpl::removeItem(const String& key, Frame* frame)
@@ -169,12 +171,12 @@ void StorageAreaImpl::removeItem(const String& key, Frame* frame)
     if (newMap)
         m_storageMap = newMap.release();
 
-    // Only notify the client if an item was actually removed
-    if (!oldValue.isNull()) {
-        if (m_storageAreaSync)
-            m_storageAreaSync->scheduleItemForSync(key, String());
-        StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
-    }
+    if (oldValue.isNull())
+        return;
+
+    if (m_storageAreaSync)
+        m_storageAreaSync->scheduleItemForSync(key, String());
+    StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
 }
 
 void StorageAreaImpl::clear(Frame* frame)
@@ -183,6 +185,9 @@ void StorageAreaImpl::clear(Frame* frame)
     blockUntilImportComplete();
 
     if (privateBrowsingEnabled(frame))
+        return;
+
+    if (!m_storageMap->length())
         return;
 
     unsigned quota = m_storageMap->quota();
