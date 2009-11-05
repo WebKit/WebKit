@@ -1272,23 +1272,29 @@ void tst_QWebPage::inputMethods_data()
 {
     QTest::addColumn<QString>("viewType");
     QTest::newRow("QWebView") << "QWebView";
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QTest::newRow("QGraphicsWebView") << "QGraphicsWebView";
+#endif
 }
 
 static Qt::InputMethodHints inputMethodHints(QObject* object)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (QGraphicsObject* o = qobject_cast<QGraphicsObject*>(object))
         return o->inputMethodHints();
-    else if (QWidget* w = qobject_cast<QWidget*>(object))
+#endif
+    if (QWidget* w = qobject_cast<QWidget*>(object))
         return w->inputMethodHints();
     return Qt::InputMethodHints();
 }
 
 static bool inputMethodEnabled(QObject* object)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (QGraphicsObject* o = qobject_cast<QGraphicsObject*>(object))
         return o->flags() & QGraphicsItem::ItemAcceptsInputMethod;
-    else if (QWidget* w = qobject_cast<QWidget*>(object))
+#endif
+    if (QWidget* w = qobject_cast<QWidget*>(object))
         return w->testAttribute(Qt::WA_InputMethodEnabled);
     return false;
 }
@@ -1304,7 +1310,9 @@ void tst_QWebPage::inputMethods()
         wv->setPage(page);
         view = wv;
         container = view;
-    } else if (viewType == "QGraphicsWebView") {
+    }
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    else if (viewType == "QGraphicsWebView") {
         QGraphicsWebView* wv = new QGraphicsWebView;
         wv->setPage(page);
         view = wv;
@@ -1316,7 +1324,9 @@ void tst_QWebPage::inputMethods()
         wv->setGeometry(QRect(0, 0, 500, 500));
 
         container = gv;
-    } else
+    }
+#endif
+    else
         QVERIFY2(false, "Unknown view type");
 
     page->mainFrame()->setHtml("<html><body>" \

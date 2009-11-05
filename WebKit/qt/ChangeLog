@@ -1,5 +1,18 @@
 2009-11-05  Simon Hausmann  <hausmann@webkit.org>
 
+        Another prospective build fix against Qt 4.5 (build bot)
+
+        Don't compile & run the QGraphicsWebView portion of the
+        input methods auto test with Qt 4.5.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods_data):
+        (inputMethodHints):
+        (inputMethodEnabled):
+        (tst_QWebPage::inputMethods):
+
+2009-11-05  Simon Hausmann  <hausmann@webkit.org>
+
         Prospective build fix against Qt 4.5 (build bot)
 
         * Api/qgraphicswebview.cpp:
