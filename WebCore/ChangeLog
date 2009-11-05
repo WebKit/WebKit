@@ -1,3 +1,28 @@
+2009-11-05  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Geoffrey Garen and Dimitri Glazkov.
+
+        Rehashing of EventListenerMap leads to loss of EvenListenerList.
+        https://bugs.webkit.org/show_bug.cgi?id=31027
+
+        Tested by new fast/events/event-listener-map-rehash-crash.html.
+
+        EventListenerMap modified to store pointers to listener vectors:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTargetData::~EventTargetData):
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        (WebCore::EventTarget::getEventListeners):
+        (WebCore::EventTarget::removeAllEventListeners):
+        * dom/EventTarget.h:
+
+        Usages updated after interface changes:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree):
+
 2009-11-05  Dan Kegel  <dank@chromium.org>
 
         Reviewed by Dmitri Titov.

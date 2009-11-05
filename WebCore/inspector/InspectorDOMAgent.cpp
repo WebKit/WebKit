@@ -380,8 +380,8 @@ void InspectorDOMAgent::getEventListenersForNode(long callId, long nodeId)
     // Get the list of event types this Node is concerned with
     Vector<AtomicString> eventTypes;
     const EventListenerMap& listenerMap = d->eventListenerMap;
-    HashMap<AtomicString, EventListenerVector>::const_iterator end = listenerMap.end();
-    for (HashMap<AtomicString, EventListenerVector>::const_iterator iter = listenerMap.begin(); iter != end; ++iter)
+    EventListenerMap::const_iterator end = listenerMap.end();
+    for (EventListenerMap::const_iterator iter = listenerMap.begin(); iter != end; ++iter)
         eventTypes.append(iter->first);
 
     // Quick break if no useful listeners
