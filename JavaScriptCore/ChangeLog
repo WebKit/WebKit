@@ -1,3 +1,20 @@
+2009-11-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Removed the "this is part of the KDE project" comments from 
+        all *.h, *.cpp, *.idl, and *.pm files.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31167
+        
+        The maintenance and architecture page in the project wiki lists
+        this as a task.
+        
+        This change includes no changes or additions to test cases 
+        since the change affects only comments.
+        
+        * wtf/wince/FastMallocWince.h:
+
 2009-11-05  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

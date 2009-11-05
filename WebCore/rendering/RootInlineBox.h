@@ -1,6 +1,4 @@
 /*
- * This file is part of the line box implementation for KDE.
- *
  * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or

@@ -1,4 +1,4 @@
-/* This file is part of the KDE project
+/* 
    Copyright (C) 2000 Simon Hausmann <hausmann@kde.org>
    Copyright (C) 2006 Apple Computer, Inc.
 

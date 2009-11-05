@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
  *
  * This library is free software; you can redistribute it and/or

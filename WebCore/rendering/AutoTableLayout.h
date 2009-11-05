@@ -1,6 +1,4 @@
 /*
- * This file is part of the HTML rendering engine for KDE.
- *
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
  *

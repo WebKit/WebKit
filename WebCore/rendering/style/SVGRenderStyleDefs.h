@@ -8,8 +8,6 @@
               (C) 2000-2003 Dirk Mueller (mueller@kde.org)
               (C) 2002-2003 Apple Computer, Inc.
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either

@@ -1,6 +1,4 @@
 /*
- * This file is part of the HTML rendering engine for KDE.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *

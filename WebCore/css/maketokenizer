@@ -1,7 +1,5 @@
 print <<END;
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2003 Lars Knoll (knoll\@kde.org)
  *
  *

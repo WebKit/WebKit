@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2006, 2007 Rob Buis
  *
  * This library is free software; you can redistribute it and/or
