@@ -1,3 +1,9 @@
+2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: empty line in expectations build fix.
+
+        * fast/events/event-listener-map-rehash-crash-expected.txt:
+
 i2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
