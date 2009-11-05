@@ -4,4 +4,9 @@ Tests that elements panel shows dom tree structure.
 <html>
 <head>
 <body onload="onload()">
+<p>Tests that elements panel shows dom tree structure.
+</p>
+<div id="frontend-script" style="display:none">
+<pre id="output">
+</body>
 </html>

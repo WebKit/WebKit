@@ -59,7 +59,8 @@ InjectedScript.getStyles = function(nodeId, authorOnly)
     var node = InjectedScript._nodeForId(nodeId);
     if (!node)
         return false;
-    var matchedRules = InjectedScript._window().getMatchedCSSRules(node, "", authorOnly);
+    var defaultView = node.ownerDocument.defaultView;
+    var matchedRules = defaultView.getMatchedCSSRules(node, "", authorOnly);
     var matchedCSSRules = [];
     for (var i = 0; matchedRules && i < matchedRules.length; ++i)
         matchedCSSRules.push(InjectedScript._serializeRule(matchedRules[i]));
@@ -72,7 +73,7 @@ InjectedScript.getStyles = function(nodeId, authorOnly)
     }
     var result = {};
     result.inlineStyle = InjectedScript._serializeStyle(node.style, true);
-    result.computedStyle = InjectedScript._serializeStyle(InjectedScript._window().getComputedStyle(node));
+    result.computedStyle = InjectedScript._serializeStyle(defaultView.getComputedStyle(node));
     result.matchedCSSRules = matchedCSSRules;
     result.styleAttributes = styleAttributes;
     return result;
@@ -83,7 +84,7 @@ InjectedScript.getComputedStyle = function(nodeId)
     var node = InjectedScript._nodeForId(nodeId);
     if (!node)
         return false;
-    return InjectedScript._serializeStyle(InjectedScript._window().getComputedStyle(node));
+    return InjectedScript._serializeStyle(node.ownerDocument.defaultView.getComputedStyle(node));
 }
 
 InjectedScript.getInlineStyle = function(nodeId)
@@ -230,15 +231,19 @@ InjectedScript.applyStyleRuleText = function(ruleId, newContent, selectedNodeId)
 
 InjectedScript.addStyleSelector = function(newContent, selectedNodeId)
 {
-    var stylesheet = InjectedScript.stylesheet;
+    var selectedNode = InjectedScript._nodeForId(selectedNodeId);
+    if (!selectedNode)
+        return false;
+    var ownerDocument = selectedNode.ownerDocument;
+
+    var stylesheet = ownerDocument.__stylesheet;
     if (!stylesheet) {
-        var inspectedDocument = InjectedScript._window().document;
-        var head = inspectedDocument.getElementsByTagName("head")[0];
-        var styleElement = inspectedDocument.createElement("style");
+        var head = ownerDocument.getElementsByTagName("head")[0];
+        var styleElement = ownerDocument.createElement("style");
         styleElement.type = "text/css";
         head.appendChild(styleElement);
-        stylesheet = inspectedDocument.styleSheets[inspectedDocument.styleSheets.length - 1];
-        InjectedScript.stylesheet = stylesheet;
+        stylesheet = ownerDocument.styleSheets[ownerDocument.styleSheets.length - 1];
+        ownerDocument.__stylesheet = stylesheet;
     }
 
     try {
@@ -248,7 +253,6 @@ InjectedScript.addStyleSelector = function(newContent, selectedNodeId)
         return false;
     }
 
-    var selectedNode = InjectedScript._nodeForId(selectedNodeId);
     var rule = stylesheet.cssRules[stylesheet.cssRules.length - 1];
     rule.__isViaInspector = true;
 

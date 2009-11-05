@@ -61,9 +61,10 @@ WebInspector.DOMNode = function(doc, payload) {
     this._matchedCSSRules = [];
 
     if (this.nodeType == Node.ELEMENT_NODE) {
-        if (this.nodeName == "HTML")
+        // HTML and BODY from internal iframes should not overwrite top-level ones.
+        if (!this.ownerDocument.documentElement && this.nodeName === "HTML")
             this.ownerDocument.documentElement = this;
-        if (this.nodeName == "BODY")
+        if (!this.ownerDocument.body && this.nodeName === "BODY")
             this.ownerDocument.body = this;
     }
 }

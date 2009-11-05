@@ -118,6 +118,7 @@ fast/text/find-hidden-text.html
 inspector/console-format-collections.html
 inspector/css-syntax-highlight.html
 inspector/javascript-syntax-highlight.html
+inspector/styles-iframe.html
 inspector/timeline-trivial.html
 inspector/uncaught-dom1-exception.html
 inspector/uncaught-dom3-exception.html

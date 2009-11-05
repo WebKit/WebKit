@@ -8,10 +8,10 @@ function doit()
     function callback(result)
     {
         var output = document.getElementById("output");
-        output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/<p>.*<\/body>/g, "").replace(/</g, "\n<");
+        output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<");
         notifyDone();
     }
-    evaluateInWebInspector("WebInspector.panels.elements.treeOutline.element.textContent", callback);
+    evaluateInWebInspector("dumpElements", callback);
 }
 
 </script>
@@ -23,6 +23,14 @@ Tests that elements panel shows dom tree structure.
 </p>
 
 <div id="frontend-script" style="display:none">
+function dumpElements(testController)
+{
+    testController.waitUntilDone();
+    expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+        testController.notifyDone(WebInspector.panels.elements.treeOutline.element.textContent);
+    });
+}
 </div>
 
 <pre id="output">

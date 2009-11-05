@@ -10,10 +10,10 @@ function doit()
     function callback(result)
     {
         for (var i = 0; i < result.length; ++i)
-            output(result[i]);
+            output(result[i].text);
         notifyDone();
     }
-    evaluateInWebInspector("dumpMessages()", callback);
+    evaluateInWebInspector("dumpConsoleMessages", callback);
 }
 
 </script>
@@ -23,17 +23,6 @@ function doit()
 <p>
 Tests that console logging dumps proper messages.
 </p>
-
-<div id="frontend-script" style="display:none">
-function dumpMessages()
-{
-    var result = [];
-    var messages = WebInspector.console.messages;
-    for (var i = 0; i < messages.length; ++i)
-        result.push(messages[i].toMessageElement().textContent.replace(/\u200b/g, ""));
-    return result;
-}
-</div>
 
 <div id="output">
 </div>

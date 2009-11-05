@@ -21,12 +21,11 @@ function onload()
 {
     if (ignoreLoad)
         return;
-    var callId = lastCallId++;
-    setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.evaluateInWebInspector(callId, document.getElementById("frontend-script").textContent);
-        doit();
-    }, 0);
+
+    var toInject = expandDOMSubtree.toString() + "\n" + dumpConsoleMessages.toString();
+    if (document.getElementById("frontend-script"))
+        toInject += "\n" + document.getElementById("frontend-script").textContent;
+    evaluateInWebInspector(toInject, doit);
 
     // Make sure web inspector window is closed before the test is interrupted.
     setTimeout(function() {
@@ -72,3 +71,26 @@ window.didEvaluateForTestInFrontend = function(callId, jsonResult)
         delete callbacks[callId];
     }
 };
+
+// Injected utility functions.
+
+function expandDOMSubtree(node)
+{
+    function processChildren(children)
+    {
+       for (var i = 0; children && i < children.length; ++i)
+           expandDOMSubtree(children[i]);
+    }
+    WebInspector.domAgent.getChildNodesAsync(node, processChildren);
+}
+
+function dumpConsoleMessages()
+{
+    var result = [];
+    var messages = WebInspector.console.messages;
+    for (var i = 0; i < messages.length; ++i) {
+        var element = messages[i].toMessageElement();
+        result.push({ text: element.textContent.replace(/\u200b/g, ""), clazz: element.getAttribute("class")});
+    }
+    return result;
+}

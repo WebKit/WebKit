@@ -17,10 +17,10 @@ function doit()
     function callback(result)
     {
         for (var i = 0; i < result.length; ++i)
-            output(result[i]);
+            output(result[i].text);
         notifyDone();
     }
-    evaluateInWebInspector("dumpMessages", callback);
+    evaluateInWebInspector("dumpConsoleMessages", callback);
 }
 
 </script>
@@ -30,22 +30,6 @@ function doit()
 <p>
 Tests that console logging dumps proper messages.
 </p>
-
-<div id="frontend-script" style="display:none">
-function dumpMessages(testController)
-{
-    // Array formatting is deferred due to the async InjectedScriptAccess.getProperties call.
-    // Queue message log dump in order to see proper result.
-    testController.waitUntilDone();
-    setTimeout(function() {
-        var result = [];
-        var messages = WebInspector.console.messages;
-        for (var i = 0; i < messages.length; ++i)
-            result.push(messages[i].toMessageElement().textContent);
-        testController.notifyDone(result);
-    }, 0);
-}
-</div>
 
 <div id="output">
 </div>

@@ -1,0 +1,17 @@
+<html>
+<head>
+<style type="text/css" media="screen">
+  body { background:green; }
+</style>
+<script>
+function iframeOnload()
+{
+    window.parent.iframeLoaded = true;
+}
+</script>
+</head>
+
+<body onload="iframeOnload()">
+</body>
+
+</html>

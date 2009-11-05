@@ -1,0 +1,99 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+  body { background:blue; }
+</style>
+
+<script src="evaluate-in-frontend.js"></script>
+<script>
+
+function runAfterIframeIsLoaded(continuation)
+{
+    function step()
+    {
+        if (!window.iframeLoaded)
+            setTimeout(step, 100);
+        else
+            continuation();
+    }
+    setTimeout(step, 100);
+}
+
+function doit()
+{
+    runAfterIframeIsLoaded(function() {
+        function callback(result)
+        {
+            for (var i = 0; i < result.length; ++i) {
+                output("Style: " + i);
+                var matchedRules = result[i].matchedCSSRules;
+                for (var j = 0; matchedRules && j < matchedRules.length; ++j) {
+                    output(JSON.stringify(matchedRules[j].style.shorthandValues));
+                }
+            }
+            notifyDone();
+        }
+        evaluateInWebInspector("dumpStyles", callback);
+    });
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that proper (and different) styles are returned for body elements of main document and iframe.
+</p>
+
+<iframe src='resources/styles-iframe-data.html'></iframe>
+
+<div id="frontend-script" style="display:none">
+
+function dumpStyles(testController)
+{
+    testController.waitUntilDone();
+
+    expandDOMSubtree(WebInspector.domAgent.document);
+
+    testController.runAfterPendingDispatches(function() {
+        dumpStylesContinuation(testController);
+    });
+}
+
+function dumpStylesContinuation(testController)
+{
+    // 1. Get styles for body, store them in mainStyles var.
+    var bodyId = WebInspector.domAgent.document.body.id;
+    var mainStyles = null;
+    function mainFrameCallback(styles) {
+        mainStyles = styles;
+    }
+    InjectedScriptAccess.getStyles(bodyId, false, mainFrameCallback);
+
+    // 2. Find iframe node
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+    var iframeBodyId = null;
+
+    for (var nodeId in innerMapping) {
+        if (innerMapping[nodeId].nodeName === "IFRAME")
+            iframeBodyId = innerMapping[nodeId].firstChild.lastChild.id;
+    }
+    if (typeof iframeBodyId !== "number") {
+        testController.notifyDone(["No iframe node found"]);
+        return;
+    }
+
+    // 3. Get styles for iframe's body, return them together with main styles.
+    function iframeCallback(styles) {
+        testController.notifyDone([mainStyles, styles]);
+    }
+    InjectedScriptAccess.getStyles(iframeBodyId, false, iframeCallback);
+}
+</div>
+
+<div id="output">
+</div>
+
+</body>
+</html>

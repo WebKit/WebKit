@@ -770,6 +770,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // resetScriptObjects should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
         resetScriptObjects();
+
 #if ENABLE(DATABASE)
         m_databaseResources.clear();
 #endif

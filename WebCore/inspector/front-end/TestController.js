@@ -42,7 +42,7 @@ WebInspector.TestController.prototype = {
 
     notifyDone: function(result)
     {
-        var message = typeof result === "undefined" ? "<undefined>" : JSON.stringify(result);
+        var message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
         InspectorController.didEvaluateForTestInFrontend(this._callId, message);
     },
 
@@ -52,7 +52,6 @@ WebInspector.TestController.prototype = {
             callback();
             return;
         }
-
         setTimeout(this.runAfterPendingDispatches.bind(this), 0, callback);
     }
 }
@@ -60,16 +59,20 @@ WebInspector.TestController.prototype = {
 WebInspector.evaluateForTestInFrontend = function(callId, script)
 {
     var controller = new WebInspector.TestController(callId);
-    try {
-        var result;
-        if (window[script] && typeof window[script] === "function")
-            result = window[script].call(this, controller);
-        else
-            result = window.eval(script);
+    function invokeMethod()
+    {
+        try {
+            var result;
+            if (window[script] && typeof window[script] === "function")
+                result = window[script].call(WebInspector, controller);
+            else
+                result = window.eval(script);
 
-        if (!controller._waitUntilDone)
-            controller.notifyDone(result);
-    } catch (e) {
-        controller.notifyDone(e.toString());
+            if (!controller._waitUntilDone)
+                controller.notifyDone(result);
+        } catch (e) {
+            controller.notifyDone(e.toString());
+        }
     }
+    controller.runAfterPendingDispatches(invokeMethod);
 }

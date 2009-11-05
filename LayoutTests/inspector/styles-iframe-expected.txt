@@ -1,0 +1,10 @@
+Tests that proper (and different) styles are returned for body elements of main document and iframe.
+
+
+Style: 0
+{"margin":"8px"}
+{"background":"blue"}
+Style: 1
+{"margin":"8px"}
+{"background":"green"}
+
