@@ -1,3 +1,20 @@
+2009-11-05  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Update bindings to use new API for external arrays
+        https://bugs.webkit.org/show_bug.cgi?id=31181
+
+        No new tests; covered by existing WebGL tests.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setIndexedPropertiesToExternalArray):
+        (WebCore::V8DOMWrapper::getTemplate):
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/custom/V8CanvasArrayCustom.h:
+        (WebCore::constructCanvasArray):
+
 2009-11-05  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed, Chromium build fix.

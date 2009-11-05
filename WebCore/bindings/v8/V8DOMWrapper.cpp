@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
+#include "CanvasArray.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "ChromiumBridge.h"
 #include "DOMObjectsInclude.h"
@@ -147,6 +148,45 @@ v8::Handle<v8::Value> V8DOMWrapper::convertSVGObjectWithContextToV8Object(V8Clas
     return result;
 }
 
+#endif
+
+#if ENABLE(3D_CANVAS)
+void V8DOMWrapper::setIndexedPropertiesToExternalArray(v8::Handle<v8::Object> wrapper,
+                                                       int index,
+                                                       void* address,
+                                                       int length)
+{
+    v8::ExternalArrayType array_type = v8::kExternalByteArray;
+    V8ClassIndex::V8WrapperType classIndex = V8ClassIndex::FromInt(index);
+    switch (classIndex) {
+    case V8ClassIndex::CANVASBYTEARRAY:
+        array_type = v8::kExternalByteArray;
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
+        array_type = v8::kExternalUnsignedByteArray;
+        break;
+    case V8ClassIndex::CANVASSHORTARRAY:
+        array_type = v8::kExternalShortArray;
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
+        array_type = v8::kExternalUnsignedShortArray;
+        break;
+    case V8ClassIndex::CANVASINTARRAY:
+        array_type = v8::kExternalIntArray;
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
+        array_type = v8::kExternalUnsignedIntArray;
+        break;
+    case V8ClassIndex::CANVASFLOATARRAY:
+        array_type = v8::kExternalFloatArray;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    wrapper->SetIndexedPropertiesToExternalArrayData(address,
+                                                     array_type,
+                                                     length);
+}
 #endif
 
 bool V8DOMWrapper::domObjectHasJSWrapper(void* object)
@@ -486,31 +526,24 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         break;
     case V8ClassIndex::CANVASBYTEARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasByteArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasByteArray), USE_INDEXED_PROPERTY_SETTER(CanvasByteArray));
         break;
     case V8ClassIndex::CANVASFLOATARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasFloatArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasFloatArray), USE_INDEXED_PROPERTY_SETTER(CanvasFloatArray));
         break;
     case V8ClassIndex::CANVASINTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasIntArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasIntArray), USE_INDEXED_PROPERTY_SETTER(CanvasIntArray));
         break;
     case V8ClassIndex::CANVASSHORTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasShortArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasShortArray), USE_INDEXED_PROPERTY_SETTER(CanvasShortArray));
         break;
     case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedByteArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedByteArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedByteArray));
         break;
     case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedIntArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedIntArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedIntArray));
         break;
     case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedShortArrayConstructor));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedShortArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedShortArray));
         break;
 #endif
     case V8ClassIndex::DOMPARSER:
@@ -709,6 +742,28 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
                 CanvasPixelArray* pixels = reinterpret_cast<CanvasPixelArray*>(impl);
                 result->SetIndexedPropertiesToPixelData(pixels->data()->data(), pixels->length());
             }
+
+#if ENABLE(3D_CANVAS)
+            // Set up CanvasArray subclasses' accesses similarly.
+            switch (type) {
+            case V8ClassIndex::CANVASBYTEARRAY:
+            case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
+            case V8ClassIndex::CANVASSHORTARRAY:
+            case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
+            case V8ClassIndex::CANVASINTARRAY:
+            case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
+            case V8ClassIndex::CANVASFLOATARRAY: {
+                CanvasArray* array = reinterpret_cast<CanvasArray*>(impl);
+                setIndexedPropertiesToExternalArray(result,
+                                                    V8ClassIndex::ToInt(type),
+                                                    array->baseAddress(),
+                                                    array->length());
+                break;
+            }
+            default:
+                break;
+            }
+#endif
 
             // Special case for non-node objects associated with a
             // DOMWindow. Both Safari and FF let the JS wrappers for these

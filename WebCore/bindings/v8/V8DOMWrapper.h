@@ -308,6 +308,13 @@ namespace WebCore {
         static v8::Handle<v8::Value> convertSVGObjectWithContextToV8Object(V8ClassIndex::V8WrapperType, void*);
 #endif
 
+#if ENABLE(3D_CANVAS)
+        static void setIndexedPropertiesToExternalArray(v8::Handle<v8::Object>,
+                                                        int,
+                                                        void*,
+                                                        int);
+#endif
+
     private:
         // Set hidden references in a DOMWindow object of a frame.
         static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);

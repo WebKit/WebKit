@@ -94,6 +94,10 @@ namespace WebCore {
                 return throwError("Invalid arguments to new Canvas<T>Array(CanvasArrayBuffer, int, int)");
             // Transform the holder into a wrapper object for the array.
             V8DOMWrapper::setDOMWrapper(args.Holder(), classIndex, array.get());
+            V8DOMWrapper::setIndexedPropertiesToExternalArray(args.Holder(),
+                                                              classIndex,
+                                                              array.get()->baseAddress(),
+                                                              array.get()->length());
             return toV8(array.release(), args.Holder());
         }
 
@@ -128,6 +132,10 @@ namespace WebCore {
 
         // Transform the holder into a wrapper object for the array.
         V8DOMWrapper::setDOMWrapper(args.Holder(), classIndex, array.get());
+        V8DOMWrapper::setIndexedPropertiesToExternalArray(args.Holder(),
+                                                          classIndex,
+                                                          array.get()->baseAddress(),
+                                                          array.get()->length());
         return toV8(array.release(), args.Holder());
     }
 
