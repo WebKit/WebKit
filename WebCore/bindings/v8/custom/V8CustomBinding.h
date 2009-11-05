@@ -600,6 +600,7 @@ namespace WebCore {
 #if ENABLE(SVG)
         DECLARE_PROPERTY_ACCESSOR_GETTER(SVGLengthValue);
         DECLARE_CALLBACK(SVGLengthConvertToSpecifiedUnits);
+        DECLARE_CALLBACK(SVGMatrixMultiply);
         DECLARE_CALLBACK(SVGMatrixInverse);
         DECLARE_CALLBACK(SVGMatrixRotateFromVector);
         DECLARE_CALLBACK(SVGElementInstanceAddEventListener);

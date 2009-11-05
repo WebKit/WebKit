@@ -38,10 +38,26 @@
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8SVGMatrix.h"
 #include "V8SVGPODTypeWrapper.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+CALLBACK_FUNC_DECL(SVGMatrixMultiply)
+{
+    INC_STATS("DOM.SVGMatrix.multiply()");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments");
+
+    if (!V8SVGMatrix::HasInstance(args[0]))
+        return throwError("secondMatrix argument was not a SVGMatrix");
+
+    TransformationMatrix m1 = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
+    TransformationMatrix m2 = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, v8::Handle<v8::Object>::Cast(args[0]));
+
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)));
+}
 
 CALLBACK_FUNC_DECL(SVGMatrixInverse)
 {

@@ -1,3 +1,16 @@
+2009-11-05  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed, Chromium build fix.
+
+        50561 introduces a custom method for SVGMatrix, we need to implement
+        this in V8.
+
+        * bindings/v8/custom/V8CustomBinding.h:
+        Adding definition for V8SVGMatrixMultiply.
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        Implement V8SVGMatrixMultiply according to the same method in JSC.
+
 2009-11-05  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert 50569 since it broke QT.  Build fix and just a revert, so no review.
