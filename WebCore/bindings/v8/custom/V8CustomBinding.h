@@ -644,6 +644,7 @@ namespace WebCore {
 #endif // ENABLE(NOTIFICATIONS)
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache);
         DECLARE_PROPERTY_ACCESSOR(DOMApplicationCacheEventHandler);
         DECLARE_CALLBACK(DOMApplicationCacheAddEventListener);
         DECLARE_CALLBACK(DOMApplicationCacheRemoveEventListener);

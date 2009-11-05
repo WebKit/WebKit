@@ -157,7 +157,7 @@ module window {
         WebKitPoint webkitConvertPointFromNodeToPage(in Node node, in WebKitPoint p);
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        readonly attribute DOMApplicationCache applicationCache;
+        readonly attribute [EnabledAtRuntime] DOMApplicationCache applicationCache;
 #endif    
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize)

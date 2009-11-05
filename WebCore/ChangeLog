@@ -1,3 +1,23 @@
+2009-11-04  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by David Levin.
+
+        Need to properly disable applicationCache at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=30417
+
+        Adding applicationCacheEnabled bit to V8 RuntimeEnabledFeatures.
+
+        No new exposed functionality, so no new tests.
+
+        * bindings/v8/RuntimeEnabledFeatures.cpp:
+        * bindings/v8/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setApplicationCacheEnabled):
+        (WebCore::RuntimeEnabledFeatures::applicationCacheEnabled):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_RUNTIME_ENABLER):
+        * page/DOMWindow.idl:
+
 2009-11-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
