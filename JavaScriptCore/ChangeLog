@@ -1,5 +1,15 @@
 2009-11-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Oliver Hunt.
+
+        Enable native call optimizations on ARMv7.  (Existing ARM_TRADITIONAL
+        implementation was generic, worked perfectly, just needed turning on).
+
+        * jit/JITOpcodes.cpp:
+        * wtf/Platform.h:
+
+2009-11-04  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber Stamped by Mark Rowe, Oliver Hunt, and Sam Weinig.
 
         Add a missing assert to the ARMv7 JIT.

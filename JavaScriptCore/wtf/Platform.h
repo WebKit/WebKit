@@ -735,7 +735,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
 #elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
     #define ENABLE_JIT 1
-    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
 /* The JIT is tested & working on x86 Windows */
 #elif PLATFORM(X86) && PLATFORM(WIN)
     #define ENABLE_JIT 1
@@ -753,9 +752,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
 #elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX)
     #define ENABLE_JIT 1
-    #if PLATFORM(ARM_THUMB2)
-        #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
-    #endif
 #endif
 #endif /* PLATFORM(QT) */
 

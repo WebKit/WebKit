@@ -1756,7 +1756,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif PLATFORM(ARM)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     // Allocate stack space for our arglist
@@ -1790,7 +1790,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(callFrameRegister, regT0);
 
     // Setup arg4: This is a plain hack
-    move(stackPointerRegister, ARMRegisters::S0);
+    move(stackPointerRegister, ARMRegisters::r3);
 
     call(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_data)));
 
