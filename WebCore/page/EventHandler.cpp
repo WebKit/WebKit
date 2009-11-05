@@ -1508,6 +1508,31 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
     return me->defaultPrevented();
 }
 
+bool EventHandler::handleDragAndDropForTarget(DragAndDropHandleType type, Node* target, const AtomicString& eventType, const PlatformMouseEvent& event, Clipboard* clipboard)
+{
+    bool accept = false;
+
+    if (target->hasTagName(frameTag) || target->hasTagName(iframeTag)) {
+        Frame* frame = static_cast<HTMLFrameElementBase*>(target)->contentFrame();
+        if (frame) {
+            switch (type) {
+                case UpdateDragAndDrop:
+                    accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
+                    break;
+                case CancelDragAndDrop:
+                    frame->eventHandler()->cancelDragAndDrop(event, clipboard);
+                    break;
+                case PerformDragAndDrop:
+                    accept = frame->eventHandler()->performDragAndDrop(event, clipboard);
+                    break;
+            }
+        }
+    } else
+        accept = dispatchDragEvent(eventType, target, event, clipboard);
+
+    return accept;
+}
+
 bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
@@ -1529,29 +1554,14 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         // FIXME: this ordering was explicitly chosen to match WinIE. However,
         // it is sometimes incorrect when dragging within subframes, as seen with
         // LayoutTests/fast/events/drag-in-frames.html.
-        if (newTarget) {
-            Frame* frame = (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame() : 0;
-            if (frame)
-                accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
-            else
-                accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
-        }
+        if (newTarget)
+            accept = handleDragAndDropForTarget(UpdateDragAndDrop, newTarget, eventNames().dragenterEvent, event, clipboard);
 
-        if (m_dragTarget) {
-            Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
-            if (frame)
-                accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
-            else
-                dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
-        }
+        if (m_dragTarget)
+            handleDragAndDropForTarget(UpdateDragAndDrop, m_dragTarget.get(), eventNames().dragleaveEvent, event, clipboard);
     } else {
-        if (newTarget) {
-            Frame* frame = (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame() : 0;
-            if (frame)
-                accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
-            else
-                accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
-        }
+        if (newTarget)
+            accept = handleDragAndDropForTarget(UpdateDragAndDrop, newTarget, eventNames().dragoverEvent, event, clipboard);
     }
     m_dragTarget = newTarget;
 
@@ -1560,28 +1570,16 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
 
 void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    if (m_dragTarget) {
-        Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) 
-                        ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
-        if (frame)
-            frame->eventHandler()->cancelDragAndDrop(event, clipboard);
-        else
-            dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
-    }
+    if (m_dragTarget)
+        handleDragAndDropForTarget(CancelDragAndDrop, m_dragTarget.get(), eventNames().dragleaveEvent, event, clipboard);
     clearDragState();
 }
 
 bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
-    if (m_dragTarget) {
-        Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) 
-                        ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
-        if (frame)
-            accept = frame->eventHandler()->performDragAndDrop(event, clipboard);
-        else
-            accept = dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
-    }
+    if (m_dragTarget)
+        accept = handleDragAndDropForTarget(PerformDragAndDrop, m_dragTarget.get(), eventNames().dropEvent, event, clipboard);
     clearDragState();
     return accept;
 }
