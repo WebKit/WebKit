@@ -182,7 +182,7 @@ WebInspector.TimelinePanel.prototype = {
         case WebInspector.TimelineAgent.RecordType.EventDispatch:
             return record.data ? record.data.type : "";
         case WebInspector.TimelineAgent.RecordType.Paint:
-            return record.data.width + " x " + record.data.height;
+            return record.data.width + "\u2009\u00d7\u2009" + record.data.height;
         case WebInspector.TimelineAgent.RecordType.TimerInstall:
         case WebInspector.TimelineAgent.RecordType.TimerRemove:
         case WebInspector.TimelineAgent.RecordType.TimerFire:
@@ -356,7 +356,7 @@ WebInspector.TimelinePanel.prototype = {
     _dragWindow: function(event)
     {
         WebInspector.elementDragStart(this._overviewWindowElement, this._windowDragging.bind(this, event.pageX,
-                this._leftResizeElement.offsetLeft, this._rightResizeElement.offsetLeft), this._endWindowDragging.bind(this), event, "col-resize");
+            this._leftResizeElement.offsetLeft, this._rightResizeElement.offsetLeft), this._endWindowDragging.bind(this), event, "ew-resize");
     },
 
     _windowDragging: function(startX, windowLeft, windowRight, event)
@@ -383,7 +383,7 @@ WebInspector.TimelinePanel.prototype = {
     _resizeWindowLeft: function(start)
     {
         // Glue to edge.
-        if (start < 20)
+        if (start < 10)
             start = 0;
         this._setWindowPosition(start, null);
     },
@@ -391,7 +391,7 @@ WebInspector.TimelinePanel.prototype = {
     _resizeWindowRight: function(end)
     {
         // Glue to edge.
-        if (end > this._overviewGridElement.clientWidth - 20)           
+        if (end > this._overviewGridElement.clientWidth - 10)
             end = this._overviewGridElement.clientWidth;
         this._setWindowPosition(null, end);
     },
@@ -453,18 +453,23 @@ WebInspector.TimelineCategoryTreeElement.prototype = {
     {
         this.listItemElement.removeChildren();
         this.listItemElement.addStyleClass("timeline-category-tree-item");
+        this.listItemElement.addStyleClass("timeline-category-" + this._category.name);
+
+        var label = document.createElement("label");
 
         var checkElement = document.createElement("input");
         checkElement.type = "checkbox";
         checkElement.className = "timeline-category-checkbox";
         checkElement.checked = true;
         checkElement.addEventListener("click", this._onCheckboxClicked.bind(this));
-        this.listItemElement.appendChild(checkElement);
+        label.appendChild(checkElement);
 
-        this.typeElement = document.createElement("span");
-        this.typeElement.className = "type";
-        this.typeElement.textContent = this._category.title;
-        this.listItemElement.appendChild(this.typeElement);
+        var typeElement = document.createElement("span");
+        typeElement.className = "type";
+        typeElement.textContent = this._category.title;
+        label.appendChild(typeElement);
+
+        this.listItemElement.appendChild(label);
     },
 
     _onCheckboxClicked: function (event) {
@@ -511,10 +516,10 @@ WebInspector.TimelineRecordTreeElement.prototype = {
             separatorElement.textContent = " ";
 
             var dataElement = document.createElement("span");
-            dataElement.className = "data";
+            dataElement.className = "data dimmed";
             dataElement.textContent = "(" + this._record.details + ")";
             dataElement.title = this._record.details;
-            dataElement.addStyleClass("dimmed");
+
             this.listItemElement.appendChild(separatorElement);
             this.listItemElement.appendChild(dataElement);
         }
@@ -522,8 +527,16 @@ WebInspector.TimelineRecordTreeElement.prototype = {
 
     refresh: function()
     {
-        if (this._record.count > 1)
-            this.typeElement.textContent = this._record.title + " x " + this._record.count;
+        if (this._record.count <= 1)
+            return;
+
+        if (!this.repeatCountElement) {
+            this.repeatCountElement = document.createElement("span");
+            this.repeatCountElement.className = "count";
+            this.listItemElement.appendChild(this.repeatCountElement);
+        }
+
+        this.repeatCountElement.textContent = "\u2009\u00d7\u2009" + this._record.count;
     }
 }
 
@@ -609,7 +622,7 @@ WebInspector.TimelineCategoryGraph = function(category)
     this._category = category;
 
     this._graphElement = document.createElement("div");
-    this._graphElement.className = "timeline-graph-side timeline-overview-graph-side filter-all";
+    this._graphElement.className = "timeline-graph-side timeline-overview-graph-side";
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "timeline-graph-bar-area timeline-category-" + category.name;

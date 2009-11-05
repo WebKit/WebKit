@@ -3288,9 +3288,9 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     top: 80px;
     left: 0;
     right: 0;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
-    border-top: 1px solid rgb(163, 163, 163);
-    border-bottom: 1px solid rgb(163, 163, 163);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(253, 253, 253)), to(rgb(213, 213, 213)));
+    border-top: 1px solid rgb(140, 140, 140);
+    border-bottom: 1px solid rgb(115, 115, 115);
     height: 10px;
 }
 
@@ -3300,7 +3300,8 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     top: 0px;
     bottom: 0px;
     left: 0px;
-    background-color: rgb(232, 232, 232);
+    padding-top: 1px;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(242, 242, 242)), to(rgb(209, 209, 209)));
     border-right: 1px solid rgb(163, 163, 163);
 }
 
@@ -3310,7 +3311,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0px;
     left: 200px;
     right: 0px;
-    background-color: rgb(232, 232, 232);
+    background-color: rgb(224, 224, 224);
 }
 
 #timeline-overview-window {
@@ -3327,14 +3328,14 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     position: absolute;
     top: 35px;
     bottom: 15px;
-    width: 6px;
+    width: 5px;
     margin-left: -3px;
-    margin-right: -3px;
-    background-color: rgb(132, 132, 132);
+    margin-right: -2px;
+    background-color: rgb(153, 153, 153);
     z-index: 500;
     cursor: col-resize;
-    border: 1px solid white;
-    -webkit-border-radius: 3px;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: white 1px 0 0, white -1px 0 0, white 0 1px 0, white 0 -1px 0;
 }
 
 .timeline .sidebar-resizer-vertical {
@@ -3367,18 +3368,39 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 .timeline-category-tree-item {
     height: 20px;
     padding-left: 6px;
-    padding-top: 2px;
+    padding-top: 3px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     font-weight: bold;
 }
 
-.timeline-tree-item .timeline-category-checkbox {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
+.timeline-category-tree-item .timeline-category-checkbox {
+    width: 10px;
+    height: 11px;
+    margin: 0 3px 0 5px;
+    padding: 0;
+    background-image: url(Images/timelineCheckmarks.png);
+    background-repeat: no-repeat;
+    background-position: 0 -66px;
+    vertical-align: -1px;
+    -webkit-appearance: none;
+}
+
+.timeline-category-tree-item .timeline-category-checkbox:checked {
+    background-position-x: -10px;
+}
+
+.timeline-category-tree-item.timeline-category-loading .timeline-category-checkbox {
+    background-position-y: 0;
+}
+
+.timeline-category-tree-item.timeline-category-scripting .timeline-category-checkbox {
+    background-position-y: -33px;
+}
+
+.timeline-category-tree-item.timeline-category-rendering .timeline-category-checkbox {
+    background-position-y: -11px;
 }
 
 .timeline-category-tree-item:nth-of-type(2n) {
@@ -3398,6 +3420,11 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     padding-left: 14px;
 }
 
+.timeline-tree-item .count {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+}
+
 .timeline-tree-item .timeline-tree-icon {
     background-image: url(Images/timelineDots.png);
     margin-top: 2px;
@@ -3414,13 +3441,13 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     color: rgba(0, 0, 0, 0.7);
 }
 
-.timeline-category-loading, .timeline-category-scripting, .timeline-category-rendering {
+#timeline-container .timeline-category-loading, #timeline-container .timeline-category-scripting, #timeline-container .timeline-category-rendering {
     display: none;
 }
 
-.filter-all .timeline-category-loading, .filter-loading .timeline-category-loading,
-.filter-all .timeline-category-scripting, .filter-scripting .timeline-category-scripting,
-.filter-all .timeline-category-rendering, .filter-rendering .timeline-category-rendering {
+#timeline-container .filter-all .timeline-category-loading, #timeline-container .filter-loading .timeline-category-loading,
+#timeline-container .filter-all .timeline-category-scripting, #timeline-container .filter-scripting .timeline-category-scripting,
+#timeline-container .filter-all .timeline-category-rendering, #timeline-container .filter-rendering .timeline-category-rendering {
     display: list-item;
 }
 
@@ -3455,6 +3482,10 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     height: 20px;
     z-index: 170;
     pointer-events: none;
+}
+
+.timeline-overview-graph-side .timeline-graph-bar {
+    height: 13px;
 }
 
 .timeline-graph-bar-area {
