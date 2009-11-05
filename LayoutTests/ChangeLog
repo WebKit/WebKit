@@ -1,3 +1,15 @@
+2009-11-05  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Adele Peterson.
+
+        The number of selected lines in textarea after a shift-PageDown
+        may differ. The test case is modified so that it will not depend
+        on the exact number of lines selected. This should resolve regression
+        on platforms like Qt and GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=31122
+
+        * editing/selection/shrink-selection-after-shift-pagedown.html:
+
 2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: empty line in expectations build fix.

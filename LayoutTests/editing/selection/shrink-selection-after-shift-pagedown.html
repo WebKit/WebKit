@@ -7,16 +7,18 @@
             layoutTestController.dumpAsText();
         
         var ta = document.getElementById('ta');
-        ta.setSelectionRange(3, 14);
-        
+        ta.setSelectionRange(4, 16);
+
+        var lastSelectedLine;
         if (window.eventSender) {
             eventSender.keyDown("pageDown",["shiftKey"]);
+            lastSelectedLine = (ta.value).substring(ta.selectionEnd - 4, ta.selectionEnd);
             eventSender.keyDown("upArrow",["shiftKey"]);
         }
         
         var result;
         var selectedText = (ta.value).substring(ta.selectionStart, ta.selectionEnd);
-        if (selectedText.indexOf('NO') == -1)
+        if ((selectedText.indexOf(lastSelectedLine) == -1) && (selectedText.indexOf('L01') == -1))
             result = "SUCCESS: The selection shrunk correctly";
         else
             result = "SUCCESS: The selected text is \"" + selectedText + "\".";
@@ -33,23 +35,22 @@
     The selection should only include the lines with "YES".
 </p>
 <textarea rows=10 id="ta">
-NO
-YES
-YES
-YES
-YES
-YES
-YES
-YES
-YES
-YES
-NO
-NO
-NO
-NO
-NO
-NO
-NO
+L01
+L02
+L03
+L04
+L05
+L06
+L07
+L08
+L09
+L10
+L11
+L12
+L13
+L14
+L15
+L16
 </textarea>
 <p id="result">TEST HAS NOT RUN</p>
 </body>
