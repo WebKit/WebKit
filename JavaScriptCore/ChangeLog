@@ -1,3 +1,14 @@
+2009-11-04  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Provide TARGETING_TIGER and TARGETING_LEOPARD as analogues to
+        BUILDING_ON_TIGER and BUILDING_ON_LEOPARD.  The TARGETING_ macros
+        consider the deployment target; the BUILDING_ON_ macros consider the
+        headers being built against.
+
+        * wtf/Platform.h:
+
 2009-11-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,3 +1,23 @@
+2009-11-04  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Separate the difference between HAVE(CGINTERPOLATION_MEDIUM), which
+        is true when building on 10.6 or later, and USE(CGINTERPOLATION_MEDIUM)
+        which is true when targeting 10.6 or later.
+
+        HAVE(CGINTERPOLATION_MEDIUM) indicates that kCGInterpolationMedium
+        is present in the CGInterpolationQuality enum, and must be handled
+        by a switch that has cases for each enumerated value.
+
+        USE(CGINTERPOLATION_MEDIUM) indicates that the product will only run
+        on 10.6 or later, and that CoreGraphics will understand when
+        InterpolationMedium is mapped to kCGInterpolationMedium at runtime.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+
 2009-11-04  Dan Kegel  <dank@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

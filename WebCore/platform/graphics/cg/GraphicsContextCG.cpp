@@ -43,8 +43,18 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+// Building on 10.6 or later: kCGInterpolationMedium is defined in the CGInterpolationQuality enum.
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
+#endif
+
+#if !defined(TARGETING_TIGER) && !defined(TARGETING_LEOPARD)
+// Targeting 10.6 or later: use kCGInterpolationMedium.
+#define WTF_USE_CG_INTERPOLATION_MEDIUM 1
+#endif
+
 #endif
 
 using namespace std;
@@ -1034,9 +1044,9 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
         quality = kCGInterpolationLow;
         break;
 
-    // Fall through to InterpolationHigh if kCGInterpolationMedium is not available
+    // Fall through to InterpolationHigh if kCGInterpolationMedium is not usable.
     case InterpolationMedium:
-#if HAVE(CG_INTERPOLATION_MEDIUM)
+#if USE(CG_INTERPOLATION_MEDIUM)
         quality = kCGInterpolationMedium;
         break;
 #endif
@@ -1061,9 +1071,15 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     case kCGInterpolationLow:
         return InterpolationLow;
 #if HAVE(CG_INTERPOLATION_MEDIUM)
+    // kCGInterpolationMedium is known to be present in the CGInterpolationQuality enum.
     case kCGInterpolationMedium:
+#if USE(CG_INTERPOLATION_MEDIUM)
+        // Only map to InterpolationMedium if targeting a system that understands it.
         return InterpolationMedium;
-#endif
+#else
+        return InterpolationDefault;
+#endif  // USE(CG_INTERPOLATION_MEDIUM)
+#endif  // HAVE(CG_INTERPOLATION_MEDIUM)
     case kCGInterpolationHigh:
         return InterpolationHigh;
     }
