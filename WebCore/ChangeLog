@@ -1,3 +1,16 @@
+2009-11-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for WebCore's CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=31114
+
+        Inherits CachedResource class from Noncopyable because its (its child
+        class) CachedCSSStyleSheet instantiated by 'new' in WebCore/loader/Cache.cpp:75 
+        and it is no need to be copyable.
+
+        * loader/CachedResource.h:
+
 2009-11-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Mark Rowe.
