@@ -5,7 +5,8 @@
   body { background:blue; }
 </style>
 
-<script src="evaluate-in-frontend.js"></script>
+<script src="inspector-test.js"></script>
+<script src="elements-tests.js"></script>
 <script>
 
 function runAfterIframeIsLoaded(continuation)
@@ -34,34 +35,25 @@ function doit()
             }
             notifyDone();
         }
-        evaluateInWebInspector("dumpStyles", callback);
+        evaluateInWebInspector("frontend_dumpStyles", callback);
     });
 }
 
-</script>
-</head>
 
-<body onload="onload()">
-<p>
-Tests that proper (and different) styles are returned for body elements of main document and iframe.
-</p>
+// Frontend functions.
 
-<iframe src='resources/styles-iframe-data.html'></iframe>
-
-<div id="frontend-script" style="display:none">
-
-function dumpStyles(testController)
+function frontend_dumpStyles(testController)
 {
     testController.waitUntilDone();
 
-    expandDOMSubtree(WebInspector.domAgent.document);
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
 
     testController.runAfterPendingDispatches(function() {
-        dumpStylesContinuation(testController);
+        frontend_dumpStylesContinuation(testController);
     });
 }
 
-function dumpStylesContinuation(testController)
+function frontend_dumpStylesContinuation(testController)
 {
     // 1. Get styles for body, store them in mainStyles var.
     var bodyId = WebInspector.domAgent.document.body.id;
@@ -90,10 +82,16 @@ function dumpStylesContinuation(testController)
     }
     InjectedScriptAccess.getStyles(iframeBodyId, false, iframeCallback);
 }
-</div>
 
-<div id="output">
-</div>
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that proper (and different) styles are returned for body elements of main document and iframe.
+</p>
+
+<iframe src="resources/styles-iframe-data.html"></iframe>
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 <html>
 <head>
-<script src="evaluate-in-frontend.js"></script>
+<script src="inspector-test.js"></script>
+<script src="console-tests.js"></script>
 <script>
 
 function doit()
@@ -33,11 +34,7 @@ function doit()
     var radioNodeList = formElement.x;
     console.log(radioNodeList);
 
-    evaluateInWebInspector("dumpConsoleMessages", function(result) {
-        for (var i = 0; i < result.length; ++i)
-            output(result[i].text);
-        notifyDone();
-    });
+    dumpConsoleMessages();
 }
 
 </script>
@@ -56,9 +53,6 @@ Tests that console nicely formats HTML Collections and NodeLists.
         <input type="radio" name="x" value="x1" /> x1
         <input type="radio" name="x" value="x2" /> x2
     </form>
-</div>
-
-<div id="output">
 </div>
 
 </body>

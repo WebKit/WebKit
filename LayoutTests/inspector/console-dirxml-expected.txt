@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 8: [object HTMLDocument]
+CONSOLE MESSAGE: line 9: [object HTMLDocument]
 Tests that console logging dumps proper messages.
 
-console-dirxml.html:8Document
+console-dirxml.html:9Document
 

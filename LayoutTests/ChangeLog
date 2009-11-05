@@ -1,3 +1,54 @@
+2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: beautify layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31189
+
+        * inspector/console-dir-expected.txt:
+        * inspector/console-dir.html:
+        * inspector/console-dirxml-expected.txt:
+        * inspector/console-dirxml.html:
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-collections.html:
+        * inspector/console-format-expected.txt:
+        * inspector/console-format.html:
+        * inspector/console-tests-expected.txt:
+        * inspector/console-tests.html:
+        * inspector/console-tests.js: Added.
+        (dumpConsoleMessages.callback):
+        (dumpConsoleMessages):
+        (dumpConsoleMessagesWithClasses.callback):
+        (dumpConsoleMessagesWithClasses):
+        (frontendScript_dumpConsoleMessages):
+        * inspector/css-syntax-highlight.html: Removed.
+        * inspector/elements-panel-structure-expected.txt:
+        * inspector/elements-panel-structure.html:
+        * inspector/elements-tests.js: Added.
+        (frontendScript_expandDOMSubtree.processChildren):
+        (frontendScript_expandDOMSubtree):
+        * inspector/evaluate-in-frontend.html:
+        * inspector/evaluate-in-frontend.js: Removed.
+        * inspector/inspector-test.js: Added.
+        ():
+        (evaluateInWebInspector):
+        (notifyDone):
+        (output):
+        (window.didEvaluateForTestInFrontend):
+        * inspector/javascript-syntax-highlight.html: Removed.
+        * inspector/styles-iframe.html:
+        * inspector/syntax-highlight-css-expected.txt: Renamed from LayoutTests/inspector/css-syntax-highlight-expected.txt.
+        * inspector/syntax-highlight-css.html: Added.
+        * inspector/syntax-highlight-javascript-expected.txt: Renamed from LayoutTests/inspector/javascript-syntax-highlight-expected.txt.
+        * inspector/syntax-highlight-javascript.html: Added.
+        * inspector/syntax-highlight.js: Added.
+        (doit.callback):
+        (doit):
+        (frontendScript_dumpSyntaxHighlight):
+        * inspector/timeline-trivial.html:
+        * platform/qt/Skipped:
+
 2009-11-05  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Adele Peterson.

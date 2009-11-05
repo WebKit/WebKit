@@ -1,17 +1,31 @@
 <html>
 <head>
-<script src="evaluate-in-frontend.js"></script>
+<script src="inspector-test.js"></script>
+<script src="elements-tests.js"></script>
 <script>
 
 function doit()
 {
     function callback(result)
     {
-        var output = document.getElementById("output");
+        var output = document.getElementById("outputPre");
         output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<");
         notifyDone();
     }
-    evaluateInWebInspector("dumpElements", callback);
+    evaluateInWebInspector("frontend_dumpAllElements", callback);
+}
+
+
+// Frontend functions.
+
+function frontend_dumpAllElements(testController)
+{
+    testController.waitUntilDone();
+    // Need test to be async to expand whole the tree first.
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+        testController.notifyDone(WebInspector.panels.elements.treeOutline.element.textContent);
+    });
 }
 
 </script>
@@ -22,18 +36,7 @@ function doit()
 Tests that elements panel shows dom tree structure.
 </p>
 
-<div id="frontend-script" style="display:none">
-function dumpElements(testController)
-{
-    testController.waitUntilDone();
-    expandDOMSubtree(WebInspector.domAgent.document);
-    testController.runAfterPendingDispatches(function() {
-        testController.notifyDone(WebInspector.panels.elements.treeOutline.element.textContent);
-    });
-}
-</div>
-
-<pre id="output">
+<pre id="outputPre">
 </pre>
 
 </body>

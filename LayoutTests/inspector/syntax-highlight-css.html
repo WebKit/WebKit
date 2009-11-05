@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="syntax-highlight.js"></script>
+<script>
+
+// Frontend functions.
+
+function frontend_dumpSyntaxHighlightCSS(str)
+{
+    return frontend_dumpSyntaxHighlight(str, WebInspector.CSSSourceSyntaxHighlighter);
+}
+
+function frontend_doitAndDump() {
+    var result = [];
+    result.push(frontend_dumpSyntaxHighlightCSS("a[href='/']"));
+    result.push(frontend_dumpSyntaxHighlightCSS("#content > a:hover"));
+    result.push(frontend_dumpSyntaxHighlightCSS("@import url(style.css);"));
+    result.push(frontend_dumpSyntaxHighlightCSS("@import url(\"style.css\") projection, tv;"));
+    result.push(frontend_dumpSyntaxHighlightCSS("@media screen { body { color: red; } }"));
+    result.push(frontend_dumpSyntaxHighlightCSS("@font-face { font-family: MyHelvetica; }"));
+    result.push(frontend_dumpSyntaxHighlightCSS("p { color: color; red: red; }"));
+    result.push(frontend_dumpSyntaxHighlightCSS("p { color: red !important; }"));
+    return result;
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that CSSSourceSyntaxHighlighter detects the tokens.
+</p>
+
+</body>
+</html>

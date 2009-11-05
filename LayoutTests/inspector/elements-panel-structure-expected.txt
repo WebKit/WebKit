@@ -6,7 +6,8 @@ Tests that elements panel shows dom tree structure.
 <body onload="onload()">
 <p>Tests that elements panel shows dom tree structure.
 </p>
-<div id="frontend-script" style="display:none">
-<pre id="output">
+<pre id="outputPre">
+<div id="output">
 </body>
 </html>
+

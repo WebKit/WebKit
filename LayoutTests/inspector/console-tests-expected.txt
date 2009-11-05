@@ -1,25 +1,25 @@
-CONSOLE MESSAGE: line 8: log
-CONSOLE MESSAGE: line 9: debug
-CONSOLE MESSAGE: line 10: info
-CONSOLE MESSAGE: line 11: warn
-CONSOLE MESSAGE: line 12: error
-CONSOLE MESSAGE: line 14: repeated
-CONSOLE MESSAGE: line 14: repeated
-CONSOLE MESSAGE: line 14: repeated
-CONSOLE MESSAGE: line 14: repeated
-CONSOLE MESSAGE: line 14: repeated
-CONSOLE MESSAGE: line 19: 1
+CONSOLE MESSAGE: line 9: log
+CONSOLE MESSAGE: line 10: debug
+CONSOLE MESSAGE: line 11: info
+CONSOLE MESSAGE: line 12: warn
+CONSOLE MESSAGE: line 13: error
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 20: 1
 Tests that console logging dumps proper messages.
 
-console-tests.html:8log console-message console-js-source console-log-level
-console-tests.html:9debug console-message console-js-source console-log-level
-console-tests.html:10info console-message console-js-source console-log-level
-console-tests.html:11warn console-message console-js-source console-warning-level
-console-tests.html:12error console-message console-js-source console-error-level
-5console-tests.html:14repeated console-message console-js-source console-log-level repeated-message
-console-tests.html:16count: 1 console-message console-js-source console-log-level
-console-tests.html:16count: 2 console-message console-js-source console-log-level
-console-tests.html:17group console-message console-js-source console-log-level console-group-title
+console-tests.html:9log console-message console-js-source console-log-level
+console-tests.html:10debug console-message console-js-source console-log-level
+console-tests.html:11info console-message console-js-source console-log-level
+console-tests.html:12warn console-message console-js-source console-warning-level
+console-tests.html:13error console-message console-js-source console-error-level
+5console-tests.html:15repeated console-message console-js-source console-log-level repeated-message
+console-tests.html:17count: 1 console-message console-js-source console-log-level
+console-tests.html:17count: 2 console-message console-js-source console-log-level
+console-tests.html:18group console-message console-js-source console-log-level console-group-title
 console-message console-js-source console-log-level
-console-tests.html:191 2 3 console-message console-js-source console-log-level
+console-tests.html:201 2 3 console-message console-js-source console-log-level
 

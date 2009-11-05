@@ -1,6 +1,7 @@
 <html>
 <head>
-<script src="evaluate-in-frontend.js"></script>
+<script src="inspector-test.js"></script>
+<script src="console-tests.js"></script>
 <script>
 
 function doit()
@@ -18,14 +19,7 @@ function doit()
     console.groupEnd();
     console.log('1', '2', '3');
 
-    function callback(result)
-    {
-        for (var i = 0; i < result.length; ++i) {
-            output(result[i].text + " " + result[i].clazz);
-        }
-        notifyDone();
-    }
-    evaluateInWebInspector("dumpConsoleMessages", callback);
+    dumpConsoleMessagesWithClasses();
 }
 
 </script>
@@ -35,9 +29,6 @@ function doit()
 <p>
 Tests that console logging dumps proper messages.
 </p>
-
-<div id="output">
-</div>
 
 </body>
 </html>

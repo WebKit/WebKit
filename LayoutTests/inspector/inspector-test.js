@@ -22,10 +22,16 @@ function onload()
     if (ignoreLoad)
         return;
 
-    var toInject = expandDOMSubtree.toString() + "\n" + dumpConsoleMessages.toString();
-    if (document.getElementById("frontend-script"))
-        toInject += "\n" + document.getElementById("frontend-script").textContent;
-    evaluateInWebInspector(toInject, doit);
+    var outputElement = document.createElement("div");
+    outputElement.id = "output";
+    document.body.appendChild(outputElement);
+
+    var toInject = [];
+    for (var name in window) {
+        if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
+            toInject.push(window[name].toString());
+    }
+    evaluateInWebInspector(toInject.join("\n"), doit);
 
     // Make sure web inspector window is closed before the test is interrupted.
     setTimeout(function() {
@@ -64,33 +70,10 @@ function output(text)
     output.appendChild(document.createElement("br"));
 }
 
-window.didEvaluateForTestInFrontend = function(callId, jsonResult)
+function didEvaluateForTestInFrontend(callId, jsonResult)
 {
     if (callbacks[callId]) {
         callbacks[callId].call(this, JSON.parse(jsonResult));
         delete callbacks[callId];
     }
-};
-
-// Injected utility functions.
-
-function expandDOMSubtree(node)
-{
-    function processChildren(children)
-    {
-       for (var i = 0; children && i < children.length; ++i)
-           expandDOMSubtree(children[i]);
-    }
-    WebInspector.domAgent.getChildNodesAsync(node, processChildren);
-}
-
-function dumpConsoleMessages()
-{
-    var result = [];
-    var messages = WebInspector.console.messages;
-    for (var i = 0; i < messages.length; ++i) {
-        var element = messages[i].toMessageElement();
-        result.push({ text: element.textContent.replace(/\u200b/g, ""), clazz: element.getAttribute("class")});
-    }
-    return result;
 }

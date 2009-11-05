@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="syntax-highlight.js"></script>
+<script>
+
+// Frontend functions.
+
+function frontend_dumpSyntaxHighlightJS(str)
+{
+    return frontend_dumpSyntaxHighlight(str, WebInspector.JavaScriptSourceSyntaxHighlighter);
+}
+
+function frontend_doitAndDump() {
+    var result = [];
+    
+    result.push(frontend_dumpSyntaxHighlightJS("return'foo';"));
+    result.push(frontend_dumpSyntaxHighlightJS("/\\\//g"));
+    result.push(frontend_dumpSyntaxHighlightJS("//ig';"));
+    result.push(frontend_dumpSyntaxHighlightJS("1 / 2 + /a/.test('a');"));
+    result.push(frontend_dumpSyntaxHighlightJS("\"\\\"/\".length / 2"));
+    result.push(frontend_dumpSyntaxHighlightJS("var foo = 1/*/***//2"));
+    result.push(frontend_dumpSyntaxHighlightJS("/*comment*//.*/.test('a')"));
+    result.push(frontend_dumpSyntaxHighlightJS("'f\\\noo';"));
+    result.push(frontend_dumpSyntaxHighlightJS("'\\f\\b\\t';"));
+    result.push(frontend_dumpSyntaxHighlightJS("'/\\\n/';"));
+    result.push(frontend_dumpSyntaxHighlightJS("foo/**\n/\n*/foo"));
+    return result;
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that JavaScriptSourceSyntaxHighlighter detects the tokens.
+</p>
+
+</body>
+</html>
