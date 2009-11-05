@@ -1,3 +1,12 @@
+2009-11-04  Eric Seidel  <eric@webkit.org>
+
+        No review, just add a line which got left out of the patch uploaded for commit.
+
+        commit-queue is crashing when trying to reject patches after unknown failures
+        https://bugs.webkit.org/show_bug.cgi?id=31091
+
+        * Scripts/bugzilla-tool: Set bug_log = None after closing to we don't re-close and crash.
+
 2009-11-04  Adam Roben  <aroben@apple.com>
 
         Remove bogus else clause in bugzilla-tool

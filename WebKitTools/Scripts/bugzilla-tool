@@ -726,6 +726,7 @@ class LandPatchesFromCommitQueue(Command):
             # If we still have a bug log open from the last loop, close it.
             if bug_log:
                 self._remove_log_from_output_tee(bug_log)
+                bug_log = None
             # Either of these calls could throw URLError which shouldn't stop the queue.
             # We catch all exceptions just in case.
             try:
