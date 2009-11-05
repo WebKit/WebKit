@@ -1,3 +1,25 @@
+2009-11-01  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Fix enabling of input method support on QGraphicsWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=30605
+
+        Instead of setting the unsupported widget attribute on the
+        QGraphicsWidget in setInputMethodEnabled() set the 
+        ItemAcceptsInputMethod GraphicsItem flag directly.
+
+        Changed the existing input method auto test to run once
+        on a QWebView and once on a QGraphicsWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::setInputMethodEnabled):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods_data):
+        (inputMethodHints):
+        (inputMethodEnabled):
+        (tst_QWebPage::inputMethods):
+
 2009-11-04  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Kenneth Christiansen.
