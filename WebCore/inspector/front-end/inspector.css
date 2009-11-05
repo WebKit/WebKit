@@ -3501,10 +3501,10 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     position: absolute;
     top: 0;
     bottom: 0;
-    margin: auto -5px;
+    margin: auto -2px;
     border-width: 4px 4px 5px;
     height: 9px;
-    min-width: 7px;
+    min-width: 5px;
     opacity: 0.8;
     -webkit-border-image: url(Images/timelineBarGray.png) 4 4 5 4;
     pointer-events: none;

@@ -45,7 +45,7 @@ WebInspector.TimelinePanel = function()
     this.calculator = new WebInspector.TimelineCalculator();
     for (category in this.categories)
         this.showCategory(category);
-    this._resourceURLs = {};
+    this._sendRequestRecords = {};
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -171,11 +171,27 @@ WebInspector.TimelinePanel.prototype = {
         formattedRecord.data = record.data;
         formattedRecord.count = 1;
         formattedRecord.type = record.type;
-        formattedRecord.details = this._getRecordDetails(record);
         formattedRecord.endTime = (typeof record.endTime !== "undefined") ? record.endTime / 1000 : formattedRecord.startTime;
+
+        // Make resource receive record last since request was sent; make finish record last since response received.
+        if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {
+            this._sendRequestRecords[record.data.identifier] = formattedRecord;
+        } else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse) {
+            var sendRequestRecord = this._sendRequestRecords[record.data.identifier];
+            sendRequestRecord._responseReceivedFormattedTime = formattedRecord.startTime;
+            formattedRecord.startTime = sendRequestRecord.startTime;
+            sendRequestRecord.details = this._getRecordDetails(record);
+            this.refreshItem(sendRequestRecord);
+        } else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceFinish) {
+            var sendRequestRecord = this._sendRequestRecords[record.data.identifier];
+            if (sendRequestRecord) // False for main resource.
+                formattedRecord.startTime = sendRequestRecord._responseReceivedFormattedTime;
+        }
+        formattedRecord.details = this._getRecordDetails(record);
+
         return formattedRecord;
     },
-    
+
     _getRecordDetails: function(record)
     {
         switch (record.type) {
@@ -191,11 +207,10 @@ WebInspector.TimelinePanel.prototype = {
         case WebInspector.TimelineAgent.RecordType.XHRLoad:
         case WebInspector.TimelineAgent.RecordType.EvaluateScript:
         case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
-            this._resourceURLs[record.data.identifier] = record.data.url;
             return WebInspector.displayNameForURL(record.data.url);
         case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
         case WebInspector.TimelineAgent.RecordType.ResourceFinish:
-            return WebInspector.displayNameForURL(this._resourceURLs[record.data.identifier]);
+            return WebInspector.displayNameForURL(this._sendRequestRecords[record.data.identifier].data.url);
         case WebInspector.TimelineAgent.RecordType.MarkTimeline:
             return record.data.message;
         default:
@@ -211,7 +226,7 @@ WebInspector.TimelinePanel.prototype = {
         for (var category in this.categories)
             this._categoryGraphs[category].clearChunks();
         this._setWindowPosition(0, this._overviewGridElement.clientWidth);
-        this._resourceURLs = {};
+        this._sendRequestRecords = {};
     },
 
     _createOverview: function()
@@ -515,18 +530,23 @@ WebInspector.TimelineRecordTreeElement.prototype = {
             separatorElement.className = "separator";
             separatorElement.textContent = " ";
 
-            var dataElement = document.createElement("span");
-            dataElement.className = "data dimmed";
-            dataElement.textContent = "(" + this._record.details + ")";
-            dataElement.title = this._record.details;
+            this.dataElement = document.createElement("span");
+            this.dataElement.className = "data dimmed";
+            this.dataElement.textContent = "(" + this._record.details + ")";
+            this.dataElement.title = this._record.details;
 
             this.listItemElement.appendChild(separatorElement);
-            this.listItemElement.appendChild(dataElement);
+            this.listItemElement.appendChild(this.dataElement);
         }
     },
 
     refresh: function()
     {
+        if (this._record.details) {
+            this.dataElement.textContent = "(" + this._record.details + ")";
+            this.dataElement.title = this._record.details;
+        }
+
         if (this._record.count <= 1)
             return;
 
