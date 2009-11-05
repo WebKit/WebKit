@@ -1,4 +1,4 @@
-2009-11-02  Justin Garcia  <justin.garcia@apple.com>
+2009-11-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele Peterson.
 
@@ -21,6 +21,7 @@
         (WebCore::startOfParagraph): Use moved/renamed function.  Removed FIXME.  The problem causing 
         5027702 is now squarely in first/lastInSpecialElement
         (WebCore::endOfParagraph): Ditto.
+        
 2009-11-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
