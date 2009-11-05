@@ -1,3 +1,15 @@
+2009-11-05  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add support for Shift-PageUp and Shift-PageDown key events.
+        https://bugs.webkit.org/show_bug.cgi?id=31166
+
+        Test: LayoutTests/editing/selection/shrink-selection-after-shift-pagedown.html
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2009-11-05  Simon Hausmann  <hausmann@webkit.org>
 
         Last Qt 4.5 build fix (*sigh*)
