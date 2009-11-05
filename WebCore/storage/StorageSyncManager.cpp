@@ -61,15 +61,14 @@ StorageSyncManager::~StorageSyncManager()
     ASSERT(isMainThread());
 }
 
-String StorageSyncManager::fullDatabaseFilename(SecurityOrigin* origin)
+String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier)
 {
-    ASSERT(origin);
     if (!makeAllDirectories(m_path)) {
         LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8().data());
         return String();
     }
 
-    return pathByAppendingComponent(m_path, origin->databaseIdentifier() + ".localstorage");
+    return pathByAppendingComponent(m_path, databaseIdentifier + ".localstorage");
 }
 
 void StorageSyncManager::close()

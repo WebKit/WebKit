@@ -58,7 +58,7 @@ namespace WebCore {
     // The following members are subject to thread synchronization issues
     public:
         // To be called from the background thread:
-        String fullDatabaseFilename(SecurityOrigin*);
+        String fullDatabaseFilename(const String& databaseIdentifier);
 
     private:
         String m_path;

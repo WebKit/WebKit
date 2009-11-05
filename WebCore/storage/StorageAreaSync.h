@@ -78,6 +78,8 @@ namespace WebCore {
         void syncTimerFired(Timer<StorageAreaSync>*);
         void sync(bool clearItems, const HashMap<String, String>& items);
 
+        const String m_databaseIdentifier;
+
         Mutex m_syncLock;
         HashMap<String, String> m_itemsPendingSync;
         bool m_clearItemsWhileSyncing;

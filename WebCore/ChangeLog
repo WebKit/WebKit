@@ -1,3 +1,25 @@
+2009-11-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Calling databaseIdentifier on LocalStorage's background thread is not safe.
+        https://bugs.webkit.org/show_bug.cgi?id=31149
+
+        Calling SecurityOrigin::databaseIdentifier on LocalStorage's background thread
+        is not safe.  databaseIdentifier does a bunch of string concatenation which
+        ref-counts StringImpls in some cases.  This was caught by valgrind thread
+        sanitizer: http://code.google.com/p/chromium/issues/detail?id=25645
+
+        There's no way to test for such racyness, unfortunately.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::performImport):
+        * storage/StorageAreaSync.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::fullDatabaseFilename):
+        * storage/StorageSyncManager.h:
+
 2009-11-03  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
