@@ -147,7 +147,11 @@ void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
         sourceURL = toWebCoreString(message->GetScriptResourceName());
     }
 
-    getScriptExecutionContext(scriptState)->reportException(errorMessage, lineNumber, sourceURL);
+    // Do not report the exception if the current execution context is Document because we do not want to lead to duplicate error messages in the console.
+    // FIXME (31171): need better design to solve the duplicate error message reporting problem.
+    ScriptExecutionContext* context = getScriptExecutionContext(scriptState);
+    if (!context->isDocument())
+      context->reportException(errorMessage, lineNumber, sourceURL);
     exceptionCatcher.Reset();
 }
 
