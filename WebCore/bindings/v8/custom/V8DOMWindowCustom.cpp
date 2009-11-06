@@ -55,7 +55,9 @@
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include "Storage.h"
+#if ENABLE(WEB_SOCKETS)
 #include "WebSocket.h"
+#endif
 #include "WindowFeatures.h"
 
 // Horizontal and vertical offset, from the parent content area, around newly

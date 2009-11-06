@@ -1,3 +1,14 @@
+2009-11-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        V8DOMWindowCustom.cpp is missing WEB_SOCKETS guard on include.
+        https://bugs.webkit.org/show_bug.cgi?id=31209
+
+        Build fix only. No new tests possible.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp: Modified. Added WEB_SOCKETS guard on inclue of WebSockets.h.
+
 2009-11-06  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by David Levin.
