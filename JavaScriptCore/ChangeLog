@@ -1,3 +1,19 @@
+2009-11-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Remove a magic number (1) from the JIT, instead compute the value with OBJECT_OFFSET.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutJITStubArg):
+        (JSC::JIT::emitPutJITStubArgConstant):
+        (JSC::JIT::emitGetJITStubArg):
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::getArgument):
+        * jit/JITStubs.h:
+
 2009-11-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

@@ -187,6 +187,8 @@ namespace JSC {
 #error "JITStackFrame not defined for this platform."
 #endif
 
+#define JITSTACKFRAME_ARGS_INDEX (OBJECT_OFFSETOF(JITStackFrame, args) / sizeof(void*))
+
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
     #define STUB_ARGS_DECLARATION void* args, ...
     #define STUB_ARGS (reinterpret_cast<void**>(vl_args) - 1)
