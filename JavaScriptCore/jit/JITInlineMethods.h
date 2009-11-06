@@ -817,7 +817,7 @@ ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 #if USE(JSVALUE64)
     UNUSED_PARAM(reg);
 #else
-    rshiftPtr(Imm32(JSImmediate::IntegerPayloadShift), reg);
+    rshift32(Imm32(JSImmediate::IntegerPayloadShift), reg);
 #endif
 }
 

@@ -1189,11 +1189,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         // Mask with 0x1f as per ecma-262 11.7.2 step 7.
-#if USE(JSVALUE64)
         rshift32(Imm32(getConstantOperandImmediateInt(op2) & 0x1f), regT0);
-#else
-        rshiftPtr(Imm32(getConstantOperandImmediateInt(op2) & 0x1f), regT0);
-#endif
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT2);
         if (supportsFloatingPointTruncate()) {

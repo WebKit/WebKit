@@ -1,3 +1,14 @@
+2009-11-06  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Unreviewed trivial buildfix after r50595.
+
+        Rename the remaining rshiftPtr calls to rshift32
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitFastArithImmToInt):
+
 2009-11-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
