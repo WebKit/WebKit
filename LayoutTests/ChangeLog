@@ -1,3 +1,17 @@
+2009-11-05  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31193
+
+        Removed obsolete test case which was included in the patch for bug #30107.
+        This test case is already covered by the test case fast/events/drag-and-drop.html,
+        which was included in the patch for bug #24731.
+
+        * fast/events/drag-and-drop-none-expected.txt: Removed.
+        * fast/events/drag-and-drop-none.html: Removed.
+        * platform/win/Skipped: Removed entry for drag-and-drop-none.html.
+
 2009-11-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
