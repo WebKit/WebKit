@@ -759,7 +759,7 @@ void Element::detach()
 
 bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
 {
-    ASSERT(currentStyle = renderStyle());
+    ASSERT(currentStyle == renderStyle());
 
     if (!renderer() || !currentStyle)
         return false;

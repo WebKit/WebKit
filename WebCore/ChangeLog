@@ -1,3 +1,13 @@
+2009-11-05  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix ASSERT(currentStyle = renderStyle()).
+        https://bugs.webkit.org/show_bug.cgi?id=31152
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid): We should have used "==" instead of "=".
+
 2009-11-05  Alpha Lam  <hclam@chromium.org>
 
         Revert 50562 because it broke Chromium. Not reviewed since this is a build fix and revert.
