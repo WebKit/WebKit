@@ -38,6 +38,9 @@
 namespace JSC {
 
 class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
+    static const int DoubleConditionMask = 0x0f;
+    static const int DoubleConditionBitSpecial = 0x10;
+    COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
 public:
     enum Condition {
         Equal = ARMAssembler::EQ,
@@ -57,9 +60,18 @@ public:
     };
 
     enum DoubleCondition {
-        DoubleEqualOrUnordered = ARMAssembler::EQ,
+        // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
+        DoubleEqual = ARMAssembler::EQ,
+        DoubleNotEqual = ARMAssembler::NE | DoubleConditionBitSpecial,
         DoubleGreaterThan = ARMAssembler::GT,
         DoubleGreaterThanOrEqual = ARMAssembler::GE,
+        DoubleLessThan = ARMAssembler::CC,
+        DoubleLessThanOrEqual = ARMAssembler::LS,
+        // If either operand is NaN, these conditions always evaluate to true.
+        DoubleEqualOrUnordered = ARMAssembler::EQ | DoubleConditionBitSpecial,
+        DoubleNotEqualOrUnordered = ARMAssembler::NE,
+        DoubleGreaterThanOrUnordered = ARMAssembler::HI,
+        DoubleGreaterThanOrEqualOrUnordered = ARMAssembler::CS,
         DoubleLessThanOrUnordered = ARMAssembler::LT,
         DoubleLessThanOrEqualOrUnordered = ARMAssembler::LE,
     };
@@ -714,7 +726,9 @@ public:
     {
         m_assembler.fcmpd_r(left, right);
         m_assembler.fmstat();
-        return Jump(m_assembler.jmp(static_cast<ARMAssembler::Condition>(cond)));
+        if (cond & DoubleConditionBitSpecial)
+            m_assembler.cmp_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::VS);
+        return Jump(m_assembler.jmp(static_cast<ARMAssembler::Condition>(cond & ~DoubleConditionMask)));
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
@@ -727,6 +741,23 @@ public:
         UNUSED_PARAM(dest);
         ASSERT_NOT_REACHED();
         return jump();
+    }
+
+    // Convert 'src' to an integer, and places the resulting 'dest'.
+    // If the result is not representable as a 32 bit value, branch.
+    // May also branch for some values that are representable in 32 bits
+    // (specifically, in this case, 0).
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp)
+    {
+        m_assembler.ftosid_r(src, ARMRegisters::SD0);
+        m_assembler.fmrs_r(ARMRegisters::SD0, dest);
+
+        // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
+        m_assembler.fsitod_r(ARMRegisters::SD0, ARMRegisters::SD0);
+        failureCases.append(branchDouble(DoubleNotEqual, src, ARMRegisters::SD0));
+
+        // If the result is zero, it might have been -0.0, and 0.0 equals to -0.0
+        failureCases.append(branchTest32(Zero, dest));
     }
 
 protected:

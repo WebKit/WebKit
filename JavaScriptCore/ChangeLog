@@ -1,3 +1,24 @@
+2009-11-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31159
+        Fix branchDouble behaviour on ARM THUMB2 JIT.
+
+        The x86 branchDouble behaviour is reworked, and all JIT
+        ports should follow the x86 port. See bug 31104 and 31151
+
+        This patch contains a fix for the traditional ARM port
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::fmrs_r):
+        (JSC::ARMAssembler::ftosid_r):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::):
+        (JSC::MacroAssemblerARM::branchDouble):
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+
 2009-11-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Eric Seidel.

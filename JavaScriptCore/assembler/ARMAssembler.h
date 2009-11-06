@@ -133,7 +133,9 @@ namespace JSC {
             B = 0x0a000000,
             BL = 0x0b000000,
             FMSR = 0x0e000a10,
+            FMRS = 0x0e100a10,
             FSITOD = 0x0eb80bc0,
+            FTOSID = 0x0ebd0b40,
             FMSTAT = 0x0ef1fa10,
 #if ARM_ARCH_VERSION >= 5
             CLZ = 0x016f0f10,
@@ -502,9 +504,19 @@ namespace JSC {
             emitInst(static_cast<ARMWord>(cc) | FMSR, rn, dd, 0);
         }
 
+        void fmrs_r(int dd, int rn, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FMRS, rn, dd, 0);
+        }
+
         void fsitod_r(int dd, int dm, Condition cc = AL)
         {
             emitInst(static_cast<ARMWord>(cc) | FSITOD, dd, 0, dm);
+        }
+
+        void ftosid_r(int fd, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FTOSID, fd, 0, dm);
         }
 
         void fmstat(Condition cc = AL)
