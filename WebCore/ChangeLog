@@ -1,3 +1,17 @@
+2009-11-06  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by David Levin.
+
+        V8 bindings do not support SharedWorkers as event targets
+        https://bugs.webkit.org/show_bug.cgi?id=31199
+
+        No new tests because existing layout tests suffice (they currently
+        crash on Chromium)
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        Added clause to create a DOM wrapper for SharedWorkers.
+
 2009-11-06  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
