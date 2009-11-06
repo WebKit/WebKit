@@ -42,8 +42,9 @@
 #ifndef DateMath_h
 #define DateMath_h
 
-#include <time.h>
+#include <math.h>
 #include <string.h>
+#include <time.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UnusedParam.h>

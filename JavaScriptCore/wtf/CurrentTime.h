@@ -32,6 +32,8 @@
 #ifndef CurrentTime_h
 #define CurrentTime_h
 
+#include <time.h>
+
 namespace WTF {
 
     // Returns the current UTC time in seconds, counted from January 1, 1970.
