@@ -1,3 +1,12 @@
+2009-11-06  Dirk Schulze  <krit@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Update SVG status page. We support feMorphology now.
+        Set lightning filters to unimplemented.
+
+        * projects/svg/status.xml:
+
 2009-11-06  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Darin Adler.

@@ -371,10 +371,7 @@
             <element>
                 <name>feMorphology</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feMorphologyElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Not implemented <bug>5863</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feOffset</name>
@@ -384,7 +381,7 @@
             <element>
                 <name>feSpecularLighting</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feSpecularLightingElement</url>
-                <status>Implemented</status>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>feTile</name>
@@ -402,7 +399,7 @@
              <element>
                 <name>feDistantLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDistantLightElement</url>
-                <status>Implemented</status>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>fePointLight</name>
