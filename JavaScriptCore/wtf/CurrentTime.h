@@ -34,10 +34,27 @@
 
 namespace WTF {
 
-    // Returns the current system (UTC) time in seconds, starting January 1, 1970.
-    // Precision varies depending on a platform but usually is as good or better 
+    // Returns the current UTC time in seconds, counted from January 1, 1970.
+    // Precision varies depending on platform but is usually as good or better 
     // than a millisecond.
     double currentTime();
+
+    // Same thing, in milliseconds.
+    inline double currentTimeMS()
+    {
+        return currentTime() * 1000.0; 
+    }
+
+    inline void getLocalTime(const time_t* localTime, struct tm* localTM)
+    {
+    #if COMPILER(MSVC7) || COMPILER(MINGW) || PLATFORM(WINCE)
+        *localTM = *localtime(localTime);
+    #elif COMPILER(MSVC)
+        localtime_s(localTM, localTime);
+    #else
+        localtime_r(localTime, localTM);
+    #endif
+    }
 
 } // namespace WTF
 

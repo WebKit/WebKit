@@ -38,7 +38,7 @@ namespace JSC {
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
             , m_exception(exception)
-            , m_globalObjectScope(callFrame, callFrame->globalData().dynamicGlobalObject ? callFrame->globalData().dynamicGlobalObject : function->scope().globalObject())
+            , m_globalObjectScope(callFrame, function->scope().globalObject())
         {
             ASSERT(!function->isHostFunction());
             m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argCount, function->scope().node(), exception);

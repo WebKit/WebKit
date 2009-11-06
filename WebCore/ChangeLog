@@ -1,3 +1,19 @@
+2009-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=31197
+        Implemented a timezone cache not based on Mac OS X's notify_check API.
+
+        Updated for JavaScriptCore internal API change.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue): Updated for namespace change.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseDate): Pass 0 for ExecState, since we don't have one.
+        (This function probably shouldn't be using a JavaScript date parser
+        to begin with, but oh well.)
+
 2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.

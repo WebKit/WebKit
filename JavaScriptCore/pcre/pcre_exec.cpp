@@ -2164,14 +2164,14 @@ void Histogram::add(const JSRegExp* re, double elapsedTime)
 
 HistogramTimeLogger::HistogramTimeLogger(const JSRegExp* re)
     : m_re(re)
-    , m_startTime(getCurrentUTCTimeWithMicroseconds())
+    , m_startTime(currentTimeMS())
 {
 }
 
 HistogramTimeLogger::~HistogramTimeLogger()
 {
     static Histogram histogram;
-    histogram.add(m_re, getCurrentUTCTimeWithMicroseconds() - m_startTime);
+    histogram.add(m_re, currentTimeMS() - m_startTime);
 }
 
 #endif

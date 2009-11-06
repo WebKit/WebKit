@@ -442,7 +442,13 @@ namespace JSC {
             : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)
             , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
         {
-            m_dynamicGlobalObjectSlot = dynamicGlobalObject;
+            if (!m_dynamicGlobalObjectSlot) {
+                m_dynamicGlobalObjectSlot = dynamicGlobalObject;
+
+                // Reset the UTC cache between JS invocations to force the VM
+                // to observe time zone changes.
+                callFrame->globalData().cachedUTCOffset = NaN;
+            }
         }
 
         ~DynamicGlobalObjectScope()

@@ -37,6 +37,8 @@
 #include <windows.h>
 #endif
 
+using namespace WTF;
+
 namespace JSC {
 
 static double getCount()
@@ -49,7 +51,7 @@ static double getCount()
     QueryPerformanceCounter(&counter);
     return static_cast<double>(counter.QuadPart) / frequency.QuadPart;
 #else
-    return WTF::getCurrentUTCTimeWithMicroseconds();
+    return currentTimeMS();
 #endif
 }
 

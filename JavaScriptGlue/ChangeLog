@@ -1,3 +1,12 @@
+2009-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31197
+        Implemented a timezone cache not based on Mac OS X's notify_check API.
+        
+        * ForwardingHeaders/wtf/CurrentTime.h: Added.
+
 2009-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: Updated for JavaScriptCore export changes.

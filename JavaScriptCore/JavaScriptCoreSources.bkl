@@ -89,6 +89,7 @@ Source files for JSCore.
         runtime/DateConstructor.cpp
         runtime/DateConversion.cpp
         runtime/DateInstance.cpp
+        wtf/DateMath.cpp
         runtime/DatePrototype.cpp
         runtime/Error.cpp
         runtime/ErrorConstructor.cpp
@@ -173,7 +174,6 @@ Source files for JSCore.
         wtf/Assertions.cpp
         wtf/ByteArray.cpp
         wtf/CurrentTime.cpp
-        wtf/DateMath.cpp
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp
         wtf/MainThread.cpp

@@ -285,14 +285,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\DateMath.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\DateMath.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\Deque.h"
 			>
 		</File>
