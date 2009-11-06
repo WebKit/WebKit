@@ -716,12 +716,12 @@ WebInspector.TimelineGraph.prototype = {
 
         if (percentages.start > 100 || percentages.end < 0) {
             this._graphElement.addStyleClass("hidden");
-            this.record._itemTreeElement.listItemElement.addStyleClass("hidden");
+            this.record._itemsTreeElement.listItemElement.addStyleClass("hidden");
         } else {
             this._barElement.style.setProperty("left", percentages.start + "%");
             this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
             this._graphElement.removeStyleClass("hidden");
-            this.record._itemTreeElement.listItemElement.removeStyleClass("hidden");
+            this.record._itemsTreeElement.listItemElement.removeStyleClass("hidden");
         }
         var tooltip = (labels.tooltip || "");
         this._barElement.title = tooltip;

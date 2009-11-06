@@ -289,17 +289,17 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
         for (var i = 0; i < staleItemsLength; ++i) {
             var item = this._staleItems[i];
-            if (!item._itemTreeElement) {
+            if (!item._itemsTreeElement) {
                 // Create the timeline tree element and graph.
-                item._itemTreeElement = this.createItemTreeElement(item);
-                item._itemTreeElement._itemGraph = this.createItemGraph(item);
+                item._itemsTreeElement = this.createItemTreeElement(item);
+                item._itemsTreeElement._itemGraph = this.createItemGraph(item);
 
-                this.itemsTreeElement.appendChild(item._itemTreeElement);
-                this.itemsGraphsElement.appendChild(item._itemTreeElement._itemGraph.graphElement);
+                this.itemsTreeElement.appendChild(item._itemsTreeElement);
+                this.itemsGraphsElement.appendChild(item._itemsTreeElement._itemGraph.graphElement);
             }
 
-            if (item._itemTreeElement.refresh)
-                item._itemTreeElement.refresh();
+            if (item._itemsTreeElement.refresh)
+                item._itemsTreeElement.refresh();
 
             if (this.calculator.updateBoundaries(item))
                 boundariesChanged = true;
@@ -312,7 +312,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
         }
 
         for (var i = 0; i < staleItemsLength; ++i)
-            this._staleItems[i]._itemTreeElement._itemGraph.refresh(this.calculator);
+            this._staleItems[i]._itemsTreeElement._itemGraph.refresh(this.calculator);
 
         this._staleItems = [];
 
@@ -370,12 +370,12 @@ WebInspector.AbstractTimelinePanel.prototype = {
     {
         this._items.remove(item, true);
 
-        if (item._itemTreeElement) {
-            this.itemsTreeElement.removeChild(resource._itemTreeElement);
-            this.itemsGraphsElement.removeChild(resource._itemTreeElement._itemGraph.graphElement);
+        if (item._itemsTreeElement) {
+            this.itemsTreeElement.removeChild(resource._itemsTreeElement);
+            this.itemsGraphsElement.removeChild(resource._itemsTreeElement._itemGraph.graphElement);
         }
 
-        delete item._itemTreeElement;
+        delete item._itemsTreeElement;
         this.adjustScrollPosition();
     },
 

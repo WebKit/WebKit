@@ -1,3 +1,16 @@
+2009-11-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix resource content search.
+        https://bugs.webkit.org/show_bug.cgi?id=31202
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        (WebInspector.AbstractTimelinePanel.prototype.removeItem):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelineGraph.prototype.refresh):
+
 2009-11-05  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Eric Seidel.
