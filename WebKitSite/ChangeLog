@@ -1,3 +1,12 @@
+2009-11-06  Jeff Schiller  <codedread@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        SVG Status page update
+        https://bugs.webkit.org/show_bug.cgi?id=31179
+
+        * projects/svg/status.xml:
+
 2009-11-03  Darin Adler  <darin@apple.com>
 
         Set the MIME type for all PNG files in this directory.

@@ -6,10 +6,10 @@
     This is a seldom-updated summary document showing the current implementation status of SVG in WebKit.
     </p>
     <p>
-    Last update: March 23rd, 2008.
+    Last update: Nov 5th, 2009.
     </p>
     <p>
-    Note: this is not a full list of all SVG bugs, please see the <a href="http://tinyurl.com/athb7">SVG bug list</a>.
+    Note: this is not a full list of all SVG bugs, please see the <a href="https://bugs.webkit.org/buglist.cgi?query_format=advanced&amp;product=WebKit&amp;component=SVG&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">SVG bug list</a>.
     </p>
     <p class="legend">
     <span class="implemented">green</span>: complete implementation,
@@ -289,21 +289,23 @@
             <element>
                 <name>filter</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#FilterElement</url>
+                <status>Partial: Requires build-webkit --filters to enable</status>
                 <issues>
-                    <issue>Subregion attributes are ignored <bug>5527</bug></issue>
+                    <issue>Tracking Bug <bug>26389</bug>.</issue>
                     <issue>Filters look grainy when scaled <bug>5526</bug></issue>
                     <issue>Filters don't support filterRes <bug>6021</bug></issue>
                     <issue>Need support sources other than SourceGraphic <bug>6022</bug></issue>
                     <issue>Support 'color-interpolation-filters' and draw in correct colorspace <bug>6033</bug></issue>
+                    <issue>Positional light problems <bug>10115</bug></issue>
+                    <issue>Handle missing filter elements correctly <bug>12569</bug></issue>
+                    <issue>Filter Effects being cleared and reloaded multiple times <bug>19388</bug></issue>
+                    <issue>Big filterRegions <bug>26380</bug></issue>
                 </issues>
             </element>
             <element>
                 <name>feBlend</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feBlendElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>Doesn't look right with all modes <bug>5970</bug></issue>
-                </issues>
             </element>
             <element>
                 <name>feColorMatrix</name>
@@ -331,15 +333,12 @@
             <element>
                 <name>feDiffuseLighting</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDiffuseLightingElement</url>
-                <status>Implemented</status>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>feDisplacementMap</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDisplacementMapElement</url>
-                <status>Implemented</status>
-                <issues>
-                    <issue>filters-displace-01-f displays incorrectly <bug>6719</bug></issue>
-                </issues>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>feFlood</name>
@@ -349,13 +348,15 @@
             <element>
                 <name>feGaussianBlur</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feGaussianBlurElement</url>
-                <issues>
-                    <issue>Fails for large x,y ratios <bug>5973</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feImage</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feImageElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Does not support SVG fragment URLs <bug>12027</bug></issue>
+                </issues>
             </element>
             <element>
                 <name>feMerge</name>
@@ -388,9 +389,7 @@
             <element>
                 <name>feTile</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feTileElement</url>
-                <issues>
-                    <issue>Broken in TOT <bug>5976</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feTurbulance</name>
@@ -408,14 +407,12 @@
             <element>
                 <name>fePointLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#fePointLightElement</url>
-                <status>Implemented</status>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>feSpotLight</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feSpotLightElement</url>
-                <issues>
-                    <issue>Default values are not correctly assigned to lighting filters <bug>5859</bug></issue>
-                </issues>
+                <status>Unimplemented</status>
             </element>
             <element>
                 <name>feFuncR</name>
