@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet"
+      href="resources/redir.php?url=http://localhost:8000/security/resources/cssStyle.css">
+<link rel="stylesheet"
+      href="http://localhost:8000/security/resources/redir.php?url=http://127.0.0.1:8000/security/resources/cssStyle.css">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(msg) {
+    var div = document.createElement("div");
+    div.textContent = msg;
+    document.getElementById("console").appendChild(div);
+}
+
+window.onload = function() {
+    log("Test begins.");
+    log("== Same-Origin to Cross-Origin ==");
+    var sheet1 = document.styleSheets[0];
+    log("cssRules: " + sheet1.cssRules);
+    log("rules: " + sheet1.rules);
+    log("== Cross-Origin to Same-Origin ==");
+    var sheet2 = document.styleSheets[1];
+    log("cssRules: " + sheet2.cssRules);
+    log("rules: " + sheet2.rules);
+    log("Test ends.");
+}
+</script>
+</head>
+<body>
+<p>This test whether a script can read the rules from a cross-origin style
+sheet in the presence of redirects.  For more information on why we block
+this, please see
+<a href="https://bugs.webkit.org/show_bug.cgi?id=20527">https://bugs.webkit.org/show_bug.cgi?id=20527</a>.
+</p>
+<div id="console"></div>
+</body>
+</html>

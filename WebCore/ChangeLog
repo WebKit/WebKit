@@ -1,3 +1,20 @@
+2009-11-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Cross-domain access to stylesheet text should not be allowed
+        https://bugs.webkit.org/show_bug.cgi?id=20527
+
+        Check whether whether the current document can read the cssRules from
+        the style sheet.  Firefox throws a security error here, but we return
+        null instead because that's what we usually do in these cases.
+
+        Test: http/tests/security/cannot-read-cssrules-redirect.html
+              http/tests/security/cannot-read-cssrules.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+
 2009-11-05  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

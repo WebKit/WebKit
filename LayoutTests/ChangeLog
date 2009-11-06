@@ -1,3 +1,17 @@
+2009-11-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Cross-domain access to stylesheet text should not be allowed
+        https://bugs.webkit.org/show_bug.cgi?id=20527
+
+        Test that a script cannot read cross-origin cssRules.
+
+        * http/tests/security/cannot-read-cssrules-expected.txt: Added.
+        * http/tests/security/cannot-read-cssrules-redirect-expected.txt: Added.
+        * http/tests/security/cannot-read-cssrules-redirect.html: Added.
+        * http/tests/security/cannot-read-cssrules.html: Added.
+
 2009-11-05  Alice Liu  <alice.liu@apple.com>
 
         Adding a resource that seems to be missing.  Without it, several tests in
