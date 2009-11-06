@@ -1,3 +1,12 @@
+2009-11-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool crashed with exception
+        https://bugs.webkit.org/show_bug.cgi?id=31092
+
+        * Scripts/modules/bugzilla.py: Change a ',' to a '%' to fix the error.
+
 2009-11-04  Eric Seidel  <eric@webkit.org>
 
         No review, just add a line which got left out of the patch uploaded for commit.

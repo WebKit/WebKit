@@ -224,7 +224,7 @@ class Bugzilla:
             failure_message = "%s does not have %s permissions according to %s." % (setter_email, result_key, self._view_source_link(committer_list))
             rejection_function(patch['id'], failure_message)
         else:
-            log("Warning, attachment %s on bug %s has invalid %s (%s)", (patch['id'], patch['bug_id'], result_key, setter_email))
+            log("Warning, attachment %s on bug %s has invalid %s (%s)" % (patch['id'], patch['bug_id'], result_key, setter_email))
         return None
 
     def _validate_reviewer(self, patch, reject_invalid_patches):
