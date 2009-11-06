@@ -1,3 +1,13 @@
+2009-11-05  Alice Liu  <alice.liu@apple.com>
+
+        Adding a resource that seems to be missing.  Without it, several tests in
+        fast/dom/beforeload aren't really testing if the default event handling is
+        prevented, but instead are only testing if the beforeload event fires. 
+
+        Rubber-stamped by Gavin Barraclough.
+
+        * fast/dom/beforeload/resources/fail.js: Added.
+
 2009-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
