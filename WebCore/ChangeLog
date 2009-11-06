@@ -1,15 +1,3 @@
-2009-11-05  Geoffrey Garen  <ggaren@apple.com>
-
-        https://bugs.webkit.org/show_bug.cgi?id=31197
-        Implemented a timezone cache not based on Mac OS X's notify_check API.
-
-        Updated for JavaScriptCore internal API change.
-
-        * platform/network/HTTPParsers.cpp:
-        (WebCore::parseDate): Pass 0 for ExecState, since we don't have one.
-        (This function probably shouldn't be using a JavaScript date parser
-        to begin with, but oh well.)
-
 2009-11-05  Alpha Lam  <hclam@chromium.org>
 
         Revert 50562 because it broke Chromium. Not reviewed since this is a build fix and revert.

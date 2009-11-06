@@ -38,7 +38,7 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo info;
 
-        const GregorianDateTime* gregorianDateTime(ExecState*, bool outputIsUTC) const;
+        const WTF::GregorianDateTime* gregorianDateTime(ExecState*, bool outputIsUTC) const;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {

@@ -842,7 +842,7 @@ static JSValue setNewValueFromTimeArgs(ExecState* exec, JSValue thisValue, const
         return result;
     } 
     
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(exec, gregorianDateTimeToMS(gregorianDateTime, ms, inputIsUTC));
     thisDateObj->setInternalValue(result);
     return result;
 }
@@ -864,7 +864,7 @@ static JSValue setNewValueFromDateArgs(ExecState* exec, JSValue thisValue, const
 
     GregorianDateTime gregorianDateTime; 
     if (numArgsToUse == 3 && isnan(milli)) 
-        msToGregorianDateTime(exec, 0, true, gregorianDateTime); 
+        WTF::msToGregorianDateTime(0, true, gregorianDateTime); 
     else { 
         ms = milli - floor(milli / msPerSecond) * msPerSecond; 
         const GregorianDateTime* other = thisDateObj->gregorianDateTime(exec, inputIsUTC);
@@ -879,7 +879,7 @@ static JSValue setNewValueFromDateArgs(ExecState* exec, JSValue thisValue, const
         return result;
     } 
            
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(exec, gregorianDateTimeToMS(gregorianDateTime, ms, inputIsUTC));
     thisDateObj->setInternalValue(result);
     return result;
 }
@@ -989,7 +989,7 @@ JSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec, JSObject*, JSValue t
     if (isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN. 
-        msToGregorianDateTime(exec, 0, true, gregorianDateTime);
+        msToGregorianDateTime(0, true, gregorianDateTime);
     else {   
         double secs = floor(milli / msPerSecond);
         ms = milli - secs * msPerSecond;
@@ -1006,7 +1006,7 @@ JSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec, JSObject*, JSValue t
     }
             
     gregorianDateTime.year = (year > 99 || year < 0) ? year - 1900 : year;
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, outputIsUTC));
+    JSValue result = jsNumber(exec, gregorianDateTimeToMS(gregorianDateTime, ms, outputIsUTC));
     thisDateObj->setInternalValue(result);
     return result;
 }

@@ -647,7 +647,7 @@ JSValue Interpreter::execute(FunctionExecutable* functionExecutable, CallFrame* 
         return jsNull();
     }
 
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(callFrame, callFrame->globalData().dynamicGlobalObject ? callFrame->globalData().dynamicGlobalObject : scopeChain->globalObject);
 
     CallFrame* newCallFrame = CallFrame::create(oldEnd);
     size_t dst = 0;
@@ -777,7 +777,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
         }
     }
 
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(callFrame, callFrame->globalData().dynamicGlobalObject ? callFrame->globalData().dynamicGlobalObject : scopeChain->globalObject);
 
     EvalCodeBlock* codeBlock = &eval->bytecode(callFrame, scopeChain);
 

@@ -51,9 +51,9 @@ using namespace WTF;
 
 namespace JSC {
 
-double parseDate(ExecState* exec, const UString &date)
+double parseDate(const UString &date)
 {
-    return parseDateFromNullTerminatedCharacters(date.UTF8String().c_str(), exec);
+    return parseDateFromNullTerminatedCharacters(date.UTF8String().c_str());
 }
 
 UString formatDate(const GregorianDateTime &t)

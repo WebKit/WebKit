@@ -51,7 +51,7 @@ static void initializeThreadingOnce()
     initializeUString();
 #if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
-    initializeDates();
+    WTF::initializeDates();
 #endif
 }
 
