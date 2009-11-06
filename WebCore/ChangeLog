@@ -1,3 +1,18 @@
+2009-11-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        feMorphology filter is not implemented
+        [https://bugs.webkit.org/show_bug.cgi?id=5863]
+
+        The Implementation of feMorphology.
+        
+        Test: We have allready a test for feMorphology
+              svg/W3C-SVG-1.1/filters-morph-01-f.svg
+
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+
 2009-11-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.
