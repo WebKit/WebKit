@@ -1,3 +1,32 @@
+2009-11-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tidy up the shift methods on the macro-assembler interface.
+
+        Currently behaviour of shifts of a magnitude > 0x1f is undefined.
+        Instead defined that all shifts are masked to this range.  This makes a lot of
+        practical sense, both since having undefined behaviour is not particularly
+        desirable, and because this behaviour is commonly required (particularly since
+        it is required bt ECMA-262 for shifts).
+
+        Update the ARM assemblers to provide this behaviour.  Remove (now) redundant
+        masks from JITArithmetic, and remove rshiftPtr (this was used in case that
+        could be rewritten in a simpler form using rshift32, only optimized JSVALUE32
+        on x86-64, which uses JSVALUE64!)
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::rshift32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::lshift32):
+        (JSC::MacroAssemblerARMv7::rshift32):
+        * assembler/MacroAssemblerX86_64.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+
 2009-11-05  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Oliver Hunt.

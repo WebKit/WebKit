@@ -179,16 +179,6 @@ public:
         or32(imm, dest);
     }
 
-    void rshiftPtr(RegisterID shift_amount, RegisterID dest)
-    {
-        rshift32(shift_amount, dest);
-    }
-
-    void rshiftPtr(Imm32 imm, RegisterID dest)
-    {
-        rshift32(imm, dest);
-    }
-
     void subPtr(RegisterID src, RegisterID dest)
     {
         sub32(src, dest);

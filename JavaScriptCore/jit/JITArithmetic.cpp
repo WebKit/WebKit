@@ -1143,13 +1143,8 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotImmediateInteger(regT2);
     emitFastArithImmToInt(regT0);
     emitFastArithImmToInt(regT2);
-#if !PLATFORM(X86)
-    // Mask with 0x1f as per ecma-262 11.7.2 step 7.
-    // On 32-bit x86 this is not necessary, since the shift anount is implicitly masked in the instruction.
-    and32(Imm32(0x1f), regT2);
-#endif
     lshift32(regT2, regT0);
-#if !USE(JSVALUE64)
+#if USE(JSVALUE32)
     addSlowCase(branchAdd32(Overflow, regT0, regT0));
     signExtend32ToPtr(regT0, regT0);
 #endif
@@ -1225,15 +1220,9 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
             emitJumpSlowCaseIfNotImmediateInteger(regT2);
         }
         emitFastArithImmToInt(regT2);
-#if !PLATFORM(X86)
-        // Mask with 0x1f as per ecma-262 11.7.2 step 7.
-        // On 32-bit x86 this is not necessary, since the shift anount is implicitly masked in the instruction.
-        and32(Imm32(0x1f), regT2);
-#endif
-#if USE(JSVALUE64)
         rshift32(regT2, regT0);
-#else
-        rshiftPtr(regT2, regT0);
+#if USE(JSVALUE32)
+        signExtend32ToPtr(regT0, regT0);
 #endif
     }
 #if USE(JSVALUE64)

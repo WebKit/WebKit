@@ -197,14 +197,19 @@ public:
         }
     }
 
-    void lshift32(Imm32 imm, RegisterID dest)
-    {
-        m_assembler.lsl(dest, dest, imm.m_value);
-    }
-
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
-        m_assembler.lsl(dest, dest, shift_amount);
+        // Clamp the shift to the range 0..31
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
+        ASSERT(armImm.isValid());
+        m_assembler.ARM_and(dataTempRegister, shift_amount, armImm);
+
+        m_assembler.lsl(dest, dest, dataTempRegister);
+    }
+
+    void lshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.lsl(dest, dest, imm.m_value & 0x1f);
     }
 
     void mul32(RegisterID src, RegisterID dest)
@@ -241,12 +246,17 @@ public:
 
     void rshift32(RegisterID shift_amount, RegisterID dest)
     {
-        m_assembler.asr(dest, dest, shift_amount);
+        // Clamp the shift to the range 0..31
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
+        ASSERT(armImm.isValid());
+        m_assembler.ARM_and(dataTempRegister, shift_amount, armImm);
+
+        m_assembler.asr(dest, dest, dataTempRegister);
     }
 
     void rshift32(Imm32 imm, RegisterID dest)
     {
-        m_assembler.asr(dest, dest, imm.m_value);
+        m_assembler.asr(dest, dest, imm.m_value & 0x1f);
     }
 
     void sub32(RegisterID src, RegisterID dest)
