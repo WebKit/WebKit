@@ -1,3 +1,32 @@
+2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        The associated webkit bug is https://bugs.webkit.org/show_bug.cgi?id=31067,
+        which affects Chromium only.
+        
+        Changes to V8HTMLDocumentCustom.cpp are as below:-
+        1. The HTMLDocumentOpen function would cause a crash in Chromium if
+           there was no calling javascript context. We now check for this case
+           and pass in NULL to the HTMLDocument::open function which can handle
+           a NULL document parameter.
+        2. The other functions like HTMLDocumentWrite, HTMLDocumentWriteln, etc
+           had ASSERTS for a NULL caller frame, which was bogus as it would crash
+           anyway. We now check for this case and return a failure.
+           
+        Changes to V8DOMWindowCustom.cpp are as below:-
+        1. Instead of failing the window.open call made by NPAPI for lack of a
+           calling javascript context, we now use the entered context as the calling
+           context.
+
+        Tests: plugins/document-open.html
+               plugins/window-open.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-11-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

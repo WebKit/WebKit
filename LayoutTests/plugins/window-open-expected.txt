@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: PLUGIN: WINDOW OPEN SUCCESS
+
+This tests that window.open invoked by a plugin via NPN_Invoke without a javascript context succeeds.

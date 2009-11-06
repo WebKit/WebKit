@@ -1,0 +1,22 @@
+<html>
+<head>
+<body>
+<embed id="testPlugin" 
+       type="application/x-webkit-test-netscape"
+       src="data:text/plain,"
+       testdocumentopenindestroystream="true">
+</embed>
+
+<div>
+    This tests that document.open invoked by a plugin via NPN_Invoke without a javascript context succeeds.
+</div>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        // If we are not done within 50 ms then we assume that the test failed.
+        setTimeout('layoutTestController.notifyDone()', 50);
+      }
+</script>
+</body>
+</html>

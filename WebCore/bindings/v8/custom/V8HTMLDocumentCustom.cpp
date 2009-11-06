@@ -120,8 +120,7 @@ CALLBACK_FUNC_DECL(HTMLDocumentWrite)
     INC_STATS("DOM.HTMLDocument.write()");
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
-    ASSERT(frame);
-    htmlDocument->write(writeHelperGetString(args), frame->document());
+    htmlDocument->write(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
 }
 
@@ -130,8 +129,7 @@ CALLBACK_FUNC_DECL(HTMLDocumentWriteln)
     INC_STATS("DOM.HTMLDocument.writeln()");
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
-    ASSERT(frame);
-    htmlDocument->writeln(writeHelperGetString(args), frame->document());
+    htmlDocument->writeln(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
 }
 
@@ -170,7 +168,7 @@ CALLBACK_FUNC_DECL(HTMLDocumentOpen)
     }
 
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
-    htmlDocument->open(frame->document());
+    htmlDocument->open(frame ? frame->document() : NULL);
     // Return the document.
     return args.Holder();
 }

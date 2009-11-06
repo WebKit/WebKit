@@ -1,3 +1,17 @@
+2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Added layout tests to test document.open and window.open calls issued
+        by NPAPI plugins without a calling javascript context. The associated
+        webkit bug is https://bugs.webkit.org/show_bug.cgi?id=31067, which
+        affects Chromium.
+
+        * plugins/document-open-expected.txt: Added.
+        * plugins/document-open.html: Added.
+        * plugins/window-open-expected.txt: Added.
+        * plugins/window-open.html: Added.
+
 2009-11-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

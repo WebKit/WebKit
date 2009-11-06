@@ -643,6 +643,60 @@ static bool testConstruct(PluginObject* obj, const NPVariant* args, uint32_t arg
     return browser->construct(obj->npp, NPVARIANT_TO_OBJECT(args[0]), args + 1, argCount - 1, result);
 }
 
+bool testDocumentOpen(NPP npp) {
+    NPIdentifier documentId = browser->getstringidentifier("document");
+    NPIdentifier openId = browser->getstringidentifier("open");
+
+    NPObject *windowObject = NULL;
+    browser->getvalue(npp, NPNVWindowNPObject, &windowObject);
+    if (!windowObject)
+        return false;
+
+    NPVariant docVariant;
+    browser->getproperty(npp, windowObject, documentId, &docVariant);
+    if (docVariant.type != NPVariantType_Object)
+        return false;
+
+    NPObject *documentObject = NPVARIANT_TO_OBJECT(docVariant);
+
+    NPVariant openArgs[2];
+    STRINGZ_TO_NPVARIANT("text/html", openArgs[0]);
+    STRINGZ_TO_NPVARIANT("_blank", openArgs[1]);
+
+    NPVariant result;
+    browser->invoke(npp, documentObject, openId, openArgs, 2, &result);
+    browser->releaseobject(documentObject);
+
+    if (result.type == NPVariantType_Object) {
+        browser->releaseobject(result.value.objectValue);
+        pluginLog(npp, "DOCUMENT OPEN SUCCESS");
+        return true;
+    }
+    return false;
+}
+
+bool testWindowOpen(NPP npp) {
+    NPIdentifier openId = browser->getstringidentifier("open");
+
+    NPObject *windowObject = NULL;
+    browser->getvalue(npp, NPNVWindowNPObject, &windowObject);
+    if (!windowObject)
+        return false;
+
+    NPVariant openArgs[2];
+    STRINGZ_TO_NPVARIANT("about:blank", openArgs[0]);
+    STRINGZ_TO_NPVARIANT("_blank", openArgs[1]);
+
+    NPVariant result;
+    browser->invoke(npp, windowObject, openId, openArgs, 2, &result);
+    if (result.type == NPVariantType_Object) {
+        browser->releaseobject(result.value.objectValue);
+        pluginLog(npp, "WINDOW OPEN SUCCESS");
+        return true;
+    }
+    return false;
+}
+
 static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(header);
@@ -732,6 +786,9 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->firstHeaders = NULL;
     newInstance->lastUrl = NULL;
     newInstance->lastHeaders = NULL;
+
+    newInstance->testDocumentOpenInDestroyStream = FALSE;
+    newInstance->testWindowOpen = FALSE;
 
     return (NPObject*)newInstance;
 }

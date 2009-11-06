@@ -1,0 +1,21 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+       
+        // If we are not done within 50 ms then we assume that the test failed.
+        setTimeout('layoutTestController.notifyDone()', 50);
+     }
+     
+</script>
+<body style="margin:0px;overflow:hidden">
+<object name="testPlugin" type="application/x-webkit-test-netscape" testwindowopen="true">
+</object>
+<div>
+    This tests that window.open invoked by a plugin via NPN_Invoke without a javascript context succeeds.
+</div>
+<body>
+</html>

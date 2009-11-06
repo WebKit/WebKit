@@ -88,12 +88,15 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
                 for (int i = 0; i < argc; i++)
                     if (_stricmp(argn[i], "src") == 0)
                         pluginLog(instance, "src: %s", argv[i]);
-            }
+            } else if (_stricmp(argn[i], "testdocumentopenindestroystream") == 0)
+                obj->testDocumentOpenInDestroyStream = TRUE;
+              else if (_stricmp(argn[i], "testwindowopen") == 0)
+                obj->testWindowOpen = TRUE;
         }
         
         instance->pdata = obj;
     }
-    
+
     return NPERR_NO_ERROR;
 }
 
@@ -120,6 +123,15 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 
 NPError NPP_SetWindow(NPP instance, NPWindow *window)
 {
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
+
+    if (obj) {
+        if (obj->testWindowOpen) {
+            testWindowOpen(instance);
+            obj->testWindowOpen = FALSE;
+        }
+    }
+
     return NPERR_NO_ERROR;
 }
 
@@ -149,7 +161,7 @@ NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool se
 
     if (obj->onStreamLoad)
         executeScript(obj, obj->onStreamLoad);
-    
+
     return NPERR_NO_ERROR;
 }
 
@@ -159,6 +171,10 @@ NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 
     if (obj->onStreamDestroy)
         executeScript(obj, obj->onStreamDestroy);
+
+    if (obj->testDocumentOpenInDestroyStream) {
+        testDocumentOpen(instance);
+    }
 
     return NPERR_NO_ERROR;
 }

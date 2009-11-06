@@ -702,13 +702,14 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
     if (!V8Proxy::canAccessFrame(frame, true))
         return v8::Undefined();
 
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    if (!callingFrame)
-        return v8::Undefined();
-
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
+
+    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
+    // We may not have a calling context if we are invoked by a plugin via NPAPI.
+    if (!callingFrame)
+        callingFrame = enteredFrame;
 
     Page* page = frame->page();
     if (!page)

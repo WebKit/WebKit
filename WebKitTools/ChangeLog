@@ -1,3 +1,30 @@
+2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Added functionality to the layout test plugin to invoke document.open and
+        window.open with default arguments. The associated webkit bug is
+        https://bugs.webkit.org/show_bug.cgi?id=31067, which affects Chromium. Basically
+        window.open and document.open calls issued by NPAPI plugins via NPN_Invoke don't
+        work in Chromium (V8) if there is no calling javascript context. To achieve this
+        effect we invoke these functions in the layout test plugin in the NPP_SetWindow
+        for the window.open test case and in NPP_DestroyStream for the document.open test case.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testDocumentOpen):
+        (testWindowOpen):
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (NPP_SetWindow):
+        (NPP_DestroyStream):
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+
 2009-11-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

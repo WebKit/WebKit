@@ -107,6 +107,10 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
             executeScript(obj, "document.body.innerHTML = ''");
         else if (!strcasecmp(argn[i], "ondestroy"))
             obj->onDestroy = strdup(argv[i]);
+        else if (strcasecmp(argn[i], "testdocumentopenindestroystream") == 0)
+            obj->testDocumentOpenInDestroyStream = TRUE;
+        else if (strcasecmp(argn[i], "testwindowopen") == 0)
+            obj->testWindowOpen = TRUE;
     }
         
 #ifndef NP_NO_CARBON
@@ -173,6 +177,11 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
             pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = false;
         }
+
+        if (obj->testWindowOpen) {
+            testWindowOpen(instance);
+            obj->testWindowOpen = FALSE;
+        }
     }
     
     return NPERR_NO_ERROR;
@@ -216,6 +225,11 @@ NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 
     if (obj->onStreamDestroy)
         executeScript(obj, obj->onStreamDestroy);
+
+    if (obj->testDocumentOpenInDestroyStream) {
+        testDocumentOpen(instance);
+        obj->testDocumentOpenInDestroyStream = FALSE;
+    }
 
     return NPERR_NO_ERROR;
 }
