@@ -84,7 +84,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);
             if (primitive.isString())
-                value = parseDate(primitive.getString());
+                value = parseDate(exec, primitive.getString());
             else
                 value = primitive.toNumber(exec);
         }
@@ -108,7 +108,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
             t.second = args.at(5).toInt32(exec);
             t.isDST = -1;
             double ms = (numArgs >= 7) ? args.at(6).toNumber(exec) : 0;
-            value = gregorianDateTimeToMS(t, ms, false);
+            value = gregorianDateTimeToMS(exec, t, ms, false);
         }
     }
 
@@ -132,7 +132,7 @@ static JSValue JSC_HOST_CALL callDate(ExecState* exec, JSObject*, JSValue, const
     time_t localTime = time(0);
     tm localTM;
     getLocalTime(&localTime, &localTM);
-    GregorianDateTime ts(localTM);
+    GregorianDateTime ts(exec, localTM);
     return jsNontrivialString(exec, formatDate(ts) + " " + formatTime(ts, false));
 }
 
@@ -144,7 +144,7 @@ CallType DateConstructor::getCallData(CallData& callData)
 
 static JSValue JSC_HOST_CALL dateParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
-    return jsNumber(exec, parseDate(args.at(0).toString(exec)));
+    return jsNumber(exec, parseDate(exec, args.at(0).toString(exec)));
 }
 
 static JSValue JSC_HOST_CALL dateNow(ExecState* exec, JSObject*, JSValue, const ArgList&)
@@ -173,7 +173,7 @@ static JSValue JSC_HOST_CALL dateUTC(ExecState* exec, JSObject*, JSValue, const 
     t.minute = args.at(4).toInt32(exec);
     t.second = args.at(5).toInt32(exec);
     double ms = (n >= 7) ? args.at(6).toNumber(exec) : 0;
-    return jsNumber(exec, gregorianDateTimeToMS(t, ms, true));
+    return jsNumber(exec, gregorianDateTimeToMS(exec, t, ms, true));
 }
 
 } // namespace JSC

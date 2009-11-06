@@ -50,6 +50,8 @@
 #include "MathExtras.h"
 #include "StringExtras.h"
 
+#include "CallFrame.h"
+
 #include <algorithm>
 #include <limits.h>
 #include <limits>
@@ -59,10 +61,6 @@
 
 #if HAVE(ERRNO_H)
 #include <errno.h>
-#endif
-
-#if PLATFORM(DARWIN)
-#include <notify.h>
 #endif
 
 #if PLATFORM(WINCE)
@@ -81,6 +79,34 @@ extern "C" struct tm * localtime(const time_t *timer);
 #define NaN std::numeric_limits<double>::quiet_NaN()
 
 namespace WTF {
+
+double getCurrentUTCTime()
+{
+    return floor(getCurrentUTCTimeWithMicroseconds());
+}
+
+// Returns current time in milliseconds since 1 Jan 1970.
+double getCurrentUTCTimeWithMicroseconds()
+{
+    return currentTime() * 1000.0; 
+}
+
+void getLocalTime(const time_t* localTime, struct tm* localTM)
+{
+#if COMPILER(MSVC7) || COMPILER(MINGW) || PLATFORM(WINCE)
+    *localTM = *localtime(localTime);
+#elif COMPILER(MSVC)
+    localtime_s(localTM, localTime);
+#else
+    localtime_r(localTime, localTM);
+#endif
+}
+
+} // namespace WTF
+
+using namespace WTF;
+
+namespace JSC {
 
 /* Constants */
 
@@ -293,28 +319,6 @@ static int dateToDayInYear(int year, int month, int day)
     return yearday + monthday + day - 1;
 }
 
-double getCurrentUTCTime()
-{
-    return floor(getCurrentUTCTimeWithMicroseconds());
-}
-
-// Returns current time in milliseconds since 1 Jan 1970.
-double getCurrentUTCTimeWithMicroseconds()
-{
-    return currentTime() * 1000.0; 
-}
-
-void getLocalTime(const time_t* localTime, struct tm* localTM)
-{
-#if COMPILER(MSVC7) || COMPILER(MINGW) || PLATFORM(WINCE)
-    *localTM = *localtime(localTime);
-#elif COMPILER(MSVC)
-    localtime_s(localTM, localTime);
-#else
-    localtime_r(localTime, localTM);
-#endif
-}
-
 // There is a hard limit at 2038 that we currently do not have a workaround
 // for (rdar://problem/5052975).
 static inline int maximumYearForDST()
@@ -399,36 +403,17 @@ static int32_t calculateUTCOffset()
     return static_cast<int32_t>(utcOffset * 1000);
 }
 
-#if PLATFORM(DARWIN)
-static int32_t s_cachedUTCOffset; // In milliseconds. An assumption here is that access to an int32_t variable is atomic on platforms that take this code path.
-static bool s_haveCachedUTCOffset;
-static int s_notificationToken;
-#endif
-
 /*
  * Get the difference in milliseconds between this time zone and UTC (GMT)
  * NOT including DST.
  */
-double getUTCOffset()
+double getUTCOffset(ExecState* exec)
 {
-#if PLATFORM(DARWIN)
-    if (s_haveCachedUTCOffset) {
-        int notified;
-        uint32_t status = notify_check(s_notificationToken, &notified);
-        if (status == NOTIFY_STATUS_OK && !notified)
-            return s_cachedUTCOffset;
-    }
-#endif
-
-    int32_t utcOffset = calculateUTCOffset();
-
-#if PLATFORM(DARWIN)
-    // Theoretically, it is possible that several threads will be executing this code at once, in which case we will have a race condition,
-    // and a newer value may be overwritten. In practice, time zones don't change that often.
-    s_cachedUTCOffset = utcOffset;
-#endif
-
-    return utcOffset;
+    double utcOffset = exec->globalData().cachedUTCOffset;
+    if (!isnan(utcOffset))
+        return utcOffset;
+    exec->globalData().cachedUTCOffset = calculateUTCOffset();
+    return exec->globalData().cachedUTCOffset;
 }
 
 /*
@@ -486,14 +471,14 @@ static double getDSTOffset(double ms, double utcOffset)
     return getDSTOffsetSimple(ms / msPerSecond, utcOffset);
 }
 
-double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
+double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
     int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
     double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
     double result = (day * msPerDay) + ms;
 
     if (!inputIsUTC) { // convert to UTC
-        double utcOffset = getUTCOffset();
+        double utcOffset = getUTCOffset(exec);
         result -= utcOffset;
         result -= getDSTOffset(result, utcOffset);
     }
@@ -502,12 +487,12 @@ double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bo
 }
 
 // input is UTC
-void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
+void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
     double dstOff = 0.0;
     double utcOff = 0.0;
     if (!outputIsUTC) {
-        utcOff = getUTCOffset();
+        utcOff = getUTCOffset(exec);
         dstOff = getDSTOffset(ms, utcOff);
         ms += dstOff + utcOff;
     }
@@ -534,14 +519,6 @@ void initializeDates()
 #endif
 
     equivalentYearForDST(2000); // Need to call once to initialize a static used in this function.
-#if PLATFORM(DARWIN)
-    // Register for a notification whenever the time zone changes.
-    uint32_t status = notify_register_check("com.apple.system.timezone", &s_notificationToken);
-    if (status == NOTIFY_STATUS_OK) {
-        s_cachedUTCOffset = calculateUTCOffset();
-        s_haveCachedUTCOffset = true;
-    }
-#endif
 }
 
 static inline double ymdhmsToSeconds(long year, int mon, int day, int hour, int minute, int second)
@@ -622,7 +599,8 @@ static bool parseLong(const char* string, char** stopPosition, int base, long* r
     return true;
 }
 
-double parseDateFromNullTerminatedCharacters(const char* dateString)
+// Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
+double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* exec)
 {
     // This parses a date in the form:
     //     Tuesday, 09-Nov-99 23:12:40 GMT
@@ -889,23 +867,22 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
         else
             year += 1900;
     }
-
+    
+    double ms = ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
     // fall back to local timezone
     if (!haveTZ) {
-        GregorianDateTime t;
-        t.monthDay = day;
-        t.month = month;
-        t.year = year - 1900;
-        t.isDST = -1;
-        t.second = second;
-        t.minute = minute;
-        t.hour = hour;
-
-        // Use our gregorianDateTimeToMS() rather than mktime() as the latter can't handle the full year range.
-        return gregorianDateTimeToMS(t, 0, false);
+        if (exec) {
+            double utcOffset = getUTCOffset(exec);
+            double dstOffset = getDSTOffset(ms, utcOffset);
+            offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
+        } else {
+            double utcOffset = calculateUTCOffset();
+            double dstOffset = getDSTOffset(ms, utcOffset);
+            offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
+        }
     }
 
-    return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
+    return ms - (offset * msPerMinute);
 }
 
 double timeClip(double t)
@@ -918,4 +895,4 @@ double timeClip(double t)
 }
 
 
-} // namespace WTF
+} // namespace JSC

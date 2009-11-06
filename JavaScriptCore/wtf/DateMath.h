@@ -45,22 +45,27 @@
 #include <time.h>
 #include <string.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/UnusedParam.h>
 
 namespace WTF {
+    double getCurrentUTCTime();
+    double getCurrentUTCTimeWithMicroseconds();
+    void getLocalTime(const time_t*, tm*);
+}
 
+namespace JSC {
+
+class ExecState;
 struct GregorianDateTime;
 
 void initializeDates();
-void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&);
-double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
-double getUTCOffset();
+void msToGregorianDateTime(ExecState*, double, bool outputIsUTC, GregorianDateTime&);
+double gregorianDateTimeToMS(ExecState*, const GregorianDateTime&, double, bool inputIsUTC);
+double getUTCOffset(ExecState*);
 int equivalentYearForDST(int year);
-double getCurrentUTCTime();
-double getCurrentUTCTimeWithMicroseconds();
-void getLocalTime(const time_t*, tm*);
 
 // Not really math related, but this is currently the only shared place to put these.  
-double parseDateFromNullTerminatedCharacters(const char*);
+double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* exec); // exec may be 0
 double timeClip(double);
 
 const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
@@ -98,7 +103,7 @@ struct GregorianDateTime : Noncopyable {
         delete [] timeZone;
     }
 
-    GregorianDateTime(const tm& inTm)
+    GregorianDateTime(ExecState* exec, const tm& inTm)
         : second(inTm.tm_sec)
         , minute(inTm.tm_min)
         , hour(inTm.tm_hour)
@@ -109,10 +114,11 @@ struct GregorianDateTime : Noncopyable {
         , year(inTm.tm_year)
         , isDST(inTm.tm_isdst)
     {
+        UNUSED_PARAM(exec);
 #if HAVE(TM_GMTOFF)
         utcOffset = static_cast<int>(inTm.tm_gmtoff);
 #else
-        utcOffset = static_cast<int>(getUTCOffset() / msPerSecond + (isDST ? secondsPerHour : 0));
+        utcOffset = static_cast<int>(getUTCOffset(exec) / msPerSecond + (isDST ? secondsPerHour : 0));
 #endif
 
 #if HAVE(TM_ZONE)
@@ -187,6 +193,6 @@ static inline int gmtoffset(const GregorianDateTime& t)
     return t.utcOffset;
 }
 
-} // namespace WTF
+} // namespace JSC
 
 #endif // DateMath_h

@@ -153,6 +153,8 @@ namespace JSC {
 
         MarkStack markStack;
 
+        double cachedUTCOffset;
+
 #ifndef NDEBUG
         bool mainThreadOnly;
 #endif

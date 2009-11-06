@@ -40,9 +40,9 @@ namespace JSC {
         static PassRefPtr<DateInstanceData> create() { return adoptRef(new DateInstanceData); }
 
         double m_gregorianDateTimeCachedForMS;
-        WTF::GregorianDateTime m_cachedGregorianDateTime;
+        GregorianDateTime m_cachedGregorianDateTime;
         double m_gregorianDateTimeUTCCachedForMS;
-        WTF::GregorianDateTime m_cachedGregorianDateTimeUTC;
+        GregorianDateTime m_cachedGregorianDateTimeUTC;
 
     private:
         DateInstanceData()
