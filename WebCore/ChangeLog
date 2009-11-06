@@ -1,3 +1,20 @@
+2009-11-05  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        If the Geolocation service fails to start, invoke the error callback asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=28276
+
+        All Geolocation callbacks must be invoked asynchronously.
+        See http://www.w3.org/TR/geolocation-API/#geolocation_interface
+
+        No new tests possible with current LayoutTestController.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::getCurrentPosition): Modified. Asserts that startRequest returned a notifier.
+        (WebCore::Geolocation::watchPosition): Modified. Asserts that startRequest returned a notifier.
+        (WebCore::Geolocation::startRequest): Modified. If the Geolocation service fails to start, set a fatal error on the notifier.
+
 2009-11-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Eric Seidel.
