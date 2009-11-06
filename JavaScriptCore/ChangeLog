@@ -1,5 +1,11 @@
 2009-11-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: updated export file.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2009-11-06  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added some #includes.
 
         * wtf/CurrentTime.h:
