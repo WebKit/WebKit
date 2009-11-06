@@ -84,20 +84,10 @@ namespace WebCore {
         ThreadIdentifier m_owningThread;
     };
 
-    // Called when the dead object is not in GC thread's map. Go through all
-    // thread maps to find the one containing it.  Then clear the JS reference
-    // and push the DOM object into the delayed queue for it to be deref-ed at
-    // later time from the owning thread.
-    //
-    // * This is called when the GC thread is not the owning thread.
-    // * This can be called on any thread that has GC running.
-    // * Only one V8 instance is running at a time due to V8::Locker. So we don't need to worry about concurrency.
-    //
     template<typename T>
     void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Handle<v8::Object> v8Object, T* domObject)
     {
-
-        WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
+        ASSERT(WTF::isMainThread());
         DOMDataList& list = DOMDataStore::allStores();
         for (size_t i = 0; i < list.size(); ++i) {
             DOMDataStore* store = list[i];
@@ -108,7 +98,8 @@ namespace WebCore {
             if (*wrapper == *v8Object) {
                 // Clear the JS reference.
                 domMap->forgetOnly(domObject);
-                store->domData()->ensureDeref(V8DOMWrapper::domWrapperType(v8Object), domObject);
+                ASSERT(store->domData()->owningThread() == WTF::currentThread());
+                store->domData()->derefObject(V8DOMWrapper::domWrapperType(v8Object), domObject);
             }
         }
     }
