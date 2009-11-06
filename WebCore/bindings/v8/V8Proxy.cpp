@@ -374,8 +374,6 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 {
     ASSERT(v8::Context::InContext());
 
-    V8GCController::checkMemoryUsage();
-
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
         timelineAgent->willEvaluateScript(source.url().isNull() ? String() : source.url().string(), source.startLine());
@@ -420,7 +418,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
     if (script.IsEmpty())
         return notHandledByInterceptor();
 
-    V8GCController::checkMemoryUsage();
     // Compute the source string and prevent against infinite recursion.
     if (m_recursion >= kMaxRecursionDepth) {
         v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
@@ -475,7 +472,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 
 v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
-    V8GCController::checkMemoryUsage();
     v8::Local<v8::Value> result;
     {
         V8ConsoleMessage::Scope scope;

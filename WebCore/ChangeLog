@@ -1,3 +1,15 @@
+2009-11-05  Alpha Lam  <hclam@chromium.org>
+
+        Revert 50562 because it broke Chromium. Not reviewed since this is a build fix and revert.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::gcEpilogue):
+        * bindings/v8/V8GCController.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate):
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+
 2009-11-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
