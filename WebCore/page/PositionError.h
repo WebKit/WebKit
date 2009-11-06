@@ -35,7 +35,6 @@ namespace WebCore {
 class PositionError : public RefCounted<PositionError> {
 public:
     enum ErrorCode {
-        UNKNOWN_ERROR = 0,
         PERMISSION_DENIED = 1,
         POSITION_UNAVAILABLE = 2,
         TIMEOUT = 3

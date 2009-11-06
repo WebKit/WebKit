@@ -1,3 +1,30 @@
+2009-11-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Geolocation error code UNKNOWN_ERROR is deprecated.
+        https://bugs.webkit.org/show_bug.cgi?id=31184
+
+        Update test case of the value of the PositionError.UNKNOWN_ERROR constant in error.html.
+        Also remove redundant test cases of the value of all PositionError constants.
+
+        * fast/dom/Geolocation/resources/error.js: Modified. Update test of value of PositionError.UNKNOWN_ERROR constant.
+        * fast/dom/Geolocation/error-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-already-error.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/permission-denied-already-error-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-already-success.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/permission-denied-already-success-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/permission-denied-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-stops-watches.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/permission-denied-stops-watches-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/reentrant-error.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/reentrant-error-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/timeout-zero.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/timeout-zero-expected.txt: Modified. Expected result for above test.
+        * fast/dom/Geolocation/resources/watch.js: Modified. Remove tests of the value of PositionError constants.
+        * fast/dom/Geolocation/watch-expected.txt: Modified. Expected result for above test.
+
 2009-11-04  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

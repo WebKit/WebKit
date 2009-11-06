@@ -1,3 +1,22 @@
+2009-11-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Geolocation error code UNKNOWN_ERROR is deprecated.
+        https://bugs.webkit.org/show_bug.cgi?id=31184
+
+        Remove this error code from PositionError, both for use from C++ code and from the JS object.
+
+        Updated fast/dom/Geolocation/error.html to test this.
+
+        * page/PositionError.h: Modified.
+        (WebCore::PositionError::): Remove ErrorCode::UNKNOWN_ERROR.
+        * page/PositionError.idl: Modified. Remove UNKNOWN_ERROR constant.
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::startRequest): Replace UNKNOWN_ERROR with POSITION_UNAVAILABLE.
+        * platform/gtk/GeolocationServiceGtk.cpp: Modified.
+        (WebCore::GeolocationServiceGtk::startUpdating): Replace UNKNOWN_ERROR with POSITION_UNAVAILABLE.
+
 2009-11-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

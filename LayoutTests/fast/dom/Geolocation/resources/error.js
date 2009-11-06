@@ -14,7 +14,7 @@ navigator.geolocation.getCurrentPosition(function(p) {
     error = e
     shouldBe('error.code', 'mockCode');
     shouldBe('error.message', 'mockMessage');
-    shouldBe('error.UNKNOWN_ERROR', '0');
+    shouldBe('error.UNKNOWN_ERROR', 'undefined');
     shouldBe('error.PERMISSION_DENIED', '1');
     shouldBe('error.POSITION_UNAVAILABLE', '2');
     shouldBe('error.TIMEOUT', '3');

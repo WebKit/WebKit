@@ -181,7 +181,7 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
         if (notifier->hasZeroTimeout() || m_service->startUpdating(notifier->m_options.get()))
             notifier->startTimerIfNeeded();
         else
-            notifier->setFatalError(PositionError::create(PositionError::UNKNOWN_ERROR, "Failed to start Geolocation service"));
+            notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, "Failed to start Geolocation service"));
     }
 
     return notifier.release();
