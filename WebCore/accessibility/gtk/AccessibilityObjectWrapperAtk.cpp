@@ -798,6 +798,8 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
     AccessibilityObject* coreObject = core(text);
     String ret;
     unsigned start = startOffset;
+    if (endOffset == -1)
+        endOffset = coreObject->stringValue().length();
     int length = endOffset - startOffset;
 
     if (coreObject->isTextControl())

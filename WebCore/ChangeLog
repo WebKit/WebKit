@@ -1,3 +1,15 @@
+2009-11-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30878
+        [Gtk] atk_text_get_text() fails in entries when the end_offset is -1
+
+        If the end_offset is -1, use the String length as the end_offset.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_text):
+
 2009-11-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.
