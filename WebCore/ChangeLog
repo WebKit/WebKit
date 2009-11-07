@@ -1,3 +1,54 @@
+2009-11-06  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixes <http://webkit.org/b/31177>.
+        Web Inspector: Bind backspace to delete cookies and DOM Storage.
+        
+        Refactor editing code from DOMStorageDataGrid to DataGrid, so other
+        places in the inspector can use editing in DataGrid (added a FIXME for
+        some stuff that needs to be generalized).
+        
+        Also added deleting functionality to DataGrid, and implemented it for
+        Cookies and DOM Storage. The reason this patch is so big is because of
+        the refactoring of editing code, which won't be used yet in a cross-datagrid
+        way, but should be able to.
+        
+        Additionally, moved the callbacks members from DOMStorageDataGrid to
+        DOMStorageItemsView, which allowed us to delete DOMStorageDataGrid, to 
+        make the architecture of DOM Storage look a lot more like the Cookies view.
+        
+        Lastly, added a preventDefault call in ElementsTreeOutline to prevent the 
+        inspector from beeping at you when you delete an element.
+
+        * WebCore.gypi: Removed DOMStorageDataGrid.
+        * WebCore.vcproj/WebCore.vcproj: Removed DOMStorageDataGrid.
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.dataGridForCookies):
+        (WebInspector.CookieItemsView.prototype._deleteButtonClicked):
+        (WebInspector.CookieItemsView.prototype._deleteCookieCallback):
+        * inspector/front-end/DOMStorageDataGrid.js: Removed.
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._dataGridForDOMStorageEntries):
+        (WebInspector.DOMStorageItemsView.prototype._deleteButtonClicked):
+        (WebInspector.DOMStorageItemsView.prototype._refreshButtonClicked):
+        (WebInspector.DOMStorageItemsView.prototype._editingCallback):
+        (WebInspector.DOMStorageItemsView.prototype.deleteSelectedRow):
+        (WebInspector.DOMStorageItemsView.prototype._deleteCallback):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype._ondblclick): Moved from DOMStorageDataGrid to DataGrid + Refactoring.
+        (WebInspector.DataGrid.prototype._startEditingColumnOfDataGridNode): Ditto.
+        (WebInspector.DataGrid.prototype._startEditing): Ditto.
+        (WebInspector.DataGrid.prototype._editingCommitted.moveToNextIfNeeded): Ditto.
+        (WebInspector.DataGrid.prototype._editingCommitted): Ditto.
+        (WebInspector.DataGrid.prototype._editingCancelled): Ditto.
+        (WebInspector.DataGrid.prototype.handleKeyEvent): Added case for delete/backspace.
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.handleKeyEvent): Added preventDefault call.
+        * inspector/front-end/WebKit.qrc: Removed DOMStorageDataGrid.
+        * inspector/front-end/inspector.html: Removed DOMStorageDataGrid.
+
 2009-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Qt build fix: added an ExecState parameter.

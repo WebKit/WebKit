@@ -185,7 +185,7 @@ WebInspector.CookieItemsView.prototype = {
         for (var columnIdentifier in columns)
             columns[columnIdentifier].width += "%";
 
-        var dataGrid = new WebInspector.DataGrid(columns);
+        var dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCookieCallback.bind(this));
         var length = nodes.length;
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
@@ -258,10 +258,15 @@ WebInspector.CookieItemsView.prototype = {
 
     _deleteButtonClicked: function(event)
     {
-        if (!this._dataGrid)
+        if (!this._dataGrid || !this._dataGrid.selectedNode)
             return;
 
-        var cookie = this._dataGrid.selectedNode.cookie;
+        this._deleteCookieCallback(this._dataGrid.selectedNode);
+    },
+    
+    _deleteCookieCallback: function(node)
+    {
+        var cookie = node.cookie;
         InspectorController.deleteCookie(cookie.name, this._cookieDomain);
         this.update();
     },

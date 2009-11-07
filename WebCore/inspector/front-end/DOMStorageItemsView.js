@@ -123,7 +123,7 @@ WebInspector.DOMStorageItemsView.prototype = {
         columns[0].width += "%";
         columns[1].width += "%";
 
-        var dataGrid = new WebInspector.DOMStorageDataGrid(columns, this.domStorage, keys);
+        var dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
         var length = nodes.length;
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
@@ -135,15 +135,40 @@ WebInspector.DOMStorageItemsView.prototype = {
 
     _deleteButtonClicked: function(event)
     {
-        if (this._dataGrid) {
-            this._dataGrid.deleteSelectedRow();
-            
-            this.show();
-        }
+        if (!this._dataGrid || !this._dataGrid.selectedNode)
+            return;
+
+        this._deleteCallback(this._dataGrid.selectedNode);
     },
 
     _refreshButtonClicked: function(event)
     {
+        this.update();
+    },
+    
+    _editingCallback: function(editingNode, columnIdentifier, oldText, newText)
+    {
+        var domStorage = this.domStorage;
+        if (columnIdentifier === 0) {
+            if (oldText)
+                domStorage.removeItem(oldText);
+
+            domStorage.setItem(newText, editingNode.data[1]);
+        } else {
+            domStorage.setItem(editingNode.data[0], newText);
+        }
+        
+        this.update();
+    },
+    
+    _deleteCallback: function(node)
+    {
+        if (!node || node.isCreationNode)
+            return;
+
+        if (this.domStorage)
+            this.domStorage.removeItem(node.data[0]);
+            
         this.update();
     }
 }

@@ -3613,7 +3613,6 @@
             'inspector/front-end/DataGrid.js',
             'inspector/front-end/DOMAgent.js',
             'inspector/front-end/DOMStorage.js',
-            'inspector/front-end/DOMStorageDataGrid.js',
             'inspector/front-end/DOMStorageItemsView.js',
             'inspector/front-end/Drawer.js',
             'inspector/front-end/ElementsPanel.js',

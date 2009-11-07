@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DataGrid = function(columns)
+WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 {
     this.element = document.createElement("div");
     this.element.className = "data-grid";
@@ -38,7 +38,16 @@ WebInspector.DataGrid = function(columns)
 
     this._dataTable.addEventListener("mousedown", this._mouseDownInDataTable.bind(this), true);
     this._dataTable.addEventListener("click", this._clickInDataTable.bind(this), true);
-
+    
+    // FIXME: Add a createCallback which is different from editCallback and has different
+    // behavior when creating a new node.
+    if (editCallback) {
+        this._dataTable.addEventListener("dblclick", this._ondblclick.bind(this), false);
+        this._editCallback = editCallback;
+    }
+    if (deleteCallback)
+        this._deleteCallback = deleteCallback;
+    
     this.aligned = {};
 
     var scrollContainer = document.createElement("div");
@@ -128,6 +137,116 @@ WebInspector.DataGrid = function(columns)
 }
 
 WebInspector.DataGrid.prototype = {
+    _ondblclick: function(event)
+    {
+        if (this._editing || this._editingNode)
+            return;
+
+        this._startEditing(event);
+    },
+
+    _startEditingColumnOfDataGridNode: function(node, column)
+    {
+        this._editing = true;
+        this._editingNode = node;
+        this._editingNode.select();
+
+        var element = this._editingNode._element.children[column];
+        WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
+        window.getSelection().setBaseAndExtent(element, 0, element, 1);
+    },
+
+    _startEditing: function(event)
+    {
+        var element = event.target.enclosingNodeOrSelfWithNodeName("td");
+        if (!element)
+            return;
+
+        this._editingNode = this.dataGridNodeFromEvent(event);
+        if (!this._editingNode) {
+            if (!this.creationNode)
+                return;
+            this._editingNode = this.creationNode;
+        }
+
+        // Force editing the 1st column when editing the creation node
+        if (this._editingNode.isCreationNode)
+            return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
+
+        this._editing = true;
+        WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
+        window.getSelection().setBaseAndExtent(element, 0, element, 1);
+    },
+
+    _editingCommitted: function(element, newText, oldText, context, moveDirection)
+    {
+        // FIXME: We need more column identifiers here throughout this function.
+        // Not needed yet since only editable DataGrid is DOM Storage, which is Key - Value.
+        
+        // FIXME: Better way to do this than regular expressions?
+        var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1]);
+
+        var textBeforeEditing = this._editingNode.data[columnIdentifier];
+        var currentEditingNode = this._editingNode;
+
+        function moveToNextIfNeeded(wasChange) {
+            if (!moveDirection)
+                return;
+
+            if (moveDirection === "forward") {
+                if (currentEditingNode.isCreationNode && columnIdentifier === 0 && !wasChange)
+                    return;
+
+                if (columnIdentifier === 0)
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 1);
+
+                var nextDataGridNode = currentEditingNode.traverseNextNode(true, null, true);
+                if (nextDataGridNode)
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 0);
+                if (currentEditingNode.isCreationNode && wasChange) {
+                    addCreationNode(false);
+                    return this._startEditingColumnOfDataGridNode(this.creationNode, 0);
+                }
+                return;
+            }
+
+            if (moveDirection === "backward") {
+                if (columnIdentifier === 1)
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 0);
+                    var nextDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
+
+                if (nextDataGridNode)
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 1);
+                return;
+            }
+        }
+
+        if (textBeforeEditing == newText) {
+            this._editingCancelled(element);
+            moveToNextIfNeeded.call(this, false);
+            return;
+        }
+
+        // Update the text in the datagrid that we typed
+        this._editingNode.data[columnIdentifier] = newText;
+        
+        // Make the callback - expects an editing node (table row), the column number that is being edited,
+        // the text that used to be there, and the new text.
+        this._editCallback(this._editingNode, columnIdentifier, textBeforeEditing, newText);
+
+        if (this._editingNode.isCreationNode)
+            this.addCreationNode(false);
+
+        this._editingCancelled(element);
+        moveToNextIfNeeded.call(this, true);
+    },
+
+    _editingCancelled: function(element, context)
+    {
+        delete this._editing;
+        this._editingNode = null;
+    },
+    
     get sortColumnIdentifier()
     {
         if (!this._sortColumnCell)
@@ -350,7 +469,7 @@ WebInspector.DataGrid.prototype = {
 
     handleKeyEvent: function(event)
     {
-        if (!this.selectedNode || event.shiftKey || event.metaKey || event.ctrlKey)
+        if (!this.selectedNode || event.shiftKey || event.metaKey || event.ctrlKey || this._editing)
             return false;
 
         var handled = false;
@@ -395,6 +514,11 @@ WebInspector.DataGrid.prototype = {
                     else
                         this.selectedNode.expand();
                 }
+            }
+        } else if (event.keyCode === 8 || event.keyCode === 46) {
+            if (this._deleteCallback) {
+                handled = true;
+                this._deleteCallback(this.selectedNode);
             }
         }
 
