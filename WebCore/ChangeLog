@@ -1,3 +1,43 @@
+2009-11-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=31219 Clean up 
+        GraphicsContext's current concept of ColorSpace
+
+        ColorSpace is now called ColorType. The variables on the state we 
+        appropriately re-named as well. I removed strokeColorSpace() and 
+        fillColorSpace() from GraphicsContext since they were never called. 
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::):
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::calculateDrawingMode):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+
 2009-11-06  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.

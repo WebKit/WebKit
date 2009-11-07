@@ -430,8 +430,8 @@ void GraphicsContext::applyFillPattern()
 
 static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPathDrawingMode& mode)
 {
-    bool shouldFill = state.fillColorSpace == PatternColorSpace || state.fillColor.alpha();
-    bool shouldStroke = state.strokeColorSpace == PatternColorSpace || (state.strokeStyle != NoStroke && state.strokeColor.alpha());
+    bool shouldFill = state.fillType == PatternType || state.fillColor.alpha();
+    bool shouldStroke = state.strokeType == PatternType || (state.strokeStyle != NoStroke && state.strokeColor.alpha());
     bool useEOFill = state.fillRule == RULE_EVENODD;
 
     if (shouldFill) {
@@ -463,16 +463,16 @@ void GraphicsContext::drawPath()
     CGContextRef context = platformContext();
     const GraphicsContextState& state = m_common->state;
 
-    if (state.fillColorSpace == GradientColorSpace || state.strokeColorSpace == GradientColorSpace) {
+    if (state.fillType == GradientType || state.strokeType == GradientType) {
         // We don't have any optimized way to fill & stroke a path using gradients
         fillPath();
         strokePath();
         return;
     }
 
-    if (state.fillColorSpace == PatternColorSpace)
+    if (state.fillType == PatternType)
         applyFillPattern();
-    if (state.strokeColorSpace == PatternColorSpace)
+    if (state.strokeType == PatternType)
         applyStrokePattern();
 
     CGPathDrawingMode drawingMode;
@@ -494,15 +494,15 @@ void GraphicsContext::fillPath()
         return;
 
     CGContextRef context = platformContext();
-    switch (m_common->state.fillColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.fillType) {
+    case SolidColorType:
         fillPathWithFillRule(context, fillRule());
         break;
-    case PatternColorSpace:
+    case PatternType:
         applyFillPattern();
         fillPathWithFillRule(context, fillRule());
         break;
-    case GradientColorSpace:
+    case GradientType:
         CGContextSaveGState(context);
         if (fillRule() == RULE_EVENODD)
             CGContextEOClip(context);
@@ -521,15 +521,15 @@ void GraphicsContext::strokePath()
         return;
 
     CGContextRef context = platformContext();
-    switch (m_common->state.strokeColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.strokeType) {
+    case SolidColorType:
         CGContextStrokePath(context);
         break;
-    case PatternColorSpace:
+    case PatternType:
         applyStrokePattern();
         CGContextStrokePath(context);
         break;
-    case GradientColorSpace:
+    case GradientType:
         CGContextSaveGState(context);
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
@@ -545,15 +545,15 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
     CGContextRef context = platformContext();
-    switch (m_common->state.fillColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.fillType) {
+    case SolidColorType:
         CGContextFillRect(context, rect);
         break;
-    case PatternColorSpace:
+    case PatternType:
         applyFillPattern();
         CGContextFillRect(context, rect);
         break;
-    case GradientColorSpace:
+    case GradientType:
         CGContextSaveGState(context);
         CGContextClipToRect(context, rect);
         CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
@@ -779,15 +779,15 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
         return;
 
     CGContextRef context = platformContext();
-    switch (m_common->state.strokeColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.strokeType) {
+    case SolidColorType:
         CGContextStrokeRectWithWidth(context, r, lineWidth);
         break;
-    case PatternColorSpace:
+    case PatternType:
         applyStrokePattern();
         CGContextStrokeRectWithWidth(context, r, lineWidth);
         break;
-    case GradientColorSpace:
+    case GradientType:
         CGContextSaveGState(context);
         setStrokeThickness(lineWidth);
         CGContextAddRect(context, r);

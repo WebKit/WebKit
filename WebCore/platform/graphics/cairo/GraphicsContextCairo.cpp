@@ -390,20 +390,20 @@ void GraphicsContext::fillPath()
     cairo_save(cr);
 
     cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    switch (m_common->state.fillColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.fillType) {
+    case SolidColorType:
         setColor(cr, fillColor());
         cairo_clip(cr);
         cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
         break;
-    case PatternColorSpace: {
+    case PatternType: {
         TransformationMatrix affine;
         cairo_set_source(cr, m_common->state.fillPattern->createPlatformPattern(affine));
         cairo_clip(cr);
         cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
         break;
     }
-    case GradientColorSpace:
+    case GradientType:
         cairo_pattern_t* pattern = m_common->state.fillGradient->platformGradient();
         cairo_set_source(cr, pattern);
         cairo_clip(cr);
@@ -420,8 +420,8 @@ void GraphicsContext::strokePath()
 
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
-    switch (m_common->state.strokeColorSpace) {
-    case SolidColorSpace:
+    switch (m_common->state.strokeType) {
+    case SolidColorType:
         float red, green, blue, alpha;
         strokeColor().getRGBA(red, green, blue, alpha);
         if (m_common->state.globalAlpha < 1.0f)
@@ -429,7 +429,7 @@ void GraphicsContext::strokePath()
         cairo_set_source_rgba(cr, red, green, blue, alpha);
         cairo_stroke(cr);
         break;
-    case PatternColorSpace: {
+    case PatternType: {
         TransformationMatrix affine;
         cairo_set_source(cr, m_common->state.strokePattern->createPlatformPattern(affine));
         if (m_common->state.globalAlpha < 1.0f) {
@@ -440,7 +440,7 @@ void GraphicsContext::strokePath()
         cairo_stroke(cr);
         break;
     }
-    case GradientColorSpace:
+    case GradientType:
         cairo_pattern_t* pattern = m_common->state.strokeGradient->platformGradient();
         cairo_set_source(cr, pattern);
         if (m_common->state.globalAlpha < 1.0f) {
