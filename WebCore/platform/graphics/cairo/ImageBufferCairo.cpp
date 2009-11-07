@@ -136,6 +136,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
             *pixel = premultipliedARGBFromColor(pixelColor);
         }
     }
+    cairo_surface_mark_dirty_rectangle (m_data.m_surface, 0, 0, m_size.width(), m_size.height());
 }
 
 template <Multiply multiplied>
@@ -260,6 +261,9 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
         }
         srcRows += srcBytesPerRow;
     }
+    cairo_surface_mark_dirty_rectangle (data.m_surface,
+                                        destx, desty,
+                                        numColumns, numRows);
 }
 
 void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)

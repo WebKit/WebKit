@@ -1,3 +1,16 @@
+2009-11-07  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Mark redrawn areas on image surfaces as dirty.
+
+        This is required to conform to the Cairo API, but is currently only
+        used by debugging tools like cairo-trace.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        (WebCore::putImageData):
+
 2009-11-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
