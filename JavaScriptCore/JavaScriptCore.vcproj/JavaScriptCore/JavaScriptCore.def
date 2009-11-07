@@ -33,6 +33,7 @@ EXPORTS
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??4UString@JSC@@QAEAAV01@PBD@Z
     ??8JSC@@YA_NABVUString@0@0@Z
+    ?NaN@JSC@@3NB
     ?UTF8String@UString@JSC@@QBE?AVCString@2@_N@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@URep@UString@JSC@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAURep@UString@2@@Z
@@ -202,6 +203,7 @@ EXPORTS
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
+    ?parseDateFromNullTerminatedCharacters@JSC@@YANPBDPAVExecState@1@@Z
     ?primaryHeapBegin@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?primaryHeapEnd@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ
@@ -310,3 +312,4 @@ EXPORTS
     WTFReportAssertionFailure
     WTFReportAssertionFailureWithMessage
     WTFReportError
+    
