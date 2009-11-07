@@ -1,3 +1,14 @@
+2009-11-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add in missing expectations.
+
+        * platform/mac/fast/forms/input-list-button-size-expected.checksum: Added.
+        * platform/mac/fast/forms/input-list-button-size-expected.png: Added.
+        * platform/mac/fast/forms/select-dirty-parent-pref-widths-expected.png: Added.
+        * platform/mac/fast/text/text-letter-spacing-expected.png: Added.
+
 2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.
