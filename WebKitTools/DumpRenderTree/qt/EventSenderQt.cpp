@@ -30,6 +30,15 @@
 #include "EventSenderQt.h"
 
 //#include <QtDebug>
+
+#define KEYCODE_DEL         127
+#define KEYCODE_BACKSPACE   8
+#define KEYCODE_LEFTARROW   0xf702
+#define KEYCODE_RIGHTARROW  0xf703
+#define KEYCODE_UPARROW     0xf700
+#define KEYCODE_DOWNARROW   0xf701
+
+
 EventSender::EventSender(QWebPage* parent)
     : QObject(parent)
 {
@@ -129,7 +138,7 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers)
             if (modifs == Qt::ShiftModifier)
                 code = Qt::Key_Backtab;
             s = QString();
-        } else if (code == 127) {
+        } else if (code == KEYCODE_DEL || code == KEYCODE_BACKSPACE) {
             code = Qt::Key_Backspace;
             if (modifs == Qt::AltModifier)
                 modifs = Qt::ControlModifier;
@@ -148,28 +157,28 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers)
             s = QString();
             code = Qt::Key_Home;
             modifs = 0;
-        } else if (code == 0xf702) {
+        } else if (code == KEYCODE_LEFTARROW) {
             s = QString();
             code = Qt::Key_Left;
             if (modifs & Qt::MetaModifier) {
                 code = Qt::Key_Home;
                 modifs &= ~Qt::MetaModifier;
             }
-        } else if (code == 0xf703) {
+        } else if (code == KEYCODE_RIGHTARROW) {
             s = QString();
             code = Qt::Key_Right;
             if (modifs & Qt::MetaModifier) {
                 code = Qt::Key_End;
                 modifs &= ~Qt::MetaModifier;
             }
-        } else if (code == 0xf700) {
+        } else if (code == KEYCODE_UPARROW) {
             s = QString();
             code = Qt::Key_Up;
             if (modifs & Qt::MetaModifier) {
                 code = Qt::Key_PageUp;
                 modifs &= ~Qt::MetaModifier;
             }
-        } else if (code == 0xf701) {
+        } else if (code == KEYCODE_DOWNARROW) {
             s = QString();
             code = Qt::Key_Down;
             if (modifs & Qt::MetaModifier) {

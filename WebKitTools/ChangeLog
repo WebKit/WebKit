@@ -1,3 +1,17 @@
+2009-11-08  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Added support for key code 8 (backspace) in EventSenderQt.
+        This helps to pass the test case below. Also replaced hardcoded
+        code numbers with defined constants.
+        https://bugs.webkit.org/show_bug.cgi?id=31185
+        
+        Test: editing/undo/undo-deleteWord.html
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::keyDown):
+
 2009-11-07  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther.
