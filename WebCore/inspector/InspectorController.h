@@ -71,7 +71,7 @@ class JavaScriptCallFrame;
 class KURL;
 class Node;
 class Page;
-struct ResourceRequest;
+class ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;

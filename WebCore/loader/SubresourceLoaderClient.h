@@ -33,7 +33,7 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 class ResourceError;
-struct ResourceRequest;
+class ResourceRequest;
 class ResourceResponse;
 class SubresourceLoader;
     

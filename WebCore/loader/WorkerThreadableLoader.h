@@ -47,7 +47,7 @@
 namespace WebCore {
 
     class ResourceError;
-    struct ResourceRequest;
+    class ResourceRequest;
     class WorkerContext;
     class WorkerLoaderProxy;
     struct CrossThreadResourceResponseData;

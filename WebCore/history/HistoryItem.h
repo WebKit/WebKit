@@ -50,7 +50,7 @@ class FormData;
 class HistoryItem;
 class Image;
 class KURL;
-struct ResourceRequest;
+class ResourceRequest;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 

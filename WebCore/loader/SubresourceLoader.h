@@ -33,7 +33,7 @@
  
 namespace WebCore {
 
-    struct ResourceRequest;
+    class ResourceRequest;
     class SubresourceLoaderClient;
     
     class SubresourceLoader : public ResourceLoader {

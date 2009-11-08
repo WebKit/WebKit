@@ -1,3 +1,17 @@
+2009-11-08  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Holger Freyther.
+
+        ResourceRequest to be class instead of struct
+        https://bugs.webkit.org/show_bug.cgi?id=30670
+
+        Started as a compilation fix for Symbian where the compiler makes a distinction between
+        class and struct in function argument signatures.
+        Changed forward declaration of ResourceRequest to have class in the forward
+        declaration instead of struct.
+
+        * WebDownload.h:
+
 2009-11-05  Adam Roben  <aroben@apple.com>
 
         Make CFDictionaryPropertyBag::createInstance return a COMPtr

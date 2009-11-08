@@ -41,7 +41,7 @@
 namespace WebCore {
 
     class ResourceError;
-    struct ResourceRequest;
+    class ResourceRequest;
     class ResourceResponse;
     class String;
     struct CrossThreadResourceResponseData;

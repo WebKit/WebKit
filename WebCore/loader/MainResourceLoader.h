@@ -40,7 +40,7 @@
 namespace WebCore {
 
     class FormState;
-    struct ResourceRequest;
+    class ResourceRequest;
 
     class MainResourceLoader : public ResourceLoader {
     public:

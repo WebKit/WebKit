@@ -38,7 +38,7 @@
 namespace WebCore {
     class KURL;
     class ResourceHandle;
-    struct ResourceRequest;
+    class ResourceRequest;
     class ResourceResponse;
 }
 

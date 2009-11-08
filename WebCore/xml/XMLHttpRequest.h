@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Document;
 class File;
-struct ResourceRequest;
+class ResourceRequest;
 class TextResourceDecoder;
 class ThreadableLoader;
 

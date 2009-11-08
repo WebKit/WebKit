@@ -41,7 +41,7 @@
 namespace WebCore {
     class Document;
     class KURL;
-    struct ResourceRequest;
+    class ResourceRequest;
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {

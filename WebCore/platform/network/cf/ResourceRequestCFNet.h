@@ -30,7 +30,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
 
-    struct ResourceRequest;
+    class ResourceRequest;
 
     void getResourceRequest(ResourceRequest&, CFURLRequestRef);
     CFURLRequestRef cfURLRequest(const ResourceRequest&);

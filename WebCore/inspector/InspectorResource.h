@@ -51,7 +51,7 @@ namespace WebCore {
     class Frame;
     class ResourceResponse;
 
-    struct ResourceRequest;
+    class ResourceRequest;
 
     class InspectorResource : public RefCounted<InspectorResource> {
     public:

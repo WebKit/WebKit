@@ -50,7 +50,7 @@ namespace WebCore {
     class KURL;
     class ResourceHandle;
     class ResourceError;
-    struct ResourceRequest;
+    class ResourceRequest;
     class ResourceResponse;
 
     enum CacheStoragePolicy {

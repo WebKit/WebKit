@@ -1,3 +1,42 @@
+2009-11-08  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Holger Freyther.
+
+        ResourceRequest to be class instead of struct
+        https://bugs.webkit.org/show_bug.cgi?id=30670
+
+        Started as a compilation fix for Symbian where the compiler makes a distinction between
+        class and struct in function argument signatures.
+        Changed all forward declarations of ResourceRequest to have class in the forward
+        declaration instead of struct and changed the definition of ResourceRequest to be class
+        and added access qualifiers where missing. Additionally two references of friend
+        struct ResourceRequestBase changed to class instead.
+
+        * history/HistoryItem.h:
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.h:
+        * loader/DocumentThreadableLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoadNotifier.h:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/ThreadableLoader.h:
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * platform/CrossThreadCopier.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/chromium/ResourceRequest.h:
+        * platform/network/curl/ResourceRequest.h:
+        * platform/network/qt/ResourceRequest.h:
+        * platform/network/soup/ResourceRequest.h:
+        * xml/XMLHttpRequest.h:
+
 2009-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
