@@ -1,3 +1,13 @@
+2009-11-08  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Update texts in test description after test case change in r50579.
+        https://bugs.webkit.org/show_bug.cgi?id=31122
+
+        * editing/selection/shrink-selection-after-shift-pagedown-expected.txt:
+        * editing/selection/shrink-selection-after-shift-pagedown.html:
+
 2009-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
