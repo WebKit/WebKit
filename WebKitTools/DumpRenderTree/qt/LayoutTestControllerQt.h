@@ -93,7 +93,8 @@ public slots:
     void queueForwardNavigation(int howFarForward);
     void queueLoad(const QString& url, const QString& target = QString());
     void queueReload();
-    void queueScript(const QString& url);
+    void queueLoadingScript(const QString& script);
+    void queueNonLoadingScript(const QString& script);
     void provisionalLoad();
     void setCloseRemainingWindowsWhenComplete(bool = false) {}
     int windowCount();

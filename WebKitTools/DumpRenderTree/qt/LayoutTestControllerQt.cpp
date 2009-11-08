@@ -186,10 +186,16 @@ void LayoutTestController::queueReload()
     WorkQueue::shared()->queue(new ReloadItem(m_drt->webPage()));
 }
 
-void LayoutTestController::queueScript(const QString &url)
+void LayoutTestController::queueLoadingScript(const QString& script)
 {
-    //qDebug() << ">>>queueScript" << url;
-    WorkQueue::shared()->queue(new ScriptItem(url, m_drt->webPage()));
+    //qDebug() << ">>>queueLoadingScript" << script;
+    WorkQueue::shared()->queue(new LoadingScriptItem(script, m_drt->webPage()));
+}
+
+void LayoutTestController::queueNonLoadingScript(const QString& script)
+{
+    //qDebug() << ">>>queueNonLoadingScript" << script;
+    WorkQueue::shared()->queue(new NonLoadingScriptItem(script, m_drt->webPage()));
 }
 
 void LayoutTestController::provisionalLoad()

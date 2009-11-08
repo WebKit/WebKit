@@ -1,3 +1,29 @@
+2009-11-07  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt][DRT] Replace queueScript by queueNonLoadingScript and queueLoadingScript method
+        https://bugs.webkit.org/show_bug.cgi?id=31158
+
+        By invoking a script queue'd by queueScript(), 'true' was beeing returned
+        always, which from WorkQueue prospective means that a load has been started
+        and the queue processing should stop and wait for the load to finish.
+        Spinning it off into a loading and a non-loading variants was the solution
+        adopted by Mac's DRT to work around this problem. The former keeps returning
+        'true' while the later executes the script synchronously and returns 'false'
+        making it possible to the WorkQueue to proceed right away.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::processWork):
+        (LayoutTestController::queueLoadingScript):
+        (LayoutTestController::queueNonLoadingScript):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/WorkQueueItem.h:
+        (LoadingScriptItem::LoadingScriptItem):
+        (LoadingScriptItem::invoke):
+        (NonLoadingScriptItem::NonLoadingScriptItem):
+        (NonLoadingScriptItem::invoke):
+
 2009-11-07  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.
