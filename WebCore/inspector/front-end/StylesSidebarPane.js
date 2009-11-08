@@ -93,13 +93,12 @@ WebInspector.StylesSidebarPane.prototype = {
             node = this.node;
 
         var body = this.bodyElement;
-        if (!refresh || !node) {
+
+        if (!node) {
             body.removeChildren();
             this.sections = [];
-        }
-
-        if (!node)
             return;
+        }
 
         var self = this;
         function callback(styles)
@@ -1354,7 +1353,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (updateInterface)
                 self.updateAll(true);
 
-            if (!self.rule)
+            if (!section.rule)
                 WebInspector.panels.elements.treeOutline.update();
         }
 

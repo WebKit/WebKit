@@ -1,3 +1,18 @@
+2009-11-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: [REGRESSION] committing style edit
+        clears elements panel selection.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31242
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.update):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2009-11-08  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Holger Freyther.

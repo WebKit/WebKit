@@ -104,6 +104,8 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     update: function()
     {
+        var selectedNode = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
+
         this.removeChildren();
 
         if (!this.rootDOMNode)
@@ -125,7 +127,8 @@ WebInspector.ElementsTreeOutline.prototype = {
             }
         }
 
-        this.updateSelection();
+        if (selectedNode)
+            this.revealAndSelectNode(selectedNode);
     },
 
     updateSelection: function()
