@@ -41,6 +41,8 @@ BEGIN {
     @ISA         = qw(Exporter);
     @EXPORT      = qw(
         &canonicalizePath
+        &changeLogEmailAddress
+        &changeLogName
         &chdirReturningRelativePath
         &determineSVNRoot
         &determineVCSRoot
@@ -413,6 +415,63 @@ sub fixChangeLogPatch($)
     splice(@patchLines, $patchHeaderIndex + 1, $firstContentIndex - $patchHeaderIndex - 1); # Remove any leading context.
 
     return join($lineEnding, @patchLines) . "\n"; # patch(1) expects an extra trailing newline.
+}
+
+sub gitConfig($)
+{
+    return unless $isGit;
+
+    my ($config) = @_;
+
+    my $result = `git config $config`;
+    if (($? >> 8)) {
+        $result = `git repo-config $config`;
+    }
+    chomp $result;
+    return $result;
+}
+
+sub changeLogNameError($)
+{
+    my ($message) = @_;
+    print STDERR "$message\nEither:\n";
+    print STDERR "  set CHANGE_LOG_NAME in your environment\n";
+    print STDERR "  OR pass --name= on the command line\n";
+    print STDERR "  OR set REAL_NAME in your environment";
+    print STDERR "  OR git users can set 'git config user.name'\n";
+    exit(1);
+}
+
+sub changeLogName()
+{
+    my $name = $ENV{CHANGE_LOG_NAME} || $ENV{REAL_NAME} || gitConfig("user.name") || (split /\s*,\s*/, (getpwuid $<)[6])[0];
+
+    changeLogNameError("Failed to determine ChangeLog name.") unless $name;
+    # getpwuid seems to always succeed on windows, returning the username instead of the full name.  This check will catch that case.
+    changeLogNameError("'$name' does not contain a space!  ChangeLogs should contain your full name.") unless ($name =~ /\w \w/);
+
+    return $name;
+}
+
+sub changeLogEmailAddressError($)
+{
+    my ($message) = @_;
+    print STDERR "$message\nEither:\n";
+    print STDERR "  set CHANGE_LOG_EMAIL_ADDRESS in your environment\n";
+    print STDERR "  OR pass --email= on the command line\n";
+    print STDERR "  OR set EMAIL_ADDRESS in your environment\n";
+    print STDERR "  OR git users can set 'git config user.email'\n";
+    exit(1);
+}
+
+sub changeLogEmailAddress()
+{
+    my $emailAddress = $ENV{CHANGE_LOG_EMAIL_ADDRESS} || $ENV{EMAIL_ADDRESS} || gitConfig("user.email");
+
+    changeLogEmailAddressError("Failed to determine email address for ChangeLog.") unless $emailAddress;
+    changeLogEmailAddressError("Email address '$emailAddress' does not contain '\@' and is likely invalid.") unless ($emailAddress =~ /\@/);
+
+    return $emailAddress;
 }
 
 1;

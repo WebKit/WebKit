@@ -65,8 +65,8 @@ use POSIX qw(strftime);
 use VCSUtils;
 
 sub changeLogDate($);
-sub changeLogEmailAddress($);
-sub changeLogName($);
+sub changeLogEmailAddressFromArgs($);
+sub changeLogNameFromArgs($);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -77,7 +77,6 @@ sub findOriginalFileFromSvn($);
 sub determinePropertyChanges($$$);
 sub pluralizeAndList($$@);
 sub generateFileList(\@\@\%);
-sub gitConfig($);
 sub isUnmodifiedStatus($);
 sub isModifiedStatus($);
 sub isAddedStatus($);
@@ -246,8 +245,8 @@ if (%changed_line_ranges) {
 
 # Get some parameters for the ChangeLog we are about to write.
 my $date = changeLogDate($changeLogTimeZone);
-$name = changeLogName($name);
-$emailAddress = changeLogEmailAddress($emailAddress);
+$name = changeLogNameFromArgs($name);
+$emailAddress = changeLogEmailAddressFromArgs($emailAddress);
 
 print STDERR "  Change author: $name <$emailAddress>.\n";
 
@@ -443,62 +442,22 @@ sub changeLogDate($)
     return $date;
 }
 
-sub changeLogNameError($)
-{
-    my ($message) = @_;
-    print STDERR "$message\nEither:\n";
-    print STDERR "  set CHANGE_LOG_NAME in your environment\n";
-    print STDERR "  OR pass --name= on the command line\n";
-    print STDERR "  OR set REAL_NAME in your environment";
-    print STDERR "  OR git users can set 'git config user.name'\n";
-    exit(1);
-}
-
-sub changeLogName($)
+sub changeLogNameFromArgs($)
 {
     my ($nameFromArgs) = @_;
-    # Silently allow --git-commit to win, we could warn if $emailAddressFromArgs is defined.
+    # Silently allow --git-commit to win, we could warn if $nameFromArgs is defined.
     return `$GIT log --max-count=1 --pretty=\"format:%an\" \"$gitCommit\"` if $gitCommit;
 
-    my $name = $nameFromArgs
-        || $ENV{CHANGE_LOG_NAME}
-        || $ENV{REAL_NAME}
-        || gitConfig("user.name")
-        || (split /\s*,\s*/, (getpwuid $<)[6])[0];
-
-    changeLogNameError("Failed to determine ChangeLog name.") unless $name;
-    # getpwuid seems to always succeed on windows, returning the username instead of the full name.  This check will catch that case.
-    changeLogNameError("'$name' does not contain a space!  ChangeLogs should contain your full name.") unless ($name =~ /\w \w/);
-
-    return $name;
+    return $nameFromArgs || changeLogName();
 }
 
-sub changeLogEmailAddressError($)
-{
-    my ($message) = @_;
-    print STDERR "$message\nEither:\n";
-    print STDERR "  set CHANGE_LOG_EMAIL_ADDRESS in your environment\n";
-    print STDERR "  OR pass --email= on the command line\n";
-    print STDERR "  OR set EMAIL_ADDRESS in your environment\n";
-    print STDERR "  OR git users can set 'git config user.email'\n";
-    exit(1);
-}
-
-sub changeLogEmailAddress($)
+sub changeLogEmailAddressFromArgs($)
 {
     my ($emailAddressFromArgs) = @_;
     # Silently allow --git-commit to win, we could warn if $emailAddressFromArgs is defined.
     return `$GIT log --max-count=1 --pretty=\"format:%ae\" \"$gitCommit\"` if $gitCommit;
 
-    my $emailAddress = $emailAddressFromArgs
-        || $ENV{CHANGE_LOG_EMAIL_ADDRESS}
-        || $ENV{EMAIL_ADDRESS}
-        || gitConfig("user.email");
-
-    changeLogEmailAddressError("Failed to determine email address for ChangeLog.") unless $emailAddress;
-    changeLogEmailAddressError("Email address '$emailAddress' does not contain '\@' and is likely invalid.") unless ($emailAddress =~ /\@/);
-
-    return $emailAddress;
+    return $emailAddressFromArgs || changeLogEmailAddress();
 }
 
 sub get_function_line_ranges($$)
@@ -1475,20 +1434,6 @@ sub generateFileList(\@\@\%)
         }
     }
     close STAT;
-}
-
-sub gitConfig($)
-{
-    return unless $isGit;
-
-    my ($config) = @_;
-
-    my $result = `$GIT config $config`;
-    if (($? >> 8) != 0) {
-        $result = `$GIT repo-config $config`;
-    }
-    chomp $result;
-    return $result;
 }
 
 sub isUnmodifiedStatus($)

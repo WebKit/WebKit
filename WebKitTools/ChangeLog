@@ -1,3 +1,22 @@
+2009-11-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=28168>.
+        commit-log-editor does not support all the email address configurations that prepare-Changelog supports
+
+        Move logic for determining the name and email address to use in a ChangeLog entry from
+        prepare-ChangeLog to VCSUtils so that commit-log-editor can use it.  It wants to check
+        whether the author of the patch matches committer, and therefore needs access to the
+        email address that would be used in a ChangeLog entry.
+
+        Based on a patch by Pierre d'Herbemont.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/commit-log-editor:
+        * Scripts/prepare-ChangeLog:
+        * Scripts/webkitdirs.pm:
+
 2009-11-06  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.

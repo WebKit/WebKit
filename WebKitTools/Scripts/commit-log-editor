@@ -170,7 +170,8 @@ for my $changeLog (@changeLogs) {
 
             # Attempt to insert the "patch by" line, after the first blank line.
             if ($previousLineWasBlank && $hasAuthorInfoToWrite && $lineCount > 0) {
-                my $authorAndCommitterAreSamePerson = $ENV{EMAIL_ADDRESS} && $email eq $ENV{EMAIL_ADDRESS};
+                my $committerEmail = changeLogEmailAddress();
+                my $authorAndCommitterAreSamePerson = $email eq $committerEmail;
                 if (!$authorAndCommitterAreSamePerson) {
                     $contents .= "Patch by $author <$email> on $date\n";
                     $hasAuthorInfoToWrite = 0;
