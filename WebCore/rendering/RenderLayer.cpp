@@ -243,14 +243,6 @@ bool RenderLayer::hasAcceleratedCompositing() const
 #endif
 }
 
-void RenderLayer::setStaticY(int staticY)
-{
-    if (m_staticY == staticY)
-        return;
-    m_staticY = staticY;
-    renderer()->setChildNeedsLayout(true, false);
-}
-
 void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags)
 {
     if (flags & DoFullRepaint) {

@@ -410,8 +410,13 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                         child->layer()->setStaticX(xPos);
                     else child->layer()->setStaticX(width() - xPos);
                 }
-                if (child->style()->hasStaticY())
-                    child->layer()->setStaticY(yPos);
+                if (child->style()->hasStaticY()) {
+                    RenderLayer* childLayer = child->layer();
+                    if (childLayer->staticY() != yPos) {
+                        child->layer()->setStaticY(yPos);
+                        child->setChildNeedsLayout(true, false);
+                    }
+                }
                 child = iterator.next();
                 continue;
             }
@@ -769,8 +774,13 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     else
                         child->layer()->setStaticX(borderRight()+paddingRight());
                 }
-                if (child->style()->hasStaticY())
-                    child->layer()->setStaticY(height());
+                if (child->style()->hasStaticY()) {
+                    RenderLayer* childLayer = child->layer();
+                    if (childLayer->staticY() != height()) {
+                        child->layer()->setStaticY(height());
+                        child->setChildNeedsLayout(true, false);
+                    }
+                }
                 child = iterator.next();
                 continue;
             } 

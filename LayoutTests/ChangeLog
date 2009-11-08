@@ -1,3 +1,16 @@
+2009-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7363434> Crash inside RenderObject::localToAbsolute
+        below FrameView::layout
+        https://bugs.webkit.org/show_bug.cgi?id=31093
+
+        * fast/block/positioning/relative-positioned-inline-container-expected.checksum: Added.
+        * fast/block/positioning/relative-positioned-inline-container-expected.png: Added.
+        * fast/block/positioning/relative-positioned-inline-container-expected.txt: Added.
+        * fast/block/positioning/relative-positioned-inline-container.html: Added.
+
 2009-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Darin Adler.
