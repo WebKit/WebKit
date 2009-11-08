@@ -195,7 +195,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
             ASSERT(!ec);
         }
 
-        m_edited = false;
+        // We set m_userEdited to false since this change was not explicty made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
         m_userEdited = false;
     }
 
