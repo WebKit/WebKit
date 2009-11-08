@@ -73,7 +73,7 @@ void LayoutTestController::processWork()
     // qDebug() << ">>>processWork";
 
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!WorkQueue::shared()->processWork() && !shouldWaitUntilDone()) {
+    if (WorkQueue::shared()->processWork() && !shouldWaitUntilDone()) {
         emit done();
         m_isLoading = false;
     }

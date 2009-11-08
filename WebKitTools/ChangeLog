@@ -2,6 +2,18 @@
 
         Reviewed by Holger Freyther.
 
+        [Qt] [DRT] Fix wrong logic in LayoutTestController processWork
+        https://bugs.webkit.org/show_bug.cgi?id=31164
+
+        Fixed wrong logic to assume WorkQueue is done in QT's DRT.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::processWork):
+
+2009-11-05  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [Qt][DRT] Replace queueScript by queueNonLoadingScript and queueLoadingScript method
         https://bugs.webkit.org/show_bug.cgi?id=31158
 
