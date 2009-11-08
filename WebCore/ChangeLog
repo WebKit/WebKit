@@ -1,3 +1,16 @@
+2009-11-08  David Levin  <levin@chromium.org>
+
+        Unreviewed build fix for chromium.
+
+        Build fix for https://bugs.webkit.org/show_bug.cgi?id=31219
+        Clean up GraphicsContext's current concept of ColorSpace
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+
 2009-11-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
