@@ -1,3 +1,12 @@
+2009-11-08  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (chromium build fix).
+
+        For the change in DateMath.
+
+        * config.h:
+        * wtf/DateMath.cpp:
+
 2009-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: export some symbols.
