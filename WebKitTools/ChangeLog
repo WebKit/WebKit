@@ -1,5 +1,13 @@
 2009-11-07  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Cameron Zwarich.
+
+        Invoke prepare-ChangeLog via an absolute path rather than assuming it can be found in PATH.
+
+        * Scripts/commit-log-editor:
+
+2009-11-07  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix <https://bugs.webkit.org/show_bug.cgi?id=28168>.

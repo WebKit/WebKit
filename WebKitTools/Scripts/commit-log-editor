@@ -230,7 +230,7 @@ if (isGit() && scalar keys %changeLogSort == 0) {
         chomp($webkitGenerateCommitMessage = `git config --bool core.webkitGenerateCommitMessage`);
     }
     if ($webkitGenerateCommitMessage ne "false") {
-        open CHANGELOG_ENTRIES, "-|", "prepare-ChangeLog --git-index --no-write" or die "prepare-ChangeLog failed: $!.\n";
+        open CHANGELOG_ENTRIES, "-|", "$FindBin::Bin/prepare-ChangeLog --git-index --no-write" or die "prepare-ChangeLog failed: $!.\n";
         while (<CHANGELOG_ENTRIES>) {
             print NEWLOG normalizeLineEndings($_, $endl);
         }
