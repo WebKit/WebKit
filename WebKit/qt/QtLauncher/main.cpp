@@ -109,7 +109,6 @@ public:
         inspector->setPage(page);
         inspector->hide();
         connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
-        connect(page, SIGNAL(webInspectorTriggered(const QWebElement&)), inspector, SLOT(show()));
 
         setupUI();
 

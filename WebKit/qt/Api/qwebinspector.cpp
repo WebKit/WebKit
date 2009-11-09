@@ -50,17 +50,13 @@
 
     \section1 Resources
 
+    This class acts mostly as a container and a controller for the inspector.
     Most of the resources needed by the inspector are owned by the associated
     QWebPage and are allocated the first time that:
     \list
         \o an element is inspected
         \o the QWebInspector is shown.
     \endlist
-
-    This class acts mostly as a container and a controller for the inspector.
-    You can defer the creation and association of the QWebInspector until
-    the first emission of QWebPage::webInspectorTriggered() to save additional
-    resources.
 
     \section1 Inspector configuration persistence
 

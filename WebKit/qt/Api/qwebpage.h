@@ -329,7 +329,6 @@ Q_SIGNALS:
     void windowCloseRequested();
     void printRequested(QWebFrame *frame);
     void linkClicked(const QUrl &url);
-    void webInspectorTriggered(const QWebElement& inspectedElement);
 
     void toolBarVisibilityChangeRequested(bool visible);
     void statusBarVisibilityChangeRequested(bool visible);
