@@ -2,6 +2,31 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstream WebData*.h Chromium API files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebData.h: Added.
+        (WebKit::WebData::~WebData):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        (WebKit::WebData::isEmpty):
+        (WebKit::WebData::isNull):
+        * public/WebDataSource.h: Added.
+        (WebKit::WebDataSource::ExtraData::~ExtraData):
+        (WebKit::WebDataSource::~WebDataSource):
+        * public/WebDatabase.h: Added.
+        (WebKit::WebDatabase::WebDatabase):
+        (WebKit::WebDatabase::~WebDatabase):
+        (WebKit::WebDatabase::operator=):
+        (WebKit::WebDatabase::isNull):
+        * public/WebDatabaseObserver.h: Added.
+        (WebKit::WebDatabaseObserver::~WebDatabaseObserver):
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstream the last of the Chromium API WebC*.h files.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
