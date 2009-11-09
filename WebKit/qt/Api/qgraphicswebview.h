@@ -49,7 +49,7 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(bool modified READ isModified)
 
 public:
-    QGraphicsWebView(QGraphicsItem* parent = 0);
+    explicit QGraphicsWebView(QGraphicsItem* parent = 0);
     ~QGraphicsWebView();
 
     QWebPage* page() const;
