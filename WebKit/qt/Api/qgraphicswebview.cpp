@@ -600,6 +600,25 @@ QWebSettings* QGraphicsWebView::settings() const
     return page()->settings();
 }
 
+/*!
+    Returns a pointer to a QAction that encapsulates the specified web action \a action.
+*/
+QAction *QGraphicsWebView::pageAction(QWebPage::WebAction action) const
+{
+    return page()->action(action);
+}
+
+/*!
+    Triggers the specified \a action. If it is a checkable action the specified
+    \a checked state is assumed.
+
+    \sa pageAction()
+*/
+void QGraphicsWebView::triggerPageAction(QWebPage::WebAction action, bool checked)
+{
+    page()->triggerAction(action, checked);
+}
+
 /*! \reimp
 */
 void QGraphicsWebView::hoverMoveEvent(QGraphicsSceneHoverEvent* ev)

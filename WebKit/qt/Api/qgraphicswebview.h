@@ -21,6 +21,7 @@
 #define QGraphicsWebView_h
 
 #include "qwebkitglobal.h"
+#include "qwebpage.h"
 #include <QtCore/qurl.h>
 #include <QtGui/qevent.h>
 #include <QtGui/qgraphicswidget.h>
@@ -72,6 +73,9 @@ public:
 
     QWebHistory* history() const;
     QWebSettings* settings() const;
+
+    QAction* pageAction(QWebPage::WebAction action) const;
+    void triggerPageAction(QWebPage::WebAction action, bool checked = false);
 
     virtual void setGeometry(const QRectF& rect);
     virtual void updateGeometry();

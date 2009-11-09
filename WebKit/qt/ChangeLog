@@ -2,6 +2,18 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Added QGraphicsWebView::pageAction() and triggerPageAction(), for
+        consistency with QWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::pageAction):
+        (QGraphicsWebView::triggerPageAction):
+        * Api/qgraphicswebview.h:
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Removed QGraphicsWebView::toHtml() after API review.
 
         That's consistent with QWebView and also based on the assumption that
