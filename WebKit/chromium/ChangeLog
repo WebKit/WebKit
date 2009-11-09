@@ -2,6 +2,73 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstream remainder of WebE*.h and WebF*.h Chromium API headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebEditingAction.h: Added.
+        (WebKit::):
+        * public/WebFileChooserCompletion.h: Added.
+        (WebKit::WebFileChooserCompletion::~WebFileChooserCompletion):
+        * public/WebFindOptions.h: Added.
+        (WebKit::WebFindOptions::WebFindOptions):
+        * public/WebFontCache.h: Added.
+        * public/WebFrame.h: Added.
+        (WebKit::WebFrame::~WebFrame):
+        * public/WebFrameClient.h: Added.
+        (WebKit::WebFrameClient::createPlugin):
+        (WebKit::WebFrameClient::createWorker):
+        (WebKit::WebFrameClient::createSharedWorker):
+        (WebKit::WebFrameClient::createMediaPlayer):
+        (WebKit::WebFrameClient::willClose):
+        (WebKit::WebFrameClient::loadURLExternally):
+        (WebKit::WebFrameClient::decidePolicyForNavigation):
+        (WebKit::WebFrameClient::canHandleRequest):
+        (WebKit::WebFrameClient::cannotHandleRequestError):
+        (WebKit::WebFrameClient::cancelledError):
+        (WebKit::WebFrameClient::unableToImplementPolicyWithError):
+        (WebKit::WebFrameClient::willSubmitForm):
+        (WebKit::WebFrameClient::willPerformClientRedirect):
+        (WebKit::WebFrameClient::didCancelClientRedirect):
+        (WebKit::WebFrameClient::didCompleteClientRedirect):
+        (WebKit::WebFrameClient::didCreateDataSource):
+        (WebKit::WebFrameClient::didStartProvisionalLoad):
+        (WebKit::WebFrameClient::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameClient::didFailProvisionalLoad):
+        (WebKit::WebFrameClient::didReceiveDocumentData):
+        (WebKit::WebFrameClient::didCommitProvisionalLoad):
+        (WebKit::WebFrameClient::didClearWindowObject):
+        (WebKit::WebFrameClient::didCreateDocumentElement):
+        (WebKit::WebFrameClient::didReceiveTitle):
+        (WebKit::WebFrameClient::didFinishDocumentLoad):
+        (WebKit::WebFrameClient::didHandleOnloadEvents):
+        (WebKit::WebFrameClient::didFailLoad):
+        (WebKit::WebFrameClient::didFinishLoad):
+        (WebKit::WebFrameClient::didChangeLocationWithinPage):
+        (WebKit::WebFrameClient::didUpdateCurrentHistoryItem):
+        (WebKit::WebFrameClient::assignIdentifierToRequest):
+        (WebKit::WebFrameClient::willSendRequest):
+        (WebKit::WebFrameClient::didReceiveResponse):
+        (WebKit::WebFrameClient::didFinishResourceLoad):
+        (WebKit::WebFrameClient::didFailResourceLoad):
+        (WebKit::WebFrameClient::didLoadResourceFromMemoryCache):
+        (WebKit::WebFrameClient::didDisplayInsecureContent):
+        (WebKit::WebFrameClient::didRunInsecureContent):
+        (WebKit::WebFrameClient::allowScript):
+        (WebKit::WebFrameClient::didExhaustMemoryAvailableForScript):
+        (WebKit::WebFrameClient::didCreateScriptContext):
+        (WebKit::WebFrameClient::didDestroyScriptContext):
+        (WebKit::WebFrameClient::didCreateIsolatedScriptContext):
+        (WebKit::WebFrameClient::didChangeContentsSize):
+        (WebKit::WebFrameClient::didChangeScrollOffset):
+        (WebKit::WebFrameClient::reportFindInPageMatchCount):
+        (WebKit::WebFrameClient::reportFindInPageSelection):
+        (WebKit::WebFrameClient::~WebFrameClient):
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstream WebDevTools*.h and WebDrag*.h Chromium API headers.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
