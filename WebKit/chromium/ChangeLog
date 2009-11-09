@@ -1,3 +1,33 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstreaming the Chromium WebKit API: WebNode.h and friends are thin wrappers around WebCore::Nodes
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebElement.h: Added.
+        (WebKit::WebElement::WebElement):
+        (WebKit::WebElement::operator=):
+        (WebKit::WebElement::assign):
+        * public/WebFormElement.h: Added.
+        (WebKit::WebFormElement::~WebFormElement):
+        (WebKit::WebFormElement::WebFormElement):
+        (WebKit::WebFormElement::operator=):
+        (WebKit::WebFormElement::assign):
+        * public/WebInputElement.h: Added.
+        (WebKit::WebInputElement::WebInputElement):
+        (WebKit::WebInputElement::operator=):
+        (WebKit::WebInputElement::assign):
+        * public/WebNode.h: Added.
+        (WebKit::WebNode::~WebNode):
+        (WebKit::WebNode::WebNode):
+        (WebKit::WebNode::operator=):
+        (WebKit::WebNode::isNull):
+        (WebKit::WebNode::toElement):
+        (WebKit::WebNode::unwrap):
+        (WebKit::WebNode::constUnwrap):
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
