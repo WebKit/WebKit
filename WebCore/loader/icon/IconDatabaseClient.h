@@ -36,7 +36,7 @@ namespace WebCore {
 
 class String;
 
-class IconDatabaseClient {
+class IconDatabaseClient : public Noncopyable {
 public:
     virtual ~IconDatabaseClient() { }
     virtual bool performImport() { return true; }

@@ -57,7 +57,7 @@ namespace WebCore {
     class ApplicationCacheStorage;
 #endif
 
-    class ApplicationCacheHost {
+    class ApplicationCacheHost : public Noncopyable {
     public:
         // The Status numeric values are specified in the HTML5 spec.
         enum Status {

@@ -47,7 +47,7 @@ static const double finalProgressValue = 0.9; // 1.0 - initialProgressValue
 
 static const int progressItemDefaultEstimatedLength = 1024 * 16;
 
-struct ProgressItem {
+struct ProgressItem : Noncopyable {
     ProgressItem(long long length) 
         : bytesReceived(0)
         , estimatedLength(length) { }
