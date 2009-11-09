@@ -1,3 +1,16 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Upstreaming the Chromium WebKit API: WebText*
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebTextAffinity.h: Added.
+        (WebKit::):
+        * public/WebTextDirection.h: Added.
+        (WebKit::):
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
