@@ -122,6 +122,7 @@ namespace WebCore {
                                 bool decodeURLEscapeSequencesTwice = false);
         static String decodeHTMLEntities(const String&, bool leaveUndecodableEntitiesUntouched = true);
 
+        bool isSameOriginResource(const String& url) const;
         bool findInRequest(const String&, bool decodeEntities = true, bool allowRequestIfNoIllegalURICharacters = false, 
                            bool decodeURLEscapeSequencesTwice = false) const;
         bool findInRequest(Frame*, const String&, bool decodeEntities = true, bool allowRequestIfNoIllegalURICharacters = false, 

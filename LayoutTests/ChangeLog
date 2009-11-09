@@ -1,3 +1,16 @@
+2009-11-08  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31098
+
+        Tests that the XSSAuditor prevents loading plugin-based content that is not 
+        from the same-origin as the enclosing page.
+
+        * http/tests/security/xssAuditor/object-src-inject-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-src-inject.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-object-src.pl: Added.
+
 2009-11-08  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Holger Freyther.
