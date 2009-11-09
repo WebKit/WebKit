@@ -846,17 +846,18 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
     }
     gsize len = strlen(utf8String);
     GString* ret = g_string_new_len(NULL, len);
+    gchar* ptr = utf8String;
 
     // WebCore introduces line breaks in the text that do not reflect
     // the layout you see on the screen, replace them with spaces
     while (len > 0) {
         gint index, start;
-        pango_find_paragraph_boundary(utf8String, len, &index, &start);
-        g_string_append_len(ret, utf8String, index);
+        pango_find_paragraph_boundary(ptr, len, &index, &start);
+        g_string_append_len(ret, ptr, index);
         if (index == start)
             break;
         g_string_append_c(ret, ' ');
-        utf8String += start;
+        ptr += start;
         len -= start;
     }
 

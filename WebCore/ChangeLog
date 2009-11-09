@@ -1,3 +1,16 @@
+2009-11-09  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Fix a crasher that occurred with text which included newline
+        chars in the markup.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (convertUniCharToUTF8):
+
 2009-11-05  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Holger Freyther.
