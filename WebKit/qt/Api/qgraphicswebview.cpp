@@ -39,7 +39,6 @@ public:
     QGraphicsWebViewPrivate(QGraphicsWebView* parent)
         : q(parent)
         , page(0)
-        , interactive(true)
     {}
 
     virtual void scroll(int dx, int dy, const QRect&);
@@ -64,8 +63,6 @@ public:
 
     QGraphicsWebView* q;
     QWebPage* page;
-
-    bool interactive;
 };
 
 void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
@@ -580,25 +577,6 @@ QWebHistory* QGraphicsWebView::history() const
 }
 
 /*!
-  \property QGraphicsWebView::interactive
-  \brief controls whether the item responds to mouse and key events.
-*/
-
-bool QGraphicsWebView::isInteractive() const
-{
-    return d->interactive;
-}
-
-void QGraphicsWebView::setInteractive(bool allowed)
-{
-    if (d->interactive == allowed)
-        return;
-
-    d->interactive = allowed;
-    emit interactivityChanged();
-}
-
-/*!
     \property QGraphicsWebView::modified
     \brief whether the document was modified by the user
 
@@ -632,7 +610,7 @@ QWebSettings* QGraphicsWebView::settings() const
 */
 void QGraphicsWebView::hoverMoveEvent(QGraphicsSceneHoverEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         QMouseEvent me = QMouseEvent(QEvent::MouseMove,
                 ev->pos().toPoint(), Qt::NoButton,
@@ -656,7 +634,7 @@ void QGraphicsWebView::hoverLeaveEvent(QGraphicsSceneHoverEvent* ev)
 */
 void QGraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -670,7 +648,7 @@ void QGraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
 */
 void QGraphicsWebView::mousePressEvent(QGraphicsSceneMouseEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -684,7 +662,7 @@ void QGraphicsWebView::mousePressEvent(QGraphicsSceneMouseEvent* ev)
 */
 void QGraphicsWebView::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -698,7 +676,7 @@ void QGraphicsWebView::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 */
 void QGraphicsWebView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -712,7 +690,7 @@ void QGraphicsWebView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 */
 void QGraphicsWebView::keyPressEvent(QKeyEvent* ev)
 {
-    if (d->interactive && d->page)
+    if (d->page)
         d->page->event(ev);
 
     if (!ev->isAccepted())
@@ -723,7 +701,7 @@ void QGraphicsWebView::keyPressEvent(QKeyEvent* ev)
 */
 void QGraphicsWebView::keyReleaseEvent(QKeyEvent* ev)
 {
-    if (d->interactive && d->page)
+    if (d->page)
         d->page->event(ev);
 
     if (!ev->isAccepted())
@@ -779,7 +757,7 @@ void QGraphicsWebView::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
 void QGraphicsWebView::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -797,7 +775,7 @@ void QGraphicsWebView::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
 void QGraphicsWebView::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -815,7 +793,7 @@ void QGraphicsWebView::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
 void QGraphicsWebView::dropEvent(QGraphicsSceneDragDropEvent* ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -846,7 +824,7 @@ void QGraphicsWebView::contextMenuEvent(QGraphicsSceneContextMenuEvent* ev)
 */
 void QGraphicsWebView::wheelEvent(QGraphicsSceneWheelEvent* ev)
 {
-    if (d->interactive && d->page) {
+    if (d->page) {
         const bool accepted = ev->isAccepted();
         d->page->event(ev);
         ev->setAccepted(accepted);
@@ -861,7 +839,7 @@ void QGraphicsWebView::wheelEvent(QGraphicsSceneWheelEvent* ev)
 */
 void QGraphicsWebView::inputMethodEvent(QInputMethodEvent* ev)
 {
-    if (d->interactive && d->page)
+    if (d->page)
         d->page->event(ev);
 
     if (!ev->isAccepted())

@@ -2,6 +2,35 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Removed the interactive property of QGraphicsWebView.
+
+        There are clearly use-cases for this feature, but it will require
+        more work to make this fully work with an enum to have fine-grained
+        control over the interactivity levels. For now it is easy to achieve
+        in user-code what the boolean property did.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::QGraphicsWebViewPrivate):
+        (QGraphicsWebView::hoverMoveEvent):
+        (QGraphicsWebView::mouseMoveEvent):
+        (QGraphicsWebView::mousePressEvent):
+        (QGraphicsWebView::mouseReleaseEvent):
+        (QGraphicsWebView::mouseDoubleClickEvent):
+        (QGraphicsWebView::keyPressEvent):
+        (QGraphicsWebView::keyReleaseEvent):
+        (QGraphicsWebView::dragLeaveEvent):
+        (QGraphicsWebView::dragMoveEvent):
+        (QGraphicsWebView::dropEvent):
+        (QGraphicsWebView::wheelEvent):
+        (QGraphicsWebView::inputMethodEvent):
+        * Api/qgraphicswebview.h:
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::qgraphicswebview):
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Make the QGraphicsWebView constructor explicit.
 
         * Api/qgraphicswebview.h:
