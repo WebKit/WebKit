@@ -1,3 +1,32 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstreaming the Chromium WebKit API: WebScreenInfo to WebSharedWorkerRepo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebScreenInfo.h: Added.
+        (WebKit::WebScreenInfo::WebScreenInfo):
+        * public/WebScriptController.h: Added.
+        * public/WebScriptSource.h: Added.
+        (WebKit::WebScriptSource::WebScriptSource):
+        * public/WebSearchableFormData.h: Added.
+        (WebKit::WebSearchableFormData::isValid):
+        (WebKit::WebSearchableFormData::url):
+        (WebKit::WebSearchableFormData::encoding):
+        * public/WebSecurityOrigin.h: Added.
+        (WebKit::WebSecurityOrigin::~WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::operator=):
+        (WebKit::WebSecurityOrigin::isNull):
+        * public/WebSecurityPolicy.h: Added.
+        * public/WebSettings.h: Added.
+        (WebKit::WebSettings::~WebSettings):
+        * public/WebSharedWorker.h: Added.
+        (WebKit::WebSharedWorker::~WebSharedWorker):
+        * public/WebSharedWorkerRepository.h: Added.
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
