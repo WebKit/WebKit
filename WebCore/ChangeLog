@@ -1,3 +1,17 @@
+2009-11-09  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Thunk to the main thread from ~Database to deref Database's m_document.
+
+        If the Database was the Document's last referrer, then ~Document occurs on the
+        Database thread, and ASSERT(!m_styleRecalcTimer.isActive()) hits a main thread
+        ASSERT in debug builds.
+
+        * storage/Database.cpp:
+        (WebCore::derefDocument):
+        (WebCore::Database::~Database):
+
 2009-11-09  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dan Bernstein.
