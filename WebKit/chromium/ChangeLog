@@ -1,3 +1,100 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstreaming the Chromium WebKit API: WebVector to WebWorkerClient
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebVector.h: Added.
+        (WebKit::WebVector::~WebVector):
+        (WebKit::WebVector::WebVector):
+        (WebKit::WebVector::operator=):
+        (WebKit::WebVector::assign):
+        (WebKit::WebVector::size):
+        (WebKit::WebVector::isEmpty):
+        (WebKit::WebVector::operator[]):
+        (WebKit::WebVector::data):
+        (WebKit::WebVector::swap):
+        (WebKit::WebVector::initialize):
+        (WebKit::WebVector::initializeFrom):
+        (WebKit::WebVector::destroy):
+        * public/WebView.h: Added.
+        (WebKit::WebView::~WebView):
+        * public/WebViewClient.h: Added.
+        (WebKit::WebViewClient::createView):
+        (WebKit::WebViewClient::createPopupMenu):
+        (WebKit::WebViewClient::didAddMessageToConsole):
+        (WebKit::WebViewClient::printPage):
+        (WebKit::WebViewClient::notificationPresenter):
+        (WebKit::WebViewClient::didStartLoading):
+        (WebKit::WebViewClient::didStopLoading):
+        (WebKit::WebViewClient::shouldBeginEditing):
+        (WebKit::WebViewClient::shouldEndEditing):
+        (WebKit::WebViewClient::shouldInsertNode):
+        (WebKit::WebViewClient::shouldInsertText):
+        (WebKit::WebViewClient::shouldChangeSelectedRange):
+        (WebKit::WebViewClient::shouldDeleteRange):
+        (WebKit::WebViewClient::shouldApplyStyle):
+        (WebKit::WebViewClient::isSmartInsertDeleteEnabled):
+        (WebKit::WebViewClient::isSelectTrailingWhitespaceEnabled):
+        (WebKit::WebViewClient::setInputMethodEnabled):
+        (WebKit::WebViewClient::didBeginEditing):
+        (WebKit::WebViewClient::didChangeSelection):
+        (WebKit::WebViewClient::didChangeContents):
+        (WebKit::WebViewClient::didExecuteCommand):
+        (WebKit::WebViewClient::didEndEditing):
+        (WebKit::WebViewClient::handleCurrentKeyboardEvent):
+        (WebKit::WebViewClient::spellCheck):
+        (WebKit::WebViewClient::autoCorrectWord):
+        (WebKit::WebViewClient::showSpellingUI):
+        (WebKit::WebViewClient::isShowingSpellingUI):
+        (WebKit::WebViewClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebViewClient::runFileChooser):
+        (WebKit::WebViewClient::runModalAlertDialog):
+        (WebKit::WebViewClient::runModalConfirmDialog):
+        (WebKit::WebViewClient::runModalPromptDialog):
+        (WebKit::WebViewClient::runModalBeforeUnloadDialog):
+        (WebKit::WebViewClient::setStatusText):
+        (WebKit::WebViewClient::setMouseOverURL):
+        (WebKit::WebViewClient::setKeyboardFocusURL):
+        (WebKit::WebViewClient::setToolTipText):
+        (WebKit::WebViewClient::showContextMenu):
+        (WebKit::WebViewClient::startDragging):
+        (WebKit::WebViewClient::acceptsLoadDrops):
+        (WebKit::WebViewClient::focusNext):
+        (WebKit::WebViewClient::focusPrevious):
+        (WebKit::WebViewClient::navigateBackForwardSoon):
+        (WebKit::WebViewClient::historyBackListCount):
+        (WebKit::WebViewClient::historyForwardListCount):
+        (WebKit::WebViewClient::didAddHistoryItem):
+        (WebKit::WebViewClient::focusAccessibilityObject):
+        (WebKit::WebViewClient::didUpdateInspectorSettings):
+        (WebKit::WebViewClient::queryAutofillSuggestions):
+        (WebKit::WebViewClient::removeAutofillSuggestions):
+        (WebKit::WebViewClient::~WebViewClient):
+        * public/WebWidget.h: Added.
+        (WebKit::WebWidget::~WebWidget):
+        * public/WebWidgetClient.h: Added.
+        (WebKit::WebWidgetClient::didInvalidateRect):
+        (WebKit::WebWidgetClient::didScrollRect):
+        (WebKit::WebWidgetClient::didFocus):
+        (WebKit::WebWidgetClient::didBlur):
+        (WebKit::WebWidgetClient::didChangeCursor):
+        (WebKit::WebWidgetClient::closeWidgetSoon):
+        (WebKit::WebWidgetClient::show):
+        (WebKit::WebWidgetClient::runModal):
+        (WebKit::WebWidgetClient::windowRect):
+        (WebKit::WebWidgetClient::setWindowRect):
+        (WebKit::WebWidgetClient::windowResizerRect):
+        (WebKit::WebWidgetClient::rootWindowRect):
+        (WebKit::WebWidgetClient::screenInfo):
+        (WebKit::WebWidgetClient::~WebWidgetClient):
+        * public/WebWorker.h: Added.
+        (WebKit::WebWorker::~WebWorker):
+        * public/WebWorkerClient.h: Added.
+        (WebKit::WebWorkerClient::~WebWorkerClient):
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
