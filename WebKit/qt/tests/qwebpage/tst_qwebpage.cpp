@@ -456,7 +456,6 @@ void tst_QWebPage::database()
     QVERIFY(QWebSettings::offlineStorageDefaultQuota() == 1024 * 1024);
 
     m_page->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
-    m_page->settings()->setAttribute(QWebSettings::SessionStorageEnabled, true);
     m_page->settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, true);
 
     QString dbFileName = path + "Databases.db";
@@ -1505,11 +1504,6 @@ void tst_QWebPage::testOptionalJSObjects()
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", true),  true);
     QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", false), true);
-
-    QCOMPARE(testFlag(webPage1, QWebSettings::SessionStorageEnabled, "sessionStorage", false), false);
-    QCOMPARE(testFlag(webPage2, QWebSettings::SessionStorageEnabled, "sessionStorage", true),  true);
-    QCOMPARE(testFlag(webPage1, QWebSettings::SessionStorageEnabled, "sessionStorage", false), false);
-    QCOMPARE(testFlag(webPage2, QWebSettings::SessionStorageEnabled, "sessionStorage", false), true);
 }
 
 void tst_QWebPage::testEnablePersistentStorage()

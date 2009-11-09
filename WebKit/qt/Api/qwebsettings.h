@@ -67,7 +67,6 @@ public:
         LocalStorageDatabaseEnabled = LocalStorageEnabled,
 #endif
         LocalContentCanAccessRemoteUrls,
-        SessionStorageEnabled,
         DnsPrefetchEnabled
     };
     enum WebGraphic {

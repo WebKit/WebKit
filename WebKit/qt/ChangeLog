@@ -1,3 +1,20 @@
+2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Remove the sessionStorage setting (per Page)
+        https://bugs.webkit.org/show_bug.cgi?id=31249
+
+        This setting allows to run sessionStorage on/off on a per page
+        basis. Remove this prematurely exposed API.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::database):
+        (tst_QWebPage::testOptionalJSObjects):
+
 2009-11-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

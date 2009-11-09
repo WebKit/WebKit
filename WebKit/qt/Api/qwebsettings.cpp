@@ -206,10 +206,6 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::LocalContentCanAccessRemoteUrls,
                                       global->attributes.value(QWebSettings::LocalContentCanAccessRemoteUrls));
         settings->setAllowUniversalAccessFromFileURLs(value);
-
-        value = attributes.value(QWebSettings::SessionStorageEnabled,
-                                    global->attributes.value(QWebSettings::SessionStorageEnabled));
-        settings->setSessionStorageEnabled(value);
     } else {
         QList<QWebSettingsPrivate*> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
@@ -351,8 +347,6 @@ QWebSettings* QWebSettings::globalSettings()
     \value LocalStorageEnabled Specifies whether support for the HTML 5
         local storage feature is enabled or not. Disabled by default.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
-    \value SessionStorageEnabled Specifies whether support for the HTML 5
-        session storage feature is enabled or not. Enabled by default.                
 */
 
 /*!
@@ -383,7 +377,6 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::OfflineWebApplicationCacheEnabled, false);
     d->attributes.insert(QWebSettings::LocalStorageEnabled, false);
     d->attributes.insert(QWebSettings::LocalContentCanAccessRemoteUrls, false);
-    d->attributes.insert(QWebSettings::SessionStorageEnabled, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
     d->printingMinimumShrinkFactor = 0.0f;
