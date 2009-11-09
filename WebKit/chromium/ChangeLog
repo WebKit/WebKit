@@ -1,5 +1,44 @@
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Upstreaming the Chromium WebKit API: WebString and other basic objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebRange.h: Added.
+        (WebKit::WebRange::~WebRange):
+        (WebKit::WebRange::WebRange):
+        (WebKit::WebRange::operator=):
+        (WebKit::WebRange::isNull):
+        * public/WebRect.h: Added.
+        (WebKit::WebRect::isEmpty):
+        (WebKit::WebRect::WebRect):
+        (WebKit::WebRect::operator=):
+        (WebKit::WebRect::operator WebCore::IntRect):
+        (WebKit::WebRect::operator gfx::Rect):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebSize.h: Added.
+        (WebKit::WebSize::isEmpty):
+        (WebKit::WebSize::WebSize):
+        (WebKit::WebSize::operator=):
+        (WebKit::WebSize::operator WebCore::IntSize):
+        (WebKit::WebSize::operator gfx::Size):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebString.h: Added.
+        (WebKit::WebString::~WebString):
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+        (WebKit::WebString::isEmpty):
+        (WebKit::WebString::isNull):
+        (WebKit::WebString::operator string16):
+        (WebKit::WebString::operator NullableString16):
+        (WebKit::WebString::fromUTF8):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Upstreaming the Chromium WebKit API: WebText*
