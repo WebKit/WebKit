@@ -224,7 +224,9 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
 
 void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
 {
-    // FIXME: implement
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    g_object_set(G_OBJECT(settings), "tab-key-cycles-through-elements", cycles, NULL);
 }
 
 void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)

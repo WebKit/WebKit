@@ -1,3 +1,18 @@
+2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Expose Page::tabKeyCyclesThroughElements in the API
+        https://bugs.webkit.org/show_bug.cgi?id=30482
+
+        Expose Page::tabKeyCyclesThroughElements as a property of
+        WebKitWebView.
+
+        No new tests; fast/events/keypress-insert-tab.html is no longer skipped.
+
+        * platform/gtk/KeyEventGtk.cpp: Correct m_text for tab key presses.
+        (WebCore::singleCharacterString):
+
 2009-11-09  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

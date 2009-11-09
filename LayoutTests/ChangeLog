@@ -1,3 +1,14 @@
+2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Expose Page::tabKeyCyclesThroughElements in the API
+        https://bugs.webkit.org/show_bug.cgi?id=30482
+
+        Unskip fast/events/keypress-insert-tab.html as it now passes.
+
+        * platform/gtk/Skipped:
+
 2009-11-05  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Holger Freyther.

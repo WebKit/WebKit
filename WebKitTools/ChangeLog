@@ -1,3 +1,16 @@
+2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Expose Page::tabKeyCyclesThroughElements in the API
+        https://bugs.webkit.org/show_bug.cgi?id=30482
+
+        LayoutTestControllerGtk now uses the exposed
+        Page::tabKeyCyclesThroughElements API
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+
 2009-11-08  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Holger Freyther.

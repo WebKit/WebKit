@@ -1323,7 +1323,6 @@ fast/events/dblclick-addEventListener.html
 fast/events/drag-in-frames.html
 fast/events/frame-tab-focus.html
 fast/events/js-keyboard-event-creation.html
-fast/events/keypress-insert-tab.html
 fast/events/mouse-click-events.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mouseup-from-button2.html

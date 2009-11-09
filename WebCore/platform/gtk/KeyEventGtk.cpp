@@ -507,6 +507,8 @@ static String singleCharacterString(guint val)
             return String("\r");
         case GDK_BackSpace:
             return String("\x8");
+        case GDK_Tab:
+            return String("\t");
         default:
             gunichar c = gdk_keyval_to_unicode(val);
             glong nwc;
