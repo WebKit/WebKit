@@ -1,0 +1,25 @@
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Starting upstreaming the Chromium WebKit API.  public/ contains header files only.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * ChangeLog: First!!
+        * public: Added.
+        * public/WebAccessibilityCache.h: Added.
+        (WebKit::WebAccessibilityCache::WebAccessibilityCache):
+        (WebKit::WebAccessibilityCache::~WebAccessibilityCache):
+        * public/WebAccessibilityObject.h: Added.
+        (WebKit::WebAccessibilityObject::~WebAccessibilityObject):
+        (WebKit::WebAccessibilityObject::WebAccessibilityObject):
+        (WebKit::WebAccessibilityObject::operator=):
+        (WebKit::WebAccessibilityObject::isNull):
+        * public/WebAccessibilityRole.h: Added.
+        (WebKit::):
+        * public/WebApplicationCacheHost.h: Added.
+        (WebKit::WebApplicationCacheHost::):
+        (WebKit::WebApplicationCacheHost::~WebApplicationCacheHost):
+        * public/WebApplicationCacheHostClient.h: Added.
+        (WebKit::WebApplicationCacheHostClient::~WebApplicationCacheHostClient):
