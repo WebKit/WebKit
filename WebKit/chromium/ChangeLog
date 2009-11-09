@@ -1,3 +1,27 @@
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        More WebC*.h upstreaming.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebCString.h: Added.
+        (WebKit::WebCString::~WebCString):
+        (WebKit::WebCString::WebCString):
+        (WebKit::WebCString::operator=):
+        (WebKit::WebCString::isEmpty):
+        (WebKit::WebCString::isNull):
+        (WebKit::WebCString::operator std::string):
+        (WebKit::WebCString::fromUTF16):
+        * public/WebColorName.h: Added.
+        (WebKit::):
+        * public/WebCommon.h: Added.
+        * public/WebCommonWorkerClient.h: Added.
+        (WebKit::WebCommonWorkerClient::~WebCommonWorkerClient):
+        * public/WebCompositionCommand.h: Added.
+        (WebKit::):
+
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
