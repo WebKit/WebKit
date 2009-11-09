@@ -1,3 +1,16 @@
+2009-11-09  Vadim Zeitlin  <vadim@wxwidgets.org>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Fix handling of alpha channel when using wxWidgets 2.9: it was
+        simply ignored before resulting in transparent areas being black in PNG
+        images for example.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=30823
+
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
