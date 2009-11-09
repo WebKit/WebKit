@@ -27,7 +27,7 @@ INCLUDEPATH = \
     $$PWD/yarr \
     $$PWD/API \
     $$PWD/ForwardingHeaders \
-    $$GENERATED_SOURCES_DIR \
+    $$PWD/$$GENERATED_SOURCES_DIR \
     $$INCLUDEPATH
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF

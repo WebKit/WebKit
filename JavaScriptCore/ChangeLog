@@ -1,3 +1,13 @@
+2009-11-09  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Prepended $$PWD to GENERATED_SOURCES_DIR to avoid potential ambiguities when included from WebCore.pro.
+        Some preprocessors consider this GENERATED_SOURCES_DIR relative to current invoking dir (e.g., ./WebCore),
+        and not the working dir of JavaCriptCore.pri (i.e., ../JavaScriptCore/).
+
+        * JavaScriptCore.pri:
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
