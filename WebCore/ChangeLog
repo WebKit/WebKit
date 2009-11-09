@@ -1,3 +1,23 @@
+2009-11-05  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] The XML tokenizer reports a parse error twice if it occurs before the document element is found.
+        https://bugs.webkit.org/show_bug.cgi?id=31144
+
+        XMLTokenizer::doEnd() uses an additional logic to report a parse failure in
+        documents that end prematurely but are not considered invalid by QXmlStream.
+        This is to stay compatible with the libxml2 implementation.
+        However, that code path would be also hit in situations when it should not,
+        i.e. the error would have already been caught and handled. As a result, the
+        same error would be reported twice.
+
+        No new tests, because the problem is already covered by
+        fast/parser/xml-declaration-missing-ending-mark.html.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::doEnd):
+
 2009-11-08  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Pavel Feldman.

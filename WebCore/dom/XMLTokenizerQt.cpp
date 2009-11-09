@@ -256,7 +256,7 @@ void XMLTokenizer::doEnd()
 #endif
     
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError
-        || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform))
+        || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform && !m_sawError))
         handleError(fatal, qPrintable(m_stream.errorString()), lineNumber(), columnNumber());
 }
 

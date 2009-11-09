@@ -4820,7 +4820,6 @@ fast/loader/null-request-after-willSendRequest.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loading/subframe-removes-itself.html
-fast/parser/xml-declaration-missing-ending-mark.html
 fast/replaced/table-percent-height-text-controls.html
 fast/xmlhttprequest/xmlhttprequest-gc.html
 platform/qt/fast/events/event-sender-keydown-frame.html

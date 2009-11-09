@@ -1,3 +1,18 @@
+2009-11-05  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Add Qt specific result for fast/parser/xml-declaration-missing-ending-mark.html
+        https://bugs.webkit.org/show_bug.cgi?id=31192
+
+        Qt is using the QXmlStreamReader to handle XML and it is generating a different
+        error string requiring to have a custom result.
+
+        Unskip the test as it is passing now.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Added.
+
 2009-11-08  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed by Dimitri Glazkov.
