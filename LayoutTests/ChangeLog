@@ -1,3 +1,15 @@
+2009-11-08  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31224
+        [V8] Return StyleSheet object instead of HTMLStyleElement w/document.styleSheets named property getter.
+
+        * fast/dom/StyleSheet/get-stylesheet-byname-expected.txt: Added.
+        * fast/dom/StyleSheet/get-stylesheet-byname.html: Added.
+        * fast/dom/StyleSheet/script-tests: Added.
+        * fast/dom/StyleSheet/script-tests/get-stylesheet-byname.js: Added.
+
 2009-11-08  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

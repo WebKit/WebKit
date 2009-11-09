@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#include "HTMLStyleElement.h"
 #include "StyleSheetList.h"
 
 #include "V8Binding.h"
@@ -50,7 +51,7 @@ NAMED_PROPERTY_GETTER(StyleSheetList)
     if (!item)
         return notHandledByInterceptor();
 
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLSTYLEELEMENT, item);
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::STYLESHEET, item->sheet());
 }
 
 } // namespace WebCore
