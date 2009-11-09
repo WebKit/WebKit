@@ -1,3 +1,16 @@
+2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for WebCore's DeleteButtonController
+        https://bugs.webkit.org/show_bug.cgi?id=31105
+
+        Inherits DeleteButtonController class from Noncopyable because it is 
+        instantiated by 'new' in WebCore/editing/Editor.cpp:919 and
+        it is no need to be copyable.  
+
+        * editing/DeleteButtonController.h:
+
 2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Jan Alonzo.
