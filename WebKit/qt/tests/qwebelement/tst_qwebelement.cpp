@@ -71,6 +71,8 @@ private slots:
     void classes();
     void namespaceURI();
     void iteration();
+    void nonConstIterator();
+    void constIterator();
     void foreachManipulation();
     void emptyCollection();
     void appendCollection();
@@ -303,6 +305,37 @@ void tst_QWebElement::iteration()
 
     QCOMPARE(paras.at(0), paras.first());
     QCOMPARE(paras.at(1), paras.last());
+}
+
+void tst_QWebElement::nonConstIterator()
+{
+    QString html = "<body><p>first para</p><p>second para</p></body>";
+    m_mainFrame->setHtml(html);
+    QWebElement body = m_mainFrame->documentElement();
+    QWebElementCollection paras = body.findAll("p");
+
+    QWebElementCollection::iterator it = paras.begin();
+    QCOMPARE(*it, paras.at(0));
+    ++it;
+    (*it).encloseWith("<div>");
+    QCOMPARE(*it, paras.at(1));
+    ++it;
+    QCOMPARE(it,  paras.end());
+}
+
+void tst_QWebElement::constIterator()
+{
+    QString html = "<body><p>first para</p><p>second para</p></body>";
+    m_mainFrame->setHtml(html);
+    QWebElement body = m_mainFrame->documentElement();
+    const QWebElementCollection paras = body.findAll("p");
+
+    QWebElementCollection::const_iterator it = paras.begin();
+    QCOMPARE(*it, paras.at(0));
+    ++it;
+    QCOMPARE(*it, paras.at(1));
+    ++it;
+    QCOMPARE(it,  paras.end());
 }
 
 void tst_QWebElement::foreachManipulation()

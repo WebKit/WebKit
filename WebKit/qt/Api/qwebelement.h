@@ -177,6 +177,7 @@ public:
 
     int count() const;
     QWebElement at(int i) const;
+    inline QWebElement operator[](int i) const { return at(i); }
 
     inline QWebElement first() const { return at(0); }
     inline QWebElement last() const { return at(count() - 1); }
@@ -185,39 +186,69 @@ public:
 
     class const_iterator {
        public:
-           int i;
-           const QWebElementCollection *s;
+           inline const_iterator(const QWebElementCollection* collection, int index) : i(index), collection(collection) {}
+           inline const_iterator(const const_iterator& o) : i(o.i), collection(o.collection) {}
 
-           inline const_iterator(const QWebElementCollection *collection, int index) : i(index), s(collection) {}
-           inline const_iterator(const const_iterator &o) : i(o.i), s(o.s) {}
+           inline const QWebElement operator*() const { return collection->at(i); }
 
-           inline const QWebElement operator*() const { return s->at(i); }
-
-           inline bool operator==(const const_iterator& o) const { return i == o.i && s == o.s; }
-           inline bool operator!=(const const_iterator& o) const { return i != o.i || s != o.s; }
+           inline bool operator==(const const_iterator& o) const { return i == o.i && collection == o.collection; }
+           inline bool operator!=(const const_iterator& o) const { return i != o.i || collection != o.collection; }
            inline bool operator<(const const_iterator& o) const { return i < o.i; }
            inline bool operator<=(const const_iterator& o) const { return i <= o.i; }
            inline bool operator>(const const_iterator& o) const { return i > o.i; }
            inline bool operator>=(const const_iterator& o) const { return i >= o.i; }
 
-           inline const_iterator &operator++() { ++i; return *this; }
-           inline const_iterator operator++(int) { const_iterator n(s, i); ++i; return n; }
-           inline const_iterator &operator--() { i--; return *this; }
-           inline const_iterator operator--(int) { const_iterator n(s, i); i--; return n; }
-           inline const_iterator &operator+=(int j) { i += j; return *this; }
-           inline const_iterator &operator-=(int j) { i -= j; return *this; }
-           inline const_iterator operator+(int j) const { return const_iterator(s, i + j); }
-           inline const_iterator operator-(int j) const { return const_iterator(s, i - j); }
+           inline const_iterator& operator++() { ++i; return *this; }
+           inline const_iterator operator++(int) { const_iterator n(collection, i); ++i; return n; }
+           inline const_iterator& operator--() { i--; return *this; }
+           inline const_iterator operator--(int) { const_iterator n(collection, i); i--; return n; }
+           inline const_iterator& operator+=(int j) { i += j; return *this; }
+           inline const_iterator& operator-=(int j) { i -= j; return *this; }
+           inline const_iterator operator+(int j) const { return const_iterator(collection, i + j); }
+           inline const_iterator operator-(int j) const { return const_iterator(collection, i - j); }
            inline int operator-(const_iterator j) const { return i - j.i; }
        private:
-            inline const_iterator() : i(0), s(0) {}
+            int i;
+            const QWebElementCollection* const collection;
     };
     friend class const_iterator;
 
-    inline const_iterator begin() const { return const_iterator(this, 0); }
-    inline const_iterator end() const { return const_iterator(this, count()); }
-    inline QWebElement operator[](int i) const { return at(i); }
+    inline const_iterator begin() const { return constBegin(); }
+    inline const_iterator end() const { return constEnd(); }
+    inline const_iterator constBegin() const { return const_iterator(this, 0); }
+    inline const_iterator constEnd() const { return const_iterator(this, count()); };
 
+    class iterator {
+    public:
+        inline iterator(const QWebElementCollection* collection, int index) : i(index), collection(collection) {}
+        inline iterator(const iterator& o) : i(o.i), collection(o.collection) {}
+
+        inline QWebElement operator*() const { return collection->at(i); }
+
+        inline bool operator==(const iterator& o) const { return i == o.i && collection == o.collection; }
+        inline bool operator!=(const iterator& o) const { return i != o.i || collection != o.collection; }
+        inline bool operator<(const iterator& o) const { return i < o.i; }
+        inline bool operator<=(const iterator& o) const { return i <= o.i; }
+        inline bool operator>(const iterator& o) const { return i > o.i; }
+        inline bool operator>=(const iterator& o) const { return i >= o.i; }
+
+        inline iterator& operator++() { ++i; return *this; }
+        inline iterator operator++(int) { iterator n(collection, i); ++i; return n; }
+        inline iterator& operator--() { i--; return *this; }
+        inline iterator operator--(int) { iterator n(collection, i); i--; return n; }
+        inline iterator& operator+=(int j) { i += j; return *this; }
+        inline iterator& operator-=(int j) { i -= j; return *this; }
+        inline iterator operator+(int j) const { return iterator(collection, i + j); }
+        inline iterator operator-(int j) const { return iterator(collection, i - j); }
+        inline int operator-(iterator j) const { return i - j.i; }
+    private:
+        int i;
+        const QWebElementCollection* const collection;
+    };
+    friend class iterator;
+
+    inline iterator begin() { return iterator(this, 0); }
+    inline iterator end()  { return iterator(this, count()); }
 private:
     QExplicitlySharedDataPointer<QWebElementCollectionPrivate> d;
 };
