@@ -1,3 +1,25 @@
+2009-11-08  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        V8 WorkerContextExecutionProxy does not handle SharedWorkers
+        https://bugs.webkit.org/show_bug.cgi?id=31226
+
+        Now checks to see what type of context is active and creates the
+        appropriate wrapper (DEDICATEDWORKERCONTEXT vs SHAREDWORKERCONTEXT).
+
+        Added support for converting to SharedWorkers and SharedWorkerContexts.
+
+        Test: Existing layout tests cover this case (start passing in Chrome).
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        Now generates the right type of DOMWrapper for SharedWorkerContexts.
+        (WebCore::WorkerContextExecutionProxy::convertToV8Object):
+        Added support for SHAREDWORKERCONTEXT.
+        (WebCore::WorkerContextExecutionProxy::convertEventTargetToV8Object):
+        Added support for SharedWorker and SharedWorkerContext.
+
 2009-11-08  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed by Dimitri Glazkov.
