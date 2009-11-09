@@ -1,3 +1,18 @@
+2009-11-08  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector should support copy() in the command line
+        https://bugs.webkit.org/show_bug.cgi?id=31238
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::copyText): Added.
+        * inspector/InspectorBackend.h: Added copyText
+        * inspector/InspectorBackend.idl: Added copyText
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._copy): Added.
+        (InjectedScript._ensureCommandLineAPIInstalled):
+
 2009-11-08  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -903,77 +903,92 @@ InjectedScript._inspectObject = function(o)
     }
 }
 
+InjectedScript._copy = function(o)
+{
+    if (Object.type(o) === "node") {
+        var nodeId = InspectorController.pushNodePathToFrontend(o, false);
+        InspectorController.copyNode(nodeId);
+    } else {
+        InspectorController.copyText(o);
+    }
+}
+
 InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObject)
 {
     if (evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI"))
         return;
-    var inspectorCommandLineAPI = evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI = { \
-        $: function() { return document.getElementById.apply(document, arguments) }, \
-        $$: function() { return document.querySelectorAll.apply(document, arguments) }, \
-        $x: function(xpath, context) { \
-            var nodes = []; \
-            try { \
-                var doc = context || document; \
-                var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \
-                var node; \
-                while (node = results.iterateNext()) nodes.push(node); \
-            } catch (e) {} \
-            return nodes; \
-        }, \
-        dir: function() { return console.dir.apply(console, arguments) }, \
-        dirxml: function() { return console.dirxml.apply(console, arguments) }, \
-        keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \
-        values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
-        profile: function() { return console.profile.apply(console, arguments) }, \
-        profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
-        _logEvent: function _inspectorCommandLineAPI_logEvent(e) { console.log(e.type, e); }, \
-        _allEventTypes: [\"mouse\", \"key\", \"load\", \"unload\", \"abort\", \"error\", \
-            \"select\", \"change\", \"submit\", \"reset\", \"focus\", \"blur\", \
-            \"resize\", \"scroll\"], \
-        _normalizeEventTypes: function(t) { \
-            if (typeof t === \"undefined\") \
-                t = console._inspectorCommandLineAPI._allEventTypes; \
-            else if (typeof t === \"string\") \
-                t = [t]; \
-            var i, te = []; \
-            for (i = 0; i < t.length; i++) { \
-                if (t[i] === \"mouse\") \
-                    te.splice(0, 0, \"mousedown\", \"mouseup\", \"click\", \"dblclick\", \
-                        \"mousemove\", \"mouseover\", \"mouseout\"); \
-                else if (t[i] === \"key\") \
-                    te.splice(0, 0, \"keydown\", \"keyup\", \"keypress\"); \
-                else \
-                    te.push(t[i]); \
-            } \
-            return te; \
-        }, \
-        monitorEvents: function(o, t) { \
-            if (!o || !o.addEventListener || !o.removeEventListener) \
-                return; \
-            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
-            for (i = 0; i < t.length; i++) { \
-                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
-                o.addEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
-            } \
-        }, \
-        unmonitorEvents: function(o, t) { \
-            if (!o || !o.removeEventListener) \
-                return; \
-            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \
-            for (i = 0; i < t.length; i++) { \
-                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \
-            } \
-        }, \
-        _inspectedNodes: [], \
-        get $0() { return console._inspectorCommandLineAPI._inspectedNodes[0] }, \
-        get $1() { return console._inspectorCommandLineAPI._inspectedNodes[1] }, \
-        get $2() { return console._inspectorCommandLineAPI._inspectedNodes[2] }, \
-        get $3() { return console._inspectorCommandLineAPI._inspectedNodes[3] }, \
-        get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] } \
+    var inspectorCommandLineAPI = evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI = { \n\
+        $: function() { return document.getElementById.apply(document, arguments) }, \n\
+        $$: function() { return document.querySelectorAll.apply(document, arguments) }, \n\
+        $x: function(xpath, context) \n\
+        { \n\
+            var nodes = []; \n\
+            try { \n\
+                var doc = context || document; \n\
+                var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \n\
+                var node; \n\
+                while (node = results.iterateNext()) nodes.push(node); \n\
+            } catch (e) {} \n\
+            return nodes; \n\
+        }, \n\
+        dir: function() { return console.dir.apply(console, arguments) }, \n\
+        dirxml: function() { return console.dirxml.apply(console, arguments) }, \n\
+        keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \n\
+        values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \n\
+        profile: function() { return console.profile.apply(console, arguments) }, \n\
+        profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \n\
+        _logEvent: function _inspectorCommandLineAPI_logEvent(e) { console.log(e.type, e); }, \n\
+        _allEventTypes: [\"mouse\", \"key\", \"load\", \"unload\", \"abort\", \"error\", \n\
+            \"select\", \"change\", \"submit\", \"reset\", \"focus\", \"blur\", \n\
+            \"resize\", \"scroll\"], \n\
+        _normalizeEventTypes: function(t) \n\
+        { \n\
+            if (typeof t === \"undefined\") \n\
+                t = console._inspectorCommandLineAPI._allEventTypes; \n\
+            else if (typeof t === \"string\") \n\
+                t = [t]; \n\
+            var i, te = []; \n\
+            for (i = 0; i < t.length; i++) { \n\
+                if (t[i] === \"mouse\") \n\
+                    te.splice(0, 0, \"mousedown\", \"mouseup\", \"click\", \"dblclick\", \n\
+                        \"mousemove\", \"mouseover\", \"mouseout\"); \n\
+                else if (t[i] === \"key\") \n\
+                    te.splice(0, 0, \"keydown\", \"keyup\", \"keypress\"); \n\
+                else \n\
+                    te.push(t[i]); \n\
+            } \n\
+            return te; \n\
+        }, \n\
+        monitorEvents: function(o, t) \n\
+        { \n\
+            if (!o || !o.addEventListener || !o.removeEventListener) \n\
+                return; \n\
+            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \n\
+            for (i = 0; i < t.length; i++) { \n\
+                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
+                o.addEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
+            } \n\
+        }, \n\
+        unmonitorEvents: function(o, t) \n\
+        { \n\
+            if (!o || !o.removeEventListener) \n\
+                return; \n\
+            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \n\
+            for (i = 0; i < t.length; i++) { \n\
+                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
+            } \n\
+        }, \n\
+        _inspectedNodes: [], \n\
+        get $0() { return console._inspectorCommandLineAPI._inspectedNodes[0] }, \n\
+        get $1() { return console._inspectorCommandLineAPI._inspectedNodes[1] }, \n\
+        get $2() { return console._inspectorCommandLineAPI._inspectedNodes[2] }, \n\
+        get $3() { return console._inspectorCommandLineAPI._inspectedNodes[3] }, \n\
+        get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] }, \n\
     };");
 
     inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InjectedScript._clearConsoleMessages);
     inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(InjectedScript._inspectObject);
+    inspectorCommandLineAPI.copy = InspectorController.wrapCallback(InjectedScript._copy);
 }
 
 InjectedScript._resolveObject = function(objectProxy)

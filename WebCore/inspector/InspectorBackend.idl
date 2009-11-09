@@ -117,6 +117,7 @@ module core {
 
         // Called from InjectedScript.
         // TODO: extract into a separate IDL.
+        void copyText(in DOMString text);
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
         [Custom] DOMObject unwrapObject(in long objectId);
