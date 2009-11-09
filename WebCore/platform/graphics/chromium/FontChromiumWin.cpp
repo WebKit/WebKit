@@ -112,6 +112,7 @@ void TransparencyAwareFontPainter::init()
 
 void TransparencyAwareFontPainter::initializeForGDI()
 {
+    m_graphicsContext->save();
     SkColor color = m_platformContext->effectiveFillColor();
     if (SkColorGetA(color) != 0xFF) {
         // When the font has some transparency, apply it by creating a new
@@ -131,6 +132,7 @@ void TransparencyAwareFontPainter::initializeForGDI()
         // and we could do ClearType in that case.
         layerMode = TransparencyWin::TextComposite;
         layerRect = estimateTextBounds();
+        m_graphicsContext->clip(layerRect);
 
         // The transparency helper requires that we draw text in black in
         // this mode and it will apply the color.
@@ -141,6 +143,7 @@ void TransparencyAwareFontPainter::initializeForGDI()
         // but if we're drawing to a layer, we still need extra work.
         layerMode = TransparencyWin::OpaqueCompositeLayer;
         layerRect = estimateTextBounds();
+        m_graphicsContext->clip(layerRect);
     } else {
         // Common case of drawing onto the bottom layer of a web page: we
         // know everything is opaque so don't need to do anything special.
@@ -167,6 +170,7 @@ TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
     m_transparency.composite();
     if (m_createdTransparencyLayer)
         m_graphicsContext->endTransparencyLayer();
+    m_graphicsContext->restore();
     m_platformContext->canvas()->endPlatformPaint();
 }
 

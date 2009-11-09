@@ -1,3 +1,18 @@
+2009-11-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Win chromium is slow to draw transparent texts
+        https://bugs.webkit.org/show_bug.cgi?id=31258
+
+        Clip graphics context to reduce calculation.
+
+        No new tests because this change only affects performance.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+
 2009-11-09  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.
