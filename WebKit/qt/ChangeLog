@@ -1,3 +1,13 @@
+2009-11-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added a missing re-implementation of QGraphicsItem::inputMethodQuery().
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::inputMethodQuery):
+        * Api/qgraphicswebview.h:
+
 2009-11-04  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

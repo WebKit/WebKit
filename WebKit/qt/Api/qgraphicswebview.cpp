@@ -260,6 +260,15 @@ QSizeF QGraphicsWebView::sizeHint(Qt::SizeHint which, const QSizeF& constraint) 
 
 /*! \reimp
 */
+QVariant QGraphicsWebView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    if (d->page)
+        return d->page->inputMethodQuery(query);
+    return QVariant();
+}
+
+/*! \reimp
+*/
 bool QGraphicsWebView::event(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
