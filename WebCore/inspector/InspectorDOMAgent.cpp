@@ -193,8 +193,9 @@ void InspectorDOMAgent::handleEvent(ScriptExecutionContext*, Event* event)
             // Re-add frame owner element together with its new children.
             long parentId = m_documentNodeToIdMap.get(innerParentNode(node));
             m_frontend->childNodeRemoved(parentId, frameOwnerId);
-            long prevId = m_documentNodeToIdMap.get(innerPreviousSibling(node));
             ScriptObject value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
+            Node* previousSibling = innerPreviousSibling(node);
+            long prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
             m_frontend->childNodeInserted(parentId, prevId, value);
             // Invalidate children requested flag for the element.
             m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));

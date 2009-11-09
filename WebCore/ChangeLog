@@ -1,3 +1,15 @@
+2009-11-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Crash when inspecting
+        WebCore\manual-tests\inspector\dom-mutation.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=31259
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::handleEvent):
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
