@@ -127,7 +127,7 @@ void PluginView::setFrameRect(const IntRect& rect)
 #if PLATFORM(WIN_OS) || PLATFORM(SYMBIAN)
     // On Windows and Symbian, always call plugin to change geometry.
     setNPWindowRect(rect);
-#elif XP_UNIX
+#elif defined(XP_UNIX)
     // On Unix, multiple calls to setNPWindow() in windowed mode causes Flash to crash
     if (m_mode == NP_FULL || !m_isWindowed)
         setNPWindowRect(rect);

@@ -1,3 +1,21 @@
+2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Make XP_UNIX tests consistent
+        https://bugs.webkit.org/show_bug.cgi?id=31250
+
+        No new tests as there is no functional change.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect): Test if XP_UNIX is defined
+        instead of the value of the macro
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded): Test if the XP_UNIX is
+        defined instead of using the PLATFORM macro to be consistent
+        (WebCore::PluginView::getValue): Ditto.
+
 2009-11-09  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Darin Adler.

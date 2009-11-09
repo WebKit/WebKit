@@ -227,7 +227,7 @@ void PluginView::setNPWindowIfNeeded()
 
     GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
     gtk_widget_size_allocate(platformPluginWidget(), &allocation);
-#if PLATFORM(XP_UNIX)
+#if defined(XP_UNIX)
     if (!m_needsXEmbed) {
         gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
         gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
@@ -332,7 +332,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         return NPERR_GENERIC_ERROR;
 #endif
 
-#if PLATFORM(XP_UNIX)
+#if defined(XP_UNIX)
     case NPNVxtAppContext:
         if (!m_needsXEmbed) {
             *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay);
