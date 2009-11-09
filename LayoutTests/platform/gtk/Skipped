@@ -1458,7 +1458,6 @@ fast/dom/elementFromPoint-relative-to-viewport.html
 
 # DnD failures https://bugs.webkit.org/show_bug.cgi?id=30576
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-fast/events/drag-and-drop-none.html
 fast/events/drag-and-drop.html
 fast/events/drag-parent-node.html
 

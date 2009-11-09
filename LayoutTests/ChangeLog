@@ -1,3 +1,12 @@
+2009-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        Removed previously (r50589) deleted test case from skiplists.
+
+        * platform/gtk/Skipped: fast/events/drag-and-drop-none.html removed.
+        * platform/qt/Skipped: fast/events/drag-and-drop-none.html removed.
+
 2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Jan Alonzo.

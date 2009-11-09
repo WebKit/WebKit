@@ -184,7 +184,6 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 fast/dom/elementFromPoint-relative-to-viewport.html
 
 # ------- missing drag-and-drop support
-fast/events/drag-and-drop-none.html
 fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
