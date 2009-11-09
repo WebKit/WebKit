@@ -2,6 +2,41 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstreaming the Chromium WebKit API: WebURL and friends.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebURL.h: Added.
+        (WebKit::WebURL::~WebURL):
+        (WebKit::WebURL::WebURL):
+        (WebKit::WebURL::operator=):
+        (WebKit::WebURL::assign):
+        (WebKit::WebURL::spec):
+        (WebKit::WebURL::parsed):
+        (WebKit::WebURL::isValid):
+        (WebKit::WebURL::isEmpty):
+        (WebKit::WebURL::isNull):
+        (WebKit::WebURL::operator GURL):
+        * public/WebURLError.h: Added.
+        (WebKit::WebURLError::WebURLError):
+        * public/WebURLLoader.h: Added.
+        (WebKit::WebURLLoader::~WebURLLoader):
+        * public/WebURLLoaderClient.h: Added.
+        (WebKit::WebURLLoaderClient::~WebURLLoaderClient):
+        * public/WebURLRequest.h: Added.
+        (WebKit::WebURLRequest::):
+        (WebKit::WebURLRequest::~WebURLRequest):
+        (WebKit::WebURLRequest::WebURLRequest):
+        (WebKit::WebURLRequest::operator=):
+        * public/WebURLResponse.h: Added.
+        (WebKit::WebURLResponse::~WebURLResponse):
+        (WebKit::WebURLResponse::WebURLResponse):
+        (WebKit::WebURLResponse::operator=):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstreaming the Chromium WebKit API: WebVector to WebWorkerClient
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
