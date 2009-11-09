@@ -1,3 +1,22 @@
+2009-11-09  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Track "can have scrollbar" state within FrameView independently of the
+        individual scrollbar states in ScrollView.
+
+        rdar://problem/7215132, https://bugs.webkit.org/show_bug.cgi?id=29167
+        REGRESSION (r48064): mint.com loses scrollbars after coming out of
+        edit mode.
+
+        rdar://problem/7314421, https://bugs.webkit.org/show_bug.cgi?id=30517
+        REGRESSION (r48064): Extra scroll bars in GarageBand Lesson Store.
+
+        Test: fast/overflow/scrollbar-restored.html
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _install]):
+
 2009-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Carlson.

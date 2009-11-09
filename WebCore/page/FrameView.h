@@ -72,6 +72,9 @@ public:
     void setMarginWidth(int);
     void setMarginHeight(int);
 
+    virtual void setCanHaveScrollbars(bool);
+    void updateCanHaveScrollbars();
+
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
 
     virtual void setContentsSize(const IntSize&);
@@ -258,6 +261,7 @@ private:
 
     bool m_doFullRepaint;
     
+    bool m_canHaveScrollbars;
     bool m_useSlowRepaints;
     bool m_isOverlapped;
     bool m_contentIsOpaque;

@@ -273,6 +273,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         owner->setWidget(view);
         // Now the render part owns the view, so we don't any more.
     }
+
+    view->updateCanHaveScrollbars();
 }
 
 @end

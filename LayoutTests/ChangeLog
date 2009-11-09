@@ -1,3 +1,17 @@
+2009-11-09  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        rdar://problem/7215132, https://bugs.webkit.org/show_bug.cgi?id=29167
+        REGRESSION (r48064): mint.com loses scrollbars after coming out of
+        edit mode.
+
+        rdar://problem/7314421, https://bugs.webkit.org/show_bug.cgi?id=30517
+        REGRESSION (r48064): Extra scroll bars in GarageBand Lesson Store.
+
+        * fast/overflow/scrollbar-restored-expected.txt: Added.
+        * fast/overflow/scrollbar-restored.html: Added.
+
 2009-11-09  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

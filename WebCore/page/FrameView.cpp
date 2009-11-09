@@ -105,6 +105,7 @@ struct ScheduledEvent {
 
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
+    , m_canHaveScrollbars(true)
     , m_slowRepaintObjectCount(0)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
@@ -219,7 +220,10 @@ void FrameView::resetScrollbars()
     // Reset the document's scrollbars back to our defaults before we yield the floor.
     m_firstLayout = true;
     setScrollbarsSuppressed(true);
-    setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
+    if (m_canHaveScrollbars)
+        setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
+    else
+        setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
     setScrollbarsSuppressed(false);
 }
 
@@ -314,6 +318,23 @@ void FrameView::setMarginHeight(int h)
 {
     // make it update the rendering area when set
     m_margins.setHeight(h);
+}
+
+void FrameView::setCanHaveScrollbars(bool canHaveScrollbars)
+{
+    m_canHaveScrollbars = canHaveScrollbars;
+    ScrollView::setCanHaveScrollbars(canHaveScrollbars);
+}
+
+void FrameView::updateCanHaveScrollbars()
+{
+    ScrollbarMode hMode;
+    ScrollbarMode vMode;
+    scrollbarModes(hMode, vMode);
+    if (hMode == ScrollbarAlwaysOff && vMode == ScrollbarAlwaysOff)
+        m_canHaveScrollbars = false;
+    else
+        m_canHaveScrollbars = true;
 }
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
@@ -562,7 +583,13 @@ void FrameView::layout(bool allowSubtree)
 
     ScrollbarMode hMode;
     ScrollbarMode vMode;
-    scrollbarModes(hMode, vMode);
+    if (m_canHaveScrollbars) {
+        hMode = ScrollbarAuto;
+        vMode = ScrollbarAuto;
+    } else {
+        hMode = ScrollbarAlwaysOff;
+        vMode = ScrollbarAlwaysOff;
+    }
 
     if (!subtree) {
         RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
