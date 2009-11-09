@@ -1,5 +1,24 @@
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Upstreaming the Chromium WebKit API: WebSockets and WebStorage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebSocketStreamError.h: Added.
+        * public/WebSocketStreamHandle.h: Added.
+        (WebKit::WebSocketStreamHandle::~WebSocketStreamHandle):
+        * public/WebSocketStreamHandleClient.h: Added.
+        * public/WebStorageArea.h: Added.
+        (WebKit::WebStorageArea::~WebStorageArea):
+        * public/WebStorageEventDispatcher.h: Added.
+        (WebKit::WebStorageEventDispatcher::~WebStorageEventDispatcher):
+        * public/WebStorageNamespace.h: Added.
+        (WebKit::WebStorageNamespace::~WebStorageNamespace):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Upstreaming the Chromium WebKit API: WebString and other basic objects.
