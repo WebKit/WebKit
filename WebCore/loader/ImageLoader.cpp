@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class ImageEventSender : public Noncopyable {
+class ImageEventSender {
 public:
     ImageEventSender(const AtomicString& eventType);
 

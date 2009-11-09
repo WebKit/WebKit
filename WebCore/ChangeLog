@@ -1,5 +1,23 @@
 2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
 
+        Unreviewed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31161
+
+        Roll back r50657 because it breaks the MAC builds.
+
+        * loader/ImageLoader.cpp:
+        * loader/ProgressTracker.cpp:
+        * loader/RedirectScheduler.cpp:
+        * loader/Request.h:
+        * loader/ThreadableLoaderClient.h:
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/icon/IconDatabaseClient.h:
+
+2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
+
         Reviewed by Darin Adler.
 
         Allow custom memory allocation control for the part of loader directory in WebCore

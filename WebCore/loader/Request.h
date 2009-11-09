@@ -30,7 +30,7 @@ namespace WebCore {
     class CachedResource;
     class DocLoader;
 
-    class Request : public Noncopyable {
+    class Request {
     public:
         Request(DocLoader*, CachedResource*, bool incremental, bool skipCanLoadCheck, bool sendResourceLoadCallbacks);
         ~Request();

@@ -36,7 +36,7 @@ namespace WebCore {
     class ResourceError;
     class ResourceResponse;
 
-    class ThreadableLoaderClient : public Noncopyable {
+    class ThreadableLoaderClient {
     public:
         virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
