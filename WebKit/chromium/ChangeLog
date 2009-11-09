@@ -2,6 +2,30 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstream remaining Chromium API WebN*.h headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebNonCopyable.h: Added.
+        (WebKit::WebNonCopyable::WebNonCopyable):
+        (WebKit::WebNonCopyable::~WebNonCopyable):
+        * public/WebNotification.h: Added.
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::~WebNotification):
+        (WebKit::WebNotification::operator=):
+        (WebKit::WebNotification::equals):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        (WebKit::operator<):
+        * public/WebNotificationPermissionCallback.h: Added.
+        (WebKit::WebNotificationPermissionCallback::~WebNotificationPermissionCallback):
+        * public/WebNotificationPresenter.h: Added.
+        (WebKit::WebNotificationPresenter::):
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstream Chromium API headers WebMessage through WebNavigation.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
