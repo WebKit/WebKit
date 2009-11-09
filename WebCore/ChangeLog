@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's DocLoader
+        https://bugs.webkit.org/show_bug.cgi?id=31163
+
+        Inherits DocLoader class from Noncopyable because it is
+        instantiated by 'new' in WebCore/dom/Document.cpp:370 and 
+        it is no need to be copyable.
+
+        * loader/DocLoader.h:
+
+2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's Tokenizer
         https://bugs.webkit.org/show_bug.cgi?id=31162
 
