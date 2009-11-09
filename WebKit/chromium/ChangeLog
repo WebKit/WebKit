@@ -2,6 +2,26 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstream the last of the Chromium API WebC*.h files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebConsoleMessage.h: Added.
+        (WebKit::WebConsoleMessage::):
+        (WebKit::WebConsoleMessage::WebConsoleMessage):
+        * public/WebContextMenuData.h: Added.
+        (WebKit::WebContextMenuData::):
+        * public/WebCookie.h: Added.
+        (WebKit::WebCookie::WebCookie):
+        * public/WebCrossOriginPreflightResultCache.h: Added.
+        * public/WebCursorInfo.h: Added.
+        (WebKit::WebCursorInfo::):
+        (WebKit::WebCursorInfo::WebCursorInfo):
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         More WebC*.h upstreaming.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
