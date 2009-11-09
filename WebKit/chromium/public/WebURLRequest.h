@@ -35,7 +35,7 @@
 #include "WebHTTPBody.h"
 
 #if defined(WEBKIT_IMPLEMENTATION)
-namespace WebCore { struct ResourceRequest; }
+namespace WebCore { class ResourceRequest; }
 #endif
 
 namespace WebKit {

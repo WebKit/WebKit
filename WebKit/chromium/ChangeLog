@@ -1,3 +1,12 @@
+2009-11-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Change struct ResourceRequest to class ResourceRequest per
+        http://trac.webkit.org/changeset/50625.
+
+        * public/WebURLRequest.h:
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
