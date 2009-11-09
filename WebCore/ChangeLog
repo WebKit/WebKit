@@ -1,3 +1,21 @@
+2009-11-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Pass credentials provided by XMLHTTPRequest to the network request.
+        https://bugs.webkit.org/show_bug.cgi?id=31208
+
+        After r42483, the credentials are no longer passed to the network request
+        in the URL of the request.
+        Pass the credentials from XMLHTTPRequest to the network request, the same
+        way that other ports do.
+
+        After this patch LayoutTests/http/xmlhttprequest/basic-auth.html passes.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed.
