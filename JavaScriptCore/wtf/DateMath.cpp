@@ -523,7 +523,7 @@ static bool parseLong(const char* string, char** stopPosition, int base, long* r
 }
 
 // Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
-double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
+static double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
 {
     haveTZ = false;
     offset = 0;
@@ -837,7 +837,7 @@ double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double
 {
     int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
     double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
-    double result = (day * msPerDay) + ms;
+    double result = (day * WTF::msPerDay) + ms;
 
     if (!inputIsUTC) { // convert to UTC
         double utcOffset = getUTCOffset(exec);
@@ -869,7 +869,7 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
     tm.year     =  year - 1900;
     tm.isDST    =  dstOff != 0.0;
-    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
+    tm.utcOffset = static_cast<long>((dstOff + utcOff) / WTF::msPerSecond);
     tm.timeZone = NULL;
 }
 
@@ -883,9 +883,9 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* 
     if (!haveTZ) {
         double utcOffset = getUTCOffset(exec);
         double dstOffset = getDSTOffset(ms, utcOffset);
-        offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
+        offset = static_cast<int>((utcOffset + dstOffset) / WTF::msPerMinute);
     }
-    return ms - (offset * msPerMinute);
+    return ms - (offset * WTF::msPerMinute);
 }
 
 } // namespace JSC

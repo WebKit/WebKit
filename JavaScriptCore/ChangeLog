@@ -1,5 +1,17 @@
 2009-11-08  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (speculative snow leopard and windows build fixes).
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * wtf/DateMath.h:
+        (JSC::GregorianDateTime::GregorianDateTime):
+
+2009-11-08  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY (chromium build fix).
         
         Hopefully, the last build fix.

@@ -125,7 +125,7 @@ struct GregorianDateTime : Noncopyable {
 #if HAVE(TM_GMTOFF)
         utcOffset = static_cast<int>(inTm.tm_gmtoff);
 #else
-        utcOffset = static_cast<int>(getUTCOffset(exec) / msPerSecond + (isDST ? secondsPerHour : 0));
+        utcOffset = static_cast<int>(getUTCOffset(exec) / WTF::msPerSecond + (isDST ? WTF::secondsPerHour : 0));
 #endif
 
 #if HAVE(TM_ZONE)
