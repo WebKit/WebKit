@@ -459,33 +459,6 @@ NSWritingDirection Frame::baseWritingDirectionForSelectionStart() const
     return result;
 }
 
-const short enableRomanKeyboardsOnly = -23;
-void Frame::setUseSecureKeyboardEntry(bool enable)
-{
-    if (enable == IsSecureEventInputEnabled())
-        return;
-    if (enable) {
-        EnableSecureEventInput();
-#ifdef BUILDING_ON_TIGER
-        KeyScript(enableRomanKeyboardsOnly);
-#else
-        // WebKit substitutes nil for input context when in password field, which corresponds to null TSMDocument. So, there is
-        // no need to call TSMGetActiveDocument(), which may return an incorrect result when selection hasn't been yet updated
-        // after focusing a node.
-        CFArrayRef inputSources = TISCreateASCIICapableInputSourceList();
-        TSMSetDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag, sizeof(CFArrayRef), &inputSources);
-        CFRelease(inputSources);
-#endif
-    } else {
-        DisableSecureEventInput();
-#ifdef BUILDING_ON_TIGER
-        KeyScript(smKeyEnableKybds);
-#else
-        TSMRemoveDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag);
-#endif
-    }
-}
-
 #if ENABLE(DASHBOARD_SUPPORT)
 NSMutableDictionary* Frame::dashboardRegionsDictionary()
 {

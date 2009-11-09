@@ -1,3 +1,18 @@
+2009-11-09  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Moves Mac implementation of setUseSecureKeyboardEntry to Frame.cpp and
+        enables it PLATFORM(CHROMIUM) in addition to PLATFORM(MAC).
+
+        https://bugs.webkit.org/show_bug.cgi?id=31083
+
+        No new tests; implementation is unchanged.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setUseSecureKeyboardEntry):
+        * page/mac/FrameMac.mm:
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Jan Alonzo.
