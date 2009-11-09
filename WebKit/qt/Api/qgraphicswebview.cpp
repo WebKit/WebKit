@@ -338,6 +338,8 @@ void QGraphicsWebView::setPage(QWebPage* page)
             this, SLOT(_q_doLoadFinished(bool)));
     connect(d->page, SIGNAL(statusBarMessage(const QString&)),
             this, SIGNAL(statusBarMessage(const QString&)));
+    connect(d->page, SIGNAL(linkClicked(const QUrl &)),
+            this, SIGNAL(linkClicked(const QUrl &)));
 }
 
 /*!
@@ -408,7 +410,6 @@ void QGraphicsWebView::setZoomFactor(qreal factor)
         return;
 
     page()->mainFrame()->setZoomFactor(factor);
-    emit zoomFactorChanged();
 }
 
 qreal QGraphicsWebView::zoomFactor() const
@@ -881,5 +882,14 @@ void QGraphicsWebView::inputMethodEvent(QInputMethodEvent* ev)
     if (!ev->isAccepted())
         QGraphicsItem::inputMethodEvent(ev);
 }
+
+/*!
+    \fn void QGraphicsWebView::linkClicked(const QUrl &url)
+
+    This signal is emitted whenever the user clicks on a link and the page's linkDelegationPolicy
+    property is set to delegate the link handling for the specified \a url.
+
+    \sa QWebPage::linkDelegationPolicy()
+*/
 
 #include "moc_qgraphicswebview.cpp"

@@ -2,6 +2,19 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Removed zoomFactoryChanged() signal and added
+        linkClicked() to QGraphicsWebView, for consistency with
+        QWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::setPage):
+        (QGraphicsWebView::setZoomFactor):
+        * Api/qgraphicswebview.h:
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Added QGraphicsWebView::findText() for convenience and consistency
         with QWebView.
 

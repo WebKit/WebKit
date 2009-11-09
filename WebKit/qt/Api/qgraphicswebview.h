@@ -40,7 +40,7 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
 
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
-    Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor NOTIFY zoomFactorChanged)
+    Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
 
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
@@ -100,7 +100,7 @@ Q_SIGNALS:
     void titleChanged(const QString&);
     void iconChanged();
     void statusBarMessage(const QString& message);
-    void zoomFactorChanged();
+    void linkClicked(const QUrl&);
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent*);
