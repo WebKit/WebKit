@@ -2,6 +2,17 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Provide a dummy re-implementation of QGraphicsLayoutItem::sizeHint(),
+        similar to QWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::sizeHint):
+        * Api/qgraphicswebview.h:
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Removed zoomFactoryChanged() signal and added
         linkClicked() to QGraphicsWebView, for consistency with
         QWebView.

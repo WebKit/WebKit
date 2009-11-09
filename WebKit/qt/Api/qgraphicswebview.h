@@ -85,6 +85,8 @@ public:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant& value);
     virtual bool event(QEvent*);
 
+    virtual QSizeF sizeHint(Qt::SizeHint which, const QSizeF& constraint) const;
+
 public Q_SLOTS:
     void stop();
     void back();

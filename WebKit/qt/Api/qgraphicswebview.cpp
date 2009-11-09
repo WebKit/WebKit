@@ -251,6 +251,15 @@ QVariant QGraphicsWebView::itemChange(GraphicsItemChange change, const QVariant&
 
 /*! \reimp
 */
+QSizeF QGraphicsWebView::sizeHint(Qt::SizeHint which, const QSizeF& constraint) const
+{
+    if (which == Qt::PreferredSize)
+        return QSizeF(800, 600); // ###
+    return QGraphicsWidget::sizeHint(which, constraint);
+}
+
+/*! \reimp
+*/
 bool QGraphicsWebView::event(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
