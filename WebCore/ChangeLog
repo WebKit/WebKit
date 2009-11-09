@@ -1,3 +1,18 @@
+2009-11-09  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        showTree(CounterNode*) generates too little info and has too many spaces.
+        https://bugs.webkit.org/show_bug.cgi?id=31212
+
+        No new tests as the change has no functional effect it is just for
+        improved debugging.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::showTreeAndMark):
+        Changed to also show addresses of parent, next and previous
+        siblings.
+
 2009-11-09  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Darin Adler.

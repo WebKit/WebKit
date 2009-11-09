@@ -169,15 +169,14 @@ static void showTreeAndMark(const CounterNode* node)
     while (root->parent())
         root = root->parent();
 
-    for (const CounterNode* c = root; c; c = nextInPreOrder(c)) {
-        if (c == node)
-            fprintf(stderr, "*");
-        for (const CounterNode* d = c; d && d != root; d = d->parent())
-            fprintf(stderr, "\t");
-        if (c->isReset())
-            fprintf(stderr, "reset: %d %d\n", c->value(), c->countInParent());
-        else
-            fprintf(stderr, "increment: %d %d\n", c->value(), c->countInParent());
+    for (const CounterNode* current = root; current; current = nextInPreOrder(current)) {
+        fwrite((current == node) ? "*" : " ", 1, 1, stderr);
+        for (const CounterNode* parent = current; parent && parent != root; parent = parent->parent())
+            fwrite("  ", 1, 2, stderr);
+        fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
+            current, current->isReset() ? "reset____" : "increment", current->value(),
+            current->countInParent(), current->parent(), current->previousSibling(),
+            current->nextSibling(), current->renderer());
     }
 }
 
