@@ -77,6 +77,8 @@ public:
     QAction* pageAction(QWebPage::WebAction action) const;
     void triggerPageAction(QWebPage::WebAction action, bool checked = false);
 
+    bool findText(const QString& subString, QWebPage::FindFlags options = 0);
+
     virtual void setGeometry(const QRectF& rect);
     virtual void updateGeometry();
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem* options, QWidget* widget = 0);

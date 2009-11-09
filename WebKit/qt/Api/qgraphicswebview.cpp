@@ -619,6 +619,29 @@ void QGraphicsWebView::triggerPageAction(QWebPage::WebAction action, bool checke
     page()->triggerAction(action, checked);
 }
 
+/*!
+    Finds the specified string, \a subString, in the page, using the given \a options.
+
+    If the HighlightAllOccurrences flag is passed, the function will highlight all occurrences
+    that exist in the page. All subsequent calls will extend the highlight, rather than
+    replace it, with occurrences of the new string.
+
+    If the HighlightAllOccurrences flag is not passed, the function will select an occurrence
+    and all subsequent calls will replace the current occurrence with the next one.
+
+    To clear the selection, just pass an empty string.
+
+    Returns true if \a subString was found; otherwise returns false.
+
+    \sa selectedText(), selectionChanged()
+*/
+bool QGraphicsWebView::findText(const QString &subString, QWebPage::FindFlags options)
+{
+    if (d->page)
+        return d->page->findText(subString, options);
+    return false;
+}
+
 /*! \reimp
 */
 void QGraphicsWebView::hoverMoveEvent(QGraphicsSceneHoverEvent* ev)

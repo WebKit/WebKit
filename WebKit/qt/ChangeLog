@@ -2,6 +2,17 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Added QGraphicsWebView::findText() for convenience and consistency
+        with QWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::findText):
+        * Api/qgraphicswebview.h:
+
+2009-11-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Added QGraphicsWebView::pageAction() and triggerPageAction(), for
         consistency with QWebView.
 
