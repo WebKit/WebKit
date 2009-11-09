@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WebCore's Tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=31162
+
+        Inherits Tokenizer class from Noncopyable because (its child class)
+        ImageTokenizer instantiated by 'new' in WebCore/loader/ImageDocument.cpp:178 
+        and it is no need to be copyable.
+
+        * dom/Tokenizer.h:
+
+2009-11-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for WebCore's DeleteButtonController
         https://bugs.webkit.org/show_bug.cgi?id=31105
 

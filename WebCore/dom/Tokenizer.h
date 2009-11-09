@@ -28,7 +28,7 @@ namespace WebCore {
     class SegmentedString;
     class XSSAuditor;
 
-    class Tokenizer {
+    class Tokenizer : public Noncopyable {
     public:
         virtual ~Tokenizer() { }
 
