@@ -1,3 +1,40 @@
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream rest of WebH*.h and WebI*.h Chromium API headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebHTTPBody.h: Added.
+        (WebKit::WebHTTPBody::Element::):
+        (WebKit::WebHTTPBody::~WebHTTPBody):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::isNull):
+        * public/WebHTTPHeaderVisitor.h: Added.
+        (WebKit::WebHTTPHeaderVisitor::~WebHTTPHeaderVisitor):
+        * public/WebHistoryItem.h: Added.
+        (WebKit::WebHistoryItem::~WebHistoryItem):
+        (WebKit::WebHistoryItem::WebHistoryItem):
+        (WebKit::WebHistoryItem::operator=):
+        (WebKit::WebHistoryItem::isNull):
+        * public/WebImage.h: Added.
+        (WebKit::WebImage::~WebImage):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+        (WebKit::WebImage::getSkBitmap):
+        (WebKit::WebImage::init):
+        (WebKit::WebImage::getCGImageRef):
+        * public/WebInputEvent.h: Added.
+        (WebKit::WebInputEvent::WebInputEvent):
+        (WebKit::WebInputEvent::):
+        (WebKit::WebInputEvent::isKeyboardEventType):
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebMouseEvent::):
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseWheelEvent::WebMouseWheelEvent):
+
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Eric Seidel.
