@@ -821,3 +821,7 @@ function isEnterKey(event) {
     // Check if in IME.
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
+
+function isFnKey(event) {
+    return event.keyCode >= 112 && event.keyCode <= 123;
+}

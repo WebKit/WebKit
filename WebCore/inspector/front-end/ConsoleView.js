@@ -395,6 +395,12 @@ WebInspector.ConsoleView.prototype = {
             this._enterKeyPressed(event);
             return;
         }
+        if (isFnKey(event)) {
+            if (WebInspector.currentPanel && WebInspector.currentPanel.handleKeyEvent) {
+                WebInspector.currentPanel.handleKeyEvent(event);
+                return;
+            }
+        }
 
         this.prompt.handleKeyEvent(event);
     },

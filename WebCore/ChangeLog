@@ -1,3 +1,20 @@
+2009-11-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Debugger shortcuts (F8, F10, F11) have no effect if the Console view is open
+        https://bugs.webkit.org/show_bug.cgi?id=31252
+
+        Route F1-F12 keypresses in the Console view to the current panel if there is one.
+
+        Test: manual-tests/inspector/debugger-shortcuts-with-console-opened.html
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._promptKeyDown):
+        * inspector/front-end/utilities.js:
+        ():
+        * manual-tests/inspector/debugger-shortcuts-with-console-opened.html: Added.
+
 2009-11-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
