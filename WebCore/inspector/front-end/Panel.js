@@ -231,8 +231,11 @@ WebInspector.Panel.prototype = {
             showFirstResult = true;
         }
 
-        if (currentView !== this.visibleView)
-            this.showView(currentView);
+        if (currentView !== this.visibleView) {
+            currentView = this.visibleView;
+            this._currentSearchResultIndex = 0;
+            showFirstResult = true;
+        }
 
         if (showFirstResult)
             currentView.jumpToFirstSearchResult();
