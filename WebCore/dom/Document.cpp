@@ -2490,7 +2490,7 @@ void Document::recalcStyleSelector()
                     sheet = cssSheet.get();
                 }
             }
-        } else if (n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag))
+        } else if ((n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag)))
 #if ENABLE(SVG)
             ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
 #endif

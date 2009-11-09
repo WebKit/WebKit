@@ -1,3 +1,41 @@
+2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use explicit parentheses to silence gcc 4.4 -Wparentheses warnings
+        https://bugs.webkit.org/show_bug.cgi?id=31040
+
+        No new tests as there is no functional change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        * editing/TextIterator.cpp:
+        (WebCore::pushFullyClippedState):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontPlatformDataCacheKey::computeHash):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::parseNumberValueAndUnit):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+
 2009-11-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dimitri Glazkov.

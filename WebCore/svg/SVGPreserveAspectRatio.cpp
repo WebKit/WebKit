@@ -178,7 +178,7 @@ TransformationMatrix SVGPreserveAspectRatio::getCTM(double logicX, double logicY
     if (align() == SVG_PRESERVEASPECTRATIO_NONE) {
         temp.scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
         temp.translate(-logicX, -logicY);
-    } else if (vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE)) {
+    } else if ((vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET)) || (vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE))) {
         temp.scaleNonUniform(physHeight / logicHeight, physHeight / logicHeight);
 
         if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMINYMAX)

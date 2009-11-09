@@ -123,9 +123,9 @@ public:
     {
         unsigned hashCodes[] = {
             CaseFoldingHash::hash(m_familyName),
-            m_size | static_cast<unsigned>(m_bold << sizeof(unsigned) * 8 - 1)
-                | static_cast<unsigned>(m_italic) << sizeof(unsigned) *8 - 2
-                | static_cast<unsigned>(m_smallCaps) << sizeof(unsigned) * 8 - 3
+            m_size | static_cast<unsigned>(m_bold << (sizeof(unsigned) * 8 - 1))
+                | static_cast<unsigned>(m_italic) << (sizeof(unsigned) * 8 - 2)
+                | static_cast<unsigned>(m_smallCaps) << (sizeof(unsigned) * 8 - 3)
         };
         m_hash = StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }

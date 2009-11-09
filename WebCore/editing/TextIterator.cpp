@@ -218,7 +218,7 @@ static void pushFullyClippedState(BitStack& stack, Node* node)
 
     // Push true if this node full clips its contents, or if a parent already has fully
     // clipped and this is not a node that ignores its container's clip.
-    stack.push(fullyClipsContents(node) || stack.top() && !ignoresContainerClip(node));
+    stack.push(fullyClipsContents(node) || (stack.top() && !ignoresContainerClip(node)));
 }
 
 static void setUpFullyClippedStack(BitStack& stack, Node* node)

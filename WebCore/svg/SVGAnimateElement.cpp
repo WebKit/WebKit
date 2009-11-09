@@ -62,7 +62,7 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
         unitLength = 4;
     String newUnit = parse.right(unitLength);
     String number = parse.left(parse.length() - unitLength);
-    if (!unit.isEmpty() && newUnit != unit || number.isEmpty())
+    if ((!unit.isEmpty() && newUnit != unit) || number.isEmpty())
         return false;
     UChar last = number[number.length() - 1];
     if (last < '0' || last > '9')
