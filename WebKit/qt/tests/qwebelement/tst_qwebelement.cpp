@@ -68,6 +68,7 @@ private slots:
     void simpleCollection();
     void attributes();
     void attributesNS();
+    void listAttributes();
     void classes();
     void namespaceURI();
     void iteration();
@@ -185,6 +186,29 @@ void tst_QWebElement::attributesNS()
     svg.setAttributeNS("http://www.w3.org/2000/svg", "svg:foobar", "true");
     QVERIFY(svg.hasAttributeNS("http://www.w3.org/2000/svg", "foobar"));
     QCOMPARE(svg.attributeNS("http://www.w3.org/2000/svg", "foobar", "defaultblah"), QString("true"));
+}
+
+void tst_QWebElement::listAttributes()
+{
+    QString content = "<html xmlns=\"http://www.w3.org/1999/xhtml\" "
+                      "xmlns:svg=\"http://www.w3.org/2000/svg\">"
+                      "<body><svg:svg foo=\"\" svg:bar=\"\">"
+                      "</svg:svg></body></html>";
+
+    m_mainFrame->setContent(content.toUtf8(), "application/xhtml+xml");
+
+    QWebElement svg = m_mainFrame->findFirstElement("svg");
+    QVERIFY(!svg.isNull());
+
+    QVERIFY(svg.attributeNames().contains("foo"));
+    QVERIFY(svg.attributeNames("http://www.w3.org/2000/svg").contains("bar"));
+
+    svg.setAttributeNS("http://www.w3.org/2000/svg", "svg:foobar", "true");
+    QVERIFY(svg.attributeNames().contains("foo"));
+    QStringList attributes = svg.attributeNames("http://www.w3.org/2000/svg");
+    QCOMPARE(attributes.size(), 2);
+    QVERIFY(attributes.contains("bar"));
+    QVERIFY(attributes.contains("foobar"));
 }
 
 void tst_QWebElement::classes()

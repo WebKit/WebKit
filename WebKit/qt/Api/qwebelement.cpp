@@ -453,6 +453,30 @@ bool QWebElement::hasAttributes() const
 }
 
 /*!
+    Return the list of attributes for the namespace given as an argument.
+
+    \sa attribute(), setAttribute()
+*/
+QStringList QWebElement::attributeNames(const QString& namespaceUri) const
+{
+    if (!m_element)
+        return QStringList();
+
+    QStringList attributeNameList;
+    const NamedNodeMap* const attrs = m_element->attributes(/* read only = */ true);
+    if (attrs) {
+        const String namespaceUriString(namespaceUri); // convert QString -> String once
+        const unsigned attrsCount = attrs->length();
+        for (unsigned i = 0; i < attrsCount; ++i) {
+            const Attribute* const attribute = attrs->attributeItem(i);
+            if (namespaceUriString == attribute->namespaceURI())
+                attributeNameList.append(attribute->localName());
+        }
+    }
+    return attributeNameList;
+}
+
+/*!
     Returns true if the element has keyboard input focus; otherwise, returns false
 
     \sa setFocus()
