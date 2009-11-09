@@ -59,6 +59,14 @@
 
 2009-11-08  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (chromium build fix).
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseDate): Changed this to not
+        use a date parser that needs ExecState passed.
+        
+2009-11-08  David Levin  <levin@chromium.org>
+
         Unreviewed build fix for chromium.
 
         * platform/graphics/skia/GraphicsContextSkia.cpp:

@@ -82,7 +82,7 @@ extern "C" struct tm * localtime(const time_t *timer);
 
 using namespace WTF;
 
-namespace JSC {
+namespace WTF {
 
 /* Constants */
 
@@ -379,21 +379,6 @@ static int32_t calculateUTCOffset()
     return static_cast<int32_t>(utcOffset * 1000);
 }
 
-#if USE(JSC)
-/*
- * Get the difference in milliseconds between this time zone and UTC (GMT)
- * NOT including DST.
- */
-double getUTCOffset(ExecState* exec)
-{
-    double utcOffset = exec->globalData().cachedUTCOffset;
-    if (!isnan(utcOffset))
-        return utcOffset;
-    exec->globalData().cachedUTCOffset = calculateUTCOffset();
-    return exec->globalData().cachedUTCOffset;
-}
-#endif
-
 /*
  * Get the DST offset for the time passed in.  Takes
  * seconds (not milliseconds) and cannot handle dates before 1970
@@ -447,46 +432,6 @@ static double getDSTOffset(double ms, double utcOffset)
     }
 
     return getDSTOffsetSimple(ms / msPerSecond, utcOffset);
-}
-
-double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
-{
-    int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
-    double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
-    double result = (day * msPerDay) + ms;
-
-    if (!inputIsUTC) { // convert to UTC
-        double utcOffset = getUTCOffset(exec);
-        result -= utcOffset;
-        result -= getDSTOffset(result, utcOffset);
-    }
-
-    return result;
-}
-
-// input is UTC
-void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
-{
-    double dstOff = 0.0;
-    double utcOff = 0.0;
-    if (!outputIsUTC) {
-        utcOff = getUTCOffset(exec);
-        dstOff = getDSTOffset(ms, utcOff);
-        ms += dstOff + utcOff;
-    }
-
-    const int year = msToYear(ms);
-    tm.second   =  msToSeconds(ms);
-    tm.minute   =  msToMinutes(ms);
-    tm.hour     =  msToHours(ms);
-    tm.weekDay  =  msToWeekDay(ms);
-    tm.yearDay  =  dayInYear(ms, year);
-    tm.monthDay =  dayInMonthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.year     =  year - 1900;
-    tm.isDST    =  dstOff != 0.0;
-    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
-    tm.timeZone = NULL;
 }
 
 void initializeDates()
@@ -578,8 +523,11 @@ static bool parseLong(const char* string, char** stopPosition, int base, long* r
 }
 
 // Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
-double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* exec)
+double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
 {
+    haveTZ = false;
+    offset = 0;
+
     // This parses a date in the form:
     //     Tuesday, 09-Nov-99 23:12:40 GMT
     // or
@@ -780,9 +728,6 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* 
         }
     }
 
-    bool haveTZ = false;
-    int offset = 0;
-
     // Don't fail if the time zone is missing. 
     // Some websites omit the time zone (4275206).
     if (*dateString) {
@@ -846,20 +791,20 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* 
             year += 1900;
     }
     
-    double ms = ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+    return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+}
+
+double parseDateFromNullTerminatedCharacters(const char* dateString)
+{
+    bool haveTZ;
+    int offset;
+    double ms = parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
     // fall back to local timezone
     if (!haveTZ) {
-        if (exec) {
-            double utcOffset = getUTCOffset(exec);
-            double dstOffset = getDSTOffset(ms, utcOffset);
-            offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
-        } else {
-            double utcOffset = calculateUTCOffset();
-            double dstOffset = getDSTOffset(ms, utcOffset);
-            offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
-        }
+        double utcOffset = calculateUTCOffset();
+        double dstOffset = getDSTOffset(ms, utcOffset);
+        offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
     }
-
     return ms - (offset * msPerMinute);
 }
 
@@ -871,6 +816,77 @@ double timeClip(double t)
         return NaN;
     return trunc(t);
 }
+} // namespace WTF
 
+#if USE(JSC)
+namespace JSC {
+/*
+ * Get the difference in milliseconds between this time zone and UTC (GMT)
+ * NOT including DST.
+ */
+double getUTCOffset(ExecState* exec)
+{
+    double utcOffset = exec->globalData().cachedUTCOffset;
+    if (!isnan(utcOffset))
+        return utcOffset;
+    exec->globalData().cachedUTCOffset = calculateUTCOffset();
+    return exec->globalData().cachedUTCOffset;
+}
+
+double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
+{
+    int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
+    double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
+    double result = (day * msPerDay) + ms;
+
+    if (!inputIsUTC) { // convert to UTC
+        double utcOffset = getUTCOffset(exec);
+        result -= utcOffset;
+        result -= getDSTOffset(result, utcOffset);
+    }
+
+    return result;
+}
+
+// input is UTC
+void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
+{
+    double dstOff = 0.0;
+    double utcOff = 0.0;
+    if (!outputIsUTC) {
+        utcOff = getUTCOffset(exec);
+        dstOff = getDSTOffset(ms, utcOff);
+        ms += dstOff + utcOff;
+    }
+
+    const int year = msToYear(ms);
+    tm.second   =  msToSeconds(ms);
+    tm.minute   =  msToMinutes(ms);
+    tm.hour     =  msToHours(ms);
+    tm.weekDay  =  msToWeekDay(ms);
+    tm.yearDay  =  dayInYear(ms, year);
+    tm.monthDay =  dayInMonthFromDayInYear(tm.yearDay, isLeapYear(year));
+    tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
+    tm.year     =  year - 1900;
+    tm.isDST    =  dstOff != 0.0;
+    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
+    tm.timeZone = NULL;
+}
+
+double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* exec)
+{
+    ASSERT(exec);
+    bool haveTZ;
+    int offset;
+    double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
+    // fall back to local timezone
+    if (!haveTZ) {
+        double utcOffset = getUTCOffset(exec);
+        double dstOffset = getDSTOffset(ms, utcOffset);
+        offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
+    }
+    return ms - (offset * msPerMinute);
+}
 
 } // namespace JSC
+#endif // USE(JSC)

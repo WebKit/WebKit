@@ -1,6 +1,27 @@
 2009-11-08  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (chromium build fix).
+        
+        Hopefully, the last build fix.
+
+        Create better separation in DateMath about the JSC
+        and non-JSC portions. Also, only expose the non-JSC
+        version in the exports.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (JSC::getUTCOffset):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * wtf/DateMath.h:
+        (JSC::gmtoffset):
+
+2009-11-08  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (chromium build fix).
 
         For the change in DateMath.
 

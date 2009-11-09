@@ -203,7 +203,7 @@ EXPORTS
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
-    ?parseDateFromNullTerminatedCharacters@JSC@@YANPBDPAVExecState@1@@Z
+    ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?primaryHeapBegin@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?primaryHeapEnd@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ
