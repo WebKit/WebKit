@@ -2,6 +2,29 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Upstream Chromium API headers Webkit.h thru WebMediaPlayerClient.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebKit.h: Added.
+        * public/WebKitClient.h: Added.
+        (WebKit::WebKitClient::~WebKitClient):
+        * public/WebLocalizedString.h: Added.
+        (WebKit::WebLocalizedString::):
+        * public/WebMediaPlayer.h: Added.
+        (WebKit::WebTimeRange::WebTimeRange):
+        (WebKit::WebMediaPlayer::):
+        (WebKit::WebMediaPlayer::~WebMediaPlayer):
+        * public/WebMediaPlayerAction.h: Added.
+        (WebKit::WebMediaPlayerAction::):
+        (WebKit::WebMediaPlayerAction::WebMediaPlayerAction):
+        * public/WebMediaPlayerClient.h: Added.
+        (WebKit::WebMediaPlayerClient::~WebMediaPlayerClient):
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstream rest of WebH*.h and WebI*.h Chromium API headers.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
