@@ -59,6 +59,7 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
 - (void)decrementVolume;
 - (void)incrementVolume;
 
+- (void)updatePlayButton;
 - (void)togglePlaying:(id)sender;
 - (BOOL)playing;
 - (void)setPlaying:(BOOL)playing;
@@ -210,12 +211,12 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [super keyDown:event];
 }
 
-- (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
+- (id <WebVideoFullscreenHUDWindowControllerDelegate>)delegate
 {
     return _delegate;
 }
 
-- (void)setDelegate:(id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
+- (void)setDelegate:(id <WebVideoFullscreenHUDWindowControllerDelegate>)delegate
 {
     _delegate = delegate;
 }
@@ -226,7 +227,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 
     // First, update right away, then schedule future update
     [self updateTime];
-    [self updateRate];
+    [self updatePlayButton];
 
     [_timelineUpdateTimer invalidate];
     [_timelineUpdateTimer release];
@@ -525,30 +526,37 @@ static NSTextField *createTimeTextField(NSRect frame)
     [self updateVolume];
 }
 
-- (void)updateRate
+- (void)updatePlayButton
 {
     [_playButton setIntValue:[self playing]];
 }
 
-- (void)togglePlaying:(id)sender
+- (void)updateRate
 {
-    BOOL nowPlaying = [self playing];
-    [self setPlaying:!nowPlaying];
+    BOOL playing = [self playing];
 
-    // Keep HUD visible when paused
-    if (!nowPlaying)
+    // Keep the HUD visible when paused.
+    if (!playing)
         [self fadeWindowIn];
     else if (!_mouseIsInHUD) {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];
         [self performSelector:@selector(fadeWindowOut) withObject:nil afterDelay:HUDWindowFadeOutDelay];
     }
+    [self updatePlayButton];
+}
+
+- (void)togglePlaying:(id)sender
+{
+    [self setPlaying:![self playing]];
 }
 
 - (BOOL)playing
 {
-    if (![_delegate mediaElement])
-        return false;
-    return ![_delegate mediaElement]->canPlay();
+    HTMLMediaElement* mediaElement = [_delegate mediaElement];
+    if (!mediaElement)
+        return NO;
+
+    return !mediaElement->canPlay();
 }
 
 - (void)setPlaying:(BOOL)playing

@@ -1,3 +1,23 @@
+2009-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Made the full-screen video HUD appear when playback stops, such as when
+        the end of the video is reached.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h: Cleaned up.
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]): Updated
+        for the renaming of -updateRate to -updatePlayButton.
+        (-[WebVideoFullscreenHUDWindowController updatePlayButton]): Renamed
+        -updateRate to this.
+        (-[WebVideoFullscreenHUDWindowController updateRate]): This method now
+        responds to changes to the playback rate by updating the play button
+        and showing or hiding the HUD as necessary.
+        (-[WebVideoFullscreenHUDWindowController togglePlaying:]): Now only
+        toggles playing. UI updates are driven by -updateRate being called.
+        (-[WebVideoFullscreenHUDWindowController playing]): Cleaned up.
+
 2009-11-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by John Sullivan and Mark Rowe.
