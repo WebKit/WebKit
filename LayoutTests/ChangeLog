@@ -1,3 +1,11 @@
+2009-11-09  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Rubber-stamped by Holger Hans Peter Freyther.
+
+        [Qt] Skip new japanese ruby annotation tests because of missing japanese font support.
+
+        * platform/qt/Skipped:
+
 2009-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.
