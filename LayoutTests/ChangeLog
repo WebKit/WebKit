@@ -1,3 +1,13 @@
+2009-11-09  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: CSS syntax highlighter doesn't recognize negative numbers
+        https://bugs.webkit.org/show_bug.cgi?id=31257
+
+        * inspector/syntax-highlight-css-expected.txt:
+        * inspector/syntax-highlight-css.html:
+
 2009-11-09  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Rubber-stamped by Holger Hans Peter Freyther.

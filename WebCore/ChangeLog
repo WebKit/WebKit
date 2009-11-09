@@ -1,3 +1,12 @@
+2009-11-09  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: CSS syntax highlighter doesn't recognize negative numbers
+        https://bugs.webkit.org/show_bug.cgi?id=31257
+
+        * inspector/front-end/SourceFrame.js:
+
 2009-11-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -947,7 +947,7 @@ WebInspector.CSSSourceSyntaxHighlighter = function(table, sourceFrame) {
         action: colorAction,
         lexStateCondition: this.LexState.DeclarationValue
     }, {
-        pattern: /^(?:(?:\d+|\d*\.\d+)(?:em|rem|__qem|ex|px|cm|mm|in|pt|pc|deg|rad|grad|turn|ms|s|Hz|kHz|%)?)/i,
+        pattern: /^(?:-?(?:\d+|\d*\.\d+)(?:em|rem|__qem|ex|px|cm|mm|in|pt|pc|deg|rad|grad|turn|ms|s|Hz|kHz|%)?)/i,
         action: numvalueAction,
         lexStateCondition: this.LexState.DeclarationValue
     }, {
