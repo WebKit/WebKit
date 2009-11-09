@@ -87,23 +87,25 @@ static String lookupIconName(String MIMEType)
     return GTK_STOCK_FILE;
 }
 
-PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
-{
-    if (!g_path_skip_root(filename.utf8().data()))
-        return 0;
-
-    String MIMEType = MIMETypeRegistry::getMIMETypeForPath(filename);
-    String iconName = lookupIconName(MIMEType);
-
-    RefPtr<Icon> icon = adoptRef(new Icon);
-    icon->m_icon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(), iconName.utf8().data(), 16, GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
-    if (!icon->m_icon)
-        return 0;
-    return icon.release();
-}
-
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
+    if (filenames.isEmpty())
+        return 0;
+
+    if (filenames.size() == 1) {
+        if (!g_path_skip_root(filenames[0].utf8().data()))
+            return 0;
+
+        String MIMEType = MIMETypeRegistry::getMIMETypeForPath(filenames[0]);
+        String iconName = lookupIconName(MIMEType);
+
+        RefPtr<Icon> icon = adoptRef(new Icon);
+        icon->m_icon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(), iconName.utf8().data(), 16, GTK_ICON_LOOKUP_USE_BUILTIN, 0);
+        if (!icon->m_icon)
+            return 0;
+        return icon.release();
+    }
+
     //FIXME: Implement this
     return 0;
 }

@@ -40,15 +40,17 @@ Icon::~Icon()
 {
 }
 
-PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
-    RefPtr<Icon> i = adoptRef(new Icon);
-    i->m_icon = QIcon(filename);
-    return i.release();
-}
+    if (filenames.isEmpty())
+        return 0;
 
-PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
-{
+    if (filenames.size() == 1) {
+        RefPtr<Icon> i = adoptRef(new Icon);
+        i->m_icon = QIcon(filenames[0]);
+        return i.release();
+    }
+
     //FIXME: Implement this
     return 0;
 }

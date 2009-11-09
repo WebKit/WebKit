@@ -1,3 +1,45 @@
+2009-11-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Simplify Icon interface.
+        https://bugs.webkit.org/show_bug.cgi?id=31154
+
+        - Remove Icon::createIconForFile().  createIconForFiles() covers
+          createIconForFile()'s role.
+        - Remove FileChooser::chooseIcon()
+        - Change the parameter types of FileChooser constructor and the
+          factory method, String -> const Vector<String>&, in order to
+          support initialization with multiple files.
+        - Remove the icon loading code in IconChromiumWin.cpp, which
+          doesn't work because of the sandbox.
+
+        No tests because it's just a refactoring.
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::create):
+        (WebCore::FileChooser::chooseFile):
+        (WebCore::FileChooser::chooseFiles):
+        * platform/FileChooser.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/chromium/IconChromiumLinux.cpp:
+        * platform/graphics/chromium/IconChromiumMac.cpp:
+        * platform/graphics/chromium/IconChromiumWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/haiku/IconHaiku.cpp:
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/wx/IconWx.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+
 2009-11-08  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

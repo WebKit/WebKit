@@ -39,27 +39,32 @@ Icon::~Icon()
 {
 }
 
-PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
-{
-    // Don't pass relative filenames -- we don't want a result that depends on the current directory.
-    // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
-    if (filename.isEmpty() || filename[0U] != '/')
-        return 0;
-
-    NSImage* image = [[NSWorkspace sharedWorkspace] iconForFile:filename];
-    if (!image)
-        return 0;
-
-    return adoptRef(new Icon(image));
-}
-
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
         return 0;
+
+    bool useIconFromFirstFile;
 #ifdef BUILDING_ON_TIGER
-    // FIXME: find a better image to use on Tiger.
-    return createIconForFile(filenames[0]);
+    // FIXME: find a better image for multiple files to use on Tiger.
+    useIconFromFirstFile = true;
+#else
+    useIconFromFirstFile = filenames.size() == 1;
+#endif
+    if (useIconFromFirstFile) {
+        // Don't pass relative filenames -- we don't want a result that depends on the current directory.
+        // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
+        if (filenames[0].isEmpty() || filenames[0][0U] != '/')
+            return 0;
+
+        NSImage* image = [[NSWorkspace sharedWorkspace] iconForFile:filenames[0]];
+        if (!image)
+            return 0;
+
+        return adoptRef(new Icon(image));
+    }
+#ifdef BUILDING_ON_TIGER
+    return 0;
 #else
     NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)

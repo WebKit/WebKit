@@ -52,26 +52,11 @@ Icon::~Icon()
         DestroyIcon(m_icon);
 }
 
-PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
-{
-    SHFILEINFO sfi;
-    memset(&sfi, 0, sizeof(sfi));
-
-    String tmpFilename = filename;
-    if (!SHGetFileInfo(tmpFilename.charactersWithNullTermination(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
-        return 0;
-
-    return adoptRef(new Icon(sfi.hIcon));
-}
-
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
-    // FIXME: support multiple files.
+    // FIXME: We can't access icons directly from renderer processes.
     // http://code.google.com/p/chromium/issues/detail?id=4092
-    if (!filenames.size())
-        return 0;
-
-    return createIconForFile(filenames[0]);
+    return 0;
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& rect)

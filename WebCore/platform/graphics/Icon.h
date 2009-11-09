@@ -51,7 +51,6 @@ class String;
     
 class Icon : public RefCounted<Icon> {
 public:
-    static PassRefPtr<Icon> createIconForFile(const String& filename);
     static PassRefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
 
     ~Icon();
