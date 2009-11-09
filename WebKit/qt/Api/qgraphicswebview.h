@@ -41,7 +41,6 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor NOTIFY zoomFactorChanged)
 
-    Q_PROPERTY(QString html READ toHtml WRITE setHtml)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
     Q_PROPERTY(bool modified READ isModified)
@@ -67,7 +66,6 @@ public:
     void load(const QUrl &url);
     void load(const QNetworkRequest& request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray& body = QByteArray());
 
-    QString toHtml() const;
     void setHtml(const QString& html, const QUrl& baseUrl = QUrl());
     // FIXME: Consider rename to setHtml?
     void setContent(const QByteArray& data, const QString& mimeType = QString(), const QUrl& baseUrl = QUrl());

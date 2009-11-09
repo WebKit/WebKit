@@ -63,7 +63,6 @@ void tst_QGraphicsWebView::qgraphicswebview()
     item.title();
     item.icon();
     item.zoomFactor();
-    item.toHtml();
     item.history();
     item.settings();
     item.page();

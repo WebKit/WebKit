@@ -522,15 +522,14 @@ void QGraphicsWebView::load(const QNetworkRequest& request,
 }
 
 /*!
-    \property QGraphicsWebView::html
-    This property provides an HTML interface to the text in the webview.
+    Sets the content of the web view to the specified \a html.
 
-    When setting this property, external objects such as stylesheets or images
-    referenced in the HTML document are located relative to \a baseUrl.
+    External objects such as stylesheets or images referenced in the HTML
+    document are located relative to \a baseUrl.
 
     The \a html is loaded immediately; external objects are loaded asynchronously.
 
-    When using these methods, WebKit assumes that external resources such as
+    When using this method, WebKit assumes that external resources such as
     JavaScript programs or style sheets are encoded in UTF-8 unless otherwise
     specified. For example, the encoding of an external script can be specified
     through the charset attribute of the HTML script tag. Alternatively, the
@@ -541,11 +540,6 @@ void QGraphicsWebView::load(const QNetworkRequest& request,
 void QGraphicsWebView::setHtml(const QString& html, const QUrl& baseUrl)
 {
     page()->mainFrame()->setHtml(html, baseUrl);
-}
-
-QString QGraphicsWebView::toHtml() const
-{
-    return page()->mainFrame()->toHtml();
 }
 
 /*!
