@@ -1,3 +1,28 @@
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream WebDevTools*.h and WebDrag*.h Chromium API headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebDevToolsAgent.h: Added.
+        (WebKit::WebDevToolsAgent::~WebDevToolsAgent):
+        * public/WebDevToolsAgentClient.h: Added.
+        (WebKit::WebDevToolsAgentClient::~WebDevToolsAgentClient):
+        * public/WebDevToolsFrontend.h: Added.
+        (WebKit::WebDevToolsFrontend::~WebDevToolsFrontend):
+        * public/WebDevToolsFrontendClient.h: Added.
+        (WebKit::WebDevToolsFrontendClient::WebDevToolsFrontendClient):
+        (WebKit::WebDevToolsFrontendClient::~WebDevToolsFrontendClient):
+        * public/WebDragData.h: Added.
+        (WebKit::WebDragData::~WebDragData):
+        (WebKit::WebDragData::WebDragData):
+        (WebKit::WebDragData::operator=):
+        (WebKit::WebDragData::isNull):
+        * public/WebDragOperation.h: Added.
+        (WebKit::):
+
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
