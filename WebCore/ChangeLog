@@ -1,3 +1,14 @@
+2009-11-09  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved macro MMP_RULES (LINKEROPTION) into symbian instead of symbian-sbsv2,
+        since adjustment of RW-section base address will be needed for all new symbian
+        tool chains, specifically for arm and gcc compilation targets.
+        Also, change target address to 0xE00000 to be sufficient for all targets.
+
+        * WebCore.pro:
+
 2009-11-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

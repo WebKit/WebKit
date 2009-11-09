@@ -12,10 +12,10 @@ symbian: {
     DEPLOYMENT += webkitlibs
 
     TARGET.UID3 = 0x200267C2
+    # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
+    # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
+    MMP_RULES += "LINKEROPTION  armcc --rw-base 0xE00000"
 }
-# RO-section in qtwebkit.dll exceeds allocated space in SBSv2. Move RW-section
-# base address to start from 0x800000 instead of the toolchain default 0x400000.
-symbian-sbsv2: MMP_RULES += "LINKEROPTION  armcc --rw-base 0x800000"
 
 include($$PWD/../WebKit.pri)
 
