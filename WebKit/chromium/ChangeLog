@@ -1,3 +1,22 @@
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebPa*.h and WebPl*.h Chromium API headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebPasswordAutocompleteListener.h: Added.
+        (WebKit::WebPasswordAutocompleteListener::~WebPasswordAutocompleteListener):
+        * public/WebPasswordFormData.h: Added.
+        (WebKit::WebPasswordFormData::isValid):
+        * public/WebPlugin.h: Added.
+        (WebKit::WebPlugin::~WebPlugin):
+        * public/WebPluginContainer.h: Added.
+        (WebKit::WebPluginContainer::~WebPluginContainer):
+        * public/WebPluginListBuilder.h: Added.
+        * public/WebPluginParams.h: Added.
+
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
