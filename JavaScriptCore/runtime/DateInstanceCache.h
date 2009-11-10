@@ -56,6 +56,11 @@ namespace JSC {
     public:
         DateInstanceCache()
         {
+            reset();
+        }
+        
+        void reset()
+        {
             for (size_t i = 0; i < cacheSize; ++i)
                 m_cache[i].key = NaN;
         }
@@ -72,7 +77,7 @@ namespace JSC {
         }
 
     private:
-        static const size_t cacheSize = 64;
+        static const size_t cacheSize = 16;
 
         struct CacheEntry {
             double key;

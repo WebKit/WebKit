@@ -1,5 +1,27 @@
 2009-11-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fixed an edge case that could cause the engine not to notice a timezone
+        change.
+        
+        No test because this case would require manual intervention to change
+        the timezone during the test.
+        
+        SunSpider reports no change.
+
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceCache::DateInstanceCache):
+        (JSC::DateInstanceCache::reset): Added a helper function for resetting
+        this cache. Also, shrank the cache, since we'll be resetting it often.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::resetDateCache): Include resetting the DateInstanceCache
+        in resetting Date data. (Otherwise, a cache hit could bypass a necessary
+        timezone update check.)
+
+2009-11-09  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Some manual inlining and constant propogation in Date code.
