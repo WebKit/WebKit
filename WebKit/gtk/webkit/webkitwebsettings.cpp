@@ -96,7 +96,6 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_offline_web_application_cache;
     WebKitEditingBehavior editing_behavior;
     gboolean enable_universal_access_from_file_uris;
-    gboolean enable_web_sockets;
     gboolean enable_dom_paste;
     gboolean tab_key_cycles_through_elements;
 };
@@ -139,7 +138,6 @@ enum {
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
     PROP_EDITING_BEHAVIOR,
     PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS,
-    PROP_ENABLE_WEB_SOCKETS,
     PROP_ENABLE_DOM_PASTE,
     PROP_TAB_KEY_CYCLES_THROUGH_ELEMENTS
 };
@@ -654,24 +652,6 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          flags));
 
     /**
-     * WebKitWebSettings:enable-web-sockets
-     *
-     * Whether to enable support for Web Sockets.
-     *
-     * Implementation of Web Sockets is currently considered experimental.
-     * Name of this property and the behavior could change in the future.
-     *
-     * Since: 1.1.16
-     */
-    g_object_class_install_property(gobject_class,
-                                    PROP_ENABLE_WEB_SOCKETS,
-                                    g_param_spec_boolean("enable-web-sockets",
-                                                         _("Enable Web Sockets"),
-                                                         _("Whether to enable Web Sockets"),
-                                                         FALSE,
-                                                         flags));
-
-    /**
      * WebKitWebSettings:enable-dom-paste
      *
      * Whether to enable DOM paste. If set to %TRUE, document.execCommand("Paste")
@@ -899,9 +879,6 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
         priv->enable_universal_access_from_file_uris = g_value_get_boolean(value);
         break;
-    case PROP_ENABLE_WEB_SOCKETS:
-        priv->enable_web_sockets = g_value_get_boolean(value);
-        break;
     case PROP_ENABLE_DOM_PASTE:
         priv->enable_dom_paste = g_value_get_boolean(value);
         break;
@@ -1019,9 +996,6 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
    case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
         g_value_set_boolean(value, priv->enable_universal_access_from_file_uris);
         break;
-    case PROP_ENABLE_WEB_SOCKETS:
-        g_value_set_boolean(value, priv->enable_web_sockets);
-        break;
     case PROP_ENABLE_DOM_PASTE:
         g_value_set_boolean(value, priv->enable_dom_paste);
         break;
@@ -1092,7 +1066,6 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
                  "editing-behavior", priv->editing_behavior,
                  "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
-                 "enable-web-sockets", priv->enable_web_sockets,
                  "enable-dom-paste", priv->enable_dom_paste,
                  NULL));
 
