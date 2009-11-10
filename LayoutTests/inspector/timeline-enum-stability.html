@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script>
+
+function dumpTimelineAgentRecordType(types) {
+   var prefix = "WebInspector.TimelineAgent.RecordType.";
+   for (prop in types) {
+       output(prefix + prop + " : " + types[prop]);
+   }
+   notifyDone();
+}
+
+function doit()
+{
+   evaluateInWebInspector("WebInspector.TimelineAgent.RecordType", dumpTimelineAgentRecordType);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p> 
+Check to see that TimelineAgent record types are stable.
+</p>
+
+<p>
+Applications outside of WebKit depend on the stability of the mapping of 
+these types to these specific values.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+Check to see that TimelineAgent record types are stable.
+
+Applications outside of WebKit depend on the stability of the mapping of these types to these specific values.
+
+WebInspector.TimelineAgent.RecordType.EventDispatch : 0
+WebInspector.TimelineAgent.RecordType.Layout : 1
+WebInspector.TimelineAgent.RecordType.RecalculateStyles : 2
+WebInspector.TimelineAgent.RecordType.Paint : 3
+WebInspector.TimelineAgent.RecordType.ParseHTML : 4
+WebInspector.TimelineAgent.RecordType.TimerInstall : 5
+WebInspector.TimelineAgent.RecordType.TimerRemove : 6
+WebInspector.TimelineAgent.RecordType.TimerFire : 7
+WebInspector.TimelineAgent.RecordType.XHRReadyStateChange : 8
+WebInspector.TimelineAgent.RecordType.XHRLoad : 9
+WebInspector.TimelineAgent.RecordType.EvaluateScript : 10
+WebInspector.TimelineAgent.RecordType.MarkTimeline : 11
+WebInspector.TimelineAgent.RecordType.ResourceSendRequest : 12
+WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse : 13
+WebInspector.TimelineAgent.RecordType.ResourceFinish : 14
+

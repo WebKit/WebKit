@@ -1,3 +1,15 @@
+2009-11-10  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a test to flag changes to values of the WebInspector Timeline record types.
+        Downstream apps depend on these mappings remaining stable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31303
+
+        * inspector/timeline-enum-stability-expected.txt: Added.
+        * inspector/timeline-enum-stability.html: Added.
+
 2009-11-10  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
