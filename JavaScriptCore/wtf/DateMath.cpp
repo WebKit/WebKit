@@ -39,6 +39,33 @@
  * other provisions required by the MPL or the GPL, as the case may be.
  * If you do not delete the provisions above, a recipient may use your
  * version of this file under any of the LGPL, the MPL or the GPL.
+
+ * Copyright 2006-2008 the V8 project authors. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ *       copyright notice, this list of conditions and the following
+ *       disclaimer in the documentation and/or other materials provided
+ *       with the distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ *       contributors may be used to endorse or promote products derived
+ *       from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -380,11 +407,9 @@ static int32_t calculateUTCOffset()
 }
 
 /*
- * Get the DST offset for the time passed in.  Takes
- * seconds (not milliseconds) and cannot handle dates before 1970
- * on some OS'
+ * Get the DST offset for the time passed in.
  */
-static double getDSTOffsetSimple(double localTimeSeconds, double utcOffset)
+static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset)
 {
     if (localTimeSeconds > maxUnixTime)
         localTimeSeconds = maxUnixTime;
@@ -413,9 +438,9 @@ static double getDSTOffsetSimple(double localTimeSeconds, double utcOffset)
 }
 
 // Get the DST offset, given a time in UTC
-static double getDSTOffset(double ms, double utcOffset)
+static double calculateDSTOffset(double ms, double utcOffset)
 {
-    // On Mac OS X, the call to localtime (see getDSTOffsetSimple) will return historically accurate
+    // On Mac OS X, the call to localtime (see calculateDSTOffsetSimple) will return historically accurate
     // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
     // standard explicitly dictates that historical information should not be considered when
     // determining DST. For this reason we shift away from years that localtime can handle but would
@@ -431,7 +456,7 @@ static double getDSTOffset(double ms, double utcOffset)
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 
-    return getDSTOffsetSimple(ms / msPerSecond, utcOffset);
+    return calculateDSTOffsetSimple(ms / msPerSecond, utcOffset);
 }
 
 void initializeDates()
@@ -802,7 +827,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
     // fall back to local timezone
     if (!haveTZ) {
         double utcOffset = calculateUTCOffset();
-        double dstOffset = getDSTOffset(ms, utcOffset);
+        double dstOffset = calculateDSTOffset(ms, utcOffset);
         offset = static_cast<int>((utcOffset + dstOffset) / msPerMinute);
     }
     return ms - (offset * msPerMinute);
@@ -820,6 +845,69 @@ double timeClip(double t)
 
 #if USE(JSC)
 namespace JSC {
+
+// Get the DST offset for the time passed in.
+//
+// NOTE: The implementation relies on the fact that no time zones have
+// more than one daylight savings offset change per month.
+// If this function is called with NaN it returns NaN.
+static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
+{
+    DSTOffsetCache& cache = exec->globalData().dstOffsetCache;
+    double start = cache.start;
+    double end = cache.end;
+
+    if (start <= ms) {
+        // If the time fits in the cached interval, return the cached offset.
+        if (ms <= end) return cache.offset;
+
+        // Compute a possible new interval end.
+        double newEnd = end + cache.increment;
+
+        if (ms <= newEnd) {
+            double endOffset = calculateDSTOffset(newEnd, utcOffset);
+            if (cache.offset == endOffset) {
+                // If the offset at the end of the new interval still matches
+                // the offset in the cache, we grow the cached time interval
+                // and return the offset.
+                cache.end = newEnd;
+                cache.increment = msPerMonth;
+                return endOffset;
+            } else {
+                double offset = calculateDSTOffset(ms, utcOffset);
+                if (offset == endOffset) {
+                    // The offset at the given time is equal to the offset at the
+                    // new end of the interval, so that means that we've just skipped
+                    // the point in time where the DST offset change occurred. Updated
+                    // the interval to reflect this and reset the increment.
+                    cache.start = ms;
+                    cache.end = newEnd;
+                    cache.increment = msPerMonth;
+                } else {
+                    // The interval contains a DST offset change and the given time is
+                    // before it. Adjust the increment to avoid a linear search for
+                    // the offset change point and change the end of the interval.
+                    cache.increment /= 3;
+                    cache.end = ms;
+                }
+                // Update the offset in the cache and return it.
+                cache.offset = offset;
+                return offset;
+            }
+        }
+    }
+
+    // Compute the DST offset for the time and shrink the cache interval
+    // to only contain the time. This allows fast repeated DST offset
+    // computations for the same time.
+    double offset = calculateDSTOffset(ms, utcOffset);
+    cache.offset = offset;
+    cache.start = ms;
+    cache.end = ms;
+    cache.increment = msPerMonth;
+    return offset;
+}
+
 /*
  * Get the difference in milliseconds between this time zone and UTC (GMT)
  * NOT including DST.
@@ -842,7 +930,7 @@ double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double
     if (!inputIsUTC) { // convert to UTC
         double utcOffset = getUTCOffset(exec);
         result -= utcOffset;
-        result -= getDSTOffset(result, utcOffset);
+        result -= getDSTOffset(exec, result, utcOffset);
     }
 
     return result;
@@ -855,7 +943,7 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     double utcOff = 0.0;
     if (!outputIsUTC) {
         utcOff = getUTCOffset(exec);
-        dstOff = getDSTOffset(ms, utcOff);
+        dstOff = getDSTOffset(exec, ms, utcOff);
         ms += dstOff + utcOff;
     }
 
@@ -882,7 +970,7 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     // fall back to local timezone
     if (!haveTZ) {
         double utcOffset = getUTCOffset(exec);
-        double dstOffset = getDSTOffset(ms, utcOffset);
+        double dstOffset = getDSTOffset(exec, ms, utcOffset);
         offset = static_cast<int>((utcOffset + dstOffset) / WTF::msPerMinute);
     }
     return ms - (offset * WTF::msPerMinute);

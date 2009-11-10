@@ -74,6 +74,7 @@ const double msPerSecond = 1000.0;
 const double msPerMinute = 60.0 * 1000.0;
 const double msPerHour = 60.0 * 60.0 * 1000.0;
 const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
+const double msPerMonth = 2592000000.0;
 
 } // namespace WTF
 

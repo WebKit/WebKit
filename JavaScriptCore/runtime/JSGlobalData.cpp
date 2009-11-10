@@ -255,6 +255,7 @@ JSGlobalData::ClientData::~ClientData()
 void JSGlobalData::resetDateCache()
 {
     cachedUTCOffset = NaN;
+    dstOffsetCache.reset();
     cachedDateString = UString();
     dateInstanceCache.reset();
 }

@@ -2,6 +2,32 @@
 
         Reviewed by Oliver Hunt.
 
+        Imported the v8 DST cache.
+        
+        SunSpider says 1.5% faster.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::resetDateCache): Reset the DST cache when resetting
+        other date data.
+
+        * runtime/JSGlobalData.h:
+        (JSC::DSTOffsetCache::DSTOffsetCache):
+        (JSC::DSTOffsetCache::reset): Added a struct for the DST cache.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateDSTOffsetSimple):
+        (WTF::calculateDSTOffset):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (JSC::getDSTOffset):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * wtf/DateMath.h: The imported code for probing and updating the cache.
+
+2009-11-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Fixed an edge case that could cause the engine not to notice a timezone
         change.
         
