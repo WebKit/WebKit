@@ -2,6 +2,175 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: ChromeClientImpl...ContextMenuClientImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/ChromeClientImpl.cpp: Added.
+        (WebKit::ChromeClientImpl::ChromeClientImpl):
+        (WebKit::ChromeClientImpl::~ChromeClientImpl):
+        (WebKit::ChromeClientImpl::chromeDestroyed):
+        (WebKit::ChromeClientImpl::setWindowRect):
+        (WebKit::ChromeClientImpl::windowRect):
+        (WebKit::ChromeClientImpl::pageRect):
+        (WebKit::ChromeClientImpl::scaleFactor):
+        (WebKit::ChromeClientImpl::focus):
+        (WebKit::ChromeClientImpl::unfocus):
+        (WebKit::ChromeClientImpl::canTakeFocus):
+        (WebKit::ChromeClientImpl::takeFocus):
+        (WebKit::ChromeClientImpl::focusedNodeChanged):
+        (WebKit::ChromeClientImpl::createWindow):
+        (WebKit::currentEventShouldCauseBackgroundTab):
+        (WebKit::ChromeClientImpl::show):
+        (WebKit::ChromeClientImpl::canRunModal):
+        (WebKit::ChromeClientImpl::runModal):
+        (WebKit::ChromeClientImpl::setToolbarsVisible):
+        (WebKit::ChromeClientImpl::toolbarsVisible):
+        (WebKit::ChromeClientImpl::setStatusbarVisible):
+        (WebKit::ChromeClientImpl::statusbarVisible):
+        (WebKit::ChromeClientImpl::setScrollbarsVisible):
+        (WebKit::ChromeClientImpl::scrollbarsVisible):
+        (WebKit::ChromeClientImpl::setMenubarVisible):
+        (WebKit::ChromeClientImpl::menubarVisible):
+        (WebKit::ChromeClientImpl::setResizable):
+        (WebKit::ChromeClientImpl::addMessageToConsole):
+        (WebKit::ChromeClientImpl::canRunBeforeUnloadConfirmPanel):
+        (WebKit::ChromeClientImpl::runBeforeUnloadConfirmPanel):
+        (WebKit::ChromeClientImpl::closeWindowSoon):
+        (WebKit::ChromeClientImpl::runJavaScriptAlert):
+        (WebKit::ChromeClientImpl::runJavaScriptConfirm):
+        (WebKit::ChromeClientImpl::runJavaScriptPrompt):
+        (WebKit::ChromeClientImpl::setStatusbarText):
+        (WebKit::ChromeClientImpl::shouldInterruptJavaScript):
+        (WebKit::ChromeClientImpl::tabsToLinks):
+        (WebKit::ChromeClientImpl::windowResizerRect):
+        (WebKit::ChromeClientImpl::repaint):
+        (WebKit::ChromeClientImpl::scroll):
+        (WebKit::ChromeClientImpl::screenToWindow):
+        (WebKit::ChromeClientImpl::windowToScreen):
+        (WebKit::ChromeClientImpl::contentsSizeChanged):
+        (WebKit::ChromeClientImpl::scrollbarsModeDidChange):
+        (WebKit::ChromeClientImpl::mouseDidMoveOverElement):
+        (WebKit::ChromeClientImpl::setToolTip):
+        (WebKit::ChromeClientImpl::print):
+        (WebKit::ChromeClientImpl::exceededDatabaseQuota):
+        (WebKit::ChromeClientImpl::reachedMaxAppCacheSize):
+        (WebKit::ChromeClientImpl::runOpenPanel):
+        (WebKit::ChromeClientImpl::popupOpened):
+        (WebKit::ChromeClientImpl::setCursor):
+        (WebKit::ChromeClientImpl::setCursorForPlugin):
+        (WebKit::ChromeClientImpl::formStateDidChange):
+        (WebKit::ChromeClientImpl::getPopupMenuInfo):
+        (WebKit::ChromeClientImpl::notificationPresenter):
+        * src/ChromeClientImpl.h: Added.
+        (WebKit::ChromeClientImpl::webView):
+        (WebKit::ChromeClientImpl::platformPageClient):
+        (WebKit::ChromeClientImpl::scrollRectIntoView):
+        (WebKit::ChromeClientImpl::requestGeolocationPermissionForFrame):
+        (WebKit::ChromeClientImpl::setCursor):
+        (WebKit::ChromeClientImpl::createHTMLParserQuirks):
+        * src/ChromiumBridge.cpp: Added.
+        (WebCore::toChromeClientImpl):
+        (WebCore::toWebWidgetClient):
+        (WebCore::ChromiumBridge::clipboardIsFormatAvailable):
+        (WebCore::ChromiumBridge::clipboardReadPlainText):
+        (WebCore::ChromiumBridge::clipboardReadHTML):
+        (WebCore::ChromiumBridge::clipboardWriteSelection):
+        (WebCore::ChromiumBridge::clipboardWritePlainText):
+        (WebCore::ChromiumBridge::clipboardWriteURL):
+        (WebCore::ChromiumBridge::clipboardWriteImage):
+        (WebCore::ChromiumBridge::setCookies):
+        (WebCore::ChromiumBridge::cookies):
+        (WebCore::ChromiumBridge::rawCookies):
+        (WebCore::ChromiumBridge::deleteCookie):
+        (WebCore::ChromiumBridge::prefetchDNS):
+        (WebCore::ChromiumBridge::fileExists):
+        (WebCore::ChromiumBridge::deleteFile):
+        (WebCore::ChromiumBridge::deleteEmptyDirectory):
+        (WebCore::ChromiumBridge::getFileSize):
+        (WebCore::ChromiumBridge::getFileModificationTime):
+        (WebCore::ChromiumBridge::directoryName):
+        (WebCore::ChromiumBridge::pathByAppendingComponent):
+        (WebCore::ChromiumBridge::makeAllDirectories):
+        (WebCore::ChromiumBridge::getAbsolutePath):
+        (WebCore::ChromiumBridge::isDirectory):
+        (WebCore::ChromiumBridge::filePathToURL):
+        (WebCore::ChromiumBridge::ensureFontLoaded):
+        (WebCore::ChromiumBridge::getFontFamilyForCharacters):
+        (WebCore::ChromiumBridge::databaseOpenFile):
+        (WebCore::ChromiumBridge::databaseDeleteFile):
+        (WebCore::ChromiumBridge::databaseGetFileAttributes):
+        (WebCore::ChromiumBridge::databaseGetFileSize):
+        (WebCore::ChromiumBridge::signedPublicKeyAndChallengeString):
+        (WebCore::ChromiumBridge::computedDefaultLanguage):
+        (WebCore::ChromiumBridge::layoutTestMode):
+        (WebCore::ChromiumBridge::isSupportedImageMIMEType):
+        (WebCore::ChromiumBridge::isSupportedJavaScriptMIMEType):
+        (WebCore::ChromiumBridge::isSupportedNonImageMIMEType):
+        (WebCore::ChromiumBridge::mimeTypeForExtension):
+        (WebCore::ChromiumBridge::mimeTypeFromFile):
+        (WebCore::ChromiumBridge::preferredExtensionForMIMEType):
+        (WebCore::ChromiumBridge::plugins):
+        (WebCore::ChromiumBridge::pluginScriptableObject):
+        (WebCore::ChromiumBridge::loadPlatformImageResource):
+        (WebCore::ChromiumBridge::sandboxEnabled):
+        (WebCore::ChromiumBridge::setSharedTimerFiredFunction):
+        (WebCore::ChromiumBridge::setSharedTimerFireTime):
+        (WebCore::ChromiumBridge::stopSharedTimer):
+        (WebCore::ChromiumBridge::decrementStatsCounter):
+        (WebCore::ChromiumBridge::incrementStatsCounter):
+        (WebCore::ChromiumBridge::suddenTerminationChanged):
+        (WebCore::ChromiumBridge::currentTime):
+        (WebCore::ChromiumBridge::paintButton):
+        (WebCore::ChromiumBridge::paintMenuList):
+        (WebCore::ChromiumBridge::paintScrollbarArrow):
+        (WebCore::ChromiumBridge::paintScrollbarThumb):
+        (WebCore::ChromiumBridge::paintScrollbarTrack):
+        (WebCore::ChromiumBridge::paintTextField):
+        (WebCore::ChromiumBridge::paintTrackbar):
+        (WebCore::ChromiumBridge::traceEventBegin):
+        (WebCore::ChromiumBridge::traceEventEnd):
+        (WebCore::ChromiumBridge::visitedLinkHash):
+        (WebCore::ChromiumBridge::isLinkVisited):
+        (WebCore::ChromiumBridge::notifyJSOutOfMemory):
+        (WebCore::ChromiumBridge::memoryUsageMB):
+        (WebCore::ChromiumBridge::screenDepth):
+        (WebCore::ChromiumBridge::screenDepthPerComponent):
+        (WebCore::ChromiumBridge::screenIsMonochrome):
+        (WebCore::ChromiumBridge::screenRect):
+        (WebCore::ChromiumBridge::screenAvailableRect):
+        (WebCore::ChromiumBridge::popupsAllowed):
+        (WebCore::ChromiumBridge::widgetSetCursor):
+        (WebCore::ChromiumBridge::widgetSetFocus):
+        (WebCore::WorkerContextProxy::create):
+        * src/ChromiumCurrentTime.cpp: Added.
+        (WTF::currentTime):
+        * src/ChromiumThreading.cpp: Added.
+        (WTF::ChromiumThreading::initializeMainThread):
+        (WTF::ChromiumThreading::scheduleDispatchFunctionsOnMainThread):
+        * src/ContextMenuClientImpl.cpp: Added.
+        (WebKit::urlFromFrame):
+        (WebKit::isASingleWord):
+        (WebKit::selectMisspelledWord):
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/ContextMenuClientImpl.h: Added.
+        (WebKit::ContextMenuClientImpl::ContextMenuClientImpl):
+        (WebKit::ContextMenuClientImpl::~ContextMenuClientImpl):
+        (WebKit::ContextMenuClientImpl::copyImageToClipboard):
+        (WebKit::ContextMenuClientImpl::contextMenuDestroyed):
+        (WebKit::ContextMenuClientImpl::contextMenuItemSelected):
+        (WebKit::ContextMenuClientImpl::downloadURL):
+        (WebKit::ContextMenuClientImpl::isSpeaking):
+        (WebKit::ContextMenuClientImpl::lookUpInDictionary):
+        (WebKit::ContextMenuClientImpl::searchWithGoogle):
+        (WebKit::ContextMenuClientImpl::shouldIncludeInspectElementItem):
+        (WebKit::ContextMenuClientImpl::speak):
+        (WebKit::ContextMenuClientImpl::stopSpeaking):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: AppCach...BackForwardListClientImpl
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
