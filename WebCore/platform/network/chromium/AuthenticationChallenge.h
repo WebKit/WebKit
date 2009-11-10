@@ -28,25 +28,23 @@
 #define AuthenticationChallenge_h
 
 #include "AuthenticationChallengeBase.h"
-#include "ResourceHandle.h"
+#include "AuthenticationClient.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-    class ResourceHandle;
 
     class AuthenticationChallenge : public AuthenticationChallengeBase {
     public:
         AuthenticationChallenge() {}
         AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&);
 
-        ResourceHandle* sourceHandle() const { return m_sourceHandle.get(); }
+        AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
 
     private:
         friend class AuthenticationChallengeBase;
         static bool platformCompare(const AuthenticationChallenge&, const AuthenticationChallenge&);
 
-        RefPtr<ResourceHandle> m_sourceHandle;
+        RefPtr<AuthenticationClient> m_authenticationClient;
     };
 
 } // namespace WebCore

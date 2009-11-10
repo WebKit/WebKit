@@ -27,6 +27,7 @@
 #define ResourceHandle_h
 
 #include "AuthenticationChallenge.h"
+#include "AuthenticationClient.h"
 #include "HTTPHeaderMap.h"
 #include "ThreadableLoader.h"
 #include <wtf/OwnPtr.h>
@@ -91,7 +92,7 @@ class SharedBuffer;
 
 template <typename T> class Timer;
 
-class ResourceHandle : public RefCounted<ResourceHandle> {
+class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationClient {
 private:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle);
 
@@ -118,9 +119,9 @@ public:
 #endif
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    void receivedCredential(const AuthenticationChallenge&, const Credential&);
-    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-    void receivedCancellation(const AuthenticationChallenge&);
+    virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
+    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+    virtual void receivedCancellation(const AuthenticationChallenge&);
 #endif
 
 #if PLATFORM(MAC)
@@ -190,10 +191,16 @@ public:
 
     void fireFailure(Timer<ResourceHandle>*);
 
+    using RefCounted<ResourceHandle>::ref;
+    using RefCounted<ResourceHandle>::deref;
+
 private:
     void scheduleFailure(FailureType);
 
     bool start(Frame*);
+
+    virtual void refAuthenticationClient() { ref(); }
+    virtual void derefAuthenticationClient() { deref(); }
 
     friend class ResourceHandleInternal;
     OwnPtr<ResourceHandleInternal> d;

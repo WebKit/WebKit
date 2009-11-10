@@ -32,16 +32,16 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class ResourceHandle;
+    class AuthenticationClient;
 }
 
 class DECLSPEC_UUID("5CACD637-F82F-491F-947A-5DCA38AA0FEA") WebURLAuthenticationChallengeSender
     : public IWebURLAuthenticationChallengeSender
 {
 public:
-    static WebURLAuthenticationChallengeSender* createInstance(PassRefPtr<WebCore::ResourceHandle>);
+    static WebURLAuthenticationChallengeSender* createInstance(PassRefPtr<WebCore::AuthenticationClient>);
 private:
-    WebURLAuthenticationChallengeSender(PassRefPtr<WebCore::ResourceHandle>);
+    WebURLAuthenticationChallengeSender(PassRefPtr<WebCore::AuthenticationClient>);
     ~WebURLAuthenticationChallengeSender();
 public:
     // IUnknown
@@ -60,12 +60,12 @@ public:
         /* [in] */ IWebURLCredential* credential, 
         /* [in] */ IWebURLAuthenticationChallenge* challenge);
 
-    WebCore::ResourceHandle* resourceHandle() const;
+    WebCore::AuthenticationClient* authenticationClient() const;
 
 private:
     ULONG m_refCount;
 
-    RefPtr<WebCore::ResourceHandle> m_handle;
+    RefPtr<WebCore::AuthenticationClient> m_client;
 };
 
 #endif

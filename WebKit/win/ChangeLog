@@ -1,3 +1,26 @@
+2009-11-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31312
+        Decouple authentication panel callbacks from ResourceHandle
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::initWithAuthenticationChallenge):
+        (WebURLAuthenticationChallenge::sender):
+        * WebURLAuthenticationChallengeSender.cpp:
+        (WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender):
+        (WebURLAuthenticationChallengeSender::createInstance):
+        (WebURLAuthenticationChallengeSender::authenticationClient):
+        * WebURLAuthenticationChallengeSender.h:
+        * WebURLAuthenticationChallengeSenderCFNet.cpp:
+        (WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge):
+        (WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge):
+        (WebURLAuthenticationChallengeSender::useCredential):
+        Adjusted for WebCore changes.
+
 2009-11-10  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by NOBODY - Build Fix.

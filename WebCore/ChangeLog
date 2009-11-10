@@ -1,3 +1,41 @@
+2009-11-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31312
+        Decouple authentication panel callbacks from ResourceHandle
+
+        No change in functionality.
+
+        SocketStreamHandle also needs to request credentials, so it's not appropriate to store
+        ResourceHandle as delegate.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/AuthenticationClient.h: Added.
+        Added a new interface for listening to authentication panel notifications.
+
+        * WebCore.xcodeproj/project.pbxproj: Added AuthenticationClient.h. Let Visual Studio do what
+        it wants with the project file.
+
+        (WebCore::AuthenticationClient::ref): Using our usual method of exposing refcounting on an
+        interface class.
+        (WebCore::AuthenticationClient::deref): Ditto.
+
+        * platform/network/ResourceHandle.h:
+        (WebCore::ResourceHandle::refAuthenticationClient): Ditto.
+        (WebCore::ResourceHandle::derefAuthenticationClient): Ditto.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::platformCompare):
+        * platform/network/cf/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::authenticationClient):
+        * platform/network/chromium/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::authenticationClient):
+        * platform/network/curl/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::authenticationClient):
+        Keeping a reference to AuthenticationClient, not to ResourceHandle.
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
        Second attempted gtk build fix. No review needed.

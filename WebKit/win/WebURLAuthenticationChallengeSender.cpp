@@ -34,18 +34,18 @@
 #include "WebURLCredential.h"
 
 #pragma warning(push, 0)
-#include <WebCore/ResourceHandle.h>
+#include <WebCore/AuthenticationClient.h>
 #pragma warning(pop)
 
 using namespace WebCore;
 
 // WebURLAuthenticationChallengeSender ----------------------------------------------------------------
 
-WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(PassRefPtr<ResourceHandle> handle)
+WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(PassRefPtr<AuthenticationClient> client)
     : m_refCount(0)
-    , m_handle(handle)
+    , m_client(client)
 {
-    ASSERT(m_handle);
+    ASSERT(m_client);
     gClassCount++;
     gClassNameCount.add("WebURLAuthenticationChallengeSender");
 }
@@ -56,9 +56,9 @@ WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender()
     gClassNameCount.remove("WebURLAuthenticationChallengeSender");
 }
 
-WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(PassRefPtr<WebCore::ResourceHandle> handle)
+WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(PassRefPtr<WebCore::AuthenticationClient> client)
 {
-    WebURLAuthenticationChallengeSender* instance = new WebURLAuthenticationChallengeSender(handle);
+    WebURLAuthenticationChallengeSender* instance = new WebURLAuthenticationChallengeSender(client);
     instance->AddRef();
     return instance;
 }
@@ -97,8 +97,8 @@ ULONG STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::Release(void)
 
 // WebURLAuthenticationChallengeSender ----------------------------------------------------------------
 
-ResourceHandle* WebURLAuthenticationChallengeSender::resourceHandle() const
+AuthenticationClient* WebURLAuthenticationChallengeSender::authenticationClient() const
 {
-    return m_handle.get();
+    return m_client.get();
 }
 

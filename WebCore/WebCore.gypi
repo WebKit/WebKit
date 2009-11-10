@@ -2442,6 +2442,7 @@
             'platform/network/win/ResourceHandleWin.h',
             'platform/network/AuthenticationChallengeBase.cpp',
             'platform/network/AuthenticationChallengeBase.h',
+            'platform/network/AuthenticationClient.h',
             'platform/network/Credential.cpp',
             'platform/network/Credential.h',
             'platform/network/DNS.h',

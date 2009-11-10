@@ -172,7 +172,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithAuthenticationC
         return E_NOINTERFACE;
 
 #if USE(CFNETWORK)
-    m_authenticationChallenge = AuthenticationChallenge(webChallenge->authenticationChallenge().cfURLAuthChallengeRef(), webSender->resourceHandle());
+    m_authenticationChallenge = AuthenticationChallenge(webChallenge->authenticationChallenge().cfURLAuthChallengeRef(), webSender->authenticationClient());
 
     return S_OK;
 #else
@@ -220,8 +220,8 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::sender(
     /* [out, retval] */ IWebURLAuthenticationChallengeSender** sender)
 {
     if (!m_sender) {
-        ResourceHandle* handle = m_authenticationChallenge.sourceHandle();
-        m_sender.adoptRef(WebURLAuthenticationChallengeSender::createInstance(handle));
+        AuthenticationClient* client = m_authenticationChallenge.authenticationClient();
+        m_sender.adoptRef(WebURLAuthenticationChallengeSender::createInstance(client));
     }
 
     return m_sender.copyRefTo(sender);

@@ -4603,6 +4603,7 @@
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
 		E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */; };
+		E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E124748310AA161D00B79493 /* AuthenticationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
 		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
@@ -9764,6 +9765,7 @@
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
 		E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutionContext.h; sourceTree = "<group>"; };
 		E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutionContext.cpp; sourceTree = "<group>"; };
+		E124748310AA161D00B79493 /* AuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationClient.h; sourceTree = "<group>"; };
 		E12719C60EEEC16800F61213 /* NavigatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorBase.h; sourceTree = "<group>"; };
 		E12719C90EEEC21300F61213 /* NavigatorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBase.cpp; sourceTree = "<group>"; };
 		E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigator.h; sourceTree = "<group>"; };
@@ -10994,6 +10996,7 @@
 				656B84E70AEA1DAE00A095B4 /* mac */,
 				934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */,
 				934F71390D5A6F1000018D69 /* AuthenticationChallengeBase.h */,
+				E124748310AA161D00B79493 /* AuthenticationClient.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
 				51A052321058774F00CC9E95 /* CredentialStorage.cpp */,
@@ -18102,6 +18105,7 @@
 				1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */,
 				1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */,
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
+				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

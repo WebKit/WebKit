@@ -1584,6 +1584,7 @@ webcore_sources += \
 	WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	WebCore/platform/network/AuthenticationChallengeBase.h \
+	WebCore/platform/network/AuthenticationClient.h \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/Credential.h \
 	WebCore/platform/network/DNS.h \

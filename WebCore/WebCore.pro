@@ -1920,6 +1920,7 @@ HEADERS += \
     platform/Logging.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
+    platform/network/AuthenticationClient.h \
     platform/network/Credential.h \
     platform/network/FormDataBuilder.h \
     platform/network/FormData.h \
