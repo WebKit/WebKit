@@ -1,3 +1,211 @@
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Up-streaming Chromium API src files: WebString...WebViewImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebString.cpp: Added.
+        (WebKit::WebString::reset):
+        (WebKit::WebString::assign):
+        (WebKit::WebString::length):
+        (WebKit::WebString::data):
+        (WebKit::WebString::utf8):
+        (WebKit::WebString::fromUTF8):
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+        (WebKit::WebString::operator WebCore::String):
+        (WebKit::WebString::operator WebCore::AtomicString):
+        * src/WebURL.cpp: Added.
+        (WebKit::WebURL::WebURL):
+        (WebKit::WebURL::operator=):
+        (WebKit::WebURL::operator WebCore::KURL):
+        * src/WebURLError.cpp: Added.
+        (WebKit::WebURLError::WebURLError):
+        (WebKit::WebURLError::operator=):
+        (WebKit::WebURLError::operator ResourceError):
+        * src/WebURLRequest.cpp: Added.
+        (WebKit::WebURLRequestPrivateImpl::WebURLRequestPrivateImpl):
+        (WebKit::WebURLRequestPrivateImpl::dispose):
+        (WebKit::WebURLRequest::initialize):
+        (WebKit::WebURLRequest::reset):
+        (WebKit::WebURLRequest::assign):
+        (WebKit::WebURLRequest::isNull):
+        (WebKit::WebURLRequest::url):
+        (WebKit::WebURLRequest::setURL):
+        (WebKit::WebURLRequest::firstPartyForCookies):
+        (WebKit::WebURLRequest::setFirstPartyForCookies):
+        (WebKit::WebURLRequest::allowCookies):
+        (WebKit::WebURLRequest::setAllowCookies):
+        (WebKit::WebURLRequest::allowStoredCredentials):
+        (WebKit::WebURLRequest::setAllowStoredCredentials):
+        (WebKit::WebURLRequest::cachePolicy):
+        (WebKit::WebURLRequest::setCachePolicy):
+        (WebKit::WebURLRequest::httpMethod):
+        (WebKit::WebURLRequest::setHTTPMethod):
+        (WebKit::WebURLRequest::httpHeaderField):
+        (WebKit::WebURLRequest::setHTTPHeaderField):
+        (WebKit::WebURLRequest::addHTTPHeaderField):
+        (WebKit::WebURLRequest::clearHTTPHeaderField):
+        (WebKit::WebURLRequest::visitHTTPHeaderFields):
+        (WebKit::WebURLRequest::httpBody):
+        (WebKit::WebURLRequest::setHTTPBody):
+        (WebKit::WebURLRequest::reportUploadProgress):
+        (WebKit::WebURLRequest::setReportUploadProgress):
+        (WebKit::WebURLRequest::targetType):
+        (WebKit::WebURLRequest::setTargetType):
+        (WebKit::WebURLRequest::requestorID):
+        (WebKit::WebURLRequest::setRequestorID):
+        (WebKit::WebURLRequest::requestorProcessID):
+        (WebKit::WebURLRequest::setRequestorProcessID):
+        (WebKit::WebURLRequest::appCacheHostID):
+        (WebKit::WebURLRequest::setAppCacheHostID):
+        (WebKit::WebURLRequest::toMutableResourceRequest):
+        (WebKit::WebURLRequest::toResourceRequest):
+        * src/WebURLRequestPrivate.h: Added.
+        (WebKit::WebURLRequestPrivate::WebURLRequestPrivate):
+        * src/WebURLResponse.cpp: Added.
+        (WebKit::WebURLResponsePrivateImpl::WebURLResponsePrivateImpl):
+        (WebKit::WebURLResponsePrivateImpl::dispose):
+        (WebKit::WebURLResponse::initialize):
+        (WebKit::WebURLResponse::reset):
+        (WebKit::WebURLResponse::assign):
+        (WebKit::WebURLResponse::isNull):
+        (WebKit::WebURLResponse::url):
+        (WebKit::WebURLResponse::setURL):
+        (WebKit::WebURLResponse::mimeType):
+        (WebKit::WebURLResponse::setMIMEType):
+        (WebKit::WebURLResponse::expectedContentLength):
+        (WebKit::WebURLResponse::setExpectedContentLength):
+        (WebKit::WebURLResponse::textEncodingName):
+        (WebKit::WebURLResponse::setTextEncodingName):
+        (WebKit::WebURLResponse::suggestedFileName):
+        (WebKit::WebURLResponse::setSuggestedFileName):
+        (WebKit::WebURLResponse::httpStatusCode):
+        (WebKit::WebURLResponse::setHTTPStatusCode):
+        (WebKit::WebURLResponse::httpStatusText):
+        (WebKit::WebURLResponse::setHTTPStatusText):
+        (WebKit::WebURLResponse::httpHeaderField):
+        (WebKit::WebURLResponse::setHTTPHeaderField):
+        (WebKit::WebURLResponse::addHTTPHeaderField):
+        (WebKit::WebURLResponse::clearHTTPHeaderField):
+        (WebKit::WebURLResponse::visitHTTPHeaderFields):
+        (WebKit::WebURLResponse::lastModifiedDate):
+        (WebKit::WebURLResponse::setLastModifiedDate):
+        (WebKit::WebURLResponse::isContentFiltered):
+        (WebKit::WebURLResponse::setIsContentFiltered):
+        (WebKit::WebURLResponse::appCacheID):
+        (WebKit::WebURLResponse::setAppCacheID):
+        (WebKit::WebURLResponse::appCacheManifestURL):
+        (WebKit::WebURLResponse::setAppCacheManifestURL):
+        (WebKit::WebURLResponse::securityInfo):
+        (WebKit::WebURLResponse::setSecurityInfo):
+        (WebKit::WebURLResponse::toMutableResourceResponse):
+        (WebKit::WebURLResponse::toResourceResponse):
+        * src/WebURLResponsePrivate.h: Added.
+        (WebKit::WebURLResponsePrivate::WebURLResponsePrivate):
+        * src/WebViewImpl.cpp: Added.
+        (WebKit::):
+        (WebKit::WebView::create):
+        (WebKit::WebView::updateVisitedLinkState):
+        (WebKit::WebView::resetVisitedLinkState):
+        (WebKit::WebViewImpl::initializeMainFrame):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::theme):
+        (WebKit::WebViewImpl::mainFrameImpl):
+        (WebKit::WebViewImpl::tabKeyCyclesThroughElements):
+        (WebKit::WebViewImpl::setTabKeyCyclesThroughElements):
+        (WebKit::WebViewImpl::mouseMove):
+        (WebKit::WebViewImpl::mouseLeave):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::mouseContextMenu):
+        (WebKit::WebViewImpl::mouseUp):
+        (WebKit::WebViewImpl::mouseWheel):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::charEvent):
+        (WebKit::WebViewImpl::sendContextMenuEvent):
+        (WebKit::WebViewImpl::keyEventDefault):
+        (WebKit::WebViewImpl::scrollViewWithKeyboard):
+        (WebKit::WebViewImpl::propagateScroll):
+        (WebKit::WebViewImpl::focusedWebCoreFrame):
+        (WebKit::WebViewImpl::fromPage):
+        (WebKit::WebViewImpl::close):
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::handleInputEvent):
+        (WebKit::WebViewImpl::mouseCaptureLost):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::handleCompositionEvent):
+        (WebKit::WebViewImpl::queryCompositionStatus):
+        (WebKit::WebViewImpl::setTextDirection):
+        (WebKit::WebViewImpl::settings):
+        (WebKit::WebViewImpl::pageEncoding):
+        (WebKit::WebViewImpl::setPageEncoding):
+        (WebKit::WebViewImpl::dispatchBeforeUnloadEvent):
+        (WebKit::WebViewImpl::dispatchUnloadEvent):
+        (WebKit::WebViewImpl::mainFrame):
+        (WebKit::WebViewImpl::findFrameByName):
+        (WebKit::WebViewImpl::focusedFrame):
+        (WebKit::WebViewImpl::setFocusedFrame):
+        (WebKit::WebViewImpl::setInitialFocus):
+        (WebKit::WebViewImpl::clearFocusedNode):
+        (WebKit::WebViewImpl::zoomIn):
+        (WebKit::WebViewImpl::zoomOut):
+        (WebKit::WebViewImpl::zoomDefault):
+        (WebKit::WebViewImpl::performMediaPlayerAction):
+        (WebKit::WebViewImpl::copyImageAt):
+        (WebKit::WebViewImpl::dragSourceEndedAt):
+        (WebKit::WebViewImpl::dragSourceMovedTo):
+        (WebKit::WebViewImpl::dragSourceSystemDragEnded):
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit::WebViewImpl::dragTargetDragOver):
+        (WebKit::WebViewImpl::dragTargetDragLeave):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        (WebKit::WebViewImpl::dragIdentity):
+        (WebKit::WebViewImpl::inspectElementAt):
+        (WebKit::WebViewImpl::inspectorSettings):
+        (WebKit::WebViewImpl::setInspectorSettings):
+        (WebKit::WebViewImpl::devToolsAgent):
+        (WebKit::WebViewImpl::setDevToolsAgent):
+        (WebKit::WebViewImpl::accessibilityObject):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        (WebKit::WebViewImpl::hideAutofillPopup):
+        (WebKit::WebViewImpl::setDropEffect):
+        (WebKit::WebViewImpl::setIsTransparent):
+        (WebKit::WebViewImpl::isTransparent):
+        (WebKit::WebViewImpl::setIsActive):
+        (WebKit::WebViewImpl::isActive):
+        (WebKit::WebViewImpl::didCommitLoad):
+        (WebKit::WebViewImpl::navigationPolicyFromMouseEvent):
+        (WebKit::WebViewImpl::startDragging):
+        (WebKit::WebViewImpl::setCurrentHistoryItem):
+        (WebKit::WebViewImpl::previousHistoryItem):
+        (WebKit::WebViewImpl::observeNewNavigation):
+        (WebKit::WebViewImpl::hideAutoCompletePopup):
+        (WebKit::WebViewImpl::autoCompletePopupDidHide):
+        (WebKit::WebViewImpl::setIgnoreInputEvents):
+        (WebKit::WebViewImpl::notificationPresenterImpl):
+        (WebKit::WebViewImpl::refreshAutofillPopup):
+        (WebKit::WebViewImpl::focusedWebCoreNode):
+        (WebKit::WebViewImpl::hitTestResultForWindowPos):
+        (WebKit::WebViewImpl::setTabsToLinks):
+        (WebKit::WebViewImpl::tabsToLinks):
+        * src/WebViewImpl.h: Added.
+        (WebKit::WebViewImpl::size):
+        (WebKit::WebViewImpl::devToolsAgentPrivate):
+        (WebKit::WebViewImpl::lastMouseDownPoint):
+        (WebKit::WebViewImpl::client):
+        (WebKit::WebViewImpl::page):
+        (WebKit::WebViewImpl::contextMenuAllowed):
+        (WebKit::WebViewImpl::setInitialNavigationPolicy):
+        (WebKit::WebViewImpl::initialNavigationPolicy):
+        (WebKit::WebViewImpl::currentInputEvent):
+        (WebKit::WebViewImpl::):
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
