@@ -1,3 +1,11 @@
+2009-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Make do-webcore-rename work with git.
+
+        * Scripts/do-webcore-rename:
+
 2009-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Adding Kenneth to the reviewers list.
