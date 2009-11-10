@@ -1,3 +1,11 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+       Second attempted gtk build fix. No review needed.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+
+
 2009-11-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
