@@ -2,6 +2,124 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: WebScriptController...WebStorageNamespaceImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebScriptController.cpp: Added.
+        (WebKit::WebScriptController::registerExtension):
+        (WebKit::WebScriptController::enableV8SingleThreadMode):
+        (WebKit::WebScriptController::flushConsoleMessages):
+        * src/WebSearchableFormData.cpp: Added.
+        (WebCore::GetFormEncoding):
+        (WebCore::IsHTTPFormSubmit):
+        (WebCore::GetButtonToActivate):
+        (WebCore::IsSelectInDefaultState):
+        (WebCore::IsInDefaultState):
+        (WebCore::HasSuitableTextElement):
+        (WebKit::WebSearchableFormData::WebSearchableFormData):
+        * src/WebSecurityOrigin.cpp: Added.
+        (WebKit::WebSecurityOrigin::reset):
+        (WebKit::WebSecurityOrigin::assign):
+        (WebKit::WebSecurityOrigin::protocol):
+        (WebKit::WebSecurityOrigin::host):
+        (WebKit::WebSecurityOrigin::port):
+        (WebKit::WebSecurityOrigin::isEmpty):
+        (WebKit::WebSecurityOrigin::toString):
+        (WebKit::WebSecurityOrigin::databaseIdentifier):
+        (WebKit::WebSecurityOrigin::WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::operator=):
+        (WebKit::WebSecurityOrigin::operator WTF::PassRefPtr<WebCore::SecurityOrigin>):
+        * src/WebSecurityPolicy.cpp: Added.
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsLocal):
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsNoAccess):
+        (WebKit::WebSecurityPolicy::whiteListAccessFromOrigin):
+        (WebKit::WebSecurityPolicy::resetOriginAccessWhiteLists):
+        * src/WebSettingsImpl.cpp: Added.
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setStandardFontFamily):
+        (WebKit::WebSettingsImpl::setFixedFontFamily):
+        (WebKit::WebSettingsImpl::setSerifFontFamily):
+        (WebKit::WebSettingsImpl::setSansSerifFontFamily):
+        (WebKit::WebSettingsImpl::setCursiveFontFamily):
+        (WebKit::WebSettingsImpl::setFantasyFontFamily):
+        (WebKit::WebSettingsImpl::setDefaultFontSize):
+        (WebKit::WebSettingsImpl::setDefaultFixedFontSize):
+        (WebKit::WebSettingsImpl::setMinimumFontSize):
+        (WebKit::WebSettingsImpl::setMinimumLogicalFontSize):
+        (WebKit::WebSettingsImpl::setDefaultTextEncodingName):
+        (WebKit::WebSettingsImpl::setJavaScriptEnabled):
+        (WebKit::WebSettingsImpl::setWebSecurityEnabled):
+        (WebKit::WebSettingsImpl::setJavaScriptCanOpenWindowsAutomatically):
+        (WebKit::WebSettingsImpl::setLoadsImagesAutomatically):
+        (WebKit::WebSettingsImpl::setPluginsEnabled):
+        (WebKit::WebSettingsImpl::setDOMPasteAllowed):
+        (WebKit::WebSettingsImpl::setDeveloperExtrasEnabled):
+        (WebKit::WebSettingsImpl::setShrinksStandaloneImagesToFit):
+        (WebKit::WebSettingsImpl::setUsesEncodingDetector):
+        (WebKit::WebSettingsImpl::setTextAreasAreResizable):
+        (WebKit::WebSettingsImpl::setJavaEnabled):
+        (WebKit::WebSettingsImpl::setAllowScriptsToCloseWindows):
+        (WebKit::WebSettingsImpl::setUserStyleSheetLocation):
+        (WebKit::WebSettingsImpl::setUsesPageCache):
+        (WebKit::WebSettingsImpl::setDownloadableBinaryFontsEnabled):
+        (WebKit::WebSettingsImpl::setXSSAuditorEnabled):
+        (WebKit::WebSettingsImpl::setLocalStorageEnabled):
+        (WebKit::WebSettingsImpl::setEditableLinkBehaviorNeverLive):
+        (WebKit::WebSettingsImpl::setFontRenderingModeNormal):
+        (WebKit::WebSettingsImpl::setShouldPaintCustomScrollbars):
+        (WebKit::WebSettingsImpl::setDatabasesEnabled):
+        (WebKit::WebSettingsImpl::setAllowUniversalAccessFromFileURLs):
+        (WebKit::WebSettingsImpl::setTextDirectionSubmenuInclusionBehaviorNeverIncluded):
+        (WebKit::WebSettingsImpl::setOfflineWebApplicationCacheEnabled):
+        (WebKit::WebSettingsImpl::setExperimentalWebGLEnabled):
+        * src/WebSettingsImpl.h: Added.
+        (WebKit::WebSettingsImpl::~WebSettingsImpl):
+        * src/WebSharedWorkerImpl.cpp: Added.
+        (WebKit::WebSharedWorkerImpl::WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::~WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::isStarted):
+        (WebKit::WebSharedWorkerImpl::connect):
+        (WebKit::WebSharedWorkerImpl::connectTask):
+        (WebKit::WebSharedWorkerImpl::startWorkerContext):
+        (WebKit::WebSharedWorkerImpl::terminateWorkerContext):
+        (WebKit::WebSharedWorkerImpl::clientDestroyed):
+        (WebKit::WebSharedWorkerImpl::client):
+        (WebKit::WebSharedWorker::create):
+        * src/WebSharedWorkerImpl.h: Added.
+        (WebKit::WebSharedWorkerImpl::commonClient):
+        * src/WebStorageAreaImpl.cpp: Added.
+        (WebKit::WebStorageAreaImpl::WebStorageAreaImpl):
+        (WebKit::WebStorageAreaImpl::~WebStorageAreaImpl):
+        (WebKit::WebStorageAreaImpl::length):
+        (WebKit::WebStorageAreaImpl::key):
+        (WebKit::WebStorageAreaImpl::getItem):
+        (WebKit::WebStorageAreaImpl::setItem):
+        (WebKit::WebStorageAreaImpl::removeItem):
+        (WebKit::WebStorageAreaImpl::clear):
+        * src/WebStorageAreaImpl.h: Added.
+        (WebKit::WebStorageAreaImpl::currentStorageEventURL):
+        (WebKit::WebStorageAreaImpl::ScopedStorageEventURL::ScopedStorageEventURL):
+        (WebKit::WebStorageAreaImpl::ScopedStorageEventURL::~ScopedStorageEventURL):
+        * src/WebStorageEventDispatcherImpl.cpp: Added.
+        (WebKit::WebStorageEventDispatcher::create):
+        (WebKit::WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl):
+        (WebKit::WebStorageEventDispatcherImpl::dispatchStorageEvent):
+        * src/WebStorageEventDispatcherImpl.h: Added.
+        * src/WebStorageNamespaceImpl.cpp: Added.
+        (WebKit::WebStorageNamespace::createLocalStorageNamespace):
+        (WebKit::WebStorageNamespace::createSessionStorageNamespace):
+        (WebKit::WebStorageNamespaceImpl::WebStorageNamespaceImpl):
+        (WebKit::WebStorageNamespaceImpl::~WebStorageNamespaceImpl):
+        (WebKit::WebStorageNamespaceImpl::createStorageArea):
+        (WebKit::WebStorageNamespaceImpl::copy):
+        (WebKit::WebStorageNamespaceImpl::close):
+        * src/WebStorageNamespaceImpl.h: Added.
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: WebPasswordFormData...WebRuntimeFeatures
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
