@@ -677,3 +677,5 @@ http/tests/xmlhttprequest
 # Ruby tests aren't passing on Windows, do they just need platform results - or should they match Mac?
 fast/ruby
 
+# https://bugs.webkit.org/show_bug.cgi?id=31315
+fast/dom/HTMLObjectElement/children-changed.html

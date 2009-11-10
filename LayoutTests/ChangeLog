@@ -1,3 +1,11 @@
+2009-11-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+        
+        Add timing out test to Windows Skipped list.
+
+        * platform/win/Skipped:
+
 2009-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Put test into skiplist added in r50758 because
