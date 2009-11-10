@@ -1,3 +1,14 @@
+2009-11-10  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30901
+        [Gtk] Need to de-lint the Atk a11y code
+
+        Removal of various and sundry style-violating nits.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+
 2009-11-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Jan Alonzo.
