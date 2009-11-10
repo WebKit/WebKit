@@ -44,7 +44,7 @@ class KURL;
 template <class T>
 class StorageIDJournal;
 
-class ApplicationCacheStorage {
+class ApplicationCacheStorage : public Noncopyable {
 public:
     void setCacheDirectory(const String&);
     const String& cacheDirectory() const;

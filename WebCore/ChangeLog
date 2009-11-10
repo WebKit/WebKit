@@ -1,3 +1,35 @@
+2009-11-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for the part of loader directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31161
+
+        Inherits the following classes from Noncopyable because these are instantiated
+        by 'new' and these are no need to be copyable:
+
+        class Request - WebCore/loader/loader.cpp:100
+        struct ScheduledRedirection - WebCore/loader/RedirectScheduler.cpp:164
+        class ApplicationCacheStorage - WebCore/loader/appcache/ApplicationCacheStorage.cpp:1121
+        class ApplicationCacheHost -  WebCore/loader/DocumentLoader.cpp:151
+        class ImageEventSender - WebCore/loader/ImageLoader.cpp:54
+        struct ProgressItem - WebCore/loader/ProgressTracker.cpp:169
+
+        Inherits ThreadableLoaderClient class from Noncopyable because (its child class) 
+        MainThreadBridge is instantiated by 'new' in 
+        WebCore/loader/WorkerThreadableLoader.cpp:59 it is no need to be copyable.
+
+        ThreadableLoaderClient's inheriting has been changed to public.
+
+        * loader/ImageLoader.cpp:
+        * loader/ProgressTracker.cpp:
+        * loader/RedirectScheduler.cpp:
+        * loader/Request.h:
+        * loader/ThreadableLoaderClient.h:
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2009-11-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
