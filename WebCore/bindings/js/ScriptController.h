@@ -63,6 +63,7 @@ class XSSAuditor;
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
 
 class ScriptController {
+    friend class ScriptCachedFrameData;
     typedef WTF::HashMap<DOMWrapperWorld*, JSC::ProtectedPtr<JSDOMWindowShell> > ShellMap;
 
 public:

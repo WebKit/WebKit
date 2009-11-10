@@ -1,3 +1,29 @@
+2009-11-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix back/forwards cache with JSC isolated worlds.
+        https://bugs.webkit.org/show_bug.cgi?id=31310
+        <rdar://problem/7328111> Cached back navigation doesn't restore global object in extension isolated world
+
+        Store the global object for all worlds, not just the normal world.
+        Also maintain bidirectional weak references between the ScriptCachedFrameData and the DOMWrapperWorld,
+        so we can forget global objects if a world goes away.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMWrapperWorld::rememberScriptCachedFrameData):
+        (WebCore::DOMWrapperWorld::forgetScriptCachedFrameData):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::forgetWorld):
+        (WebCore::ScriptCachedFrameData::domWindow):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptController.h:
+
 2009-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r50760.

@@ -44,19 +44,35 @@ using namespace JSC;
 namespace WebCore {
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
+    : m_domWindow(0)
 {
     JSLock lock(SilenceAssertionsOnly);
 
     ScriptController* scriptController = frame->script();
-    // FIXME: explicitly save and restore isolated worlds' global objects when using the back/forward cache. <rdar://problem/7328111>
-    if (JSDOMWindowShell* windowShell = scriptController->existingWindowShell(mainThreadNormalWorld())) {
-        m_window = windowShell->window();
-        scriptController->attachDebugger(0);
+    ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
+
+    ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
+    for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
+        DOMWrapperWorld* world = iter->first;
+        JSDOMWindow* window = iter->second->window();
+        
+        world->rememberScriptCachedFrameData(this);
+        m_windows.add(world, window);
+
+        m_domWindow = window->impl();
     }
+
+    scriptController->attachDebugger(0);
 }
 
-DOMWindow* ScriptCachedFrameData::domWindow() const {
-    return m_window ? m_window->impl() : 0;
+void ScriptCachedFrameData::forgetWorld(DOMWrapperWorld* world)
+{
+    m_windows.remove(world);
+}
+
+DOMWindow* ScriptCachedFrameData::domWindow() const
+{
+    return m_domWindow;
 }
 
 ScriptCachedFrameData::~ScriptCachedFrameData()
@@ -71,26 +87,39 @@ void ScriptCachedFrameData::restore(Frame* frame)
     JSLock lock(SilenceAssertionsOnly);
 
     ScriptController* scriptController = frame->script();
-    // FIXME: explicitly save and restore isolated worlds' global objects when using the back/forward cache. <rdar://problem/7328111>
-    if (JSDOMWindowShell* windowShell = scriptController->existingWindowShell(mainThreadNormalWorld())) {
-        if (m_window)
-            windowShell->setWindow(m_window.get());
+    ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
+
+    ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
+    for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
+        DOMWrapperWorld* world = iter->first;
+        JSDOMWindowShell* windowShell = iter->second.get();
+
+        if (JSDOMWindow* window = m_windows.get(world))
+            windowShell->setWindow(window);
         else {
             windowShell->setWindow(frame->domWindow());
-            scriptController->attachDebugger(page->debugger());
-            windowShell->window()->setProfileGroup(page->group().identifier());
+            if (world == debuggerWorld()) {
+                scriptController->attachDebugger(page->debugger());
+                windowShell->window()->setProfileGroup(page->group().identifier());
+            }
         }
     }
 }
 
 void ScriptCachedFrameData::clear()
 {
+    if (m_windows.isEmpty())
+        return;
+
     JSLock lock(SilenceAssertionsOnly);
 
-    if (m_window) {
-        m_window = 0;
-        gcController().garbageCollectSoon();
+    for (JSDOMWindowSet::iterator iter = m_windows.begin(); iter != m_windows.end(); ++iter) {
+        DOMWrapperWorld* world = iter->first;
+        world->forgetScriptCachedFrameData(this);
     }
+
+    m_windows.clear();
+    gcController().garbageCollectSoon();
 }
 
 } // namespace WebCore
