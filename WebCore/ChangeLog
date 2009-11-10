@@ -1,3 +1,18 @@
+2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Compiler warnings in InspectorResource.h
+        https://bugs.webkit.org/show_bug.cgi?id=29231
+
+        Fix compilation warnings by removing addition operation on an enum type.
+
+        * inspector/InspectorResource.h:
+        (WebCore::InspectorResource::):
+        (WebCore::InspectorResource::Changes::hasChange):
+        (WebCore::InspectorResource::Changes::set):
+        (WebCore::InspectorResource::Changes::setAll):
+
 2009-11-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein.
