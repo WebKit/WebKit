@@ -1,5 +1,58 @@
 2009-11-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Some manual inlining and constant propogation in Date code.
+        
+        SunSpider reports a 0.4% speedup on date-*, no overall speedup. Shark
+        says some previously evident stalls are now gone.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        * runtime/DateConversion.cpp:
+        (JSC::formatTime):
+        (JSC::formatTimeUTC): Split formatTime into UTC and non-UTC variants.
+
+        * runtime/DateConversion.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::gregorianDateTime):
+        (JSC::DateInstance::gregorianDateTimeUTC): Split gregorianDateTime into
+        a UTC and non-UTC variant, and split each variant into a fast inline
+        case and a slow out-of-line case.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear): Updated for the gregorianDateTime change above.
+
+2009-11-09  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: export a new symbol.
 
         * JavaScriptCore.exp:

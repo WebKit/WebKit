@@ -51,7 +51,8 @@ struct GregorianDateTime;
 double parseDate(ExecState* exec, const UString&);
 UString formatDate(const GregorianDateTime&);
 UString formatDateUTCVariant(const GregorianDateTime&);
-UString formatTime(const GregorianDateTime&, bool inputIsUTC);
+UString formatTime(const GregorianDateTime&);
+UString formatTimeUTC(const GregorianDateTime&);
 
 } // namespace JSC
 

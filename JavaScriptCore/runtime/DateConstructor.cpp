@@ -133,7 +133,7 @@ static JSValue JSC_HOST_CALL callDate(ExecState* exec, JSObject*, JSValue, const
     tm localTM;
     getLocalTime(&localTime, &localTM);
     GregorianDateTime ts(exec, localTM);
-    return jsNontrivialString(exec, formatDate(ts) + " " + formatTime(ts, false));
+    return jsNontrivialString(exec, formatDate(ts) + " " + formatTime(ts));
 }
 
 CallType DateConstructor::getCallData(CallData& callData)

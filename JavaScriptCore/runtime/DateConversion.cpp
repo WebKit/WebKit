@@ -80,27 +80,30 @@ UString formatDateUTCVariant(const GregorianDateTime &t)
     return buffer;
 }
 
-UString formatTime(const GregorianDateTime &t, bool utc)
+UString formatTime(const GregorianDateTime &t)
 {
     char buffer[100];
-    if (utc) {
-        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
-    } else {
-        int offset = abs(gmtoffset(t));
-        char timeZoneName[70];
-        struct tm gtm = t;
-        strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
+    int offset = abs(gmtoffset(t));
+    char timeZoneName[70];
+    struct tm gtm = t;
+    strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
 
-        if (timeZoneName[0]) {
-            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
-                t.hour, t.minute, t.second,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
-        } else {
-            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
-                t.hour, t.minute, t.second,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
-        }
+    if (timeZoneName[0]) {
+        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
+            t.hour, t.minute, t.second,
+            gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
+    } else {
+        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
+            t.hour, t.minute, t.second,
+            gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
     }
+    return UString(buffer);
+}
+
+UString formatTimeUTC(const GregorianDateTime &t)
+{
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
     return UString(buffer);
 }
 
