@@ -159,25 +159,25 @@ void V8DOMWrapper::setIndexedPropertiesToExternalArray(v8::Handle<v8::Object> wr
     v8::ExternalArrayType array_type = v8::kExternalByteArray;
     V8ClassIndex::V8WrapperType classIndex = V8ClassIndex::FromInt(index);
     switch (classIndex) {
-    case V8ClassIndex::CANVASBYTEARRAY:
+    case V8ClassIndex::WEBGLBYTEARRAY:
         array_type = v8::kExternalByteArray;
         break;
-    case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY:
         array_type = v8::kExternalUnsignedByteArray;
         break;
-    case V8ClassIndex::CANVASSHORTARRAY:
+    case V8ClassIndex::WEBGLSHORTARRAY:
         array_type = v8::kExternalShortArray;
         break;
-    case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY:
         array_type = v8::kExternalUnsignedShortArray;
         break;
-    case V8ClassIndex::CANVASINTARRAY:
+    case V8ClassIndex::WEBGLINTARRAY:
         array_type = v8::kExternalIntArray;
         break;
-    case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDINTARRAY:
         array_type = v8::kExternalUnsignedIntArray;
         break;
-    case V8ClassIndex::CANVASFLOATARRAY:
+    case V8ClassIndex::WEBGLFLOATARRAY:
         array_type = v8::kExternalFloatArray;
         break;
     default:
@@ -521,28 +521,28 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
 
 #if ENABLE(3D_CANVAS)
     // The following objects are created from JavaScript.
-    case V8ClassIndex::CANVASARRAYBUFFER:
+    case V8ClassIndex::WEBGLARRAYBUFFER:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLArrayBufferConstructor));
         break;
-    case V8ClassIndex::CANVASBYTEARRAY:
+    case V8ClassIndex::WEBGLBYTEARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLByteArrayConstructor));
         break;
-    case V8ClassIndex::CANVASFLOATARRAY:
+    case V8ClassIndex::WEBGLFLOATARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLFloatArrayConstructor));
         break;
-    case V8ClassIndex::CANVASINTARRAY:
+    case V8ClassIndex::WEBGLINTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLIntArrayConstructor));
         break;
-    case V8ClassIndex::CANVASSHORTARRAY:
+    case V8ClassIndex::WEBGLSHORTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLShortArrayConstructor));
         break;
-    case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedByteArrayConstructor));
         break;
-    case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDINTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedIntArrayConstructor));
         break;
-    case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
+    case V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY:
         descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedShortArrayConstructor));
         break;
 #endif
@@ -746,13 +746,13 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
 #if ENABLE(3D_CANVAS)
             // Set up WebGLArray subclasses' accesses similarly.
             switch (type) {
-            case V8ClassIndex::CANVASBYTEARRAY:
-            case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
-            case V8ClassIndex::CANVASSHORTARRAY:
-            case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
-            case V8ClassIndex::CANVASINTARRAY:
-            case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
-            case V8ClassIndex::CANVASFLOATARRAY: {
+            case V8ClassIndex::WEBGLBYTEARRAY:
+            case V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY:
+            case V8ClassIndex::WEBGLSHORTARRAY:
+            case V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY:
+            case V8ClassIndex::WEBGLINTARRAY:
+            case V8ClassIndex::WEBGLUNSIGNEDINTARRAY:
+            case V8ClassIndex::WEBGLFLOATARRAY: {
                 WebGLArray* array = reinterpret_cast<WebGLArray*>(impl);
                 setIndexedPropertiesToExternalArray(result,
                                                     V8ClassIndex::ToInt(type),
