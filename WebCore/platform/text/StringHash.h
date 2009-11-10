@@ -29,6 +29,10 @@
 
 namespace WebCore {
 
+    // The hash() functions on StringHash and CaseFoldingHash do not support
+    // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
+    // cause a null-pointer dereference when passed null strings.
+
     // FIXME: We should really figure out a way to put the computeHash function that's
     // currently a member function of StringImpl into this file so we can be a little
     // closer to having all the nearly-identical hash functions in one place.

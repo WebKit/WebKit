@@ -1,3 +1,12 @@
+2009-11-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a comment about null strings and hash functions.
+        https://bugs.webkit.org/show_bug.cgi?id=29118
+
+        * platform/text/StringHash.h:
+
 2009-11-09  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Darin Adler.
