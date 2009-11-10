@@ -1,3 +1,11 @@
+2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Not reviewed, build fix.
+
+        Revert r50695 because it broke QtWebKit (clean builds).
+
+        * JavaScriptCore.pri:
+
 2009-11-09  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

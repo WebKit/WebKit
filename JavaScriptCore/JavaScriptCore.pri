@@ -1,4 +1,4 @@
-# JavaScriptCore - Qt4 build info
+\# JavaScriptCore - Qt4 build info
 VPATH += $$PWD
 
 CONFIG(debug, debug|release) {
@@ -27,7 +27,7 @@ INCLUDEPATH = \
     $$PWD/yarr \
     $$PWD/API \
     $$PWD/ForwardingHeaders \
-    $$PWD/$$GENERATED_SOURCES_DIR \
+    $$GENERATED_SOURCES_DIR \
     $$INCLUDEPATH
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
