@@ -1,5 +1,59 @@
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Up-streaming Chromium API src files: Platform specific files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/gtk/WebFontInfo.cpp: Added.
+        (WebKit::WebFontInfo::familyForChars):
+        * src/gtk/WebInputEventFactory.cpp: Added.
+        (WebKit::gdkEventTimeToWebEventTime):
+        (WebKit::gdkStateToWebEventModifiers):
+        (WebKit::gdkEventToWindowsKeyCode):
+        (WebKit::getControlCharacter):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+        * src/gtk/WebScreenInfoFactory.cpp: Added.
+        (WebKit::WebScreenInfoFactory::screenInfo):
+        * src/linux/WebFontRendering.cpp: Added.
+        (WebKit::WebFontRendering::setHinting):
+        (WebKit::WebFontRendering::setAntiAlias):
+        (WebKit::WebFontRendering::setSubpixelGlyphs):
+        (WebKit::WebFontRendering::setLCDOrder):
+        (WebKit::WebFontRendering::setLCDOrientation):
+        * src/mac/WebInputEventFactory.mm: Added.
+        (WebKit::isKeyUpEvent):
+        (WebKit::isKeypadEvent):
+        (WebKit::windowsKeyCodeForKeyEvent):
+        (WebKit::textFromEvent):
+        (WebKit::unmodifiedTextFromEvent):
+        (WebKit::keyIdentifierForKeyEvent):
+        (WebKit::modifiersFromEvent):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+        * src/mac/WebScreenInfoFactory.mm: Added.
+        (WebKit::screenForWindow):
+        (WebKit::toUserSpace):
+        (WebKit::WebScreenInfoFactory::screenInfo):
+        * src/win/WebInputEventFactory.cpp: Added.
+        (WebKit::isKeyPad):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        (WebKit::GetRelativeCursorPos):
+        (WebKit::WebInputEventFactory::resetLastClickState):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+        * src/win/WebScreenInfoFactory.cpp: Added.
+        (WebKit::toWebRect):
+        (WebKit::WebScreenInfoFactory::screenInfo):
+        * src/x11/WebScreenInfoFactory.cpp: Added.
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Up-streaming Chromium API src files: WrapperResourceRequest and Response
