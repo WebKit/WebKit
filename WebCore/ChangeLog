@@ -1,3 +1,18 @@
+2009-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and Dan Bernstein.
+
+        <rdar://problem/7328395>
+        https://bugs.webkit.org/show_bug.cgi?id=31277
+
+        When an object tag's style changes (for example when child nodes are added/removed),
+        reuse its Frame (if it has one) instead of creating multiple Frames.
+
+        Test: fast/dom/HTMLObjectElement/children-changed.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+
 2009-11-09  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
