@@ -1,3 +1,15 @@
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Rename 3D Canvas related classes to use WebGL prefix
+        https://bugs.webkit.org/show_bug.cgi?id=29095
+
+        Automatic rename of all WebGL related types from Canvas* to
+        WebGL* per more recent version of the WebGL spec.
+
+        Due to the automatic rename I've removed the 600+ line change list.
+
 2009-11-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -70,27 +70,27 @@ DOM_CLASSES = \
     CSSValueList \
     CSSVariablesRule \
     CSSVariablesDeclaration \
-    CanvasActiveInfo \
-    CanvasArray \
-    CanvasArrayBuffer \
-    CanvasBuffer \
-    CanvasByteArray \
-    CanvasFloatArray \
-    CanvasFramebuffer \
+    WebGLActiveInfo \
+    WebGLArray \
+    WebGLArrayBuffer \
+    WebGLBuffer \
+    WebGLByteArray \
+    WebGLFloatArray \
+    WebGLFramebuffer \
     CanvasGradient \
-    CanvasIntArray \
+    WebGLIntArray \
     CanvasPattern \
-    CanvasProgram \
-    CanvasRenderbuffer \
+    WebGLProgram \
+    WebGLRenderbuffer \
     CanvasRenderingContext \
     CanvasRenderingContext2D \
-    CanvasRenderingContext3D \
-    CanvasShader \
-    CanvasShortArray \
-    CanvasTexture \
-    CanvasUnsignedByteArray \
-    CanvasUnsignedIntArray \
-    CanvasUnsignedShortArray \
+    WebGLRenderingContext \
+    WebGLShader \
+    WebGLShortArray \
+    WebGLTexture \
+    WebGLUnsignedByteArray \
+    WebGLUnsignedIntArray \
+    WebGLUnsignedShortArray \
     CharacterData \
     ClientRect \
     ClientRectList \

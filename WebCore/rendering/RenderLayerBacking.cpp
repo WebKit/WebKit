@@ -28,7 +28,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "AnimationController.h"
-#include "CanvasRenderingContext3D.h"
+#include "WebGLRenderingContext.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "FrameView.h"
@@ -192,7 +192,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         else if (renderer()->isCanvas()) {
             HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
             if (canvas->is3D()) {
-                CanvasRenderingContext3D* context = static_cast<CanvasRenderingContext3D*>(canvas->renderingContext());
+                WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(canvas->renderingContext());
                 if (context->graphicsContext3D()->platformGraphicsContext3D())
                     m_graphicsLayer->setContentsToGraphicsContext3D(context->graphicsContext3D());
             }

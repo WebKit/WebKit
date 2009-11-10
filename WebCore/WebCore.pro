@@ -373,20 +373,20 @@ IDL_BINDINGS += \
     dom/WebKitAnimationEvent.idl \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
-    html/canvas/CanvasArray.idl \
-    html/canvas/CanvasArrayBuffer.idl \
-    html/canvas/CanvasByteArray.idl \
-    html/canvas/CanvasFloatArray.idl \
+    html/canvas/WebGLArray.idl \
+    html/canvas/WebGLArrayBuffer.idl \
+    html/canvas/WebGLByteArray.idl \
+    html/canvas/WebGLFloatArray.idl \
     html/canvas/CanvasGradient.idl \
-    html/canvas/CanvasIntArray.idl \
+    html/canvas/WebGLIntArray.idl \
     html/canvas/CanvasPattern.idl \
     html/canvas/CanvasRenderingContext.idl \
     html/canvas/CanvasRenderingContext2D.idl \
-    html/canvas/CanvasRenderingContext3D.idl \
-    html/canvas/CanvasShortArray.idl \
-    html/canvas/CanvasUnsignedByteArray.idl \
-    html/canvas/CanvasUnsignedIntArray.idl \
-    html/canvas/CanvasUnsignedShortArray.idl \
+    html/canvas/WebGLRenderingContext.idl \
+    html/canvas/WebGLShortArray.idl \
+    html/canvas/WebGLUnsignedByteArray.idl \
+    html/canvas/WebGLUnsignedIntArray.idl \
+    html/canvas/WebGLUnsignedShortArray.idl \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
     html/File.idl \

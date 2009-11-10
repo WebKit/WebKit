@@ -151,20 +151,20 @@ IDL_BINDINGS += \
 	WebCore/dom/WebKitAnimationEvent.idl \
 	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
-	WebCore/html/canvas/CanvasArray.idl \
-	WebCore/html/canvas/CanvasArrayBuffer.idl \
-	WebCore/html/canvas/CanvasByteArray.idl \
-	WebCore/html/canvas/CanvasFloatArray.idl \
+	WebCore/html/canvas/WebGLArray.idl \
+	WebCore/html/canvas/WebGLArrayBuffer.idl \
+	WebCore/html/canvas/WebGLByteArray.idl \
+	WebCore/html/canvas/WebGLFloatArray.idl \
 	WebCore/html/canvas/CanvasGradient.idl \
-	WebCore/html/canvas/CanvasIntArray.idl \
+	WebCore/html/canvas/WebGLIntArray.idl \
 	WebCore/html/canvas/CanvasPattern.idl \
 	WebCore/html/canvas/CanvasRenderingContext.idl \
 	WebCore/html/canvas/CanvasRenderingContext2D.idl \
-	WebCore/html/canvas/CanvasRenderingContext3D.idl \
-	WebCore/html/canvas/CanvasShortArray.idl \
-	WebCore/html/canvas/CanvasUnsignedByteArray.idl \
-	WebCore/html/canvas/CanvasUnsignedIntArray.idl \
-	WebCore/html/canvas/CanvasUnsignedShortArray.idl \
+	WebCore/html/canvas/WebGLRenderingContext.idl \
+	WebCore/html/canvas/WebGLShortArray.idl \
+	WebCore/html/canvas/WebGLUnsignedByteArray.idl \
+	WebCore/html/canvas/WebGLUnsignedIntArray.idl \
+	WebCore/html/canvas/WebGLUnsignedShortArray.idl \
 	WebCore/html/DataGridColumn.idl \
 	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/File.idl \

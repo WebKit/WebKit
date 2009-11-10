@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
-#include "CanvasArray.h"
+#include "WebGLArray.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "ChromiumBridge.h"
 #include "DOMObjectsInclude.h"
@@ -522,28 +522,28 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
 #if ENABLE(3D_CANVAS)
     // The following objects are created from JavaScript.
     case V8ClassIndex::CANVASARRAYBUFFER:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasArrayBufferConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLArrayBufferConstructor));
         break;
     case V8ClassIndex::CANVASBYTEARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasByteArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLByteArrayConstructor));
         break;
     case V8ClassIndex::CANVASFLOATARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasFloatArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLFloatArrayConstructor));
         break;
     case V8ClassIndex::CANVASINTARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasIntArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLIntArrayConstructor));
         break;
     case V8ClassIndex::CANVASSHORTARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasShortArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLShortArrayConstructor));
         break;
     case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedByteArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedByteArrayConstructor));
         break;
     case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedIntArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedIntArrayConstructor));
         break;
     case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
-        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedShortArrayConstructor));
+        descriptor->SetCallHandler(USE_CALLBACK(WebGLUnsignedShortArrayConstructor));
         break;
 #endif
     case V8ClassIndex::DOMPARSER:
@@ -744,7 +744,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
             }
 
 #if ENABLE(3D_CANVAS)
-            // Set up CanvasArray subclasses' accesses similarly.
+            // Set up WebGLArray subclasses' accesses similarly.
             switch (type) {
             case V8ClassIndex::CANVASBYTEARRAY:
             case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
@@ -753,7 +753,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
             case V8ClassIndex::CANVASINTARRAY:
             case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
             case V8ClassIndex::CANVASFLOATARRAY: {
-                CanvasArray* array = reinterpret_cast<CanvasArray*>(impl);
+                WebGLArray* array = reinterpret_cast<WebGLArray*>(impl);
                 setIndexedPropertiesToExternalArray(result,
                                                     V8ClassIndex::ToInt(type),
                                                     array->baseAddress(),

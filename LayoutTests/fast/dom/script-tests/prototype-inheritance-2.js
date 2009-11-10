@@ -57,16 +57,16 @@ function constructorNamesForWindow(globalObject)
             continue;
         var type = classNameForObject(value);
         // Ignore these properties because they do not exist in all implementations. They will be tested separately
-        if (type == "CanvasRenderingContext3DConstructor" || 
-            type == "CanvasArrayBufferConstructor" ||
-            type == "CanvasByteArrayConstructor" ||
-            type =="CanvasFloatArrayConstructor" ||
-            type =="CanvasIntArrayConstructor" ||
-            type =="CanvasShortArrayConstructor" ||
-            type =="CanvasUnsignedByteArrayConstructor" ||
-            type =="CanvasUnsignedIntArrayConstructor" ||
-            type =="CanvasUnsignedShortArrayConstructor")
-            continue; // We ignore CanvasRenderingContext3D and test it elsewhere, since it is not in all builds
+        if (type == "WebGLRenderingContextConstructor" || 
+            type == "WebGLArrayBufferConstructor" ||
+            type == "WebGLByteArrayConstructor" ||
+            type =="WebGLFloatArrayConstructor" ||
+            type =="WebGLIntArrayConstructor" ||
+            type =="WebGLShortArrayConstructor" ||
+            type =="WebGLUnsignedByteArrayConstructor" ||
+            type =="WebGLUnsignedIntArrayConstructor" ||
+            type =="WebGLUnsignedShortArrayConstructor")
+            continue; // We ignore WebGLRenderingContext and test it elsewhere, since it is not in all builds
         if (!type.match('Constructor$'))
             continue;
         namesSet[type] = 1;

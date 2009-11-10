@@ -46,18 +46,18 @@ const Platform3DObject NullPlatform3DObject = 0;
 #endif
 
 namespace WebCore {
-    class CanvasActiveInfo;
-    class CanvasArray;
-    class CanvasBuffer;
-    class CanvasUnsignedByteArray;
-    class CanvasFloatArray;
-    class CanvasFramebuffer;
-    class CanvasIntArray;
-    class CanvasProgram;
-    class CanvasRenderbuffer;
-    class CanvasRenderingContext3D;
-    class CanvasShader;
-    class CanvasTexture;
+    class WebGLActiveInfo;
+    class WebGLArray;
+    class WebGLBuffer;
+    class WebGLUnsignedByteArray;
+    class WebGLFloatArray;
+    class WebGLFramebuffer;
+    class WebGLIntArray;
+    class WebGLProgram;
+    class WebGLRenderbuffer;
+    class WebGLRenderingContext;
+    class WebGLShader;
+    class WebGLTexture;
     class Image;
     class HTMLVideoElement;
     class ImageData;
@@ -99,12 +99,12 @@ namespace WebCore {
         int sizeInBytes(int type);
 
         void activeTexture(unsigned long texture);
-        void attachShader(CanvasProgram* program, CanvasShader* shader);
-        void bindAttribLocation(CanvasProgram*, unsigned long index, const String& name);
-        void bindBuffer(unsigned long target, CanvasBuffer*);
-        void bindFramebuffer(unsigned long target, CanvasFramebuffer*);
-        void bindRenderbuffer(unsigned long target, CanvasRenderbuffer*);
-        void bindTexture(unsigned long target, CanvasTexture* texture);
+        void attachShader(WebGLProgram* program, WebGLShader* shader);
+        void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name);
+        void bindBuffer(unsigned long target, WebGLBuffer*);
+        void bindFramebuffer(unsigned long target, WebGLFramebuffer*);
+        void bindRenderbuffer(unsigned long target, WebGLRenderbuffer*);
+        void bindTexture(unsigned long target, WebGLTexture* texture);
         void blendColor(double red, double green, double blue, double alpha);
         void blendEquation(unsigned long mode);
         void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
@@ -112,8 +112,8 @@ namespace WebCore {
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
         void bufferData(unsigned long target, int size, unsigned long usage);
-        void bufferData(unsigned long target, CanvasArray* data, unsigned long usage);
-        void bufferSubData(unsigned long target, long offset, CanvasArray* data);
+        void bufferData(unsigned long target, WebGLArray* data, unsigned long usage);
+        void bufferSubData(unsigned long target, long offset, WebGLArray* data);
 
         unsigned long checkFramebufferStatus(unsigned long target);
         void clear(unsigned long mask);
@@ -121,7 +121,7 @@ namespace WebCore {
         void clearDepth(double depth);
         void clearStencil(long s);
         void colorMask(bool red, bool green, bool blue, bool alpha);
-        void compileShader(CanvasShader*);
+        void compileShader(WebGLShader*);
         
         //void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
         //void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
@@ -132,7 +132,7 @@ namespace WebCore {
         void depthFunc(unsigned long func);
         void depthMask(bool flag);
         void depthRange(double zNear, double zFar);
-        void detachShader(CanvasProgram*, CanvasShader*);
+        void detachShader(WebGLProgram*, WebGLShader*);
         void disable(unsigned long cap);
         void disableVertexAttribArray(unsigned long index);
         void drawArrays(unsigned long mode, long first, long count);
@@ -142,84 +142,84 @@ namespace WebCore {
         void enableVertexAttribArray(unsigned long index);
         void finish();
         void flush();
-        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer*);
-        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
+        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer*);
+        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture*, long level);
         void frontFace(unsigned long mode);
         void generateMipmap(unsigned long target);
 
-        bool getActiveAttrib(CanvasProgram* program, unsigned long index, ActiveInfo&);
-        bool getActiveUniform(CanvasProgram* program, unsigned long index, ActiveInfo&);
+        bool getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo&);
+        bool getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo&);
 
-        int  getAttribLocation(CanvasProgram*, const String& name);
+        int  getAttribLocation(WebGLProgram*, const String& name);
 
         bool getBoolean(unsigned long pname);
-        PassRefPtr<CanvasUnsignedByteArray> getBooleanv(unsigned long pname);
+        PassRefPtr<WebGLUnsignedByteArray> getBooleanv(unsigned long pname);
         int getBufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getBufferParameteriv(unsigned long target, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getBufferParameteriv(unsigned long target, unsigned long pname);
 
         unsigned long getError();
 
         float getFloat(unsigned long pname);
-        PassRefPtr<CanvasFloatArray> getFloatv(unsigned long pname);
+        PassRefPtr<WebGLFloatArray> getFloatv(unsigned long pname);
         int getFramebufferAttachmentParameteri(unsigned long target, unsigned long attachment, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
         int getInteger(unsigned long pname);
-        PassRefPtr<CanvasIntArray> getIntegerv(unsigned long pname);
-        int getProgrami(CanvasProgram*, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getProgramiv(CanvasProgram*, unsigned long pname);
-        String getProgramInfoLog(CanvasProgram*);
+        PassRefPtr<WebGLIntArray> getIntegerv(unsigned long pname);
+        int getProgrami(WebGLProgram*, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getProgramiv(WebGLProgram*, unsigned long pname);
+        String getProgramInfoLog(WebGLProgram*);
         int getRenderbufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
-        int getShaderi(CanvasShader*, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getShaderiv(CanvasShader*, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
+        int getShaderi(WebGLShader*, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getShaderiv(WebGLShader*, unsigned long pname);
 
-        String getShaderInfoLog(CanvasShader*);
+        String getShaderInfoLog(WebGLShader*);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        String getShaderSource(CanvasShader*);
+        String getShaderSource(WebGLShader*);
         String getString(unsigned long name);
         
         float getTexParameterf(unsigned long target, unsigned long pname);
-        PassRefPtr<CanvasFloatArray> getTexParameterfv(unsigned long target, unsigned long pname);
+        PassRefPtr<WebGLFloatArray> getTexParameterfv(unsigned long target, unsigned long pname);
         int getTexParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
 
-        float getUniformf(CanvasProgram* program, long location);
-        PassRefPtr<CanvasFloatArray> getUniformfv(CanvasProgram* program, long location);
-        int getUniformi(CanvasProgram* program, long location);
-        PassRefPtr<CanvasIntArray> getUniformiv(CanvasProgram* program, long location);
+        float getUniformf(WebGLProgram* program, long location);
+        PassRefPtr<WebGLFloatArray> getUniformfv(WebGLProgram* program, long location);
+        int getUniformi(WebGLProgram* program, long location);
+        PassRefPtr<WebGLIntArray> getUniformiv(WebGLProgram* program, long location);
 
-        long getUniformLocation(CanvasProgram*, const String& name);
+        long getUniformLocation(WebGLProgram*, const String& name);
 
         float getVertexAttribf(unsigned long index, unsigned long pname);
-        PassRefPtr<CanvasFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
+        PassRefPtr<WebGLFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
         int getVertexAttribi(unsigned long index, unsigned long pname);
-        PassRefPtr<CanvasIntArray> getVertexAttribiv(unsigned long index, unsigned long pname);
+        PassRefPtr<WebGLIntArray> getVertexAttribiv(unsigned long index, unsigned long pname);
         
         long getVertexAttribOffset(unsigned long index, unsigned long pname);
 
         void hint(unsigned long target, unsigned long mode);
-        bool isBuffer(CanvasBuffer*);
+        bool isBuffer(WebGLBuffer*);
         bool isEnabled(unsigned long cap);
-        bool isFramebuffer(CanvasFramebuffer*);
-        bool isProgram(CanvasProgram*);
-        bool isRenderbuffer(CanvasRenderbuffer*);
-        bool isShader(CanvasShader*);
-        bool isTexture(CanvasTexture*);
+        bool isFramebuffer(WebGLFramebuffer*);
+        bool isProgram(WebGLProgram*);
+        bool isRenderbuffer(WebGLRenderbuffer*);
+        bool isShader(WebGLShader*);
+        bool isTexture(WebGLTexture*);
         void lineWidth(double);
-        void linkProgram(CanvasProgram*);
+        void linkProgram(WebGLProgram*);
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
-        PassRefPtr<CanvasArray> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
+        PassRefPtr<WebGLArray> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
         
         void releaseShaderCompiler();
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
         void sampleCoverage(double value, bool invert);
         void scissor(long x, long y, unsigned long width, unsigned long height);
-        void shaderSource(CanvasShader*, const String& string);
+        void shaderSource(WebGLShader*, const String& string);
         void stencilFunc(unsigned long func, long ref, unsigned long mask);
         void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
         void stencilMask(unsigned long mask);
@@ -231,7 +231,7 @@ namespace WebCore {
         // Currently they return -1 on any error.
         int texImage2D(unsigned target, unsigned level, unsigned internalformat,
                        unsigned width, unsigned height, unsigned border,
-                       unsigned format, unsigned type, CanvasArray* pixels);
+                       unsigned format, unsigned type, WebGLArray* pixels);
         int texImage2D(unsigned target, unsigned level, unsigned internalformat,
                        unsigned width, unsigned height, unsigned border,
                        unsigned format, unsigned type, ImageData* pixels);
@@ -245,7 +245,7 @@ namespace WebCore {
 
         int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                           unsigned width, unsigned height,
-                          unsigned format, unsigned type, CanvasArray* pixels);
+                          unsigned format, unsigned type, WebGLArray* pixels);
         int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                           unsigned width, unsigned height,
                           unsigned format, unsigned type, ImageData* pixels);
@@ -276,8 +276,8 @@ namespace WebCore {
         void uniformMatrix3fv(long location, bool transpose, float* value, int size);
         void uniformMatrix4fv(long location, bool transpose, float* value, int size);
 
-        void useProgram(CanvasProgram*);
-        void validateProgram(CanvasProgram*);
+        void useProgram(WebGLProgram*);
+        void validateProgram(WebGLProgram*);
 
         void vertexAttrib1f(unsigned long indx, float x);
         void vertexAttrib1fv(unsigned long indx, float* values);
@@ -295,7 +295,7 @@ namespace WebCore {
         void reshape(int width, int height);
         
         // Helpers for notification about paint events
-        void beginPaint(CanvasRenderingContext3D* context);
+        void beginPaint(WebGLRenderingContext* context);
         void endPaint();
 
         // Support for buffer creation and deletion

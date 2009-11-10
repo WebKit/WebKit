@@ -2,7 +2,7 @@
 // initWebGL
 //
 // Initialize the Canvas element with the passed name as a WebGL object and return the
-// CanvasRenderingContext3D. 
+// WebGLRenderingContext. 
 //
 // Load shaders with the passed names and create a program with them. Return this program 
 // in the 'program' property of the returned context.
@@ -80,7 +80,7 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
 // loadShader
 //
 // 'shaderId' is the id of a <script> element containing the shader source string.
-// Load this shader and return the CanvasShader object corresponding to it.
+// Load this shader and return the WebGLShader object corresponding to it.
 //
 function loadShader(ctx, shaderId)
 {
@@ -131,10 +131,10 @@ function loadShader(ctx, shaderId)
 // Create a box with vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 // 
 function makeBox(ctx)
@@ -149,7 +149,7 @@ function makeBox(ctx)
     //  v2------v3
     //
     // vertex coords array
-    var vertices = new CanvasFloatArray(
+    var vertices = new WebGLFloatArray(
         [  1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1,    // v0-v1-v2-v3 front
            1, 1, 1,   1,-1, 1,   1,-1,-1,   1, 1,-1,    // v0-v3-v4-v5 right
            1, 1, 1,   1, 1,-1,  -1, 1,-1,  -1, 1, 1,    // v0-v5-v6-v1 top
@@ -159,7 +159,7 @@ function makeBox(ctx)
     );
 
     // normal array
-    var normals = new CanvasFloatArray(
+    var normals = new WebGLFloatArray(
         [  0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1,     // v0-v1-v2-v3 front
            1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0,     // v0-v3-v4-v5 right
            0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0,     // v0-v5-v6-v1 top
@@ -170,7 +170,7 @@ function makeBox(ctx)
 
 
     // texCoord array
-    var texCoords = new CanvasFloatArray(
+    var texCoords = new WebGLFloatArray(
         [  1, 1,   0, 1,   0, 0,   1, 0,    // v0-v1-v2-v3 front
            0, 1,   0, 0,   1, 0,   1, 1,    // v0-v3-v4-v5 right
            1, 0,   1, 1,   0, 1,   0, 0,    // v0-v5-v6-v1 top
@@ -180,7 +180,7 @@ function makeBox(ctx)
        );
 
     // index array
-    var indices = new CanvasUnsignedByteArray(
+    var indices = new WebGLUnsignedByteArray(
         [  0, 1, 2,   0, 2, 3,    // front
            4, 5, 6,   4, 6, 7,    // right
            8, 9,10,   8,10,11,    // top
@@ -222,10 +222,10 @@ function makeBox(ctx)
 // Sphere has vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 // 
 function makeSphere(ctx, radius, lats, longs)
@@ -280,20 +280,20 @@ function makeSphere(ctx, radius, lats, longs)
     
     retval.normalObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.normalObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(normalData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(normalData), ctx.STATIC_DRAW);
 
     retval.texCoordObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.texCoordObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(texCoordData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(texCoordData), ctx.STATIC_DRAW);
 
     retval.vertexObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.vertexObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(geometryData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(geometryData), ctx.STATIC_DRAW);
     
     retval.numIndices = indexData.length;
     retval.indexObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, retval.indexObject);
-    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new CanvasUnsignedShortArray(indexData), ctx.STREAM_DRAW);
+    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray(indexData), ctx.STREAM_DRAW);
     
     return retval;
 }
@@ -305,10 +305,10 @@ function makeSphere(ctx, radius, lats, longs)
 // When the object load is complete, the 'loaded' property becomes true and the following 
 // properties are set:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 //  
 function loadObj(ctx, url)
@@ -446,20 +446,20 @@ function doLoadObj(obj, text)
     // set the VBOs
     obj.normalObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.normalObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(normalArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(normalArray), obj.ctx.STATIC_DRAW);
 
     obj.texCoordObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.texCoordObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(textureArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(textureArray), obj.ctx.STATIC_DRAW);
 
     obj.vertexObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.vertexObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(vertexArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(vertexArray), obj.ctx.STATIC_DRAW);
     
     obj.numIndices = indexArray.length;
     obj.indexObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ELEMENT_ARRAY_BUFFER, obj.indexObject);
-    obj.ctx.bufferData(obj.ctx.ELEMENT_ARRAY_BUFFER, new CanvasUnsignedShortArray(indexArray), obj.ctx.STREAM_DRAW);
+    obj.ctx.bufferData(obj.ctx.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray(indexArray), obj.ctx.STREAM_DRAW);
     
     obj.loaded = true;
 }
@@ -467,7 +467,7 @@ function doLoadObj(obj, text)
 //
 // loadImageTexture
 //
-// Load the image at the passed url, place it in a new CanvasTexture object and return the CanvasTexture.
+// Load the image at the passed url, place it in a new WebGLTexture object and return the WebGLTexture.
 //
 function loadImageTexture(ctx, url)
 {

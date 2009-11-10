@@ -2,27 +2,27 @@ Verifies the functionality of the new array-like objects in the WebGL spec
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS test CanvasByteArray SetAndGetPos10ToNeg10
-PASS test CanvasByteArray ConstructWithArrayOfSignedValues
-PASS test CanvasByteArray BoundaryConditions(-128, -128, 127, 127)
-PASS test CanvasFloatArray SetAndGetPos10ToNeg10
-PASS test CanvasFloatArray ConstructWithArrayOfSignedValues
-PASS test CanvasFloatArray BoundaryConditions(-500, -500, 500, 500)
-PASS test CanvasIntArray SetAndGetPos10ToNeg10
-PASS test CanvasIntArray ConstructWithArrayOfSignedValues
-PASS test CanvasIntArray BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
-PASS test CanvasShortArray SetAndGetPos10ToNeg10
-PASS test CanvasShortArray ConstructWithArrayOfSignedValues
-PASS test CanvasShortArray BoundaryConditions(-32768, -32768, 32767, 32767)
-PASS test CanvasUnsignedByteArray SetAndGet10To1
-PASS test CanvasUnsignedByteArray ConstructWithArrayOfUnsignedValues
-PASS test CanvasUnsignedByteArray BoundaryConditions(0, 0, 255, 255)
-PASS test CanvasUnsignedIntArray SetAndGet10To1
-PASS test CanvasUnsignedIntArray ConstructWithArrayOfUnsignedValues
-PASS test CanvasUnsignedIntArray BoundaryConditions(0, 0, 4294967295, 4294967295)
-PASS test CanvasUnsignedShortArray SetAndGet10To1
-PASS test CanvasUnsignedShortArray ConstructWithArrayOfUnsignedValues
-PASS test CanvasUnsignedShortArray BoundaryConditions(0, 0, 65535, 65535)
+PASS test WebGLByteArray SetAndGetPos10ToNeg10
+PASS test WebGLByteArray ConstructWithArrayOfSignedValues
+PASS test WebGLByteArray BoundaryConditions(-128, -128, 127, 127)
+PASS test WebGLFloatArray SetAndGetPos10ToNeg10
+PASS test WebGLFloatArray ConstructWithArrayOfSignedValues
+PASS test WebGLFloatArray BoundaryConditions(-500, -500, 500, 500)
+PASS test WebGLIntArray SetAndGetPos10ToNeg10
+PASS test WebGLIntArray ConstructWithArrayOfSignedValues
+PASS test WebGLIntArray BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
+PASS test WebGLShortArray SetAndGetPos10ToNeg10
+PASS test WebGLShortArray ConstructWithArrayOfSignedValues
+PASS test WebGLShortArray BoundaryConditions(-32768, -32768, 32767, 32767)
+PASS test WebGLUnsignedByteArray SetAndGet10To1
+PASS test WebGLUnsignedByteArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedByteArray BoundaryConditions(0, 0, 255, 255)
+PASS test WebGLUnsignedIntArray SetAndGet10To1
+PASS test WebGLUnsignedIntArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedIntArray BoundaryConditions(0, 0, 4294967295, 4294967295)
+PASS test WebGLUnsignedShortArray SetAndGet10To1
+PASS test WebGLUnsignedShortArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedShortArray BoundaryConditions(0, 0, 65535, 65535)
 Test passed.
 PASS successfullyParsed is true
 

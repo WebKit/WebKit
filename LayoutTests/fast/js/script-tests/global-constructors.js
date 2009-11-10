@@ -17,15 +17,15 @@ for (var x in constructorNames) {
     var expectedConstructorName = "'[object " + name + "Constructor]'";
 
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
-    if (name == "CanvasRenderingContext3D" ||
-        name == "CanvasArrayBuffer" ||
-        name =="CanvasByteArray" ||
-        name =="CanvasFloatArray" ||
-        name =="CanvasIntArray" ||
-        name =="CanvasShortArray" ||
-        name =="CanvasUnsignedByteArray" ||
-        name =="CanvasUnsignedIntArray" ||
-        name =="CanvasUnsignedShortArray")
+    if (name == "WebGLRenderingContext" ||
+        name == "WebGLArrayBuffer" ||
+        name =="WebGLByteArray" ||
+        name =="WebGLFloatArray" ||
+        name =="WebGLIntArray" ||
+        name =="WebGLShortArray" ||
+        name =="WebGLUnsignedByteArray" ||
+        name =="WebGLUnsignedIntArray" ||
+        name =="WebGLUnsignedShortArray")
         continue;
 
     if (name == "XMLDocument")

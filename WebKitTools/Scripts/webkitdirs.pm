@@ -680,7 +680,7 @@ sub has3DCanvasSupport
     return 0 if isQt();
 
     my $path = shift;
-    return libraryContainsSymbol($path, "CanvasShader");
+    return libraryContainsSymbol($path, "WebGLShader");
 }
 
 sub checkWebCore3DCanvasSupport

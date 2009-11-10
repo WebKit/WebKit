@@ -31,7 +31,7 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #if ENABLE(3D_CANVAS)    
-#include "CanvasRenderingContext3D.h"
+#include "WebGLRenderingContext.h"
 #endif
 #include "CanvasStyle.h"
 #include "Chrome.h"
@@ -172,7 +172,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
             if (m_context && !m_context->is3d())
                 return 0;
             if (!m_context) {
-                m_context = CanvasRenderingContext3D::create(this);
+                m_context = WebGLRenderingContext::create(this);
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
                     setNeedsStyleRecalc(SyntheticStyleChange);
@@ -249,9 +249,9 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
         return;
     
 #if ENABLE(3D_CANVAS)
-    CanvasRenderingContext3D* context3D = NULL;
+    WebGLRenderingContext* context3D = NULL;
     if (m_context && m_context->is3d()) {
-        context3D = static_cast<CanvasRenderingContext3D*>(m_context.get());
+        context3D = static_cast<WebGLRenderingContext*>(m_context.get());
         context3D->beginPaint();
     }
 #endif

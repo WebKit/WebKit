@@ -33,7 +33,7 @@
         void load(in CanvasMatrix4 matrix);                 // copy the values from the passed matrix
         void load(in sequence<float> array);                // copy 16 floats into the matrix
         sequence<float> getAsArray();                       // return the matrix as an array of 16 floats
-        CanvasFloatArray getAsCanvasFloatArray();           // return the matrix as a CanvasFloatArray with 16 values
+        WebGLFloatArray getAsCanvasFloatArray();           // return the matrix as a WebGLFloatArray with 16 values
         void makeIdentity();                                // replace the matrix with identity
         void transpose();                                   // replace the matrix with its transpose
         void invert();                                      // replace the matrix with its inverse
@@ -141,7 +141,7 @@ CanvasMatrix4.prototype.getAsArray = function()
 
 CanvasMatrix4.prototype.getAsCanvasFloatArray = function()
 {
-    return new CanvasFloatArray(this.getAsArray());
+    return new WebGLFloatArray(this.getAsArray());
 }
 
 CanvasMatrix4.prototype.makeIdentity = function()

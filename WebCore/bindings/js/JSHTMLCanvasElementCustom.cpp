@@ -29,7 +29,7 @@
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
 #if ENABLE(3D_CANVAS)
-#include "JSCanvasRenderingContext3D.h"
+#include "JSWebGLRenderingContext.h"
 #endif
 #include <wtf/GetPtr.h>
 

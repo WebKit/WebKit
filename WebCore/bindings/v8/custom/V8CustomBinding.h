@@ -363,35 +363,35 @@ namespace WebCore {
         DECLARE_CALLBACK(CanvasRenderingContext2DPutImageData);
 
 #if ENABLE(3D_CANVAS)
-        DECLARE_CALLBACK(CanvasRenderingContext3DBufferData);
-        DECLARE_CALLBACK(CanvasRenderingContext3DBufferSubData);
-        DECLARE_CALLBACK(CanvasRenderingContext3DSizeof);
-        DECLARE_CALLBACK(CanvasRenderingContext3DTexImage2D);
-        DECLARE_CALLBACK(CanvasRenderingContext3DTexSubImage2D);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform1fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform1iv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform2fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform2iv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform3fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform3iv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform4fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniform4iv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniformMatrix2fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniformMatrix3fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DUniformMatrix4fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DVertexAttrib1fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DVertexAttrib2fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DVertexAttrib3fv);
-        DECLARE_CALLBACK(CanvasRenderingContext3DVertexAttrib4fv);
+        DECLARE_CALLBACK(WebGLRenderingContextBufferData);
+        DECLARE_CALLBACK(WebGLRenderingContextBufferSubData);
+        DECLARE_CALLBACK(WebGLRenderingContextSizeof);
+        DECLARE_CALLBACK(WebGLRenderingContextTexImage2D);
+        DECLARE_CALLBACK(WebGLRenderingContextTexSubImage2D);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform1fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform1iv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform2fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform2iv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform3fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform3iv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform4fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniform4iv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix2fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix3fv);
+        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix4fv);
+        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib1fv);
+        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib2fv);
+        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib3fv);
+        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib4fv);
 
-        DECLARE_CALLBACK(CanvasArrayBufferConstructor);
-        DECLARE_CALLBACK(CanvasByteArrayConstructor);
-        DECLARE_CALLBACK(CanvasFloatArrayConstructor);
-        DECLARE_CALLBACK(CanvasIntArrayConstructor);
-        DECLARE_CALLBACK(CanvasShortArrayConstructor);
-        DECLARE_CALLBACK(CanvasUnsignedByteArrayConstructor);
-        DECLARE_CALLBACK(CanvasUnsignedIntArrayConstructor);
-        DECLARE_CALLBACK(CanvasUnsignedShortArrayConstructor);
+        DECLARE_CALLBACK(WebGLArrayBufferConstructor);
+        DECLARE_CALLBACK(WebGLByteArrayConstructor);
+        DECLARE_CALLBACK(WebGLFloatArrayConstructor);
+        DECLARE_CALLBACK(WebGLIntArrayConstructor);
+        DECLARE_CALLBACK(WebGLShortArrayConstructor);
+        DECLARE_CALLBACK(WebGLUnsignedByteArrayConstructor);
+        DECLARE_CALLBACK(WebGLUnsignedIntArrayConstructor);
+        DECLARE_CALLBACK(WebGLUnsignedShortArrayConstructor);
 #endif
 
         DECLARE_PROPERTY_ACCESSOR_GETTER(ClipboardTypes);
@@ -529,31 +529,31 @@ namespace WebCore {
         DECLARE_NAMED_PROPERTY_GETTER(HTMLCollection);
 
 #if ENABLE(3D_CANVAS)
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasByteArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasByteArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLByteArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLByteArray);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasFloatArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasFloatArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLFloatArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLFloatArray);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasIntArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasIntArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLIntArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLIntArray);
 #endif
 
         DECLARE_INDEXED_PROPERTY_GETTER(CanvasPixelArray);
         DECLARE_INDEXED_PROPERTY_SETTER(CanvasPixelArray);
 
 #if ENABLE(3D_CANVAS)
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasShortArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasShortArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLShortArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLShortArray);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasUnsignedByteArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasUnsignedByteArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedByteArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasUnsignedIntArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasUnsignedIntArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedIntArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedIntArray);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasUnsignedShortArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasUnsignedShortArray);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedShortArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray);
 #endif
 
         DECLARE_PROPERTY_ACCESSOR_GETTER(MessageEventPorts);

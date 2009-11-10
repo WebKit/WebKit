@@ -445,23 +445,23 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 
 #if ENABLE(3D_CANVAS)
 #define DOM_OBJECT_3D_CANVAS_TYPES(V)                                   \
-    V(CANVASACTIVEINFO, CanvasActiveInfo)                               \
-    V(CANVASARRAY, CanvasArray)                                         \
-    V(CANVASARRAYBUFFER, CanvasArrayBuffer)                             \
-    V(CANVASBUFFER, CanvasBuffer)                                       \
-    V(CANVASBYTEARRAY, CanvasByteArray)                                 \
-    V(CANVASFLOATARRAY, CanvasFloatArray)                               \
-    V(CANVASFRAMEBUFFER, CanvasFramebuffer)                             \
-    V(CANVASINTARRAY, CanvasIntArray)                                   \
-    V(CANVASPROGRAM, CanvasProgram)                                     \
-    V(CANVASRENDERBUFFER, CanvasRenderbuffer)                           \
-    V(CANVASRENDERINGCONTEXT3D, CanvasRenderingContext3D)               \
-    V(CANVASSHADER, CanvasShader)                                       \
-    V(CANVASSHORTARRAY, CanvasShortArray)                               \
-    V(CANVASTEXTURE, CanvasTexture)                                     \
-    V(CANVASUNSIGNEDBYTEARRAY, CanvasUnsignedByteArray)                 \
-    V(CANVASUNSIGNEDINTARRAY, CanvasUnsignedIntArray)                   \
-    V(CANVASUNSIGNEDSHORTARRAY, CanvasUnsignedShortArray)
+    V(CANVASACTIVEINFO, WebGLActiveInfo)                               \
+    V(CANVASARRAY, WebGLArray)                                         \
+    V(CANVASARRAYBUFFER, WebGLArrayBuffer)                             \
+    V(CANVASBUFFER, WebGLBuffer)                                       \
+    V(CANVASBYTEARRAY, WebGLByteArray)                                 \
+    V(CANVASFLOATARRAY, WebGLFloatArray)                               \
+    V(CANVASFRAMEBUFFER, WebGLFramebuffer)                             \
+    V(CANVASINTARRAY, WebGLIntArray)                                   \
+    V(CANVASPROGRAM, WebGLProgram)                                     \
+    V(CANVASRENDERBUFFER, WebGLRenderbuffer)                           \
+    V(CANVASRENDERINGCONTEXT3D, WebGLRenderingContext)               \
+    V(CANVASSHADER, WebGLShader)                                       \
+    V(CANVASSHORTARRAY, WebGLShortArray)                               \
+    V(CANVASTEXTURE, WebGLTexture)                                     \
+    V(CANVASUNSIGNEDBYTEARRAY, WebGLUnsignedByteArray)                 \
+    V(CANVASUNSIGNEDINTARRAY, WebGLUnsignedIntArray)                   \
+    V(CANVASUNSIGNEDSHORTARRAY, WebGLUnsignedShortArray)
 #else
 #define DOM_OBJECT_3D_CANVAS_TYPES(V)
 #endif

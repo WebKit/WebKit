@@ -1,3 +1,16 @@
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Rename 3D Canvas related classes to use WebGL prefix
+        https://bugs.webkit.org/show_bug.cgi?id=29095
+
+        Checkin new version of do-webcore-rename used to do the WebGL type rename,
+        and upate webkitdirs script to new method of testing for WebGL.
+
+        * Scripts/do-webcore-rename:
+        * Scripts/webkitdirs.pm:
+
 2009-11-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

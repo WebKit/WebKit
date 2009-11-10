@@ -28,11 +28,11 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasObject.h"
-#include "CanvasRenderingContext3D.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
     
-CanvasObject::CanvasObject(CanvasRenderingContext3D* context)
+CanvasObject::CanvasObject(WebGLRenderingContext* context)
     : m_object(0)
     , m_context(context)
 {
