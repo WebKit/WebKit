@@ -1,3 +1,228 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Up-streaming Chromium API src files: WebFileChooser...WebImageSkia
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebFileChooserCompletionImpl.cpp: Added.
+        (WebKit::WebFileChooserCompletionImpl::WebFileChooserCompletionImpl):
+        (WebKit::WebFileChooserCompletionImpl::~WebFileChooserCompletionImpl):
+        (WebKit::WebFileChooserCompletionImpl::didChooseFile):
+        * src/WebFileChooserCompletionImpl.h: Added.
+        * src/WebFontCache.cpp: Added.
+        (WebKit::WebFontCache::fontDataCount):
+        (WebKit::WebFontCache::inactiveFontDataCount):
+        (WebKit::WebFontCache::clear):
+        * src/WebFormElement.cpp: Added.
+        (WebKit::WebFormElement::WebFormElement):
+        (WebKit::WebFormElement::operator=):
+        (WebKit::WebFormElement::operator WTF::PassRefPtr<WebCore::HTMLFormElement>):
+        (WebKit::WebFormElement::autoComplete):
+        (WebKit::WebFormElement::action):
+        (WebKit::WebFormElement::submit):
+        (WebKit::WebFormElement::getNamedElements):
+        * src/WebFrameImpl.cpp: Added.
+        (WebKit::frameContentAsPlainText):
+        (WebKit::ChromePrintContext::ChromePrintContext):
+        (WebKit::ChromePrintContext::begin):
+        (WebKit::ChromePrintContext::getPageShrink):
+        (WebKit::ChromePrintContext::spoolPage):
+        (WebKit::DataSourceForDocLoader):
+        (WebKit::WebFrameImpl::DeferredScopeStringMatches::DeferredScopeStringMatches):
+        (WebKit::WebFrameImpl::DeferredScopeStringMatches::doTimeout):
+        (WebKit::WebFrame::frameForEnteredContext):
+        (WebKit::WebFrame::frameForCurrentContext):
+        (WebKit::WebFrameImpl::name):
+        (WebKit::WebFrameImpl::url):
+        (WebKit::WebFrameImpl::favIconURL):
+        (WebKit::WebFrameImpl::openSearchDescriptionURL):
+        (WebKit::WebFrameImpl::scrollOffset):
+        (WebKit::WebFrameImpl::contentsSize):
+        (WebKit::WebFrameImpl::contentsPreferredWidth):
+        (WebKit::WebFrameImpl::hasVisibleContent):
+        (WebKit::WebFrameImpl::view):
+        (WebKit::WebFrameImpl::opener):
+        (WebKit::WebFrameImpl::parent):
+        (WebKit::WebFrameImpl::top):
+        (WebKit::WebFrameImpl::firstChild):
+        (WebKit::WebFrameImpl::lastChild):
+        (WebKit::WebFrameImpl::nextSibling):
+        (WebKit::WebFrameImpl::previousSibling):
+        (WebKit::WebFrameImpl::traverseNext):
+        (WebKit::WebFrameImpl::traversePrevious):
+        (WebKit::WebFrameImpl::findChildByName):
+        (WebKit::WebFrameImpl::findChildByExpression):
+        (WebKit::WebFrameImpl::forms):
+        (WebKit::WebFrameImpl::securityOrigin):
+        (WebKit::WebFrameImpl::grantUniversalAccess):
+        (WebKit::WebFrameImpl::windowObject):
+        (WebKit::WebFrameImpl::bindToWindowObject):
+        (WebKit::WebFrameImpl::executeScript):
+        (WebKit::WebFrameImpl::executeScriptInNewContext):
+        (WebKit::WebFrameImpl::executeScriptInIsolatedWorld):
+        (WebKit::WebFrameImpl::addMessageToConsole):
+        (WebKit::WebFrameImpl::collectGarbage):
+        (WebKit::WebFrameImpl::mainWorldScriptContext):
+        (WebKit::WebFrameImpl::insertStyleText):
+        (WebKit::WebFrameImpl::reload):
+        (WebKit::WebFrameImpl::loadRequest):
+        (WebKit::WebFrameImpl::loadHistoryItem):
+        (WebKit::WebFrameImpl::loadData):
+        (WebKit::WebFrameImpl::loadHTMLString):
+        (WebKit::WebFrameImpl::isLoading):
+        (WebKit::WebFrameImpl::stopLoading):
+        (WebKit::WebFrameImpl::provisionalDataSource):
+        (WebKit::WebFrameImpl::dataSource):
+        (WebKit::WebFrameImpl::previousHistoryItem):
+        (WebKit::WebFrameImpl::currentHistoryItem):
+        (WebKit::WebFrameImpl::enableViewSourceMode):
+        (WebKit::WebFrameImpl::isViewSourceModeEnabled):
+        (WebKit::WebFrameImpl::setReferrerForRequest):
+        (WebKit::WebFrameImpl::dispatchWillSendRequest):
+        (WebKit::WebFrameImpl::commitDocumentData):
+        (WebKit::WebFrameImpl::unloadListenerCount):
+        (WebKit::WebFrameImpl::isProcessingUserGesture):
+        (WebKit::WebFrameImpl::willSuppressOpenerInNewFrame):
+        (WebKit::WebFrameImpl::replaceSelection):
+        (WebKit::WebFrameImpl::insertText):
+        (WebKit::WebFrameImpl::setMarkedText):
+        (WebKit::WebFrameImpl::unmarkText):
+        (WebKit::WebFrameImpl::hasMarkedText):
+        (WebKit::WebFrameImpl::markedRange):
+        (WebKit::WebFrameImpl::executeCommand):
+        (WebKit::WebFrameImpl::isCommandEnabled):
+        (WebKit::WebFrameImpl::enableContinuousSpellChecking):
+        (WebKit::WebFrameImpl::isContinuousSpellCheckingEnabled):
+        (WebKit::WebFrameImpl::hasSelection):
+        (WebKit::WebFrameImpl::selectionRange):
+        (WebKit::WebFrameImpl::selectionAsText):
+        (WebKit::WebFrameImpl::selectionAsMarkup):
+        (WebKit::WebFrameImpl::printBegin):
+        (WebKit::WebFrameImpl::getPrintPageShrink):
+        (WebKit::WebFrameImpl::printPage):
+        (WebKit::WebFrameImpl::printEnd):
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::stopFinding):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        (WebKit::WebFrameImpl::cancelPendingScopingEffort):
+        (WebKit::WebFrameImpl::increaseMatchCount):
+        (WebKit::WebFrameImpl::reportFindInPageSelection):
+        (WebKit::WebFrameImpl::resetMatchCount):
+        (WebKit::WebFrameImpl::completeURL):
+        (WebKit::WebFrameImpl::contentAsText):
+        (WebKit::WebFrameImpl::contentAsMarkup):
+        (WebKit::WebFrameImpl::create):
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::~WebFrameImpl):
+        (WebKit::WebFrameImpl::initializeAsMainFrame):
+        (WebKit::WebFrameImpl::createChildFrame):
+        (WebKit::WebFrameImpl::layout):
+        (WebKit::WebFrameImpl::paint):
+        (WebKit::WebFrameImpl::createFrameView):
+        (WebKit::WebFrameImpl::fromFrame):
+        (WebKit::WebFrameImpl::viewImpl):
+        (WebKit::WebFrameImpl::dataSourceImpl):
+        (WebKit::WebFrameImpl::provisionalDataSourceImpl):
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection):
+        (WebKit::WebFrameImpl::didFail):
+        (WebKit::WebFrameImpl::setAllowsScrolling):
+        (WebKit::WebFrameImpl::registerPasswordListener):
+        (WebKit::WebFrameImpl::getPasswordListener):
+        (WebKit::WebFrameImpl::closing):
+        (WebKit::WebFrameImpl::invalidateArea):
+        (WebKit::WebFrameImpl::addMarker):
+        (WebKit::WebFrameImpl::setMarkerActive):
+        (WebKit::WebFrameImpl::ordinalOfFirstMatchForFrame):
+        (WebKit::WebFrameImpl::shouldScopeMatches):
+        (WebKit::WebFrameImpl::scopeStringMatchesSoon):
+        (WebKit::WebFrameImpl::callScopeStringMatches):
+        (WebKit::WebFrameImpl::invalidateIfNecessary):
+        (WebKit::WebFrameImpl::clearPasswordListeners):
+        (WebKit::WebFrameImpl::loadJavaScriptURL):
+        * src/WebFrameImpl.h: Added.
+        (WebKit::WebFrameImpl::liveObjectCount):
+        (WebKit::WebFrameImpl::frame):
+        (WebKit::WebFrameImpl::frameView):
+        (WebKit::WebFrameImpl::activeMatchFrame):
+        (WebKit::WebFrameImpl::client):
+        (WebKit::WebFrameImpl::dropClient):
+        (WebKit::WebFrameImpl::ClientHandle::create):
+        (WebKit::WebFrameImpl::ClientHandle::client):
+        (WebKit::WebFrameImpl::ClientHandle::dropClient):
+        (WebKit::WebFrameImpl::ClientHandle::ClientHandle):
+        (WebKit::WebFrameImpl::):
+        * src/WebHTTPBody.cpp: Added.
+        (WebKit::WebHTTPBody::initialize):
+        (WebKit::WebHTTPBody::reset):
+        (WebKit::WebHTTPBody::assign):
+        (WebKit::WebHTTPBody::elementCount):
+        (WebKit::WebHTTPBody::elementAt):
+        (WebKit::WebHTTPBody::appendData):
+        (WebKit::WebHTTPBody::appendFile):
+        (WebKit::WebHTTPBody::identifier):
+        (WebKit::WebHTTPBody::setIdentifier):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::operator PassRefPtr<FormData>):
+        (WebKit::WebHTTPBody::ensureMutable):
+        * src/WebHistoryItem.cpp: Added.
+        (WebKit::WebHistoryItem::initialize):
+        (WebKit::WebHistoryItem::reset):
+        (WebKit::WebHistoryItem::assign):
+        (WebKit::WebHistoryItem::urlString):
+        (WebKit::WebHistoryItem::setURLString):
+        (WebKit::WebHistoryItem::originalURLString):
+        (WebKit::WebHistoryItem::setOriginalURLString):
+        (WebKit::WebHistoryItem::referrer):
+        (WebKit::WebHistoryItem::setReferrer):
+        (WebKit::WebHistoryItem::target):
+        (WebKit::WebHistoryItem::setTarget):
+        (WebKit::WebHistoryItem::parent):
+        (WebKit::WebHistoryItem::setParent):
+        (WebKit::WebHistoryItem::title):
+        (WebKit::WebHistoryItem::setTitle):
+        (WebKit::WebHistoryItem::alternateTitle):
+        (WebKit::WebHistoryItem::setAlternateTitle):
+        (WebKit::WebHistoryItem::lastVisitedTime):
+        (WebKit::WebHistoryItem::setLastVisitedTime):
+        (WebKit::WebHistoryItem::scrollOffset):
+        (WebKit::WebHistoryItem::setScrollOffset):
+        (WebKit::WebHistoryItem::isTargetItem):
+        (WebKit::WebHistoryItem::setIsTargetItem):
+        (WebKit::WebHistoryItem::visitCount):
+        (WebKit::WebHistoryItem::setVisitCount):
+        (WebKit::WebHistoryItem::documentState):
+        (WebKit::WebHistoryItem::setDocumentState):
+        (WebKit::WebHistoryItem::httpContentType):
+        (WebKit::WebHistoryItem::setHTTPContentType):
+        (WebKit::WebHistoryItem::httpBody):
+        (WebKit::WebHistoryItem::setHTTPBody):
+        (WebKit::WebHistoryItem::children):
+        (WebKit::WebHistoryItem::setChildren):
+        (WebKit::WebHistoryItem::appendToChildren):
+        (WebKit::WebHistoryItem::WebHistoryItem):
+        (WebKit::WebHistoryItem::operator=):
+        (WebKit::WebHistoryItem::operator PassRefPtr<HistoryItem>):
+        (WebKit::WebHistoryItem::ensureMutable):
+        * src/WebImageCG.cpp: Added.
+        (WebKit::WebImage::fromData):
+        (WebKit::WebImage::reset):
+        (WebKit::WebImage::assign):
+        (WebKit::WebImage::isNull):
+        (WebKit::WebImage::size):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+        * src/WebImageSkia.cpp: Added.
+        (WebKit::WebImage::fromData):
+        (WebKit::WebImage::reset):
+        (WebKit::WebImage::assign):
+        (WebKit::WebImage::isNull):
+        (WebKit::WebImage::size):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+
 2009-11-09  Yaar Schnitman  <yaar@chromium.src>
 
         Reviewed by Dimitri Glazkov.
