@@ -1,3 +1,59 @@
+2009-11-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update references to Canvas 3D classes to use the WebGL prefix
+        introduced in http://trac.webkit.org/changeset/50725.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+        (WebCore::GraphicsContext3DInternal::bindBuffer):
+        (WebCore::GraphicsContext3DInternal::bindTexture):
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getProgrami):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderi):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformf):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformi):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
@@ -1197,25 +1253,6 @@
         (WebKit::WebViewImpl::initialNavigationPolicy):
         (WebKit::WebViewImpl::currentInputEvent):
         (WebKit::WebViewImpl::):
-
-2009-11-09  Nate Chapin  <japhet@chromium.org>
-
-        Reviewed by Dimitri Glazkov.
-
-        WebPa*.h and WebPl*.h Chromium API headers.
-
-        https://bugs.webkit.org/show_bug.cgi?id=28394
-
-        * public/WebPasswordAutocompleteListener.h: Added.
-        (WebKit::WebPasswordAutocompleteListener::~WebPasswordAutocompleteListener):
-        * public/WebPasswordFormData.h: Added.
-        (WebKit::WebPasswordFormData::isValid):
-        * public/WebPlugin.h: Added.
-        (WebKit::WebPlugin::~WebPlugin):
-        * public/WebPluginContainer.h: Added.
-        (WebKit::WebPluginContainer::~WebPluginContainer):
-        * public/WebPluginListBuilder.h: Added.
-        * public/WebPluginParams.h: Added.
 
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
