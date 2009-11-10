@@ -1,5 +1,14 @@
 2009-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed documentation fixes.
+
+        Added a few improvements from Jocelyn Turcotte to the
+        createWindow docs.
+
+        * Api/qwebview.cpp:
+
+2009-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Unreviewed documentation fix.
 
         [Qt] Make qwebpage's createWindow not qwebview dependent.
