@@ -1,5 +1,12 @@
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
+        Another chrome build fix.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
         Yet another chrome buildfix
 
         * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
