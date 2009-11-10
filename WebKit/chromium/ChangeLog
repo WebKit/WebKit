@@ -2,6 +2,213 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: DOMUtilities...FrameLoaderClientImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/DOMUtilitiesPrivate.cpp: Added.
+        (WebCore::toHTMLElement):
+        (WebKit::toHTMLInputElement):
+        (WebKit::toHTMLLinkElement):
+        (WebKit::toHTMLMetaElement):
+        (WebKit::toHTMLOptionElement):
+        (WebKit::nameOfInputElement):
+        * src/DOMUtilitiesPrivate.h: Added.
+        * src/DragClientImpl.cpp: Added.
+        (WebKit::DragClientImpl::willPerformDragDestinationAction):
+        (WebKit::DragClientImpl::willPerformDragSourceAction):
+        (WebKit::DragClientImpl::actionMaskForDrag):
+        (WebKit::DragClientImpl::dragSourceActionMaskForPoint):
+        (WebKit::DragClientImpl::startDrag):
+        (WebKit::DragClientImpl::createDragImageForLink):
+        (WebKit::DragClientImpl::dragControllerDestroyed):
+        * src/DragClientImpl.h: Added.
+        (WebKit::DragClientImpl::DragClientImpl):
+        * src/EditorClientImpl.cpp: Added.
+        (WebKit::EditorClientImpl::EditorClientImpl):
+        (WebKit::EditorClientImpl::~EditorClientImpl):
+        (WebKit::EditorClientImpl::pageDestroyed):
+        (WebKit::EditorClientImpl::shouldShowDeleteInterface):
+        (WebKit::EditorClientImpl::smartInsertDeleteEnabled):
+        (WebKit::EditorClientImpl::isSelectTrailingWhitespaceEnabled):
+        (WebKit::EditorClientImpl::shouldSpellcheckByDefault):
+        (WebKit::EditorClientImpl::isContinuousSpellCheckingEnabled):
+        (WebKit::EditorClientImpl::toggleContinuousSpellChecking):
+        (WebKit::EditorClientImpl::isGrammarCheckingEnabled):
+        (WebKit::EditorClientImpl::toggleGrammarChecking):
+        (WebKit::EditorClientImpl::spellCheckerDocumentTag):
+        (WebKit::EditorClientImpl::isEditable):
+        (WebKit::EditorClientImpl::shouldBeginEditing):
+        (WebKit::EditorClientImpl::shouldEndEditing):
+        (WebKit::EditorClientImpl::shouldInsertNode):
+        (WebKit::EditorClientImpl::shouldInsertText):
+        (WebKit::EditorClientImpl::shouldDeleteRange):
+        (WebKit::EditorClientImpl::shouldChangeSelectedRange):
+        (WebKit::EditorClientImpl::shouldApplyStyle):
+        (WebKit::EditorClientImpl::shouldMoveRangeAfterDelete):
+        (WebKit::EditorClientImpl::didBeginEditing):
+        (WebKit::EditorClientImpl::respondToChangedSelection):
+        (WebKit::EditorClientImpl::respondToChangedContents):
+        (WebKit::EditorClientImpl::didEndEditing):
+        (WebKit::EditorClientImpl::didWriteSelectionToPasteboard):
+        (WebKit::EditorClientImpl::didSetSelectionTypesForPasteboard):
+        (WebKit::EditorClientImpl::registerCommandForUndo):
+        (WebKit::EditorClientImpl::registerCommandForRedo):
+        (WebKit::EditorClientImpl::clearUndoRedoOperations):
+        (WebKit::EditorClientImpl::canUndo):
+        (WebKit::EditorClientImpl::canRedo):
+        (WebKit::EditorClientImpl::undo):
+        (WebKit::EditorClientImpl::redo):
+        (WebKit::):
+        (WebKit::EditorClientImpl::interpretKeyEvent):
+        (WebKit::EditorClientImpl::handleEditingKeyboardEvent):
+        (WebKit::EditorClientImpl::handleKeyboardEvent):
+        (WebKit::EditorClientImpl::handleInputMethodKeydown):
+        (WebKit::EditorClientImpl::textFieldDidBeginEditing):
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::textDidChangeInTextField):
+        (WebKit::EditorClientImpl::showFormAutofillForNode):
+        (WebKit::EditorClientImpl::autofill):
+        (WebKit::EditorClientImpl::doAutofill):
+        (WebKit::EditorClientImpl::cancelPendingAutofill):
+        (WebKit::EditorClientImpl::onAutofillSuggestionAccepted):
+        (WebKit::EditorClientImpl::doTextFieldCommandFromEvent):
+        (WebKit::EditorClientImpl::textWillBeDeletedInTextField):
+        (WebKit::EditorClientImpl::textDidChangeInTextArea):
+        (WebKit::EditorClientImpl::ignoreWordInSpellDocument):
+        (WebKit::EditorClientImpl::learnWord):
+        (WebKit::EditorClientImpl::checkSpellingOfString):
+        (WebKit::EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::EditorClientImpl::checkGrammarOfString):
+        (WebKit::EditorClientImpl::updateSpellingUIWithGrammarString):
+        (WebKit::EditorClientImpl::updateSpellingUIWithMisspelledWord):
+        (WebKit::EditorClientImpl::showSpellingUI):
+        (WebKit::EditorClientImpl::spellingUIIsShowing):
+        (WebKit::EditorClientImpl::getGuessesForWord):
+        (WebKit::EditorClientImpl::setInputMethodState):
+        * src/EditorClientImpl.h: Added.
+        (WebKit::EditorClientImpl::):
+        * src/FrameLoaderClientImpl.cpp: Added.
+        (WebKit::):
+        (WebKit::FrameLoaderClientImpl::FrameLoaderClientImpl):
+        (WebKit::FrameLoaderClientImpl::~FrameLoaderClientImpl):
+        (WebKit::FrameLoaderClientImpl::frameLoaderDestroyed):
+        (WebKit::FrameLoaderClientImpl::windowObjectCleared):
+        (WebKit::FrameLoaderClientImpl::documentElementAvailable):
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContextForFrame):
+        (WebKit::FrameLoaderClientImpl::didDestroyScriptContextForFrame):
+        (WebKit::FrameLoaderClientImpl::didCreateIsolatedScriptContext):
+        (WebKit::FrameLoaderClientImpl::didPerformFirstNavigation):
+        (WebKit::FrameLoaderClientImpl::registerForIconNotification):
+        (WebKit::FrameLoaderClientImpl::didChangeScrollOffset):
+        (WebKit::FrameLoaderClientImpl::allowJavaScript):
+        (WebKit::FrameLoaderClientImpl::hasWebView):
+        (WebKit::FrameLoaderClientImpl::hasFrameView):
+        (WebKit::FrameLoaderClientImpl::makeDocumentView):
+        (WebKit::FrameLoaderClientImpl::makeRepresentation):
+        (WebKit::FrameLoaderClientImpl::forceLayout):
+        (WebKit::FrameLoaderClientImpl::forceLayoutForNonHTML):
+        (WebKit::FrameLoaderClientImpl::setCopiesOnScroll):
+        (WebKit::FrameLoaderClientImpl::detachedFromParent2):
+        (WebKit::FrameLoaderClientImpl::detachedFromParent3):
+        (WebKit::FrameLoaderClientImpl::assignIdentifierToInitialRequest):
+        (WebKit::determineTargetTypeFromLoader):
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendRequest):
+        (WebKit::FrameLoaderClientImpl::shouldUseCredentialStorage):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveAuthenticationChallenge):
+        (WebKit::FrameLoaderClientImpl::dispatchDidCancelAuthenticationChallenge):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveResponse):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveContentLength):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFinishLoading):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFailLoading):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFinishDocumentLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidLoadResourceFromMemoryCache):
+        (WebKit::FrameLoaderClientImpl::dispatchDidLoadResourceByXMLHttpRequest):
+        (WebKit::FrameLoaderClientImpl::dispatchDidHandleOnloadEvents):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidCancelClientRedirect):
+        (WebKit::FrameLoaderClientImpl::dispatchWillPerformClientRedirect):
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClientImpl::dispatchWillClose):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveIcon):
+        (WebKit::FrameLoaderClientImpl::dispatchDidStartProvisionalLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidReceiveTitle):
+        (WebKit::FrameLoaderClientImpl::dispatchDidCommitLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFailProvisionalLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFailLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFinishLoad):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFirstLayout):
+        (WebKit::FrameLoaderClientImpl::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebKit::FrameLoaderClientImpl::dispatchCreatePage):
+        (WebKit::FrameLoaderClientImpl::dispatchShow):
+        (WebKit::shouldTreatAsAttachment):
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForMIMEType):
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClientImpl::cancelPolicyCheck):
+        (WebKit::FrameLoaderClientImpl::dispatchUnableToImplementPolicy):
+        (WebKit::FrameLoaderClientImpl::dispatchWillSubmitForm):
+        (WebKit::FrameLoaderClientImpl::dispatchDidLoadMainResource):
+        (WebKit::FrameLoaderClientImpl::revertToProvisionalState):
+        (WebKit::FrameLoaderClientImpl::setMainDocumentError):
+        (WebKit::FrameLoaderClientImpl::postProgressStartedNotification):
+        (WebKit::FrameLoaderClientImpl::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClientImpl::postProgressFinishedNotification):
+        (WebKit::FrameLoaderClientImpl::setMainFrameDocumentReady):
+        (WebKit::FrameLoaderClientImpl::startDownload):
+        (WebKit::FrameLoaderClientImpl::willChangeTitle):
+        (WebKit::FrameLoaderClientImpl::didChangeTitle):
+        (WebKit::FrameLoaderClientImpl::committedLoad):
+        (WebKit::FrameLoaderClientImpl::finishedLoading):
+        (WebKit::FrameLoaderClientImpl::updateGlobalHistory):
+        (WebKit::FrameLoaderClientImpl::updateGlobalHistoryRedirectLinks):
+        (WebKit::FrameLoaderClientImpl::shouldGoToHistoryItem):
+        (WebKit::FrameLoaderClientImpl::didDisplayInsecureContent):
+        (WebKit::FrameLoaderClientImpl::didRunInsecureContent):
+        (WebKit::FrameLoaderClientImpl::blockedError):
+        (WebKit::FrameLoaderClientImpl::cancelledError):
+        (WebKit::FrameLoaderClientImpl::cannotShowURLError):
+        (WebKit::FrameLoaderClientImpl::interruptForPolicyChangeError):
+        (WebKit::FrameLoaderClientImpl::cannotShowMIMETypeError):
+        (WebKit::FrameLoaderClientImpl::fileDoesNotExistError):
+        (WebKit::FrameLoaderClientImpl::pluginWillHandleLoadError):
+        (WebKit::FrameLoaderClientImpl::shouldFallBack):
+        (WebKit::FrameLoaderClientImpl::canHandleRequest):
+        (WebKit::FrameLoaderClientImpl::canShowMIMEType):
+        (WebKit::FrameLoaderClientImpl::representationExistsForURLScheme):
+        (WebKit::FrameLoaderClientImpl::generatedMIMETypeForURLScheme):
+        (WebKit::FrameLoaderClientImpl::frameLoadCompleted):
+        (WebKit::FrameLoaderClientImpl::saveViewStateToItem):
+        (WebKit::FrameLoaderClientImpl::restoreViewState):
+        (WebKit::FrameLoaderClientImpl::provisionalLoadStarted):
+        (WebKit::FrameLoaderClientImpl::didFinishLoad):
+        (WebKit::FrameLoaderClientImpl::prepareForDataSourceReplacement):
+        (WebKit::FrameLoaderClientImpl::createDocumentLoader):
+        (WebKit::FrameLoaderClientImpl::setTitle):
+        (WebKit::FrameLoaderClientImpl::userAgent):
+        (WebKit::FrameLoaderClientImpl::savePlatformDataToCachedFrame):
+        (WebKit::FrameLoaderClientImpl::transitionToCommittedFromCachedFrame):
+        (WebKit::FrameLoaderClientImpl::transitionToCommittedForNewPage):
+        (WebKit::FrameLoaderClientImpl::canCachePage):
+        (WebKit::FrameLoaderClientImpl::download):
+        (WebKit::FrameLoaderClientImpl::createFrame):
+        (WebKit::FrameLoaderClientImpl::createPlugin):
+        (WebKit::FrameLoaderClientImpl::redirectDataToPlugin):
+        (WebKit::FrameLoaderClientImpl::createJavaAppletWidget):
+        (WebKit::FrameLoaderClientImpl::objectContentType):
+        (WebKit::FrameLoaderClientImpl::overrideMediaType):
+        (WebKit::FrameLoaderClientImpl::actionSpecifiesNavigationPolicy):
+        (WebKit::FrameLoaderClientImpl::handleBackForwardNavigation):
+        (WebKit::FrameLoaderClientImpl::pluginLoadObserver):
+        * src/FrameLoaderClientImpl.h: Added.
+        (WebKit::FrameLoaderClientImpl::webFrame):
+        (WebKit::FrameLoaderClientImpl::willChangeEstimatedProgress):
+        (WebKit::FrameLoaderClientImpl::didChangeEstimatedProgress):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: ChromeClientImpl...ContextMenuClientImpl
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
