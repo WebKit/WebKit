@@ -2,6 +2,26 @@
 
         Reviewed by Dimitri Glazkov.
 
+        WebPo*.h and WebRunetimeFeatures.h Chromium API headers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/WebPoint.h: Added.
+        (WebKit::WebPoint::WebPoint):
+        (WebKit::WebPoint::operator=):
+        (WebKit::WebPoint::operator WebCore::IntPoint):
+        (WebKit::WebPoint::operator gfx::Point):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebPopupMenu.h: Added.
+        * public/WebPopupMenuInfo.h: Added.
+        (WebKit::WebPopupMenuInfo::Item::):
+        * public/WebRuntimeFeatures.h: Added.
+
+2009-11-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         WebPa*.h and WebPl*.h Chromium API headers.
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
