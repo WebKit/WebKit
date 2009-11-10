@@ -1,3 +1,10 @@
+2009-11-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Skip another test that requires implementing editing
+        callbacks.
+
+        * platform/gtk/Skipped:
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

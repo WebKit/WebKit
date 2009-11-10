@@ -5357,6 +5357,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 # Tests that require editing callbacks (and possibly Glib DOM bindings)
 editing/execCommand/indent-with-style.html
 editing/text-iterator/thai-cursor-movement.html
+editing/undo/redo-style.html
 editing/undo/undo-indent.html
 
 # Requires expected results that we don't have atm
