@@ -1,26 +1,26 @@
-layer at (0,0) size 800x637
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x637
-  RenderBlock {HTML} at (0,0) size 800x637
-    RenderBody {BODY} at (8,8) size 784x621 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x637
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x637
+  RenderBlock {HTML} at (0,0) size 784x637
+    RenderBody {BODY} at (8,8) size 768x621 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x51
+      RenderBlock {PRE} at (0,37) size 768x51
         RenderText {#text} at (0,0) size 266x51
           text run at (0,0) width 266: "P {background-image: url(../resources/bg.gif);}"
           text run at (266,0) width 0: " "
           text run at (0,17) width 183: ".one {background-image: none;}"
           text run at (183,17) width 0: " "
           text run at (0,34) width 0: " "
-      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,119) size 784x63
-        RenderText {#text} at (0,0) size 777x63
+      RenderBlock {HR} at (0,101) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,119) size 768x63
+        RenderText {#text} at (0,0) size 733x63
           text run at (0,0) width 569: "This sentence should be backed by an image-- a green grid pattern, in this case. "
           text run at (569,0) width 164: "The background image"
-          text run at (0,21) width 777: "should also tile along both axes, because no repeat direction is specified (specific tests for repeating are found"
-          text run at (0,42) width 83: "elsewhere)."
-      RenderBlock {P} at (0,198) size 784x86
+          text run at (0,21) width 733: "should also tile along both axes, because no repeat direction is specified (specific tests for repeating are"
+          text run at (0,42) width 127: "found elsewhere)."
+      RenderBlock {P} at (0,198) size 768x86
         RenderText {#text} at (0,0) size 679x21
           text run at (0,0) width 679: "This sentence should be backed by a repeated green-grid image, as should the last three words "
         RenderInline {STRONG} at (0,0) size 725x43
@@ -40,33 +40,33 @@ layer at (0,0) size 800x637
         RenderInline {CODE} at (0,0) size 28x17
           RenderText {#text} at (397,25) size 28x17
             text run at (397,25) width 28: "none"
-        RenderText {#text} at (425,22) size 770x64
+        RenderText {#text} at (425,22) size 744x64
           text run at (425,22) width 309: " means that the element has no background"
-          text run at (0,44) width 770: "image, allowing the parent to \"shine through\" by default; since the parent of the words \"in this sentence\" is the"
-          text run at (0,65) width 407: "paragraph, then the paragraph's image should be visible.)"
-      RenderBlock {P} at (0,300) size 784x42
+          text run at (0,44) width 744: "image, allowing the parent to \"shine through\" by default; since the parent of the words \"in this sentence\" is"
+          text run at (0,65) width 433: "the paragraph, then the paragraph's image should be visible.)"
+      RenderBlock {P} at (0,300) size 768x42
         RenderText {#text} at (0,0) size 744x42
           text run at (0,0) width 744: "This sentence should NOT be backed by a repeated green-grid image, allowing the page's background to"
           text run at (0,21) width 169: "\"shine through\" instead."
-      RenderTable {TABLE} at (0,358) size 784x263 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x261
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,358) size 768x263 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x261
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x231
+          RenderTableRow {TR} at (0,30) size 766x231
             RenderTableCell {TD} at (0,131) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x231 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x63
+            RenderTableCell {TD} at (12,30) size 754x231 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x63
                 RenderText {#text} at (0,0) size 733x63
                   text run at (0,0) width 569: "This sentence should be backed by an image-- a green grid pattern, in this case. "
                   text run at (569,0) width 164: "The background image"
                   text run at (0,21) width 733: "should also tile along both axes, because no repeat direction is specified (specific tests for repeating are"
                   text run at (0,42) width 127: "found elsewhere)."
-              RenderBlock {P} at (4,83) size 762x86
+              RenderBlock {P} at (4,83) size 746x86
                 RenderText {#text} at (0,0) size 679x21
                   text run at (0,0) width 679: "This sentence should be backed by a repeated green-grid image, as should the last three words "
                 RenderInline {STRONG} at (0,0) size 725x43
@@ -90,7 +90,7 @@ layer at (0,0) size 800x637
                   text run at (425,22) width 309: " means that the element has no background"
                   text run at (0,44) width 744: "image, allowing the parent to \"shine through\" by default; since the parent of the words \"in this sentence\" is"
                   text run at (0,65) width 433: "the paragraph, then the paragraph's image should be visible.)"
-              RenderBlock {P} at (4,185) size 762x42
+              RenderBlock {P} at (4,185) size 746x42
                 RenderText {#text} at (0,0) size 744x42
                   text run at (0,0) width 744: "This sentence should NOT be backed by a repeated green-grid image, allowing the page's background to"
                   text run at (0,21) width 169: "\"shine through\" instead."

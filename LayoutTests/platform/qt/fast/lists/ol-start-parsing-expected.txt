@@ -1,160 +1,160 @@
-layer at (0,0) size 800x1258
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1258
-  RenderBlock {HTML} at (0,0) size 800x1258
-    RenderBody {BODY} at (8,8) size 784x1242
-      RenderBlock (anonymous) at (0,0) size 784x21
+layer at (0,0) size 784x1258
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1258
+  RenderBlock {HTML} at (0,0) size 784x1258
+    RenderBody {BODY} at (8,8) size 768x1242
+      RenderBlock (anonymous) at (0,0) size 768x21
         RenderText {#text} at (0,0) size 120x21
           text run at (0,0) width 120: "No start attribute."
-      RenderBlock {OL} at (0,37) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,37) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,105) size 784x21
+      RenderBlock {HR} at (0,95) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,105) size 768x21
         RenderText {#text} at (0,0) size 30x21
           text run at (0,0) width 30: "start"
-      RenderBlock {OL} at (0,142) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,142) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock {HR} at (0,200) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,210) size 784x21
+      RenderBlock {HR} at (0,200) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,210) size 768x21
         RenderText {#text} at (0,0) size 51x21
           text run at (0,0) width 51: "start=\"\""
-      RenderBlock {OL} at (0,247) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,247) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock {HR} at (0,305) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,315) size 784x21
+      RenderBlock {HR} at (0,305) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,315) size 768x21
         RenderText {#text} at (0,0) size 68x21
           text run at (0,0) width 68: "start=\" 2 \""
-      RenderBlock {OL} at (0,352) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,352) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "3"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 3"
-      RenderBlock {HR} at (0,410) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,420) size 784x21
+      RenderBlock {HR} at (0,410) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,420) size 768x21
         RenderText {#text} at (0,0) size 69x21
           text run at (0,0) width 69: "start=\"+2\""
-      RenderBlock {OL} at (0,457) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,457) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "3"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 3"
-      RenderBlock {HR} at (0,515) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,525) size 784x21
+      RenderBlock {HR} at (0,515) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,525) size 768x21
         RenderText {#text} at (0,0) size 71x21
           text run at (0,0) width 71: "start=\"A2\""
-      RenderBlock {OL} at (0,562) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,562) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock {HR} at (0,620) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,630) size 784x21
+      RenderBlock {HR} at (0,620) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,630) size 768x21
         RenderText {#text} at (0,0) size 64x21
           text run at (0,0) width 64: "start=\".2\""
-      RenderBlock {OL} at (0,667) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,667) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock {HR} at (0,725) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,735) size 784x21
+      RenderBlock {HR} at (0,725) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,735) size 768x21
         RenderText {#text} at (0,0) size 69x21
           text run at (0,0) width 69: "start=\"#2\""
-      RenderBlock {OL} at (0,772) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,772) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-      RenderBlock (anonymous) at (0,830) size 784x21
+      RenderBlock (anonymous) at (0,830) size 768x21
         RenderText {#text} at (0,0) size 60x21
           text run at (0,0) width 60: "start=\"0\""
-      RenderBlock {OL} at (0,867) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,867) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "0"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 0"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-      RenderBlock {HR} at (0,925) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,935) size 784x21
+      RenderBlock {HR} at (0,925) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,935) size 768x21
         RenderText {#text} at (0,0) size 68x21
           text run at (0,0) width 68: "start=\" 0 \""
-      RenderBlock {OL} at (0,972) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,972) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "0"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 0"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "1"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 1"
-      RenderBlock {HR} at (0,1030) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1040) size 784x21
+      RenderBlock {HR} at (0,1030) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1040) size 768x21
         RenderText {#text} at (0,0) size 60x21
           text run at (0,0) width 60: "start=\"2\""
-      RenderBlock {OL} at (0,1077) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,1077) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-22,0) size 17x21: "2"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 2"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-22,0) size 17x21: "3"
           RenderText {#text} at (0,0) size 86x21
             text run at (0,0) width 86: "Should be 3"
-      RenderBlock {HR} at (0,1135) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1145) size 784x21
+      RenderBlock {HR} at (0,1135) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1145) size 768x21
         RenderText {#text} at (0,0) size 65x21
           text run at (0,0) width 65: "start=\"-2\""
-      RenderBlock {OL} at (0,1182) size 784x42
-        RenderListItem {LI} at (40,0) size 744x21
+      RenderBlock {OL} at (0,1182) size 768x42
+        RenderListItem {LI} at (40,0) size 728x21
           RenderListMarker at (-27,0) size 22x21: "-2"
           RenderText {#text} at (0,0) size 91x21
             text run at (0,0) width 91: "Should be -2"
-        RenderListItem {LI} at (40,21) size 744x21
+        RenderListItem {LI} at (40,21) size 728x21
           RenderListMarker at (-27,0) size 22x21: "-1"
           RenderText {#text} at (0,0) size 91x21
             text run at (0,0) width 91: "Should be -1"
-      RenderBlock {HR} at (0,1240) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1240) size 768x2 [border: (1px inset #000000)]

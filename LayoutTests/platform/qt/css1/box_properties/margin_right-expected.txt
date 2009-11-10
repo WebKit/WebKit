@@ -1,12 +1,12 @@
-layer at (0,0) size 802x1159
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 802x1159
-  RenderBlock {HTML} at (0,0) size 800x1159
-    RenderBody {BODY} at (8,8) size 784x1143 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 786x1180
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 786x1180
+  RenderBlock {HTML} at (0,0) size 784x1180
+    RenderBody {BODY} at (8,8) size 768x1164 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x102
+      RenderBlock {PRE} at (0,37) size 768x102
         RenderText {#text} at (0,0) size 387x102
           text run at (0,0) width 368: ".zero {background-color: silver; margin-right: 0; text-align: right;}"
           text run at (368,0) width 0: " "
@@ -20,103 +20,104 @@ layer at (0,0) size 802x1159
           text run at (381,68) width 0: " "
           text run at (0,85) width 292: ".five {margin-right: -10px; background-color: aqua;}"
           text run at (292,85) width 0: " "
-      RenderBlock {HR} at (0,152) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,170) size 784x21 [bgcolor=#C0C0C0]
-        RenderText {#text} at (552,0) size 232x21
-          text run at (552,0) width 232: "This element has a class of zero."
-      RenderBlock {P} at (0,207) size 736x21 [bgcolor=#00FFFF]
-        RenderText {#text} at (337,0) size 399x21
-          text run at (337,0) width 399: "This sentence should have a right margin of half an inch."
-      RenderBlock {P} at (0,244) size 759x21 [bgcolor=#00FFFF]
-        RenderText {#text} at (378,0) size 381x21
-          text run at (378,0) width 381: "This sentence should have a right margin of 25 pixels."
-      RenderBlock {P} at (0,281) size 704x21 [bgcolor=#00FFFF]
-        RenderText {#text} at (352,0) size 352x21
-          text run at (352,0) width 352: "This sentence should have a right margin of 5 em."
-      RenderBlock {P} at (0,318) size 588x42 [bgcolor=#00FFFF]
-        RenderText {#text} at (11,0) size 577x42
-          text run at (11,0) width 577: "This sentence should have a right margin of 25%, which is calculated with respect"
-          text run at (350,21) width 238: "to the width of the parent element."
-      RenderBlock {UL} at (0,376) size 759x126 [bgcolor=#808080]
-        RenderListItem {LI} at (40,0) size 719x42
+      RenderBlock {HR} at (0,152) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,170) size 768x21 [bgcolor=#C0C0C0]
+        RenderText {#text} at (536,0) size 232x21
+          text run at (536,0) width 232: "This element has a class of zero."
+      RenderBlock {P} at (0,207) size 720x21 [bgcolor=#00FFFF]
+        RenderText {#text} at (321,0) size 399x21
+          text run at (321,0) width 399: "This sentence should have a right margin of half an inch."
+      RenderBlock {P} at (0,244) size 743x21 [bgcolor=#00FFFF]
+        RenderText {#text} at (362,0) size 381x21
+          text run at (362,0) width 381: "This sentence should have a right margin of 25 pixels."
+      RenderBlock {P} at (0,281) size 688x21 [bgcolor=#00FFFF]
+        RenderText {#text} at (336,0) size 352x21
+          text run at (336,0) width 352: "This sentence should have a right margin of 5 em."
+      RenderBlock {P} at (0,318) size 576x42 [bgcolor=#00FFFF]
+        RenderText {#text} at (55,0) size 521x42
+          text run at (55,0) width 521: "This sentence should have a right margin of 25%, which is calculated with"
+          text run at (282,21) width 294: "respect to the width of the parent element."
+      RenderBlock {UL} at (0,376) size 743x147 [bgcolor=#808080]
+        RenderListItem {LI} at (40,0) size 703x42
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (13,0) size 706x42
-            text run at (13,0) width 706: "The right margin on this unordered list has been set to 25 pixels, and the background color has been"
-            text run at (642,21) width 77: "set to gray."
-        RenderListItem {LI} at (40,42) size 694x63 [bgcolor=#FFFFFF]
+          RenderText {#text} at (37,0) size 666x42
+            text run at (37,0) width 666: "The right margin on this unordered list has been set to 25 pixels, and the background color has"
+            text run at (586,21) width 117: "been set to gray."
+        RenderListItem {LI} at (40,42) size 678x84 [bgcolor=#FFFFFF]
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (17,0) size 693x63
-            text run at (17,0) width 677: "Another list item might not be such a bad idea, either, considering that such things do need to be"
-            text run at (1,21) width 122: "double-checked. "
-            text run at (123,21) width 571: "This list item has its right margin also set to 25 pixels, which should combine with"
-            text run at (45,42) width 649: "the list's margin to make 50 pixels of margin, and its background-color has been set to white."
-        RenderListItem {LI} at (40,105) size 719x21
+          RenderText {#text} at (1,0) size 677x84
+            text run at (1,0) width 677: "Another list item might not be such a bad idea, either, considering that such things do need to be"
+            text run at (18,21) width 122: "double-checked. "
+            text run at (140,21) width 538: "This list item has its right margin also set to 25 pixels, which should combine"
+            text run at (42,42) width 636: "with the list's margin to make 50 pixels of margin, and its background-color has been set to"
+            text run at (636,63) width 42: "white."
+        RenderListItem {LI} at (40,126) size 703x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (515,0) size 204x21
-            text run at (515,0) width 204: "This is an unclassed list item"
-      RenderBlock {P} at (0,518) size 784x21 [bgcolor=#C0C0C0]
-        RenderText {#text} at (552,0) size 232x21
-          text run at (552,0) width 232: "This element has a class of zero."
-      RenderBlock {P} at (0,555) size 794x63 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 782x63
+          RenderText {#text} at (499,0) size 204x21
+            text run at (499,0) width 204: "This is an unclassed list item"
+      RenderBlock {P} at (0,539) size 768x21 [bgcolor=#C0C0C0]
+        RenderText {#text} at (536,0) size 232x21
+          text run at (536,0) width 232: "This element has a class of zero."
+      RenderBlock {P} at (0,576) size 778x63 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 775x63
           text run at (0,0) width 775: "This paragraph has a right margin of -10px, which should cause it to be wider than it might otherwise be, and it"
           text run at (0,21) width 204: "has a light blue background. "
           text run at (204,21) width 433: "In all other respects, however, the element should be normal. "
-          text run at (637,21) width 145: "No styles have been"
-          text run at (0,42) width 509: "applied to it besides the negative right margin and the background color."
-      RenderTable {TABLE} at (0,634) size 784x509 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x507
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+          text run at (637,21) width 105: "No styles have"
+          text run at (0,42) width 549: "been applied to it besides the negative right margin and the background color."
+      RenderTable {TABLE} at (0,655) size 768x509 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x507
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x477
+          RenderTableRow {TR} at (0,30) size 766x477
             RenderTableCell {TD} at (0,254) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x477 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x21 [bgcolor=#C0C0C0]
-                RenderText {#text} at (530,0) size 232x21
-                  text run at (530,0) width 232: "This element has a class of zero."
-              RenderBlock {P} at (4,41) size 714x21 [bgcolor=#00FFFF]
-                RenderText {#text} at (315,0) size 399x21
-                  text run at (315,0) width 399: "This sentence should have a right margin of half an inch."
-              RenderBlock {P} at (4,78) size 737x21 [bgcolor=#00FFFF]
-                RenderText {#text} at (356,0) size 381x21
-                  text run at (356,0) width 381: "This sentence should have a right margin of 25 pixels."
-              RenderBlock {P} at (4,115) size 682x21 [bgcolor=#00FFFF]
-                RenderText {#text} at (330,0) size 352x21
-                  text run at (330,0) width 352: "This sentence should have a right margin of 5 em."
-              RenderBlock {P} at (4,152) size 572x42 [bgcolor=#00FFFF]
-                RenderText {#text} at (51,0) size 521x42
-                  text run at (51,0) width 521: "This sentence should have a right margin of 25%, which is calculated with"
-                  text run at (278,21) width 294: "respect to the width of the parent element."
-              RenderBlock {UL} at (4,210) size 737x147 [bgcolor=#808080]
-                RenderListItem {LI} at (40,0) size 697x42
+            RenderTableCell {TD} at (12,30) size 754x477 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x21 [bgcolor=#C0C0C0]
+                RenderText {#text} at (514,0) size 232x21
+                  text run at (514,0) width 232: "This element has a class of zero."
+              RenderBlock {P} at (4,41) size 698x21 [bgcolor=#00FFFF]
+                RenderText {#text} at (299,0) size 399x21
+                  text run at (299,0) width 399: "This sentence should have a right margin of half an inch."
+              RenderBlock {P} at (4,78) size 721x21 [bgcolor=#00FFFF]
+                RenderText {#text} at (340,0) size 381x21
+                  text run at (340,0) width 381: "This sentence should have a right margin of 25 pixels."
+              RenderBlock {P} at (4,115) size 666x21 [bgcolor=#00FFFF]
+                RenderText {#text} at (314,0) size 352x21
+                  text run at (314,0) width 352: "This sentence should have a right margin of 5 em."
+              RenderBlock {P} at (4,152) size 560x42 [bgcolor=#00FFFF]
+                RenderText {#text} at (39,0) size 521x42
+                  text run at (39,0) width 521: "This sentence should have a right margin of 25%, which is calculated with"
+                  text run at (266,21) width 294: "respect to the width of the parent element."
+              RenderBlock {UL} at (4,210) size 721x147 [bgcolor=#808080]
+                RenderListItem {LI} at (40,0) size 681x42
                   RenderListMarker at (-18,0) size 7x21: bullet
-                  RenderText {#text} at (31,0) size 666x42
-                    text run at (31,0) width 666: "The right margin on this unordered list has been set to 25 pixels, and the background color has"
-                    text run at (580,21) width 117: "been set to gray."
-                RenderListItem {LI} at (40,42) size 672x84 [bgcolor=#FFFFFF]
+                  RenderText {#text} at (15,0) size 666x42
+                    text run at (15,0) width 666: "The right margin on this unordered list has been set to 25 pixels, and the background color has"
+                    text run at (564,21) width 117: "been set to gray."
+                RenderListItem {LI} at (40,42) size 656x84 [bgcolor=#FFFFFF]
                   RenderListMarker at (-18,0) size 7x21: bullet
-                  RenderText {#text} at (17,0) size 659x84
-                    text run at (17,0) width 655: "Another list item might not be such a bad idea, either, considering that such things do need to"
-                    text run at (55,21) width 144: "be double-checked. "
-                    text run at (199,21) width 473: "This list item has its right margin also set to 25 pixels, which should"
-                    text run at (13,42) width 659: "combine with the list's margin to make 50 pixels of margin, and its background-color has been"
-                    text run at (588,63) width 84: "set to white."
-                RenderListItem {LI} at (40,126) size 697x21
+                  RenderText {#text} at (1,0) size 655x84
+                    text run at (1,0) width 655: "Another list item might not be such a bad idea, either, considering that such things do need to"
+                    text run at (39,21) width 144: "be double-checked. "
+                    text run at (183,21) width 473: "This list item has its right margin also set to 25 pixels, which should"
+                    text run at (37,42) width 619: "combine with the list's margin to make 50 pixels of margin, and its background-color has"
+                    text run at (532,63) width 124: "been set to white."
+                RenderListItem {LI} at (40,126) size 681x21
                   RenderListMarker at (-18,0) size 7x21: bullet
-                  RenderText {#text} at (493,0) size 204x21
-                    text run at (493,0) width 204: "This is an unclassed list item"
-              RenderBlock {P} at (4,373) size 762x21 [bgcolor=#C0C0C0]
-                RenderText {#text} at (530,0) size 232x21
-                  text run at (530,0) width 232: "This element has a class of zero."
-              RenderBlock {P} at (4,410) size 772x63 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 763x63
-                  text run at (0,0) width 763: "This paragraph has a right margin of -10px, which should cause it to be wider than it might otherwise be, and"
-                  text run at (0,21) width 216: "it has a light blue background. "
-                  text run at (216,21) width 433: "In all other respects, however, the element should be normal. "
-                  text run at (649,21) width 105: "No styles have"
-                  text run at (0,42) width 549: "been applied to it besides the negative right margin and the background color."
+                  RenderText {#text} at (477,0) size 204x21
+                    text run at (477,0) width 204: "This is an unclassed list item"
+              RenderBlock {P} at (4,373) size 746x21 [bgcolor=#C0C0C0]
+                RenderText {#text} at (514,0) size 232x21
+                  text run at (514,0) width 232: "This element has a class of zero."
+              RenderBlock {P} at (4,410) size 756x63 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 746x63
+                  text run at (0,0) width 732: "This paragraph has a right margin of -10px, which should cause it to be wider than it might otherwise be,"
+                  text run at (0,21) width 247: "and it has a light blue background. "
+                  text run at (247,21) width 433: "In all other respects, however, the element should be normal. "
+                  text run at (680,21) width 66: "No styles"
+                  text run at (0,42) width 588: "have been applied to it besides the negative right margin and the background color."

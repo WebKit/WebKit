@@ -1,12 +1,12 @@
-layer at (0,0) size 800x2432
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2432
-  RenderBlock {HTML} at (0,0) size 800x2432
-    RenderBody {BODY} at (8,8) size 784x2416 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x2400
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2400
+  RenderBlock {HTML} at (0,0) size 784x2400
+    RenderBody {BODY} at (8,8) size 768x2384 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x136
+      RenderBlock {PRE} at (0,37) size 768x136
         RenderText {#text} at (0,0) size 326x136
           text run at (0,0) width 145: "IMG.one {display: inline;}"
           text run at (145,0) width 0: " "
@@ -24,63 +24,63 @@ layer at (0,0) size 800x2432
           text run at (142,102) width 0: " "
           text run at (0,119) width 305: "          margin-right: 0; margin-left: auto; width: 50%;}"
           text run at (305,119) width 0: " "
-      RenderBlock {HR} at (0,186) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,204) size 784x21
+      RenderBlock {HR} at (0,186) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,204) size 768x21
         RenderImage {IMG} at (0,1) size 15x15
         RenderText {#text} at (15,0) size 492x21
           text run at (15,0) width 492: "The image at the beginning of this sentence should be a 15px square."
       RenderImage {IMG} at (0,241) size 15x15
-      RenderBlock {P} at (0,272) size 784x21
+      RenderBlock {P} at (0,272) size 768x21
         RenderText {#text} at (0,0) size 553x21
           text run at (0,0) width 553: "The above image should be a 15px square with the same left edge as this text."
-      RenderImage {IMG} at (384,309) size 15x15
-      RenderBlock {P} at (0,340) size 784x21
+      RenderImage {IMG} at (376,309) size 15x15
+      RenderBlock {P} at (0,340) size 768x21
         RenderText {#text} at (0,0) size 455x21
           text run at (0,0) width 455: "The above image should be a 15px square aligned at the center."
-      RenderImage {IMG} at (196,377) size 392x392
-      RenderBlock {P} at (0,785) size 784x42
+      RenderImage {IMG} at (192,377) size 384x384
+      RenderBlock {P} at (0,777) size 768x42
         RenderText {#text} at (0,0) size 729x42
           text run at (0,0) width 729: "The above image should be a square resized so its width is 50% of the its parent element, and centered"
           text run at (0,21) width 272: "horizontally within the parent element: "
           text run at (272,21) width 440: "the document body in the first half, and the table in the second."
-      RenderImage {IMG} at (392,843) size 392x392
-      RenderBlock {P} at (0,1251) size 784x42
-        RenderText {#text} at (0,0) size 772x42
-          text run at (0,0) width 772: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the right"
-          text run at (0,21) width 197: "edge of the parent element: "
-          text run at (197,21) width 440: "the document body in the first half, and the table in the second."
-      RenderTable {TABLE} at (0,1309) size 784x1107 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x1105
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderImage {IMG} at (384,835) size 384x384
+      RenderBlock {P} at (0,1235) size 768x42
+        RenderText {#text} at (0,0) size 737x42
+          text run at (0,0) width 737: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the"
+          text run at (0,21) width 232: "right edge of the parent element: "
+          text run at (232,21) width 440: "the document body in the first half, and the table in the second."
+      RenderTable {TABLE} at (0,1293) size 768x1091 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x1089
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x1075
-            RenderTableCell {TD} at (0,553) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,30) size 766x1059
+            RenderTableCell {TD} at (0,545) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x1075 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x21
+            RenderTableCell {TD} at (12,30) size 754x1059 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x21
                 RenderImage {IMG} at (0,1) size 15x15
                 RenderText {#text} at (15,0) size 492x21
                   text run at (15,0) width 492: "The image at the beginning of this sentence should be a 15px square."
               RenderImage {IMG} at (4,41) size 15x15
-              RenderBlock {P} at (4,72) size 762x21
+              RenderBlock {P} at (4,72) size 746x21
                 RenderText {#text} at (0,0) size 553x21
                   text run at (0,0) width 553: "The above image should be a 15px square with the same left edge as this text."
-              RenderImage {IMG} at (377,109) size 15x15
-              RenderBlock {P} at (4,140) size 762x21
+              RenderImage {IMG} at (369,109) size 15x15
+              RenderBlock {P} at (4,140) size 746x21
                 RenderText {#text} at (0,0) size 455x21
                   text run at (0,0) width 455: "The above image should be a 15px square aligned at the center."
-              RenderImage {IMG} at (194,177) size 381x381
-              RenderBlock {P} at (4,574) size 762x42
+              RenderImage {IMG} at (190,177) size 373x373
+              RenderBlock {P} at (4,566) size 746x42
                 RenderText {#text} at (0,0) size 729x42
                   text run at (0,0) width 729: "The above image should be a square resized so its width is 50% of the its parent element, and centered"
                   text run at (0,21) width 272: "horizontally within the parent element: "
                   text run at (272,21) width 440: "the document body in the first half, and the table in the second."
-              RenderImage {IMG} at (385,632) size 381x381
-              RenderBlock {P} at (4,1029) size 762x42
+              RenderImage {IMG} at (377,624) size 373x373
+              RenderBlock {P} at (4,1013) size 746x42
                 RenderText {#text} at (0,0) size 737x42
                   text run at (0,0) width 737: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the"
                   text run at (0,21) width 232: "right edge of the parent element: "

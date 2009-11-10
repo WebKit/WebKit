@@ -1,12 +1,12 @@
-layer at (0,0) size 800x1492
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1492
-  RenderBlock {HTML} at (0,0) size 800x1492
-    RenderBody {BODY} at (8,8) size 784x1476 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x1501
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1501
+  RenderBlock {HTML} at (0,0) size 784x1501
+    RenderBody {BODY} at (8,8) size 768x1485 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x51
+      RenderBlock {PRE} at (0,37) size 768x51
         RenderText {#text} at (0,0) size 122x51
           text run at (0,0) width 107: ".one {width: 50px;}"
           text run at (107,0) width 0: " "
@@ -14,20 +14,20 @@ layer at (0,0) size 800x1492
           text run at (104,17) width 0: " "
           text run at (0,34) width 122: "TABLE {width: 50%;}"
           text run at (122,34) width 0: " "
-      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,111) size 784x50
+      RenderBlock {HR} at (0,101) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,111) size 768x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,177) size 784x21
+      RenderBlock {P} at (0,177) size 768x21
         RenderText {#text} at (0,0) size 319x21
           text run at (0,0) width 319: "The square above should be fifty pixels wide."
-      RenderBlock (anonymous) at (0,214) size 784x392
-        RenderImage {IMG} at (0,0) size 392x392
+      RenderBlock (anonymous) at (0,214) size 768x384
+        RenderImage {IMG} at (0,0) size 384x384
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,622) size 784x21
+      RenderBlock {P} at (0,614) size 768x21
         RenderText {#text} at (0,0) size 754x21
           text run at (0,0) width 754: "The square above should be half as wide as the image's parent element (either the BODY or the table cell)."
-      RenderBlock {P} at (0,659) size 392x126
+      RenderBlock {P} at (0,651) size 384x126
         RenderText {#text} at (0,0) size 376x105
           text run at (0,0) width 366: "This paragraph should be half the width of its parent"
           text run at (0,21) width 367: "element (either the BODY or the table, which should"
@@ -41,48 +41,50 @@ layer at (0,0) size 800x1492
         RenderText {#text} at (73,84) size 356x42
           text run at (73,84) width 283: " property without the need for the user to"
           text run at (0,105) width 191: "resize the viewing window."
-      RenderTable {TABLE} at (0,801) size 392x675 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 390x673
-          RenderTableRow {TR} at (0,0) size 390x30
-            RenderTableCell {TD} at (0,0) size 390x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,793) size 384x692 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 382x690
+          RenderTableRow {TR} at (0,0) size 382x30
+            RenderTableCell {TD} at (0,0) size 382x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 390x643
-            RenderTableCell {TD} at (0,337) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,30) size 382x660
+            RenderTableCell {TD} at (0,345) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 378x643 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (4,4) size 370x50
+            RenderTableCell {TD} at (12,30) size 370x660 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (4,4) size 362x50
                 RenderImage {IMG} at (0,0) size 50x50
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,70) size 370x21
+              RenderBlock {P} at (4,70) size 362x21
                 RenderText {#text} at (0,0) size 319x21
                   text run at (0,0) width 319: "The square above should be fifty pixels wide."
-              RenderBlock (anonymous) at (4,107) size 370x185
-                RenderImage {IMG} at (0,0) size 185x185
+              RenderBlock (anonymous) at (4,107) size 362x181
+                RenderImage {IMG} at (0,0) size 181x181
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,308) size 370x63
+              RenderBlock {P} at (4,304) size 362x63
                 RenderText {#text} at (0,0) size 339x63
                   text run at (0,0) width 339: "The square above should be half as wide as the"
                   text run at (0,21) width 334: "image's parent element (either the BODY or the"
                   text run at (0,42) width 73: "table cell)."
-              RenderBlock {P} at (4,387) size 185x252
-                RenderText {#text} at (0,0) size 182x189
-                  text run at (0,0) width 182: "This paragraph should be"
-                  text run at (0,21) width 180: "half the width of its parent"
-                  text run at (0,42) width 182: "element (either the BODY"
-                  text run at (0,63) width 181: "or the table, which should"
-                  text run at (0,84) width 165: "itself be half as wide as"
-                  text run at (0,105) width 146: "the BODY element). "
-                  text run at (146,105) width 31: "This"
-                  text run at (0,126) width 162: "is extra text included to"
-                  text run at (0,147) width 171: "ensure that this will be a"
-                  text run at (0,168) width 98: "fair test of the "
+              RenderBlock {P} at (4,383) size 181x273
+                RenderText {#text} at (0,0) size 181x210
+                  text run at (0,0) width 160: "This paragraph should"
+                  text run at (0,21) width 153: "be half the width of its"
+                  text run at (0,42) width 181: "parent element (either the"
+                  text run at (0,63) width 179: "BODY or the table, which"
+                  text run at (0,84) width 158: "should itself be half as"
+                  text run at (0,105) width 131: "wide as the BODY"
+                  text run at (0,126) width 70: "element). "
+                  text run at (70,126) width 86: "This is extra"
+                  text run at (0,147) width 160: "text included to ensure"
+                  text run at (0,168) width 173: "that this will be a fair test"
+                  text run at (0,189) width 43: "of the "
                 RenderInline {CODE} at (0,0) size 30x17
-                  RenderText {#text} at (98,171) size 30x17
-                    text run at (98,171) width 30: "width"
-                RenderText {#text} at (0,189) size 179x63
-                  text run at (0,189) width 179: "property without the need"
-                  text run at (0,210) width 169: "for the user to resize the"
-                  text run at (0,231) width 118: "viewing window."
+                  RenderText {#text} at (43,192) size 30x17
+                    text run at (43,192) width 30: "width"
+                RenderText {#text} at (73,189) size 180x84
+                  text run at (73,189) width 62: " property"
+                  text run at (0,210) width 165: "without the need for the"
+                  text run at (0,231) width 180: "user to resize the viewing"
+                  text run at (0,252) width 59: "window."

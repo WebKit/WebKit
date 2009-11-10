@@ -1,12 +1,12 @@
 layer at (0,0) size 1031x608
-  RenderView at (0,0) size 800x600
+  RenderView at (0,0) size 784x584
 layer at (0,0) size 1031x608
-  RenderBlock {HTML} at (0,0) size 800x608
-    RenderBody {BODY} at (8,8) size 784x592 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+  RenderBlock {HTML} at (0,0) size 784x608
+    RenderBody {BODY} at (8,8) size 768x592 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x68
+      RenderBlock {PRE} at (0,37) size 768x68
         RenderText {#text} at (0,0) size 165x68
           text run at (0,0) width 136: ".one {white-space: pre;}"
           text run at (136,0) width 0: " "
@@ -15,8 +15,8 @@ layer at (0,0) size 1031x608
           text run at (0,34) width 165: ".three {white-space: normal;}"
           text run at (165,34) width 0: " "
           text run at (0,51) width 0: " "
-      RenderBlock {HR} at (0,118) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,136) size 784x105
+      RenderBlock {HR} at (0,118) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,136) size 768x105
         RenderText {#text} at (0,0) size 631x105
           text run at (0,0) width 0: " "
           text run at (0,21) width 631: "This sentence should     show extra space  where there    would ordinarily         not be any."
@@ -27,10 +27,10 @@ layer at (0,0) size 1031x608
           text run at (115,63) width 0: " "
           text run at (0,84) width 205: "     very clearly demonstrates."
           text run at (205,84) width 0: " "
-      RenderBlock {P} at (0,257) size 784x21
+      RenderBlock {P} at (0,257) size 768x21
         RenderText {#text} at (0,0) size 1001x21
           text run at (0,0) width 1001: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
-      RenderBlock {P} at (0,294) size 784x42
+      RenderBlock {P} at (0,294) size 768x42
         RenderText {#text} at (0,0) size 332x42
           text run at (0,0) width 0: " "
           text run at (0,21) width 332: "This sentence      should     show extra   space, "

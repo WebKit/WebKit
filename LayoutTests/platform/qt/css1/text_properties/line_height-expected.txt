@@ -1,12 +1,12 @@
-layer at (0,0) size 800x2912
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2912
-  RenderBlock {HTML} at (0,0) size 800x2912
-    RenderBody {BODY} at (8,8) size 784x2896 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x2912
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2912
+  RenderBlock {HTML} at (0,0) size 784x2912
+    RenderBody {BODY} at (8,8) size 768x2896 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x238
+      RenderBlock {PRE} at (0,37) size 768x238
         RenderText {#text} at (0,0) size 284x238
           text run at (0,0) width 230: ".one {line-height: 0.5in; font-size: 12px;}"
           text run at (230,0) width 0: " "
@@ -36,150 +36,150 @@ layer at (0,0) size 800x2912
           text run at (176,204) width 0: " "
           text run at (0,221) width 222: "SPAN.color {background-color: silver;}"
           text run at (222,221) width 0: " "
-      RenderBlock {HR} at (0,288) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,302) size 784x48
+      RenderBlock {HR} at (0,288) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,302) size 768x48
         RenderText {#text} at (0,16) size 588x16
           text run at (0,16) width 588: "This sentence should have a line-height of half an inch, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,362) size 784x75
+      RenderBlock {P} at (0,362) size 768x75
         RenderText {#text} at (0,29) size 610x16
           text run at (0,29) width 610: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,449) size 784x75
+      RenderBlock {P} at (0,449) size 768x75
         RenderText {#text} at (0,29) size 622x16
           text run at (0,29) width 622: "This sentence should have a line-height of twenty millimeters, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,536) size 784x32
+      RenderBlock {P} at (0,536) size 768x32
         RenderText {#text} at (0,8) size 621x16
           text run at (0,8) width 621: "This sentence should have a line-height of twenty-four points, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,580) size 784x32
+      RenderBlock {P} at (0,580) size 768x32
         RenderText {#text} at (0,8) size 576x16
           text run at (0,8) width 576: "This sentence should have a line-height of two picas, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,624) size 784x24
+      RenderBlock {P} at (0,624) size 768x24
         RenderText {#text} at (0,4) size 564x16
           text run at (0,4) width 564: "This sentence should have a line-height of two em, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,660) size 784x18
+      RenderBlock {P} at (0,660) size 768x18
         RenderText {#text} at (0,1) size 569x16
           text run at (0,1) width 569: "This sentence should have a line-height of three ex, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,690) size 784x24
+      RenderBlock {P} at (0,690) size 768x24
         RenderText {#text} at (0,4) size 621x16
           text run at (0,4) width 621: "This sentence should have a line-height of twice the font size, which should cause extra spacing between the lines."
-      RenderBlock {DIV} at (0,726) size 784x168 [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (0,0) size 784x24
+      RenderBlock {DIV} at (0,726) size 768x168 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (0,0) size 768x24
           RenderText {#text} at (0,4) size 670x16
             text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-        RenderBlock {P} at (0,48) size 784x72
+        RenderBlock {P} at (0,48) size 768x72
           RenderText {#text} at (0,-3) size 740x78
             text run at (0,-3) width 740: "This sentence should have a line-height of twice the DIV's font size, or"
             text run at (0,21) width 736: "28px; this should not cause extra spacing between the lines, since the"
             text run at (0,45) width 560: "line-height and font-size should have the same value."
-        RenderBlock (anonymous) at (0,144) size 784x24
+        RenderBlock (anonymous) at (0,144) size 768x24
           RenderText {#text} at (0,4) size 691x16
             text run at (0,4) width 691: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,906) size 784x24
+      RenderBlock {P} at (0,906) size 768x24
         RenderText {#text} at (0,4) size 621x16
           text run at (0,4) width 621: "This sentence should have a line-height of twice the font size, which should cause extra spacing between the lines."
-      RenderBlock {DIV} at (0,942) size 784x288 [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (0,0) size 784x24
+      RenderBlock {DIV} at (0,942) size 768x288 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (0,0) size 768x24
           RenderText {#text} at (0,4) size 670x16
             text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-        RenderBlock {P} at (0,48) size 784x192
+        RenderBlock {P} at (0,48) size 768x192
           RenderText {#text} at (0,9) size 763x174
             text run at (0,9) width 739: "This sentence should have a line-height of twice the font size, which is"
             text run at (0,57) width 738: "200% normal thanks to an inline style; this should cause extra spacing"
             text run at (0,105) width 763: "between the lines, as the font-size will be 28px and the line-height will be"
             text run at (0,153) width 58: "56px."
-        RenderBlock (anonymous) at (0,264) size 784x24
+        RenderBlock (anonymous) at (0,264) size 768x24
           RenderText {#text} at (0,4) size 691x16
             text run at (0,4) width 691: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-      RenderBlock {P} at (0,1242) size 784x100
+      RenderBlock {P} at (0,1242) size 768x100
         RenderText {#text} at (0,17) size 754x66
           text run at (0,17) width 681: "This paragraph should have a line-height of 50 pixels in the first section, which should cause extra spacing between the lines. "
           text run at (681,17) width 73: "In the second"
           text run at (0,67) width 309: "section (within the table) its line-height should be normal."
-      RenderBlock {P} at (0,1354) size 784x16
+      RenderBlock {P} at (0,1354) size 768x16
         RenderText {#text} at (0,0) size 585x16
           text run at (0,0) width 585: "This sentence should have a normal line-height, because negative values are not permitted for this property."
-      RenderBlock {P} at (0,1382) size 784x225
+      RenderBlock {P} at (0,1382) size 768x225
         RenderInline {SPAN} at (0,0) size 765x166 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,29) size 765x166
             text run at (0,29) width 757: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a background"
             text run at (0,104) width 765: "color of silver, but no padding or border. The background color has been set on an inline element and should therefore only cover the text, not"
             text run at (0,179) width 113: "the interline spacing."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,1619) size 784x1277 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x1275
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,1619) size 768x1277 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x1275
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x1245
+          RenderTableRow {TR} at (0,30) size 766x1245
             RenderTableCell {TD} at (0,638) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x1245 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x48
+            RenderTableCell {TD} at (12,30) size 754x1245 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x48
                 RenderText {#text} at (0,16) size 588x16
                   text run at (0,16) width 588: "This sentence should have a line-height of half an inch, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,64) size 762x75
+              RenderBlock {P} at (4,64) size 746x75
                 RenderText {#text} at (0,29) size 610x16
                   text run at (0,29) width 610: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,151) size 762x75
+              RenderBlock {P} at (4,151) size 746x75
                 RenderText {#text} at (0,29) size 622x16
                   text run at (0,29) width 622: "This sentence should have a line-height of twenty millimeters, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,238) size 762x32
+              RenderBlock {P} at (4,238) size 746x32
                 RenderText {#text} at (0,8) size 621x16
                   text run at (0,8) width 621: "This sentence should have a line-height of twenty-four points, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,282) size 762x32
+              RenderBlock {P} at (4,282) size 746x32
                 RenderText {#text} at (0,8) size 576x16
                   text run at (0,8) width 576: "This sentence should have a line-height of two picas, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,326) size 762x24
+              RenderBlock {P} at (4,326) size 746x24
                 RenderText {#text} at (0,4) size 564x16
                   text run at (0,4) width 564: "This sentence should have a line-height of two em, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,362) size 762x18
+              RenderBlock {P} at (4,362) size 746x18
                 RenderText {#text} at (0,1) size 569x16
                   text run at (0,1) width 569: "This sentence should have a line-height of three ex, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,392) size 762x24
+              RenderBlock {P} at (4,392) size 746x24
                 RenderText {#text} at (0,4) size 621x16
                   text run at (0,4) width 621: "This sentence should have a line-height of twice the font size, which should cause extra spacing between the lines."
-              RenderBlock {DIV} at (4,428) size 762x168 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (0,0) size 762x24
+              RenderBlock {DIV} at (4,428) size 746x168 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (0,0) size 746x24
                   RenderText {#text} at (0,4) size 670x16
                     text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-                RenderBlock {P} at (0,48) size 762x72
+                RenderBlock {P} at (0,48) size 746x72
                   RenderText {#text} at (0,-3) size 740x78
                     text run at (0,-3) width 740: "This sentence should have a line-height of twice the DIV's font size, or"
                     text run at (0,21) width 736: "28px; this should not cause extra spacing between the lines, since the"
                     text run at (0,45) width 560: "line-height and font-size should have the same value."
-                RenderBlock (anonymous) at (0,144) size 762x24
+                RenderBlock (anonymous) at (0,144) size 746x24
                   RenderText {#text} at (0,4) size 691x16
                     text run at (0,4) width 691: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,608) size 762x24
+              RenderBlock {P} at (4,608) size 746x24
                 RenderText {#text} at (0,4) size 621x16
                   text run at (0,4) width 621: "This sentence should have a line-height of twice the font size, which should cause extra spacing between the lines."
-              RenderBlock {DIV} at (4,644) size 762x288 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (0,0) size 762x24
+              RenderBlock {DIV} at (4,644) size 746x288 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (0,0) size 746x24
                   RenderText {#text} at (0,4) size 670x16
                     text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-                RenderBlock {P} at (0,48) size 762x192
+                RenderBlock {P} at (0,48) size 746x192
                   RenderText {#text} at (0,9) size 739x174
                     text run at (0,9) width 739: "This sentence should have a line-height of twice the font size, which is"
                     text run at (0,57) width 738: "200% normal thanks to an inline style; this should cause extra spacing"
                     text run at (0,105) width 730: "between the lines, as the font-size will be 28px and the line-height will"
                     text run at (0,153) width 91: "be 56px."
-                RenderBlock (anonymous) at (0,264) size 762x24
+                RenderBlock (anonymous) at (0,264) size 746x24
                   RenderText {#text} at (0,4) size 691x16
                     text run at (0,4) width 691: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
-              RenderBlock {P} at (4,944) size 762x32
-                RenderText {#text} at (0,0) size 754x32
+              RenderBlock {P} at (4,944) size 746x32
+                RenderText {#text} at (0,0) size 711x32
                   text run at (0,0) width 681: "This paragraph should have a line-height of 50 pixels in the first section, which should cause extra spacing between the lines. "
-                  text run at (681,0) width 73: "In the second"
-                  text run at (0,16) width 309: "section (within the table) its line-height should be normal."
-              RenderBlock {P} at (4,988) size 762x16
+                  text run at (681,0) width 30: "In the"
+                  text run at (0,16) width 352: "second section (within the table) its line-height should be normal."
+              RenderBlock {P} at (4,988) size 746x16
                 RenderText {#text} at (0,0) size 585x16
                   text run at (0,0) width 585: "This sentence should have a normal line-height, because negative values are not permitted for this property."
-              RenderBlock {P} at (4,1016) size 762x225
-                RenderInline {SPAN} at (0,0) size 757x166 [bgcolor=#C0C0C0]
-                  RenderText {#text} at (0,29) size 757x166
-                    text run at (0,29) width 757: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a background"
-                    text run at (0,104) width 745: "color of silver, but no padding or border. The background color has been set on an inline element and should therefore only cover the text,"
-                    text run at (0,179) width 133: "not the interline spacing."
+              RenderBlock {P} at (4,1016) size 746x225
+                RenderInline {SPAN} at (0,0) size 735x166 [bgcolor=#C0C0C0]
+                  RenderText {#text} at (0,29) size 735x166
+                    text run at (0,29) width 689: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a"
+                    text run at (0,104) width 735: "background color of silver, but no padding or border. The background color has been set on an inline element and should therefore only"
+                    text run at (0,179) width 211: "cover the text, not the interline spacing."
                 RenderText {#text} at (0,0) size 0x0

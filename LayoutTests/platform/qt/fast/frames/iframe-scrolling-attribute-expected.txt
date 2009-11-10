@@ -1,9 +1,9 @@
-layer at (0,0) size 800x701
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x701
-  RenderBlock {HTML} at (0,0) size 800x701
-    RenderBody {BODY} at (8,8) size 784x685
-      RenderBlock {P} at (0,0) size 784x42
+layer at (0,0) size 784x701
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x701
+  RenderBlock {HTML} at (0,0) size 784x701
+    RenderBody {BODY} at (8,8) size 768x685
+      RenderBlock {P} at (0,0) size 768x42
         RenderText {#text} at (0,0) size 247x21
           text run at (0,0) width 247: "This page tests the behavior of the "
         RenderInline {TT} at (0,0) size 48x17
@@ -14,10 +14,10 @@ layer at (0,0) size 800x701
         RenderInline {TT} at (0,0) size 52x17
           RenderText {#text} at (382,3) size 52x17
             text run at (382,3) width 52: "<iframe>"
-        RenderText {#text} at (434,0) size 773x42
-          text run at (434,0) width 339: " elements which contain a page large enough to"
-          text run at (0,21) width 139: "need to be scrolled."
-      RenderBlock (anonymous) at (0,58) size 784x627
+        RenderText {#text} at (434,0) size 756x42
+          text run at (434,0) width 322: " elements which contain a page large enough"
+          text run at (0,21) width 156: "to need to be scrolled."
+      RenderBlock (anonymous) at (0,58) size 768x627
         RenderPartObject {IFRAME} at (0,0) size 204x204 [border: (2px inset #000000)]
           layer at (0,0) size 408x516
             RenderView at (0,0) size 184x184

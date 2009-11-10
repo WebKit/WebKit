@@ -1,3 +1,12 @@
+2009-11-10  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Remove obsolete scrollbar policy settings from DRT constructor.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2009-11-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Jan Alonzo.

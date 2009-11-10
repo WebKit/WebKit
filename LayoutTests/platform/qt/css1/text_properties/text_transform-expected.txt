@@ -1,12 +1,12 @@
-layer at (0,0) size 800x857
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x857
-  RenderBlock {HTML} at (0,0) size 800x857
-    RenderBody {BODY} at (8,8) size 784x841 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x857
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x857
+  RenderBlock {HTML} at (0,0) size 784x857
+    RenderBody {BODY} at (8,8) size 768x841 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x85
+      RenderBlock {PRE} at (0,37) size 768x85
         RenderText {#text} at (0,0) size 190x85
           text run at (0,0) width 152: ".ttn {text-transform: none;}"
           text run at (152,0) width 0: " "
@@ -17,17 +17,17 @@ layer at (0,0) size 800x857
           text run at (0,51) width 186: ".low {text-transform: lowercase;}"
           text run at (186,51) width 0: " "
           text run at (0,68) width 0: " "
-      RenderBlock {HR} at (0,135) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,153) size 784x42
+      RenderBlock {HR} at (0,135) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,153) size 768x42
         RenderText {#text} at (0,0) size 751x42
           text run at (0,0) width 751: "This page tests the 'text-transform' property of CSS1. This paragraph has no text transformation and should"
           text run at (0,21) width 107: "appear normal."
-      RenderBlock {P} at (0,211) size 784x63
-        RenderText {#text} at (0,0) size 779x63
+      RenderBlock {P} at (0,211) size 768x63
+        RenderText {#text} at (0,0) size 742x63
           text run at (0,0) width 742: "This Paragraph Is Capitalized And The First Letter In Each Word Should Therefore Appear In Uppercase."
-          text run at (0,21) width 779: "Words That Are In Uppercase In The Source (E.G. USA) Should Remain So. There Should Be A Capital Letter"
-          text run at (0,42) width 688: "After A Non-Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
-      RenderBlock {P} at (0,290) size 784x42
+          text run at (0,21) width 735: "Words That Are In Uppercase In The Source (E.G. USA) Should Remain So. There Should Be A Capital"
+          text run at (0,42) width 732: "Letter After A Non-Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
+      RenderBlock {P} at (0,290) size 768x42
         RenderText {#text} at (0,0) size 747x42
           text run at (0,0) width 747: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last"
           text run at (0,21) width 431: "word in this sentence should have one, and only one, capital "
@@ -41,7 +41,7 @@ layer at (0,0) size 800x857
             text run at (457,21) width 14: "er"
         RenderText {#text} at (471,21) size 4x21
           text run at (471,21) width 4: "."
-      RenderBlock {P} at (0,348) size 784x63
+      RenderBlock {P} at (0,348) size 768x63
         RenderText {#text} at (0,0) size 740x42
           text run at (0,0) width 740: "THIS PARAGRAPH IS UPPERCASED AND SMALL CHARACTERS IN THE SOURCE (E.G. A AND \x{C5})"
           text run at (0,21) width 378: "SHOULD THEREFORE APPEAR IN UPPERCASE. "
@@ -52,57 +52,57 @@ layer at (0,0) size 800x857
             text run at (0,42) width 222: "words should not be uppercase"
         RenderText {#text} at (222,42) size 4x21
           text run at (222,42) width 4: "."
-      RenderBlock {P} at (0,427) size 784x42
+      RenderBlock {P} at (0,427) size 768x42
         RenderText {#text} at (0,0) size 746x42
           text run at (0,0) width 746: "this paragraph is lowercased and capital characters in the source (e.g. a and \x{E5}) should therefore appear in"
           text run at (0,21) width 77: "lowercase."
-      RenderTable {TABLE} at (0,485) size 784x356 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x354
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,485) size 768x356 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x354
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x324
+          RenderTableRow {TR} at (0,30) size 766x324
             RenderTableCell {TD} at (0,177) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x324 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x42
-                RenderText {#text} at (0,0) size 751x42
-                  text run at (0,0) width 751: "This page tests the 'text-transform' property of CSS1. This paragraph has no text transformation and should"
-                  text run at (0,21) width 107: "appear normal."
-              RenderBlock {P} at (4,62) size 762x63
+            RenderTableCell {TD} at (12,30) size 754x324 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x42
+                RenderText {#text} at (0,0) size 699x42
+                  text run at (0,0) width 699: "This page tests the 'text-transform' property of CSS1. This paragraph has no text transformation and"
+                  text run at (0,21) width 159: "should appear normal."
+              RenderBlock {P} at (4,62) size 746x63
                 RenderText {#text} at (0,0) size 742x63
                   text run at (0,0) width 742: "This Paragraph Is Capitalized And The First Letter In Each Word Should Therefore Appear In Uppercase."
                   text run at (0,21) width 735: "Words That Are In Uppercase In The Source (E.G. USA) Should Remain So. There Should Be A Capital"
                   text run at (0,42) width 732: "Letter After A Non-Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
-              RenderBlock {P} at (4,141) size 762x42
-                RenderText {#text} at (0,0) size 747x42
-                  text run at (0,0) width 747: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last"
-                  text run at (0,21) width 431: "word in this sentence should have one, and only one, capital "
+              RenderBlock {P} at (4,141) size 746x42
+                RenderText {#text} at (0,0) size 718x42
+                  text run at (0,0) width 718: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the"
+                  text run at (0,21) width 460: "last word in this sentence should have one, and only one, capital "
                 RenderInline {SPAN} at (0,0) size 40x21
-                  RenderText {#text} at (431,21) size 18x21
-                    text run at (431,21) width 18: "Le"
+                  RenderText {#text} at (460,21) size 18x21
+                    text run at (460,21) width 18: "Le"
                   RenderInline {SPAN} at (0,0) size 8x21
-                    RenderText {#text} at (449,21) size 8x21
-                      text run at (449,21) width 8: "tt"
-                  RenderText {#text} at (457,21) size 14x21
-                    text run at (457,21) width 14: "er"
-                RenderText {#text} at (471,21) size 4x21
-                  text run at (471,21) width 4: "."
-              RenderBlock {P} at (4,199) size 762x63
+                    RenderText {#text} at (478,21) size 8x21
+                      text run at (478,21) width 8: "tt"
+                  RenderText {#text} at (486,21) size 14x21
+                    text run at (486,21) width 14: "er"
+                RenderText {#text} at (500,21) size 4x21
+                  text run at (500,21) width 4: "."
+              RenderBlock {P} at (4,199) size 746x63
                 RenderText {#text} at (0,0) size 740x42
                   text run at (0,0) width 740: "THIS PARAGRAPH IS UPPERCASED AND SMALL CHARACTERS IN THE SOURCE (E.G. A AND \x{C5})"
                   text run at (0,21) width 378: "SHOULD THEREFORE APPEAR IN UPPERCASE. "
                   text run at (378,21) width 292: "IN THE LAST SENTENCE, HOWEVER, "
-                RenderInline {SPAN} at (0,0) size 760x42
-                  RenderText {#text} at (670,21) size 760x42
-                    text run at (670,21) width 90: "the last eight"
-                    text run at (0,42) width 222: "words should not be uppercase"
-                RenderText {#text} at (222,42) size 4x21
-                  text run at (222,42) width 4: "."
-              RenderBlock {P} at (4,278) size 762x42
+                RenderInline {SPAN} at (0,0) size 721x42
+                  RenderText {#text} at (670,21) size 721x42
+                    text run at (670,21) width 51: "the last"
+                    text run at (0,42) width 261: "eight words should not be uppercase"
+                RenderText {#text} at (261,42) size 4x21
+                  text run at (261,42) width 4: "."
+              RenderBlock {P} at (4,278) size 746x42
                 RenderText {#text} at (0,0) size 746x42
                   text run at (0,0) width 746: "this paragraph is lowercased and capital characters in the source (e.g. a and \x{E5}) should therefore appear in"
                   text run at (0,21) width 77: "lowercase."

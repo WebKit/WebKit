@@ -1,12 +1,12 @@
-layer at (0,0) size 800x1598
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1598
-  RenderBlock {HTML} at (0,0) size 800x1598
-    RenderBody {BODY} at (8,8) size 784x1582 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x21
+layer at (0,0) size 784x1590
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1590
+  RenderBlock {HTML} at (0,0) size 784x1590
+    RenderBody {BODY} at (8,8) size 768x1574 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x21
         RenderText {#text} at (0,0) size 395x21
           text run at (0,0) width 395: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,37) size 784x102
+      RenderBlock {PRE} at (0,37) size 768x102
         RenderText {#text} at (0,0) size 292x102
           text run at (0,0) width 273: ".zero {background-color: silver; padding-top: 0;}"
           text run at (273,0) width 0: " "
@@ -20,76 +20,76 @@ layer at (0,0) size 800x1598
           text run at (286,68) width 0: " "
           text run at (0,85) width 291: ".five {padding-top: -20px; background-color: aqua;}"
           text run at (291,85) width 0: " "
-      RenderBlock {HR} at (0,152) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,170) size 784x21 [bgcolor=#C0C0C0]
+      RenderBlock {HR} at (0,152) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,170) size 768x21 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 232x21
           text run at (0,0) width 232: "This element has a class of zero."
-      RenderBlock {P} at (0,207) size 784x90 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,207) size 768x90 [bgcolor=#00FFFF]
         RenderText {#text} at (0,48) size 758x42
           text run at (0,48) width 699: "This element should have a top padding of half an inch, which will require extra text in order to test. "
           text run at (699,48) width 59: "Both the"
           text run at (0,69) width 456: "content background and the padding should be aqua (light blue)."
-      RenderBlock {P} at (0,313) size 784x67 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,313) size 768x67 [bgcolor=#00FFFF]
         RenderText {#text} at (0,25) size 740x42
           text run at (0,25) width 681: "This element should have a top padding of 25 pixels, which will require extra text in order to test. "
           text run at (681,25) width 59: "Both the"
           text run at (0,46) width 456: "content background and the padding should be aqua (light blue)."
-      RenderBlock {P} at (0,396) size 784x122 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,396) size 768x122 [bgcolor=#00FFFF]
         RenderText {#text} at (0,80) size 767x42
           text run at (0,80) width 652: "This element should have a top padding of 5 em, which will require extra text in order to test. "
           text run at (652,80) width 115: "Both the content"
           text run at (0,101) width 400: "background and the padding should be aqua (light blue)."
-      RenderBlock {P} at (0,534) size 784x259 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,196) size 769x63
-          text run at (0,196) width 746: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent"
-          text run at (0,217) width 65: "element. "
-          text run at (65,217) width 523: "Both the content background and the padding should be aqua (light blue). "
-          text run at (588,217) width 181: "This will require extra text"
-          text run at (0,238) width 104: "in order to test."
-      RenderBlock {P} at (0,809) size 784x42 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,534) size 768x255 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,192) size 746x63
+          text run at (0,192) width 746: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent"
+          text run at (0,213) width 65: "element. "
+          text run at (65,213) width 523: "Both the content background and the padding should be aqua (light blue). "
+          text run at (588,213) width 152: "This will require extra"
+          text run at (0,234) width 133: "text in order to test."
+      RenderBlock {P} at (0,805) size 768x42 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 753x42
           text run at (0,0) width 638: "This element should have no top padding, since negative padding values are not allowed. "
           text run at (638,0) width 115: "Both the content"
           text run at (0,21) width 453: "background and the normal padding should be aqua (light blue)."
-      RenderTable {TABLE} at (0,867) size 784x715 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x713
-          RenderTableRow {TR} at (0,0) size 782x30
-            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,863) size 768x711 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x709
+          RenderTableRow {TR} at (0,0) size 766x30
+            RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 178x21
                 RenderText {#text} at (4,4) size 178x21
                   text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 782x683
-            RenderTableCell {TD} at (0,357) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,30) size 766x679
+            RenderTableCell {TD} at (0,355) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 770x683 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x21 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (12,30) size 754x679 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x21 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 232x21
                   text run at (0,0) width 232: "This element has a class of zero."
-              RenderBlock {P} at (4,41) size 762x90 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,48) size 758x42
+              RenderBlock {P} at (4,41) size 746x90 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,48) size 732x42
                   text run at (0,48) width 699: "This element should have a top padding of half an inch, which will require extra text in order to test. "
-                  text run at (699,48) width 59: "Both the"
-                  text run at (0,69) width 456: "content background and the padding should be aqua (light blue)."
-              RenderBlock {P} at (4,147) size 762x67 [bgcolor=#00FFFF]
+                  text run at (699,48) width 33: "Both"
+                  text run at (0,69) width 482: "the content background and the padding should be aqua (light blue)."
+              RenderBlock {P} at (4,147) size 746x67 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,25) size 740x42
                   text run at (0,25) width 681: "This element should have a top padding of 25 pixels, which will require extra text in order to test. "
                   text run at (681,25) width 59: "Both the"
                   text run at (0,46) width 456: "content background and the padding should be aqua (light blue)."
-              RenderBlock {P} at (4,230) size 762x122 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,230) size 746x122 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,80) size 711x42
                   text run at (0,80) width 652: "This element should have a top padding of 5 em, which will require extra text in order to test. "
                   text run at (652,80) width 59: "Both the"
                   text run at (0,101) width 456: "content background and the padding should be aqua (light blue)."
-              RenderBlock {P} at (4,368) size 762x253 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,190) size 746x63
-                  text run at (0,190) width 746: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent"
-                  text run at (0,211) width 65: "element. "
-                  text run at (65,211) width 523: "Both the content background and the padding should be aqua (light blue). "
-                  text run at (588,211) width 152: "This will require extra"
-                  text run at (0,232) width 133: "text in order to test."
-              RenderBlock {P} at (4,637) size 762x42 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 753x42
+              RenderBlock {P} at (4,368) size 746x249 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,186) size 746x63
+                  text run at (0,186) width 746: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent"
+                  text run at (0,207) width 65: "element. "
+                  text run at (65,207) width 523: "Both the content background and the padding should be aqua (light blue). "
+                  text run at (588,207) width 152: "This will require extra"
+                  text run at (0,228) width 133: "text in order to test."
+              RenderBlock {P} at (4,633) size 746x42 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 697x42
                   text run at (0,0) width 638: "This element should have no top padding, since negative padding values are not allowed. "
-                  text run at (638,0) width 115: "Both the content"
-                  text run at (0,21) width 453: "background and the normal padding should be aqua (light blue)."
+                  text run at (638,0) width 59: "Both the"
+                  text run at (0,21) width 509: "content background and the normal padding should be aqua (light blue)."

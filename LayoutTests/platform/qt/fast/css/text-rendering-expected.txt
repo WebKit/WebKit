@@ -1,8 +1,8 @@
-layer at (0,0) size 800x616
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x616
-  RenderBlock {HTML} at (0,0) size 800x616
-    RenderBody {BODY} at (8,8) size 784x600
+layer at (0,0) size 784x616
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x616
+  RenderBlock {HTML} at (0,0) size 784x616
+    RenderBody {BODY} at (8,8) size 768x600
       RenderInline {SPAN} at (0,0) size 685x151
         RenderText {#text} at (0,0) size 685x151
           text run at (0,0) width 685: "fin LYAWA (No kerning or"

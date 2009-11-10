@@ -1,9 +1,9 @@
-layer at (0,0) size 800x697
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x697
-  RenderBlock {HTML} at (0,0) size 800x685
-    RenderBody {BODY} at (8,8) size 784x661
-      RenderBlock (anonymous) at (0,0) size 784x150
+layer at (0,0) size 784x697
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x697
+  RenderBlock {HTML} at (0,0) size 784x685
+    RenderBody {BODY} at (8,8) size 768x661
+      RenderBlock (anonymous) at (0,0) size 768x150
         RenderInline {SPAN} at (0,0) size 292x131 [border: (5px solid #000000)]
           RenderText {#text} at (5,14) size 60x21
             text run at (5,14) width 60: "This text"
@@ -71,13 +71,13 @@ layer at (0,0) size 800x697
             RenderTableCell {TD} at (132,222) size 51x43 [border: (1px solid #000000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 29x21
                 text run at (11,11) width 29: "Cell"
-      RenderBlock {P} at (0,561) size 784x42
+      RenderBlock {P} at (0,561) size 768x42
         RenderText {#text} at (0,0) size 391x21
           text run at (0,0) width 391: "The first line of this div should have a box-shadow on it."
         RenderBR {BR} at (391,16) size 0x0
         RenderText {#text} at (0,21) size 199x21
           text run at (0,21) width 199: "This second line should not."
-      RenderBlock {P} at (0,619) size 784x42
+      RenderBlock {P} at (0,619) size 768x42
         RenderBlock (floating) at (0,0) size 39x70 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
           RenderText {#text} at (5,5) size 29x60
             text run at (5,5) width 29: "T"
