@@ -99,6 +99,33 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
     return true;
 }
 
+static float playbackPosition(GstElement* playbin)
+{
+
+    float ret = 0.0;
+
+    GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
+    if (!gst_element_query(playbin, query)) {
+        LOG_VERBOSE(Media, "Position query failed...");
+        gst_query_unref(query);
+        return ret;
+    }
+
+    gint64 position;
+    gst_query_parse_position(query, 0, &position);
+
+    // Position is available only if the pipeline is not in NULL or
+    // READY state.
+    if (position != GST_CLOCK_TIME_NONE)
+        ret = (float) (position / 1000000000.0);
+
+    LOG_VERBOSE(Media, "Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
+
+    gst_query_unref(query);
+
+    return ret;
+}
+
 void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivate* playerPrivate)
 {
     g_return_if_fail(GST_IS_BUFFER(buffer));
@@ -137,6 +164,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_videoSink(0)
     , m_source(0)
     , m_seekTime(0)
+    , m_changingRate(false)
     , m_endTime(numeric_limits<float>::infinity())
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -229,23 +257,8 @@ float MediaPlayerPrivate::currentTime() const
     if (m_seeking)
         return m_seekTime;
 
-    float ret = 0.0;
+    return playbackPosition(m_playBin);
 
-    GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
-    if (!gst_element_query(m_playBin, query)) {
-        LOG_VERBOSE(Media, "Position query failed...");
-        gst_query_unref(query);
-        return ret;
-    }
-
-    gint64 position;
-    gst_query_parse_position(query, 0, &position);
-    ret = (float) (position / 1000000000.0);
-    LOG_VERBOSE(Media, "Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
-
-    gst_query_unref(query);
-
-    return ret;
 }
 
 void MediaPlayerPrivate::seek(float time)
@@ -271,6 +284,8 @@ void MediaPlayerPrivate::seek(float time)
     else {
         m_seeking = true;
         m_seekTime = sec;
+        // Wait some time for the seek to complete.
+        gst_element_get_state(m_playBin, 0, 0, 40 * GST_MSECOND);
     }
 }
 
@@ -363,16 +378,53 @@ void MediaPlayerPrivate::setVolume(float volume)
 
 void MediaPlayerPrivate::setRate(float rate)
 {
-    if (rate == 0.0) {
-        gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+    GstState state;
+    GstState pending;
+
+    gst_element_get_state(m_playBin,
+        &state, &pending, 250 * GST_NSECOND);
+    if (state != GST_STATE_PLAYING && state != GST_STATE_PAUSED)
         return;
-    }
 
     if (m_isStreaming)
         return;
 
+    m_changingRate = true;
+    float currentPosition = playbackPosition(m_playBin) * GST_SECOND;
+    GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH);
+    gint64 start, end;
+    bool mute = false;
+
     LOG_VERBOSE(Media, "Set Rate to %f", rate);
-    seek(currentTime());
+    if (rate >= 0) {
+        // Mute the sound if the playback rate is too extreme.
+        // TODO: in other cases we should perform pitch adjustments.
+        mute = (bool) (rate < 0.8 || rate > 2);
+        start = currentPosition;
+        end = GST_CLOCK_TIME_NONE;
+    } else {
+        start = 0;
+        mute = true;
+
+        // If we are at beginning of media, start from the end to
+        // avoid immediate EOS.
+        if (currentPosition == 0 || currentPosition == -1)
+            end = duration() * GST_SECOND;
+        else
+            end = currentPosition;
+    }
+
+    LOG_VERBOSE(Media, "Need to mute audio: %d", (int) mute);
+
+    if (!gst_element_seek(m_playBin, rate, GST_FORMAT_TIME, flags,
+                          GST_SEEK_TYPE_SET, start,
+                          GST_SEEK_TYPE_SET, end))
+        LOG_VERBOSE(Media, "Set rate to %f failed", rate);
+    else {
+        g_object_set(m_playBin, "mute", mute, NULL);
+        // Wait some time for the seek to complete.
+        gst_element_get_state(m_playBin, 0, 0, 40 * GST_MSECOND);
+    }
 }
 
 int MediaPlayerPrivate::dataRate() const
@@ -507,6 +559,11 @@ void MediaPlayerPrivate::updateStates()
         } else
             m_paused = true;
 
+        if (m_changingRate) {
+            m_player->rateChanged();
+            m_changingRate = false;
+        }
+
         if (m_seeking) {
             shouldUpdateAfterSeek = true;
             m_seeking = false;
@@ -566,11 +623,6 @@ void MediaPlayerPrivate::updateStates()
 }
 
 void MediaPlayerPrivate::loadStateChanged()
-{
-    updateStates();
-}
-
-void MediaPlayerPrivate::rateChanged()
 {
     updateStates();
 }
