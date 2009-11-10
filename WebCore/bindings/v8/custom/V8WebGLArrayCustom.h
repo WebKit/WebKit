@@ -69,7 +69,7 @@ namespace WebCore {
                 return throwError("Wrong number of arguments to new Canvas<T>Array(WebGLArrayBuffer, int, int)");
 
             WebGLArrayBuffer* buf =
-                V8DOMWrapper::convertToNativeObject<WebGLArrayBuffer>(V8ClassIndex::CANVASARRAYBUFFER,
+                V8DOMWrapper::convertToNativeObject<WebGLArrayBuffer>(V8ClassIndex::WEBGLARRAYBUFFER,
                                                                        args[0]->ToObject());
             if (buf == NULL)
                 return throwError("Could not convert argument 0 to a WebGLArrayBuffer");

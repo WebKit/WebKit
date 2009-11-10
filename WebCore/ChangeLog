@@ -1,5 +1,47 @@
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
+        Yet another chrome buildfix
+
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        (WebCore::constructCanvasArray):
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
         Chrome build fix.
 
         * bindings/v8/V8Index.h:

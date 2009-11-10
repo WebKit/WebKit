@@ -1,4 +1,4 @@
-/*
+V8ClassIndex::WEBGL/*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,14 +47,14 @@ CALLBACK_FUNC_DECL(WebGLIntArrayConstructor)
 {
     INC_STATS("DOM.WebGLIntArray.Contructor");
 
-    return constructCanvasArray<WebGLIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::CANVASINTARRAY));
+    return constructCanvasArray<WebGLIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLINTARRAY));
 }
 
 // Get the specified value from the integer array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid pixel buffer range return "undefined".
 INDEXED_PROPERTY_GETTER(WebGLIntArray)
 {
     INC_STATS("DOM.WebGLIntArray.IndexedPropertyGetter");
-    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::CANVASINTARRAY, info.Holder());
+    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::WEBGLINTARRAY, info.Holder());
 
     if ((index < 0) || (index >= array->length()))
         return v8::Undefined();
@@ -68,7 +68,7 @@ INDEXED_PROPERTY_GETTER(WebGLIntArray)
 INDEXED_PROPERTY_SETTER(WebGLIntArray)
 {
     INC_STATS("DOM.WebGLIntArray.IndexedPropertySetter");
-    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::CANVASINTARRAY, info.Holder());
+    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::WEBGLINTARRAY, info.Holder());
 
     if ((index >= 0) && (index < array->length())) {
         if (!value->IsNumber())
