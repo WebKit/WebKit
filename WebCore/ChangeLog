@@ -1,3 +1,19 @@
+2009-11-10  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Speed up syntax highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=31291
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        (WebInspector.SourceSyntaxHighlighter.prototype.process.moveToNextLine): Replace the line content node.
+        (WebInspector.SourceSyntaxHighlighter.prototype.process):
+        (WebInspector.SourceSyntaxHighlighter.prototype.appendNonToken):
+        (WebInspector.SourceSyntaxHighlighter.prototype.syntaxHighlightNode):
+        (WebInspector.CSSSourceSyntaxHighlighter):
+        (WebInspector.JavaScriptSourceSyntaxHighlighter):
+
 2009-11-09  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Eric Seidel.
