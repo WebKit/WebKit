@@ -1,3 +1,16 @@
+2009-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed documentation fix.
+
+        [Qt] Make qwebpage's createWindow not qwebview dependent.
+        https://bugs.webkit.org/show_bug.cgi?id=30771
+
+        Update documentation to make it clear that a reimplementation
+        of the createWindow method of the associated QWebPage can
+        result in the QWebView::createWindow method to never be called.
+
+        * Api/qwebview.cpp:
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -759,8 +759,12 @@ void QWebView::paintEvent(QPaintEvent *ev)
 }
 
 /*!
-    This function is called whenever WebKit wants to create a new window of the given \a type, for example as a result of
-    a JavaScript request to open a document in a new window.
+    This function is called from the createWindow() method of the associated QWebPage,
+    each time the page wants to create a new window of the given \a type, for example
+    as a result of a JavaScript request to open a document in a new window.
+
+    \note If the createWindow() method of the associated page is reimplemented, this
+    method is not called, unless explicitly done so in the reimplementation.
 
     \sa QWebPage::createWindow()
 */
