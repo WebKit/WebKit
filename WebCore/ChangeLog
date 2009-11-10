@@ -1,3 +1,10 @@
+2009-11-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r50760.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix. (No review needed.)
