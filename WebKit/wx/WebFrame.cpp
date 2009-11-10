@@ -187,10 +187,19 @@ wxString wxWebFrame::GetExternalRepresentation()
 wxString wxWebFrame::RunScript(const wxString& javascript)
 {
     wxString returnValue = wxEmptyString;
-    if (m_impl->frame) {
-        JSC::JSValue result = m_impl->frame->script()->executeScript(javascript, true).jsValue();
-        if (result)
-            returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).UTF8String().c_str(), wxConvUTF8);        
+    if (m_impl->frame && m_impl->frame->loader()) {
+        bool hasLoaded = m_impl->frame->loader()->frameHasLoaded();
+        wxASSERT_MSG(hasLoaded, wxT("Document must be loaded before calling RunScript."));
+        if (hasLoaded) {
+            WebCore::ScriptController* controller = m_impl->frame->script();
+            bool jsEnabled = controller->isEnabled(); 
+            wxASSERT_MSG(jsEnabled, wxT("RunScript requires JavaScript to be enabled."));
+            if (jsEnabled) {
+                JSC::JSValue result = controller->executeScript(javascript, true).jsValue();
+                if (result)
+                    returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).UTF8String().c_str(), wxConvUTF8);        
+            }
+        }
     }
     return returnValue;
 }
