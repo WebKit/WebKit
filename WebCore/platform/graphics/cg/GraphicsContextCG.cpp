@@ -63,6 +63,9 @@ namespace WebCore {
 
 static CGColorSpaceRef sRGBColorSpaceRef()
 {
+#ifdef BUILDING_ON_TIGER
+    return deviceRGBColorSpaceRef();
+#endif
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     return sRGBSpace;
 }
