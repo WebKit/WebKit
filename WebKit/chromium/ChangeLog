@@ -2,6 +2,95 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: NotificationPresenterImpl...SharedWorkerRepository
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/NotificationPresenterImpl.cpp: Added.
+        (WebKit::VoidCallbackClient::VoidCallbackClient):
+        (WebKit::VoidCallbackClient::permissionRequestComplete):
+        (WebKit::NotificationPresenterImpl::initialize):
+        (WebKit::NotificationPresenterImpl::isInitialized):
+        (WebKit::NotificationPresenterImpl::show):
+        (WebKit::NotificationPresenterImpl::cancel):
+        (WebKit::NotificationPresenterImpl::notificationObjectDestroyed):
+        (WebKit::NotificationPresenterImpl::checkPermission):
+        (WebKit::NotificationPresenterImpl::requestPermission):
+        * src/NotificationPresenterImpl.h: Added.
+        (WebKit::NotificationPresenterImpl::NotificationPresenterImpl):
+        * src/PlatformMessagePortChannel.cpp: Added.
+        (WebCore::MessagePortChannel::create):
+        (WebCore::MessagePortChannel::createChannel):
+        (WebCore::MessagePortChannel::MessagePortChannel):
+        (WebCore::MessagePortChannel::~MessagePortChannel):
+        (WebCore::MessagePortChannel::entangleIfOpen):
+        (WebCore::MessagePortChannel::disentangle):
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        (WebCore::MessagePortChannel::tryGetMessageFromRemote):
+        (WebCore::MessagePortChannel::close):
+        (WebCore::MessagePortChannel::isConnectedTo):
+        (WebCore::MessagePortChannel::hasPendingActivity):
+        (WebCore::MessagePortChannel::locallyEntangledPort):
+        (WebCore::PlatformMessagePortChannel::create):
+        (WebCore::PlatformMessagePortChannel::PlatformMessagePortChannel):
+        (WebCore::PlatformMessagePortChannel::~PlatformMessagePortChannel):
+        (WebCore::PlatformMessagePortChannel::createChannel):
+        (WebCore::PlatformMessagePortChannel::messageAvailable):
+        (WebCore::PlatformMessagePortChannel::entangleIfOpen):
+        (WebCore::PlatformMessagePortChannel::disentangle):
+        (WebCore::PlatformMessagePortChannel::postMessageToRemote):
+        (WebCore::PlatformMessagePortChannel::tryGetMessageFromRemote):
+        (WebCore::PlatformMessagePortChannel::close):
+        (WebCore::PlatformMessagePortChannel::isConnectedTo):
+        (WebCore::PlatformMessagePortChannel::hasPendingActivity):
+        (WebCore::PlatformMessagePortChannel::setEntangledChannel):
+        (WebCore::PlatformMessagePortChannel::webChannelRelease):
+        * src/PlatformMessagePortChannel.h: Added.
+        * src/ResourceHandle.cpp: Added.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandleInternal::cancel):
+        (WebCore::ResourceHandleInternal::setDefersLoading):
+        (WebCore::ResourceHandleInternal::allowStoredCredentials):
+        (WebCore::ResourceHandleInternal::willSendRequest):
+        (WebCore::ResourceHandleInternal::didSendData):
+        (WebCore::ResourceHandleInternal::didReceiveResponse):
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        (WebCore::ResourceHandleInternal::didFinishLoading):
+        (WebCore::ResourceHandleInternal::didFail):
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::request):
+        (WebCore::ResourceHandle::client):
+        (WebCore::ResourceHandle::setClient):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::clearAuthentication):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::bufferedData):
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::willLoadFromCache):
+        * src/SharedWorkerRepository.cpp: Added.
+        (WebCore::SharedWorkerScriptLoader::SharedWorkerScriptLoader):
+        (WebCore::SharedWorkerScriptLoader::load):
+        (WebCore::getWebPort):
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        (WebCore::SharedWorkerScriptLoader::sendConnect):
+        (WebCore::SharedWorkerScriptLoader::contextDestroyed):
+        (WebCore::SharedWorkerScriptLoader::connected):
+        (WebCore::SharedWorkerRepository::isAvailable):
+        (WebCore::getId):
+        (WebCore::SharedWorkerRepository::connect):
+        (WebCore::SharedWorkerRepository::documentDetached):
+        (WebCore::SharedWorkerRepository::hasSharedWorkers):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: GraphicContext3D...MediaPlaterPrivateChromium
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
