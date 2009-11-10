@@ -72,7 +72,6 @@ Settings::Settings(Page* page)
     , m_arePluginsEnabled(false)
     , m_databasesEnabled(false)
     , m_localStorageEnabled(false)
-    , m_sessionStorageEnabled(true)
     , m_isJavaScriptEnabled(false)
     , m_isWebSecurityEnabled(true)
     , m_allowUniversalAccessFromFileURLs(true)
@@ -254,11 +253,6 @@ void Settings::setDatabasesEnabled(bool databasesEnabled)
 void Settings::setLocalStorageEnabled(bool localStorageEnabled)
 {
     m_localStorageEnabled = localStorageEnabled;
-}
-
-void Settings::setSessionStorageEnabled(bool sessionStorageEnabled)
-{
-    m_sessionStorageEnabled = sessionStorageEnabled;
 }
 
 void Settings::setLocalStorageQuota(unsigned localStorageQuota)

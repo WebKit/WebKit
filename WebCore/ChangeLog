@@ -1,3 +1,24 @@
+2009-11-09  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove session storage setting
+        https://bugs.webkit.org/show_bug.cgi?id=31279
+
+        Remove session storage from Settings.  It was added temporarily so we could
+        disable it by default at runtime in Chromium.  We now disable these things in a
+        different way, so it's time to remove it.  Qt also depended on this setting for
+        a short period of time, but after talking to them we agreed that it should be
+        removed.
+
+        This bug is the second half of https://bugs.webkit.org/show_bug.cgi?id=30602
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2009-11-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Carlson and Darin Adler.
