@@ -1,3 +1,24 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstreaming Chromium API: Platform specific files
+
+        https://bugs.webkit.org/show_bug.cgi?id=28394
+
+        * public/gtk/WebFontInfo.h: Added.
+        * public/gtk/WebInputEventFactory.h: Added.
+        * public/gtk/WebScreenInfoFactory.h: Added.
+        * public/linux/WebFontRendering.h: Added.
+        * public/linux/WebSandboxSupport.h: Added.
+        * public/mac/WebInputEventFactory.h: Added.
+        * public/mac/WebScreenInfoFactory.h: Added.
+        * public/win/WebInputEventFactory.h: Added.
+        * public/win/WebSandboxSupport.h: Added.
+        * public/win/WebScreenInfoFactory.h: Added.
+        * public/win/WebThemeEngine.h: Added.
+        * public/x11/WebScreenInfoFactory.h: Added.
+
 2009-11-09  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.
