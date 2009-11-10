@@ -489,8 +489,10 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
 
 const AtomicString& Element::getAttribute(const String& name) const
 {
-    String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    if (localName == styleAttr.localName() && !m_isStyleAttributeValid)
+    bool ignoreCase = shouldIgnoreAttributeCase(this);
+    
+    // Update the 'style' attribute if it's invalid and being requested:
+    if (!m_isStyleAttributeValid && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();
 
 #if ENABLE(SVG)
@@ -499,8 +501,8 @@ const AtomicString& Element::getAttribute(const String& name) const
 #endif
 
     if (namedAttrMap)
-        if (Attribute* a = namedAttrMap->getAttributeItem(name, shouldIgnoreAttributeCase(this)))
-            return a->value();
+        if (Attribute* attribute = namedAttrMap->getAttributeItem(name, ignoreCase))
+            return attribute->value();
     
     return nullAtom;
 }

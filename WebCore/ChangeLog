@@ -1,3 +1,17 @@
+2009-11-10  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Optimizations to Element::getAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=30926
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):  User case-insensitive compare instead of lowercasing the name.
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedNodeMap::getAttributeItem):  Avoid redundant compares, and do fast/likely compares first.
+        * platform/text/PlatformString.h:
+        (WebCore::equalPossiblyIgnoringCase):  New inline method, used by both of the above.
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
