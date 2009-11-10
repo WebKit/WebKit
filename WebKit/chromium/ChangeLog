@@ -2,6 +2,70 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: WebBindging ... WebCursorInfo
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebBindings.cpp: Added.
+        (WebKit::WebBindings::construct):
+        (WebKit::WebBindings::createObject):
+        (WebKit::WebBindings::enumerate):
+        (WebKit::WebBindings::evaluate):
+        (WebKit::WebBindings::evaluateHelper):
+        (WebKit::WebBindings::getIntIdentifier):
+        (WebKit::WebBindings::getProperty):
+        (WebKit::WebBindings::getStringIdentifier):
+        (WebKit::WebBindings::getStringIdentifiers):
+        (WebKit::WebBindings::hasMethod):
+        (WebKit::WebBindings::hasProperty):
+        (WebKit::WebBindings::identifierIsString):
+        (WebKit::WebBindings::intFromIdentifier):
+        (WebKit::WebBindings::initializeVariantWithStringCopy):
+        (WebKit::WebBindings::invoke):
+        (WebKit::WebBindings::invokeDefault):
+        (WebKit::WebBindings::releaseObject):
+        (WebKit::WebBindings::releaseVariantValue):
+        (WebKit::WebBindings::removeProperty):
+        (WebKit::WebBindings::retainObject):
+        (WebKit::WebBindings::setException):
+        (WebKit::WebBindings::setProperty):
+        (WebKit::WebBindings::unregisterObject):
+        (WebKit::WebBindings::utf8FromIdentifier):
+        (WebKit::WebBindings::extractIdentifierData):
+        (WebKit::getEvent):
+        (WebKit::getDragDataImpl):
+        (WebKit::getRangeImpl):
+        (WebKit::WebBindings::getDragData):
+        (WebKit::WebBindings::isDragEvent):
+        (WebKit::WebBindings::getRange):
+        * src/WebCString.cpp: Added.
+        (WebKit::WebCString::reset):
+        (WebKit::WebCString::assign):
+        (WebKit::WebCString::length):
+        (WebKit::WebCString::data):
+        (WebKit::WebCString::utf16):
+        (WebKit::WebCString::fromUTF16):
+        (WebKit::WebCString::WebCString):
+        (WebKit::WebCString::operator=):
+        (WebKit::WebCString::operator WebCore::CString):
+        * src/WebCache.cpp: Added.
+        (WebKit::ToResourceTypeStat):
+        (WebKit::WebCache::setCapacities):
+        (WebKit::WebCache::clear):
+        (WebKit::WebCache::getUsageStats):
+        (WebKit::WebCache::getResourceTypeStats):
+        * src/WebColor.cpp: Added.
+        (WebKit::toCSSValueKeyword):
+        (WebKit::setNamedColors):
+        * src/WebCrossOriginPreflightResultCache.cpp: Added.
+        (WebKit::WebCrossOriginPreflightResultCache::clear):
+        * src/WebCursorInfo.cpp: Added.
+        (WebKit::WebCursorInfo::WebCursorInfo):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: WebAccessibilty
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
