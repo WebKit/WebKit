@@ -1,3 +1,9 @@
+2009-11-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Skip new tests.
+
+        * platform/gtk/Skipped:
+
 2009-11-10  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Timothy Hatcher.
