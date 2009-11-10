@@ -1,5 +1,24 @@
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Up-streaming Chromium API src files: WrapperResourceRequest and Response
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WrappedResourceRequest.h: Added.
+        (WebKit::WrappedResourceRequest::~WrappedResourceRequest):
+        (WebKit::WrappedResourceRequest::WrappedResourceRequest):
+        (WebKit::WrappedResourceRequest::bind):
+        (WebKit::WrappedResourceRequest::Handle::dispose):
+        * src/WrappedResourceResponse.h: Added.
+        (WebKit::WrappedResourceResponse::~WrappedResourceResponse):
+        (WebKit::WrappedResourceResponse::WrappedResourceResponse):
+        (WebKit::WrappedResourceResponse::bind):
+        (WebKit::WrappedResourceResponse::Handle::dispose):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Up-streaming Chromium API src files: StorageStreamHandlers...StorageNamespaceProxy
