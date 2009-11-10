@@ -1,3 +1,16 @@
+2009-11-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Repro crash saving pcmag.com article as a webarchive.
+        <rdar://problem/7381219> and https://webkit.org/b/31322
+
+        Test: http/tests/webarchive/cross-origin-stylesheet-crash.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Walk the stylesheet itself instead
+          of creating a CSSRuleList (and subjecting ourselves to the security origin check)
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
         Attempt 2 to fix Tiger build. No review needed.

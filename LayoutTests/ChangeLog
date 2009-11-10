@@ -1,3 +1,16 @@
+2009-11-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Repro crash saving pcmag.com article as a webarchive.
+        <rdar://problem/7381219> and https://webkit.org/b/31322
+
+        * http/tests/webarchive/cross-origin-stylesheet-crash.html: Added.
+        * http/tests/webarchive/cross-origin-stylesheet-crash-expected.webarchive: Added.
+        * http/tests/webarchive/resources/localhost-stylesheet.css: Added.
+        * platform/gtk/Skipped: Add this test to the gtk Skipped list which tracks all individual skipped tests
+          instead of directories.
+
 2009-11-10  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Anders Carlsson.

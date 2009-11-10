@@ -3567,6 +3567,7 @@ http/tests/navigation/postredirect-basic.html
 http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
 http/tests/uri/css-href.php
+http/tests/webarchive/cross-origin-stylesheet-crash.html
 http/tests/webarchive/test-css-url-encoding-shift-jis.html
 http/tests/webarchive/test-css-url-encoding-utf-8.html
 http/tests/webarchive/test-css-url-encoding.html

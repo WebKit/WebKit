@@ -230,10 +230,12 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
         CSSStyleSheet* styleSheet = styleSheetQueue.first();
         styleSheetQueue.removeFirst();
 
-        RefPtr<CSSRuleList> ruleList = styleSheet->cssRules();
-
-        for (unsigned i = 0; i < ruleList->length(); ++i) {
-            CSSRule* rule = ruleList->item(i);
+        for (unsigned i = 0; i < styleSheet->length(); ++i) {
+            StyleBase* styleBase = styleSheet->item(i);
+            if (!styleBase->isRule())
+                continue;
+            
+            CSSRule* rule = static_cast<CSSRule*>(styleBase);
             if (rule->isImportRule()) {
                 if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
                     styleSheetQueue.append(ruleStyleSheet);
