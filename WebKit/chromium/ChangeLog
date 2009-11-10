@@ -1,3 +1,90 @@
+2009-11-09  Yaar Schnitman  <yaar@chromium.src>
+
+        Reviewed by Dimitri Glazkov.
+
+        Up-streaming Chromium API src files: WebData...WebElement
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebData.cpp: Added.
+        (WebKit::WebData::reset):
+        (WebKit::WebData::assign):
+        (WebKit::WebData::size):
+        (WebKit::WebData::data):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        (WebKit::WebData::operator PassRefPtr<SharedBuffer>):
+        * src/WebDataSourceImpl.cpp: Added.
+        (WebKit::WebDataSourceImpl::create):
+        (WebKit::WebDataSourceImpl::originalRequest):
+        (WebKit::WebDataSourceImpl::request):
+        (WebKit::WebDataSourceImpl::response):
+        (WebKit::WebDataSourceImpl::hasUnreachableURL):
+        (WebKit::WebDataSourceImpl::unreachableURL):
+        (WebKit::WebDataSourceImpl::redirectChain):
+        (WebKit::WebDataSourceImpl::pageTitle):
+        (WebKit::WebDataSourceImpl::navigationType):
+        (WebKit::WebDataSourceImpl::triggeringEventTime):
+        (WebKit::WebDataSourceImpl::extraData):
+        (WebKit::WebDataSourceImpl::setExtraData):
+        (WebKit::WebDataSourceImpl::toWebNavigationType):
+        (WebKit::WebDataSourceImpl::endOfRedirectChain):
+        (WebKit::WebDataSourceImpl::clearRedirectChain):
+        (WebKit::WebDataSourceImpl::appendRedirect):
+        (WebKit::WebDataSourceImpl::setNextPluginLoadObserver):
+        (WebKit::WebDataSourceImpl::WebDataSourceImpl):
+        (WebKit::WebDataSourceImpl::~WebDataSourceImpl):
+        * src/WebDataSourceImpl.h: Added.
+        (WebKit::WebDataSourceImpl::fromDocumentLoader):
+        (WebKit::WebDataSourceImpl::hasRedirectChain):
+        (WebKit::WebDataSourceImpl::releasePluginLoadObserver):
+        * src/WebDatabase.cpp: Added.
+        (WebKit::WebDatabase::reset):
+        (WebKit::WebDatabase::assign):
+        (WebKit::WebDatabase::name):
+        (WebKit::WebDatabase::displayName):
+        (WebKit::WebDatabase::estimatedSize):
+        (WebKit::WebDatabase::securityOrigin):
+        (WebKit::WebDatabase::setObserver):
+        (WebKit::WebDatabase::observer):
+        (WebKit::WebDatabase::updateDatabaseSize):
+        (WebKit::WebDatabase::WebDatabase):
+        (WebKit::WebDatabase::operator=):
+        (WebKit::WebDatabase::operator WTF::PassRefPtr<Database>):
+        * src/WebDevToolsAgentPrivate.h: Added.
+        * src/WebDragData.cpp: Added.
+        (WebKit::WebDragData::initialize):
+        (WebKit::WebDragData::reset):
+        (WebKit::WebDragData::assign):
+        (WebKit::WebDragData::url):
+        (WebKit::WebDragData::setURL):
+        (WebKit::WebDragData::urlTitle):
+        (WebKit::WebDragData::setURLTitle):
+        (WebKit::WebDragData::fileExtension):
+        (WebKit::WebDragData::setFileExtension):
+        (WebKit::WebDragData::hasFileNames):
+        (WebKit::WebDragData::fileNames):
+        (WebKit::WebDragData::setFileNames):
+        (WebKit::WebDragData::appendToFileNames):
+        (WebKit::WebDragData::plainText):
+        (WebKit::WebDragData::setPlainText):
+        (WebKit::WebDragData::htmlText):
+        (WebKit::WebDragData::setHTMLText):
+        (WebKit::WebDragData::htmlBaseURL):
+        (WebKit::WebDragData::setHTMLBaseURL):
+        (WebKit::WebDragData::fileContentFileName):
+        (WebKit::WebDragData::setFileContentFileName):
+        (WebKit::WebDragData::fileContent):
+        (WebKit::WebDragData::setFileContent):
+        (WebKit::WebDragData::WebDragData):
+        (WebKit::WebDragData::operator=):
+        (WebKit::WebDragData::operator WTF::PassRefPtr<WebCore::ChromiumDataObject>):
+        (WebKit::WebDragData::ensureMutable):
+        * src/WebElement.cpp: Added.
+        (WebKit::WebElement::WebElement):
+        (WebKit::WebElement::operator=):
+        (WebKit::WebElement::operator WTF::PassRefPtr<Element>):
+
 2009-11-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
