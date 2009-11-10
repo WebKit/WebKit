@@ -1,3 +1,18 @@
+2009-11-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31047
+        [GTK] Failing test media/video-played-ranges-1.html
+
+        WebKit coding style fixes.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::mimeTypeCache):
+
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
         Remove build failure introduced by earlier build fix.

@@ -66,11 +66,11 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
         LOG_VERBOSE(Media, "Error: %d, %s", err->code,  err->message);
 
         error = MediaPlayer::Empty;
-        if (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND ||
-            err->code == GST_STREAM_ERROR_WRONG_TYPE ||
-            err->code == GST_STREAM_ERROR_FAILED ||
-            err->code == GST_CORE_ERROR_MISSING_PLUGIN ||
-            err->code == GST_RESOURCE_ERROR_NOT_FOUND)
+        if (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND
+            || err->code == GST_STREAM_ERROR_WRONG_TYPE
+            || err->code == GST_STREAM_ERROR_FAILED
+            || err->code == GST_CORE_ERROR_MISSING_PLUGIN
+            || err->code == GST_RESOURCE_ERROR_NOT_FOUND)
             error = MediaPlayer::FormatError;
         else if (err->domain == GST_STREAM_ERROR)
             error = MediaPlayer::DecodeError;
@@ -335,10 +335,10 @@ IntSize MediaPlayerPrivate::naturalSize() const
         gfloat pixelAspectRatio;
         gint pixelAspectRatioNumerator, pixelAspectRatioDenominator;
 
-        if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps) ||
-            !gst_video_format_parse_caps(caps, NULL, &width, &height) ||
-            !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
-                                                           &pixelAspectRatioDenominator)) {
+        if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps)
+            || !gst_video_format_parse_caps(caps, 0, &width, &height)
+            || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
+                                                        &pixelAspectRatioDenominator)) {
             gst_object_unref(GST_OBJECT(pad));
             return IntSize();
         }
@@ -695,10 +695,10 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     double scale, gapHeight, gapWidth;
     GstVideoFormat format;
 
-    GstCaps *caps = gst_buffer_get_caps(m_buffer);
+    GstCaps* caps = gst_buffer_get_caps(m_buffer);
 
-    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height) ||
-        !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator))) {
+    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height)
+                   || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator))) {
       gst_caps_unref(caps);
       return;
     }
@@ -728,7 +728,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     displayHeight *= doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator;
 
     // Calculate the largest scale factor that would fill the target surface
-    scale = MIN(rect.width() / displayWidth, rect.height() / displayHeight);
+    scale = std::min(rect.width() / displayWidth, rect.height() / displayHeight);
     // And calculate the new display width/height
     displayWidth *= scale;
     displayHeight *= scale;
@@ -795,15 +795,15 @@ static HashSet<String> mimeTypeCache()
             // by default. In that case, we should not consider these types supportable by GStreamer.
             // Examples of what GStreamer can support but should not be added:
             // text/plain, text/html, image/jpeg, application/xml
-            if (g_str_equal(mimetype[0], "audio") ||
-                    g_str_equal(mimetype[0], "video") ||
-                    (g_str_equal(mimetype[0], "application") &&
-                        !ignoredApplicationSubtypes.contains(String(mimetype[1])))) {
+            if (g_str_equal(mimetype[0], "audio")
+                || g_str_equal(mimetype[0], "video")
+                || (g_str_equal(mimetype[0], "application")
+                    && !ignoredApplicationSubtypes.contains(String(mimetype[1])))) {
                 cache.add(String(capability[0]));
 
                 // These formats are supported by GStreamer, but not correctly advertised
-                if (g_str_equal(capability[0], "video/x-h264") ||
-                    g_str_equal(capability[0], "audio/x-m4a")) {
+                if (g_str_equal(capability[0], "video/x-h264")
+                    || g_str_equal(capability[0], "audio/x-m4a")) {
                     cache.add(String("video/mp4"));
                     cache.add(String("audio/aac"));
                 }
@@ -818,7 +818,7 @@ static HashSet<String> mimeTypeCache()
                     // This is what we are handling: mpegversion=(int)1, layer=(int)[ 1, 3 ]
                     gchar** versionAndLayer = g_strsplit(capability[1], ",", 2);
 
-                    if (g_str_has_suffix (versionAndLayer[0], "(int)1")) {
+                    if (g_str_has_suffix(versionAndLayer[0], "(int)1")) {
                         for (int i = 0; versionAndLayer[1][i] != '\0'; i++) {
                             if (versionAndLayer[1][i] == '1')
                                 cache.add(String("audio/mp1"));
