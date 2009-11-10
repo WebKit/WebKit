@@ -1,5 +1,11 @@
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
+        Remove build failure introduced by earlier build fix.
+
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
         Is this the last build fix? grep tells me yes.
 
         * bindings/v8/custom/V8DocumentCustom.cpp:
