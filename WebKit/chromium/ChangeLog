@@ -2,6 +2,63 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: StorageStreamHandlers...StorageNamespaceProxy
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/SocketStreamHandle.cpp: Added.
+        (WebCore::SocketStreamHandleInternal::create):
+        (WebCore::SocketStreamHandleInternal::SocketStreamHandleInternal):
+        (WebCore::SocketStreamHandleInternal::~SocketStreamHandleInternal):
+        (WebCore::SocketStreamHandleInternal::connect):
+        (WebCore::SocketStreamHandleInternal::send):
+        (WebCore::SocketStreamHandleInternal::close):
+        (WebCore::SocketStreamHandleInternal::willOpenStream):
+        (WebCore::SocketStreamHandleInternal::didOpenStream):
+        (WebCore::SocketStreamHandleInternal::didSendData):
+        (WebCore::SocketStreamHandleInternal::didReceiveData):
+        (WebCore::SocketStreamHandleInternal::didClose):
+        (WebCore::SocketStreamHandleInternal::didFail):
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::SocketStreamHandle::didReceiveAuthenticationChallenge):
+        (WebCore::SocketStreamHandle::receivedCredential):
+        (WebCore::SocketStreamHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::SocketStreamHandle::receivedCancellation):
+        * src/StorageAreaProxy.cpp: Added.
+        (WebCore::StorageAreaProxy::StorageAreaProxy):
+        (WebCore::StorageAreaProxy::~StorageAreaProxy):
+        (WebCore::StorageAreaProxy::length):
+        (WebCore::StorageAreaProxy::key):
+        (WebCore::StorageAreaProxy::getItem):
+        (WebCore::StorageAreaProxy::setItem):
+        (WebCore::StorageAreaProxy::removeItem):
+        (WebCore::StorageAreaProxy::clear):
+        (WebCore::StorageAreaProxy::contains):
+        * src/StorageAreaProxy.h: Added.
+        * src/StorageEventDispatcherChromium.cpp: Added.
+        (WebCore::StorageEventDispatcher::dispatch):
+        * src/StorageEventDispatcherImpl.cpp: Added.
+        (WebCore::StorageEventDispatcherImpl::StorageEventDispatcherImpl):
+        (WebCore::StorageEventDispatcherImpl::dispatchStorageEvent):
+        * src/StorageEventDispatcherImpl.h: Added.
+        * src/StorageNamespaceProxy.cpp: Added.
+        (WebCore::StorageNamespace::localStorageNamespace):
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+        (WebCore::StorageNamespaceProxy::StorageNamespaceProxy):
+        (WebCore::StorageNamespaceProxy::~StorageNamespaceProxy):
+        (WebCore::StorageNamespaceProxy::copy):
+        (WebCore::StorageNamespaceProxy::storageArea):
+        (WebCore::StorageNamespaceProxy::close):
+        (WebCore::StorageNamespaceProxy::unlock):
+        * src/StorageNamespaceProxy.h: Added.
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: NotificationPresenterImpl...SharedWorkerRepository
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
