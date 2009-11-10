@@ -45,7 +45,7 @@
             gl.box = makeBox(gl);
 
             // color array
-            var colors = new CanvasUnsignedByteArray(
+            var colors = new WebGLUnsignedByteArray(
                 [  0, 0, 1, 1,   0, 0, 1, 1,   0, 0, 1, 1,   0, 0, 1, 1,     // v0-v1-v2-v3 front
                    1, 0, 0, 1,   1, 0, 0, 1,   1, 0, 0, 1,   1, 0, 0, 1,     // v0-v3-v4-v5 right
                    0, 1, 0, 1,   0, 1, 0, 1,   0, 1, 0, 1,   0, 1, 0, 1,     // v0-v5-v6-v1 top
@@ -77,7 +77,7 @@
             var pMatrix = new CanvasMatrix4();
             pMatrix.lookat(0,0,10, 0, 0, 0, 0, 1, 0);
             pMatrix.perspective(30, width/height, 1, 10000);
-            gl.uniformMatrix4fv(gl.getUniformLocation(gl.program, "pMatrix"), false, pMatrix.getAsCanvasFloatArray());
+            gl.uniformMatrix4fv(gl.getUniformLocation(gl.program, "pMatrix"), false, pMatrix.getAsWebGLFloatArray());
         }
         
         function drawPicture(gl)
@@ -88,7 +88,7 @@
             var mvMatrix = new CanvasMatrix4();
             mvMatrix.rotate(currentAngle, 0,1,0);
             mvMatrix.rotate(20, 1,0,0);
-            gl.uniformMatrix4fv(gl.getUniformLocation(gl.program, "mvMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            gl.uniformMatrix4fv(gl.getUniformLocation(gl.program, "mvMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             gl.enableVertexAttribArray(0);
             gl.enableVertexAttribArray(1);

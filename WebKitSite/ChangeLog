@@ -1,3 +1,23 @@
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix WebGL demos to work with renamed WebGL primitives
+
+        * blog-files/webgl/Earth.html:
+        * blog-files/webgl/ManyPlanetsDeep.html:
+        * blog-files/webgl/SpinningBox.html:
+        * blog-files/webgl/SpiritBox.html:
+        * blog-files/webgl/TeapotPerPixel.html:
+        * blog-files/webgl/TeapotPerVertex.html:
+        * blog-files/webgl/WebGL+CSS.html:
+        * blog-files/webgl/resources/CanvasMatrix.js:
+        (CanvasMatrix4.prototype.getAsWebGLFloatArray):
+        * blog-files/webgl/resources/utils3d.js:
+        (makeBox):
+        (makeSphere):
+        (doLoadObj):
+
 2009-11-06  Dirk Schulze  <krit@webkit.org>
 
         Rubber stamped by Eric Seidel.

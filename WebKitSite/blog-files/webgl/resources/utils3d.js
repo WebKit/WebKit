@@ -1,3 +1,22 @@
+// The WebGL spec was recently updated to replace the Canvas prefix on types with the WebGL prefix.
+// For compatibility reasons we set up aliases to from the WebGL prefixed typename to the
+// Canvas prefixed name for the benefit of older builds of WebKit and Mozilla
+if (!("WebGLFloatArray" in window))
+    WebGLFloatArray = window.CanvasFloatArray;
+if (!("WebGLByteArray" in window))
+    WebGLByteArray = window.CanvasByteArray;
+if (!("WebGLIntArray" in window))
+    WebGLIntArray = window.CanvasIntArray;
+if (!("WebGLShortArray" in window))
+    WebGLShortArray = window.CanvasShortArray;
+if (!("WebGLUnsignedByteArray" in window))
+    WebGLUnsignedByteArray = window.CanvasUnsignedByteArray;
+if (!("WebGLUnsignedIntArray" in window))
+    WebGLUnsignedIntArray = window.CanvasUnsignedIntArray;
+if (!("WebGLUnsignedShortArray" in window))
+    WebGLUnsignedShortArray = window.CanvasUnsignedShortArray;
+
+
 //
 // initWebGL
 //
@@ -149,7 +168,7 @@ function makeBox(ctx)
     //  v2------v3
     //
     // vertex coords array
-    var vertices = new CanvasFloatArray(
+    var vertices = new WebGLFloatArray(
         [  1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1,    // v0-v1-v2-v3 front
            1, 1, 1,   1,-1, 1,   1,-1,-1,   1, 1,-1,    // v0-v3-v4-v5 right
            1, 1, 1,   1, 1,-1,  -1, 1,-1,  -1, 1, 1,    // v0-v5-v6-v1 top
@@ -159,7 +178,7 @@ function makeBox(ctx)
     );
 
     // normal array
-    var normals = new CanvasFloatArray(
+    var normals = new WebGLFloatArray(
         [  0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1,     // v0-v1-v2-v3 front
            1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0,     // v0-v3-v4-v5 right
            0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0,     // v0-v5-v6-v1 top
@@ -170,7 +189,7 @@ function makeBox(ctx)
 
 
     // texCoord array
-    var texCoords = new CanvasFloatArray(
+    var texCoords = new WebGLFloatArray(
         [  1, 1,   0, 1,   0, 0,   1, 0,    // v0-v1-v2-v3 front
            0, 1,   0, 0,   1, 0,   1, 1,    // v0-v3-v4-v5 right
            1, 0,   1, 1,   0, 1,   0, 0,    // v0-v5-v6-v1 top
@@ -180,7 +199,7 @@ function makeBox(ctx)
        );
 
     // index array
-    var indices = new CanvasUnsignedByteArray(
+    var indices = new WebGLUnsignedByteArray(
         [  0, 1, 2,   0, 2, 3,    // front
            4, 5, 6,   4, 6, 7,    // right
            8, 9,10,   8,10,11,    // top
@@ -280,20 +299,20 @@ function makeSphere(ctx, radius, lats, longs)
     
     retval.normalObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.normalObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(normalData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(normalData), ctx.STATIC_DRAW);
 
     retval.texCoordObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.texCoordObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(texCoordData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(texCoordData), ctx.STATIC_DRAW);
 
     retval.vertexObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.vertexObject);
-    ctx.bufferData(ctx.ARRAY_BUFFER, new CanvasFloatArray(geometryData), ctx.STATIC_DRAW);
+    ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(geometryData), ctx.STATIC_DRAW);
     
     retval.numIndices = indexData.length;
     retval.indexObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, retval.indexObject);
-    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new CanvasUnsignedShortArray(indexData), ctx.STREAM_DRAW);
+    ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray(indexData), ctx.STREAM_DRAW);
     
     return retval;
 }
@@ -446,20 +465,20 @@ function doLoadObj(obj, text)
     // set the VBOs
     obj.normalObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.normalObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(normalArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(normalArray), obj.ctx.STATIC_DRAW);
 
     obj.texCoordObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.texCoordObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(textureArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(textureArray), obj.ctx.STATIC_DRAW);
 
     obj.vertexObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ARRAY_BUFFER, obj.vertexObject);
-    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new CanvasFloatArray(vertexArray), obj.ctx.STATIC_DRAW);
+    obj.ctx.bufferData(obj.ctx.ARRAY_BUFFER, new WebGLFloatArray(vertexArray), obj.ctx.STATIC_DRAW);
     
     obj.numIndices = indexArray.length;
     obj.indexObject = obj.ctx.createBuffer();
     obj.ctx.bindBuffer(obj.ctx.ELEMENT_ARRAY_BUFFER, obj.indexObject);
-    obj.ctx.bufferData(obj.ctx.ELEMENT_ARRAY_BUFFER, new CanvasUnsignedShortArray(indexArray), obj.ctx.STREAM_DRAW);
+    obj.ctx.bufferData(obj.ctx.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray(indexArray), obj.ctx.STREAM_DRAW);
     
     obj.loaded = true;
 }

@@ -256,16 +256,16 @@
             mvMatrix.makeIdentity();
             mvMatrix.rotate(currentAngle, 0, 1, 0);
             mvMatrix.rotate(10, 1,0,0);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             // construct the normal matrix from the model-view matrix
             normalMatrix.load(mvMatrix);
             normalMatrix.invert();
             normalMatrix.transpose();
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsWebGLFloatArray());
             
             mvMatrix.multRight(ctx.perspectiveMatrix);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             ctx.drawElements(ctx.TRIANGLES, obj.numIndices, ctx.UNSIGNED_SHORT, 0);
             
