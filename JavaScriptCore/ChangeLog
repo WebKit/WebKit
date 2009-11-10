@@ -1,3 +1,32 @@
+2009-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Can cache prototype lookups on uncacheable dictionaries.
+        https://bugs.webkit.org/show_bug.cgi?id=31198
+
+        Replace fromDictionaryTransition with flattenDictionaryObject and
+        flattenDictionaryStructure.  This change is necessary as we need to
+        guarantee that our attempt to convert away from a dictionary structure
+        will definitely succeed, and in some cases this requires mutating the
+        object storage itself.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::~BatchedTransitionOptimizer):
+        * runtime/JSObject.h:
+        (JSC::JSObject::flattenDictionaryObject):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::comparePropertyMapEntryIndices):
+        * runtime/Structure.h:
+
 2009-11-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Not reviewed, build fix.

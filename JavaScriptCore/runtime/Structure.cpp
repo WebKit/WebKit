@@ -77,6 +77,8 @@ static HashSet<Structure*>& ignoreSet = *(new HashSet<Structure*>);
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
+static int comparePropertyMapEntryIndices(const void* a, const void* b);
+
 void Structure::dumpStatistics()
 {
 #if DUMP_STRUCTURE_ID_STATISTICS
@@ -534,20 +536,47 @@ PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(Structure* st
     return toDictionaryTransition(structure, UncachedDictionaryKind);
 }
 
-PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
+PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSObject* object)
 {
-    ASSERT(structure->isDictionary());
+    ASSERT(isDictionary());
+    if (isUncacheableDictionary()) {
+        ASSERT(m_propertyTable);
+        Vector<PropertyMapEntry*> sortedPropertyEntries(m_propertyTable->keyCount);
+        PropertyMapEntry** p = sortedPropertyEntries.data();
+        unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
+        for (unsigned i = 1; i <= entryCount; i++) {
+            if (m_propertyTable->entries()[i].key)
+                *p++ = &m_propertyTable->entries()[i];
+        }
+        size_t propertyCount = p - sortedPropertyEntries.data();
+        qsort(sortedPropertyEntries.data(), propertyCount, sizeof(PropertyMapEntry*), comparePropertyMapEntryIndices);
+        sortedPropertyEntries.resize(propertyCount);
 
-    // Since dictionary Structures are not shared, and no opcodes specialize
-    // for them, we don't need to allocate a new Structure when transitioning
-    // to non-dictionary status.
+        // We now have the properties currently defined on this object
+        // in the order that they are expected to be in, but we need to
+        // reorder the storage, so we have to copy the current values out
+        Vector<JSValue> values(propertyCount);
+        unsigned anonymousSlotCount = m_propertyTable->anonymousSlotCount;
+        for (unsigned i = 0; i < propertyCount; i++) {
+            PropertyMapEntry* entry = sortedPropertyEntries[i];
+            values[i] = object->getDirectOffset(entry->offset);
+            // Update property table to have the new property offsets
+            entry->offset = anonymousSlotCount + i;
+            entry->index = i;
+        }
+        
+        // Copy the original property values into their final locations
+        for (unsigned i = 0; i < propertyCount; i++)
+            object->putDirectOffset(anonymousSlotCount + i, values[i]);
 
-    // FIMXE: We can make this more efficient by canonicalizing the Structure (draining the
-    // deleted offsets vector) before transitioning from dictionary. 
-    if (!structure->m_propertyTable || !structure->m_propertyTable->deletedOffsets || structure->m_propertyTable->deletedOffsets->isEmpty())
-        structure->m_dictionaryKind = NoneDictionaryKind;
+        if (m_propertyTable->deletedOffsets) {
+            delete m_propertyTable->deletedOffsets;
+            m_propertyTable->deletedOffsets = 0;
+        }
+    }
 
-    return structure;
+    m_dictionaryKind = NoneDictionaryKind;
+    return this;
 }
 
 size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
@@ -1004,7 +1033,7 @@ void Structure::rehashPropertyMapHashTable(unsigned newTableSize)
     checkConsistency();
 }
 
-static int comparePropertyMapEntryIndices(const void* a, const void* b)
+int comparePropertyMapEntryIndices(const void* a, const void* b)
 {
     unsigned ia = static_cast<PropertyMapEntry* const*>(a)[0]->index;
     unsigned ib = static_cast<PropertyMapEntry* const*>(b)[0]->index;

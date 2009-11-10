@@ -243,7 +243,7 @@ namespace JSC {
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
             if (cell->structure()->isDictionary())
-                asObject(cell)->setStructure(Structure::fromDictionaryTransition(cell->structure()));
+                asObject(cell)->flattenDictionaryObject();
 
             ++count;
         }
@@ -265,7 +265,7 @@ namespace JSC {
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
             if (base->structure()->isDictionary())
-                asObject(base)->setStructure(Structure::fromDictionaryTransition(base->structure()));
+                asObject(base)->flattenDictionaryObject();
 
             ++count;
         }

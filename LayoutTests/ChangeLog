@@ -1,3 +1,17 @@
+2009-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Can cache prototype lookups on uncacheable dictionaries.
+        https://bugs.webkit.org/show_bug.cgi?id=31198
+
+        Add tests for lookup on uncacheable prototype.
+
+        * fast/js/dictionary-prototype-caching-expected.txt: Added.
+        * fast/js/dictionary-prototype-caching.html: Added.
+        * fast/js/script-tests/dictionary-prototype-caching.js: Added.
+        (protoTest):
+
 2009-11-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein.

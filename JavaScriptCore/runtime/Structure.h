@@ -74,7 +74,8 @@ namespace JSC {
         static PassRefPtr<Structure> getterSetterTransition(Structure*);
         static PassRefPtr<Structure> toCacheableDictionaryTransition(Structure*);
         static PassRefPtr<Structure> toUncacheableDictionaryTransition(Structure*);
-        static PassRefPtr<Structure> fromDictionaryTransition(Structure*);
+
+        PassRefPtr<Structure> flattenDictionaryStructure(JSObject*);
 
         ~Structure();
 

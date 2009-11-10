@@ -1042,7 +1042,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (baseObject->structure()->isDictionary())
-            baseObject->setStructure(Structure::fromDictionaryTransition(baseObject->structure()));
+            baseObject->flattenDictionaryObject();
 
         ASSERT(!baseObject->structure()->isUncacheableDictionary());
 
