@@ -362,14 +362,14 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
         graphicsContext->clearShadow();
         Color fillColor = graphicsContext->fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        graphicsContext->setFillColor(shadowFillColor);
+        graphicsContext->setFillColor(shadowFillColor, DeviceColorSpace);
         CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width(), point.y() + translation.height() + shadowSize.height());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width() + font->syntheticBoldOffset(), point.y() + translation.height() + shadowSize.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
-        graphicsContext->setFillColor(fillColor);
+        graphicsContext->setFillColor(fillColor, DeviceColorSpace);
     }
 
     CGContextSetTextPosition(cgContext, point.x() + translation.width(), point.y() + translation.height());

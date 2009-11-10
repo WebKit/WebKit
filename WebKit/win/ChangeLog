@@ -1,3 +1,12 @@
+2009-11-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by NOBODY - Build Fix.
+
+        Updated fillRoundedRect to take a ColorSpace argument.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::createDragImageForLink):
+
 2009-11-08  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Holger Freyther.

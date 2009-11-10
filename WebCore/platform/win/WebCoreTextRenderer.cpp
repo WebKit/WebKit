@@ -49,7 +49,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
 {
     TextRun run(text.characters(), text.length());
 
-    context.setFillColor(color);
+    context.setFillColor(color, DeviceColorSpace);
     if (isOneLeftToRightRun(run))
         font.drawText(&context, run, point);
     else
@@ -71,7 +71,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
         IntPoint underlinePoint(point);
         underlinePoint.move(beforeWidth, 1);
 
-        context.setStrokeColor(color);
+        context.setStrokeColor(color, DeviceColorSpace);
         context.drawLineForText(underlinePoint, underlinedWidth, false);
     }
 }

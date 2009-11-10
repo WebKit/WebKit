@@ -295,7 +295,7 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     static const Color backgroundColor(140, 140, 140);
     static const IntSize radii(DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS);
     IntRect rect(0, 0, imageSize.width(), imageSize.height());
-    context.fillRoundedRect(rect, radii, radii, radii, radii, backgroundColor);
+    context.fillRoundedRect(rect, radii, radii, radii, radii, backgroundColor, DeviceColorSpace);
  
     // Draw the text
     static const Color topColor(0, 0, 0, 255); //original alpha = 0.75

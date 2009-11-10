@@ -1,3 +1,23 @@
+2009-11-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by NOBODY - Build Fix.
+
+        Updated function calls to take a ColorSpace argument, passing
+        in DeviceColorSpace for now - this should be fixed. Also added
+        ColorSpace.h to WebCore project.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButton):
+
 2009-11-10  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.

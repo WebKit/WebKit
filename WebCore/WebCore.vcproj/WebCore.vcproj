@@ -22125,6 +22125,10 @@
 					RelativePath="..\platform\graphics\Color.h"
 					>
 				</File>
+                <File
+					RelativePath="..\platform\graphics\ColorPath.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\graphics\FloatPoint.cpp"
 					>
