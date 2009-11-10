@@ -173,6 +173,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBoxReflect,
     CSSPropertyWebkitBoxShadow,
     CSSPropertyWebkitBoxSizing,
+    CSSPropertyWebkitColorCorrection,
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakBefore,
     CSSPropertyWebkitColumnBreakInside,
@@ -1348,6 +1349,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getTimingFunctionValue(style->transitions());
         case CSSPropertyPointerEvents:
             return CSSPrimitiveValue::create(style->pointerEvents());
+        case CSSPropertyWebkitColorCorrection:
+            return CSSPrimitiveValue::create(style->colorSpace());
 
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:

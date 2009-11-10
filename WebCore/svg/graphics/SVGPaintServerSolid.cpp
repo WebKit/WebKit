@@ -64,10 +64,11 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
 {
     RenderStyle* style = object ? object->style() : 0;
     const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
+    ColorSpace colorSpace = style ? style->colorSpace() : DeviceColorSpace;
 
     if ((type & ApplyToFillTargetType) && (!style || svgStyle->hasFill())) {
         context->setAlpha(style ? svgStyle->fillOpacity() : 1);
-        context->setFillColor(color().rgb());
+        context->setFillColor(color().rgb(), colorSpace);
         context->setFillRule(style ? svgStyle->fillRule() : RULE_NONZERO);
 
         if (isPaintingText)
@@ -76,7 +77,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
 
     if ((type & ApplyToStrokeTargetType) && (!style || svgStyle->hasStroke())) {
         context->setAlpha(style ? svgStyle->strokeOpacity() : 1);
-        context->setStrokeColor(color().rgb());
+        context->setStrokeColor(color().rgb(), colorSpace);
 
         if (style)
             applyStrokeStyleToContext(context, style, object);

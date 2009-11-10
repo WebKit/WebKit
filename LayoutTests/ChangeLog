@@ -1,3 +1,40 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for <rdar://problem/7059710> 
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=31196 Implement -webkit-
+        color-correction for CSS colors
+
+        New tests.
+        * fast/css/color-correction-backgrounds-and-text.html: Added.
+        * fast/css/color-correction-on-backgrounds.html: Added.
+        * fast/css/color-correction-on-text.html: Added.
+        * fast/css/color-correction.html: Added.
+        * fast/css/parsing-color-correction-expected.txt: Added.
+        * fast/css/parsing-color-correction.html: Added.
+        * fast/css/resources/parsing-color-correction.js: Added.
+        (test):
+        * fast/css/resources/purple-srgb.png: Added.
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.png: Added.
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.txt: Added.
+        * platform/mac/fast/css/color-correction-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-expected.png: Added.
+        * platform/mac/fast/css/color-correction-expected.txt: Added.
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.png: Added.
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/mac/fast/css/color-correction-on-text-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-on-text-expected.png: Added.
+        * platform/mac/fast/css/color-correction-on-text-expected.txt: Added.
+
+        New and improved results.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-11-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Skip new tests.

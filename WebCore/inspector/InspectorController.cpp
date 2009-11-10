@@ -1654,7 +1654,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
 
         context.addPath(quadPath);
         context.setStrokeThickness(outlineThickness);
-        context.setStrokeColor(outlineColor);
+        context.setStrokeColor(outlineColor, DeviceColorSpace);
         context.strokePath();
 
         context.restore();
@@ -1662,7 +1662,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     
     // Now do the fill
     context.addPath(quadPath);
-    context.setFillColor(fillColor);
+    context.setFillColor(fillColor, DeviceColorSpace);
     context.fillPath();
 }
 

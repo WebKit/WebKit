@@ -34,7 +34,7 @@ const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
 
 // Helper functions shared by InlineTextBox / SVGRootInlineBox
-void updateGraphicsContext(GraphicsContext* context, const Color& fillColor, const Color& strokeColor, float strokeThickness);
+void updateGraphicsContext(GraphicsContext*, const Color& fillColor, const Color& strokeColor, float strokeThickness, ColorSpace);
 Color correctedTextColor(Color textColor, Color backgroundColor);
 
 class InlineTextBox : public InlineRunBox {

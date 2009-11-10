@@ -85,13 +85,14 @@ void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect
     
     // Fill first.
     GraphicsContext* context = paintInfo.context;
-    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : borderFillColor());
+    ColorSpace colorSpace = style()->colorSpace();
+    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : borderFillColor(), colorSpace);
     
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
     if (borderRect.width() >= 3) {
-        context->fillRect(IntRect(borderRect.topLeft(), IntSize(1, height())), borderStartEdgeColor());
-        context->fillRect(IntRect(borderRect.topRight(), IntSize(1, height())), borderEndEdgeColor());
+        context->fillRect(IntRect(borderRect.topLeft(), IntSize(1, height())), borderStartEdgeColor(), colorSpace);
+        context->fillRect(IntRect(borderRect.topRight(), IntSize(1, height())), borderEndEdgeColor(), colorSpace);
     }
 }
 
@@ -104,13 +105,14 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     
     // Fill first.
     GraphicsContext* context = paintInfo.context;
-    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : borderFillColor());
+    ColorSpace colorSpace = style()->colorSpace();
+    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : borderFillColor(), colorSpace);
 
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
     if (borderRect.height() >= 3) {
-        context->fillRect(IntRect(borderRect.topLeft(), IntSize(width(), 1)), borderStartEdgeColor());
-        context->fillRect(IntRect(borderRect.bottomLeft(), IntSize(width(), 1)), borderEndEdgeColor());
+        context->fillRect(IntRect(borderRect.topLeft(), IntSize(width(), 1)), borderStartEdgeColor(), colorSpace);
+        context->fillRect(IntRect(borderRect.bottomLeft(), IntSize(width(), 1)), borderEndEdgeColor(), colorSpace);
     }
 }
 

@@ -1,3 +1,234 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7059710> 
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=31196 Implement -webkit-
+        color-correction for CSS colors
+
+        New exported symbol for GraphicsContext::fillColor() which now 
+        accepts a ColorSpace as an optional parameter.
+        * WebCore.base.exp:
+
+        Added a new file, ColorSpace.h, to define the ColorSpace enum.
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Computed Style for -webkit-color-correction
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+        Parse -webkit-color-correction
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
+       Map CSS identifiers to the appropriate values of the ColorSpace enum
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ColorSpace):
+
+        New property -webkit-color-correction
+        * css/CSSPropertyNames.in:
+
+        Map -webkit-color-correction into the RenderStyle.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
+        Add new value sRGB.
+        * css/CSSValueKeywords.in:
+
+        Comment out the reference to sRGB since it will now be inherited as 
+        a value from CSSValueKeywords.
+        * css/SVGCSSValueKeywords.in:
+
+        Definition of the ColorSpace enum.
+        * platform/graphics/ColorSpace.h: Added.
+        (WebCore::):
+
+        These functions all now take a ColorSpace as a parameter.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::drawHighlightForText):
+
+        Return the appropriate ColorSpace.
+        (WebCore::GraphicsContext::strokeColorSpace):
+        (WebCore::GraphicsContext::fillColorSpace):
+
+        These functions all call other functions which require a ColorSpace 
+        as a parameter.
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+
+        All of the GraphicsContext functions that take a Color should now 
+        also take a ColorSpace.
+        * platform/graphics/GraphicsContext.h:
+
+        Added new member variables stokeColorSpace and fillColorSpace.
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+
+        Attempt to keep the Cairo port building with all of the massive 
+        changes to GraphicsContext.        
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::fillRoundedRect):
+
+        
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::sRGBColorSpaceRef): New static function that returns a 
+        CGColorSpaceRef for the sRGB color space.
+        (WebCore::deviceRGBColorSpaceRef): New static function that returns 
+        a CGColorSpaceRef for the device RGB color space.
+
+        (WebCore::setCGFillColor): Now takes a ColorSpace parameter and 
+        sets the fill color to the specified color in the given ColorSpace.
+        (WebCore::setCGStrokeColor): Same, but for stroke.
+
+        (WebCore::setCGFillColorSpace): New static to set the 
+        CGFillColorSpace to the given ColorSpace
+        (WebCore::setCGStrokeColorSpace): Same, but for stroke.
+
+        Send ColorSpaces when appropriate, set ColorSpaces when 
+        appropriate, and check ColorSpaces when appropriate.
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
+        Attempt to keep Haiku building.
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
+        Attempt to keep QT building.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
+        Attempt to keep Wince building.
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformShadow):
+
+        Attempt to keep WX building.
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
+        Added functions colorSpace() and setColorSpace()
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::colorSpace):
+        (WebCore::InheritedFlags::setColorSpace):
+
+        The ColorSpace is stored here.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
+        All of these call sites call GraphicsContext functions which now 
+        require ColorSpaces.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::paintCaret):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * inspector/InspectorController.cpp:
+        (WebCore::drawOutlinedQuad):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paintScrollCorner):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paintScrollCorner):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::fillWithSolidColor):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::paint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::updateGraphicsContext):
+        (WebCore::paintTextWithShadows):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::drawArcForBoxSide):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::paintScrollCorner):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelection):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
 2009-11-10  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

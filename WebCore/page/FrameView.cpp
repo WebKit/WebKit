@@ -1664,7 +1664,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         fillWithRed = true;
     
     if (fillWithRed)
-        p->fillRect(rect, Color(0xFF, 0, 0));
+        p->fillRect(rect, Color(0xFF, 0, 0), DeviceColorSpace);
 #endif
 
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;

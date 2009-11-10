@@ -364,8 +364,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
         if (cWidth > 2 && cHeight > 2) {
             // Draw an outline rect where the image should be.
             context->setStrokeStyle(SolidStroke);
-            context->setStrokeColor(Color::lightGray);
-            context->setFillColor(Color::transparent);
+            context->setStrokeColor(Color::lightGray, style()->colorSpace());
+            context->setFillColor(Color::transparent, style()->colorSpace());
             context->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
 
             bool errorPictureDrawn = false;
@@ -392,7 +392,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
             if (!m_altText.isEmpty()) {
                 String text = document()->displayStringModifiedByEncoding(m_altText);
-                context->setFillColor(style()->color());
+                context->setFillColor(style()->color(), style()->colorSpace());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();

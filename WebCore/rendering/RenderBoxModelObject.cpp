@@ -441,14 +441,14 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (baseColor.alpha() > 0) {
                 context->save();
                 context->setCompositeOperation(CompositeCopy);
-                context->fillRect(rect, baseColor);
+                context->fillRect(rect, baseColor, style()->colorSpace());
                 context->restore();
             } else
                 context->clearRect(rect);
         }
 
         if (bgColor.isValid() && bgColor.alpha() > 0)
-            context->fillRect(rect, bgColor);
+            context->fillRect(rect, bgColor, style()->colorSpace());
     }
 
     // no progressive loading of the background image
@@ -1241,7 +1241,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
                 if (!rectToClipOut.isEmpty())
                     context->clipOutRoundedRect(rectToClipOut, topLeftToClipOut, topRightToClipOut, bottomLeftToClipOut, bottomRightToClipOut);
-                context->fillRoundedRect(fillRect, topLeft, topRight, bottomLeft, bottomRight, Color::black);
+                context->fillRoundedRect(fillRect, topLeft, topRight, bottomLeft, bottomRight, Color::black, s->colorSpace());
             } else {
                 IntRect rectToClipOut = rect;
 
@@ -1258,7 +1258,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
                 if (!rectToClipOut.isEmpty())
                     context->clipOut(rectToClipOut);
-                context->fillRect(fillRect, Color::black);
+                context->fillRect(fillRect, Color::black, s->colorSpace());
             }
 
             context->restore();
@@ -1269,9 +1269,9 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
             if (holeRect.isEmpty()) {
                 if (hasBorderRadius)
-                    context->fillRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight, shadowColor);
+                    context->fillRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight, shadowColor, s->colorSpace());
                 else
-                    context->fillRect(rect, shadowColor);
+                    context->fillRect(rect, shadowColor, s->colorSpace());
                 continue;
             }
             if (!begin) {
@@ -1320,7 +1320,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
                 context->addPath(Path::createRectangle(holeRect));
 
             context->setFillRule(RULE_EVENODD);
-            context->setFillColor(fillColor);
+            context->setFillColor(fillColor, s->colorSpace());
             context->setShadow(shadowOffset, shadowBlur, shadowColor);
             context->fillPath();
 

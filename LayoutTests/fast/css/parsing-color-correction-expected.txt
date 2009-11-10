@@ -1,0 +1,15 @@
+This tests checks that all of the input values for -webkit-color-correction parse correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("-webkit-color-correction: default;") is "default"
+PASS test("-webkit-color-correction: sRGB;") is "srgb"
+PASS test("-webkit-color-correction: srgb;") is "srgb"
+PASS test("-webkit-color-correction: apple;") is null
+PASS test("-webkit-color-correction: 15;") is null
+PASS test("-webkit-color-correction: auto;") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

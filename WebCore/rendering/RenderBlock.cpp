@@ -2120,7 +2120,7 @@ IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, 
         return IntRect();
     IntRect gapRect(xPos, yPos, width, height);
     if (paintInfo && selObj->style()->visibility() == VISIBLE)
-        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor());
+        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
 }
 
@@ -2141,7 +2141,7 @@ IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int las
 
     IntRect gapRect(left, top, width, height);
     if (paintInfo)
-        paintInfo->context->fillRect(gapRect, selectionBackgroundColor());
+        paintInfo->context->fillRect(gapRect, selectionBackgroundColor(), style()->colorSpace());
     return gapRect;
 }
 
@@ -2157,7 +2157,7 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
 
     IntRect gapRect(left, top, width, height);
     if (paintInfo)
-        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor());
+        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
 }
 
@@ -2173,7 +2173,7 @@ IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int y
 
     IntRect gapRect(left, top, width, height);
     if (paintInfo)
-        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor());
+        paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
 }
 

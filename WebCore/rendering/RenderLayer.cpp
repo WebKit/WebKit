@@ -1913,7 +1913,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
         return;
     }
     
-    context->fillRect(absRect, Color::white);
+    context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
 void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
@@ -1951,9 +1951,9 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
         context->clip(absRect);
         IntRect largerCorner = absRect;
         largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
-        context->setStrokeColor(Color(makeRGB(217, 217, 217)));
+        context->setStrokeColor(Color(makeRGB(217, 217, 217)), DeviceColorSpace);
         context->setStrokeThickness(1.0f);
-        context->setFillColor(Color::transparent);
+        context->setFillColor(Color::transparent, DeviceColorSpace);
         context->drawRect(largerCorner);
         context->restore();
     }

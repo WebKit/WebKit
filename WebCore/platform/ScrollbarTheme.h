@@ -73,7 +73,7 @@ public:
 
     virtual void invalidatePart(Scrollbar*, ScrollbarPart) {}
 
-    virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white); }
+    virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white, DeviceColorSpace); }
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&) { return false; }

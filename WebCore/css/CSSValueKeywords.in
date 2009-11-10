@@ -638,3 +638,7 @@ subpixel-antialiased
 optimizeSpeed
 optimizeLegibility
 geometricPrecision
+
+# -webkit-color-correction
+#default
+sRGB

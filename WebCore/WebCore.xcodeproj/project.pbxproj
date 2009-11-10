@@ -2246,6 +2246,7 @@
 		938192030F87E1E600D5352A /* BinaryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938192020F87E1E600D5352A /* BinaryPropertyList.cpp */; };
 		938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 938192040F87E1EC00D5352A /* BinaryPropertyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382AAB10D8C386100F357A6 /* NodeWithIndex.h */; };
+		9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382DF5710A8D5C900925652 /* ColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93831B570D087D6000E5C984 /* ExceptionCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93831B560D087D6000E5C984 /* ExceptionCode.cpp */; };
 		938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */; };
 		938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */; };
@@ -7499,6 +7500,7 @@
 		938192020F87E1E600D5352A /* BinaryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryPropertyList.cpp; sourceTree = "<group>"; };
 		938192040F87E1EC00D5352A /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
+		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
 		93831B560D087D6000E5C984 /* ExceptionCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCode.cpp; sourceTree = "<group>"; };
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElementWrapperFactory.h; sourceTree = "<group>"; };
 		938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementWrapperFactory.cpp; sourceTree = "<group>"; };
@@ -14067,6 +14069,7 @@
 				A89943260B42338700D7C802 /* BitmapImage.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
+				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
 				B275353B0B053814002CE64F /* FloatPoint.h */,
@@ -18099,6 +18102,7 @@
 				1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */,
 				1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */,
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
+				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -93,7 +93,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         CGFloat blue;
         CGFloat alpha;
         [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
-        graphicsContext.setFillColor(makeRGBA(red * 255, green * 255, blue * 255, alpha * 255));
+        graphicsContext.setFillColor(makeRGBA(red * 255, green * 255, blue * 255, alpha * 255), DeviceColorSpace);
 
         webCoreFont.drawText(&graphicsContext, run, FloatPoint(point.x, (flipped ? point.y : (-1 * point.y))));
 

@@ -276,7 +276,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document()->printing()) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
-        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
+        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());
     }
 }
 

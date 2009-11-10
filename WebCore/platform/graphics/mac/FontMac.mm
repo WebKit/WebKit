@@ -122,15 +122,16 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();
         Color fillColor = context->fillColor();
+        ColorSpace fillColorSpace = context->fillColorSpace();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        context->setFillColor(shadowFillColor);
+        context->setFillColor(shadowFillColor, fillColorSpace);
         CGContextSetTextPosition(cgContext, point.x() + shadowSize.width(), point.y() + shadowSize.height());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + shadowSize.width() + font->syntheticBoldOffset(), point.y() + shadowSize.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
-        context->setFillColor(fillColor);
+        context->setFillColor(fillColor, fillColorSpace);
     }
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());

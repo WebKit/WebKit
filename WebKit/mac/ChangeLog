@@ -1,3 +1,17 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Small WebKit part of:
+        Fix for <rdar://problem/7059710> 
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=31196 Implement -webkit-
+        color-correction for CSS colors
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]): setFillColor now 
+        requires callers to pass a ColorSpace.
+
 2009-11-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Carlson and Darin Adler.

@@ -37,6 +37,7 @@
 #include "CachedImage.h"
 #include "CollapsedBorderValue.h"
 #include "Color.h"
+#include "ColorSpace.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
 #include "CursorList.h"
@@ -599,6 +600,7 @@ public:
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     float textStrokeWidth() const { return rareInheritedData->textStrokeWidth; }
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
+    ColorSpace colorSpace() const { return static_cast<ColorSpace>(rareInheritedData->colorSpace); }
     float opacity() const { return rareNonInheritedData->opacity; }
     ControlPart appearance() const { return static_cast<ControlPart>(rareNonInheritedData->m_appearance); }
     EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->align); }
@@ -930,6 +932,7 @@ public:
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
     void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c) }
+    void setColorSpace(ColorSpace space) { SET_VAR(rareInheritedData, colorSpace, space) }
     void setOpacity(float f) { SET_VAR(rareNonInheritedData, opacity, f); }
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
     void setBoxAlign(EBoxAlignment a) { SET_VAR(rareNonInheritedData.access()->flexibleBox, align, a); }

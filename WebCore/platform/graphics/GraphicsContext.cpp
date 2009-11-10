@@ -120,11 +120,12 @@ void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
     setPlatformStrokeStyle(style);
 }
 
-void GraphicsContext::setStrokeColor(const Color& color)
+void GraphicsContext::setStrokeColor(const Color& color, ColorSpace colorSpace)
 {
     m_common->state.strokeType = SolidColorType;
     m_common->state.strokeColor = color;
-    setPlatformStrokeColor(color);
+    m_common->state.strokeColorSpace = colorSpace;
+    setPlatformStrokeColor(color, colorSpace);
 }
 
 void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& color)
@@ -167,6 +168,11 @@ Color GraphicsContext::strokeColor() const
     return m_common->state.strokeColor;
 }
 
+ColorSpace GraphicsContext::strokeColorSpace() const
+{
+    return m_common->state.strokeColorSpace;
+}
+
 WindRule GraphicsContext::fillRule() const
 {
     return m_common->state.fillRule;
@@ -177,16 +183,22 @@ void GraphicsContext::setFillRule(WindRule fillRule)
     m_common->state.fillRule = fillRule;
 }
 
-void GraphicsContext::setFillColor(const Color& color)
+void GraphicsContext::setFillColor(const Color& color, ColorSpace colorSpace)
 {
     m_common->state.fillType = SolidColorType;
     m_common->state.fillColor = color;
-    setPlatformFillColor(color);
+    m_common->state.fillColorSpace = colorSpace;
+    setPlatformFillColor(color, colorSpace);
 }
 
 Color GraphicsContext::fillColor() const
 {
     return m_common->state.fillColor;
+}
+
+ColorSpace GraphicsContext::fillColorSpace() const
+{
+    return m_common->state.fillColorSpace;
 }
 
 void GraphicsContext::setShouldAntialias(bool b)
@@ -204,7 +216,7 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
 {
     ASSERT(pattern);
     if (!pattern) {
-        setStrokeColor(Color::black);
+        setStrokeColor(Color::black, DeviceColorSpace);
         return;
     }
     m_common->state.strokeType = PatternType;
@@ -216,7 +228,7 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
 {
     ASSERT(pattern);
     if (!pattern) {
-        setFillColor(Color::black);
+        setFillColor(Color::black, DeviceColorSpace);
         return;
     }
     m_common->state.fillType = PatternType;
@@ -228,7 +240,7 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
 {
     ASSERT(gradient);
     if (!gradient) {
-        setStrokeColor(Color::black);
+        setStrokeColor(Color::black, DeviceColorSpace);
         return;
     }
     m_common->state.strokeType = GradientType;
@@ -240,7 +252,7 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
 {
     ASSERT(gradient);
     if (!gradient) {
-        setFillColor(Color::black);
+        setFillColor(Color::black, DeviceColorSpace);
         return;
     }
     m_common->state.fillType = GradientType;
@@ -360,12 +372,12 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     bidiResolver.deleteRuns();
 }
 
-void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const IntPoint& point, int h, const Color& backgroundColor, int from, int to)
+void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const IntPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)
 {
     if (paintingDisabled())
         return;
 
-    fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor);
+    fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor, colorSpace);
 }
 
 void GraphicsContext::initFocusRing(int width, int offset)

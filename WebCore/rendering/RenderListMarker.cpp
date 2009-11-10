@@ -546,7 +546,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->drawImage(m_image->image(this, marker.size()), marker.location());
         if (selectionState() != SelectionNone) {
             // FIXME: selectionRect() is in absolute, not painting coordinates.
-            context->fillRect(selectionRect(), selectionBackgroundColor());
+            context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());
         }
         return;
     }
@@ -559,21 +559,21 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     if (selectionState() != SelectionNone) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
-        context->fillRect(selectionRect(), selectionBackgroundColor());
+        context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());
     }
 
     const Color color(style()->color());
-    context->setStrokeColor(color);
+    context->setStrokeColor(color, style()->colorSpace());
     context->setStrokeStyle(SolidStroke);
     context->setStrokeThickness(1.0f);
-    context->setFillColor(color);
+    context->setFillColor(color, style()->colorSpace());
 
     switch (style()->listStyleType()) {
         case DISC:
             context->drawEllipse(marker);
             return;
         case CIRCLE:
-            context->setFillColor(Color::transparent);
+            context->setFillColor(Color::transparent, DeviceColorSpace);
             context->drawEllipse(marker);
             return;
         case SQUARE:

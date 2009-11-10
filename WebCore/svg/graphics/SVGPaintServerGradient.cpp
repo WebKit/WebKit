@@ -233,7 +233,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         // lines or rectangles without width or height.
         if (bbox.width() == 0 || bbox.height() == 0) {
             Color color(0, 0, 0);
-            context->setStrokeColor(color);
+            context->setStrokeColor(color, object->style()->colorSpace());
             return true;
         }
         matrix.translate(bbox.x(), bbox.y());

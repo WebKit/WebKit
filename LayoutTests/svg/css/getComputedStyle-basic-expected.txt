@@ -240,6 +240,8 @@ rect: style.getPropertyValue(-webkit-box-shadow) : none
 rect: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-sizing) : content-box
 rect: style.getPropertyCSSValue(-webkit-box-sizing) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-color-correction) : default
+rect: style.getPropertyCSSValue(-webkit-color-correction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-break-after) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-after) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-break-before) : auto
@@ -652,6 +654,8 @@ g: style.getPropertyValue(-webkit-box-shadow) : none
 g: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-sizing) : content-box
 g: style.getPropertyCSSValue(-webkit-box-sizing) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-color-correction) : default
+g: style.getPropertyCSSValue(-webkit-color-correction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-break-after) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-after) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-break-before) : auto

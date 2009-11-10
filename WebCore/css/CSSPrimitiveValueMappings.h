@@ -28,6 +28,7 @@
 #ifndef CSSPrimitiveValueMappings_h
 #define CSSPrimitiveValueMappings_h
 
+#include "ColorSpace.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "FontSmoothingMode.h"
@@ -1878,6 +1879,32 @@ template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
         default:
             ASSERT_NOT_REACHED();
             return AutoTextRendering;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColorSpace space)
+    : m_type(CSS_IDENT)
+{
+    switch (space) {
+        case DeviceColorSpace:
+            m_value.ident = CSSValueDefault;
+            break;
+        case sRGBColorSpace:
+            m_value.ident = CSSValueSrgb;
+            break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ColorSpace() const
+{
+    switch (m_value.ident) {
+        case CSSValueDefault:
+            return DeviceColorSpace;
+        case CSSValueSrgb:
+            return sRGBColorSpace;
+        default:
+            ASSERT_NOT_REACHED();
+            return DeviceColorSpace;
     }
 }
 

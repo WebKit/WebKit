@@ -198,7 +198,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
         if (baseColor.alpha() > 0) {
             paintInfo.context->save();
             paintInfo.context->setCompositeOperation(CompositeCopy);
-            paintInfo.context->fillRect(paintInfo.rect, baseColor);
+            paintInfo.context->fillRect(paintInfo.rect, baseColor, style()->colorSpace());
             paintInfo.context->restore();
         } else
             paintInfo.context->clearRect(paintInfo.rect);

@@ -470,7 +470,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     fillPath();
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
@@ -634,13 +634,13 @@ IntPoint GraphicsContext::origin()
     return IntPoint(static_cast<int>(matrix.x0), static_cast<int>(matrix.y0));
 }
 
-void GraphicsContext::setPlatformFillColor(const Color& col)
+void GraphicsContext::setPlatformFillColor(const Color& col, ColorSpace colorSpace)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color& col)
+void GraphicsContext::setPlatformStrokeColor(const Color& col, ColorSpace colorSpace)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
@@ -997,7 +997,7 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& r)
     clipOut(p);
 }
 
-void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
+void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
