@@ -1,3 +1,14 @@
+2009-11-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for SVG filter effect feDisplacementMap.
+
+        * platform/mac/svg/filters/feDisplacementMap-expected.checksum: Added.
+        * platform/mac/svg/filters/feDisplacementMap-expected.png: Added.
+        * platform/mac/svg/filters/feDisplacementMap-expected.txt: Added.
+        * svg/filters/feDisplacementMap.svg: Added.
+
 2009-11-03  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

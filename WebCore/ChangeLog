@@ -1,3 +1,18 @@
+2009-11-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG feDisplacementMap is not implemented
+        [https://bugs.webkit.org/show_bug.cgi?id=31255]
+
+        This is the implementation of the SVG filter effect
+        feDisplacementMap. 
+
+        Test: svg/filters/feDisplacementMap.svg
+
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+
 2009-11-09  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

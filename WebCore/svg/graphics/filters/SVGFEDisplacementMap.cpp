@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,8 +24,12 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEDisplacementMap.h"
-#include "SVGRenderTreeAsText.h"
+
+#include "CanvasPixelArray.h"
 #include "Filter.h"
+#include "GraphicsContext.h"
+#include "ImageData.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
@@ -75,8 +80,51 @@ void FEDisplacementMap::setScale(float scale)
     m_scale = scale;
 }
 
-void FEDisplacementMap::apply(Filter*)
+void FEDisplacementMap::apply(Filter* filter)
 {
+    m_in->apply(filter);
+    m_in2->apply(filter);
+    if (!m_in->resultImage() || !m_in2->resultImage())
+        return;
+
+    if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
+        return;
+
+    if (!getEffectContext())
+        return;
+
+    IntRect effectADrawingRect = calculateDrawingIntRect(m_in->subRegion());
+    RefPtr<CanvasPixelArray> srcPixelArrayA(m_in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+
+    IntRect effectBDrawingRect = calculateDrawingIntRect(m_in2->subRegion());
+    RefPtr<CanvasPixelArray> srcPixelArrayB(m_in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect)->data());
+
+    IntRect imageRect(IntPoint(), resultImage()->size());
+    RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
+
+    ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
+
+    float scale = m_scale / 255.f;
+    float scaleAdjustment = 0.5f - 0.5f * m_scale;
+    int stride = imageRect.width() * 4;
+    for (int y = 0; y < imageRect.height(); ++y) {
+        int line = y * stride;
+        for (int x = 0; x < imageRect.width(); ++x) {
+            int dstIndex = line + x * 4;
+            int srcX = x + static_cast<int>(scale * srcPixelArrayB->get(dstIndex + m_xChannelSelector - 1) + scaleAdjustment);
+            int srcY = y + static_cast<int>(scale * srcPixelArrayB->get(dstIndex + m_yChannelSelector - 1) + scaleAdjustment);
+            for (unsigned channel = 0; channel < 4; ++channel) {
+                if (srcX < 0 || srcX >= imageRect.width() || srcY < 0 || srcY >= imageRect.height())
+                    imageData->data()->set(dstIndex + channel, static_cast<unsigned char>(0));
+                else {
+                    unsigned char pixelValue = srcPixelArrayA->get(srcY * stride + srcX * 4 + channel);
+                    imageData->data()->set(dstIndex + channel, pixelValue);
+                }
+            }
+
+        }
+    }
+    resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());
 }
 
 void FEDisplacementMap::dump()
