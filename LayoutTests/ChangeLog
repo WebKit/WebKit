@@ -1,3 +1,14 @@
+2009-11-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Can cache prototype lookups on uncacheable dictionaries.
+        https://bugs.webkit.org/show_bug.cgi?id=31198
+
+        Fixed wrong expectation file committed.
+
+        * fast/js/dictionary-prototype-caching-expected.txt:
+
 2009-11-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

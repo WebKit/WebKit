@@ -5,6 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS protoTest(o) is 'PASS'
 PASS protoTest(o) is undefined.
+PASS protoKeys is [1,2,3]
+PASS protoKeys is [1,2,3]
 PASS successfullyParsed is true
 
 TEST COMPLETE
