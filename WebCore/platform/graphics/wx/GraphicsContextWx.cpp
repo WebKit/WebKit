@@ -119,8 +119,8 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     setPaintingDisabled(!context);
     if (context) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor());
-        setPlatformStrokeColor(strokeColor());
+        setPlatformFillColor(fillColor(), DeviceColorSpace);
+        setPlatformStrokeColor(strokeColor(), DeviceColorSpace);
     }
 #if USE(WXGC)
     m_data->context = (wxGCDC*)context;

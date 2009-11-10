@@ -56,7 +56,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
     wxGCDC* dc = static_cast<wxGCDC*>(graphicsContext->platformContext());
 
     wxFont* wxfont = font->getWxFont();
-    graphicsContext->setFillColor(graphicsContext->fillColor());
+    graphicsContext->setFillColor(graphicsContext->fillColor(), DeviceColorSpace);
 
     CGContextRef cgContext = static_cast<CGContextRef>(dc->GetGraphicsContext()->GetNativeContext());
 

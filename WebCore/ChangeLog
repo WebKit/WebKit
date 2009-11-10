@@ -1,3 +1,12 @@
+2009-11-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Changes needed after r50760.
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+
 2009-11-10  Alexey Proskuryakov  <ap@apple.com>
 
         Qt build fix.
