@@ -1,3 +1,16 @@
+2009-11-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Remove WebSocket configuration from WebKitWebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=31244
+
+        Follow-up of r50724. Don't set the enable-web-socket property
+        anymore.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
