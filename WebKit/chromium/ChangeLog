@@ -2,6 +2,87 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: WebWorker and friends.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebWorkerBase.cpp: Added.
+        (WebKit::WorkerWebFrameClient::didCreateDataSource):
+        (WebKit::WorkerWebFrameClient::sharedInstance):
+        (WebKit::WorkerWebFrameClient::WorkerWebFrameClient):
+        (WebKit::initializeWebKitStaticValues):
+        (WebKit::WebWorkerBase::WebWorkerBase):
+        (WebKit::WebWorkerBase::~WebWorkerBase):
+        (WebKit::WebWorkerBase::stopWorkerThread):
+        (WebKit::WebWorkerBase::initializeLoader):
+        (WebKit::WebWorkerBase::dispatchTaskToMainThread):
+        (WebKit::WebWorkerBase::invokeTaskMethod):
+        (WebKit::WebWorkerBase::postMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postMessageTask):
+        (WebKit::WebWorkerBase::postExceptionToWorkerObject):
+        (WebKit::WebWorkerBase::postExceptionTask):
+        (WebKit::WebWorkerBase::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postConsoleMessageTask):
+        (WebKit::WebWorkerBase::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerBase::confirmMessageTask):
+        (WebKit::WebWorkerBase::reportPendingActivity):
+        (WebKit::WebWorkerBase::reportPendingActivityTask):
+        (WebKit::WebWorkerBase::workerContextClosed):
+        (WebKit::WebWorkerBase::workerContextClosedTask):
+        (WebKit::WebWorkerBase::workerContextDestroyed):
+        (WebKit::WebWorkerBase::workerContextDestroyedTask):
+        (WebKit::WebWorkerBase::postTaskToLoader):
+        (WebKit::WebWorkerBase::postTaskForModeToWorkerContext):
+        * src/WebWorkerBase.h: Added.
+        (WebKit::WebWorkerBase::setWorkerThread):
+        (WebKit::WebWorkerBase::workerThread):
+        * src/WebWorkerClientImpl.cpp: Added.
+        (WebKit::WebWorkerClientImpl::createWorkerContextProxy):
+        (WebKit::WebWorkerClientImpl::WebWorkerClientImpl):
+        (WebKit::WebWorkerClientImpl::~WebWorkerClientImpl):
+        (WebKit::WebWorkerClientImpl::setWebWorker):
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerClientImpl::hasPendingActivity):
+        (WebKit::WebWorkerClientImpl::workerObjectDestroyed):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerClientImpl::reportPendingActivity):
+        (WebKit::WebWorkerClientImpl::workerContextDestroyed):
+        (WebKit::WebWorkerClientImpl::workerContextClosed):
+        (WebKit::WebWorkerClientImpl::startWorkerContextTask):
+        (WebKit::WebWorkerClientImpl::terminateWorkerContextTask):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerContextTask):
+        (WebKit::WebWorkerClientImpl::workerObjectDestroyedTask):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::reportPendingActivityTask):
+        * src/WebWorkerClientImpl.h: Added.
+        (WebKit::WebWorkerClientImpl::createWorker):
+        (WebKit::WebWorkerClientImpl::notificationPresenter):
+        * src/WebWorkerImpl.cpp: Added.
+        (WebKit::WebWorker::create):
+        (WebKit::WebWorkerImpl::WebWorkerImpl):
+        (WebKit::WebWorkerImpl::~WebWorkerImpl):
+        (WebKit::WebWorkerImpl::commonClient):
+        (WebKit::WebWorkerImpl::postMessageToWorkerContextTask):
+        (WebKit::WebWorkerImpl::startWorkerContext):
+        (WebKit::WebWorkerImpl::terminateWorkerContext):
+        (WebKit::WebWorkerImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerImpl::workerObjectDestroyed):
+        (WebKit::WebWorkerImpl::clientDestroyed):
+        * src/WebWorkerImpl.h: Added.
+        (WebKit::WebWorkerImpl::client):
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: Platform specific files.
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
