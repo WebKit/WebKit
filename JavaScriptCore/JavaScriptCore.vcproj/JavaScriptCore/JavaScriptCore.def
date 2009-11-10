@@ -1,6 +1,7 @@
 LIBRARY    "JavaScriptCore"
 
 EXPORTS
+    
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DateInstance@JSC@@QAE@PAVExecState@1@N@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
@@ -228,6 +229,7 @@ EXPORTS
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
+    ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
@@ -312,4 +314,3 @@ EXPORTS
     WTFReportAssertionFailure
     WTFReportAssertionFailureWithMessage
     WTFReportError
-    

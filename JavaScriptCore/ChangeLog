@@ -1,5 +1,12 @@
 2009-11-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: export a new symbol.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2009-11-09  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam "Home Wrecker" Weinig.
 
         Added a tiny cache for Date parsing.
