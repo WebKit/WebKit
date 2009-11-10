@@ -1484,6 +1484,7 @@ webcore_sources += \
 	WebCore/platform/graphics/BitmapImage.h \
 	WebCore/platform/graphics/Color.cpp \
 	WebCore/platform/graphics/Color.h \
+	WebCore/platform/graphics/ColorSpace.h \
 	WebCore/platform/graphics/DashArray.h \
 	WebCore/platform/graphics/FloatPoint.cpp \
 	WebCore/platform/graphics/FloatPoint.h \

@@ -1,3 +1,9 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix. (No review needed.)
+
+        * GNUmakefile.am: Adding ColorSpace.h
+
 2009-11-10  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by NOBODY - Build Fix.
