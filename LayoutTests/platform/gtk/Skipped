@@ -3587,9 +3587,7 @@ media/video-source-error.html
 
 #   Tests timing out
 media/controls-drag-timebar.html
-media/event-attributes.html
 media/unsupported-rtsp.html
-media/video-played-collapse.html
 #   Tests generating new results
 media/audio-controls-rendering.html
 media/video-aspect-ratio.html
