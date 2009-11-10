@@ -2,6 +2,70 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: WebAccessibilty
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebAccessibilityCache.cpp: Added.
+        (WebKit::WebAccessibilityCache::enableAccessibility):
+        * src/WebAccessibilityCacheImpl.cpp: Added.
+        (WebKit::toAccessibilityObject):
+        (WebKit::WebAccessibilityCache::create):
+        (WebKit::WebAccessibilityCacheImpl::WeakHandle::create):
+        (WebKit::WebAccessibilityCacheImpl::WeakHandle::WeakHandle):
+        (WebKit::WebAccessibilityCacheImpl::WeakHandle::detach):
+        (WebKit::WebAccessibilityCacheImpl::WebAccessibilityCacheImpl):
+        (WebKit::WebAccessibilityCacheImpl::~WebAccessibilityCacheImpl):
+        (WebKit::WebAccessibilityCacheImpl::initialize):
+        (WebKit::WebAccessibilityCacheImpl::getObjectById):
+        (WebKit::WebAccessibilityCacheImpl::isValidId):
+        (WebKit::WebAccessibilityCacheImpl::remove):
+        (WebKit::WebAccessibilityCacheImpl::clear):
+        (WebKit::WebAccessibilityCacheImpl::addOrGetId):
+        * src/WebAccessibilityCacheImpl.h: Added.
+        (WebKit::WebAccessibilityCacheImpl::isInitialized):
+        * src/WebAccessibilityObject.cpp: Added.
+        (WebKit::WebAccessibilityObject::reset):
+        (WebKit::WebAccessibilityObject::assign):
+        (WebKit::WebAccessibilityObject::accessibilityDescription):
+        (WebKit::WebAccessibilityObject::actionVerb):
+        (WebKit::WebAccessibilityObject::canSetFocusAttribute):
+        (WebKit::WebAccessibilityObject::childCount):
+        (WebKit::WebAccessibilityObject::childAt):
+        (WebKit::WebAccessibilityObject::firstChild):
+        (WebKit::WebAccessibilityObject::focusedChild):
+        (WebKit::WebAccessibilityObject::lastChild):
+        (WebKit::WebAccessibilityObject::nextSibling):
+        (WebKit::WebAccessibilityObject::parentObject):
+        (WebKit::WebAccessibilityObject::previousSibling):
+        (WebKit::WebAccessibilityObject::isAnchor):
+        (WebKit::WebAccessibilityObject::isChecked):
+        (WebKit::WebAccessibilityObject::isFocused):
+        (WebKit::WebAccessibilityObject::isEnabled):
+        (WebKit::WebAccessibilityObject::isHovered):
+        (WebKit::WebAccessibilityObject::isIndeterminate):
+        (WebKit::WebAccessibilityObject::isMultiSelect):
+        (WebKit::WebAccessibilityObject::isOffScreen):
+        (WebKit::WebAccessibilityObject::isPasswordField):
+        (WebKit::WebAccessibilityObject::isPressed):
+        (WebKit::WebAccessibilityObject::isReadOnly):
+        (WebKit::WebAccessibilityObject::isVisited):
+        (WebKit::WebAccessibilityObject::boundingBoxRect):
+        (WebKit::WebAccessibilityObject::helpText):
+        (WebKit::WebAccessibilityObject::hitTest):
+        (WebKit::WebAccessibilityObject::keyboardShortcut):
+        (WebKit::WebAccessibilityObject::performDefaultAction):
+        (WebKit::WebAccessibilityObject::roleValue):
+        (WebKit::WebAccessibilityObject::stringValue):
+        (WebKit::WebAccessibilityObject::title):
+        (WebKit::WebAccessibilityObject::WebAccessibilityObject):
+        (WebKit::WebAccessibilityObject::operator=):
+        (WebKit::WebAccessibilityObject::operator WTF::PassRefPtr<WebCore::AccessibilityObject>):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Upstreaming Chromium API: Platform specific files
 
         https://bugs.webkit.org/show_bug.cgi?id=28394
