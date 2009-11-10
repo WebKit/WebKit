@@ -1,3 +1,127 @@
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Up-streaming Chromium API src files: WebPasswordFormData...WebRuntimeFeatures
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebPasswordFormData.cpp: Added.
+        (WebKit::):
+        (WebKit::WebPasswordFormData::WebPasswordFormData):
+        * src/WebPasswordFormUtils.cpp: Added.
+        (WebKit::findPasswordFormFields):
+        * src/WebPasswordFormUtils.h: Added.
+        (WebKit::PasswordFormFields::PasswordFormFields):
+        * src/WebPluginContainerImpl.cpp: Added.
+        (WebKit::WebPluginContainerImpl::setFrameRect):
+        (WebKit::WebPluginContainerImpl::paint):
+        (WebKit::WebPluginContainerImpl::invalidateRect):
+        (WebKit::WebPluginContainerImpl::setFocus):
+        (WebKit::WebPluginContainerImpl::show):
+        (WebKit::WebPluginContainerImpl::hide):
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        (WebKit::WebPluginContainerImpl::frameRectsChanged):
+        (WebKit::WebPluginContainerImpl::setParentVisible):
+        (WebKit::WebPluginContainerImpl::setParent):
+        (WebKit::WebPluginContainerImpl::invalidate):
+        (WebKit::WebPluginContainerImpl::reportGeometry):
+        (WebKit::WebPluginContainerImpl::clearScriptObjects):
+        (WebKit::WebPluginContainerImpl::scriptableObjectForElement):
+        (WebKit::WebPluginContainerImpl::executeScriptURL):
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+        (WebKit::WebPluginContainerImpl::didReceiveResponse):
+        (WebKit::WebPluginContainerImpl::didReceiveData):
+        (WebKit::WebPluginContainerImpl::didFinishLoading):
+        (WebKit::WebPluginContainerImpl::didFailLoading):
+        (WebKit::WebPluginContainerImpl::scriptableObject):
+        (WebKit::WebPluginContainerImpl::willDestroyPluginLoadObserver):
+        (WebKit::WebPluginContainerImpl::~WebPluginContainerImpl):
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+        (WebKit::WebPluginContainerImpl::calculateGeometry):
+        (WebKit::WebPluginContainerImpl::windowClipRect):
+        (WebKit::getObjectStack):
+        (WebKit::checkStackOnTop):
+        (WebKit::WebPluginContainerImpl::windowCutOutRects):
+        * src/WebPluginContainerImpl.h: Added.
+        (WebKit::WebPluginContainerImpl::create):
+        (WebKit::WebPluginContainerImpl::plugin):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * src/WebPluginListBuilderImpl.cpp: Added.
+        (WebKit::WebPluginListBuilderImpl::addPlugin):
+        (WebKit::WebPluginListBuilderImpl::addMediaTypeToLastPlugin):
+        (WebKit::WebPluginListBuilderImpl::addFileExtensionToLastMediaType):
+        * src/WebPluginListBuilderImpl.h: Added.
+        (WebKit::WebPluginListBuilderImpl::WebPluginListBuilderImpl):
+        * src/WebPluginLoadObserver.cpp: Added.
+        (WebKit::WebPluginLoadObserver::~WebPluginLoadObserver):
+        (WebKit::WebPluginLoadObserver::didFinishLoading):
+        (WebKit::WebPluginLoadObserver::didFailLoading):
+        * src/WebPluginLoadObserver.h: Added.
+        (WebKit::WebPluginLoadObserver::WebPluginLoadObserver):
+        (WebKit::WebPluginLoadObserver::url):
+        (WebKit::WebPluginLoadObserver::clearPluginContainer):
+        * src/WebPopupMenuImpl.cpp: Added.
+        (WebKit::WebPopupMenu::create):
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::~WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::Init):
+        (WebKit::WebPopupMenuImpl::MouseMove):
+        (WebKit::WebPopupMenuImpl::MouseLeave):
+        (WebKit::WebPopupMenuImpl::MouseDown):
+        (WebKit::WebPopupMenuImpl::MouseUp):
+        (WebKit::WebPopupMenuImpl::MouseWheel):
+        (WebKit::WebPopupMenuImpl::KeyEvent):
+        (WebKit::WebPopupMenuImpl::close):
+        (WebKit::WebPopupMenuImpl::resize):
+        (WebKit::WebPopupMenuImpl::layout):
+        (WebKit::WebPopupMenuImpl::paint):
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        (WebKit::WebPopupMenuImpl::mouseCaptureLost):
+        (WebKit::WebPopupMenuImpl::setFocus):
+        (WebKit::WebPopupMenuImpl::handleCompositionEvent):
+        (WebKit::WebPopupMenuImpl::queryCompositionStatus):
+        (WebKit::WebPopupMenuImpl::setTextDirection):
+        (WebKit::WebPopupMenuImpl::repaint):
+        (WebKit::WebPopupMenuImpl::scroll):
+        (WebKit::WebPopupMenuImpl::screenToWindow):
+        (WebKit::WebPopupMenuImpl::windowToScreen):
+        (WebKit::WebPopupMenuImpl::scrollRectIntoView):
+        (WebKit::WebPopupMenuImpl::scrollbarsModeDidChange):
+        (WebKit::WebPopupMenuImpl::popupClosed):
+        * src/WebPopupMenuImpl.h: Added.
+        (WebKit::WebPopupMenuImpl::size):
+        (WebKit::WebPopupMenuImpl::client):
+        (WebKit::WebPopupMenuImpl::platformPageClient):
+        * src/WebRange.cpp: Added.
+        (WebKit::WebRange::reset):
+        (WebKit::WebRange::assign):
+        (WebKit::WebRange::startOffset):
+        (WebKit::WebRange::endOffset):
+        (WebKit::WebRange::startContainer):
+        (WebKit::WebRange::endContainer):
+        (WebKit::WebRange::toHTMLText):
+        (WebKit::WebRange::toPlainText):
+        (WebKit::WebRange::WebRange):
+        (WebKit::WebRange::operator=):
+        (WebKit::WebRange::operator WTF::PassRefPtr<WebCore::Range>):
+        * src/WebRuntimeFeatures.cpp: Added.
+        (WebKit::WebRuntimeFeatures::enableDatabase):
+        (WebKit::WebRuntimeFeatures::isDatabaseEnabled):
+        (WebKit::WebRuntimeFeatures::enableLocalStorage):
+        (WebKit::WebRuntimeFeatures::isLocalStorageEnabled):
+        (WebKit::WebRuntimeFeatures::enableSessionStorage):
+        (WebKit::WebRuntimeFeatures::isSessionStorageEnabled):
+        (WebKit::WebRuntimeFeatures::enableMediaPlayer):
+        (WebKit::WebRuntimeFeatures::isMediaPlayerEnabled):
+        (WebKit::WebRuntimeFeatures::enableSockets):
+        (WebKit::WebRuntimeFeatures::isSocketsEnabled):
+        (WebKit::WebRuntimeFeatures::enableNotifications):
+        (WebKit::WebRuntimeFeatures::isNotificationsEnabled):
+        (WebKit::WebRuntimeFeatures::enableApplicationCache):
+        (WebKit::WebRuntimeFeatures::isApplicationCacheEnabled):
+
 2009-11-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
