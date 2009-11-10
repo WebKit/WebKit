@@ -1,3 +1,11 @@
+2009-11-10  Beth Dakin  <bdakin@apple.com>
+
+        Attempt 2 to fix Tiger build. No review needed.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::deviceRGBColorSpaceRef):
+        (WebCore::sRGBColorSpaceRef):
+
 2009-11-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Changes needed after r50760.

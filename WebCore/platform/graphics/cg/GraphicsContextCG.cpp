@@ -61,19 +61,20 @@ using namespace std;
 
 namespace WebCore {
 
-static CGColorSpaceRef sRGBColorSpaceRef()
-{
-#ifdef BUILDING_ON_TIGER
-    return deviceRGBColorSpaceRef();
-#endif
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    return sRGBSpace;
-}
-
 static CGColorSpaceRef deviceRGBColorSpaceRef()
 {
     static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
     return deviceSpace;
+}
+
+static CGColorSpaceRef sRGBColorSpaceRef()
+{
+#ifdef BUILDING_ON_TIGER
+    return deviceRGBColorSpaceRef();
+#else
+    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    return sRGBSpace;
+#endif
 }
 
 static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
