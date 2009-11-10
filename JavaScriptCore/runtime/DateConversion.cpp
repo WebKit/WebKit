@@ -43,6 +43,7 @@
 #include "config.h"
 #include "DateConversion.h"
 
+#include "CallFrame.h"
 #include "UString.h"
 #include <wtf/DateMath.h>
 #include <wtf/StringExtras.h>
@@ -53,7 +54,12 @@ namespace JSC {
 
 double parseDate(ExecState* exec, const UString &date)
 {
-    return parseDateFromNullTerminatedCharacters(date.UTF8String().c_str(), exec);
+    if (date == exec->globalData().cachedDateString)
+        return exec->globalData().cachedDateStringValue;
+    double value = parseDateFromNullTerminatedCharacters(exec, date.UTF8String().c_str());
+    exec->globalData().cachedDateString = date;
+    exec->globalData().cachedDateStringValue = value;
+    return value;
 }
 
 UString formatDate(const GregorianDateTime &t)

@@ -873,7 +873,7 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.timeZone = NULL;
 }
 
-double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState* exec)
+double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)
 {
     ASSERT(exec);
     bool haveTZ;

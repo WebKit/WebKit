@@ -1,3 +1,27 @@
+2009-11-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam "Home Wrecker" Weinig.
+
+        Added a tiny cache for Date parsing.
+        
+        SunSpider says 1.2% faster.
+
+        * runtime/DateConversion.cpp:
+        (JSC::parseDate): Try to reuse the last parsed Date, if present.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::resetDateCache):
+        * runtime/JSGlobalData.h: Added storage for last parsed Date. Refactored
+        this code to make resetting the date cache easier.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope): Updated for
+        refactoring.
+
+        * wtf/DateMath.cpp:
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * wtf/DateMath.h: Changed ExecState to be first parameter, as is the JSC custom.
+
 2009-11-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

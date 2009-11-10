@@ -155,9 +155,14 @@ namespace JSC {
 
         double cachedUTCOffset;
 
+        UString cachedDateString;
+        double cachedDateStringValue;
+
 #ifndef NDEBUG
         bool mainThreadOnly;
 #endif
+
+        void resetDateCache();
 
         void startSampling();
         void stopSampling();

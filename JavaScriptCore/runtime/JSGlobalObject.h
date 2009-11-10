@@ -445,9 +445,9 @@ namespace JSC {
             if (!m_dynamicGlobalObjectSlot) {
                 m_dynamicGlobalObjectSlot = dynamicGlobalObject;
 
-                // Reset the UTC cache between JS invocations to force the VM
+                // Reset the date cache between JS invocations to force the VM
                 // to observe time zone changes.
-                callFrame->globalData().cachedUTCOffset = NaN;
+                callFrame->globalData().resetDateCache();
             }
         }
 

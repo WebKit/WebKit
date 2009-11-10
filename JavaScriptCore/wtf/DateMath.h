@@ -85,7 +85,7 @@ struct GregorianDateTime;
 void msToGregorianDateTime(ExecState*, double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(ExecState*, const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset(ExecState*);
-double parseDateFromNullTerminatedCharacters(const char* dateString, ExecState*);
+double parseDateFromNullTerminatedCharacters(ExecState*, const char* dateString);
 
 // Intentionally overridding the default tm of the system.
 // The members of tm differ on various operating systems.

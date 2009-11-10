@@ -252,6 +252,12 @@ JSGlobalData::ClientData::~ClientData()
 {
 }
 
+void JSGlobalData::resetDateCache()
+{
+    cachedUTCOffset = NaN;
+    cachedDateString = UString();
+}
+
 void JSGlobalData::startSampling()
 {
     interpreter->startSampling();
