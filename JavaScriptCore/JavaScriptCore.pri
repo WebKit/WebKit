@@ -1,4 +1,4 @@
-\# JavaScriptCore - Qt4 build info
+# JavaScriptCore - Qt4 build info
 VPATH += $$PWD
 
 CONFIG(debug, debug|release) {
