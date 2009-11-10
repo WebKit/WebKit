@@ -165,6 +165,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 #if !defined(BUILDING_ON_TIGER)
     ASSERT(!_area);
 #endif
+    ASSERT(!_isScrubbing);
     [_timeline release];
     [_remainingTimeText release];
     [_elapsedTimeText release];
@@ -447,9 +448,25 @@ static NSTextField *createTimeTextField(NSRect frame)
     [_elapsedTimeText setStringValue:[self elapsedTimeText]];
 }
 
+- (void)endScrubbing
+{
+    ASSERT(_isScrubbing);
+    _isScrubbing = NO;
+    if (HTMLMediaElement* mediaElement = [_delegate mediaElement])
+        mediaElement->endScrubbing();
+}
+
 - (void)timelinePositionChanged:(id)sender
 {
     [self setCurrentTime:[_timeline floatValue]];
+    if (!_isScrubbing) {
+        _isScrubbing = YES;
+        if (HTMLMediaElement* mediaElement = [_delegate mediaElement])
+            mediaElement->beginScrubbing();
+        static NSArray *endScrubbingModes = [[NSArray alloc] initWithObjects:NSDefaultRunLoopMode, NSModalPanelRunLoopMode, nil];
+        // Schedule -endScrubbing for when leaving mouse tracking mode.
+        [[NSRunLoop currentRunLoop] performSelector:@selector(endScrubbing) target:self argument:nil order:0 modes:endScrubbingModes];
+    }
 }
 
 - (float)currentTime

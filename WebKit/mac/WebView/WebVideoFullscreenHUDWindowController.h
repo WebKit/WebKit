@@ -40,6 +40,7 @@ namespace WebCore {
 #endif
     BOOL _mouseIsInHUD;
     BOOL _isEndingFullscreen;
+    BOOL _isScrubbing;
 
     NSControl *_timeline;
     NSTextField *_remainingTimeText;

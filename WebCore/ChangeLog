@@ -1,3 +1,12 @@
+2009-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Carlson and Darin Adler.
+
+        WebCore part of making full-screen video pause during scrubbing.
+
+        * WebCore.Video.exp: Sorted and added HTMLMediaElement::beginScrubbing()
+        and HTMLMediaElement::endScrubbing().
+
 2009-11-10  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

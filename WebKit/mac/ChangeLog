@@ -1,3 +1,20 @@
+2009-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Carlson and Darin Adler.
+
+        WebKit part of making full-screen video pause during scrubbing.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h: Added _isScrubbing
+        ivar.
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController dealloc]): Assert that
+        _isScrubbing is NO.
+        (-[WebVideoFullscreenHUDWindowController endScrubbing]): Call
+        HTMLMediaElement::endScrubbing().
+        (-[WebVideoFullscreenHUDWindowController timelinePositionChanged:]):
+        If scrubbing has just begun, call HTMLMediaElement::beginScrubbing()
+        and schedule -endScrubbing to be called when mouse tracking ends.
+
 2009-11-09  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dan Bernstein.
