@@ -1,3 +1,15 @@
+2009-11-09  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Oliver Hunt.
+
+        [Gtk] Build from tarball fails with --enable-introspection
+        https://bugs.webkit.org/show_bug.cgi?id=31261
+
+        We need to enable gobject-introspection during distcheck otherwise
+        some of the required files are missing in tarball.
+
+        * GNUmakefile.am:
+
 2009-11-05  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Jan Alonzo.
