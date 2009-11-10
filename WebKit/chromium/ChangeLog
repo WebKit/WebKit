@@ -2,6 +2,86 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: AppCach...BackForwardListClientImpl
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/ApplicationCacheHost.cpp: Added.
+        (WebCore::ApplicationCacheHostInternal::ApplicationCacheHostInternal):
+        (WebCore::ApplicationCacheHostInternal::notifyEventListener):
+        (WebCore::ApplicationCacheHost::ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::~ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::selectCacheWithoutManifest):
+        (WebCore::ApplicationCacheHost::selectCacheWithManifest):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainResponse):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForMainError):
+        (WebCore::ApplicationCacheHost::mainResourceDataReceived):
+        (WebCore::ApplicationCacheHost::failedLoadingMainResource):
+        (WebCore::ApplicationCacheHost::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForRedirect):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForResponse):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForError):
+        (WebCore::ApplicationCacheHost::maybeLoadSynchronously):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackSynchronously):
+        (WebCore::ApplicationCacheHost::canCacheInPageCache):
+        (WebCore::ApplicationCacheHost::setDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::status):
+        (WebCore::ApplicationCacheHost::update):
+        (WebCore::ApplicationCacheHost::swapCache):
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+        * src/AssertMatchingEnums.cpp: Added.
+        * src/AutocompletePopupMenuClient.cpp: Added.
+        (WebKit::AutocompletePopupMenuClient::AutocompletePopupMenuClient):
+        (WebKit::AutocompletePopupMenuClient::~AutocompletePopupMenuClient):
+        (WebKit::AutocompletePopupMenuClient::initialize):
+        (WebKit::AutocompletePopupMenuClient::valueChanged):
+        (WebKit::AutocompletePopupMenuClient::itemText):
+        (WebKit::AutocompletePopupMenuClient::itemStyle):
+        (WebKit::AutocompletePopupMenuClient::menuStyle):
+        (WebKit::AutocompletePopupMenuClient::clientPaddingLeft):
+        (WebKit::AutocompletePopupMenuClient::clientPaddingRight):
+        (WebKit::AutocompletePopupMenuClient::popupDidHide):
+        (WebKit::AutocompletePopupMenuClient::setTextFromItem):
+        (WebKit::AutocompletePopupMenuClient::fontSelector):
+        (WebKit::AutocompletePopupMenuClient::hostWindow):
+        (WebKit::AutocompletePopupMenuClient::createScrollbar):
+        (WebKit::AutocompletePopupMenuClient::setSuggestions):
+        (WebKit::AutocompletePopupMenuClient::removeItemAtIndex):
+        (WebKit::AutocompletePopupMenuClient::textFieldStyle):
+        * src/AutocompletePopupMenuClient.h: Added.
+        (WebKit::AutocompletePopupMenuClient::textField):
+        (WebKit::AutocompletePopupMenuClient::itemToolTip):
+        (WebKit::AutocompletePopupMenuClient::itemIsEnabled):
+        (WebKit::AutocompletePopupMenuClient::clientInsetLeft):
+        (WebKit::AutocompletePopupMenuClient::clientInsetRight):
+        (WebKit::AutocompletePopupMenuClient::listSize):
+        (WebKit::AutocompletePopupMenuClient::selectedIndex):
+        (WebKit::AutocompletePopupMenuClient::itemIsSeparator):
+        (WebKit::AutocompletePopupMenuClient::itemIsLabel):
+        (WebKit::AutocompletePopupMenuClient::itemIsSelected):
+        (WebKit::AutocompletePopupMenuClient::shouldPopOver):
+        (WebKit::AutocompletePopupMenuClient::valueShouldChangeOnHotTrack):
+        * src/BackForwardListClientImpl.cpp: Added.
+        (WebKit::BackForwardListClientImpl::BackForwardListClientImpl):
+        (WebKit::BackForwardListClientImpl::~BackForwardListClientImpl):
+        (WebKit::BackForwardListClientImpl::setCurrentHistoryItem):
+        (WebKit::BackForwardListClientImpl::previousHistoryItem):
+        (WebKit::BackForwardListClientImpl::addItem):
+        (WebKit::BackForwardListClientImpl::goToItem):
+        (WebKit::BackForwardListClientImpl::currentItem):
+        (WebKit::BackForwardListClientImpl::itemAtIndex):
+        (WebKit::BackForwardListClientImpl::backListCount):
+        (WebKit::BackForwardListClientImpl::forwardListCount):
+        (WebKit::BackForwardListClientImpl::close):
+        * src/BackForwardListClientImpl.h: Added.
+
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: WebString...WebViewImpl
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
