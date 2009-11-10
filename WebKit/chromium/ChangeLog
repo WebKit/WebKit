@@ -2,6 +2,120 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Up-streaming Chromium API src files: WebFileInputElement...WebNotifications
+
+        https://bugs.webkit.org/show_bug.cgi?id=31276
+
+        * src/WebInputElement.cpp: Added.
+        (WebKit::WebInputElement::WebInputElement):
+        (WebKit::WebInputElement::operator=):
+        (WebKit::WebInputElement::operator WTF::PassRefPtr<HTMLInputElement>):
+        (WebKit::WebInputElement::setActivatedSubmit):
+        (WebKit::WebInputElement::setValue):
+        (WebKit::WebInputElement::value):
+        (WebKit::WebInputElement::setAutofilled):
+        (WebKit::WebInputElement::dispatchFormControlChangeEvent):
+        (WebKit::WebInputElement::setSelectionRange):
+        * src/WebInputEvent.cpp: Added.
+        (WebKit::staticKeyIdentifiers):
+        (WebKit::WebKeyboardEvent::setKeyIdentifierFromWindowsKeyCode):
+        * src/WebInputEventConversion.cpp: Added.
+        (WebKit::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebKit::toPlatformKeyboardEventType):
+        (WebKit::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebKit::PlatformKeyboardEventBuilder::setKeyType):
+        (WebKit::PlatformKeyboardEventBuilder::isCharacterKey):
+        (WebKit::getWebInputModifiers):
+        (WebKit::WebMouseEventBuilder::WebMouseEventBuilder):
+        (WebKit::WebKeyboardEventBuilder::WebKeyboardEventBuilder):
+        * src/WebInputEventConversion.h: Added.
+        * src/WebKit.cpp: Added.
+        (WebKit::initialize):
+        (WebKit::shutdown):
+        (WebKit::webKitClient):
+        (WebKit::setLayoutTestMode):
+        (WebKit::layoutTestMode):
+        (WebKit::resetPluginCache):
+        * src/WebMediaPlayerClientImpl.cpp: Added.
+        (WebKit::createWebMediaPlayer):
+        (WebKit::WebMediaPlayerClientImpl::isEnabled):
+        (WebKit::WebMediaPlayerClientImpl::setIsEnabled):
+        (WebKit::WebMediaPlayerClientImpl::registerSelf):
+        (WebKit::WebMediaPlayerClientImpl::networkStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::volumeChanged):
+        (WebKit::WebMediaPlayerClientImpl::timeChanged):
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        (WebKit::WebMediaPlayerClientImpl::durationChanged):
+        (WebKit::WebMediaPlayerClientImpl::rateChanged):
+        (WebKit::WebMediaPlayerClientImpl::sizeChanged):
+        (WebKit::WebMediaPlayerClientImpl::sawUnsupportedTracks):
+        (WebKit::WebMediaPlayerClientImpl::load):
+        (WebKit::WebMediaPlayerClientImpl::cancelLoad):
+        (WebKit::WebMediaPlayerClientImpl::play):
+        (WebKit::WebMediaPlayerClientImpl::pause):
+        (WebKit::WebMediaPlayerClientImpl::naturalSize):
+        (WebKit::WebMediaPlayerClientImpl::hasVideo):
+        (WebKit::WebMediaPlayerClientImpl::hasAudio):
+        (WebKit::WebMediaPlayerClientImpl::setVisible):
+        (WebKit::WebMediaPlayerClientImpl::duration):
+        (WebKit::WebMediaPlayerClientImpl::currentTime):
+        (WebKit::WebMediaPlayerClientImpl::seek):
+        (WebKit::WebMediaPlayerClientImpl::seeking):
+        (WebKit::WebMediaPlayerClientImpl::setEndTime):
+        (WebKit::WebMediaPlayerClientImpl::setRate):
+        (WebKit::WebMediaPlayerClientImpl::paused):
+        (WebKit::WebMediaPlayerClientImpl::supportsFullscreen):
+        (WebKit::WebMediaPlayerClientImpl::supportsSave):
+        (WebKit::WebMediaPlayerClientImpl::setVolume):
+        (WebKit::WebMediaPlayerClientImpl::networkState):
+        (WebKit::WebMediaPlayerClientImpl::readyState):
+        (WebKit::WebMediaPlayerClientImpl::maxTimeSeekable):
+        (WebKit::WebMediaPlayerClientImpl::buffered):
+        (WebKit::WebMediaPlayerClientImpl::dataRate):
+        (WebKit::WebMediaPlayerClientImpl::totalBytesKnown):
+        (WebKit::WebMediaPlayerClientImpl::totalBytes):
+        (WebKit::WebMediaPlayerClientImpl::bytesLoaded):
+        (WebKit::WebMediaPlayerClientImpl::setSize):
+        (WebKit::WebMediaPlayerClientImpl::paint):
+        (WebKit::WebMediaPlayerClientImpl::setAutobuffer):
+        (WebKit::WebMediaPlayerClientImpl::hasSingleSecurityOrigin):
+        (WebKit::WebMediaPlayerClientImpl::movieLoadType):
+        (WebKit::WebMediaPlayerClientImpl::create):
+        (WebKit::WebMediaPlayerClientImpl::getSupportedTypes):
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        (WebKit::WebMediaPlayerClientImpl::WebMediaPlayerClientImpl):
+        * src/WebMediaPlayerClientImpl.h: Added.
+        * src/WebNode.cpp: Added.
+        (WebKit::WebNode::reset):
+        (WebKit::WebNode::assign):
+        (WebKit::WebNode::parentNode):
+        (WebKit::WebNode::nodeName):
+        (WebKit::WebNode::WebNode):
+        (WebKit::WebNode::operator=):
+        (WebKit::WebNode::operator WTF::PassRefPtr<WebCore::Node>):
+        (WebKit::WebNode::frame):
+        * src/WebNotification.cpp: Added.
+        (WebKit::WebNotification::reset):
+        (WebKit::WebNotification::assign):
+        (WebKit::WebNotification::lessThan):
+        (WebKit::WebNotification::isHTML):
+        (WebKit::WebNotification::url):
+        (WebKit::WebNotification::icon):
+        (WebKit::WebNotification::title):
+        (WebKit::WebNotification::body):
+        (WebKit::WebNotification::dispatchDisplayEvent):
+        (WebKit::WebNotification::dispatchErrorEvent):
+        (WebKit::WebNotification::dispatchCloseEvent):
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::operator=):
+        (WebKit::WebNotification::operator WTF::PassRefPtr<Notification>):
+
+2009-11-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Up-streaming Chromium API src files: WebFileChooser...WebImageSkia
 
         https://bugs.webkit.org/show_bug.cgi?id=31276
