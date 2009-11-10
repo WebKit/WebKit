@@ -1,3 +1,10 @@
+2009-11-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Put test into skiplist added in r50758 because
+        layoutTestController.showWebInspector() is unimplemented now.
+
+        * platform/qt/Skipped: inspector/timeline-enum-stability.html added.
+
 2009-11-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Skip another test that requires implementing editing

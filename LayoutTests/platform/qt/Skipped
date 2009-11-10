@@ -119,6 +119,7 @@ inspector/console-format-collections.html
 inspector/styles-iframe.html
 inspector/syntax-highlight-css.html
 inspector/syntax-highlight-javascript.html
+inspector/timeline-enum-stability.html
 inspector/timeline-trivial.html
 inspector/uncaught-dom1-exception.html
 inspector/uncaught-dom3-exception.html
