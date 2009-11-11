@@ -1,0 +1,16 @@
+Tests the Timeline API instrumentation of an HTML script tag.
+
+ParseHTML
+----> EvaluateScript
+--------> MarkTimeline : SCRIPT TAG
+
+EvaluateScript Properties:
++ startTime : * DEFINED *
++ data : {
++- url : * DEFINED *
++- lineNumber : 76
++ }
++ children : * DEFINED *
++ endTime : * DEFINED *
++ type : 10
+

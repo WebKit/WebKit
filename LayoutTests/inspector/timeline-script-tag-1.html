@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+var timelineMark = "SCRIPT TAG";
+
+function analyzeEvaluateScript(record) 
+{
+    var numChildren = record.children ? record.children.length : 0;
+    for (var i = 0; i < numChildren; ++i) {
+        var child = record.children[i];
+        if (child.type == timelineAgentRecordType.MarkTimeline
+            && child.data.message == timelineMark
+            && record.data.url.indexOf("timeline-script-tag-1.html") !== -1) {
+
+            // Finish printing the record as a tree
+            dumpTimelineRecord(record, 1);
+            output("");
+
+            // Now print the important fields of the record
+            printTimelineRecordProperties(record);
+            return true;
+        }
+    }
+    return false;
+}
+
+function analyzeParseHTML(record) 
+{
+    // Now, dump the specific Script tag that includes the Marker and dump it in detail.
+    var numChildren = record.children ? record.children.length : 0;
+    for (var i = 0; i < numChildren; ++i) {
+        var child = record.children[i];
+        if (child.type == timelineAgentRecordType.EvaluateScript)
+            if (analyzeEvaluateScript(child))
+                return true;
+    }
+    return false;
+}  
+
+// Look for the ParseHtml->EvaluateScript->MarkTimeline that correlates 
+// to the <script> tag below.
+function analyzeTimelineData(timelineRecords) 
+{
+    // Uncomment to debugging the list of data returned.
+    // dumpTimelineRecords(timelineRecords);
+
+    // Search for a ParseHTML record
+    var numRecords = timelineRecords.length;
+    for (var i = 0 ; i < numRecords; ++i) {
+        var record = timelineRecords[i];
+        if (record.type == timelineAgentRecordType.ParseHTML) {
+            // Uncomment to debug the ParseHTML data record
+            // dumpTimelineRecord(record, 0);
+            output("ParseHTML");
+            if (!analyzeParseHTML(record))
+                output("Failed to find timeline mark: " + timelineMark);
+        }
+    }
+}
+
+function doit() 
+{
+    retrieveTimelineData(analyzeTimelineData);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests the Timeline API instrumentation of an HTML script tag.
+</p>
+
+<script>
+     // Mark this script tag so we can find it in the timeline data.
+     console.markTimeline(timelineMark);
+</script>
+</body>
+</html>

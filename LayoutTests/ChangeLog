@@ -1,3 +1,30 @@
+2009-11-11  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a test that dumps the timeline data for a simple script tag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31204
+
+        * inspector/inspector-test.js:
+        (onload):
+        * inspector/timeline-script-tag-1-expected.txt: Added.
+        * inspector/timeline-script-tag-1.html: Added.
+        * inspector/timeline-test.js: Added.
+        (retrieveTimelineData):
+        ():
+        (dumpTimelineRecords):
+        (printTimelineRecordProperties):
+        (isNonDeterministicProp):
+        (printProps):
+        (isTimelineOverheadRecord):
+        (markTimelineRecordAsOverhead):
+        (timelineAgentTypeToString):
+        (frontend_startTimelineProfiler.window.WebInspector.addRecordToTimeline):
+        (frontend_startTimelineProfiler):
+        (frontend_getTimelineResults):
+        (frontend_setup):
+
 2009-11-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Skipping new tests.

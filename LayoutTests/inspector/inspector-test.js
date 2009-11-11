@@ -10,28 +10,39 @@ if (window.layoutTestController) {
 // to capture events that happen during the initial page load.
 var ignoreLoad = window.location.href.indexOf("?reload") === -1;
 if (ignoreLoad) {
+    // Start in a timer, as synchronous opening of web inspector may fail on Windows
     setTimeout(function() {
         if (window.layoutTestController)
             layoutTestController.showWebInspector();
-        window.location.href += "?reload";
     }, 0);
 }
 
 function onload()
 {
-    if (ignoreLoad)
+    if (ignoreLoad) {
+        // Inject scripts into the frontend on the first pass.  Some other logic may want to
+        // use them before the reload.
+        var toInject = [];
+        for (var name in window) {
+            if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
+                toInject.push(window[name].toString());
+        }
+        // Invoke a setup method if it has been specified
+        if (window["frontend_setup"]) 
+            toInject.push("frontend_setup();");
+
+        evaluateInWebInspector(toInject.join("\n"), function(arg) {
+            window.location.href += "?reload";
+        });
         return;
+    }
 
     var outputElement = document.createElement("div");
     outputElement.id = "output";
     document.body.appendChild(outputElement);
 
-    var toInject = [];
-    for (var name in window) {
-        if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
-            toInject.push(window[name].toString());
-    }
-    evaluateInWebInspector(toInject.join("\n"), doit);
+    // Make sure web inspector has settled down before executing user code
+    evaluateInWebInspector("true", doit);
 
     // Make sure web inspector window is closed before the test is interrupted.
     setTimeout(function() {
