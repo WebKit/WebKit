@@ -60,8 +60,6 @@ public:
     int send(const char*, int);
     void close();
 
-    virtual void willOpenStream(WebSocketStreamHandle*, const WebURL&);
-
     virtual void didOpenStream(WebSocketStreamHandle*, int);
     virtual void didSendData(WebSocketStreamHandle*, int);
     virtual void didReceiveData(WebSocketStreamHandle*, const WebData&);
@@ -110,8 +108,6 @@ int SocketStreamHandleInternal::send(const char* data, int len)
     if (m_socket->send(webdata)) {
         m_pendingAmountSent += len;
         LOG(Network, "sent");
-        if (m_handle && m_handle->m_client)
-            m_handle->m_client->willSendData(m_handle, webdata.data(), webdata.size());
         return len;
     }
     LOG(Network, "busy. buffering");
@@ -123,17 +119,7 @@ void SocketStreamHandleInternal::close()
     LOG(Network, "close");
     m_socket->close();
 }
-
-void SocketStreamHandleInternal::willOpenStream(WebSocketStreamHandle* socketHandle, const WebURL& url)
-{
-    LOG(Network, "willOpenStream");
-    if (m_handle && m_socket.get()) {
-        ASSERT(socketHandle == m_socket.get());
-        if (m_handle->m_client)
-            m_handle->m_client->willOpenStream(m_handle, url);
-    }
-}
-
+    
 void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
 {
     LOG(Network, "SocketStreamHandleInternal::didOpen %d",
@@ -243,12 +229,6 @@ void SocketStreamHandle::receivedCredential(const AuthenticationChallenge& chall
 void SocketStreamHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
     notImplemented();
-}
-
-void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge& challenge)
-{
-    if (m_client)
-        m_client->receivedCancellation(this, challenge);
 }
 
 }  // namespace WebCore

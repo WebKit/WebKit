@@ -43,9 +43,6 @@ class WebURL;
 class WebSocketStreamHandleClient {
 public:
 
-    // Called when WebSocketStreamHandle is going to open the URL.
-    virtual void willOpenStream(WebSocketStreamHandle*, const WebURL&) = 0;
-
     // Called when Socket Stream is opened.
     virtual void didOpenStream(WebSocketStreamHandle*, int /* maxPendingSendAllowed */) = 0;
 

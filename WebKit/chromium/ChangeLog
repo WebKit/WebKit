@@ -1,5 +1,19 @@
 2009-11-11  Nate Chapin  <japhet@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        http://trac.webkit.org/changeset/50811 removed some methods from
+        platform/network/SocketStreamHandleClient.h, so remove them
+        here too.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31360
+
+        * public/WebSocketStreamHandleClient.h:
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::send):
+
+2009-11-11  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Remove some additional references to dragSourceMovedTo() not
