@@ -1,0 +1,41 @@
+This directory contains the Chromium WebKit API.
+
+
+OVERVIEW
+
+  The Chromium WebKit API provides a stable interface to WebCore without
+  revealing any of the WebCore or WTF types to the consumer.
+
+  The 'public' directory contains the API headers, and the 'src' directory
+  contains the API implementation.  The API is intended to be used either as a
+  shared or static library.
+
+
+COMPATIBILITY
+
+  No attempt is made to support runtime compatibility in a shared library
+  build.  Instead, the API is intended to support backwards compatibility at
+  build time.  C++ symbols are allowed in other words.
+
+
+DEFINES
+
+  WEBKIT_IMPLEMENTATION is defined when building the 'src' directory.
+  Consumers should not define this macro.
+
+  WEBKIT_DLL is defined when building as a shared library.  This should be
+  defined when building the 'src' directory, and it should also be defined by
+  the consumer to ensure proper linkage to the shared library.
+
+
+BASIC TYPES
+
+  Use of STL is prohibited except in cases where it would be allowed in
+  WebCore.  This includes non-allocating uses: algorithms, numeric limits, etc.
+  WTF container classes should be used in the implementation of this API.
+
+  The API includes some usage of WebCore types when WEBKIT_IMPLEMENTATION is
+  defined.  This is only done for the convenience to the implementation, and
+  should not be considered part of the Chromium WebKit API.  Similarly, STL
+  types are assumed when WEBKIT_IMPLEMENTATION is not defined, which is done
+  for the convenience of the consumer.

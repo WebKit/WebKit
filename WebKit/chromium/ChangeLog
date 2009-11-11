@@ -1,3 +1,15 @@
+2009-11-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Modified WebKit.gyp to build the webkit api.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31320
+
+        * README: Added.
+        * WebKit.gyp: Added.
+        * webkit.gyp: Removed.
+
 2009-11-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.
