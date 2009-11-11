@@ -1,3 +1,16 @@
+2009-11-11  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Display the correct summary in the web inspector for the padding
+        shorthand. Also corrects the summaries for the border-color,
+        border-width, border-style, and margin shorthands.
+
+        https://bugs.webkit.org/show_bug.cgi?id=7987
+
+        * fast/css/shorthands-four-values-expected.txt: Added.
+        * fast/css/shorthands-four-values.html: Added.
+
 2009-11-11  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.

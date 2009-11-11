@@ -259,20 +259,28 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
 
 String CSSMutableStyleDeclaration::get4Values(const int* properties) const
 {
-    String res;
-    for (int i = 0; i < 4; ++i) {
-        if (!isPropertyImplicit(properties[i])) {
-            RefPtr<CSSValue> value = getPropertyCSSValue(properties[i]);
+    // Assume the properties are in the usual order top, right, bottom, left.
+    RefPtr<CSSValue> topValue = getPropertyCSSValue(properties[0]);
+    RefPtr<CSSValue> rightValue = getPropertyCSSValue(properties[1]);
+    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(properties[2]);
+    RefPtr<CSSValue> leftValue = getPropertyCSSValue(properties[3]);
 
-            // apparently all 4 properties must be specified.
-            if (!value)
-                return String();
+    // All 4 properties must be specified.
+    if (!topValue || !rightValue || !bottomValue || !leftValue)
+        return String();
 
-            if (!res.isNull())
-                res += " ";
-            res += value->cssText();
-        }
-    }
+    bool showLeft = rightValue->cssText() != leftValue->cssText();
+    bool showBottom = (topValue->cssText() != bottomValue->cssText()) || showLeft;
+    bool showRight = (topValue->cssText() != rightValue->cssText()) || showBottom;
+
+    String res = topValue->cssText();
+    if (showRight)
+        res += " " + rightValue->cssText();
+    if (showBottom)
+        res += " " + bottomValue->cssText();
+    if (showLeft)
+        res += " " + leftValue->cssText();
+
     return res;
 }
 

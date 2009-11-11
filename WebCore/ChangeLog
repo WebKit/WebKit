@@ -1,3 +1,18 @@
+2009-11-11  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Display the correct summary in the web inspector for the shorthands
+        border-color, border-width, border-style, margin, and padding.
+        https://bugs.webkit.org/show_bug.cgi?id=7987
+
+        Test: fast/css/shorthands-four-values.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::get4Values):
+        Display the summary information in the same way the shorthand would be
+        specified in a css rule.
+
 2009-11-11  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.
