@@ -1,3 +1,14 @@
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Set m_hasPendingGeometryChange to true by default, so that
+        at least one call to NPP_SetWindow is executed, which is
+        needed by the DRT plugin testing framework.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+
 2009-11-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

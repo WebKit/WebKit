@@ -819,7 +819,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_eventModel(NPEventModel(-1))
 #endif
 #if defined(Q_WS_X11) && ENABLE(NETSCAPE_PLUGIN_API)
-    , m_hasPendingGeometryChange(false)
+    , m_hasPendingGeometryChange(true)
     , m_drawable(0)
     , m_visual(0)
     , m_colormap(0)

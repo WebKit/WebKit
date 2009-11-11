@@ -75,7 +75,8 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
                 for (int i = 0; i < argc; i++)
                     if (strcasecmp(argn[i], "src") == 0)
                         pluginLog(instance, "src: %s", argv[i]);
-            }
+            } else if (strcasecmp(argn[i], "testwindowopen") == 0)
+                obj->testWindowOpen = TRUE;
         }
 
         instance->pdata = obj;
@@ -117,6 +118,12 @@ webkit_test_plugin_set_window(NPP instance, NPWindow *window)
             pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = false;
         }
+
+        if (obj->testWindowOpen) {
+            testWindowOpen(instance);
+            obj->testWindowOpen = FALSE;
+        }
+
     }
 
     return NPERR_NO_ERROR;

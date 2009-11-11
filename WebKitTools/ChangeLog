@@ -1,3 +1,13 @@
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Implement the functionality needed by plugins/window-open.html
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_set_window):
+
 2009-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
