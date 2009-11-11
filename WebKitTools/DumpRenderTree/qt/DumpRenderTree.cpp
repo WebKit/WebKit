@@ -414,8 +414,11 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
         result.append(QLatin1String("'\n--------\n"));
     }
 
-    result.append(frame->toPlainText());
-    result.append(QLatin1String("\n"));
+    QString innerText = frame->toPlainText();
+    if (!innerText.isEmpty()) {
+        result.append(innerText);
+        result.append(QLatin1String("\n"));
+    }
 
     if (m_controller->shouldDumpChildrenAsText()) {
         QList<QWebFrame *> children = frame->childFrames();

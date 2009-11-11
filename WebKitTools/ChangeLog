@@ -11,6 +11,17 @@
 
         Reviewed by Simon Hausmann.
 
+        If the frame has no innerText don't append it, and
+        do not add a newline which breaks some cross platform
+        results.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Implement missing functionality in the Gtk/Qt TestNetscapePlugin.
 
         * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
