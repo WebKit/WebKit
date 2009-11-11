@@ -1,3 +1,17 @@
+2009-11-10  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        rename counter to makeCounterNode in RenderCounter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=31289
+
+        No new test because this is just a small refactoring.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::originalText):
+
 2009-11-10  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Oliver Hunt.

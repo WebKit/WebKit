@@ -38,7 +38,7 @@ using namespace HTMLNames;
 typedef HashMap<RefPtr<AtomicStringImpl>, CounterNode*> CounterMap;
 typedef HashMap<const RenderObject*, CounterMap*> CounterMaps;
 
-static CounterNode* counter(RenderObject*, const AtomicString& counterName, bool alwaysCreateCounter);
+static CounterNode* makeCounterNode(RenderObject*, const AtomicString& counterName, bool alwaysCreateCounter);
 
 static CounterMaps& counterMaps()
 {
@@ -148,7 +148,7 @@ static bool findPlaceForCounter(RenderObject* object, const AtomicString& counte
     // sibling or the reset node. This flag controls it.
     bool createChildForReset = true;
     while ((prevCounterCandidate = prevCounterCandidate->previousInPreOrder())) {
-        CounterNode* c = counter(prevCounterCandidate, counterName, false);
+        CounterNode* c = makeCounterNode(prevCounterCandidate, counterName, false);
         if (prevCounterCandidate == resetCandidate) {
             if (!candidateCounter) {
                 candidateCounter = c;
@@ -185,7 +185,7 @@ static bool findPlaceForCounter(RenderObject* object, const AtomicString& counte
     return false;
 }
 
-static CounterNode* counter(RenderObject* object, const AtomicString& counterName, bool alwaysCreateCounter)
+static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& counterName, bool alwaysCreateCounter)
 {
     ASSERT(object);
 
@@ -246,7 +246,7 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
         return 0;
 
     if (!m_counterNode)
-        m_counterNode = counter(parent(), m_counter.identifier(), true);
+        m_counterNode = makeCounterNode(parent(), m_counter.identifier(), true);
 
     CounterNode* child = m_counterNode;
     int value = child->isReset() ? child->value() : child->countInParent();
