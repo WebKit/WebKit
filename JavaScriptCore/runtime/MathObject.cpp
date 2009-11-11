@@ -96,7 +96,6 @@ MathObject::MathObject(ExecState* exec, NonNullPassRefPtr<Structure> structure)
     putDirectWithoutTransition(Identifier(exec, "PI"), jsNumber(exec, piDouble), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(Identifier(exec, "SQRT1_2"), jsNumber(exec, sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(Identifier(exec, "SQRT2"), jsNumber(exec, sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
-    WTF::initializeWeakRandomNumberGenerator();
 }
 
 // ECMA 15.8
@@ -211,7 +210,7 @@ JSValue JSC_HOST_CALL mathProtoFuncPow(ExecState* exec, JSObject*, JSValue, cons
 
 JSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
-    return jsNumber(exec, WTF::weakRandomNumber());
+    return jsNumber(exec, exec->globalData().weakRandom.get());
 }
 
 JSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec, JSObject*, JSValue, const ArgList& args)

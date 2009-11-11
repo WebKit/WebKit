@@ -38,6 +38,7 @@
 #include "NumericStrings.h"
 #include "SmallStrings.h"
 #include "TimeoutChecker.h"
+#include "WeakRandom.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -178,6 +179,8 @@ namespace JSC {
         
         UString cachedDateString;
         double cachedDateStringValue;
+        
+        WeakRandom weakRandom;
 
 #ifndef NDEBUG
         bool mainThreadOnly;

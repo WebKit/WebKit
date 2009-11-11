@@ -1212,6 +1212,10 @@
 				RelativePath="..\..\runtime\UString.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\runtime\WeakRandom.h"
+				>
+			</File>
 			<Filter
 				Name="DerivedSources"
 				>

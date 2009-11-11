@@ -1,3 +1,30 @@
+2009-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin "avGni arBalroguch" Barraclough.
+
+        Faster Math.random, based on GameRand.
+        
+        SunSpider says 1.4% faster.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added the header to the project.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h: Use an object to track random number generation
+        state, initialized to the current time.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        (JSC::mathProtoFuncRandom): Use the new hotness.
+
+        * runtime/WeakRandom.h: Added.
+        (JSC::WeakRandom::WeakRandom):
+        (JSC::WeakRandom::get):
+        (JSC::WeakRandom::advance): The new hotness.
+
 2009-11-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

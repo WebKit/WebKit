@@ -332,6 +332,7 @@
             'runtime/Tracing.h',
             'runtime/UString.cpp',
             'runtime/UString.h',
+            'runtime/WeakRandom.h',
             'wrec/CharacterClass.cpp',
             'wrec/CharacterClass.h',
             'wrec/CharacterClassConstructor.cpp',

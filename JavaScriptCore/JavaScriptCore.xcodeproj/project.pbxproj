@@ -51,6 +51,7 @@
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
+		1420BE7B10AA6DDB00F455D2 /* WeakRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */; };
 		1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1421359A0A677F4F00A8195E /* JSBase.cpp */; };
 		14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8580255597D01FF60F7 /* Debugger.cpp */; };
 		1428082D107EC0570013E7B2 /* CallData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA62DFE0E2826230004F30D /* CallData.cpp */; };
@@ -561,6 +562,7 @@
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = minidom.js; path = tests/minidom.js; sourceTree = "<group>"; };
 		141211200A48793C00480255 /* minidom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidom; sourceTree = BUILT_PRODUCTS_DIR; };
 		1419D32C0CEA7CDE00FF507A /* RefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounted.h; sourceTree = "<group>"; };
+		1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandom.h; sourceTree = "<group>"; };
 		1421359A0A677F4F00A8195E /* JSBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; };
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
 		1429D77B0ED20D7300B89619 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
@@ -1593,6 +1595,7 @@
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
+				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -2002,6 +2005,7 @@
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
+				1420BE7B10AA6DDB00F455D2 /* WeakRandom.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

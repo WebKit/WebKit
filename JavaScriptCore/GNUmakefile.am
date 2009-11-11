@@ -498,6 +498,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
+	JavaScriptCore/runtime/WeakRandom.h \
 	JavaScriptCore/wtf/FastAllocBase.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \
