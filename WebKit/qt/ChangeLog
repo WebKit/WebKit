@@ -1,3 +1,22 @@
+2009-11-11  Warwick Allison  <warwick.allison@nokia.com>, Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Regression: Preserve the parent of plugin objects when using
+        QtWebKit with only a QWebPage.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin): Don't reparent
+        plugins to 0.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginCounterPage::PluginCounterPage): Initialize m_pluginParent to 0.
+        (PluginCounterPage::~PluginCounterPage): Delete the plugin parent later
+        (after the page)
+        (PluginTracerPage::createPlugin): Assign a dummy parent to the plugin.
+        (PluginTracerPage::PluginTracerPage): Set up the plugin parent.
+        (tst_QWebPage::createViewlessPlugin): Verify that for viewless pages the
+        plugin parent remains unchanged.
+
 2009-11-11  David Boddie  <dboddie@trolltech.com>
 
         [Qt] Doc: Added internal or hidden placeholder documentation.

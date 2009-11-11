@@ -658,20 +658,41 @@ class PluginCounterPage : public QWebPage {
 public:
     int m_count;
     QPointer<QObject> m_widget;
-    PluginCounterPage(QObject* parent = 0) : QWebPage(parent), m_count(0), m_widget(0)
+    QObject* m_pluginParent;
+    PluginCounterPage(QObject* parent = 0)
+        : QWebPage(parent)
+        , m_count(0)
+        , m_widget(0)
+        , m_pluginParent(0)
     {
        settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    }
+    ~PluginCounterPage()
+    {
+        if (m_pluginParent)
+            m_pluginParent->deleteLater();
     }
 };
 
 template<class T>
 class PluginTracerPage : public PluginCounterPage {
 public:
-    PluginTracerPage(QObject* parent = 0) : PluginCounterPage(parent) {}
+    PluginTracerPage(QObject* parent = 0)
+        : PluginCounterPage(parent)
+    {
+        // this is a dummy parent object for the created plugin
+        m_pluginParent = new T;
+    }
     virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&)
     {
         m_count++;
-        return m_widget = new T();
+        m_widget = new T;
+        // need a cast to the specific type, as QObject::setParent cannot be called,
+        // because it is not virtual. Instead it is necesary to call QWidget::setParent,
+        // which also takes a QWidget* instead of a QObject*. Therefore we need to
+        // upcast to T*, which is a QWidget.
+        static_cast<T*>(m_widget.data())->setParent(static_cast<T*>(m_pluginParent));
+        return m_widget;
     }
 };
 
@@ -737,6 +758,8 @@ void tst_QWebPage::createViewlessPlugin()
     page->mainFrame()->setHtml(content);
     QCOMPARE(page->m_count, 1);
     QVERIFY(page->m_widget);
+    QVERIFY(page->m_pluginParent);
+    QVERIFY(page->m_widget->parent() == page->m_pluginParent);
     delete page;
 
 }
