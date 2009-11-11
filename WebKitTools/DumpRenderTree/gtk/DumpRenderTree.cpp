@@ -82,6 +82,7 @@ static GCController* gcController = 0;
 static WebKitWebView* webView;
 static GtkWidget* window;
 static GtkWidget* container;
+static GtkWidget* webInspectorWindow;
 WebKitWebFrame* mainFrame = 0;
 WebKitWebFrame* topLoadingFrame = 0;
 guint waitToDumpWatchdog = 0;
@@ -706,9 +707,29 @@ static void databaseQuotaExceeded(WebKitWebView* view, WebKitWebFrame* frame, We
 
 static WebKitWebView* webViewCreate(WebKitWebView*, WebKitWebFrame*);
 
+static gboolean webInspectorShowWindow(WebKitWebInspector*, gpointer data)
+{
+    gtk_window_set_default_size(GTK_WINDOW(webInspectorWindow), 800, 600);
+    gtk_widget_show_all(webInspectorWindow);
+    return TRUE;
+}
+
+static gboolean webInspectorCloseWindow(WebKitWebInspector*, gpointer data)
+{
+    gtk_widget_destroy(webInspectorWindow);
+    webInspectorWindow = 0;
+    return TRUE;
+}
+
 static WebKitWebView* webInspectorInspectWebView(WebKitWebInspector*, gpointer data)
 {
-    return WEBKIT_WEB_VIEW(webkit_web_view_new());
+    webInspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    GtkWidget* webView = webkit_web_view_new();
+    gtk_container_add(GTK_CONTAINER(webInspectorWindow),
+                      webView);
+
+    return WEBKIT_WEB_VIEW(webView);
 }
 
 static WebKitWebView* createWebView()
@@ -736,7 +757,11 @@ static WebKitWebView* createWebView()
                      NULL);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(view);
-    g_signal_connect(inspector, "inspect-web-view", G_CALLBACK(webInspectorInspectWebView), 0);
+    g_object_connect(G_OBJECT(inspector),
+                     "signal::inspect-web-view", webInspectorInspectWebView, 0,
+                     "signal::show-window", webInspectorShowWindow, 0,
+                     "signal::close-window", webInspectorCloseWindow, 0,
+                     NULL);
 
     return view;
 }
