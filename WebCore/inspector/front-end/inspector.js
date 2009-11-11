@@ -1062,6 +1062,8 @@ WebInspector.removeResource = function(identifier)
 
 WebInspector.addDatabase = function(payload)
 {
+    if (!this.panels.storage)
+        return;
     var database = new WebInspector.Database(
         payload.id,
         payload.domain,
@@ -1072,12 +1074,15 @@ WebInspector.addDatabase = function(payload)
 
 WebInspector.addCookieDomain = function(domain)
 {
-    if (this.panels.storage)
-        this.panels.storage.addCookieDomain(domain);
+    if (!this.panels.storage)
+        return;
+    this.panels.storage.addCookieDomain(domain);
 }
 
 WebInspector.addDOMStorage = function(payload)
 {
+    if (!this.panels.storage)
+        return;
     var domStorage = new WebInspector.DOMStorage(
         payload.id,
         payload.host,
@@ -1087,6 +1092,8 @@ WebInspector.addDOMStorage = function(payload)
 
 WebInspector.updateDOMStorage = function(storageId)
 {
+    if (!this.panels.storage)
+        return;
     this.panels.storage.updateDOMStorage(storageId);
 }
 

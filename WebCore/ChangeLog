@@ -1,3 +1,17 @@
+2009-11-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Check that if Storage panel exists before calling its methods
+
+        https://bugs.webkit.org/show_bug.cgi?id=31343
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.addDatabase):
+        (WebInspector.addCookieDomain):
+        (WebInspector.addDOMStorage):
+        (WebInspector.updateDOMStorage):
+
 2009-11-11  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.
