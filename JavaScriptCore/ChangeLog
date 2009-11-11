@@ -1,5 +1,11 @@
 2009-11-10  Geoffrey Garen  <ggaren@apple.com>
 
+        JavaScriptGlue build fix: Marked a file 'private' instead of 'project'.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2009-11-10  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Gavin "avGni arBalroguch" Barraclough.
 
         Faster Math.random, based on GameRand.
