@@ -1,5 +1,19 @@
 2009-11-11  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        Several committers use separate email addresses for bugzilla and svn.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=31364
+
+        Update records for existing committers to include email addresses
+        used in svn.webkit.org and lists.webkit.org.
+        Most committers use the same email address in all 3 places, but some use
+        separate addresses.  committers.py needs record of each of these addresses.
+
+        * Scripts/modules/committers.py:
+
+2009-11-11  Eric Seidel  <eric@webkit.org>
+
         No review, adding second email address for an existing committer.
 
         Add Yong Li's second bugzilla account to his committer record.
