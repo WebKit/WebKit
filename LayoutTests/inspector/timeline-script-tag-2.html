@@ -12,7 +12,7 @@ function analyzeEvaluateScript(record)
         var child = record.children[i];
         if (child.type === timelineAgentRecordType.MarkTimeline
             && child.data.message === timelineMark
-            && record.data.url.indexOf("timeline-script-tag-1.html") !== -1) {
+            && record.data.url.indexOf("timeline-script-tag-2.js") !== -1) {
 
             // Finish printing the record as a tree
             dumpTimelineRecord(record, 1);
@@ -28,7 +28,6 @@ function analyzeEvaluateScript(record)
 
 function analyzeParseHTML(record) 
 {
-    // Now, dump the specific Script tag that includes the Marker and dump it in detail.
     var numChildren = record.children ? record.children.length : 0;
     for (var i = 0; i < numChildren; ++i) {
         var child = record.children[i];
@@ -70,12 +69,9 @@ function doit()
 
 <body onload="onload()">
 <p>
-Tests the Timeline API instrumentation of an HTML script tag.
+Tests the Timeline API instrumentation of a script tag with an external script.
 </p>
 
-<script>
-     // Mark this script tag so we can find it in the timeline data.
-     console.markTimeline(timelineMark);
-</script>
+<script src="timeline-script-tag-2.js"></script>
 </body>
 </html>

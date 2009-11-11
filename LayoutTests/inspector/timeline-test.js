@@ -39,7 +39,7 @@ function dumpTimelineRecord(record, level)
         prefix = "----" + prefix;
     if (level > 0)
         prefix = prefix + "> ";
-    if (record.type == timelineAgentRecordType.MarkTimeline) {
+    if (record.type === timelineAgentRecordType.MarkTimeline) {
         suffix = " : " + record.data.message;
     }
     output(prefix + timelineAgentTypeToString(record.type) + suffix);
@@ -127,7 +127,7 @@ function markTimelineRecordAsOverhead(arg)
 function timelineAgentTypeToString(numericType)
 {
     for (var prop in timelineAgentRecordType) {
-        if (timelineAgentRecordType[prop] == numericType)
+        if (timelineAgentRecordType[prop] === numericType)
             return prop;
     }
     return undefined;

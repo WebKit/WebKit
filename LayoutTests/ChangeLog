@@ -1,3 +1,21 @@
+2009-11-11  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Added a test of an externally loaded script tag for Inspector 
+        timeline records.
+        Fixed identity comparisons.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31365
+
+        * inspector/timeline-script-tag-1.html:
+        * inspector/timeline-script-tag-2-expected.txt: Added.
+        * inspector/timeline-script-tag-2.html: Added.
+        * inspector/timeline-script-tag-2.js: Added.
+        * inspector/timeline-test.js:
+        ():
+        (timelineAgentTypeToString):
+
 2009-11-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Kenneth Christiansen.
