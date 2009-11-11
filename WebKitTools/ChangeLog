@@ -12,6 +12,15 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Force -graphicssystem raster and -style windows when running DRT
+
+        * DumpRenderTree/qt/main.cpp:
+        * Scripts/run-webkit-tests:
+
+2009-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Compute correct library paths for Qt
 
         * Scripts/webkitdirs.pm:

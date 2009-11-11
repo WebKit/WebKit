@@ -992,7 +992,10 @@ close HTML;
 
 my @configurationArgs = argumentsForConfiguration();
 
-if (isQt() || isGtk()) {
+if (isGtk()) {
+  system "WebKitTools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
+} elsif (isQt()) {
+  unshift @configurationArgs, qw(-graphicssystem raster -style windows);
   system "WebKitTools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
