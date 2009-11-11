@@ -33,3 +33,7 @@ lessThan(QT_MINOR_VERSION, 4) {
 symbian {
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
 }
+
+mac {
+    LIBS_PRIVATE += -framework AppKit
+}
