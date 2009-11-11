@@ -1,3 +1,15 @@
+2009-11-10  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30754
+
+        Removed method draggedImage:movedTo:
+
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+
 2009-11-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

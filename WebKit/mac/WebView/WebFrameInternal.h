@@ -155,7 +155,6 @@ WebView *getWebView(WebFrame *webFrame);
 - (DOMCSSStyleDeclaration *)_typingStyle;
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
 
-- (void)_dragSourceMovedTo:(NSPoint)windowLoc;
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
 
 - (BOOL)_canProvideDocumentSource;

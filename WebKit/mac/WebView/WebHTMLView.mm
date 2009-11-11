@@ -3444,21 +3444,6 @@ done:
     return (NSDragOperation)page->dragController()->sourceDragOperation();
 }
 
-- (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
-{
-    ASSERT(![self _webView] || [self _isTopHTMLView]);
-    
-    NSPoint windowImageLoc = [[self window] convertScreenToBase:screenLoc];
-    NSPoint windowMouseLoc = windowImageLoc;
-    
-    if (Page* page = core([self _webView])) {
-        DragController* dragController = page->dragController();
-        NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
-    }
-    
-    [[self _frame] _dragSourceMovedTo:windowMouseLoc];
-}
-
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     ASSERT(![self _webView] || [self _isTopHTMLView]);

@@ -923,20 +923,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->computeAndSetTypingStyle(core(style), undoAction);
 }
 
-- (void)_dragSourceMovedTo:(NSPoint)windowLoc
-{
-    if (!_private->coreFrame)
-        return;
-    FrameView* view = _private->coreFrame->view();
-    if (!view)
-        return;
-    ASSERT([getWebView(self) _usesDocumentViews]);
-    // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->platformWidget() window]),
-        LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-    _private->coreFrame->eventHandler()->dragSourceMovedTo(event);
-}
-
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (!_private->coreFrame)

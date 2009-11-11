@@ -1,3 +1,18 @@
+2009-11-10  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30754
+
+        Tests that the drag event always fires before the dragover event.
+
+        Also, re-bases the result for test fast/events/drag-in-frames.html, since
+        we now conform to the HTML 5 spec.
+
+        * fast/events/drag-and-drop-fire-drag-dragover-expected.txt: Added.
+        * fast/events/drag-and-drop-fire-drag-dragover.html: Added.
+        * fast/events/drag-in-frames-expected.txt: Rebased result.
+
 2009-11-10  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

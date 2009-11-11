@@ -1,16 +1,16 @@
 Event log
 
 ondragstart src
-ondragenter left target
 ondrag src
+ondragenter left target
 ondragover left target
 ondrag src
 ondragover left target
 ondrag src
 ondragenter right target
 ondragleave left target
-ondrag src
 ondragover right target
+ondrag src
 ondragover right target
 ondrop right target
 ondragend src
