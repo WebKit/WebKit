@@ -1,3 +1,12 @@
+2009-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30221
+        [GTK] fails to load media embedded in iframe element
+
+        * platform/gtk/Skipped: Unskip fixed tests.
+
 2009-11-10  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,16 @@
+2009-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30221
+        [GTK] fails to load media embedded in iframe element
+
+        The FrameLoader can show Media if the audio/video support is
+        enabled at compile time.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::canShowMIMEType):
+
 2009-11-10  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Jan Alonzo.

@@ -769,8 +769,10 @@ bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const
 
 bool FrameLoaderClient::canShowMIMEType(const String& type) const
 {
-    return MIMETypeRegistry::isSupportedImageMIMEType(type) || MIMETypeRegistry::isSupportedNonImageMIMEType(type) ||
-        PluginDatabase::installedPlugins()->isMIMETypeRegistered(type);
+    return (MIMETypeRegistry::isSupportedImageMIMEType(type)
+            || MIMETypeRegistry::isSupportedNonImageMIMEType(type)
+            || MIMETypeRegistry::isSupportedMediaMIMEType(type)
+            || PluginDatabase::installedPlugins()->isMIMETypeRegistered(type));
 }
 
 bool FrameLoaderClient::representationExistsForURLScheme(const String&) const
