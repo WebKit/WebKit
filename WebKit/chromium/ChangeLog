@@ -1,3 +1,16 @@
+2009-11-11  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        SharedWorkerRepository.connect() does not call WebSharedWorkerRepository
+        https://bugs.webkit.org/show_bug.cgi?id=31371
+
+        Test: Unit tests can be enabled downstream when this lands.
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerRepository::connect):
+        Added missing call to WebSharedWorkerRepository.addSharedWorker().
+
 2009-11-11  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
