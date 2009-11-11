@@ -1,3 +1,20 @@
+2009-11-11  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert LayoutTests/fast/inline/dirtyLinesForInline.html into dumpAsText.
+        
+        This test checks if the browser crashes after some operations. It doesn't test
+        any other interesting features, so we can safely make it a dumpAsText test.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31335
+
+        * fast/inline/dirtyLinesForInline-expected.txt: Added.
+        * fast/inline/dirtyLinesForInline.html: Added dumpAsText().
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.checksum: Removed.
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.png: Removed.
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.txt: Removed.
+
 2009-11-11  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Timothy Hatcher.

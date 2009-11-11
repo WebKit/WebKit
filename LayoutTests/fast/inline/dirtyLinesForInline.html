@@ -28,6 +28,7 @@ The bug is fixed if we don't crash. </p>
 
 <script>
         if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
             layoutTestController.waitUntilDone();
             if (window.eventSender) {
                 eventSender.mouseMoveTo(50,75);
