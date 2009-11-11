@@ -5612,3 +5612,6 @@ fast/ruby/rubyDOM-remove-text2.html
 
 # SVG new tests
 svg/filters/feDisplacementMap.svg
+
+# Missing SocketStreamHandle implementation
+websocket/tests

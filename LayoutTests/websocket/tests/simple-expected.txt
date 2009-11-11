@@ -1,0 +1,10 @@
+Simple Web Socket test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Connected.
+Received: 'Hello from Simple WSH.'
+Closed.
+PASS successfullyParsed is true
+
+TEST COMPLETE

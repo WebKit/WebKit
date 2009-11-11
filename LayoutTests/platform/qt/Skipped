@@ -5045,3 +5045,6 @@ http/tests/xmlhttprequest/zero-length-response-sync.html
 http/tests/xmlhttprequest/workers/methods-async.html
 http/tests/xmlhttprequest/workers/methods.html
 http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+
+# Missing SocketStreamHandle implementation
+websocket/tests

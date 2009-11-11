@@ -96,3 +96,5 @@ media/video-empty-source.html
 # Ruby layout tests somehow cause http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html to fail
 fast/ruby
 
+# Missing SocketStreamHandle implementation
+websocket/tests

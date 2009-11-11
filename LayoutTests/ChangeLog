@@ -1,3 +1,25 @@
+2009-11-11  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Levin.
+
+        Add a simple web socket test. This tests basic features of Web Socket.
+        This also serves as an example of Web Socket tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27492
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * websocket/tests/resources/simple.js: Added.
+        (ws.onopen):
+        (ws.onmessage):
+        (ws.onclose):
+        (timeOutCallback):
+        * websocket/tests/simple-expected.txt: Added.
+        * websocket/tests/simple.html: Added.
+        * websocket/tests/simple_wsh.py: Added.
+
 2009-11-11  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
