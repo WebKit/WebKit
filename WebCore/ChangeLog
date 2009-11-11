@@ -1,3 +1,23 @@
+2009-11-11  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Optimize V8 getDOMNodeMap(), a hot function in Dromaeo DOM tests, by increasing inlining.
+
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::getCurrent):  Moved getCurrentMainThread to MainThreadDOMData::getCurrent
+            so it can be inlined by its caller.
+        * bindings/v8/DOMData.h:
+        * bindings/v8/MainThreadDOMData.cpp:
+        (WebCore::MainThreadDOMData::getCurrent):  Moved here from DOMData.cpp.
+        (WebCore::MainThreadDOMData::getMainThreadStore):  Added UNLIKELY macro to improve codegen.
+        (WebCore::MainThreadDOMData::getCurrentMainThreadStore):  Combination of getCurrentMainThread
+            and getStore, which inline both calls together.
+        * bindings/v8/MainThreadDOMData.h:
+        (WebCore::MainThreadDOMData::getStore):  Broke out nonvirtual getMainThreadStore for inlineability.
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMNodeMap):  Call new getCurrentMainThreadStore, which is faster.
+
 2009-11-11  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

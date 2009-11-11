@@ -47,7 +47,6 @@ namespace WebCore {
         DOMData();
 
         static DOMData* getCurrent();
-        static DOMData* getCurrentMainThread(); // Caller must be on the main thread.
         virtual DOMDataStore& getStore() = 0;
 
         template<typename T>

@@ -39,14 +39,30 @@ MainThreadDOMData::MainThreadDOMData()
     : m_defaultStore(this)
 {
 }
-
-DOMDataStore& MainThreadDOMData::getStore()
+    
+MainThreadDOMData* MainThreadDOMData::getCurrent()
 {
     ASSERT(WTF::isMainThread());
+    DEFINE_STATIC_LOCAL(MainThreadDOMData, mainThreadDOMData, ());
+    return &mainThreadDOMData;
+}
+
+DOMDataStore& MainThreadDOMData::getMainThreadStore()
+{
+    // This is broken out as a separate non-virtual method from getStore()
+    // so that it can be inlined by getCurrentMainThreadStore, which is
+    // a hot spot in Dromaeo DOM tests.
+    ASSERT(WTF::isMainThread());
     V8IsolatedWorld* world = V8IsolatedWorld::getEntered();
-    if (world)
+    if (UNLIKELY(world != 0))
         return *world->getDOMDataStore();
     return m_defaultStore;
 }
+
+DOMDataStore& MainThreadDOMData::getCurrentMainThreadStore()
+{
+    return getCurrent()->getMainThreadStore();
+}
+
 
 } // namespace WebCore

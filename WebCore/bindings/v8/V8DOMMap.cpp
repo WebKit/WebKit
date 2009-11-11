@@ -34,6 +34,7 @@
 #include "DOMData.h"
 #include "DOMDataStore.h"
 #include "DOMObjectsInclude.h"
+#include "MainThreadDOMData.h"
 #include "ScopedDOMDataStore.h"
 
 namespace WebCore {
@@ -49,8 +50,7 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
 
 DOMWrapperMap<Node>& getDOMNodeMap()
 {
-    // Nodes only exist on the main thread.
-    return DOMData::getCurrentMainThread()->getStore().domNodeMap();
+    return MainThreadDOMData::getCurrentMainThreadStore().domNodeMap();
 }
 
 DOMWrapperMap<void>& getDOMObjectMap()

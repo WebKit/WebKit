@@ -38,10 +38,16 @@ namespace WebCore {
 
     class MainThreadDOMData : public DOMData {
     public:
-        MainThreadDOMData();
-        DOMDataStore& getStore();
+        static MainThreadDOMData* getCurrent(); // Caller must be on the main thread.
+        static DOMDataStore& getCurrentMainThreadStore();
+                
+        virtual DOMDataStore& getStore() { return getMainThreadStore(); }
+        
 
     private:
+        MainThreadDOMData();
+        DOMDataStore& getMainThreadStore();
+
         StaticDOMDataStore m_defaultStore;
         // Note: The DOMDataStores for isolated world are owned by the world object.
     };

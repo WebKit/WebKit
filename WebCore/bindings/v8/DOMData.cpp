@@ -46,17 +46,10 @@ DOMData::DOMData()
 DOMData* DOMData::getCurrent()
 {
     if (WTF::isMainThread())
-        return getCurrentMainThread();
+        return MainThreadDOMData::getCurrent();
 
     DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<ChildThreadDOMData>, childThreadDOMData, ());
     return childThreadDOMData;
-}
-
-DOMData* DOMData::getCurrentMainThread()
-{
-    ASSERT(WTF::isMainThread());
-    DEFINE_STATIC_LOCAL(MainThreadDOMData, mainThreadDOMData, ());
-    return &mainThreadDOMData;
 }
 
 void DOMData::ensureDeref(V8ClassIndex::V8WrapperType type, void* domObject)
