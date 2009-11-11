@@ -1,3 +1,13 @@
+2009-11-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no reviewed.
+
+        Correct setPlatformFillColor and setPlatformStrokeColor calls
+        to match new ColorSpace-supporting signatures.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:  Add the
+          color space to the set[...]Color calls.
+
 2009-11-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

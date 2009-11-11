@@ -74,8 +74,8 @@ GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
 
     if (m_data->cr) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor());
-        setPlatformStrokeColor(strokeColor());
+        setPlatformFillColor(fillColor(), fillColorSpace());
+        setPlatformStrokeColor(strokeColor(), strokeColorSpace());
     }
 }
 
