@@ -1,3 +1,18 @@
+2009-11-11  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add methods to KURLGoogle.cpp declared in http://trac.webkit.org/changeset/50784 but not defined when using KURLGoogle.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31357
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::isSchemeFirstChar):
+        (WebCore::isSchemeChar):
+        (WebCore::KURL::hasPort):
+        (WebCore::KURL::removePort):
+        (WebCore::protocolIsValid):
+
 2009-11-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no reviewed.
