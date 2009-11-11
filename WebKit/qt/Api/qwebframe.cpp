@@ -471,7 +471,9 @@ QString QWebFrame::toPlainText() const
         d->frame->view()->layout();
 
     Element *documentElement = d->frame->document()->documentElement();
-    return documentElement->innerText();
+    if (documentElement)
+        return documentElement->innerText();
+    return QString();
 }
 
 /*!
