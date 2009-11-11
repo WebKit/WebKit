@@ -1,3 +1,15 @@
+2009-11-11  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        De-inline convertNodeToV8Object(), which expands to a lot of asm code and is inlined 136
+        times in the generated V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=31368
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertNodeToV8Object):  Moved body here from .h file
+        * bindings/v8/V8DOMWrapper.h:  Removed inline method body.
+
 2009-11-11  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Timothy Hatcher.

@@ -147,22 +147,7 @@ namespace WebCore {
             return convertNodeToV8Object(node.get());
         }
 
-        static v8::Handle<v8::Value> convertNodeToV8Object(Node* node)
-        {
-            if (!node)
-                return v8::Null();
-
-            Document* document = node->document();
-            if (node == document)
-                return convertDocumentToV8Object(document);
-
-            DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
-            v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
-            if (wrapper.IsEmpty())
-                return convertNewNodeToV8Object(node, 0, domNodeMap);
-
-            return wrapper;
-        }
+        static v8::Handle<v8::Value> convertNodeToV8Object(Node*);
 
         static v8::Handle<v8::Value> convertDocumentToV8Object(Document*);
 

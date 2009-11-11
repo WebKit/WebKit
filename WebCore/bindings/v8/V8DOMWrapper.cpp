@@ -1305,6 +1305,23 @@ v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document
     return wrapper;
 }
 
+v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
+{
+    if (!node)
+        return v8::Null();
+    
+    Document* document = node->document();
+    if (node == document)
+        return convertDocumentToV8Object(document);
+    
+    DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
+    v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
+    if (wrapper.IsEmpty())
+        return convertNewNodeToV8Object(node, 0, domNodeMap);
+    
+    return wrapper;
+}
+    
 // Caller checks node is not null.
 v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy* proxy, DOMWrapperMap<Node>& domNodeMap)
 {
