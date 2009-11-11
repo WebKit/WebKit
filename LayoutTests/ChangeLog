@@ -1,3 +1,13 @@
+2009-11-11  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Dmitri Titov.
+
+        Fix layout test to not call onload on the wrong window after image has
+        been dropped onto the iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=30893
+
+        * editing/selection/drag-to-contenteditable-iframe.html:
+
 2009-11-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Beth Dakin.

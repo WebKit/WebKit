@@ -6,7 +6,6 @@ if (window.layoutTestController) {
      layoutTestController.waitUntilDone();
 }
 
-var loadedResources = 0;
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
@@ -16,16 +15,7 @@ function log(message) {
     li.appendChild(text);
 }
 
-function runTest() {     
-   // We need to wait for both the image and the iframe to load.
-   loadedResources++;
-   if (loadedResources == 2) {
-     step2();
-   }
-}
-
-function step2() 
-{
+function runTest() {
     if (!window.layoutTestController) {
         log("This test uses the eventSender.  To run it manually, drag the image into the editable frame and drop it.  It should appear inside the editable frame.");
         return;
@@ -50,13 +40,16 @@ function step2()
     
     layoutTestController.notifyDone();
 }
+
+window.onload = runTest;
+
 </script>
 </head>
 
 <body style="padding:0; margin:0">  
 
-<iframe id="frame" style="width: 200px; height: 200px; border: 4px solid black;" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>
-<img id="dragme" src="../resources/abe.png" onload="runTest();">
+<iframe id="frame" style="width: 200px; height: 200px; border: 4px solid black;" src="../resources/contenteditable-iframe-src.html"></iframe>
+<img id="dragme" src="../resources/abe.png">
 
 <ul id="console"></ul>
 </body>
