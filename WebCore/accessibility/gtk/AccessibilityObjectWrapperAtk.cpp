@@ -404,21 +404,21 @@ static AtkRole atkRole(AccessibilityRole role)
 
 static AtkRole webkit_accessible_get_role(AtkObject* object)
 {
-    AccessibilityObject* AXObject = core(object);
+    AccessibilityObject* axObject = core(object);
 
-    if (!AXObject)
+    if (!axObject)
         return ATK_ROLE_UNKNOWN;
 
     // WebCore does not seem to have a role for list items
-    if (AXObject->isGroup()) {
-        AccessibilityObject* parent = AXObject->parentObjectUnignored();
+    if (axObject->isGroup()) {
+        AccessibilityObject* parent = axObject->parentObjectUnignored();
         if (parent && parent->isList())
             return ATK_ROLE_LIST_ITEM;
     }
 
     // WebCore does not know about paragraph role, label role, or section role
-    if (AXObject->isAccessibilityRenderObject()) {
-        Node* node = static_cast<AccessibilityRenderObject*>(AXObject)->renderer()->node();
+    if (axObject->isAccessibilityRenderObject()) {
+        Node* node = static_cast<AccessibilityRenderObject*>(axObject)->renderer()->node();
         if (node) {
             if (node->hasTagName(HTMLNames::pTag))
                 return ATK_ROLE_PARAGRAPH;
@@ -430,10 +430,10 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
     }
 
     // Note: Why doesn't WebCore have a password field for this
-    if (AXObject->isPasswordField())
+    if (axObject->isPasswordField())
         return ATK_ROLE_PASSWORD_TEXT;
 
-    return atkRole(AXObject->roleValue());
+    return atkRole(axObject->roleValue());
 }
 
 static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkStateSet* stateSet)

@@ -1,3 +1,14 @@
+2009-11-11  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30901
+        [Gtk] Need to de-lint the Atk a11y code
+
+        Cleaned up some missed capitalization style-guideline violations.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+
 2009-11-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Eric Seidel.
