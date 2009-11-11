@@ -1,5 +1,11 @@
 2009-11-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Linux build fix: Added an #include for UINT_MAX.
+
+        * runtime/WeakRandom.h:
+
+2009-11-10  Geoffrey Garen  <ggaren@apple.com>
+
         JavaScriptGlue build fix: Marked a file 'private' instead of 'project'.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
