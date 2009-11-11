@@ -441,7 +441,7 @@ END
     return V8DOMWrapper::getConstructor(type, workerContext);
 END
     } else {
-        push(@implContentDecls, "    return v8::Undefined();");
+        push(@implContentDecls, "    return v8::Handle<v8::Value>();");
     }
 
     push(@implContentDecls, <<END);
@@ -522,7 +522,7 @@ END
         # perform lookup first
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
-    if (holder.IsEmpty()) return v8::Undefined();
+    if (holder.IsEmpty()) return v8::Handle<v8::Value>();
 END
       }
         HolderToNative($dataNode, $implClassName, $classIndex);
@@ -535,9 +535,9 @@ END
 
     # Generate security checks if necessary
     if ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
-        push(@implContentDecls, "    if (!V8Proxy::checkNodeSecurity(imp->$attrName())) return v8::Undefined();\n\n");
+        push(@implContentDecls, "    if (!V8Proxy::checkNodeSecurity(imp->$attrName())) return v8::Handle<v8::Value>();\n\n");
     } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
-        push(@implContentDecls, "    if (!V8Proxy::checkNodeSecurity(imp->contentDocument())) return v8::Undefined();\n\n");
+        push(@implContentDecls, "    if (!V8Proxy::checkNodeSecurity(imp->contentDocument())) return v8::Handle<v8::Value>();\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions} and !($isPodType);
@@ -617,7 +617,7 @@ END
     } else {
         if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
             push(@implContentDecls, "    if (!imp->document())\n");
-            push(@implContentDecls, "      return v8::Undefined();\n");
+            push(@implContentDecls, "      return v8::Handle<v8::Value>();\n");
         }
 
         if ($useExceptions) {
@@ -849,7 +849,7 @@ sub GenerateFunctionCallback
 
     if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
         push(@implContentDecls,
-            "    if (args.Length() < $numParameters) return v8::Undefined();\n");
+            "    if (args.Length() < $numParameters) return v8::Handle<v8::Value>();\n");
     }
 
     if (IsPodType($implClassName)) {
@@ -871,7 +871,7 @@ END
     # We have not find real use cases yet.
     push(@implContentDecls,
 "    if (!V8Proxy::canAccessFrame(imp->frame(), true)) {\n".
-"      return v8::Undefined();\n" .
+"      return v8::Handle<v8::Value>();\n" .
 "    }\n");
     }
 
@@ -891,7 +891,7 @@ END
     if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
         push(@implContentDecls,
 "    if (!V8Proxy::checkNodeSecurity(imp->getSVGDocument(ec)))\n" .
-"      return v8::Undefined();\n");
+"      return v8::Handle<v8::Value>();\n");
     }
 
     my $paramIndex = 0;
@@ -2124,7 +2124,7 @@ sub ReturnNativeToJSValue
 
     return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
     return "return $value ? v8::True() : v8::False()" if $type eq "boolean";
-    return "return v8::Undefined()" if $type eq "void";
+    return "return v8::Handle<v8::Value>()" if $type eq "void";
 
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.

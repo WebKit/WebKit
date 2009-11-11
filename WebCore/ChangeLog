@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Make V8 bindings return NULL handles instead of calling v8::Undefined(). This has equivalent
+        meaning to the caller, saves code, and appears to save a few cycles at runtime too.
+        https://bugs.webkit.org/show_bug.cgi?id=31367
+
+        * bindings/scripts/CodeGeneratorV8.pm: Change "v8::Undefined()" to "v8::Handle<v8::Value>()"
+
+2009-11-11  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Optimize V8 getDOMNodeMap(), a hot function in Dromaeo DOM tests, by increasing inlining.
 
         * bindings/v8/DOMData.cpp:
