@@ -604,6 +604,10 @@ void dumpRenderTree(int argc, const char *argv[])
 
     // <http://webkit.org/b/31200> In order to prevent extra frame load delegate logging being generated if the first test to use SSL
     // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1.
+#if BUILDING_ON_TIGER
+    // Initialize internal NSURLRequest data for setAllowsAnyHTTPSCertificate:forHost: to work properly.
+    [[[[NSURLRequest alloc] init] autorelease] HTTPMethod];
+#endif
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
 

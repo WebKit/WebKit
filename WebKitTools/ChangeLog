@@ -1,3 +1,12 @@
+2009-11-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31200
+        Tests in http/tests/security/mixedContent start to fail when new tests are added
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (dumpRenderTree): Added a workaround for Tiger bug.
+
 2009-11-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Jan Alonzo.
