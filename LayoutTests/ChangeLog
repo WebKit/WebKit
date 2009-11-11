@@ -1,3 +1,20 @@
+2009-11-11  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31334
+        
+        We should skip the test case /fast/events/drag-and-drop-fire-drag-dragover.html
+        on both the Qt and GTK builds since there are issues with drag-and-drop support
+        in these builds.
+        
+        For Qt: https://bugs.webkit.org/show_bug.cgi?id=31332
+        For GTK: https://bugs.webkit.org/show_bug.cgi?id=30576
+
+        * platform/gtk/Skipped: Skip test case /fast/events/drag-and-drop-fire-drag-dragover.html
+        since there are issues with drag-and-drop support in both GTK and Qt.
+        * platform/qt/Skipped: Ditto.
+
 2009-11-11  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Eric Seidel.

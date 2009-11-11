@@ -185,9 +185,11 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 fast/dom/elementFromPoint-relative-to-viewport.html
 
 # ------- missing drag-and-drop support
+# See bug https://bugs.webkit.org/show_bug.cgi?id=31332
 fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+fast/events/drag-and-drop-fire-drag-dragover.html
 
 # ------- broken backgroundOf(el)
 fast/forms/input-live-pseudo-selectors.html
