@@ -1,3 +1,23 @@
+2009-11-11  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Timeline tests for records generated for
+        Layout, Paint, ParseHTML, MarkTimeline, and Style Recalculation
+
+        https://bugs.webkit.org/show_bug.cgi?id=31361
+
+        * inspector/timeline-layout-expected.txt: Added.
+        * inspector/timeline-layout.html: Added.
+        * inspector/timeline-mark-timeline-expected.txt: Added.
+        * inspector/timeline-mark-timeline.html: Added.
+        * inspector/timeline-paint-expected.txt: Added.
+        * inspector/timeline-paint.html: Added.
+        * inspector/timeline-parse-html-expected.txt: Added.
+        * inspector/timeline-parse-html.html: Added.
+        * inspector/timeline-recalculate-styles-expected.txt: Added.
+        * inspector/timeline-recalculate-styles.html: Added.
+
 2009-11-11  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function analyzeTimelineData(timelineRecords) 
+{
+    // Uncomment to debugging the list of data returned.
+    // dumpTimelineRecords(timelineRecords);
+
+    // Search for the first Layout record you can find
+    var numRecords = timelineRecords.length;
+    for (var i = 0 ; i < numRecords; ++i) {
+        var record = timelineRecords[i];
+        if (record.type === timelineAgentRecordType.Layout) {
+            printTimelineRecordProperties(record);
+            break;
+        }
+    }
+}
+
+function doit() 
+{
+    retrieveTimelineData(analyzeTimelineData);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests the Timeline API instrumentation of a Layout event
+</p>
+
+</body>
+</html>

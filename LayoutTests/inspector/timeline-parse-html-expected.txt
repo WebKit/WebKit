@@ -1,0 +1,8 @@
+Tests the Timeline API instrumentation of ParseHTML
+
+ParseHTML Properties:
++ startTime : * DEFINED *
++ children : * DEFINED *
++ endTime : * DEFINED *
++ type : 4
+

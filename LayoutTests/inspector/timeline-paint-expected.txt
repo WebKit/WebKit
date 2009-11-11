@@ -1,0 +1,14 @@
+Tests the Timeline API instrumentation of a paint event
+
+Paint Properties:
++ startTime : * DEFINED *
++ data : {
++- x : 0
++- y : 0
++- width : 800
++- height : 350
++ }
++ children : * DEFINED *
++ endTime : * DEFINED *
++ type : 3
+
