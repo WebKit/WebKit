@@ -1,3 +1,11 @@
+2009-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compute correct library paths for Qt
+
+        * Scripts/webkitdirs.pm:
+
 2009-11-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

@@ -521,8 +521,18 @@ sub builtDylibPathForName
 {
     my $libraryName = shift;
     determineConfigurationProductDir();
-    if (isQt() or isChromium()) {
+    if (isChromium()) {
         return "$configurationProductDir/$libraryName";
+    }
+    if (isQt()) {
+        $libraryName = "QtWebKit";
+        if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
+            return "$configurationProductDir/lib/$libraryName.framework/$libraryName";
+        } elsif (isWindows() or isCygwin()) {
+            return "$configurationProductDir/lib/$libraryName.dll";
+        } else {
+            return "$configurationProductDir/lib/lib$libraryName.so";
+        }
     }
     if (isWx()) {
         return "$configurationProductDir/libwxwebkit.dylib";
@@ -561,7 +571,7 @@ sub libraryContainsSymbol
     my $path = shift;
     my $symbol = shift;
 
-    if (isCygwin()) {
+    if (isCygwin() or isWindows()) {
         # FIXME: Implement this for Windows.
         return 0;
     }
