@@ -1,3 +1,25 @@
+2009-11-10  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, fix Chromium build after http://trac.webkit.org/changeset/50760.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::paintBorder):
+        (WebCore::PopupListBox::paint):
+        (WebCore::PopupListBox::paintRow):
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::setupLayerForWhiteLayer):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider):
+        (WebCore::paintMediaVolumeSlider):
+        (WebCore::paintMediaTimelineContainer):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMenuListButton):
+
 2009-11-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

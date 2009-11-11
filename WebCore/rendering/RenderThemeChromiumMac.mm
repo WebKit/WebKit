@@ -983,7 +983,7 @@ bool RenderThemeChromiumMac::paintMenuListButton(RenderObject* o, const RenderOb
     
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->color());
+    paintInfo.context->setFillColor(o->style()->color(), DeviceColorSpace);
     paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
@@ -1012,11 +1012,11 @@ bool RenderThemeChromiumMac::paintMenuListButton(RenderObject* o, const RenderOb
     // Draw the separator to the left of the arrows
     paintInfo.context->setStrokeThickness(1.0f); // Deliberately ignores zoom since it looks nicer if it stays thin.
     paintInfo.context->setStrokeStyle(SolidStroke);
-    paintInfo.context->setStrokeColor(leftSeparatorColor);
+    paintInfo.context->setStrokeColor(leftSeparatorColor, DeviceColorSpace);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator, bounds.bottom()));
 
-    paintInfo.context->setStrokeColor(rightSeparatorColor);
+    paintInfo.context->setStrokeColor(rightSeparatorColor, DeviceColorSpace);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.bottom()));
 

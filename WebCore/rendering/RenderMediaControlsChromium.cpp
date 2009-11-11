@@ -114,9 +114,9 @@ static bool paintMediaSlider(RenderObject* object, const RenderObject::PaintInfo
     context->save();
     context->setShouldAntialias(true);
     context->setStrokeStyle(SolidStroke);
-    context->setStrokeColor(style->borderLeftColor());
+    context->setStrokeColor(style->borderLeftColor(), DeviceColorSpace);
     context->setStrokeThickness(style->borderLeftWidth());
-    context->setFillColor(style->backgroundColor());
+    context->setFillColor(style->backgroundColor(), DeviceColorSpace);
     context->drawRect(rect);
     context->restore();
 
@@ -172,13 +172,13 @@ static bool paintMediaVolumeSlider(RenderObject* object, const RenderObject::Pai
     GraphicsContext* context = paintInfo.context;
     Color originalColor = context->strokeColor();
     if (originalColor != Color::white)
-        context->setStrokeColor(Color::white);
+        context->setStrokeColor(Color::white, DeviceColorSpace);
 
     int x = rect.x() + rect.width() / 2;
     context->drawLine(IntPoint(x, rect.y()),  IntPoint(x, rect.y() + rect.height()));
 
     if (originalColor != Color::white)
-        context->setStrokeColor(originalColor);
+        context->setStrokeColor(originalColor, DeviceColorSpace);
     return true;
 }
 
@@ -207,17 +207,17 @@ static bool paintMediaTimelineContainer(RenderObject* object, const RenderObject
 
         // Draw the left border using CSS defined width and color.
         context->setStrokeThickness(object->style()->borderLeftWidth());
-        context->setStrokeColor(object->style()->borderLeftColor().rgb());
+        context->setStrokeColor(object->style()->borderLeftColor().rgb(), DeviceColorSpace);
         context->drawLine(IntPoint(rect.x() + 1, rect.y()),
                           IntPoint(rect.x() + 1, rect.y() + rect.height()));
 
         // Draw the right border using CSS defined width and color.
         context->setStrokeThickness(object->style()->borderRightWidth());
-        context->setStrokeColor(object->style()->borderRightColor().rgb());
+        context->setStrokeColor(object->style()->borderRightColor().rgb(), DeviceColorSpace);
         context->drawLine(IntPoint(rect.x() + rect.width() - 1, rect.y()),
                           IntPoint(rect.x() + rect.width() - 1, rect.y() + rect.height()));
 
-        context->setStrokeColor(originalColor);
+        context->setStrokeColor(originalColor, DeviceColorSpace);
         context->setStrokeThickness(originalThickness);
         context->setStrokeStyle(originalStyle);
     }

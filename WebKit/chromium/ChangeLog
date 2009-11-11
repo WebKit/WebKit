@@ -1,3 +1,10 @@
+2009-11-10  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium build fix for http://trac.webkit.org/changeset/50760.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::paint):
+
 2009-11-10  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

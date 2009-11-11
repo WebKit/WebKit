@@ -446,7 +446,7 @@ void PopupContainer::paintBorder(GraphicsContext* gc, const IntRect& rect)
     Color borderColor(127, 157, 185);
 
     gc->setStrokeStyle(NoStroke);
-    gc->setFillColor(borderColor);
+    gc->setFillColor(borderColor, DeviceColorSpace);
 
     int tx = x();
     int ty = y();
@@ -772,7 +772,7 @@ void PopupListBox::paint(GraphicsContext* gc, const IntRect& rect)
 
     // Special case for an empty popup.
     if (numItems() == 0)
-        gc->fillRect(r, Color::white);
+        gc->fillRect(r, Color::white, DeviceColorSpace);
 
     gc->restore();
 
@@ -805,23 +805,23 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // If we have a transparent background, make sure it has a color to blend
     // against.
     if (backColor.hasAlpha())
-        gc->fillRect(rowRect, Color::white);
+        gc->fillRect(rowRect, Color::white, DeviceColorSpace);
 
-    gc->fillRect(rowRect, backColor);
+    gc->fillRect(rowRect, backColor, DeviceColorSpace);
     
     if (m_popupClient->itemIsSeparator(rowIndex)) {
         IntRect separatorRect(
             rowRect.x() + separatorPadding,
             rowRect.y() + (rowRect.height() - separatorHeight) / 2,
             rowRect.width() - 2 * separatorPadding, separatorHeight);
-        gc->fillRect(separatorRect, textColor);
+        gc->fillRect(separatorRect, textColor, DeviceColorSpace);
         return;
     }
     
     if (!style.isVisible())
         return;
 
-    gc->setFillColor(textColor);
+    gc->setFillColor(textColor, DeviceColorSpace);
 
     Font itemFont = getRowFont(rowIndex);
     // FIXME: http://crbug.com/19872 We should get the padding of individual option
