@@ -1,3 +1,9 @@
+2009-11-11  David Boddie  <dboddie@trolltech.com>
+
+        [Qt] Doc: Added internal or hidden placeholder documentation.
+
+        * Api/qwebpage.cpp:
+
 2009-11-11  Martin Smith  <msmith@trolltech.com>
 
         [Qt] doc: Changed Trolltech to Nokia
