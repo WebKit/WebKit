@@ -1,3 +1,9 @@
+2009-11-11  Martin Smith  <msmith@trolltech.com>
+
+        [Qt] doc: Changed Trolltech to Nokia
+
+        * Api/qwebview.cpp:
+
 2009-11-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
