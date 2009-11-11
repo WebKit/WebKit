@@ -345,6 +345,14 @@ fast/text/international/bidi-menulist.html
 fast/text/international/wrap-CJK-001.html
 fast/xpath/string-value.html
 
+# ------- plugin tests that use Objective-C
+plugins/call-as-function-test.html
+plugins/jsobjc-dom-wrappers.html
+plugins/jsobjc-simple.html
+plugins/root-object-premature-delete-crash.html
+plugins/throw-on-dealloc.html
+plugins/undefined-property-crash.html
+
 # ------- all other failures (not looked at)
 fast/box-sizing/percentage-height.html
 fast/css/acid2-pixel.html
@@ -467,19 +475,13 @@ fast/text/midword-break-after-breakable-char.html
 fast/text/textIteratorNilRenderer.html
 fast/text/international/002.html
 
-plugins/call-as-function-test.html
 plugins/destroy-during-npp-new.html
 plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
 plugins/geturl-replace-query.html
-plugins/jsobjc-dom-wrappers.html
-plugins/jsobjc-simple.html
 plugins/mouse-events.html
 plugins/open-and-close-window-with-plugin.html
-plugins/root-object-premature-delete-crash.html
-plugins/throw-on-dealloc.html
-plugins/undefined-property-crash.html
 
 security/block-test.html
 svg/W3C-SVG-1.1/animate-elem-02-t.svg
