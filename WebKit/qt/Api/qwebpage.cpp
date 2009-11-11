@@ -153,6 +153,7 @@ public:
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
     virtual void setInputMethodEnabled(bool enable);
+    virtual bool inputMethodEnabled() const;
 #if QT_VERSION >= 0x040600
     virtual void setInputMethodHint(Qt::InputMethodHint hint, bool enable);
 #endif
@@ -185,6 +186,12 @@ void QWebPageWidgetClient::setInputMethodEnabled(bool enable)
 {
     view->setAttribute(Qt::WA_InputMethodEnabled, enable);
 }
+
+bool QWebPageWidgetClient::inputMethodEnabled() const
+{
+    return view->testAttribute(Qt::WA_InputMethodEnabled);
+}
+
 #if QT_VERSION >= 0x040600
 void QWebPageWidgetClient::setInputMethodHint(Qt::InputMethodHint hint, bool enable)
 {
@@ -857,13 +864,13 @@ void QWebPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    if (q->view() && q->view()->testAttribute(Qt::WA_InputMethodEnabled)
+    if (client && client->inputMethodEnabled()
         && button == Qt::LeftButton && qApp->autoSipEnabled()) {
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
-            q->view()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
+            client->ownerWidget()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
         if (!clickCausedFocus || behavior == QStyle::RSIP_OnMouseClick) {
             QEvent event(QEvent::RequestSoftwareInputPanel);
-            QApplication::sendEvent(q->view(), &event);
+            QApplication::sendEvent(client->ownerWidget(), &event);
         }
     }
 

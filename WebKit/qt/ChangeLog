@@ -1,3 +1,25 @@
+2009-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix enabling of software input panel when activating editable elements
+        in QGraphicsWebView.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::inputMethodEnabled): Implement method to
+        query for input method support.
+        * Api/qwebpage.cpp:
+        (QWebPageWidgetClient::inputMethodEnabled): Ditto for QWidget.
+        (QWebPagePrivate::handleSoftwareInputPanel): Don't use view() to
+        test for input method support. Instead query using QWebPageClient
+        and send the SIPR event to the ownerWidget() instead of the view().
+        The latter is null for QGraphicsWebView.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (EventSpy::EventSpy):
+        (EventSpy::eventFilter):
+        (tst_QWebPage::inputMethods): Modify the test to verify that SIPR
+        events are dispatched when activating focusable content.
+
 2009-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed documentation fixes.
