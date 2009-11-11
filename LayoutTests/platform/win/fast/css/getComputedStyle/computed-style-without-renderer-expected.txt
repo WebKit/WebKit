@@ -120,6 +120,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-box-reflect: none
     -webkit-box-shadow: none
     -webkit-box-sizing: content-box
+    -webkit-color-correction: default
     -webkit-column-break-after: auto
     -webkit-column-break-before: auto
     -webkit-column-break-inside: auto

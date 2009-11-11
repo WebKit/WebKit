@@ -1,3 +1,10 @@
+2009-11-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Update getComputedStyle results for Windows to add -webkit-color-correction.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-11-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (Fix my own layout-test snafu)
