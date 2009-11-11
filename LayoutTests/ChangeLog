@@ -1,5 +1,14 @@
 2009-11-11  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Unskip the webkit-color-correction tests because the workaround of using
+        the deviceRGBColorSpace allows the tests to pass on Windows.
+
+        * platform/win/Skipped:
+
+2009-11-11  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Darin Adler.
 
         Skip the webkit-color-correction tests because they crash on Windows 

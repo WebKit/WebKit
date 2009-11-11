@@ -1,3 +1,13 @@
+2009-11-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        If we are on Windows, don't try and get the kCGColorSpaceSRGB ColorSpace,
+        because there is a CG bug preventing this from working.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::sRGBColorSpaceRef):
+
 2009-11-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

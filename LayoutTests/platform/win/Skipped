@@ -682,9 +682,3 @@ fast/dom/HTMLObjectElement/children-changed.html
 
 # Missing SocketStreamHandle implementation
 websocket/tests
-
-# https://bugs.webkit.org/show_bug.cgi?id=31363
-fast/css/color-correction-backgrounds-and-text.html
-fast/css/color-correction-on-backgrounds.html
-fast/css/color-correction-on-text.html
-fast/css/color-correction.html

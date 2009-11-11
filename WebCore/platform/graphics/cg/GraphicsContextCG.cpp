@@ -69,7 +69,8 @@ static CGColorSpaceRef deviceRGBColorSpaceRef()
 
 static CGColorSpaceRef sRGBColorSpaceRef()
 {
-#ifdef BUILDING_ON_TIGER
+    // FIXME: Windows should be able to use kCGColorSpaceSRGB, this is tracked by http://webkit.org/b/31363.
+#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
     return deviceRGBColorSpaceRef();
 #else
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
