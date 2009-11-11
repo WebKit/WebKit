@@ -1,3 +1,19 @@
+2009-11-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Refactor multiple JavaScriptCore threads
+        https://bugs.webkit.org/show_bug.cgi?id=31328
+
+        Remove the id field from the PlatformThread structure 
+        as it is not used.
+
+        * runtime/Collector.cpp:
+        (JSC::getCurrentPlatformThread):
+        (JSC::suspendThread):
+        (JSC::resumeThread):
+        (JSC::getPlatformThreadRegisters):
+
 2009-11-10  Geoffrey Garen  <ggaren@apple.com>
 
         Linux build fix: Added an #include for UINT_MAX.
