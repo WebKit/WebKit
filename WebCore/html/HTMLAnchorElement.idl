@@ -37,7 +37,7 @@ module html {
         attribute [ConvertNullToNullString, Reflect] DOMString target;
         attribute [ConvertNullToNullString, Reflect] DOMString type;
 
-        // IE Extensions
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString hash;
         readonly attribute DOMString host;
         readonly attribute DOMString hostname;
@@ -45,6 +45,16 @@ module html {
         readonly attribute DOMString port;
         readonly attribute DOMString protocol;
         readonly attribute DOMString search;
+#else
+        attribute [ConvertNullToNullString] DOMString hash;
+        attribute [ConvertNullToNullString] DOMString host;
+        attribute [ConvertNullToNullString] DOMString hostname;
+        attribute [ConvertNullToNullString] DOMString pathname;
+        attribute [ConvertNullToNullString] DOMString port;
+        attribute [ConvertNullToNullString] DOMString protocol;
+        attribute [ConvertNullToNullString] DOMString search;
+#endif
+
         readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

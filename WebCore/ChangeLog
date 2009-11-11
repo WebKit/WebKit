@@ -1,3 +1,47 @@
+2009-11-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Implement URL decomposition IDL attributes for HTMLAnchorElement.
+        https://bugs.webkit.org/show_bug.cgi?id=29972.
+
+        Add methods for setting different parts of the URL in href attribute.
+
+        Tests: fast/dom/HTMLAnchorElement/set-href-attribute-hash.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-host.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-hostname.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-pathname.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-port.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-search.html
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setPort):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::parsePortFromStringPosition):
+        (WebCore::HTMLAnchorElement::setHash):
+        (WebCore::HTMLAnchorElement::setHost):
+        (WebCore::HTMLAnchorElement::setHostname):
+        (WebCore::HTMLAnchorElement::setPathname):
+        (WebCore::HTMLAnchorElement::setPort):
+        (WebCore::HTMLAnchorElement::setProtocol):
+        (WebCore::HTMLAnchorElement::setSearch):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL):
+        * platform/KURL.cpp:
+        (WebCore::KURL::removePort):
+        (WebCore::KURL::setPort):
+        (WebCore::KURL::prettyURL):
+        (WebCore::protocolIsValid):
+        * platform/KURL.h:
+        (WebCore::KURL::canSetHostOrPort):
+        (WebCore::KURL::canSetPathname):
+        (WebCore::KURL::hasPort):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
 2009-11-10  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, fix Chromium build after http://trac.webkit.org/changeset/50760.

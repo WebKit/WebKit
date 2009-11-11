@@ -257,8 +257,9 @@ void JSLocation::setPort(ExecState* exec, JSValue value)
     const UString& portString = value.toString(exec);
     int port = charactersToInt(portString.data(), portString.size());
     if (port < 0 || port > 0xFFFF)
-        port = 0;
-    url.setPort(port);
+        url.removePort();
+    else
+        url.setPort(port);
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }

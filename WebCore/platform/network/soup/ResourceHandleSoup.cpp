@@ -873,7 +873,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     // using GIO internally, and providing URIs instead of file paths
     url.removeFragmentIdentifier();
     url.setQuery(String());
-    url.setPort(0);
+    url.removePort();
 
 #if !PLATFORM(WIN_OS)
     // we avoid the escaping for local files, because

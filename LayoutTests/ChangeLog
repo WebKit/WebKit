@@ -1,3 +1,37 @@
+2009-11-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Implement URL decomposition IDL attributes for HTMLAnchorElement.
+        https://bugs.webkit.org/show_bug.cgi?id=29972
+
+        Testcases for setting and getting different parts of the URL.
+
+        * fast/dom/HTMLAnchorElement: Added.
+        * fast/dom/HTMLAnchorElement/script-tests: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/TEMPLATE.html: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-hash.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-host.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-hostname.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-pathname.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-port.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-protocol.js: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-search.js: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hostname-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hostname.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-pathname.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-port.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-search-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-search.html: Added.
+
 2009-11-10  Brian Weinstein  <bweinstein@apple.com>
 
         Update getComputedStyle results for Windows to add -webkit-color-correction.

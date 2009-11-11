@@ -605,8 +605,8 @@ KURL FrameLoader::iconURL()
     KURL url;
     url.setProtocol(m_URL.protocol());
     url.setHost(m_URL.host());
-    if (int port = m_URL.port())
-        url.setPort(port);
+    if (m_URL.hasPort())
+        url.setPort(m_URL.port());
     url.setPath("/favicon.ico");
     return url;
 }

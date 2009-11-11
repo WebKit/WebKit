@@ -62,12 +62,26 @@ public:
     const AtomicString& name() const;
 
     String hash() const;
+    void setHash(const String&);
+
     String host() const;
+    void setHost(const String&);
+
     String hostname() const;
+    void setHostname(const String&);
+
     String pathname() const;
+    void setPathname(const String&);
+
     String port() const;
+    void setPort(const String&);
+
     String protocol() const;
+    void setProtocol(const String&);
+
     String search() const;
+    void setSearch(const String&);
+
     String text() const;
 
     String toString() const;

@@ -685,18 +685,22 @@ void KURL::setHost(const String& s)
     parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
 }
 
+void KURL::removePort()
+{
+    if (m_hostEnd == m_portEnd)
+        return;
+    parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
+}
+
 void KURL::setPort(unsigned short i)
 {
     if (!m_isValid)
         return;
 
-    if (i) {
-        bool colonNeeded = m_portEnd == m_hostEnd;
-        int portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
+    bool colonNeeded = m_portEnd == m_hostEnd;
+    int portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
 
-        parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
-    } else
-        parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
+    parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
 }
 
 void KURL::setHostAndPort(const String& hostAndPort)
@@ -819,7 +823,7 @@ String KURL::prettyURL() const
             authority.append('@');
         }
         append(authority, host());
-        if (port() != 0) {
+        if (hasPort()) {
             authority.append(':');
             append(authority, String::number(port()));
         }
@@ -1622,6 +1626,18 @@ bool protocolIs(const String& url, const char* protocol)
 bool protocolIsJavaScript(const String& url)
 {
     return protocolIs(url, "javascript");
+}
+
+bool protocolIsValid(const String& protocol)
+{
+    if (!isSchemeFirstChar(protocol[0]))
+        return false;
+    unsigned protocolLength = protocol.length();
+    for (unsigned i = 1; i < protocolLength; i++) {
+        if (!isSchemeChar(protocol[i]))
+            return false;
+    }
+    return true;
 }
 
 String mimeTypeFromDataURL(const String& url)
