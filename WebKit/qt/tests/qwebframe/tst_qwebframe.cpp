@@ -38,6 +38,10 @@
 #endif
 #include "../util.h"
 
+#if defined(Q_OS_SYMBIAN)
+# define SRCDIR ""
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 

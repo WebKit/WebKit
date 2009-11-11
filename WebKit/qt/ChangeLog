@@ -1,3 +1,12 @@
+2009-11-11  Liang QI  <liang.qi@nokia.com>
+
+        [Qt] Fix tst_qwebpage and tst_qwebframe compilation on Symbian.
+
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebpage/tst_qwebpage.cpp:
+
 2009-11-11  Warwick Allison  <warwick.allison@nokia.com>, Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

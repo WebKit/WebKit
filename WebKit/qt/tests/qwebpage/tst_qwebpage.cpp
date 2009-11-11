@@ -40,6 +40,10 @@
 #include <QPushButton>
 #include <QDir>
 
+#if defined(Q_OS_SYMBIAN)
+# define SRCDIR ""
+#endif
+
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
