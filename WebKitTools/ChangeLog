@@ -1,5 +1,16 @@
 2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Simon Hausmann.
+
+        Implement missing functionality in the Gtk/Qt TestNetscapePlugin.
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_destroy_instance):
+        (webkit_test_plugin_destroy_stream):
+
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Implement the functionality needed by plugins/window-open.html
