@@ -41,7 +41,7 @@ namespace WebCore {
     class DOMWrapperWorld;
 
     class ScriptCachedFrameData  {
-        typedef HashMap<DOMWrapperWorld*, JSC::ProtectedPtr<JSDOMWindow> > JSDOMWindowSet;
+        typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::ProtectedPtr<JSDOMWindow> > JSDOMWindowSet;
 
     public:
         ScriptCachedFrameData(Frame*);
@@ -50,7 +50,6 @@ namespace WebCore {
         void restore(Frame*);
         void clear();
         DOMWindow* domWindow() const;
-        void forgetWorld(DOMWrapperWorld*);
 
     private:
         JSDOMWindowSet m_windows;

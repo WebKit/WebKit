@@ -1,3 +1,29 @@
+2009-11-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Simplify the ownership model for worlds - rather than having a pair of weak references
+        between DOMWrapperWorld and ScriptController/ScriptCachedFrameData, give the latter an
+        ref pointer to the former.  This reduces complexity & cost of the caching entries in the
+        back forward cache.
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMWrapperWorld::forgetDocument):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/js/ScriptController.h:
+
 2009-11-10  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

@@ -53,21 +53,12 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
-        DOMWrapperWorld* world = iter->first;
         JSDOMWindow* window = iter->second->window();
-        
-        world->rememberScriptCachedFrameData(this);
-        m_windows.add(world, window);
-
+        m_windows.add(iter->first.get(), window);
         m_domWindow = window->impl();
     }
 
     scriptController->attachDebugger(0);
-}
-
-void ScriptCachedFrameData::forgetWorld(DOMWrapperWorld* world)
-{
-    m_windows.remove(world);
 }
 
 DOMWindow* ScriptCachedFrameData::domWindow() const
@@ -91,7 +82,7 @@ void ScriptCachedFrameData::restore(Frame* frame)
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
-        DOMWrapperWorld* world = iter->first;
+        DOMWrapperWorld* world = iter->first.get();
         JSDOMWindowShell* windowShell = iter->second.get();
 
         if (JSDOMWindow* window = m_windows.get(world))
@@ -112,12 +103,6 @@ void ScriptCachedFrameData::clear()
         return;
 
     JSLock lock(SilenceAssertionsOnly);
-
-    for (JSDOMWindowSet::iterator iter = m_windows.begin(); iter != m_windows.end(); ++iter) {
-        DOMWrapperWorld* world = iter->first;
-        world->forgetScriptCachedFrameData(this);
-    }
-
     m_windows.clear();
     gcController().garbageCollectSoon();
 }

@@ -168,10 +168,6 @@ DOMWrapperWorld::~DOMWrapperWorld()
 
     for (HashSet<Document*>::iterator iter = documentsWithWrappers.begin(); iter != documentsWithWrappers.end(); ++iter)
         forgetWorldOfDOMNodesForDocument(*iter, this);
-    for (HashSet<ScriptController*>::iterator iter = scriptControllersWithShells.begin(); iter != scriptControllersWithShells.end(); ++iter)
-        (*iter)->forgetWorld(this);
-    for (HashSet<ScriptCachedFrameData*>::iterator iter = backForwardCachesWithShells.begin(); iter != backForwardCachesWithShells.end(); ++iter)
-        (*iter)->forgetWorld(this);
 }
 
 EnterDOMWrapperWorld::EnterDOMWrapperWorld(JSC::JSGlobalData& globalData, DOMWrapperWorld* isolatedWorld)
