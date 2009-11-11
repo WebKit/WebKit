@@ -87,6 +87,10 @@ using namespace std;
 @interface DumpRenderTreeEvent : NSEvent
 @end
 
+@interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
++(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
+@end
+
 static void runTest(const string& testPathOrURL);
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
@@ -596,9 +600,13 @@ void dumpRenderTree(int argc, const char *argv[])
     mainFrame = [webView mainFrame];
 
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-
     [WebCache empty];
-     
+
+    // <http://webkit.org/b/31200> In order to prevent extra frame load delegate logging being generated if the first test to use SSL
+    // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1.
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
+
     // <rdar://problem/5222911>
     testStringByEvaluatingJavaScriptFromString();
 

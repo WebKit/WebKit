@@ -51,10 +51,6 @@
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <wtf/Assertions.h>
 
-@interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
-+(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
-@end
-
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
 @end
@@ -182,13 +178,15 @@
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailProvisionalLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
+        printf("%s\n", [string UTF8String]);
     }
 
     if ([error domain] == NSURLErrorDomain && ([error code] == NSURLErrorServerCertificateHasUnknownRoot || [error code] == NSURLErrorServerCertificateUntrusted)) {
-        NSURL *failedURL = [[error userInfo] objectForKey:@"NSErrorFailingURLKey"];
-        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[failedURL _web_hostString]];
-        [frame loadRequest:[[[[frame provisionalDataSource] request] mutableCopy] autorelease]];
+        // <http://webkit.org/b/31200> In order to prevent extra frame load delegate logging being generated if the first test to use SSL
+        // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1 from within dumpRenderTree.
+        // Those are the only hosts that we use SSL with at present.  If we hit this code path then we've found another host that we need
+        // to apply the workaround to.
+        ASSERT_NOT_REACHED();
         return;
     }
     

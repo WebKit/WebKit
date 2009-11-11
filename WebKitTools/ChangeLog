@@ -1,3 +1,23 @@
+2009-11-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <http://webkit.org/b/31200> Tests in http/tests/security/mixedContent start to fail when new tests are added
+
+        The first request to an HTTPS URL results in didFailProvisionalLoadWithError being called with an error
+        about the validity of the self-signed certificates used in the regression tests.  We would then add the
+        host to the ignore list for SSL certificate errors and retry the request.  If this happened during a test
+        that had enabled frame load delegate logging this would result in extra log messages being generated,
+        causing the test to fail.
+
+        We address this by explicitly ignoring SSL certificate errors for localhost and 127.0.0.1 before running any
+        tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+
 2009-11-10  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
