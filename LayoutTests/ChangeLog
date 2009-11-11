@@ -1,5 +1,13 @@
 2009-11-10  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by NOBODY (Fix my own layout-test snafu)
+
+        Made a small change to my test then didn't update the results before landing.
+
+        * http/tests/webarchive/cross-origin-stylesheet-crash-expected.webarchive:
+
+2009-11-10  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig.
 
         Repro crash saving pcmag.com article as a webarchive.

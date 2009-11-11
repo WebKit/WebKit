@@ -30,7 +30,8 @@ Making a webarchive of this page should not crash.
 	<array>
 		<dict>
 			<key>WebResourceData</key>
-			<string> </string>
+			<string>
+</string>
 			<key>WebResourceMIMEType</key>
 			<string>text/css</string>
 			<key>WebResourceResponse</key>
