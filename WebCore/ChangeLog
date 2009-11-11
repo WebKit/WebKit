@@ -1,3 +1,27 @@
+2009-11-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31327
+        Clean up SocketStreamHandleClient interface
+
+        No change in behavior.
+
+        * platform/network/SocketStreamHandleClient.h: Removed willOpenStream and willSendData.
+        (WebCore::SocketStreamHandleClient::willOpenStream): Removed. This is currently not used by
+        the only client (WebSocketChannel), and it's not clear what this callback's semantics
+        should be.
+        (WebCore::SocketStreamHandleClient::willSendData): Ditto.
+        (WebCore::SocketStreamHandleClient::receivedCancellation): Removed, because it was misplaced.
+        For ResourceHandle, this method is called when the user cancels authentication sheet,
+        not when something happens with the stream.
+
+        * websockets/WebSocketChannel.h: Some WebSocketChannel methods were virtual without any
+        reason. Also, added didReceiveAuthenticationChallenge/didCancelAuthenticationChallenge.
+
+        * websockets/WebSocketChannel.cpp: Adjusted for the above change. Authentication-related
+        callbacks have no real implementation yet.
+
 2009-11-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

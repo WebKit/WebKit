@@ -50,21 +50,18 @@ namespace WebCore {
         static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
         virtual ~WebSocketChannel();
 
-        virtual void connect();
+        void connect();
+        bool send(const String& msg);
+        unsigned long bufferedAmount() const;
+        void close();
+        void disconnect(); // Will suppress didClose().
 
-        virtual bool send(const String& msg);
-        virtual unsigned long bufferedAmount() const;
-
-        virtual void close();
-
-        virtual void disconnect();
-
-        virtual void willOpenStream(SocketStreamHandle*, const KURL&);
-        virtual void willSendData(SocketStreamHandle*, const char*, int);
         virtual void didOpen(SocketStreamHandle*);
         virtual void didClose(SocketStreamHandle*);
         virtual void didReceiveData(SocketStreamHandle*, const char*, int);
         virtual void didFail(SocketStreamHandle*, const SocketStreamError&);
+        virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
+        virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 
     private:
         WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String&);

@@ -112,14 +112,6 @@ void WebSocketChannel::disconnect()
         m_handle->close();
 }
 
-void WebSocketChannel::willOpenStream(SocketStreamHandle*, const KURL&)
-{
-}
-
-void WebSocketChannel::willSendData(SocketStreamHandle*, const char*, int)
-{
-}
-
 void WebSocketChannel::didOpen(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didOpen", this);
@@ -226,6 +218,14 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
     LOG(Network, "WebSocketChannel %p didFail", this);
     ASSERT(handle == m_handle.get() || !m_handle.get());
     handle->close();
+}
+
+void WebSocketChannel::didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
+{
+}
+
+void WebSocketChannel::didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
+{
 }
 
 bool WebSocketChannel::appendToBuffer(const char* data, int len)
