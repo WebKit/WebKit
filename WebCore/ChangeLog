@@ -1,3 +1,17 @@
+2009-11-11  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Black artifacts in youtube.com/html5
+
+        Paint the video to the given size. It's the job of the callers to keep
+        track of aspect ratio. RenderVideo.cpp does it for the <video>
+        element.
+        https://bugs.webkit.org/show_bug.cgi?id=30925
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+
 2009-11-11  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Reviewed by Jan Alonzo.

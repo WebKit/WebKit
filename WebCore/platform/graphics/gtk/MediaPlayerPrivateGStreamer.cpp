@@ -686,27 +686,13 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     int width = 0, height = 0;
-    int pixelAspectRatioNumerator = 0;
-    int pixelAspectRatioDenominator = 0;
-    double doublePixelAspectRatioNumerator = 0;
-    double doublePixelAspectRatioDenominator = 0;
-    double displayWidth;
-    double displayHeight;
-    double scale, gapHeight, gapWidth;
+    GstCaps *caps = gst_buffer_get_caps(m_buffer);
     GstVideoFormat format;
 
-    GstCaps* caps = gst_buffer_get_caps(m_buffer);
-
-    if (G_UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height)
-                   || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator))) {
+    if (!gst_video_format_parse_caps(caps, &format, &width, &height)) {
       gst_caps_unref(caps);
       return;
     }
-
-    displayWidth = width;
-    displayHeight = height;
-    doublePixelAspectRatioNumerator = pixelAspectRatioNumerator;
-    doublePixelAspectRatioDenominator = pixelAspectRatioDenominator;
 
     cairo_format_t cairoFormat;
     if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA)
@@ -721,34 +707,15 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
                                                                4 * width);
 
     cairo_save(cr);
-    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
-    // Calculate the display width/height from the storage width/height and the pixel aspect ratio
-    displayWidth *= doublePixelAspectRatioNumerator / doublePixelAspectRatioDenominator;
-    displayHeight *= doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator;
+    // translate and scale the context to correct size
+    cairo_translate(cr, rect.x(), rect.y());
+    cairo_scale(cr, static_cast<double>(rect.width()) / width, static_cast<double>(rect.height()) / height);
 
-    // Calculate the largest scale factor that would fill the target surface
-    scale = std::min(rect.width() / displayWidth, rect.height() / displayHeight);
-    // And calculate the new display width/height
-    displayWidth *= scale;
-    displayHeight *= scale;
-
-    // Calculate gap between border an picture on every side
-    gapWidth = (rect.width() - displayWidth) / 2.0;
-    gapHeight = (rect.height() - displayHeight) / 2.0;
-
-    // Paint the rectangle on the context and draw the buffer inside the rectangle
-
-    // Go to the new origin and center the video frame.
-    cairo_translate(cr, rect.x() + gapWidth, rect.y() + gapHeight);
-    cairo_rectangle(cr, 0, 0, rect.width(), rect.height());
-    // Scale the video frame according to the pixel aspect ratio.
-    cairo_scale(cr, doublePixelAspectRatioNumerator / doublePixelAspectRatioDenominator,
-                doublePixelAspectRatioDenominator / doublePixelAspectRatioNumerator);
-    // Scale the video frame to fill the target surface as good as possible.
-    cairo_scale(cr, scale, scale);
     // And paint it.
     cairo_set_source_surface(cr, src, 0, 0);
+    cairo_pattern_set_extend(cairo_get_source(cr), CAIRO_EXTEND_PAD);
+    cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
     cairo_restore(cr);
 
