@@ -28,6 +28,7 @@
 
 #include "FocusDirection.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
     class Node;
     class Page;
 
-    class FocusController {
+    class FocusController : public Noncopyable {
     public:
         FocusController(Page*);
 

@@ -64,7 +64,7 @@ namespace WebCore {
     // if possible in the future.
     enum EditingBehavior { EditingMacBehavior, EditingWindowsBehavior };
 
-    class Settings {
+    class Settings : public Noncopyable {
     public:
         Settings(Page*);
 

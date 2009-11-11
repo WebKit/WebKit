@@ -35,7 +35,7 @@ namespace WebCore {
 
 class HaltablePlugin;
 
-class PluginHalter {
+class PluginHalter : public Noncopyable {
 public:
     PluginHalter(PluginHalterClient*);
 

@@ -1,3 +1,38 @@
+2009-11-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for the part of page directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31350
+
+        Inherits the following classes from Noncopyable because these are instantiated
+        by 'new' and these are no need to be copyable:
+
+        class DragController         - instantiated at: WebCore/page/Page.cpp:107
+        class FocusController        - instantiated at: WebCore/page/Page.cpp:109
+        class Settings               - instantiated at: WebCore/page/Page.cpp:116
+        class PluginHalter           - instantiated at: WebCore/page/Page.cpp:160
+        struct ScheduledEvent        - instantiated at: WebCore/page/FrameView.cpp:1275
+        class UserScript             - instantiated at: WebCore/page/PageGroup.cpp:208
+        struct EventHandlerDragState - instantiated at: WebCore/page/EventHandler.cpp:182
+        class XSSAuditor             - instantiated at: WebCore/bindings/js/ScriptController.cpp:70
+        class UserStyleSheet         - instantiated at: WebCore/page/PageGroup.cpp:222
+
+        Inherits PropertyWrapperBase class from Noncopyable because (its child class) 
+        PropertyWrapper is instantiated by 'new' in 
+        WebCore/page/animation/AnimationBase.cpp:564 it is no need to be copyable.
+
+        * page/DragController.h:
+        * page/EventHandler.h:
+        * page/FocusController.h:
+        * page/FrameView.cpp:
+        * page/PluginHalter.h:
+        * page/Settings.h:
+        * page/UserScript.h:
+        * page/UserStyleSheet.h:
+        * page/XSSAuditor.h:
+        * page/animation/AnimationBase.cpp:
+
 2009-11-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

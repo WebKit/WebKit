@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class UserStyleSheet {
+class UserStyleSheet : public Noncopyable {
 public:
     UserStyleSheet(const String& source, const KURL& url,
                    PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
