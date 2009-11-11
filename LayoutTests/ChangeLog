@@ -1,3 +1,9 @@
+2009-11-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Skipping new tests.
+
+        * platform/gtk/Skipped:
+
 2009-11-11  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by David Levin.

@@ -5615,3 +5615,9 @@ svg/filters/feDisplacementMap.svg
 
 # Missing SocketStreamHandle implementation
 websocket/tests
+
+# New color correction tests
+fast/css/color-correction-backgrounds-and-text.html
+fast/css/color-correction-on-backgrounds.html
+fast/css/color-correction-on-text.html
+fast/css/color-correction.html
