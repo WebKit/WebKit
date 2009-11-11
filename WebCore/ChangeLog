@@ -1,3 +1,18 @@
+2009-11-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Make the default style background color valid.
+        Currently the color is transparent but invalid, this causes
+        list boxes in QtWebKit to be drawn with a black background
+        since r49242.
+        https://bugs.webkit.org/show_bug.cgi?id=31295
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::initialBackgroundColor):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+
 2009-11-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

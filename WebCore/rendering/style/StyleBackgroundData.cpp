@@ -22,12 +22,14 @@
 #include "config.h"
 #include "StyleBackgroundData.h"
 
+#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
 
 StyleBackgroundData::StyleBackgroundData()
     : m_background(BackgroundFillLayer)
+    , m_color(RenderStyle::initialBackgroundColor())
 {
 }
 
