@@ -296,10 +296,6 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css
 
-DOMLUT_FILES += \
-    bindings/js/JSDOMWindowBase.cpp \
-    bindings/js/JSWorkerContextBase.cpp
-
 IDL_BINDINGS += \
     css/Counter.idl \
     css/CSSCharsetRule.idl \
@@ -3185,14 +3181,6 @@ idl.depends = $$PWD/bindings/scripts/generate-bindings.pl \
               $$PWD/bindings/scripts/InFilesParser.pm
 idl.CONFIG += target_predeps
 addExtraCompilerWithHeader(idl)
-
-# GENERATOR 2-A: LUT creator
-domlut.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.lut.h
-domlut.commands = perl $$PWD/../JavaScriptCore/create_hash_table ${QMAKE_FILE_NAME} -n WebCore > ${QMAKE_FILE_OUT}
-domlut.depend = ${QMAKE_FILE_NAME}
-domlut.input = DOMLUT_FILES
-domlut.CONFIG += no_link
-addExtraCompiler(domlut)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp

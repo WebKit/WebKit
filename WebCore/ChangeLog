@@ -1,3 +1,12 @@
+2009-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31348
+        [Qt] Remove unnecessary LUT creator from WebCore.pro
+
+        * WebCore.pro:
+
 2009-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
