@@ -104,7 +104,7 @@ committers_unable_to_review = [
     Committer("Tony Chang", "tony@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com"),
     Committer("Yael Aharon", "yael.aharon@nokia.com"),
-    Committer("Yong Li", "yong.li@torchmobile.com"),
+    Committer("Yong Li", ["yong.li@torchmobile.com", "yong.li.webkit@gmail.com"]),
     Committer("Yury Semikhatsky", "yurys@chromium.org"),
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
