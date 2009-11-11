@@ -1,3 +1,14 @@
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed Qt buildbot fix.
+
+        My previous fix was wrong, so revert that change and fix it by
+        returning when the document of the frame has no document element.
+        Idea is borrowed from mac and win DRT.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+
 2009-11-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed byg Kenneth Rohde Christiansen.

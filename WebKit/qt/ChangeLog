@@ -1,3 +1,13 @@
+2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed buildbot fix.
+
+        Export a method to the DRT to know if the document has a
+        document element.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_hasDocumentElement):
+
 2009-11-11  Liang QI  <liang.qi@nokia.com>
 
         [Qt] Fix tst_qwebpage and tst_qwebframe compilation on Symbian.

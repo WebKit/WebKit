@@ -70,6 +70,7 @@ extern void qt_dump_frame_loader(bool b);
 extern void qt_drt_clearFrameName(QWebFrame* qFrame);
 extern void qt_drt_overwritePluginDirectories();
 extern void qt_drt_resetOriginAccessWhiteLists();
+extern bool qt_drt_hasDocumentElement(QWebFrame* qFrame);
 
 namespace WebCore {
 
@@ -403,7 +404,7 @@ void DumpRenderTree::initJSObjects()
 
 QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
 {
-    if (!frame)
+    if (!frame || !qt_drt_hasDocumentElement(frame))
         return QString();
 
     QString result;
@@ -415,10 +416,8 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
     }
 
     QString innerText = frame->toPlainText();
-    if (!innerText.isEmpty()) {
-        result.append(innerText);
-        result.append(QLatin1String("\n"));
-    }
+    result.append(innerText);
+    result.append(QLatin1String("\n"));
 
     if (m_controller->shouldDumpChildrenAsText()) {
         QList<QWebFrame *> children = frame->childFrames();
