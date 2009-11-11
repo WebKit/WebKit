@@ -724,7 +724,6 @@ END
             push(@implContentDecls, "    if (!imp->document())\n");
             push(@implContentDecls, "      return;\n");
         }
-        push(@implContentDecls, "    $nativeType v = V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate);\n");
     } else {
         push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
     }
@@ -764,18 +763,10 @@ END
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
             $cacheIndex = GetHiddenDependencyIndex($dataNode, $attrName);
-            push(@implContentDecls, "    $nativeType old = imp->$attrName();\n");
-            push(@implContentDecls, "    V8AbstractEventListener* oldListener = old ? V8AbstractEventListener::cast(old.get()) : 0;\n");
-            push(@implContentDecls, "    if (oldListener) {\n");
-            push(@implContentDecls, "      v8::Local<v8::Object> oldListenerObject = oldListener->getExistingListenerObject();\n");
-            push(@implContentDecls, "      if (!oldListenerObject.IsEmpty())\n");
-            push(@implContentDecls, "        removeHiddenDependency(holder, oldListenerObject, $cacheIndex);\n");
-            push(@implContentDecls, "    }\n");
-            push(@implContentDecls, "    imp->set$implSetterFunctionName($result);\n");
-            push(@implContentDecls, "    if ($result)\n");
-            push(@implContentDecls, "      createHiddenDependency(holder, value, $cacheIndex");
+            push(@implContentDecls, "    transferHiddenDependency(holder, imp->$attrName(), value, $cacheIndex);\n");
+            push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate)");
         } else {
-            push(@implContentDecls, "    imp->set$implSetterFunctionName(" . $result);
+            push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
         }
         push(@implContentDecls, ", ec") if $useExceptions;
         push(@implContentDecls, ");\n");

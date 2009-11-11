@@ -1,3 +1,16 @@
+2009-11-11  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        More V8 de-inlining (outlining?) Abstracted a chunk of boilerplate code from every
+        event-listener setter into a new subroutine transferHiddenDependency().
+        https://bugs.webkit.org/show_bug.cgi?id=31377
+
+        * bindings/scripts/CodeGeneratorV8.pm:  Replace boilerplate with call to transferHiddenDependency().
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::transferHiddenDependency):  New.
+        * bindings/v8/V8Utilities.h:  Declaration of transferHiddenDependency.
+
 2009-11-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Beth Dakin.

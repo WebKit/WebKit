@@ -76,6 +76,24 @@ void removeHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> 
         }
     }
 }
+    
+void transferHiddenDependency(v8::Handle<v8::Object> object,
+                              EventListener* oldValue, 
+                              v8::Local<v8::Value> newValue, 
+                              int cacheIndex)
+{
+    if (oldValue) {
+        V8AbstractEventListener* oldListener = V8AbstractEventListener::cast(oldValue);
+        if (oldListener) {
+            v8::Local<v8::Object> oldListenerObject = oldListener->getExistingListenerObject();
+            if (!oldListenerObject.IsEmpty())
+                removeHiddenDependency(object, oldListenerObject, cacheIndex);
+        }
+    }
+    if (!newValue->IsNull() && !newValue->IsUndefined())
+        createHiddenDependency(object, newValue, cacheIndex);
+}
+    
 
 bool processingUserGesture()
 {
