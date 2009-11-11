@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 760x41
+        text run at (0,0) width 333: "This is a test for simple ruby that contains <rp> tags. "
+        text run at (333,0) width 427: "Contents of the <rp> tags (opening and closing brackets) should not"
+        text run at (0,21) width 202: "show when ruby is suppoorted. "
+      RenderBR {BR} at (202,38) size 0x0
+      RenderBR {BR} at (0,42) size 0x20
+      RenderText {#text} at (0,76) size 183x20
+        text run at (0,76) width 183: "\x{FF23}\x{FF33}\x{FF33}\x{FF13}\x{FF0F}\x{FF28}\x{FF34}\x{FF2D}\x{FF2C}\x{FF15}\x{306E}\x{30EB}\x{30D3}\x{306F}"
+      RenderRuby (inline) {RUBY} at (0,0) size 48x20
+        RenderRubyRun (anonymous) at (183,63) size 48x34
+          RenderRubyText {RT} at (0,0) size 48x13
+            RenderText {#text} at (5,0) size 38x13
+              text run at (5,0) width 38: "\x{306B}\x{307B}\x{3093}\x{3054}"
+          RenderRubyBase (anonymous) at (0,13) size 48x21
+            RenderText {#text} at (0,0) size 48x20
+              text run at (0,0) width 48: "\x{65E5}\x{672C}\x{8A9E}"
+      RenderText {#text} at (231,76) size 155x20
+        text run at (231,76) width 155: "\x{306B}\x{3088}\x{304F}\x{4F7F}\x{308F}\x{308C}\x{3066}\x{3044}\x{307E}\x{3059}\x{3002}"
+      RenderText {#text} at (0,0) size 0x0

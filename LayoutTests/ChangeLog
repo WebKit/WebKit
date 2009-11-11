@@ -1,3 +1,60 @@
+2009-11-10  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Re-baselined layout test results for Windows for tests in fast/ruby.
+        (see https://bugs.webkit.org/show_bug.cgi?id=28420)
+
+        * platform/win/fast/ruby: Added.
+        * platform/win/fast/ruby/ruby-empty-rt-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-empty-rt-expected.png: Added.
+        * platform/win/fast/ruby/ruby-empty-rt-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-length-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-length-expected.png: Added.
+        * platform/win/fast/ruby/ruby-length-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-run-break-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-run-break-expected.png: Added.
+        * platform/win/fast/ruby/ruby-run-break-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-runs-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-runs-expected.png: Added.
+        * platform/win/fast/ruby/ruby-runs-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-runs-spans-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-runs-spans-expected.png: Added.
+        * platform/win/fast/ruby/ruby-runs-spans-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-simple-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-simple-expected.png: Added.
+        * platform/win/fast/ruby/ruby-simple-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-simple-rp-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-simple-rp-expected.png: Added.
+        * platform/win/fast/ruby/ruby-simple-rp-expected.txt: Added.
+        * platform/win/fast/ruby/ruby-trailing-expected.checksum: Added.
+        * platform/win/fast/ruby/ruby-trailing-expected.png: Added.
+        * platform/win/fast/ruby/ruby-trailing-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-rt-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-rt-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-rt-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text1-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text1-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text1-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text2-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text2-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text2-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text3-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text3-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-insert-text3-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt1-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt1-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt1-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt2-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt2-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-rt2-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text1-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text1-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text1-expected.txt: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text2-expected.checksum: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text2-expected.png: Added.
+        * platform/win/fast/ruby/rubyDOM-remove-text2-expected.txt: Added.
+
 2009-11-10  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Oliver Hunt.

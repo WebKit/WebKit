@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 773x41
+        text run at (0,0) width 773: "This is a initial test for simple ruby. There should be 2 ruby annotations on below line, one with a ruby text shorter than the"
+        text run at (0,21) width 36: "base, "
+        text run at (36,21) width 291: "and one with a ruby text longer than the base. "
+      RenderBR {BR} at (327,38) size 0x0
+      RenderBR {BR} at (0,42) size 0x20
+      RenderText {#text} at (0,76) size 183x20
+        text run at (0,76) width 183: "\x{FF23}\x{FF33}\x{FF33}\x{FF13}\x{FF0F}\x{FF28}\x{FF34}\x{FF2D}\x{FF2C}\x{FF15}\x{306E}\x{30EB}\x{30D3}\x{306F}"
+      RenderRuby (inline) {RUBY} at (0,0) size 75x20
+        RenderRubyRun (anonymous) at (183,63) size 75x34
+          RenderRubyText {RT} at (0,0) size 75x13
+            RenderText {#text} at (0,0) size 75x13
+              text run at (0,0) width 75: "Japanese Langauge"
+          RenderRubyBase (anonymous) at (0,13) size 75x21
+            RenderText {#text} at (13,0) size 48x20
+              text run at (13,0) width 48: "\x{65E5}\x{672C}\x{8A9E}"
+      RenderText {#text} at (258,76) size 38x20
+        text run at (258,76) width 38: "\x{306B}\x{3088}\x{304F}"
+      RenderRuby (inline) {RUBY} at (0,0) size 62x20
+        RenderRubyRun (anonymous) at (296,63) size 62x34
+          RenderRubyText {RT} at (0,0) size 62x13
+            RenderText {#text} at (22,0) size 18x13
+              text run at (22,0) width 18: "used"
+          RenderRubyBase (anonymous) at (0,13) size 62x21
+            RenderText {#text} at (0,0) size 62x20
+              text run at (0,0) width 62: "\x{4F7F}\x{308F}\x{308C}\x{3066}"
+      RenderText {#text} at (358,76) size 55x20
+        text run at (358,76) width 55: "\x{3044}\x{307E}\x{3059}\x{3002}"
+      RenderText {#text} at (0,0) size 0x0
