@@ -31,8 +31,8 @@
 #ifndef WebSandboxSupport_h
 #define WebSandboxSupport_h
 
-#include "webkit/api/public/WebCommon.h"
-#include "webkit/api/public/WebString.h"
+#include "../WebCommon.h"
+#include "../WebString.h"
 
 namespace WebKit {
 

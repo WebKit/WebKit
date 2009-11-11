@@ -1,3 +1,14 @@
+2009-11-11  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tiny path fixes in Chromium API includes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31369
+
+        * public/linux/WebSandboxSupport.h: Fixed path.
+        * src/WebBindings.cpp: Fixed path.
+
 2009-11-11  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
