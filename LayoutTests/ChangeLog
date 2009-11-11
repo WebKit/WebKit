@@ -2,6 +2,24 @@
 
         Reviewed by David Levin.
 
+        Add a test for web socket handshake error.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31336
+
+        * websocket/tests/handshake-error-expected.txt: Added.
+        * websocket/tests/handshake-error.html: Added.
+        * websocket/tests/handshake-error_wsh.py: Added.
+        * websocket/tests/script-tests/handshake-error.js: Added.
+        (endTest):
+        (ws.onopen):
+        (ws.onmessage):
+        (ws.onclose):
+        (timeOutCallback):
+
+2009-11-11  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Levin.
+
         Add a simple web socket test. This tests basic features of Web Socket.
         This also serves as an example of Web Socket tests.
 
