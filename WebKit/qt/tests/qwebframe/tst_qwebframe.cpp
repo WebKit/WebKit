@@ -2238,7 +2238,7 @@ protected:
     virtual QNetworkReply* createRequest(Operation op, const QNetworkRequest& request, QIODevice* outgoingData)
     {
         QString url = request.url().toString();
-        if (op == QNetworkAccessManager::GetOperation)
+        if (op == QNetworkAccessManager::GetOperation) {
             if (url == "qrc:/test1.html" ||  url == "http://abcdef.abcdef/")
                 return new FakeReply(request, this);
 #ifndef QT_NO_OPENSSL
@@ -2249,6 +2249,7 @@ protected:
                 return reply;
             }
 #endif
+       }
 
         return QNetworkAccessManager::createRequest(op, request, outgoingData);
     }

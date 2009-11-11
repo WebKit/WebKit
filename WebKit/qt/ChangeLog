@@ -1,3 +1,13 @@
+2009-11-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31323
+        Fix a few compiler warnings
+
+        * tests/qwebframe/tst_qwebframe.cpp: Add extra brackets 
+        to make it explicit where the else case belongs
+
 2009-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

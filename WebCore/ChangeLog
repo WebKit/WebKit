@@ -1,3 +1,16 @@
+2009-11-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31323
+        Fix a few compiler warnings
+
+        No new tests as there is no new functionality.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isRenderedAsNonInlineTableImageOrHR): Use explicit
+        parentheses to silence gcc 4.4 -Wparentheses warnings
+
 2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Mark Rowe.

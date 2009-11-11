@@ -1084,7 +1084,7 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
     if (!node)
         return false;
     RenderObject* renderer = node->renderer();
-    return renderer && ((renderer->isTable() && !renderer->isInline()) || renderer->isImage() && !renderer->isInline() || renderer->isHR());
+    return renderer && ((renderer->isTable() && !renderer->isInline()) || (renderer->isImage() && !renderer->isInline()) || renderer->isHR());
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
