@@ -1,3 +1,13 @@
+2009-11-10  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix crash in V8CustomXPathNSResolver (http://crbug.com/26726).
+        https://bugs.webkit.org/show_bug.cgi?id=31301
+
+        * fast/xpath/xpath-detached-iframe-resolver-crash-expected.txt: Added.
+        * fast/xpath/xpath-detached-iframe-resolver-crash.html: Added.
+
 2009-11-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Timothy Hatcher.

@@ -253,13 +253,13 @@ namespace WebCore {
 
 
         // XPath-related utilities
-        static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value)
+        static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy = 0)
         {
             RefPtr<XPathNSResolver> resolver;
             if (V8XPathNSResolver::HasInstance(value))
                 resolver = convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, v8::Handle<v8::Object>::Cast(value));
             else if (value->IsObject())
-                resolver = V8CustomXPathNSResolver::create(value->ToObject());
+                resolver = V8CustomXPathNSResolver::create(proxy, value->ToObject());
             return resolver;
         }
 

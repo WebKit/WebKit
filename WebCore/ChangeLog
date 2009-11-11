@@ -1,3 +1,23 @@
+2009-11-10  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix crash in V8CustomXPathNSResolver (http://crbug.com/26726).
+        https://bugs.webkit.org/show_bug.cgi?id=31301
+
+        Tested by new fast/xpath/xpath-detached-iframe-resolver-crash.html.
+
+        Allowed passing V8Proxy for the calling JS context:
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getXPathNSResolver):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::create):
+        (WebCore::V8CustomXPathNSResolver::V8CustomXPathNSResolver):
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8CustomXPathNSResolver.h:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-11-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Timothy Hatcher.

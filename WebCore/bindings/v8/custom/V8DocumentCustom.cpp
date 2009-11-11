@@ -61,7 +61,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     if (V8Node::HasInstance(args[1]))
         contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1]));
 
-    RefPtr<XPathNSResolver> resolver = V8DOMWrapper::getXPathNSResolver(args[2]);
+    RefPtr<XPathNSResolver> resolver = V8DOMWrapper::getXPathNSResolver(args[2], V8Proxy::retrieve(V8Proxy::retrieveFrameForCallingContext()));
     if (!resolver && !args[2]->IsNull() && !args[2]->IsUndefined())
         return throwError(TYPE_MISMATCH_ERR);
 

@@ -1,0 +1,41 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+
+    var dummyResolverCalled = false;
+    var foundNode;
+    function dummyResolver() {
+        dummyResolverCalled = true;
+        return "http://www.w3.org/1999/xhtml";
+    }
+
+    function test() {
+        var iframe = document.createElement("iframe");
+        document.body.appendChild(iframe);
+        var doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write("<html><body><div></div></body></html>");
+        doc.close();
+        document.body.removeChild(iframe);
+        foundNode = doc.evaluate("//dummyns:div", doc, dummyResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+        testPassed("Did not crash.");
+        shouldBeTrue("dummyResolverCalled");
+        shouldBe("foundNode.toString()", "\"[object HTMLDivElement]\"");
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+</head>
+<body onload="test()">
+<p>Ensure that using XPath namespace resolver with a detached iframe doesn't crash.</p>
+<div id="console"></div>
+</body>
+</html>
