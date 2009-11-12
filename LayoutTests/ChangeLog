@@ -1,3 +1,10 @@
+2009-11-12  Mark Rowe  <mrowe@apple.com>
+
+        Skip an accessibility test that covers functionality not available on Tiger or Leopard.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2009-11-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping one more new test, and a number of other tests, with bugs

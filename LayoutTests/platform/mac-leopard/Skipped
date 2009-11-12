@@ -22,3 +22,6 @@ transforms/3d
 # These tests requires fullscreen <video> support
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
+
+# Tests of accessibility functionality not supported on Leopard
+accessibility/aria-list-and-listitem.html
