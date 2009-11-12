@@ -978,7 +978,7 @@ void QWebView::changeEvent(QEvent *e)
 /*!
     \fn void QWebView::statusBarMessage(const QString& text)
 
-    This signal is emitted when the statusbar \a text is changed by the page.
+    This signal is emitted when the status bar \a text is changed by the page.
 */
 
 /*!

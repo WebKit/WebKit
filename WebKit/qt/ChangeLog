@@ -1,3 +1,15 @@
+2009-11-11  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Various doc fixes
+        https://bugs.webkit.org/show_bug.cgi?id=31323
+
+        Fixed and synchronized QWebView related documentation.
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebview.cpp:
+
 2009-11-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed buildbot fix.
