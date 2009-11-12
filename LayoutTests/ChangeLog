@@ -1,3 +1,10 @@
+2009-11-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping one more new test, and a number of other tests, with bugs
+        filled.
+
+        * platform/gtk/Skipped:
+
 2009-11-12  Mark Rowe  <mrowe@apple.com>
 
         Fix results for fast/dom/Window/window-properties.html after r50893.

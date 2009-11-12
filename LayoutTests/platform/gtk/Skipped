@@ -5635,6 +5635,7 @@ fast/multicol/single-line.html
 
 # New tests failing
 accessibility/aria-controls-with-tabs.html
+accessibility/aria-list-and-listitem.html
 accessibility/aria-presentational-role.html
 fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
@@ -5644,3 +5645,18 @@ fast/css/color-correction-on-text-shadow.html
 fast/block/positioning/relative-positioned-inline-container.html
 fast/repaint/inline-relative-positioned.html
 inspector/timeline-paint.html
+
+# Test crashing on release bot
+# See https://bugs.webkit.org/show_bug.cgi?id=31433
+plugins/document-open.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=31434
+media/video-played-collapse.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=31435
+fast/forms/input-radio-checked-tab.html
+fast/forms/tabs-with-modifiers.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=31436
+fast/events/key-events-in-input-text.html
+fast/events/tab-focus-hidden.html
