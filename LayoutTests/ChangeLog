@@ -1,5 +1,11 @@
 2009-11-12  Mark Rowe  <mrowe@apple.com>
 
+        Fix results for fast/dom/Window/window-properties.html after r50893.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2009-11-12  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Anders Carlsson.
 
         Move a misplaced accessibility test from platform/mac-snowleopard/accessibility to accessibility,
