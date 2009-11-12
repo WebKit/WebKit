@@ -1,3 +1,18 @@
+2009-11-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Various doc fixes
+        https://bugs.webkit.org/show_bug.cgi?id=31358
+
+        Fixed wrong documentation: item's dimensions do fit to Web page
+        content by default.
+
+        Kenneth agreed to land this as a followup patch to the
+        just landed documentation patch.
+
+        * Api/qgraphicswebview.cpp:
+
 2009-11-11  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Kenneth Christiansen.
