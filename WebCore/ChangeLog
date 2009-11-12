@@ -1,3 +1,14 @@
+2009-11-11  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        bindings/js/ScriptObject.cpp is missing and ENABLE(INSPECTOR) guard.
+        https://bugs.webkit.org/show_bug.cgi?id=31384
+
+        No functionality change so no tests required.
+
+        * bindings/js/ScriptObject.cpp: Add ENABLE(INSPECTOR) guard around the JSInspectorBackend.h include.
+
 2009-11-11  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.
