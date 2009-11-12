@@ -55,6 +55,8 @@ void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
 static DragOperation dragOpFromIEOp(const String& op)
 {
     // yep, it's really just this fixed set
+    if (op == "uninitialized")
+        return DragOperationEvery;
     if (op == "none")
         return DragOperationNone;
     if (op == "copy")
