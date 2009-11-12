@@ -1,3 +1,9 @@
+2009-11-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping tests that fail intermitently.
+
+        * platform/gtk/Skipped:
+
 2009-11-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
