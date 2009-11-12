@@ -1,4 +1,4 @@
 Text
-Is settable: 1
+Is settable: true
 
 

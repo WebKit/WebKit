@@ -104,12 +104,14 @@ public:
     virtual bool isRequired() const;
     virtual bool isLinked() const;
     virtual bool isExpanded() const;
-    
+    virtual void setIsExpanded(bool);
+
     const AtomicString& getAttribute(const QualifiedName&) const;
     virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;
     virtual bool canSetValueAttribute() const;
-    
+    virtual bool canSetExpandedAttribute() const;
+
     virtual bool hasIntValue() const;
     
     virtual bool accessibilityIsIgnored() const;
@@ -146,7 +148,6 @@ public:
     
     virtual AXObjectCache* axObjectCache() const;
     
-    virtual void expandObject() const;
     virtual Element* actionElement() const;
     Element* mouseButtonListener() const;
     FrameView* frameViewIfRenderView() const;
@@ -188,12 +189,15 @@ public:
     virtual void getDocumentLinks(AccessibilityChildrenVector&);
     virtual FrameView* documentFrameView() const;
     virtual String language() const;
-    
+    virtual unsigned hierarchicalLevel() const;
+
     virtual const AccessibilityChildrenVector& children();
     
     virtual void setFocused(bool);
     virtual void setSelectedTextRange(const PlainTextRange&);
     virtual void setValue(const String&);
+    virtual void setSelected(bool);
+    virtual void setSelectedRows(AccessibilityChildrenVector&);
     virtual void changeValueByPercent(float percentChange);
     virtual void increment();
     virtual void decrement();
@@ -262,6 +266,11 @@ private:
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement* map) const;
 
+    void ariaTreeSelectedRows(AccessibilityChildrenVector&);
+    
+    bool elementAttributeValue(const QualifiedName&);
+    void setElementAttributeValue(const QualifiedName&, bool);
+    
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& name) const;
     

@@ -43,6 +43,24 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
 
 AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
+    // Determine if this is in a tree. If so, we apply special behavior to make it work like an AXOutline.
+    AccessibilityObject* axObj = parentObject();
+    bool isInTree = false;
+    while (axObj) {
+        if (axObj->isTree()) {
+            isInTree = true;
+            break;
+        }
+        axObj = axObj->parentObjectUnignored();
+    }
+    
+    // If the object is in a tree, only tree items should be exposed (and the children of tree items).
+    if (isInTree) {
+        AccessibilityRole role = roleValue();
+        if (role != TreeItemRole && role != StaticTextRole)
+            return IgnoreObject;
+    }
+    
     return DefaultBehavior;
 }
     

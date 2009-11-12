@@ -164,6 +164,8 @@ enum AccessibilityRole {
     TabRole,
     TabListRole,
     TabPanelRole,
+    TreeRole,
+    TreeItemRole,
     
     // ARIA Grouping roles
     LandmarkApplicationRole,
@@ -276,6 +278,8 @@ public:
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
     bool isComboBox() const { return roleValue() == ComboBoxRole; }
+    bool isTree() const { return roleValue() == TreeRole; }
+    bool isTreeItem() const { return roleValue() == TreeItemRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -292,12 +296,14 @@ public:
     virtual bool isRequired() const { return false; }
     virtual bool isLinked() const { return false; }
     virtual bool isExpanded() const { return false; }
+    virtual void setIsExpanded(bool) { }
 
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
     virtual bool canSetValueAttribute() const { return false; }
     virtual bool canSetSelectedAttribute() const { return false; }
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
+    virtual bool canSetExpandedAttribute() const { return false; }
     
     virtual bool hasIntValue() const { return false; }
 
@@ -378,17 +384,18 @@ public:
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
     virtual String language() const;
-
+    virtual unsigned hierarchicalLevel() const { return 0; }
+    
     virtual void setFocused(bool) { }
     virtual void setSelectedText(const String&) { }
     virtual void setSelectedTextRange(const PlainTextRange&) { }
     virtual void setValue(const String&) { }
     virtual void setSelected(bool) { }
-
+    virtual void setSelectedRows(AccessibilityChildrenVector&) { }
+    
     virtual void makeRangeVisible(const PlainTextRange&) { }
     virtual bool press() const;
     bool performDefaultAction() const { return press(); }
-    virtual void expandObject() const { }
     
     virtual AccessibilityOrientation orientation() const;
     virtual void increment() { }
@@ -460,7 +467,14 @@ public:
     virtual String stringRoleForMSAA() const { return String(); }
     virtual String nameForMSAA() const { return String(); }
     virtual String descriptionForMSAA() const { return String(); }
-
+    
+    // Used by an ARIA tree to get all its rows.
+    void ariaTreeRows(AccessibilityChildrenVector&);
+    // Used by an ARIA tree item to get all of its direct rows that it can disclose.
+    void ariaTreeItemDisclosedRows(AccessibilityChildrenVector&);
+    // Used by an ARIA tree item to get only its content, and not its child tree items and groups. 
+    void ariaTreeItemContent(AccessibilityChildrenVector&);
+    
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)
     AccessibilityObjectWrapper* wrapper() const;

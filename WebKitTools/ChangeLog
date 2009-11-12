@@ -1,3 +1,40 @@
+2009-11-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        need to implement aria tree roles
+        https://bugs.webkit.org/show_bug.cgi?id=31284
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (disclosedRowAtIndexCallback):
+        (selectedRowAtIndexCallback):
+        (isEqualCallback):
+        (isAttributeSettableCallback):
+        (isActionSupportedCallback):
+        (disclosedByRowCallback):
+        (hierarchicalLevelCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement::isEqual):
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::hierarchicalLevel):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::disclosedByRow):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (AccessibilityUIElement::disclosedByRow):
+        (AccessibilityUIElement::hierarchicalLevel):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::hierarchicalLevel):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::disclosedByRow):
+
 2009-11-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

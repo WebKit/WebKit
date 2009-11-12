@@ -1,3 +1,57 @@
+2009-11-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        need to implement aria tree roles
+        https://bugs.webkit.org/show_bug.cgi?id=31284
+
+        Tests: platform/mac/accessibility/aria-multiselectable.html
+               platform/mac/accessibility/aria-tree.html
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::accessibilityIsIgnored):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaTreeRows):
+        (WebCore::AccessibilityObject::ariaTreeItemContent):
+        (WebCore::AccessibilityObject::ariaTreeItemDisclosedRows):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        (WebCore::AccessibilityObject::isTree):
+        (WebCore::AccessibilityObject::isTreeItem):
+        (WebCore::AccessibilityObject::setIsExpanded):
+        (WebCore::AccessibilityObject::canSetExpandedAttribute):
+        (WebCore::AccessibilityObject::hierarchicalLevel):
+        (WebCore::AccessibilityObject::setSelectedRows):
+        (WebCore::AccessibilityObject::performDefaultAction):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hierarchicalLevel):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::isExpanded):
+        (WebCore::AccessibilityRenderObject::setElementAttributeValue):
+        (WebCore::AccessibilityRenderObject::elementAttributeValue):
+        (WebCore::AccessibilityRenderObject::setIsExpanded):
+        (WebCore::AccessibilityRenderObject::isSelected):
+        (WebCore::AccessibilityRenderObject::setSelected):
+        (WebCore::AccessibilityRenderObject::setSelectedRows):
+        (WebCore::createARIARoleMap):
+        (WebCore::AccessibilityRenderObject::canSetExpandedAttribute):
+        (WebCore::AccessibilityRenderObject::ariaTreeSelectedRows):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (RoleEntry::):
+        (-[AccessibilityObjectWrapper subrole]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        * html/HTMLAttributeNames.in:
+
 2009-11-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix after @r50760 with ENABLE_FILTERS.

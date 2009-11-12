@@ -328,6 +328,12 @@ bool AccessibilityUIElement::isSelected() const
     return false;
 }
 
+int AccessibilityUIElement::hierarchicalLevel() const
+{
+    // FIXME: implement
+    return 0;
+}
+
 bool AccessibilityUIElement::isExpanded() const
 {
     // FIXME: implement
@@ -448,6 +454,21 @@ void AccessibilityUIElement::decrement()
 void AccessibilityUIElement::showMenu()
 {
     // FIXME: implement
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
+{
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
+{
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
+{
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const

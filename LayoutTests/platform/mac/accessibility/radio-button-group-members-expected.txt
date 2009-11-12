@@ -18,7 +18,7 @@ AXStartTextMarker: <AXRadioButton>
 AXEndTextMarker: <AXRadioButton>
 AXVisited: 0
 AXLinkedUIElements: <array of size 3>
-AXSelected: 0
+AXSelected: 1
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
@@ -100,7 +100,7 @@ AXStartTextMarker: <AXRadioButton>
 AXEndTextMarker: <AXRadioButton>
 AXVisited: 0
 AXLinkedUIElements: <array of size 2>
-AXSelected: 0
+AXSelected: 1
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
@@ -156,7 +156,7 @@ AXStartTextMarker: <AXRadioButton: 'Yes'>
 AXEndTextMarker: <AXRadioButton: 'Yes'>
 AXVisited: 0
 AXLinkedUIElements: <array of size 2>
-AXSelected: 0
+AXSelected: 1
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton: 'Yes'>
 AXTitleUIElement: (null)
@@ -212,7 +212,7 @@ AXStartTextMarker: <AXRadioButton>
 AXEndTextMarker: <AXRadioButton>
 AXVisited: 0
 AXLinkedUIElements: <array of size 1>
-AXSelected: 0
+AXSelected: 1
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)

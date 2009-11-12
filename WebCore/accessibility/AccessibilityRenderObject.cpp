@@ -712,6 +712,40 @@ String AccessibilityRenderObject::helpText() const
     return String();
 }
     
+unsigned AccessibilityRenderObject::hierarchicalLevel() const
+{
+    if (!m_renderer)
+        return 0;
+
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return 0;
+    Element* element = static_cast<Element*>(node);
+    String ariaLevel = element->getAttribute(aria_levelAttr);
+    if (!ariaLevel.isEmpty())
+        return ariaLevel.toInt();
+    
+    // Only tree item will calculate its level through the DOM currently.
+    if (roleValue() != TreeItemRole)
+        return 0;
+    
+    // Hierarchy leveling starts at 0.
+    // We measure tree hierarchy by the number of groups that the item is within.
+    unsigned level = 0;
+    AccessibilityObject* parent = parentObject();
+    while (parent) {
+        AccessibilityRole parentRole = parent->roleValue();
+        if (parentRole == GroupRole)
+            level++;
+        else if (parentRole == TreeRole)
+            break;
+        
+        parent = parent->parentObject();
+    }
+    
+    return level;
+}
+    
 String AccessibilityRenderObject::language() const
 {
     if (!m_renderer)
@@ -1288,7 +1322,7 @@ bool AccessibilityRenderObject::ariaIsHidden() const
 
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
-    // is the platform is interested in this object?
+    // Is the platform interested in this object?
     AccessibilityObjectPlatformInclusion decision = accessibilityPlatformIncludesObject();
     if (decision == IncludeObject)
         return false;
@@ -1575,27 +1609,44 @@ bool AccessibilityRenderObject::isVisited() const
     return m_renderer->style()->pseudoState() == PseudoVisited;
 }
     
-void AccessibilityRenderObject::expandObject() const
-{
-    // Combo boxes can be expanded (in different ways on different platforms).
-    // That action translates into setting the aria-expanded attribute to true
-    if (roleValue() != ComboBoxRole || !m_renderer)
-        return;
-    
-    Node* node = m_renderer->node();
-    if (!node || !node->isElementNode())
-        return;
-
-    Element* element = static_cast<Element*>(node);
-    element->setAttribute(aria_expandedAttr, "true");
-}
-    
 bool AccessibilityRenderObject::isExpanded() const
 {
     if (equalIgnoringCase(getAttribute(aria_expandedAttr).string(), "true"))
         return true;
     
     return false;  
+}
+
+void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& attributeName, bool value)
+{
+    if (!m_renderer)
+        return;
+    
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return;
+    
+    Element* element = static_cast<Element*>(node);
+    element->setAttribute(attributeName, (value) ? "true" : "false");        
+}
+    
+bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attributeName)
+{
+    if (!m_renderer)
+        return false;
+    
+    return equalIgnoringCase(getAttribute(attributeName).string(), "true");
+}
+    
+void AccessibilityRenderObject::setIsExpanded(bool isExpanded)
+{
+    // Combo boxes and tree items can be expanded (in different ways on different platforms).
+    // That action translates into setting the aria-expanded attribute to true.
+    AccessibilityRole role = roleValue();
+    if (role != ComboBoxRole && role != TreeItemRole)
+        return;
+    
+    setElementAttributeValue(aria_expandedAttr, isExpanded);
 }
     
 bool AccessibilityRenderObject::isRequired() const
@@ -1615,8 +1666,13 @@ bool AccessibilityRenderObject::isSelected() const
     if (!node)
         return false;
     
-    if (equalIgnoringCase(getAttribute(aria_selectedAttr).string(), "true"))
+    String ariaSelected = getAttribute(aria_selectedAttr).string();
+    if (equalIgnoringCase(ariaSelected, "true"))
         return true;    
+    
+    // ARIA says that selection should follow focus unless specifically set otherwise.
+    if (!equalIgnoringCase(ariaSelected, "false") && isFocused())
+        return true;
     
     if (isTabItem() && isTabItemSelected())
         return true;
@@ -1710,6 +1766,26 @@ void AccessibilityRenderObject::changeValueByPercent(float percentChange)
     setValue(String::number(value));
     
     axObjectCache()->postNotification(m_renderer, AXObjectCache::AXValueChanged, true);
+}
+    
+void AccessibilityRenderObject::setSelected(bool enabled)
+{
+    setElementAttributeValue(aria_selectedAttr, enabled);
+}
+
+void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
+{
+    // Setting selected rows only works on trees for now.
+    if (roleValue() != TreeRole)
+        return;
+    
+    bool isMultiselectable = elementAttributeValue(aria_multiselectableAttr);
+    unsigned count = selectedRows.size();
+    if (count > 1 && !isMultiselectable)
+        count = 1;
+    
+    for (unsigned k = 0; k < count; ++k)
+        selectedRows[k]->setSelected(true);
 }
     
 void AccessibilityRenderObject::setValue(const String& string)
@@ -2407,7 +2483,9 @@ static const ARIARoleMap& createARIARoleMap()
         { "textbox", TextAreaRole },
         { "timer", ApplicationTimerRole },
         { "toolbar", ToolbarRole },
-        { "tooltip", UserInterfaceTooltipRole }
+        { "tooltip", UserInterfaceTooltipRole },
+        { "tree", TreeRole },
+        { "treeitem", TreeItemRole }
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         
@@ -2591,6 +2669,13 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
         return false;
     }
 }
+    
+bool AccessibilityRenderObject::canSetExpandedAttribute() const
+{
+    // An object can be expanded if it aria-expanded is true or false.
+    String ariaExpanded = getAttribute(aria_expandedAttr).string();
+    return equalIgnoringCase(ariaExpanded, "true") || equalIgnoringCase(ariaExpanded, "false");
+}
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
 {
@@ -2708,17 +2793,34 @@ void AccessibilityRenderObject::addChildren()
     }
 }
 
+void AccessibilityRenderObject::ariaTreeSelectedRows(AccessibilityChildrenVector& result)
+{
+    // Get all the rows. 
+    AccessibilityChildrenVector allRows;
+    ariaTreeRows(allRows);
+
+    // Determine which rows are selected.
+    bool isMultiselectable = elementAttributeValue(aria_multiselectableAttr);
+
+    unsigned count = allRows.size();
+    for (unsigned k = 0; k < count; ++k) {
+        if (allRows[k]->isSelected()) {
+            result.append(allRows[k]);
+            if (!isMultiselectable)
+                break;
+        }
+    }
+}
+    
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)
 {
     AccessibilityObject* child = firstChild();
-    bool isMultiselectable = false;
     
     Element* element = static_cast<Element*>(renderer()->node());        
     if (!element || !element->isElementNode()) // do this check to ensure safety of static_cast above
         return;
 
-    String multiselectablePropertyStr = element->getAttribute("aria-multiselectable").string();
-    isMultiselectable = equalIgnoringCase(multiselectablePropertyStr, "true");
+    bool isMultiselectable = elementAttributeValue(aria_multiselectableAttr);
     
     while (child) {
         // every child should have aria-role option, and if so, check for selected attribute/state
@@ -2746,11 +2848,11 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
     ASSERT(result.isEmpty());
 
     // only listboxes should be asked for their selected children. 
-    if (ariaRoleAttribute() != ListBoxRole) { // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
-        ASSERT_NOT_REACHED(); 
-        return;
-    }
-    return ariaListboxSelectedChildren(result);
+    AccessibilityRole role = roleValue();
+    if (role == ListBoxRole) // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+        ariaListboxSelectedChildren(result);
+    else if (role == TreeRole)
+        ariaTreeSelectedRows(result);
 }
 
 void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildrenVector& result)      

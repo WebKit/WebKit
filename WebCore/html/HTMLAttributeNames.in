@@ -23,6 +23,7 @@ aria-label
 aria-labeledby
 aria-labelledby
 aria-level
+aria-multiselectable
 aria-pressed
 aria-readonly
 aria-required

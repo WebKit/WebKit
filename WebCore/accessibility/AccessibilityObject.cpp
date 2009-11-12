@@ -753,6 +753,53 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     return anchorRenderer->document()->axObjectCache()->getOrCreate(anchorRenderer);
 }
     
+void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& result)
+{
+    AccessibilityChildrenVector axChildren = children();
+    unsigned count = axChildren.size();
+    for (unsigned k = 0; k < count; ++k) {
+        AccessibilityObject* obj = axChildren[k].get();
+        
+        // Add tree items as the rows.
+        if (obj->roleValue() == TreeItemRole) 
+            result.append(obj);
+
+        // Now see if this item also has rows hiding inside of it.
+        obj->ariaTreeRows(result);
+    }
+}
+    
+void AccessibilityObject::ariaTreeItemContent(AccessibilityChildrenVector& result)
+{
+    // The ARIA tree item content are the item that are not other tree items or their containing groups.
+    AccessibilityChildrenVector axChildren = children();
+    unsigned count = axChildren.size();
+    for (unsigned k = 0; k < count; ++k) {
+        AccessibilityObject* obj = axChildren[k].get();
+        AccessibilityRole role = obj->roleValue();
+        if (role == TreeItemRole || role == GroupRole)
+            continue;
+        
+        result.append(obj);
+    }
+}
+
+void AccessibilityObject::ariaTreeItemDisclosedRows(AccessibilityChildrenVector& result)
+{
+    AccessibilityChildrenVector axChildren = children();
+    unsigned count = axChildren.size();
+    for (unsigned k = 0; k < count; ++k) {
+        AccessibilityObject* obj = axChildren[k].get();
+        
+        // Add tree items as the rows.
+        if (obj->roleValue() == TreeItemRole)
+            result.append(obj);
+        // If it's not a tree item, then descend into the group to find more tree items.
+        else 
+            obj->ariaTreeRows(result);
+    }    
+}
+    
 const String& AccessibilityObject::actionVerb() const
 {
     // FIXME: Need to add verbs for select elements.

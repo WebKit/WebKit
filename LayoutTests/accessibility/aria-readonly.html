@@ -27,27 +27,27 @@ var successfullyParsed = false;
           body.focus();
           var textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
           var succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "0");
+          shouldBe("succeeded", "false");
 
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
           succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "1");
+          shouldBe("succeeded", "true");
           
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(2);
           succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "0");
+          shouldBe("succeeded", "false");
             
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(3);
           succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "1");
+          shouldBe("succeeded", "true");
           
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(4);
           succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "0");
+          shouldBe("succeeded", "false");
 
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(5);
           succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "1");
+          shouldBe("succeeded", "true");
     }
 
     successfullyParsed = true;

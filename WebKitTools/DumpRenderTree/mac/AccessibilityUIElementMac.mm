@@ -232,7 +232,25 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 
     if (children.size() == 1)
         return children[0];
-    return nil;
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
+{
+    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedRowsAttribute];
+    if (index < [rows count])
+        return [rows objectAtIndex:index];
+
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
+{
+    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilitySelectedRowsAttribute];
+    if (index < [rows count])
+        return [rows objectAtIndex:index];
+    
+    return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
@@ -241,7 +259,7 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
     if (accessibilityObject)
         return AccessibilityUIElement(accessibilityObject);
     
-    return nil;
+    return 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
@@ -250,7 +268,16 @@ AccessibilityUIElement AccessibilityUIElement::parentElement()
     if (accessibilityObject)
         return AccessibilityUIElement(accessibilityObject);
     
-    return nil;
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
+{
+    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedByRowAttribute];
+    if (accessibilityObject)
+        return AccessibilityUIElement(accessibilityObject);
+    
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
@@ -453,6 +480,14 @@ bool AccessibilityUIElement::isExpanded() const
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
     return false;
+}
+
+int AccessibilityUIElement::hierarchicalLevel() const
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityDisclosureLevelAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value intValue];
+    return 0;
 }
 
 // parameterized attributes

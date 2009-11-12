@@ -257,6 +257,11 @@ bool AccessibilityUIElement::isSelected() const
     return false;
 }
 
+int AccessibilityUIElement::hierarchicalLevel() const
+{
+    return 0;
+}
+
 bool AccessibilityUIElement::isExpanded() const
 {
     return false;
@@ -398,6 +403,21 @@ void AccessibilityUIElement::decrement()
 
 void AccessibilityUIElement::showMenu()
 {
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
+{
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
+{
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
+{
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
