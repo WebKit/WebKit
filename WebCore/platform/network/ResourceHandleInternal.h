@@ -128,8 +128,6 @@ namespace WebCore {
             , m_startWhenScheduled(false)
             , m_needsSiteSpecificQuirks(false)
             , m_currentMacChallenge(nil)
-#elif USE(CFNETWORK)
-            , m_currentCFChallenge(0)
 #endif
             , m_failureTimer(loader, &ResourceHandle::fireFailure)
         {
@@ -212,12 +210,10 @@ namespace WebCore {
         QWebFrame* m_frame;
 #endif
 
-        // FIXME: The platform challenge is almost identical to the one stored in m_currentWebChallenge, but it has a different sender. We only need to store a sender reference here.
 #if PLATFORM(MAC)
+        // We need to keep a reference to the original challenge to be able to cancel it.
+        // It is almost identical to m_currentWebChallenge.nsURLAuthenticationChallenge(), but has a different sender.
         NSURLAuthenticationChallenge *m_currentMacChallenge;
-#endif
-#if USE(CFNETWORK)
-        CFURLAuthChallengeRef m_currentCFChallenge;
 #endif
         AuthenticationChallenge m_currentWebChallenge;
 

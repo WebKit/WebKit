@@ -55,7 +55,7 @@ typedef int NSInteger;
 
 using namespace WebCore;
 
-@interface WebCoreResourceHandleAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
+@interface WebCoreResourceHandleAsDelegate : NSObject
 {
     ResourceHandle* m_handle;
 }
@@ -138,6 +138,7 @@ ResourceHandleInternal::~ResourceHandleInternal()
 ResourceHandle::~ResourceHandle()
 {
     releaseDelegate();
+    d->m_currentWebChallenge.setAuthenticationClient(0);
 
     LOG(Network, "Handle %p destroyed", this);
 }
@@ -511,10 +512,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 #endif
 
     d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
-    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:d->m_currentMacChallenge 
-                                                                                       sender:(id<NSURLAuthenticationChallengeSender>)delegate()];
-    d->m_currentWebChallenge = core(webChallenge);
-    [webChallenge release];
+    d->m_currentWebChallenge = core(d->m_currentMacChallenge);
+    d->m_currentWebChallenge.setAuthenticationClient(this);
 
     if (client())
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
@@ -523,8 +522,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(d->m_currentMacChallenge);
+    ASSERT(d->m_currentMacChallenge == challenge.nsURLAuthenticationChallenge());
     ASSERT(!d->m_currentWebChallenge.isNull());
-    ASSERT(d->m_currentWebChallenge == challenge);
 
     if (client())
         client()->didCancelAuthenticationChallenge(this, challenge);
@@ -866,27 +865,6 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
                                                        storagePolicy:static_cast<NSURLCacheStoragePolicy>(policy)] autorelease];
 
     return newResponse;
-}
-
-- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_handle)
-        return;
-    m_handle->receivedCredential(core(challenge), core(credential));
-}
-
-- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_handle)
-        return;
-    m_handle->receivedRequestToContinueWithoutCredential(core(challenge));
-}
-
-- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    if (!m_handle)
-        return;
-    m_handle->receivedCancellation(core(challenge));
 }
 
 @end

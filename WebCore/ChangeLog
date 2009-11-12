@@ -1,3 +1,55 @@
+2009-11-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31386
+        Make Mac AuthenticationChallenge usable from cross-platform code
+
+        No change in behavior, so no tests.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::clearAuthentication):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        Don't store m_currentCFChallenge, which was only used for a single assertion. Unlike the
+        NSURLConnection case, CF challenge doesn't carry a sender with it, so the copy in web challenge
+        is identical.
+
+        * platform/network/cf/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::setAuthenticationClient): Added a setter to match the new
+        Mac interface. Previously, one had to create a new AuthenticationChallenge to replace client.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Fixed assertions after removal
+        of m_currentCFChallenge. Also, there is no need to set client now, as it's guaranteed to
+        be already set.
+
+        * platform/network/mac/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::m_sender): Explained the existence of this member to the
+        best of my understanding.
+        (WebCore::AuthenticationChallenge::m_nsChallenge): Renamed from m_macChallenge to prevent
+        confusion with "mac" and "web" challenges in ResourceHandleInternal.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCoreAuthenticationClientAsChallengeSender): Added a Obj-C wrapper for AuthenticationClient,
+        making it possible to use the latter with NSURLAuthenticationChallenge.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Updated for m_macChallenge ->
+        m_nsChallenge renaming.
+        (WebCore::AuthenticationChallenge::setAuthenticationClient): Wrap the client in Obj-C and
+        set it as sender (or unset, if client is null).
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCoreResourceHandleAsDelegate) WebCoreResourceHandleAsDelegate no longer doubles as
+        authentication challenge sender.
+        (WebCore::ResourceHandle::~ResourceHandle): A navigation can happen underneath an
+        authentication sheet.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Form m_currentWebChallenge
+        using the new setAuthenticationClient() method.
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge): Fixed an incorrect assertion.
+        Since didCancelAuthenticationChallenge is called by connection, the passed challenge is
+        the original Mac one, not the one we created for use with authentication sheet. I don't
+        know when a connection would cancel authentication in practice, so I haven't tested this.
+
 2009-11-12  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.

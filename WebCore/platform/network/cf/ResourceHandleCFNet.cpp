@@ -479,11 +479,11 @@ bool ResourceHandle::shouldUseCredentialStorage()
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     LOG(Network, "CFNet - didReceiveAuthenticationChallenge()");
-    ASSERT(!d->m_currentCFChallenge);
     ASSERT(d->m_currentWebChallenge.isNull());
     // Since CFURLConnection networking relies on keeping a reference to the original CFURLAuthChallengeRef,
     // we make sure that is actually present
     ASSERT(challenge.cfURLAuthChallengeRef());
+    ASSERT(challenge.authenticationClient() == this); // Should be already set.
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         RetainPtr<CFStringRef> user(AdoptCF, d->m_user.createCFString());
@@ -513,8 +513,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         }
     }
 
-    d->m_currentCFChallenge = challenge.cfURLAuthChallengeRef();
-    d->m_currentWebChallenge = AuthenticationChallenge(d->m_currentCFChallenge, this);
+    d->m_currentWebChallenge = challenge;
     
     if (client())
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);

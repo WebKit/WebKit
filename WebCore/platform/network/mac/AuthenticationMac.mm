@@ -26,6 +26,7 @@
 #import "AuthenticationMac.h"
 
 #import "AuthenticationChallenge.h"
+#import "AuthenticationClient.h"
 #import "Credential.h"
 #import "ProtectionSpace.h"
 
@@ -33,6 +34,51 @@
 #import <Foundation/NSURLCredential.h>
 #import <Foundation/NSURLProtectionSpace.h>
 
+using namespace WebCore;
+
+@interface WebCoreAuthenticationClientAsChallengeSender : NSObject <NSURLAuthenticationChallengeSender>
+{
+    AuthenticationClient* m_client;
+}
+- (id)initWithClient:(AuthenticationClient*)client;
+- (void)detachClient;
+@end
+
+@implementation WebCoreAuthenticationClientAsChallengeSender
+
+- (id)initWithClient:(AuthenticationClient*)client
+{
+    self = [self init];
+    if (!self)
+        return nil;
+    m_client = client;
+    return self;
+}
+
+- (void)detachClient
+{
+    m_client = 0;
+}
+
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (m_client)
+        m_client->receivedCredential(core(challenge), core(credential));
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (m_client)
+        m_client->receivedRequestToContinueWithoutCredential(core(challenge));
+}
+
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (m_client)
+        m_client->receivedCancellation(core(challenge));
+}
+
+@end
 
 namespace WebCore {
 
@@ -49,15 +95,26 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 {
 }
 
-AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *macChallenge)
-    : AuthenticationChallengeBase(core([macChallenge protectionSpace]),
-                                  core([macChallenge proposedCredential]),
-                                  [macChallenge previousFailureCount],
-                                  [macChallenge failureResponse],
-                                  [macChallenge error])
-    , m_sender([macChallenge sender])
-    , m_macChallenge(macChallenge)
+AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
+    : AuthenticationChallengeBase(core([challenge protectionSpace]),
+                                  core([challenge proposedCredential]),
+                                  [challenge previousFailureCount],
+                                  [challenge failureResponse],
+                                  [challenge error])
+    , m_sender([challenge sender])
+    , m_nsChallenge(challenge)
 {
+}
+
+void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* client)
+{
+    if (client) {
+        m_sender.adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithClient:client]);
+        m_nsChallenge.adoptNS([[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_nsChallenge.get() sender:m_sender.get()]);
+    } else {
+        if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
+            [(WebCoreAuthenticationClientAsChallengeSender *)m_sender.get() detachClient];
+    }
 }
 
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
