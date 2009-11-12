@@ -253,6 +253,7 @@ public:
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isFieldset() const { return false; }
+    virtual bool isFileUploadControl() const { return false; }
     virtual bool isFrame() const { return false; }
     virtual bool isFrameSet() const { return false; }
     virtual bool isImage() const { return false; }

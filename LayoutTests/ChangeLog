@@ -1,3 +1,23 @@
+2009-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Print the file text of a file upload control in DumpRenderTree for ease of tests.
+        https://bugs.webkit.org/show_bug.cgi?id=31195
+
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/file-input-direction-expected.txt:
+        * platform/mac/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/hidden-input-file-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/win/fast/forms/box-shadow-override-expected.txt:
+        * platform/win/fast/forms/file-input-disabled-expected.txt:
+        * platform/win/fast/forms/input-appearance-height-expected.txt:
+        * platform/win/fast/forms/input-value-expected.txt:
+
 2009-11-11  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Dmitri Titov.

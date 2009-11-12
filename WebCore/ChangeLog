@@ -1,3 +1,21 @@
+2009-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Print the file text of a file upload control in DumpRenderTree for ease of tests.
+        https://bugs.webkit.org/show_bug.cgi?id=31195
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        * rendering/RenderFileUploadControl.h:
+        (WebCore::RenderFileUploadControl::isFileUploadControl):
+        (WebCore::toRenderFileUploadControl):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFileUploadControl):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+
 2009-11-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

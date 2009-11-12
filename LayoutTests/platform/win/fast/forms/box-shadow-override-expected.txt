@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (57,0) size 15x15
         RenderText {#text} at (177,9) size 4x18
           text run at (177,9) width 4: " "
-        RenderFileUploadControl {INPUT} at (183,10) size 237x18
+        RenderFileUploadControl {INPUT} at (183,10) size 237x18 "no file selected"
           RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 62x13
               RenderText at (0,0) size 62x13
