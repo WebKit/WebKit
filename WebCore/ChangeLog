@@ -1,3 +1,19 @@
+2009-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Custom printing shrink factors
+        https://bugs.webkit.org/show_bug.cgi?id=29042
+
+        This reverts commit r49769. The public API for this needs to be reviewed
+        before its inclusion in Qt.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::begin):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2009-11-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
