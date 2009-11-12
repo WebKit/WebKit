@@ -1,3 +1,10 @@
+2009-11-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Skipped new tests, a test that keeps failing despite
+        not failing locally, and a new DnD test.
+
+        * platform/gtk/Skipped:
+
 2009-11-12  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.

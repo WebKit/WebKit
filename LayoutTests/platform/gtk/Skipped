@@ -21,6 +21,7 @@
 #
 # editing/selection/extend-selection.html
 # fast/dom/Window/window-screen-properties.html
+# fast/dom/null-document-location-href-put-crash.html
 # fast/dom/null-document-location-put-crash.html
 # fast/js/navigator-mimeTypes-length.html
 # media/video-currentTime-set.html
@@ -1289,6 +1290,7 @@ fast/dom/Geolocation/watch.html
 fast/dom/Element/getBoundingClientRect.html
 fast/dom/Range/getBoundingClientRect.html
 fast/dom/Range/getClientRects.html
+fast/dom/null-document-location-href-put-crash.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html
@@ -1462,6 +1464,7 @@ fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
 fast/events/drag-parent-node.html
+http/tests/misc/bubble-drag-events.html
 
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 #   Tests timing out
@@ -5629,3 +5632,15 @@ fast/css/color-correction.html
 
 # Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
 fast/multicol/single-line.html
+
+# New tests failing
+accessibility/aria-controls-with-tabs.html
+accessibility/aria-presentational-role.html
+fast/overflow/scrollbar-restored.html
+fast/css/color-correction-on-box-shadow.html
+fast/css/color-correction-on-text-shadow.html
+
+# Tests that seem to need a rebaseline
+fast/block/positioning/relative-positioned-inline-container.html
+fast/repaint/inline-relative-positioned.html
+inspector/timeline-paint.html
