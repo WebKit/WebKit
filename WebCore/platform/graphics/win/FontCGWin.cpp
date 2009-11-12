@@ -380,7 +380,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     }
 
     if (hasSimpleShadow)
-        graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
+        graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor, DeviceColorSpace);
 
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
 }

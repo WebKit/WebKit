@@ -1,5 +1,12 @@
 2009-11-11  Beth Dakin  <bdakin@apple.com>
 
+        Windows build fix. No review needed. 
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
+2009-11-11  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Simon Fraser.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=31382
