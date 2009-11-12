@@ -240,18 +240,10 @@ CachedResource* InspectorResource::cachedResource() const
     return cachedResource;
 }
 
-InspectorResource::Type InspectorResource::type() const
+InspectorResource::Type InspectorResource::cachedResourceType() const
 {
-    if (!m_xmlHttpResponseText.isNull())
-        return XHR;
-
-    if (m_requestURL == m_loader->requestURL())
-        return Doc;
-
-    if (m_loader->frameLoader() && m_requestURL == m_loader->frameLoader()->iconURL())
-        return Image;
-
     CachedResource* cachedResource = this->cachedResource();
+
     if (!cachedResource)
         return Other;
 
@@ -270,6 +262,26 @@ InspectorResource::Type InspectorResource::type() const
         default:
             return Other;
     }
+}
+
+InspectorResource::Type InspectorResource::type() const
+{
+    if (!m_xmlHttpResponseText.isNull())
+        return XHR;
+
+    if (m_requestURL == m_loader->requestURL()) {
+        InspectorResource::Type resourceType = cachedResourceType();
+        if (resourceType == Other)
+            return Doc;
+
+        return resourceType;
+    }
+
+    if (m_loader->frameLoader() && m_requestURL == m_loader->frameLoader()->iconURL())
+        return Image;
+    
+    return cachedResourceType();
+    
 }
 
 void InspectorResource::setXMLHttpResponseText(const ScriptString& data)

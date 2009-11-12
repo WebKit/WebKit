@@ -1,3 +1,19 @@
+2009-11-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixes <http://webkit.org/b/31260>.
+        Web Inspector: Main Resources Other than HTML are mis-detected.
+        
+        Even if the resource is a main resource, look at its CachedResource type, 
+        because it might be an image, stylesheet, or JavaScript file, and we
+        want to show them all correctly.
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::cachedResourceType): Move this method out so it can be called in multiple places.
+        (WebCore::InspectorResource::type): 
+        * inspector/InspectorResource.h:
+
 2009-11-12  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.
