@@ -1,3 +1,17 @@
+2009-11-12  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        Add new accessibility enum values to Chromium enums from
+        http://trac.webkit.org/changeset/50865 and
+        http://trac.webkit.org/changeset/50883.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31424
+
+        * public/WebAccessibilityRole.h:
+        (WebKit::):
+        * src/AssertMatchingEnums.cpp:
+
 2009-11-12  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
