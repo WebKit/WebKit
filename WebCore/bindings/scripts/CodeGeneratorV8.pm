@@ -350,15 +350,16 @@ sub HolderToNative
     my $dataNode = shift;
     my $implClassName = shift;
     my $classIndex = shift;
+    my $holder = shift || "holder";   # optional param
 
     if (IsNodeSubType($dataNode)) {
         push(@implContentDecls, <<END);
-    $implClassName* imp = V8DOMWrapper::convertDOMWrapperToNode<$implClassName>(holder);
+    $implClassName* imp = v8DOMWrapperToNode<$implClassName>($holder);
 END
 
     } else {
         push(@implContentDecls, <<END);
-    $implClassName* imp = V8DOMWrapper::convertToNativeObject<$implClassName>(V8ClassIndex::$classIndex, holder);
+    $implClassName* imp = v8DOMWrapperTo<$implClassName>(V8ClassIndex::$classIndex, $holder);
 END
 
   }
@@ -397,7 +398,7 @@ sub GenerateDomainSafeFunctionGetter
     }
 END
 
-  HolderToNative($dataNode, $implClassName, $classIndex);
+    HolderToNative($dataNode, $implClassName, $classIndex);
 
     push(@implContentDecls, <<END);
     if (!V8Proxy::canAccessFrame(imp->frame(), false)) {
@@ -428,7 +429,7 @@ END
 
     if ($classIndex eq "DOMWINDOW") {
         push(@implContentDecls, <<END);
-    DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
+    DOMWindow* window = v8DOMWrapperTo<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     // Get the proxy corresponding to the DOMWindow if possible to
     // make sure that the constructor function is constructed in the
     // context of the DOMWindow and not in the context of the caller.
@@ -437,7 +438,7 @@ END
     } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT" or $classIndex eq "SHAREDWORKERCONTEXT") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
+    WorkerContext* workerContext = v8DOMWrapperTo<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
     return V8DOMWrapper::getConstructor(type, workerContext);
 END
     } else {
@@ -504,7 +505,7 @@ END
 
     if ($isPodType) {
         push(@implContentDecls, <<END);
-    V8SVGPODTypeWrapper<$implClassName>* imp_wrapper = V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());
+    V8SVGPODTypeWrapper<$implClassName>* imp_wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());
     $implClassName imp_instance = *imp_wrapper;
 END
         if ($getterStringUsesImp) {
@@ -525,12 +526,12 @@ END
     if (holder.IsEmpty()) return v8::Handle<v8::Value>();
 END
       }
-        HolderToNative($dataNode, $implClassName, $classIndex);
+        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     } else {
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
-        HolderToNative($dataNode, $implClassName, $classIndex);
+        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     }
 
     # Generate security checks if necessary
@@ -575,10 +576,6 @@ END
         }
     } else {
         $getterString = "imp_instance";
-    }
-
-    if ($nativeType eq "String") {
-        $getterString = "toString($getterString)";
     }
 
     my $result;
@@ -694,7 +691,7 @@ sub GenerateNormalAttrSetter
     if ($isPodType) {
         $implClassName = GetNativeType($implClassName);
         $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
-        push(@implContentDecls, "    V8SVGPODTypeWrapper<$implClassName>* wrapper = V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());\n");
+        push(@implContentDecls, "    V8SVGPODTypeWrapper<$implClassName>* wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());\n");
         push(@implContentDecls, "    $implClassName imp_instance = *wrapper;\n");
         push(@implContentDecls, "    $implClassName* imp = &imp_instance;\n");
 
@@ -710,12 +707,12 @@ END
     if (holder.IsEmpty()) return;
 END
       }
-        HolderToNative($dataNode, $implClassName, $classIndex);
+        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     } else {
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
-        HolderToNative($dataNode, $implClassName, $classIndex);
+        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     }
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
@@ -845,7 +842,7 @@ sub GenerateFunctionCallback
 
     if (IsPodType($implClassName)) {
         my $nativeClassName = GetNativeType($implClassName);
-        push(@implContentDecls, "    V8SVGPODTypeWrapper<$nativeClassName>* imp_wrapper = V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<$nativeClassName> >(V8ClassIndex::$classIndex, args.Holder());\n");
+        push(@implContentDecls, "    V8SVGPODTypeWrapper<$nativeClassName>* imp_wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$nativeClassName> >(V8ClassIndex::$classIndex, args.Holder());\n");
         push(@implContentDecls, "    $nativeClassName imp_instance = *imp_wrapper;\n");
         push(@implContentDecls, "    $nativeClassName* imp = &imp_instance;\n");
     } else {
@@ -1401,19 +1398,12 @@ END
 }
 
 v8::Persistent<v8::FunctionTemplate> ${className}::GetRawTemplate() {
-  static v8::Persistent<v8::FunctionTemplate> ${className}_raw_cache_;
-  if (${className}_raw_cache_.IsEmpty()) {
-    v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8Proxy::checkNewLegal);
-    ${className}_raw_cache_ = v8::Persistent<v8::FunctionTemplate>::New(result);
-  }
+  static v8::Persistent<v8::FunctionTemplate> ${className}_raw_cache_ = createRawTemplate();
   return ${className}_raw_cache_;
 }
 
 v8::Persistent<v8::FunctionTemplate> ${className}::GetTemplate() {
-  static v8::Persistent<v8::FunctionTemplate> ${className}_cache_;
-  if (${className}_cache_.IsEmpty())
-    ${className}_cache_ = Configure${className}Template(GetRawTemplate());
+  static v8::Persistent<v8::FunctionTemplate> ${className}_cache_ = Configure${className}Template(GetRawTemplate());
   return ${className}_cache_;
 }
 
@@ -1620,7 +1610,7 @@ sub GetTypeFromSignature
     my $signature = shift;
 
     my $type = $codeGenerator->StripModule($signature->type);
-    if (($type eq "DOMString") && $signature->extendedAttributes->{"HintAtomic"}) {
+    if (($type eq "DOMString") && ($signature->extendedAttributes->{"HintAtomic"} || $signature->extendedAttributes->{"Reflect"})) {
         $type = "AtomicString";
     }
 
@@ -1913,14 +1903,19 @@ sub JSValueToNative
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
 
     if ($type eq "AtomicString") {
-        return "v8ValueToAtomicWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
+        return "toAtomicWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "v8ValueToAtomicWebCoreString($value)";
     }
 
-    return "toWebCoreString($value)" if $type eq "DOMUserData";
+    if ($type eq "DOMUserData") {
+        return "toWebCoreString(args, $1)" if $value =~ /args\[(\d+)]/;
+        return "toWebCoreString($value)";
+    }
     if ($type eq "DOMString") {
         return "toWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "toWebCoreStringWithNullOrUndefinedCheck($value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
+        
+        return "toWebCoreString(args, $1)" if $value =~ /args\[(\d+)]/;
         return "toWebCoreString($value)";
     }
 
@@ -1947,7 +1942,7 @@ sub JSValueToNative
         $implIncludes{"V8Node.h"} = 1;
 
         # EventTarget is not in DOM hierarchy, but all Nodes are EventTarget.
-        return "V8Node::HasInstance($value) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8Node::HasInstance($value) ? v8DOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast($value)) : 0";
     }
 
     if ($type eq "XPathNSResolver") {
@@ -1962,7 +1957,7 @@ sub JSValueToNative
 
         # Perform type checks on the parameter, if it is expected Node type,
         # return NULL.
-        return "V8${type}::HasInstance($value) ? V8DOMWrapper::convertDOMWrapperToNode<${type}>(v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8${type}::HasInstance($value) ? v8DOMWrapperToNode<${type}>(v8::Handle<v8::Object>::Cast($value)) : 0";
     } else {
         # TODO: Temporary to avoid Window name conflict.
         my $classIndex = uc($type);
@@ -1981,7 +1976,7 @@ sub JSValueToNative
 
         # Perform type checks on the parameter, if it is expected Node type,
         # return NULL.
-        return "V8${type}::HasInstance($value) ? V8DOMWrapper::convertToNativeObject<${implClassName}>(V8ClassIndex::${classIndex}, v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8${type}::HasInstance($value) ? v8DOMWrapperTo<${implClassName}>(V8ClassIndex::${classIndex}, v8::Handle<v8::Object>::Cast($value)) : 0";
     }
 }
 
@@ -2114,8 +2109,8 @@ sub ReturnNativeToJSValue
     my $className= "V8$type";
 
     return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
-    return "return $value ? v8::True() : v8::False()" if $type eq "boolean";
-    return "return v8::Handle<v8::Value>()" if $type eq "void";
+    return "return v8Boolean($value)" if $type eq "boolean";
+    return "return v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
 
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.

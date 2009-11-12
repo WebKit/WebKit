@@ -2,6 +2,41 @@
 
         Reviewed by Dimitri Glazkov.
 
+        The Big De-Inlining. 450k code size reduction (32-bit x86.)
+        - Various inline functions in V8Binding.h made non-inline.
+        - Some renaming for consistency.
+        - New function createRawTemplate().
+        https://bugs.webkit.org/show_bug.cgi?id=31383
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8DOMWrapperToNative):
+        (WebCore::v8ValueToWebCoreString):
+        (WebCore::v8ValueToAtomicWebCoreString):
+        (WebCore::toInt32):
+        (WebCore::toWebCoreString):
+        (WebCore::toWebCoreStringWithNullCheck):
+        (WebCore::toAtomicWebCoreStringWithNullCheck):
+        (WebCore::toWebCoreStringWithNullOrUndefinedCheck):
+        (WebCore::isUndefinedOrNull):
+        (WebCore::v8Boolean):
+        (WebCore::v8UndetectableString):
+        (WebCore::v8StringOrNull):
+        (WebCore::v8StringOrUndefined):
+        (WebCore::v8StringOrFalse):
+        (WebCore::v8StringToWebCoreString):
+        (WebCore::v8ExternalString):
+        (WebCore::createRawTemplate):  New function.
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8DOMWrapperTo):
+        (WebCore::v8DOMWrapperToNode):
+        (WebCore::v8StringToWebCoreString):
+        (WebCore::v8StringToAtomicWebCoreString):
+
+2009-11-11  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         More V8 de-inlining (outlining?) Abstracted a chunk of boilerplate code from every
         event-listener setter into a new subroutine transferHiddenDependency().
         https://bugs.webkit.org/show_bug.cgi?id=31377

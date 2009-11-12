@@ -128,13 +128,122 @@ private:
 #endif
 };
 
-enum ExternalMode {
-    Externalize,
-    DoNotExternalize
-};
+
+void* v8DOMWrapperToNative(v8::Handle<v8::Object> object) {
+    return object->GetPointerFromInternalField(V8Custom::kDOMWrapperObjectIndex);
+}
+    
+void* v8DOMWrapperToNative(const v8::AccessorInfo& info) {
+    return info.Holder()->GetPointerFromInternalField(V8Custom::kDOMWrapperObjectIndex);
+}
+    
+
+String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
+{
+    if (value->IsString())
+        return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(value));
+    return v8NonStringValueToWebCoreString(value);
+}
+
+AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value)
+{
+    if (value->IsString())
+        return v8StringToAtomicWebCoreString(v8::Handle<v8::String>::Cast(value));
+    return v8NonStringValueToAtomicWebCoreString(value);
+}
+
+int toInt32(v8::Handle<v8::Value> value, bool& ok)
+{
+    ok = true;
+    
+    // Fast case.  The value is already a 32-bit integer.
+    if (value->IsInt32())
+        return value->Int32Value();
+    
+    // Can the value be converted to a number?
+    v8::Local<v8::Number> numberObject = value->ToNumber();
+    if (numberObject.IsEmpty()) {
+        ok = false;
+        return 0;
+    }
+    
+    // Does the value convert to nan or to an infinity?
+    double numberValue = numberObject->Value();
+    if (isnan(numberValue) || isinf(numberValue)) {
+        ok = false;
+        return 0;
+    }
+    
+    // Can the value be converted to a 32-bit integer?
+    v8::Local<v8::Int32> intValue = value->ToInt32();
+    if (intValue.IsEmpty()) {
+        ok = false;
+        return 0;
+    }
+    
+    // Return the result of the int32 conversion.
+    return intValue->Value();
+}
+    
+String toWebCoreString(const v8::Arguments& args, int index) {
+    return v8ValueToWebCoreString(args[index]);
+}
+
+    
+String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+{
+    if (value->IsNull()) 
+        return String();
+    return v8ValueToWebCoreString(value);
+}
+
+AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+{
+    if (value->IsNull())
+        return AtomicString();
+    return v8ValueToAtomicWebCoreString(value);
+}
+
+String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
+{
+    if (value->IsNull() || value->IsUndefined())
+        return String();
+    return toWebCoreString(value);
+}
+
+bool isUndefinedOrNull(v8::Handle<v8::Value> value)
+{
+    return value->IsNull() || value->IsUndefined();
+}
+
+v8::Handle<v8::Boolean> v8Boolean(bool value)
+{
+    return value ? v8::True() : v8::False();
+}
+
+v8::Handle<v8::String> v8UndetectableString(const String& str)
+{
+    return v8::String::NewUndetectable(fromWebCoreString(str), str.length());
+}
+
+v8::Handle<v8::Value> v8StringOrNull(const String& str)
+{
+    return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str));
+}
+
+v8::Handle<v8::Value> v8StringOrUndefined(const String& str)
+{
+    return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str));
+}
+
+v8::Handle<v8::Value> v8StringOrFalse(const String& str)
+{
+    return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str));
+}
+
 
 template <typename StringType>
-static StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
+StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
 {
     WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
     if (stringResource)
@@ -167,16 +276,6 @@ static StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, Exter
         }
     }
     return result;
-}
-
-String v8StringToWebCoreString(v8::Handle<v8::String> v8String)
-{
-    return v8StringToWebCoreString<String>(v8String, Externalize);
-}
-
-AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
-{
-    return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
 }
 
 String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
@@ -254,13 +353,13 @@ static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parame
 
 v8::Local<v8::String> v8ExternalString(const String& string)
 {
-    if (!string.length())
+    StringImpl* stringImpl = string.impl();
+    if (!stringImpl || !stringImpl->length())
         return v8::String::Empty();
 
     if (!stringImplCacheEnabled)
         return makeExternalString(string);
 
-    StringImpl* stringImpl = string.impl();
     StringCache& stringCache = getStringCache();
     v8::String* cachedV8String = stringCache.get(stringImpl);
     if (cachedV8String)
@@ -280,5 +379,12 @@ v8::Local<v8::String> v8ExternalString(const String& string)
 
     return newString;
 }
+    
+v8::Persistent<v8::FunctionTemplate> createRawTemplate()
+{
+    v8::HandleScope scope;
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8Proxy::checkNewLegal);
+    return v8::Persistent<v8::FunctionTemplate>::New(result);
+}        
 
 } // namespace WebCore

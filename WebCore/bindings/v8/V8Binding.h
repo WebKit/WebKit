@@ -34,37 +34,107 @@
 #include "AtomicString.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
+#include "V8DOMWrapper.h"
+#include "V8Index.h"
 
 #include <v8.h>
 
 namespace WebCore {
+    
+    class EventListener;
+    class EventTarget;
+    
+    // A helper function extract native object pointer from a DOM wrapper
+    // and cast to the specified type.
+    void* v8DOMWrapperToNative(v8::Handle<v8::Object>);
+    
+    template <class C>
+    C* v8DOMWrapperTo(v8::Handle<v8::Object> object)
+    {
+        ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
+        return reinterpret_cast<C*>(v8DOMWrapperToNative(object));
+    }
+    template <class C>
+    C* v8DOMWrapperToNode(v8::Handle<v8::Object> object)
+    {
+        ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
+        ASSERT(V8DOMWrapper::domWrapperType(object) == V8ClassIndex::NODE);
+        return reinterpret_cast<C*>(v8DOMWrapperToNative(object));
+    }
+    
+    void* v8DOMWrapperToNative(const v8::AccessorInfo&);
+    
+    template <class C>
+    C* v8DOMWrapperTo(const v8::AccessorInfo& info) {
+        ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
+        return reinterpret_cast<C*>(v8DOMWrapperToNative(info));
+    }
+    template <class C>
+    C* v8DOMWrapperToNode(const v8::AccessorInfo& info) {
+        ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
+        return reinterpret_cast<C*>(v8DOMWrapperToNative(info));
+    }
+    
+    template <class C>
+    C* v8DOMWrapperTo(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)
+    {
+        // Native event listener is per frame, it cannot be handled by this generic function.
+        ASSERT(type != V8ClassIndex::EVENTLISTENER);
+        ASSERT(type != V8ClassIndex::EVENTTARGET);
+        
+        ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
+        
+#ifndef NDEBUG
+        const bool typeIsValid =
+#define MAKE_CASE(TYPE, NAME) (type != V8ClassIndex::TYPE) &&
+        DOM_NODE_TYPES(MAKE_CASE)
+#if ENABLE(SVG)
+        SVG_NODE_TYPES(MAKE_CASE)
+#endif
+#undef MAKE_CASE
+        true;
+        ASSERT(typeIsValid);
+#endif
+        
+        return v8DOMWrapperTo<C>(object);
+    }
+    
+    template <class C>
+    C* v8DOMWrapperTo(V8ClassIndex::V8WrapperType type, const v8::AccessorInfo& info)
+    {
+#ifndef NDEBUG
+        return v8DOMWrapperTo<C>(type, info.Holder());
+#else
+        return reinterpret_cast<C*>(v8DOMWrapperToNative(info));
+#endif
+    }
+
+    
+    enum ExternalMode {
+        Externalize,
+        DoNotExternalize
+    };
+    
+    template <typename StringType>
+    StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external);
 
     // Convert v8 types to a WebCore::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    String v8StringToWebCoreString(v8::Handle<v8::String>);
-    String v8NonStringValueToWebCoreString(v8::Handle<v8::Value>);
-    inline String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
+    inline String v8StringToWebCoreString(v8::Handle<v8::String> v8String)
     {
-        if (value->IsString())
-            return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(value));
-        return v8NonStringValueToWebCoreString(value);
+        return v8StringToWebCoreString<String>(v8String, Externalize);
     }
+    String v8NonStringValueToWebCoreString(v8::Handle<v8::Value>);
+    String v8ValueToWebCoreString(v8::Handle<v8::Value> value);
 
     // Convert v8 types to a WebCore::AtomicString.
-    AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String>);
+    inline AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
+    {
+        return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
+    }
     AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value>);
-    inline AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value)
-    {
-        if (value->IsString())
-            return v8StringToAtomicWebCoreString(v8::Handle<v8::String>::Cast(value));
-        return v8NonStringValueToAtomicWebCoreString(value);
-    }
-
-    inline const String& toString(const String& string)
-    {
-        return string;
-    }
+    AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value);
 
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
@@ -84,38 +154,7 @@ namespace WebCore {
 
     // Convert a value to a 32-bit integer.  The conversion fails if the
     // value cannot be converted to an integer or converts to nan or to an infinity.
-    inline int toInt32(v8::Handle<v8::Value> value, bool& ok)
-    {
-        ok = true;
-
-        // Fast case.  The value is already a 32-bit integer.
-        if (value->IsInt32())
-            return value->Int32Value();
-
-        // Can the value be converted to a number?
-        v8::Local<v8::Number> numberObject = value->ToNumber();
-        if (numberObject.IsEmpty()) {
-            ok = false;
-            return 0;
-        }
-
-        // Does the value convert to nan or to an infinity?
-        double numberValue = numberObject->Value();
-        if (isnan(numberValue) || isinf(numberValue)) {
-            ok = false;
-            return 0;
-        }
-
-        // Can the value be converted to a 32-bit integer?
-        v8::Local<v8::Int32> intValue = value->ToInt32();
-        if (intValue.IsEmpty()) {
-            ok = false;
-            return 0;
-        }
-
-        // Return the result of the int32 conversion.
-        return intValue->Value();
-    }
+    int toInt32(v8::Handle<v8::Value> value, bool& ok);
 
     // Convert a value to a 32-bit integer assuming the conversion cannot fail.
     inline int toInt32(v8::Handle<v8::Value> value)
@@ -134,6 +173,8 @@ namespace WebCore {
     {
         return v8ValueToWebCoreString(object);
     }
+    
+    String toWebCoreString(const v8::Arguments&, int index);
 
     // The string returned by this function is still owned by the argument
     // and will be deallocated when the argument is deallocated.
@@ -142,56 +183,26 @@ namespace WebCore {
         return reinterpret_cast<const uint16_t*>(str.characters());
     }
 
-    inline bool isUndefinedOrNull(v8::Handle<v8::Value> value)
-    {
-        return value->IsNull() || value->IsUndefined();
-    }
+    bool isUndefinedOrNull(v8::Handle<v8::Value> value);
 
-    inline v8::Handle<v8::Boolean> v8Boolean(bool value)
-    {
-        return value ? v8::True() : v8::False();
-    }
+    v8::Handle<v8::Boolean> v8Boolean(bool value);
 
-    inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
-    {
-        if (value->IsNull()) 
-            return String();
-        return v8ValueToWebCoreString(value);
-    }
+    String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value);
 
-    inline AtomicString v8ValueToAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
-    {
-        if (value->IsNull())
-            return AtomicString();
-        return v8ValueToAtomicWebCoreString(value);
-    }
+    AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value);
 
-    inline String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
-    {
-        if (value->IsNull() || value->IsUndefined())
-            return String();
-        return toWebCoreString(value);
-    }
+    String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value);
  
-    inline v8::Handle<v8::String> v8UndetectableString(const String& str)
-    {
-        return v8::String::NewUndetectable(fromWebCoreString(str), str.length());
-    }
+    v8::Handle<v8::String> v8UndetectableString(const String& str);
 
-    inline v8::Handle<v8::Value> v8StringOrNull(const String& str)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str));
-    }
+    v8::Handle<v8::Value> v8StringOrNull(const String& str);
 
-    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str));
-    }
+    v8::Handle<v8::Value> v8StringOrUndefined(const String& str);
 
-    inline v8::Handle<v8::Value> v8StringOrFalse(const String& str)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str));
-    }
+    v8::Handle<v8::Value> v8StringOrFalse(const String& str);
+    
+    v8::Persistent<v8::FunctionTemplate> createRawTemplate();
+
 } // namespace WebCore
 
 #endif // V8Binding_h
