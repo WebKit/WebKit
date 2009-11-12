@@ -1682,7 +1682,7 @@ InspectorController* QWebPagePrivate::inspectorController()
 */
 
 /*!
-    Constructs an empty QWebView with parent \a parent.
+    Constructs an empty QWebPage with parent \a parent.
 */
 QWebPage::QWebPage(QObject *parent)
     : QObject(parent)

@@ -1,3 +1,15 @@
+2009-11-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Jan Alonzo.
+
+        [Qt] Various doc fixes
+        https://bugs.webkit.org/show_bug.cgi?id=31358
+
+        QWebPage's constructor docs are mentioning "QWebView":
+        "Constructs an empty QWebView with parent".
+
+        * Api/qwebpage.cpp:
+
 2009-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
