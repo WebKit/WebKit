@@ -1791,7 +1791,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     return swallowEvent;
 }
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) && !(PLATFORM(CHROMIUM) && PLATFORM(LINUX))
 bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const
 {
     return false;

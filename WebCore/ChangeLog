@@ -1,3 +1,17 @@
+2009-11-12  Kinuko Yasuda  <kinuko@google.com>
+
+        Reviewed by David Levin.
+
+        Support Gtk scrollwheel behavior for horizontal scrollbars on Linux
+        Chromium too.
+        https://bugs.webkit.org/show_bug.cgi?id=31292
+
+        No new tests. (Corresponding test for Gtk+ is
+        platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html)
+
+        * page/EventHandler.cpp:
+        * page/chromium/EventHandlerChromium.cpp:
+
 2009-11-12  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Eric Seidel.

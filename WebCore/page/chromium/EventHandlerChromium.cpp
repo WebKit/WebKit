@@ -154,4 +154,14 @@ unsigned EventHandler::accessKeyModifiers()
 #endif
 }
 
+#if PLATFORM(LINUX)
+// GTK+ must scroll horizontally if the mouse pointer is on top of the
+// horizontal scrollbar while scrolling with the wheel.
+// This code comes from gtk/EventHandlerGtk.cpp.
+bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result) const
+{
+    return result.scrollbar() && result.scrollbar()->orientation() == HorizontalScrollbar;
+}
+#endif
+
 } // namespace WebCore
