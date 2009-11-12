@@ -1,3 +1,10 @@
+2009-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Build fix. No review needed.
+
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+
 2009-11-10  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Oliver Hunt.
