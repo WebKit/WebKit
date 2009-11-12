@@ -1,3 +1,9 @@
+2009-11-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Not reviewed.  Build fix.  Will be cleaned up in subsequent patch once we know exaclty what's going on.
+
+        * src/WebBindings.cpp:
+
 2009-11-11  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Dimitri Glazkov.

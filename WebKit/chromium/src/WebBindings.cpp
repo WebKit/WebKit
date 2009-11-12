@@ -34,8 +34,8 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
-#include "WebDragData.h"
-#include "WebRange.h"
+#include "../public/WebDragData.h"
+#include "../public/WebRange.h"
 
 #if USE(V8)
 #include "ChromiumDataObject.h"
