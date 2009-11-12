@@ -1,3 +1,17 @@
+2009-11-11  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Remove t2embed.dll functions from FontCustomPlatformData.cpp for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=31345
+
+        Remove dependency on t2embed.dll so that Chromium for Windows can start even if t2embed.dll cannot be accessed.
+
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Remove TTDeleteEmbeddedFont() call. Always use RemoveFontMemResourceEx().
+        (WebCore::FontCustomPlatformData::fontPlatformData): Remove TTGetNewFontName() call.
+        (WebCore::createFontCustomPlatformData): Remove TTLoadEmbeddedFont() call. Always use AddFontMemResourceEx() via renameAndActivateFont() in opentype/OpenTypeUtility.h. Remove EOTStream class as well.
+
 2009-11-11  Beth Dakin  <bdakin@apple.com>
 
         Build fix. No review needed.
