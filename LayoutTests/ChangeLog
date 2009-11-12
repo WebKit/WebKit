@@ -1,3 +1,15 @@
+2009-11-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Sify compose button alerts error
+        https://bugs.webkit.org/show_bug.cgi?id=31394
+
+        Test that we're using the calling security context in a simple case.
+
+        * http/tests/security/calling-versus-current-expected.txt: Added.
+        * http/tests/security/calling-versus-current.html: Added.
+
 2009-11-12  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.
