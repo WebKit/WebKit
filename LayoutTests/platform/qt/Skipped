@@ -120,6 +120,13 @@ inspector/styles-iframe.html
 inspector/syntax-highlight-css.html
 inspector/syntax-highlight-javascript.html
 inspector/timeline-enum-stability.html
+inspector/timeline-layout.html
+inspector/timeline-mark-timeline.html
+inspector/timeline-paint.html
+inspector/timeline-parse-html.html
+inspector/timeline-recalculate-styles.html
+inspector/timeline-script-tag-1.html
+inspector/timeline-script-tag-2.html
 inspector/timeline-trivial.html
 inspector/uncaught-dom1-exception.html
 inspector/uncaught-dom3-exception.html
