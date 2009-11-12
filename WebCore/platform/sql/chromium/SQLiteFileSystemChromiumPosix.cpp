@@ -42,8 +42,11 @@ using namespace WebCore;
 
 // Defined in Chromium's codebase in third_party/sqlite/src/os_unix.c
 extern "C" {
-void initUnixFile(sqlite3_file* file);
-int fillInUnixFile(sqlite3_vfs* vfs, int fd, int dirfd, sqlite3_file* file, const char* fileName, int noLock);
+void chromium_sqlite3_initialize_unix_sqlite3_file(sqlite3_file* file);
+int chromium_sqlite3_fill_in_unix_sqlite3_file(sqlite3_vfs* vfs, int fd, int dirfd, sqlite3_file* file, const char* fileName, int noLock);
+int chromium_sqlite3_get_reusable_file_handle(sqlite3_file* file, const char* fileName, int flags, int* fd);
+void chromium_sqlite3_update_reusable_file_handle(sqlite3_file* file, int fd, int flags);
+void chromium_sqlite3_destroy_reusable_file_handle(sqlite3_file* file);
 }
 
 // Chromium's Posix implementation of SQLite VFS
@@ -59,18 +62,28 @@ namespace {
 int chromiumOpen(sqlite3_vfs* vfs, const char* fileName,
                  sqlite3_file* id, int desiredFlags, int* usedFlags)
 {
-    initUnixFile(id);
+    chromium_sqlite3_initialize_unix_sqlite3_file(id);
+    int fd = -1;
     int dirfd = -1;
-    int fd = ChromiumBridge::databaseOpenFile(fileName, desiredFlags, &dirfd);
+    int result = chromium_sqlite3_get_reusable_file_handle(id, fileName, desiredFlags, &fd);
+    if (result != SQLITE_OK)
+        return result;
+
     if (fd < 0) {
-        if (desiredFlags & SQLITE_OPEN_READWRITE) {
+        fd = ChromiumBridge::databaseOpenFile(fileName, desiredFlags, &dirfd);
+        if ((fd < 0) && (desiredFlags & SQLITE_OPEN_READWRITE)) {
             int newFlags = (desiredFlags & ~(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)) | SQLITE_OPEN_READONLY;
-            return chromiumOpen(vfs, fileName, id, newFlags, usedFlags);
-        } else
-            return SQLITE_CANTOPEN;
+            fd = ChromiumBridge::databaseOpenFile(fileName, newFlags, &dirfd);
+        }
     }
+    if (fd < 0) {
+        chromium_sqlite3_destroy_reusable_file_handle(id);
+        return SQLITE_CANTOPEN;
+    }
+
     if (usedFlags)
         *usedFlags = desiredFlags;
+    chromium_sqlite3_update_reusable_file_handle(id, fd, desiredFlags);
 
     fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
     if (dirfd >= 0)
@@ -79,7 +92,10 @@ int chromiumOpen(sqlite3_vfs* vfs, const char* fileName,
     // The mask 0x00007F00 gives us the 7 bits that determine the type of the file SQLite is trying to open.
     int fileType = desiredFlags & 0x00007F00;
     int noLock = (fileType != SQLITE_OPEN_MAIN_DB);
-    return fillInUnixFile(vfs, fd, dirfd, id, fileName, noLock);
+    result = fillInUnixFile(vfs, fd, dirfd, id, fileName, noLock);
+    if (result != SQLITE_OK)
+        chromium_sqlite3_destroy_reusable_file_handle(id);
+    return result;
 }
 
 // Deletes the given file.

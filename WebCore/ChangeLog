@@ -1,3 +1,14 @@
+2009-11-09  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixing Chromium's POSIX VFS implementation, by adding the required
+        "used file descriptors" logic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31275
+
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+
 2009-11-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
