@@ -192,17 +192,17 @@ WebInspector.ElementsPanel.prototype = {
         inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
 
+        this.treeOutline.suppressSelectHighlight = true;
         this.rootDOMNode = inspectedRootDocument;
 
         var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
         if (canidateFocusNode) {
-            this.treeOutline.suppressSelectHighlight = true;
             this.focusedDOMNode = canidateFocusNode;
-            this.treeOutline.suppressSelectHighlight = false;
 
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
         }
+        this.treeOutline.suppressSelectHighlight = false;
     },
 
     searchCanceled: function()
