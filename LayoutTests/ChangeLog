@@ -1,5 +1,15 @@
 2009-11-12  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Move a misplaced accessibility test from platform/mac-snowleopard/accessibility to accessibility,
+        and the results from platform/mac-snowleopard/accessibility to platform/mac/accessibility.
+
+        * accessibility/aria-list-and-listitem.html: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/aria-list-and-listitem.html.
+        * platform/mac/accessibility/aria-list-and-listitem-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/accessibility/aria-list-and-listitem-expected.txt.
+
+2009-11-12  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Brady Eidson.
 
         Land updated results for file-url-mimetypes-2.html and file-url-mimetypes-3.html.
