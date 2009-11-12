@@ -5623,3 +5623,6 @@ fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-backgrounds.html
 fast/css/color-correction-on-text.html
 fast/css/color-correction.html
+
+# Need rebaseline: https://bugs.webkit.org/show_bug.cgi?id=26830
+fast/multicol/single-line.html
