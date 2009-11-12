@@ -1510,11 +1510,13 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
 
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
-    if (m_codeBlock->needsFullScopeChain()) {
-        emitOpcode(op_tear_off_activation);
-        instructions().append(m_activationRegisterIndex);
-    } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters > 1)
-        emitOpcode(op_tear_off_arguments);
+    if (codeType() == FunctionCode) {
+        if (m_codeBlock->needsFullScopeChain()) {
+            emitOpcode(op_tear_off_activation);
+            instructions().append(m_activationRegisterIndex);
+        } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters > 1)
+            emitOpcode(op_tear_off_arguments);
+    }
 
     return emitUnaryNoDstOp(op_ret, src);
 }

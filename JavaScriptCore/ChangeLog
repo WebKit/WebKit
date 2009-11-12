@@ -1,3 +1,19 @@
+2009-11-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Start unifying entry logic for function and eval code.
+
+        Eval now uses a ret instruction to end execution, and sets up
+        a callframe more in line with what we do for function entry.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * parser/Nodes.cpp:
+        (JSC::EvalNode::emitBytecode):
+
 2009-11-12  Richard Moe Gustavsen  <richard.gustavsen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

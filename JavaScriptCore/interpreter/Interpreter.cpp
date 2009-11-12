@@ -813,17 +813,23 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     }
 
     Register* oldEnd = m_registerFile.end();
-    Register* newEnd = m_registerFile.start() + globalRegisterOffset + codeBlock->m_numCalleeRegisters;
-    if (!m_registerFile.grow(newEnd)) {
+    int argc = 1; // Implicit this argument
+    if (!m_registerFile.grow(m_registerFile.start() + globalRegisterOffset + argc)) {
         *exception = createStackOverflowError(callFrame);
         return jsNull();
     }
 
     CallFrame* newCallFrame = CallFrame::create(m_registerFile.start() + globalRegisterOffset);
+    newCallFrame->r(0) = JSValue(thisObj);
 
+    newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argc + RegisterFile::CallFrameHeaderSize, argc);
+    if (UNLIKELY(!newCallFrame)) {
+        *exception = createStackOverflowError(callFrame);
+        m_registerFile.shrink(oldEnd);
+        return jsNull();
+    }
     // a 0 codeBlock indicates a built-in caller
-    newCallFrame->r(codeBlock->thisRegister()) = JSValue(thisObj);
-    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), 0, 0, 0);
+    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), 0, argc, 0);
 
     if (codeBlock->needsFullScopeChain())
         scopeChain->ref();
