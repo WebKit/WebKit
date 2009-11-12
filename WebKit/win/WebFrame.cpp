@@ -29,29 +29,30 @@
 #include "WebFrame.h"
 
 #include "CFDictionaryPropertyBag.h"
-#include "COMPtr.h"
 #include "COMPropertyBag.h"
-#include "DefaultPolicyDelegate.h"
+#include "COMPtr.h"
 #include "DOMCoreClasses.h"
+#include "DefaultPolicyDelegate.h"
 #include "HTMLFrameOwnerElement.h"
 #include "MarshallingHelpers.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
+#include "WebDataSource.h"
 #include "WebDocumentLoader.h"
 #include "WebDownload.h"
-#include "WebError.h"
-#include "WebMutableURLRequest.h"
 #include "WebEditorClient.h"
+#include "WebError.h"
 #include "WebFramePolicyListener.h"
 #include "WebHistory.h"
+#include "WebHistoryItem.h"
 #include "WebIconFetcher.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
+#include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
-#include "WebView.h"
-#include "WebDataSource.h"
-#include "WebHistoryItem.h"
+#include "WebScriptWorld.h"
 #include "WebURLResponse.h"
+#include "WebView.h"
 #pragma warning( push, 0 )
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
@@ -490,14 +491,17 @@ JSGlobalContextRef STDMETHODCALLTYPE WebFrame::globalContext()
     return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
 
-JSGlobalContextRef STDMETHODCALLTYPE WebFrame::contextForWorldID(
-    /* [in] */ unsigned worldID)
+JSGlobalContextRef WebFrame::globalContextForScriptWorld(IWebScriptWorld* iWorld)
 {
     Frame* coreFrame = core(this);
     if (!coreFrame)
         return 0;
 
-    return toGlobalRef(coreFrame->script()->globalObject(worldID)->globalExec());
+    COMPtr<WebScriptWorld> world(Query, iWorld);
+    if (!world)
+        return 0;
+
+    return toGlobalRef(coreFrame->script()->globalObject(world->world())->globalExec());
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::loadRequest( 
@@ -2194,7 +2198,22 @@ HRESULT STDMETHODCALLTYPE WebFrame::stringByEvaluatingJavaScriptInIsolatedWorld(
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->impl()->frame();
     ASSERT(frame->document());
-    JSValue result = frame->script()->executeScriptInIsolatedWorld(worldID, string, true).jsValue();
+
+    // Get the world to execute in based on the worldID. DRT expects that a
+    // worldID of 0 always corresponds to a newly-created world, while any
+    // other worldID corresponds to a world that is created once and then
+    // cached forever.
+    RefPtr<DOMWrapperWorld> world;
+    if (!worldID)
+        world = ScriptController::createWorld();
+    else {
+        static HashMap<unsigned, RefPtr<DOMWrapperWorld> >& worlds = *new HashMap<unsigned, RefPtr<DOMWrapperWorld> >;
+        RefPtr<DOMWrapperWorld>& worldSlot = worlds.add(worldID, 0).first->second;
+        if (!worldSlot)
+            worldSlot = ScriptController::createWorld();
+        world = worldSlot;
+    }
+    JSValue result = frame->script()->executeScriptInWorld(world.get(), string, true).jsValue();
 
     if (!frame) // In case the script removed our frame from the page.
         return S_OK;

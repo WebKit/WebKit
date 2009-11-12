@@ -740,17 +740,17 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCanStartPlugins(
         /* [in] */ BOOL canStartPlugins);
 
-    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url,
+    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
                                                            unsigned whitelistCount, BSTR* whitelist, 
                                                            unsigned blacklistCount, BSTR* blacklist,
                                                            WebUserScriptInjectionTime);
-    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url,
+    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
                                                                unsigned whitelistCount, BSTR* whitelist, 
                                                                unsigned blacklistCount, BSTR* blacklist);
-    virtual HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(BSTR groupName, unsigned worldID, BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(BSTR groupName, unsigned worldID, BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(BSTR groupName, unsigned worldID);
-    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(BSTR groupName, unsigned worldID);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(BSTR groupName, IWebScriptWorld*, BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(BSTR groupName, IWebScriptWorld*, BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(BSTR groupName, IWebScriptWorld*);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(BSTR groupName, IWebScriptWorld*);
     virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
 
     virtual HRESULT STDMETHODCALLTYPE setPluginHalterDelegate(IWebPluginHalterDelegate*);

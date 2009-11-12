@@ -200,29 +200,29 @@ StorageNamespace* PageGroup::localStorage()
 }
 #endif
 
-void PageGroup::addUserScriptToWorld(unsigned worldID, const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
+void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
                                      PassOwnPtr<Vector<String> > blacklist, UserScriptInjectionTime injectionTime)
 {
-    if (worldID == UINT_MAX)
-        return;
-    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, worldID, injectionTime));
+    ASSERT_ARG(world, world);
+
+    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, injectionTime));
     if (!m_userScripts)
         m_userScripts.set(new UserScriptMap);
-    UserScriptVector*& scriptsInWorld = m_userScripts->add(worldID, 0).first->second;
+    UserScriptVector*& scriptsInWorld = m_userScripts->add(world, 0).first->second;
     if (!scriptsInWorld)
         scriptsInWorld = new UserScriptVector;
     scriptsInWorld->append(userScript.release());
 }
 
-void PageGroup::addUserStyleSheetToWorld(unsigned worldID, const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
+void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
                                          PassOwnPtr<Vector<String> > blacklist)
 {
-    if (worldID == UINT_MAX)
-        return;
-    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, worldID));
+    ASSERT_ARG(world, world);
+
+    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist));
     if (!m_userStyleSheets)
         m_userStyleSheets.set(new UserStyleSheetMap);
-    UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(worldID, 0).first->second;
+    UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(world, 0).first->second;
     if (!styleSheetsInWorld)
         styleSheetsInWorld = new UserStyleSheetVector;
     styleSheetsInWorld->append(userStyleSheet.release());
@@ -235,12 +235,14 @@ void PageGroup::addUserStyleSheetToWorld(unsigned worldID, const String& source,
     }
 }
 
-void PageGroup::removeUserScriptFromWorld(unsigned worldID, const KURL& url)
+void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& url)
 {
+    ASSERT_ARG(world, world);
+
     if (!m_userScripts)
         return;
 
-    UserScriptMap::iterator it = m_userScripts->find(worldID);
+    UserScriptMap::iterator it = m_userScripts->find(world);
     if (it == m_userScripts->end())
         return;
     
@@ -257,12 +259,14 @@ void PageGroup::removeUserScriptFromWorld(unsigned worldID, const KURL& url)
     m_userScripts->remove(it);
 }
 
-void PageGroup::removeUserStyleSheetFromWorld(unsigned worldID, const KURL& url)
+void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL& url)
 {
+    ASSERT_ARG(world, world);
+
     if (!m_userStyleSheets)
         return;
 
-    UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
+    UserStyleSheetMap::iterator it = m_userStyleSheets->find(world);
     bool sheetsChanged = false;
     if (it == m_userStyleSheets->end())
         return;
@@ -291,12 +295,14 @@ void PageGroup::removeUserStyleSheetFromWorld(unsigned worldID, const KURL& url)
     }
 }
 
-void PageGroup::removeUserScriptsFromWorld(unsigned worldID)
+void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld* world)
 {
+    ASSERT_ARG(world, world);
+
     if (!m_userScripts)
         return;
 
-    UserScriptMap::iterator it = m_userScripts->find(worldID);
+    UserScriptMap::iterator it = m_userScripts->find(world);
     if (it == m_userScripts->end())
         return;
        
@@ -304,12 +310,14 @@ void PageGroup::removeUserScriptsFromWorld(unsigned worldID)
     m_userScripts->remove(it);
 }
 
-void PageGroup::removeUserStyleSheetsFromWorld(unsigned worldID)
+void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
 {
+    ASSERT_ARG(world, world);
+
     if (!m_userStyleSheets)
         return;
     
-    UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
+    UserStyleSheetMap::iterator it = m_userStyleSheets->find(world);
     if (it == m_userStyleSheets->end())
         return;
     

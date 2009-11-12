@@ -126,7 +126,7 @@ void ScheduledAction::execute(Document* document)
         executeFunctionInContext(window, window->shell());
         Document::updateStyleForAllDocuments();
     } else
-        frame->script()->executeScriptInIsolatedWorld(m_isolatedWorld.get(), m_code);
+        frame->script()->executeScriptInWorld(m_isolatedWorld.get(), m_code);
 
     frame->script()->setProcessingTimerCallback(false);
 }

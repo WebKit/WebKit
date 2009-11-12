@@ -70,17 +70,17 @@ namespace WebCore {
         bool hasLocalStorage() { return m_localStorage; }
 #endif
 
-        void addUserScriptToWorld(unsigned worldID, const String& source, const KURL&, 
+        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&, 
                                   PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
                                   UserScriptInjectionTime);
-        void addUserStyleSheetToWorld(unsigned worldID, const String& source, const KURL&,
+        void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist);
         
-        void removeUserScriptFromWorld(unsigned, const KURL&);
-        void removeUserStyleSheetFromWorld(unsigned, const KURL&);
+        void removeUserScriptFromWorld(DOMWrapperWorld*, const KURL&);
+        void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const KURL&);
         
-        void removeUserScriptsFromWorld(unsigned);
-        void removeUserStyleSheetsFromWorld(unsigned);
+        void removeUserScriptsFromWorld(DOMWrapperWorld*);
+        void removeUserStyleSheetsFromWorld(DOMWrapperWorld*);
     
         void removeAllUserContent();
         

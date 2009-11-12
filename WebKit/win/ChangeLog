@@ -1,5 +1,73 @@
 2009-11-12  Adam Roben  <aroben@apple.com>
 
+        Replace worldIDs with world objects
+
+        WebScriptWorld is the new object that represents a world.  The only
+        place worldID is still used is in
+        IWebFramePrivate::stringByEvaluatingJavaScriptInIsolatedWorld, but
+        that will change soon.
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        * ForEachCoClass.h: Added WebScriptWorld.
+
+        * Interfaces/IWebFramePrivate.idl: Replaced contextForWorldID with
+        contextForWorld.
+
+        * Interfaces/IWebScriptWorld.idl: Added.
+
+        * Interfaces/IWebViewPrivate.idl: Changed the user script/stylesheet
+        functions to take an IWebScriptWorld instead of a worldID.
+
+        * Interfaces/WebKit.idl: Added WebScriptWorld.
+
+        * WebFrame.cpp:
+        (WebFrame::contextForWorld): Renamed from contextForWorldID. Now takes
+        an IWebScriptWorld.
+        (WebFrame::stringByEvaluatingJavaScriptInIsolatedWorld): Moved the
+        bizarre world caching/creation logic that DRT depends on here from the
+        findWorld function in ScriptController.cpp. Updated to use
+        ScriptController::executeScriptInWorld instead of
+        ScriptController::executeScriptInIsolatedWorld.
+
+        * WebFrame.h: Replaced contextForWorldID with contextForWorld.
+
+        * WebScriptWorld.cpp: Added.
+        (WebScriptWorld::WebScriptWorld):
+        (WebScriptWorld::~WebScriptWorld):
+        (WebScriptWorld::createInstance):
+        (WebScriptWorld::AddRef):
+        (WebScriptWorld::Release):
+        (WebScriptWorld::QueryInterface):
+        Standard COM class implementations.
+
+        (WebScriptWorld::standardWorld): Returns a shared instance that represents
+        WebCore's mainThreadNormalWorld().
+
+        * WebScriptWorld.h: Added.
+        (WebScriptWorld::world): Simple getter.
+
+        * WebKit.vcproj/Interfaces.vcproj: Added IWebScriptWorld.idl.
+
+        * WebKit.vcproj/WebKit.vcproj: Added WebScriptWorld.
+
+        * WebKitClassFactory.cpp: Added WebScriptWorld.
+
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::removeUserScriptFromGroup):
+        (WebView::removeUserStyleSheetFromGroup):
+        (WebView::removeUserScriptsFromGroup):
+        (WebView::removeUserStyleSheetsFromGroup):
+        * WebView.h:
+        Changed these functions to take an IWebScriptWorld instead of a worldID.
+
+2009-11-12  Adam Roben  <aroben@apple.com>
+
         Small clean-up in WebView's user content functions
 
         Preparation for <http://webkit.org/b/31414> Implement new SPI for

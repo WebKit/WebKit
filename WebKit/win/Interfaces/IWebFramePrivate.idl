@@ -32,6 +32,7 @@ import "IWebFrame.idl";
 interface IWebFrame;
 interface IWebIconFetcher;
 interface IWebIconFetcherDelegate;
+interface IWebScriptWorld;
 
 typedef enum {
     WebFrameLoadTypeStandard,
@@ -96,7 +97,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT stringByEvaluatingJavaScriptInIsolatedWorld([in] unsigned worldID, [in] OLE_HANDLE jsGlobalObject, [in] BSTR script, [out, retval] BSTR* result);
 
-    [local] JSGlobalContextRef contextForWorldID([in] unsigned worldID);
+    [local] JSGlobalContextRef globalContextForScriptWorld([in] IWebScriptWorld*);
 
     HRESULT counterValueForElementById([in] BSTR id, [out, retval] BSTR* result);
 }

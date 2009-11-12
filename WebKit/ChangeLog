@@ -1,3 +1,14 @@
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Replace worldIDs with world objects
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebScriptWorld to the project.
+
 2009-11-12  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

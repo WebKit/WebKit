@@ -1,3 +1,61 @@
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Replace worldIDs with world objects
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        Covered by existing tests.
+
+        * WebCore.base.exp: Update exported symbols to match what now exists
+        and is needed by WebKit.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): Updated for function rename.
+
+        * bindings/js/ScriptController.cpp: Removed code that dealt with
+        worldIDs.
+        (WebCore::ScriptController::createWorld): Added. Returns a new world
+        suitable for use on the main thread.
+        (WebCore::ScriptController::executeScriptInWorld): Renamed from
+        executeScriptInIsolatedWorld, since this works just fine with a
+        "normal" world.
+
+        * bindings/js/ScriptController.h: Added createWorld, removed functions
+        that took worldIDs, renamed executeScriptInIsolatedWorld to
+        executeScriptInWorld.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        (WebCore::Frame::injectUserScriptsForWorld):
+        Updated for changes to UserScriptMap and ScriptController.
+
+        * page/Frame.h: Changed injectUserScriptsForWorld to take a
+        DOMWrapperWorld* instead of a worldID.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScriptToWorld):
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        (WebCore::PageGroup::removeUserScriptFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld):
+        (WebCore::PageGroup::removeUserScriptsFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld):
+        * page/PageGroup.h:
+        Changed these functions to take a DOMWrapperWorld* instead of a
+        worldID. Also updated for changes to UserScript and UserStyleSheet.
+
+        * page/UserScript.h:
+        * page/UserStyleSheet.h: Changed not to hold a worldID, since it was
+        never used.
+
+        * page/UserScriptTypes.h:
+        * page/UserStyleSheetTypes.h: Changed UserScriptMap and
+        UserStyleSheetMap to use a RefPtr<DOMWrapperWorld> instead of a
+        worldID as their key type.
+
+
 2009-11-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.

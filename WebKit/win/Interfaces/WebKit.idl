@@ -113,6 +113,7 @@ import "ocidl.idl";
 #include "IWebResource.idl"
 #include "IWebResourceLoadDelegate.idl"
 #include "IWebResourceLoadDelegatePrivate.idl"
+#include "IWebScriptWorld.idl"
 #include "IWebScrollBarDelegatePrivate.idl"
 #include "IWebScrollBarPrivate.idl"
 #include "IWebSecurityOrigin.idl"
@@ -270,5 +271,10 @@ library WebKit
     [uuid(0967AAFF-2FFE-4fcc-81F3-3FF2A9C6DCE2)]
     coclass WebWorkersPrivate{
         [default] interface IWebWorkersPrivate;
+    }
+
+    [uuid(D3C301EE-D59A-49c0-A43A-9EA01CDB1590)]
+    coclass WebScriptWorld {
+        [default] interface IWebScriptWorld;
     }
 }

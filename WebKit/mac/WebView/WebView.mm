@@ -90,6 +90,7 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegate.h"
+#import "WebScriptWorldInternal.h"
 #import "WebSystemInterface.h"
 #import "WebTextCompletionController.h"
 #import "WebTextIterator.h"
@@ -2175,36 +2176,36 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return patternsVector;
 }
 
-+ (void)_addUserScriptToGroup:(NSString *)groupName worldID:(unsigned)worldID source:(NSString *)source url:(NSURL *)url
++ (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
                     whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist injectionTime:(WebUserScriptInjectionTime)injectionTime
 {
     String group(groupName);
-    if (group.isEmpty() || worldID == UINT_MAX)
+    if (group.isEmpty())
         return;
     
     PageGroup* pageGroup = PageGroup::pageGroup(group);
     if (!pageGroup)
         return;
     
-    pageGroup->addUserScriptToWorld(worldID, source, url, toStringVector(whitelist), toStringVector(blacklist), 
+    pageGroup->addUserScriptToWorld(core(world), source, url, toStringVector(whitelist), toStringVector(blacklist), 
                                     injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 }
 
-+ (void)_addUserStyleSheetToGroup:(NSString *)groupName worldID:(unsigned)worldID source:(NSString *)source url:(NSURL *)url
++ (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
                         whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist
 {
     String group(groupName);
-    if (group.isEmpty() || worldID == UINT_MAX)
+    if (group.isEmpty())
         return;
     
     PageGroup* pageGroup = PageGroup::pageGroup(group);
     if (!pageGroup)
         return;
 
-    pageGroup->addUserStyleSheetToWorld(worldID, source, url, toStringVector(whitelist), toStringVector(blacklist));
+    pageGroup->addUserStyleSheetToWorld(core(world), source, url, toStringVector(whitelist), toStringVector(blacklist));
 }
 
-+ (void)_removeUserScriptFromGroup:(NSString *)groupName worldID:(unsigned)worldID url:(NSURL *)url
++ (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
 {
     String group(groupName);
     if (group.isEmpty())
@@ -2214,10 +2215,10 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserScriptFromWorld(worldID, url);
+    pageGroup->removeUserScriptFromWorld(core(world), url);
 }
 
-+ (void)_removeUserStyleSheetFromGroup:(NSString *)groupName worldID:(unsigned)worldID url:(NSURL *)url
++ (void)_removeUserStyleSheetFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
 {
     String group(groupName);
     if (group.isEmpty())
@@ -2227,10 +2228,10 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserStyleSheetFromWorld(worldID, url);
+    pageGroup->removeUserStyleSheetFromWorld(core(world), url);
 }
 
-+ (void)_removeUserScriptsFromGroup:(NSString *)groupName worldID:(unsigned)worldID
++ (void)_removeUserScriptsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
 {
     String group(groupName);
     if (group.isEmpty())
@@ -2240,10 +2241,10 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserScriptsFromWorld(worldID);
+    pageGroup->removeUserScriptsFromWorld(core(world));
 }
 
-+ (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName worldID:(unsigned)worldID
++ (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
 {
     String group(groupName);
     if (group.isEmpty())
@@ -2253,7 +2254,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserStyleSheetsFromWorld(worldID);
+    pageGroup->removeUserStyleSheetsFromWorld(core(world));
 }
 
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName

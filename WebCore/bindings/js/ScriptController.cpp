@@ -165,42 +165,9 @@ public:
     static PassRefPtr<IsolatedWorld> create(JSGlobalData* globalData) { return adoptRef(new IsolatedWorld(globalData)); }
 };
 
-static PassRefPtr<IsolatedWorld> findWorld(unsigned worldID)
+PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
 {
-    if (!worldID)
-        return IsolatedWorld::create(JSDOMWindow::commonJSGlobalData());
-
-    typedef HashMap<unsigned, RefPtr<IsolatedWorld> > WorldMap;
-    DEFINE_STATIC_LOCAL(WorldMap, isolatedWorlds, ());
-
-    WorldMap::iterator iter = isolatedWorlds.find(worldID);
-    if (iter != isolatedWorlds.end())
-        return iter->second;
-
-    RefPtr<IsolatedWorld> newWorld = IsolatedWorld::create(JSDOMWindow::commonJSGlobalData());
-    isolatedWorlds.add(worldID, newWorld);
-    return newWorld;
-}
-
-JSDOMWindow* ScriptController::globalObject(unsigned worldID)
-{
-    RefPtr<DOMWrapperWorld> world = findWorld(worldID);
-    return windowShell(world.get())->window();
-}
-
-ScriptValue ScriptController::evaluateInIsolatedWorld(unsigned worldID, const ScriptSourceCode& sourceCode) 
-{
-    RefPtr<DOMWrapperWorld> world = findWorld(worldID);
-    return evaluateInWorld(sourceCode, world.get());
-}
-
-void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sourceCode) 
-{
-    RefPtr<DOMWrapperWorld> world = findWorld(worldID);
-
-    unsigned size = sourceCode.size();
-    for (unsigned i = 0; i < size; ++i)
-        evaluateInWorld(sourceCode[i], world.get());
+    return IsolatedWorld::create(JSDOMWindow::commonJSGlobalData());
 }
 
 void ScriptController::clearWindowShell()
@@ -476,27 +443,7 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-ScriptValue ScriptController::executeScriptInIsolatedWorld(unsigned worldID, const String& script, bool forceUserGesture)
-{
-    ScriptSourceCode sourceCode(script, forceUserGesture ? KURL() : m_frame->loader()->url());
-
-    if (!isEnabled() || isPaused())
-        return ScriptValue();
-
-    bool wasInExecuteScript = m_inExecuteScript;
-    m_inExecuteScript = true;
-
-    ScriptValue result = evaluateInIsolatedWorld(worldID, sourceCode);
-
-    if (!wasInExecuteScript) {
-        m_inExecuteScript = false;
-        Document::updateStyleForAllDocuments();
-    }
-
-    return result;
-}
-
-ScriptValue ScriptController::executeScriptInIsolatedWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
+ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
 {
     ScriptSourceCode sourceCode(script, forceUserGesture ? KURL() : m_frame->loader()->url());
 

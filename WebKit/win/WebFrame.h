@@ -254,8 +254,7 @@ public:
         /* [in] */ BSTR script,
         /* [retval][out] */ BSTR* evaluationResult);
 
-    virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE contextForWorldID(
-        /* [in] */ unsigned worldID);
+    virtual JSGlobalContextRef STDMETHODCALLTYPE globalContextForScriptWorld(IWebScriptWorld*);
 
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 

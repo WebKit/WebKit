@@ -1,3 +1,55 @@
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Replace worldIDs with world objects
+
+        WebScriptWorld is the new object that represents a world.  The only
+        place worldID is still used is in -[WebFrame
+        _stringByEvaluatingJavaScriptInIsolatedWorld:WithGlobalObject:FromString:],
+        but that will change soon.
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.exp: Export WebScriptWorld.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptInIsolatedWorld:WithGlobalObject:FromString:]):
+        Moved the bizarre world caching/creation logic that DRT depends on
+        here from the findWorld function in ScriptController.cpp. Updated to
+        use ScriptController::executeScriptInWorld instead of
+        ScriptController::executeScriptInIsolatedWorld.
+        (-[WebFrame _contextForWorld:]): Renamed from contextForWorldID:. Now
+        takes a WebScriptWorld.
+
+        * WebView/WebFramePrivate.h: Replaced contextForWorldID: with
+        _contextForWorld:.
+
+        * WebView/WebScriptWorld.h: Added.
+        * WebView/WebScriptWorld.mm: Added.
+        (-[WebScriptWorld initWithWorld:]): Store the passed-in world in our
+        _private member.
+        (-[WebScriptWorld init]): Create a new DOMWrapperWorld and pass it to
+        -initWithWorld:.
+        (-[WebScriptWorld dealloc]): Release _private.
+        (+[WebScriptWorld standardWorld]): Returns a shared instance that
+        represents WebCore's mainThreadNormalWorld().
+        (+[WebScriptWorld world]): Returns a new instance.
+        (core): Returns the DOMWrapperWorld for this WebScriptWorld.
+
+        * WebView/WebScriptWorldInternal.h: Added.
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:]):
+        (+[WebView _removeUserScriptFromGroup:world:url:]):
+        (+[WebView _removeUserStyleSheetFromGroup:world:url:]):
+        (+[WebView _removeUserScriptsFromGroup:world:]):
+        (+[WebView _removeUserStyleSheetsFromGroup:world:]):
+        * WebView/WebViewPrivate.h:
+        Changed these functions to take a WebScriptWorld instead of a worldID.
+
 2009-11-12  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

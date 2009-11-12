@@ -1,3 +1,21 @@
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Replace worldIDs with world objects
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        Changed these functions to create a new WebJSWorld each time they're
+        called and to pass that world to WebKit.
+
 2009-11-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

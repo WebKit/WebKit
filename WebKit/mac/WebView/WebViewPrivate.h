@@ -45,6 +45,7 @@
 @class WebFrame;
 @class WebInspector;
 @class WebPreferences;
+@class WebScriptWorld;
 @class WebTextIterator;
 
 @protocol WebFormDelegate;
@@ -479,12 +480,12 @@ Could be worth adding to the API.
 // Removes all white list entries created with _whiteListAccessFromOrigin.
 + (void)_resetOriginAccessWhiteLists;
 
-+ (void)_addUserScriptToGroup:(NSString *)groupName worldID:(unsigned)worldID source:(NSString *)source url:(NSURL *)url whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist injectionTime:(WebUserScriptInjectionTime)injectionTime;
-+ (void)_addUserStyleSheetToGroup:(NSString *)groupName worldID:(unsigned)worldID source:(NSString *)source url:(NSURL *)url whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist;
-+ (void)_removeUserScriptFromGroup:(NSString *)groupName worldID:(unsigned)worldID url:(NSURL *)url;
-+ (void)_removeUserStyleSheetFromGroup:(NSString *)groupName worldID:(unsigned)worldID url:(NSURL *)url;
-+ (void)_removeUserScriptsFromGroup:(NSString *)groupName worldID:(unsigned)worldID;
-+ (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName worldID:(unsigned)worldID;
++ (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist injectionTime:(WebUserScriptInjectionTime)injectionTime;
++ (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist;
++ (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url;
++ (void)_removeUserStyleSheetFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url;
++ (void)_removeUserScriptsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world;
++ (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world;
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName;
 
 /*!

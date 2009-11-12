@@ -33,10 +33,11 @@ namespace WebCore {
 
 enum UserScriptInjectionTime { InjectAtDocumentStart, InjectAtDocumentEnd };
 
+class DOMWrapperWorld;
 class UserScript;
 
 typedef Vector<OwnPtr<UserScript> > UserScriptVector;
-typedef HashMap<unsigned, UserScriptVector*> UserScriptMap;
+typedef HashMap<RefPtr<DOMWrapperWorld>, UserScriptVector*> UserScriptMap;
 
 } // namespace WebCore
  

@@ -131,7 +131,7 @@ namespace WebCore {
         void injectUserScripts(UserScriptInjectionTime);
 
     private:
-        void injectUserScriptsForWorld(unsigned worldID, const UserScriptVector&, UserScriptInjectionTime);
+        void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
 
     private:
         Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);

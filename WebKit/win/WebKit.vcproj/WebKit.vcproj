@@ -722,6 +722,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptWorld.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebKitStatistics.h"
 				>
 			</File>
@@ -1087,6 +1091,10 @@
 			</File>
 			<File
 				RelativePath="..\WebKitLogging.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebScriptWorld.cpp"
 				>
 			</File>
 			<File
