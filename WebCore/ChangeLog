@@ -1,3 +1,9 @@
+2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fix Chromium build after http://trac.webkit.org/changeset/50876.
+
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+
 2009-11-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
