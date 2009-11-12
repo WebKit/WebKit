@@ -3603,8 +3603,8 @@ media/video-zoom.html
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
 # Tests requiring fullscreen <video> support
-media-fullscreen-inline.html
-media-fullscreen-not-in-document.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
 
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work

@@ -52,8 +52,8 @@ media/video-error-abort.html
 media/video-volume-slider.html
 
 # These tests requires fullscreen <video> support
-media-fullscreen-inline.html
-media-fullscreen-not-in-document.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
 
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common

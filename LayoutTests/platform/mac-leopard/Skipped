@@ -20,5 +20,5 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 transforms/3d
 
 # These tests requires fullscreen <video> support
-media-fullscreen-inline.html
-media-fullscreen-not-in-document.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html

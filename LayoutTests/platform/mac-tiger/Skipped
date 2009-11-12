@@ -62,5 +62,5 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/redirect-with-no-location-crash.html
 
 # We don't support fullscreen <video> on Tiger
-media-fullscreen-inline.html
-media-fullscreen-not-in-document.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html

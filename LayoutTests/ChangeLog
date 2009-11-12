@@ -1,5 +1,17 @@
 2009-11-12  Eric Carlson  <eric.carlson@apple.com>
 
+        Unreviewed, build fix.
+
+        Skipped tests need path relative to LayoutTests folder, not just
+        test name.
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+
+2009-11-12  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/7388969> Add DOM API for fullscreen video
