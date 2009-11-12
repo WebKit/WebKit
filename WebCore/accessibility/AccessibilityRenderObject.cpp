@@ -2432,6 +2432,8 @@ struct RoleEntry {
 static const ARIARoleMap& createARIARoleMap()
 {
     const RoleEntry roles[] = {
+        { "alert", ApplicationAlertRole },
+        { "alertdialog", ApplicationAlertDialogRole },
         { "application", LandmarkApplicationRole },
         { "article", DocumentArticleRole },
         { "banner", LandmarkBannerRole },
@@ -2439,6 +2441,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "checkbox", CheckBoxRole },
         { "complementary", LandmarkComplementaryRole },
         { "contentinfo", LandmarkContentInfoRole },
+        { "dialog", ApplicationDialogRole },
         { "grid", TableRole },
         { "gridcell", CellRole },
         { "columnheader", ColumnHeaderRole },

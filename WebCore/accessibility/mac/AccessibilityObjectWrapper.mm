@@ -1037,6 +1037,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { LandmarkMainRole, NSAccessibilityGroupRole },
         { LandmarkNavigationRole, NSAccessibilityGroupRole },
         { LandmarkSearchRole, NSAccessibilityGroupRole },
+        { ApplicationAlertRole, NSAccessibilityGroupRole },
+        { ApplicationAlertDialogRole, NSAccessibilityGroupRole },
+        { ApplicationDialogRole, NSAccessibilityGroupRole },
         { ApplicationLogRole, NSAccessibilityGroupRole },
         { ApplicationMarqueeRole, NSAccessibilityGroupRole },
         { ApplicationStatusRole, NSAccessibilityGroupRole },
@@ -1116,6 +1119,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXLandmarkNavigation";
         case LandmarkSearchRole:
             return @"AXLandmarkSearch";
+        case ApplicationAlertRole:
+            return @"AXApplicationAlert";
+        case ApplicationAlertDialogRole:
+            return @"AXApplicationAlertDialog";
+        case ApplicationDialogRole:
+            return @"AXApplicationDialog";
         case ApplicationLogRole:
             return @"AXApplicationLog";
         case ApplicationMarqueeRole:
@@ -1177,6 +1186,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXARIAContentGroupText(@"ARIALandmarkNavigation");
             case LandmarkSearchRole:
                 return AXARIAContentGroupText(@"ARIALandmarkSearch");
+            case ApplicationAlertRole:
+                return AXARIAContentGroupText(@"ARIAApplicationAlert");
+            case ApplicationAlertDialogRole:
+                return AXARIAContentGroupText(@"ARIAApplicationAlertDialog");
+            case ApplicationDialogRole:
+                return AXARIAContentGroupText(@"ARIAApplicationDialog");
             case ApplicationLogRole:
                 return AXARIAContentGroupText(@"ARIAApplicationLog");
             case ApplicationMarqueeRole:

@@ -1,3 +1,13 @@
+2009-11-12  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ARIA: add alert type roles
+        https://bugs.webkit.org/show_bug.cgi?id=31392
+
+        * platform/mac/accessibility/aria-alerts-expected.txt: Added.
+        * platform/mac/accessibility/aria-alerts.html: Added.
+
 2009-11-12  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Rubber-stamped by Tor Arne Vestbø.

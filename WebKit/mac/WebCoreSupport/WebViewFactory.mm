@@ -555,6 +555,12 @@
 
 - (NSString *)AXARIAContentGroupText:(NSString *)ariaType
 {
+    if ([ariaType isEqualToString:@"ARIAApplicationAlert"])
+        return UI_STRING("alert", "An ARIA accessibility group that acts as an alert.");
+    if ([ariaType isEqualToString:@"ARIAApplicationAlertDialog"])
+        return UI_STRING("alert dialog", "An ARIA accessibility group that acts as an alert dialog.");
+    if ([ariaType isEqualToString:@"ARIAApplicationDialog"])
+        return UI_STRING("dialog", "An ARIA accessibility group that acts as an dialog.");
     if ([ariaType isEqualToString:@"ARIAApplicationLog"])
         return UI_STRING("log", "An ARIA accessibility group that acts as a console log.");
     if ([ariaType isEqualToString:@"ARIAApplicationMarquee"])

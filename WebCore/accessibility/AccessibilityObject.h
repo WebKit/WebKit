@@ -176,6 +176,9 @@ enum AccessibilityRole {
     LandmarkNavigationRole,
     LandmarkSearchRole,
     
+    ApplicationAlertRole,
+    ApplicationAlertDialogRole,
+    ApplicationDialogRole,
     ApplicationLogRole,
     ApplicationMarqueeRole,
     ApplicationStatusRole,
