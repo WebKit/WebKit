@@ -1,3 +1,19 @@
+2009-11-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/7267951>
+        Canvas methods should reject uses of NaN and Infinity.
+
+        Test: fast/canvas/canvas-with-illegal-args.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+
 2009-11-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

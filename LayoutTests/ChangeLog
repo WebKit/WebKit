@@ -1,3 +1,14 @@
+2009-11-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for <rdar://problem/7267951>
+        Canvas methods should reject uses of NaN and Infinity.
+
+        * fast/canvas/canvas-with-illegal-args-expected.txt: Added.
+        * fast/canvas/canvas-with-illegal-args.html: Added.
+        * fast/canvas/script-tests/canvas-with-illegal-args.js: Added.
+
 2009-11-12  Mark Rowe  <mrowe@apple.com>
 
         Skip an accessibility test that covers functionality not available on Tiger or Leopard.
