@@ -40,13 +40,13 @@ using namespace WebCore;
 {
     AuthenticationClient* m_client;
 }
-- (id)initWithClient:(AuthenticationClient*)client;
+- (id)initWithAuthenticationClient:(AuthenticationClient*)client;
 - (void)detachClient;
 @end
 
 @implementation WebCoreAuthenticationClientAsChallengeSender
 
-- (id)initWithClient:(AuthenticationClient*)client
+- (id)initWithAuthenticationClient:(AuthenticationClient*)client
 {
     self = [self init];
     if (!self)
@@ -109,7 +109,7 @@ AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *c
 void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* client)
 {
     if (client) {
-        m_sender.adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithClient:client]);
+        m_sender.adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:client]);
         m_nsChallenge.adoptNS([[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_nsChallenge.get() sender:m_sender.get()]);
     } else {
         if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
