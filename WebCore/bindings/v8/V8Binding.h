@@ -203,6 +203,24 @@ namespace WebCore {
     
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
+    struct BatchedAttribute;
+    struct BatchedCallback;
+    
+    v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>,
+                                               const char *interfaceName,
+                                               V8ClassIndex::V8WrapperType parentClassIndex,
+                                               int fieldCount,
+                                               const BatchedAttribute*, 
+                                               size_t attributeCount,
+                                               const BatchedCallback*,
+                                               size_t callbackCount);
+    
+    void createCallback(v8::Local<v8::ObjectTemplate> proto,
+                        const char *name,
+                        v8::InvocationCallback,
+                        v8::Handle<v8::Signature>,
+                        v8::PropertyAttribute attributes = v8::DontDelete);
+    
 } // namespace WebCore
 
 #endif // V8Binding_h

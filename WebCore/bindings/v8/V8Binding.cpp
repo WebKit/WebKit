@@ -387,4 +387,41 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
     return v8::Persistent<v8::FunctionTemplate>::New(result);
 }        
 
+v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>desc,
+                                           const char *interfaceName,
+                                           V8ClassIndex::V8WrapperType parentClassIndex,
+                                           int fieldCount,
+                                           const BatchedAttribute* attributes, 
+                                           size_t attributeCount,
+                                           const BatchedCallback* callbacks,
+                                           size_t callbackCount)
+{
+    desc->SetClassName(v8::String::New(interfaceName));
+    v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
+    instance->SetInternalFieldCount(fieldCount);
+    if (parentClassIndex)
+        desc->Inherit(V8DOMWrapper::getTemplate(parentClassIndex));
+    if (attributeCount)
+        batchConfigureAttributes(instance, desc->PrototypeTemplate(),
+                                 attributes, attributeCount);
+    v8::Local<v8::Signature> defaultSignature = v8::Signature::New(desc);
+    if (callbackCount)
+        batchConfigureCallbacks(desc->PrototypeTemplate(),
+                                defaultSignature,
+                                static_cast<v8::PropertyAttribute>(v8::DontDelete),
+                                callbacks, callbackCount);
+    return defaultSignature;
+}
+
+void createCallback(v8::Local<v8::ObjectTemplate> proto,
+                    const char *name,
+                    v8::InvocationCallback callback,
+                    v8::Handle<v8::Signature> signature,
+                    v8::PropertyAttribute attribute)
+{
+    proto->Set(v8::String::New(name),
+               v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
+               attribute);
+}
+
 } // namespace WebCore

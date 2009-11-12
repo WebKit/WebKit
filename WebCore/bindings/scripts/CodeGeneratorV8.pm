@@ -793,12 +793,11 @@ END
     push(@implContentDecls, "  }\n\n");  # end of setter
 }
 
-sub GenerateNewFunctionTemplate
+sub GetFunctionTemplateCallbackName
 {
     $function = shift;
     $dataNode = shift;
-    $signature = shift;
-
+    
     my $interfaceName = $dataNode->name;
     my $name = $function->signature->name;
 
@@ -813,10 +812,20 @@ sub GenerateNewFunctionTemplate
         if ($customFunc eq 1) {
             $customFunc = $interfaceName . $codeGenerator->WK_ucfirst($name);
         }
-        return "v8::FunctionTemplate::New(V8Custom::v8${customFunc}Callback, v8::Handle<v8::Value>(), $signature)";
+        return "V8Custom::v8${customFunc}Callback";
     } else {
-        return "v8::FunctionTemplate::New(${interfaceName}Internal::${name}Callback, v8::Handle<v8::Value>(), $signature)";
+        return "${interfaceName}Internal::${name}Callback";
     }
+}
+
+sub GenerateNewFunctionTemplate
+{
+    $function = shift;
+    $dataNode = shift;
+    $signature = shift;
+
+    my $callback = GetFunctionTemplateCallbackName($function, $dataNode);
+    return "v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), $signature)";
 }
 
 sub GenerateFunctionCallback
@@ -1206,6 +1215,38 @@ sub GenerateImplementation
         GenerateBatchedAttributeData($dataNode, $attributes);
         push(@implContent, "};\n");
     }
+    
+    # Setup table of standard callback functions
+    $num_callbacks = 0;
+    $has_callbacks = 0;
+    foreach my $function (@{$dataNode->functions}) {
+        my $attrExt = $function->signature->extendedAttributes;
+        # Don't put any nonstandard functions into this table:
+        if ($attrExt->{"V8OnInstance"}) {
+            next;
+        }
+        if ($attrExt->{"EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
+            next;
+        }
+        if ($attrExt->{"DoNotCheckDomainSecurity"} &&
+            ($dataNode->extendedAttributes->{"CheckDomainSecurity"} || $interfaceName eq "DOMWindow")) {
+            next;
+        }
+        if ($attrExt->{"DontEnum"} || $attrExt->{"V8ReadOnly"}) {
+            next;
+        }
+        if (!$has_callbacks) {
+            $has_callbacks = 1;
+            push(@implContent, "static const BatchedCallback ${interfaceName}_callbacks[] = {\n");
+        }
+        my $name = $function->signature->name;
+        my $callback = GetFunctionTemplateCallbackName($function, $dataNode);
+        push(@implContent, <<END);
+  {"$name", $callback},
+END
+        $num_callbacks++;
+    }
+    push(@implContent, "};\n")  if $has_callbacks;
 
     # Setup constants
     my $has_constants = 0;
@@ -1229,7 +1270,7 @@ END
 
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
-    my $access_check = "/* no access check */";
+    my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
         $access_check = "instance->SetAccessCheckCallbacks(V8Custom::v8${interfaceName}NamedSecurityCheck, V8Custom::v8${interfaceName}IndexedSecurityCheck, v8::Integer::New(V8ClassIndex::ToInt(V8ClassIndex::${classIndex})));";
     }
@@ -1248,35 +1289,59 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
 END
     }
 
+    # find the super descriptor
+    my $parentClassIndex = "INVALID_CLASS_INDEX";
+    foreach (@{$dataNode->parents}) {
+        my $parent = $codeGenerator->StripModule($_);
+        if ($parent eq "EventTarget") { next; }
+        $implIncludes{"V8${parent}.h"} = 1;
+        $parentClassIndex = uc($codeGenerator->StripModule($parent));
+        last;
+    }
+
+    # find the field count
+    my $fieldCount = "V8Custom::kDefaultWrapperInternalFieldCount";
+    if (IsNodeSubType($dataNode)) {
+        $fieldCount = "V8Custom::kNodeMinimumInternalFieldCount";
+    }
+    
     # Generate the template configuration method
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc) {
-  v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
+  v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${interfaceName}\",
+      V8ClassIndex::$parentClassIndex, $fieldCount,
 END
-    if (IsNodeSubType($dataNode)) {
-        push(@implContent, <<END);
-  instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
-END
-    } else {
-        push(@implContent, <<END);
-  instance->SetInternalFieldCount(V8Custom::kDefaultWrapperInternalFieldCount);
-END
-    }
-
-    push(@implContent,  <<END);
-  v8::Local<v8::Signature> default_signature = v8::Signature::New(desc);
-  v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
-  $access_check
-END
-
 
     # Set up our attributes if we have them
     if ($has_attributes) {
         push(@implContent, <<END);
-  batchConfigureAttributes(instance, proto, ${interfaceName}_attrs, sizeof(${interfaceName}_attrs)/sizeof(*${interfaceName}_attrs));
+      ${interfaceName}_attrs, sizeof(${interfaceName}_attrs)/sizeof(*${interfaceName}_attrs),
+END
+    } else {
+        push(@implContent, <<END);
+      NULL, 0,
+END
+    }
+    
+    if ($has_callbacks) {
+        push(@implContent, <<END);
+      ${interfaceName}_callbacks, sizeof(${interfaceName}_callbacks)/sizeof(*${interfaceName}_callbacks));
+END
+    } else {
+        push(@implContent, <<END);
+      NULL, 0);
 END
     }
 
+    if ($access_check or @enabledAtRuntime or @{$dataNode->functions} or $has_constants) {
+    push(@implContent,  <<END);
+  v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
+  v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
+END
+    }
+
+    push(@implContent,  "  $access_check\n");
+    
     # Setup the enable-at-runtime attrs if we have them
     foreach my $runtime_attr (@enabledAtRuntime) {
         $enable_function = $interfaceName . $codeGenerator->WK_ucfirst($runtime_attr->signature->name);
@@ -1293,7 +1358,9 @@ END
     }
 
     # Define our functions with Set() or SetAccessor()
+    $total_functions = 0;
     foreach my $function (@{$dataNode->functions}) {
+        $total_functions++;
         my $attrExt = $function->signature->extendedAttributes;
         my $name = $function->signature->name;
 
@@ -1347,6 +1414,7 @@ END
       v8::ALL_CAN_READ,
       static_cast<v8::PropertyAttribute>($property_attributes));
 END
+          $num_callbacks++;
           next;
       }
 
@@ -1361,31 +1429,26 @@ END
       }
 
       # Normal function call is a template
-      my $templateFunction = GenerateNewFunctionTemplate($function, $dataNode, $signature);
-
-
+      my $callback = GetFunctionTemplateCallbackName($function, $dataNode);
+      
+      if ($property_attributes eq "v8::DontDelete") {
+          $property_attributes = "";
+      } else {
+          $property_attributes = ", static_cast<v8::PropertyAttribute>($property_attributes)";
+      }
+      
+      if ($template eq "proto" && $conditional eq "" && $signature eq "default_signature" && $property_attributes eq "") {
+          # Standard type of callback, already created in the batch, so skip it here.
+          next;
+      }
+      
       push(@implContent, <<END);
-
-  // $commentInfo
-  $conditional ${template}->Set(
-      v8::String::New("$name"),
-      $templateFunction,
-      static_cast<v8::PropertyAttribute>($property_attributes));
+  ${conditional}createCallback($template, "$name", $callback, ${signature}$property_attributes);
 END
+      $num_callbacks++;
     }
-
-    # set the super descriptor
-    foreach (@{$dataNode->parents}) {
-        my $parent = $codeGenerator->StripModule($_);
-        if ($parent eq "EventTarget") { next; }
-        $implIncludes{"V8${parent}.h"} = 1;
-        my $parentClassIndex = uc($codeGenerator->StripModule($parent));
-        push(@implContent, "  desc->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::${parentClassIndex}));\n");
-        last;
-    }
-
-    # Set the class name.  This is used when printing objects.
-    push(@implContent, "  desc->SetClassName(v8::String::New(\"${interfaceName}\"));\n");
+    
+    die "Wrong number of callbacks generated for $interfaceName ($num_callbacks, should be $total_functions)" if $num_callbacks != $total_functions;
 
     if ($has_constants) {
         push(@implContent, <<END);

@@ -72,13 +72,34 @@ V8Extensions V8Proxy::m_extensions;
 const char* V8Proxy::kContextDebugDataType = "type";
 const char* V8Proxy::kContextDebugDataValue = "value";
 
-void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute* attributes, size_t attributeCount)
+void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
+                              v8::Handle<v8::ObjectTemplate> proto, 
+                              const BatchedAttribute* attributes, 
+                              size_t attributeCount)
 {
     for (size_t i = 0; i < attributeCount; ++i)
         configureAttribute(instance, proto, attributes[i]);
 }
 
-void batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor, v8::Handle<v8::ObjectTemplate> proto, const BatchedConstant* constants, size_t constantCount)
+void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> proto, 
+                             v8::Handle<v8::Signature> signature, 
+                             v8::PropertyAttribute attributes,
+                             const BatchedCallback* callbacks,
+                             size_t callbackCount)
+{
+    for (size_t i = 0; i < callbackCount; ++i) {
+        proto->Set(v8::String::New(callbacks[i].name),
+                   v8::FunctionTemplate::New(callbacks[i].callback, 
+                                             v8::Handle<v8::Value>(),
+                                             signature),
+                   attributes);
+    }
+}
+
+void batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor,
+                             v8::Handle<v8::ObjectTemplate> proto,
+                             const BatchedConstant* constants,
+                             size_t constantCount)
 {
     for (size_t i = 0; i < constantCount; ++i) {
         const BatchedConstant* constant = &constants[i];

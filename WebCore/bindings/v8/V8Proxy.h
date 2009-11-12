@@ -102,6 +102,17 @@ namespace WebCore {
 
     void batchConfigureConstants(v8::Handle<v8::FunctionTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedConstant*, size_t constantCount);
 
+    struct BatchedCallback {
+        const char* const name;
+        v8::InvocationCallback callback;
+    };
+
+    void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate>, 
+                                 v8::Handle<v8::Signature>,
+                                 v8::PropertyAttribute,
+                                 const BatchedCallback*, 
+                                 size_t callbackCount);
+
     const int kMaxRecursionDepth = 20;
 
     // Information about an extension that is registered for use with V8. If
