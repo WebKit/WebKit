@@ -29,6 +29,7 @@
 
 import base64
 import os
+import os.path
 import re
 import stat
 import subprocess
@@ -202,6 +203,83 @@ class SCMTest(unittest.TestCase):
         self.assertFalse(re.search('test4', r3_patch))
         self.assertTrue(re.search('test2', r3_patch))
         self.assertTrue(re.search('test2', self.scm.diff_for_revision(2)))
+
+    def _shared_test_svn_apply_git_patch(self):
+        self._setup_webkittools_scripts_symlink(self.scm)
+        git_binary_addition = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
+new file mode 100644
+index 0000000000000000000000000000000000000000..64a9532e7794fcd791f6f12157406d90
+60151690
+GIT binary patch
+literal 512
+zcmZ?wbhEHbRAx|MU|?iW{Kxc~?KofD;ckY;H+&5HnHl!!GQMD7h+sU{_)e9f^V3c?
+zhJP##HdZC#4K}7F68@!1jfWQg2daCm-gs#3|JREDT>c+pG4L<_2;w##WMO#ysPPap
+zLqpAf1OE938xAsSp4!5f-o><?VKe(#0jEcwfHGF4%M1^kRs14oVBp2ZEL{E1N<-zJ
+zsfLmOtKta;2_;2c#^S1-8cf<nb!QnGl>c!Xe6RXvrEtAWBvSDTgTO1j3vA31Puw!A
+zs(87q)j_mVDTqBo-P+03-P5mHCEnJ+x}YdCuS7#bCCyePUe(ynK+|4b-3qK)T?Z&)
+zYG+`tl4h?GZv_$t82}X4*DTE|$;{DEiPyF@)U-1+FaX++T9H{&%cag`W1|zVP@`%b
+zqiSkp6{BTpWTkCr!=<C6Q=?#~R8^JfrliAF6Q^gV9Iup8RqCXqqhqC`qsyhk<-nlB
+z00f{QZvfK&|Nm#oZ0TQl`Yr$BIa6A@16O26ud7H<QM=xl`toLKnz-3h@9c9q&wm|X
+z{89I|WPyD!*M?gv?q`;L=2YFeXrJQNti4?}s!zFo=5CzeBxC69xA<zrjP<wUcCRh4
+ptUl-ZG<%a~#LwkIWv&q!KSCH7tQ8cJDiw+|GV?MN)RjY50RTb-xvT&H
+
+literal 0
+HcmV?d00001
+
+"""
+        self.scm.apply_patch(self._create_patch(git_binary_addition))
+        added = read_from_path('fizzbuzz7.gif')
+        self.assertEqual(512, len(added))
+        self.assertTrue(added.startswith('GIF89a'))
+        self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
+
+        # The file already exists.
+        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_addition))
+
+        git_binary_modification = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
+index 64a9532e7794fcd791f6f12157406d9060151690..323fae03f4606ea9991df8befbb2fca7
+GIT binary patch
+literal 7
+OcmYex&reD$;sO8*F9L)B
+
+literal 512
+zcmZ?wbhEHbRAx|MU|?iW{Kxc~?KofD;ckY;H+&5HnHl!!GQMD7h+sU{_)e9f^V3c?
+zhJP##HdZC#4K}7F68@!1jfWQg2daCm-gs#3|JREDT>c+pG4L<_2;w##WMO#ysPPap
+zLqpAf1OE938xAsSp4!5f-o><?VKe(#0jEcwfHGF4%M1^kRs14oVBp2ZEL{E1N<-zJ
+zsfLmOtKta;2_;2c#^S1-8cf<nb!QnGl>c!Xe6RXvrEtAWBvSDTgTO1j3vA31Puw!A
+zs(87q)j_mVDTqBo-P+03-P5mHCEnJ+x}YdCuS7#bCCyePUe(ynK+|4b-3qK)T?Z&)
+zYG+`tl4h?GZv_$t82}X4*DTE|$;{DEiPyF@)U-1+FaX++T9H{&%cag`W1|zVP@`%b
+zqiSkp6{BTpWTkCr!=<C6Q=?#~R8^JfrliAF6Q^gV9Iup8RqCXqqhqC`qsyhk<-nlB
+z00f{QZvfK&|Nm#oZ0TQl`Yr$BIa6A@16O26ud7H<QM=xl`toLKnz-3h@9c9q&wm|X
+z{89I|WPyD!*M?gv?q`;L=2YFeXrJQNti4?}s!zFo=5CzeBxC69xA<zrjP<wUcCRh4
+ptUl-ZG<%a~#LwkIWv&q!KSCH7tQ8cJDiw+|GV?MN)RjY50RTb-xvT&H
+
+"""
+        self.scm.apply_patch(self._create_patch(git_binary_modification))
+        modified = read_from_path('fizzbuzz7.gif')
+        self.assertEqual('foobar\n', modified)
+        self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
+
+        # Applying the same modification should fail.
+        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_modification))
+
+        git_binary_deletion = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
+deleted file mode 100644
+index 323fae0..0000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 7
+OcmYex&reD$;sO8*F9L)B
+
+"""
+        self.scm.apply_patch(self._create_patch(git_binary_deletion))
+        self.assertFalse(os.path.exists('fizzbuzz7.gif'))
+        self.assertFalse('fizzbuzz7.gif' in self.scm.changed_files())
+
+        # Cannot delete again.
+        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_deletion))
 
 
 class SVNTest(SCMTest):
@@ -387,6 +465,8 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
     def test_diff_for_revision(self):
         self._shared_test_diff_for_revision()
 
+    def test_svn_apply_git_patch(self):
+        self._shared_test_svn_apply_git_patch()
 
 class GitTest(SCMTest):
 
@@ -476,6 +556,9 @@ class GitTest(SCMTest):
 
     def test_diff_for_revision(self):
         self._shared_test_diff_for_revision()
+
+    def test_svn_apply_git_patch(self):
+        self._shared_test_svn_apply_git_patch()
 
 if __name__ == '__main__':
     unittest.main()

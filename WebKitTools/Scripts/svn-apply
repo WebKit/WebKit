@@ -55,7 +55,7 @@
 #   Notice a patch that's being applied at the "wrong level" and make it work anyway.
 #   Do a dry run on the whole patch and don't do anything if part of the patch is
 #       going to fail (probably too strict unless we exclude ChangeLog).
-#   Handle git-diff patches with binary changes
+#   Handle git-diff patches with binary delta
 
 use strict;
 use warnings;
@@ -75,6 +75,7 @@ sub addDirectoriesIfNeeded($);
 sub applyPatch($$;$);
 sub checksum($);
 sub handleBinaryChange($$);
+sub handleGitBinaryChange($$);
 sub isDirectoryEmptyForRemoval($);
 sub patch($);
 sub removeDirectoriesIfNeeded();
@@ -276,6 +277,39 @@ sub handleBinaryChange($$)
     }
 }
 
+sub handleGitBinaryChange($$)
+{
+    my ($fullPath, $contents) = @_;
+
+    my ($binaryChunkType, $binaryChunk, $reverseBinaryChunkType, $reverseBinaryChunk) = decodeGitBinaryPatch($contents, $fullPath);
+    # FIXME: support "delta" type.
+    die "only literal type is supported now" if ($binaryChunkType ne "literal" || $reverseBinaryChunkType ne "literal");
+
+    my $isFileAddition = $contents =~ /\nnew file mode \d+\n/;
+    my $isFileDeletion = $contents =~ /\ndeleted file mode \d+\n/;
+
+    my $originalContents = "";
+    if (open FILE, $fullPath) {
+        die "$fullPath already exists" if $isFileAddition;
+
+        $originalContents = join("", <FILE>);
+        close FILE;
+    }
+    die "Original content of $fullPath mismatches" if $originalContents ne $reverseBinaryChunk;
+
+    if ($isFileDeletion) {
+        scmRemove($fullPath);
+    } else {
+        # Addition or Modification
+        open FILE, ">", $fullPath or die "Failed to open $fullPath.";
+        print FILE $binaryChunk;
+        close FILE;
+        if ($isFileAddition) {
+            scmAdd($fullPath);
+        }
+    }
+}
+
 sub isDirectoryEmptyForRemoval($)
 {
     my ($dir) = @_;
@@ -310,12 +344,14 @@ sub patch($)
     my $deletion = 0;
     my $addition = 0;
     my $isBinary = 0;
+    my $isGitBinary = 0;
 
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
+    $isGitBinary = 1 if $patch =~ /\nGIT binary patch\n/;
 
-    if (!$addition && !$deletion && !$isBinary) {
+    if (!$addition && !$deletion && !$isBinary && !$isGitBinary) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -332,6 +368,9 @@ sub patch($)
         if ($isBinary) {
             # Binary change
             handleBinaryChange($fullPath, $patch);
+        } elsif ($isGitBinary) {
+            # Git binary change
+            handleGitBinaryChange($fullPath, $patch);
         } elsif ($deletion) {
             # Deletion
             applyPatch($patch, $fullPath, ["--force"]);

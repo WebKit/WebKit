@@ -44,6 +44,7 @@ BEGIN {
         &changeLogEmailAddress
         &changeLogName
         &chdirReturningRelativePath
+        &decodeGitBinaryPatch
         &determineSVNRoot
         &determineVCSRoot
         &fixChangeLogPatch
@@ -345,8 +346,6 @@ sub gitdiff2svndiff($)
     $_ = shift @_;
     if (m#^diff --git a/(.+) b/(.+)#) {
         return "Index: $1";
-    } elsif (m/^new file.*/) {
-        return "";
     } elsif (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
         return "===================================================================";
     } elsif (m#^--- a/(.+)#) {
@@ -472,6 +471,100 @@ sub changeLogEmailAddress()
     changeLogEmailAddressError("Email address '$emailAddress' does not contain '\@' and is likely invalid.") unless ($emailAddress =~ /\@/);
 
     return $emailAddress;
+}
+
+# http://tools.ietf.org/html/rfc1924
+sub decodeBase85($)
+{
+    my ($encoded) = @_;
+    my %table;
+    my @characters = ('0'..'9', 'A'..'Z', 'a'..'z', '!', '#', '$', '%', '&', '(', ')', '*', '+', '-', ';', '<', '=', '>', '?', '@', '^', '_', '`', '{', '|', '}', '~');
+    for (my $i = 0; $i < 85; $i++) {
+        $table{$characters[$i]} = $i;
+    }
+
+    my $decoded = '';
+    my @encodedChars = $encoded =~ /./g;
+
+    for (my $encodedIter = 0; defined($encodedChars[$encodedIter]);) {
+        my $digit = 0;
+        for (my $i = 0; $i < 5; $i++) {
+            $digit *= 85;
+            my $char = $encodedChars[$encodedIter];
+            $digit += $table{$char};
+            $encodedIter++;
+        }
+
+        for (my $i = 0; $i < 4; $i++) {
+            $decoded .= chr(($digit >> (3 - $i) * 8) & 255);
+        }
+    }
+
+    return $decoded;
+}
+
+sub decodeGitBinaryChunk($$)
+{
+    my ($contents, $fullPath) = @_;
+
+    # Load this module lazily in case the user don't have this module
+    # and won't handle git binary patches.
+    require Compress::Zlib;
+
+    my $encoded = "";
+    my $compressedSize = 0;
+    while ($contents =~ /^([A-Za-z])(.*)$/gm) {
+        my $line = $2;
+        next if $line eq "";
+        die "$fullPath: unexpected size of a line: $&" if length($2) % 5 != 0;
+        my $actualSize = length($2) / 5 * 4;
+        my $encodedExpectedSize = ord($1);
+        my $expectedSize = $encodedExpectedSize <= ord("Z") ? $encodedExpectedSize - ord("A") + 1 : $encodedExpectedSize - ord("a") + 27;
+
+        die "$fullPath: unexpected size of a line: $&" if int(($expectedSize + 3) / 4) * 4 != $actualSize;
+        $compressedSize += $expectedSize;
+        $encoded .= $line;
+    }
+
+    my $compressed = decodeBase85($encoded);
+    $compressed = substr($compressed, 0, $compressedSize);
+    return Compress::Zlib::uncompress($compressed);
+}
+
+sub decodeGitBinaryPatch($$)
+{
+    my ($contents, $fullPath) = @_;
+
+    # Git binary patch has two chunks. One is for the normal patching
+    # and another is for the reverse patching.
+    #
+    # Each chunk a line which starts from either "literal" or "delta",
+    # followed by a number which specifies decoded size of the chunk.
+    # The "delta" type chunks aren't supported by this function yet.
+    #
+    # Then, content of the chunk comes. To decode the content, we
+    # need decode it with base85 first, and then zlib.
+    my $gitPatchRegExp = '(literal|delta) ([0-9]+)\n([A-Za-z0-9!#$%&()*+-;<=>?@^_`{|}~\\n]*?)\n\n';
+    if ($contents !~ m"\nGIT binary patch\n$gitPatchRegExp$gitPatchRegExp\Z") {
+        die "$fullPath: unknown git binary patch format"
+    }
+
+    my $binaryChunkType = $1;
+    my $binaryChunkExpectedSize = $2;
+    my $encodedChunk = $3;
+    my $reverseBinaryChunkType = $4;
+    my $reverseBinaryChunkExpectedSize = $5;
+    my $encodedReverseChunk = $6;
+
+    my $binaryChunk = decodeGitBinaryChunk($encodedChunk, $fullPath);
+    my $binaryChunkActualSize = length($binaryChunk);
+    my $reverseBinaryChunk = decodeGitBinaryChunk($encodedReverseChunk, $fullPath);
+    my $reverseBinaryChunkActualSize = length($reverseBinaryChunk);
+
+    die "$fullPath: unexpected size of the first chunk (expected $binaryChunkExpectedSize but was $binaryChunkActualSize" if ($binaryChunkExpectedSize != $binaryChunkActualSize);
+    die "$fullPath: unexpected size of the second chunk (expected $reverseBinaryChunkExpectedSize but was $reverseBinaryChunkActualSize" if ($reverseBinaryChunkExpectedSize != $reverseBinaryChunkActualSize);
+
+    return ($binaryChunkType, $binaryChunk, $reverseBinaryChunkType, $reverseBinaryChunk);
 }
 
 1;
