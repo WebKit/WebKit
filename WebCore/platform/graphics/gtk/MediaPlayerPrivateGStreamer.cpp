@@ -214,14 +214,26 @@ void MediaPlayerPrivate::load(const String& url)
 
 void MediaPlayerPrivate::play()
 {
-    LOG_VERBOSE(Media, "Play");
-    gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+    GstState state;
+    GstState pending;
+
+    gst_element_get_state(m_playBin, &state, &pending, 0);
+    if (state != GST_STATE_PLAYING && pending != GST_STATE_PLAYING) {
+        LOG_VERBOSE(Media, "Play");
+        gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+    }
 }
 
 void MediaPlayerPrivate::pause()
 {
-    LOG_VERBOSE(Media, "Pause");
-    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+    GstState state;
+    GstState pending;
+
+    gst_element_get_state(m_playBin, &state, &pending, 0);
+    if (state != GST_STATE_PAUSED  && pending != GST_STATE_PAUSED) {
+        LOG_VERBOSE(Media, "Pause");
+        gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+    }
 }
 
 float MediaPlayerPrivate::duration() const
@@ -284,8 +296,6 @@ void MediaPlayerPrivate::seek(float time)
     else {
         m_seeking = true;
         m_seekTime = sec;
-        // Wait some time for the seek to complete.
-        gst_element_get_state(m_playBin, 0, 0, 40 * GST_MSECOND);
     }
 }
 
