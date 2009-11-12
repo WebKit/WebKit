@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "PlatformString.h"
 #include "PluginData.h"
+#include "PluginDataChromium.h"
 #include "StringExtras.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -1348,8 +1349,15 @@ ObjectContentType FrameLoaderClientImpl::objectContentType(
         // Try to guess the MIME type based off the extension.
         String filename = url.lastPathComponent();
         int extensionPos = filename.reverseFind('.');
-        if (extensionPos >= 0)
-            mimeType = MIMETypeRegistry::getMIMETypeForPath(url.path());
+        if (extensionPos >= 0) {
+            String extension = filename.substring(extensionPos + 1);
+            mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+            if (mimeType.isEmpty()) {
+                // If there's no mimetype registered for the extension, check to see
+                // if a plugin can handle the extension.
+                mimeType = getPluginMimeTypeFromExtension(extension);
+            }
+        }
 
         if (mimeType.isEmpty())
             return ObjectContentFrame;
