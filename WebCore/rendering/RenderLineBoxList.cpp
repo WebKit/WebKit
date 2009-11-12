@@ -199,6 +199,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::Pain
         int bottom = curr->bottomVisibleOverflow() + renderer->maximalOutlineSize(info.phase);
         h = bottom - top;
         yPos = ty + top;
+        v->setMinimumColumnHeight(h);
         if (yPos < info.rect.bottom() && yPos + h > info.rect.y())
             curr->paint(info, tx, ty);
     }

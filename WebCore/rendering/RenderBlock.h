@@ -368,7 +368,7 @@ private:
     void offsetForContents(int& tx, int& ty) const;
 
     void calcColumnWidth();
-    int layoutColumns(int endOfContent = -1);
+    int layoutColumns(int endOfContent = -1, int requestedColumnHeight = -1);
 
     bool expandsToEncloseOverhangingFloats() const;
 

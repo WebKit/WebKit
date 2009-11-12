@@ -3617,7 +3617,7 @@ Vector<IntRect>* RenderBlock::columnRects() const
     return &gColumnInfoMap->get(this)->m_columnRects;    
 }
 
-int RenderBlock::layoutColumns(int endOfContent)
+int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
 {
     // Don't do anything if we have no columns
     if (!hasColumns())
@@ -3630,17 +3630,20 @@ int RenderBlock::layoutColumns(int endOfContent)
     
     bool computeIntrinsicHeight = (endOfContent == -1);
 
-    // Fill the columns in to the available height.  Attempt to balance the height of the columns
-    int availableHeight = contentHeight();
-    int colHeight = computeIntrinsicHeight ? availableHeight / desiredColumnCount : availableHeight;
-    
+    // Fill the columns in to the available height.  Attempt to balance the height of the columns.
     // Add in half our line-height to help with best-guess initial balancing.
     int columnSlop = lineHeight(false) / 2;
     int remainingSlopSpace = columnSlop * desiredColumnCount;
+    int availableHeight = contentHeight();
+    int colHeight;
+    if (computeIntrinsicHeight && requestedColumnHeight >= 0)
+        colHeight = requestedColumnHeight;
+    else if (computeIntrinsicHeight)
+        colHeight = availableHeight / desiredColumnCount + columnSlop;
+    else
+        colHeight = availableHeight;
+    int originalColHeight = colHeight;
 
-    if (computeIntrinsicHeight)
-        colHeight += columnSlop;
-                                                                            
     int colGap = columnGap();
 
     // Compute a collection of column rects.
@@ -3656,7 +3659,8 @@ int RenderBlock::layoutColumns(int endOfContent)
     int currY = top;
     unsigned colCount = desiredColumnCount;
     int maxColBottom = borderTop() + paddingTop();
-    int contentBottom = top + availableHeight; 
+    int contentBottom = top + availableHeight;
+    int minimumColumnHeight = -1;
     for (unsigned i = 0; i < colCount; i++) {
         // If we aren't constrained, then the last column can just get all the remaining space.
         if (computeIntrinsicHeight && i == colCount - 1)
@@ -3675,6 +3679,11 @@ int RenderBlock::layoutColumns(int endOfContent)
         setHasColumns(false);
         paintObject(paintInfo, 0, 0);
         setHasColumns(true);
+
+        if (computeIntrinsicHeight && v->minimumColumnHeight() > originalColHeight) {
+            // The initial column height was too small to contain one line of text.
+            minimumColumnHeight = max(minimumColumnHeight, v->minimumColumnHeight());
+        }
 
         int adjustedBottom = v->bestTruncatedAt();
         if (adjustedBottom <= currY)
@@ -3710,6 +3719,11 @@ int RenderBlock::layoutColumns(int endOfContent)
         // Start adding in more columns as long as there's still content left.
         if (currY < endOfContent && i == colCount - 1 && (computeIntrinsicHeight || contentHeight()))
             colCount++;
+    }
+
+    if (minimumColumnHeight >= 0) {
+        // If originalColHeight was too small, we need to try to layout again.
+        return layoutColumns(endOfContent, minimumColumnHeight);
     }
 
     int overflowRight = max(width(), currX - colGap);

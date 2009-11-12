@@ -1,3 +1,28 @@
+2009-11-12  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Prevent text inside a multi-column block from being split into columns.
+        
+        If the tentative height of a multi-column block was too small, we need to
+        expand the block height and try to layout again, in order to prevent text
+        from being split into different columns.
+
+        CSS Multicolumn text is split awkwardly
+        https://bugs.webkit.org/show_bug.cgi?id=22249
+
+        Test: fast/multicol/single-line.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBlock.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::setTruncatedAt):
+        (WebCore::RenderView::setMinimumColumnHeight):
+        (WebCore::RenderView::minimumColumnHeight):
+
 2009-11-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
