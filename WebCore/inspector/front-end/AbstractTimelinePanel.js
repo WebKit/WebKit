@@ -209,13 +209,6 @@ WebInspector.AbstractTimelinePanel.prototype = {
             this.needsRefresh = true;
             return false;
         }
-
-        if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet or the window is closed,
-            // so we can't calculate what is need. Return early.
-            return false;
-        }
-
         return this._timelineGrid.updateDividers(force, this.calculator);
     },
 

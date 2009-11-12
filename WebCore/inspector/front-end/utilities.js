@@ -147,13 +147,18 @@ Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, di
 
 Element.prototype.removeStyleClass = function(className) 
 {
-    // Test for the simple case before using a RegExp.
+    // Test for the simple case first.
     if (this.className === className) {
         this.className = "";
         return;
     }
 
-    this.removeMatchingStyleClasses(className.escapeForRegExp());
+    var index = this.className.indexOf(className);
+    if (index === -1)
+        return;
+
+    var newClassName = " " + this.className + " ";
+    this.className = newClassName.replace(" " + className + " ", " ");
 }
 
 Element.prototype.removeMatchingStyleClasses = function(classNameRegex)
@@ -176,8 +181,12 @@ Element.prototype.hasStyleClass = function(className)
     // Test for the simple case before using a RegExp.
     if (this.className === className)
         return true;
-    var regex = new RegExp("(^|\\s)" + className.escapeForRegExp() + "($|\\s)");
-    return regex.test(this.className);
+
+    var index = this.className.indexOf(className);
+    if (index === -1)
+        return false;
+    var toTest = " " + this.className + " ";
+    return toTest.indexOf(" " + className + " ", index) !== -1;
 }
 
 Element.prototype.positionAt = function(x, y)

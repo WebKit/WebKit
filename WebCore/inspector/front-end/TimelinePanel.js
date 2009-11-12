@@ -417,21 +417,23 @@ WebInspector.TimelinePanel.prototype = {
         this.calculator.reset();
         this.invalidateAllItems();
         if (typeof start === "number") {
-          if (start > this._rightResizeElement.offsetLeft - 25)
-              start = this._rightResizeElement.offsetLeft - 25;
+            if (start > this._rightResizeElement.offsetLeft - 25)
+                start = this._rightResizeElement.offsetLeft - 25;
 
-          this.calculator.windowLeft = start / this._overviewGridElement.clientWidth;
-          this._leftResizeElement.style.left = this.calculator.windowLeft*100 + "%";
-          this._overviewWindowElement.style.left = this.calculator.windowLeft*100 + "%";
+            var windowLeft = start / this._overviewGridElement.clientWidth;
+            this.calculator.windowLeft = windowLeft;
+            this._leftResizeElement.style.left = windowLeft * 100 + "%";
+            this._overviewWindowElement.style.left = windowLeft * 100 + "%";
         }
         if (typeof end === "number") {
             if (end < this._leftResizeElement.offsetLeft + 30)
                 end = this._leftResizeElement.offsetLeft + 30;
 
-            this.calculator.windowRight = end / this._overviewGridElement.clientWidth;
-            this._rightResizeElement.style.left = this.calculator.windowRight*100 + "%";
+            var windowRight = end / this._overviewGridElement.clientWidth;
+            this.calculator.windowRight = windowRight;
+            this._rightResizeElement.style.left = windowRight * 100 + "%";
         }
-        this._overviewWindowElement.style.width = (this.calculator.windowRight - this.calculator.windowLeft)*100 + "%";
+        this._overviewWindowElement.style.width = (this.calculator.windowRight - this.calculator.windowLeft) * 100 + "%";
         this.needsRefresh = true;
     },
 
@@ -540,7 +542,8 @@ WebInspector.TimelineRecordTreeElement.prototype = {
         }
     },
 
-    _updateDetails: function() {
+    _updateDetails: function()
+    {
         if (this.dataElement && this._record.details !== this._details) {
             this._details = this._record.details;
             this.dataElement.textContent = "(" + this._details + ")";
@@ -573,6 +576,7 @@ WebInspector.TimelineCalculator = function()
     WebInspector.AbstractTimelineCalculator.call(this);
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
+    this._uiString = WebInspector.UIString.bind(WebInspector);
 }
 
 WebInspector.TimelineCalculator.prototype = {
@@ -595,22 +599,34 @@ WebInspector.TimelineCalculator.prototype = {
 
     get minimumBoundary()
     {
+        if (typeof this._minimumBoundary === "number")
+            return this._minimumBoundary;
+
         if (typeof this.windowLeft === "number")
-            return this._absoluteMinimumBoundary + this.windowLeft * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
-        return this._absoluteMinimumBoundary;
+            this._minimumBoundary = this._absoluteMinimumBoundary + this.windowLeft * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
+        else
+            this._minimumBoundary = this._absoluteMinimumBoundary;
+        return this._minimumBoundary;
     },
 
     get maximumBoundary()
     {
+        if (typeof this._maximumBoundary === "number")
+            return this._maximumBoundary;
+
         if (typeof this.windowLeft === "number")
-            return this._absoluteMinimumBoundary + this.windowRight * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
-        return this._absoluteMaximumBoundary;
+            this._maximumBoundary = this._absoluteMinimumBoundary + this.windowRight * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
+        else
+            this._maximumBoundary = this._absoluteMaximumBoundary;
+        return this._maximumBoundary;
     },
 
     reset: function()
     {
         delete this._absoluteMinimumBoundary;
         delete this._absoluteMaximumBoundary;
+        delete this._minimumBoundary;
+        delete this._maximumBoundary;
     },
 
     updateBoundaries: function(record)
@@ -621,12 +637,14 @@ WebInspector.TimelineCalculator.prototype = {
 
         if (typeof this._absoluteMinimumBoundary === "undefined" || lowerBound < this._absoluteMinimumBoundary) {
             this._absoluteMinimumBoundary = lowerBound;
+            delete this._minimumBoundary;
             didChange = true;
         }
 
         var upperBound = record.endTime;
         if (typeof this._absoluteMaximumBoundary === "undefined" || upperBound > this._absoluteMaximumBoundary) {
             this._absoluteMaximumBoundary = upperBound;
+            delete this._maximumBoundary;
             didChange = true;
         }
 
@@ -635,7 +653,7 @@ WebInspector.TimelineCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, WebInspector.UIString.bind(WebInspector));
+        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, this._uiString);
     }
 }
 
@@ -700,6 +718,7 @@ WebInspector.TimelineGraph = function(record)
     this._barAreaElement.appendChild(this._barElement);
 
     this._graphElement.addStyleClass("timeline-category-" + record.category.name);
+    this._hidden = false;
 }
 
 WebInspector.TimelineGraph.prototype = {
@@ -720,13 +739,19 @@ WebInspector.TimelineGraph.prototype = {
         this._percentages = percentages;
 
         if (percentages.start > 100 || percentages.end < 0) {
-            this._graphElement.addStyleClass("hidden");
-            this.record._itemsTreeElement.listItemElement.addStyleClass("hidden");
+            if (!this._hidden) {
+                this._graphElement.addStyleClass("hidden");
+                this.record._itemsTreeElement.listItemElement.addStyleClass("hidden");
+                this._hidden = true;
+            }
         } else {
             this._barElement.style.setProperty("left", percentages.start + "%");
             this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
-            this._graphElement.removeStyleClass("hidden");
-            this.record._itemsTreeElement.listItemElement.removeStyleClass("hidden");
+            if (this._hidden) {
+                this._graphElement.removeStyleClass("hidden");
+                this.record._itemsTreeElement.listItemElement.removeStyleClass("hidden");
+                this._hidden = false;
+            }
         }
         var tooltip = (labels.tooltip || "");
         this._barElement.title = tooltip;
