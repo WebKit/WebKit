@@ -1,3 +1,27 @@
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Small clean-up in WebView's user content functions
+
+        Preparation for <http://webkit.org/b/31414> Implement new SPI for
+        dealing with user scripts/stylesheets and isolated worlds
+
+        Reviewed by Dave Hyatt.
+
+        * WebView.cpp:
+        (toString):
+        (toKURL):
+        Added these helper functions to convert BSTRs to WebCore types.
+
+        (toStringVector):
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::removeUserScriptFromGroup):
+        (WebView::removeUserStyleSheetFromGroup):
+        (WebView::removeUserScriptsFromGroup):
+        (WebView::removeUserStyleSheetsFromGroup):
+        (WebView::removeAllUserContentFromGroup):
+        Use the new helper functions.
+
 2009-11-11  Beth Dakin  <bdakin@apple.com>
 
         Build fix. No review needed.
