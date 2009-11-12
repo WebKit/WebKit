@@ -1,3 +1,15 @@
+2009-11-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: preload status bar button glyphs
+        in order to prevent them from flickering.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31439
+
+        * inspector/front-end/inspector.js:
+        (preloadImages):
+
 2009-11-12  Adam Roben  <aroben@apple.com>
 
         Replace worldIDs with world objects
