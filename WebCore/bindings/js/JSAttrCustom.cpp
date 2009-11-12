@@ -65,10 +65,8 @@ void JSAttr::markChildren(MarkStack& markStack)
 
     // Mark the element so that this will work to access the attribute even if the last
     // other reference goes away.
-    if (Element* element = impl()->ownerElement()) {
-        if (JSNode* wrapper = getCachedDOMNodeWrapper(element->document(), element))
-            markStack.append(wrapper);
-    }
+    if (Element* element = impl()->ownerElement())
+        markDOMNodeWrapper(markStack, element->document(), element);
 }
 
 } // namespace WebCore

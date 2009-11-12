@@ -536,6 +536,23 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
     }
 }
 
+void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
+{
+    if (document) {
+        JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
+        for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
+            if (JSNode* wrapper = iter->second->get(node))
+                markStack.append(wrapper);
+        }
+        return;
+    }
+
+    for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
+        if (DOMObject* wrapper = worldIter->m_wrappers.get(node))
+            markStack.append(wrapper);
+    }
+}
+
 JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())

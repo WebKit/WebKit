@@ -1,3 +1,30 @@
+2009-11-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        DOM Wrappers for some nodes may not be marked.
+        https://bugs.webkit.org/show_bug.cgi?id=31380
+
+        Some markChildren methods are calling getCachedDOMNodeWrapper, which will find
+        the wrapper for the current world only.  This means that wrappers may be GC'ed
+        prematurely, and properties lost.
+
+        Move to a model more like markDOMObjectWrapper, mark wrappers for all worlds.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::markChildren):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markDOMNodeWrapper):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::markChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::markChildren):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::markChildren):
+
 2009-11-11  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.
