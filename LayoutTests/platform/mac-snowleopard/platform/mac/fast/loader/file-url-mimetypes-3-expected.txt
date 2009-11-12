@@ -17,7 +17,7 @@ example-skm.skm has MIME type application/x-koan
 example-skp.skp has MIME type application/x-koan
 example-skt.skt has MIME type application/x-koan
 example-smf.smf has MIME type audio/midi
-example-smi.smi has MIME type application/smil
+example-smi.smi has MIME type application/x-diskcopy
 example-smil.smil has MIME type application/smil
 example-snd.snd has MIME type audio/basic
 example-so.so has MIME type application/octet-stream

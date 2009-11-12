@@ -57,7 +57,7 @@ example-odt.odt has MIME type application/vnd.oasis.opendocument.text
 example-omf.omf has MIME type application/octet-stream
 example-orf.orf has MIME type application/octet-stream
 example-otc.otc has MIME type application/vnd.oasis.opendocument.chart-template
-example-otf.otf has MIME type application/vnd.oasis.opendocument.formula-template
+example-otf.otf has MIME type application/octet-stream
 example-otg.otg has MIME type application/vnd.oasis.opendocument.graphics-template
 example-oth.oth has MIME type application/vnd.oasis.opendocument.text-web
 example-oti.oti has MIME type application/vnd.oasis.opendocument.image-template
@@ -84,7 +84,7 @@ example-php.php has MIME type text/php
 example-php3.php3 has MIME type text/php
 example-php4.php4 has MIME type text/php
 example-phtml.phtml has MIME type text/php
-example-pic.pic has MIME type image/pict
+example-pic.pic has MIME type application/octet-stream
 example-pict.pict has MIME type image/pict
 example-pl.pl has MIME type text/x-perl-script
 example-plist.plist has MIME type application/octet-stream
@@ -105,7 +105,7 @@ example-pptx.pptx has MIME type application/vnd.openxmlformats-officedocument.pr
 example-ps.ps has MIME type application/postscript
 example-psd.psd has MIME type image/vnd.adobe.photoshop
 example-py.py has MIME type text/x-python-script
-example-qif.qif has MIME type text/qif
+example-qif.qif has MIME type application/octet-stream
 example-qt.qt has MIME type video/quicktime
 example-qti.qti has MIME type image/x-quicktime
 example-qtif.qtif has MIME type image/x-quicktime
