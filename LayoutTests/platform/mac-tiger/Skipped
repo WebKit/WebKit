@@ -60,3 +60,7 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # See <rdar://problem/5081884> and https://bugs.webkit.org/show_bug.cgi?id=29329
 http/tests/loading/redirect-with-no-location-crash.html
+
+# We don't support fullscreen <video> on Tiger
+media-fullscreen-inline.html
+media-fullscreen-not-in-document.html

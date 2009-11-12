@@ -199,6 +199,8 @@ onwaiting
 onwebkitanimationstart
 onwebkitanimationiteration
 onwebkitanimationend
+onwebkitbeginfullscreen
+onwebkitendfullscreen
 onwebkittransitionend
 pattern
 placeholder

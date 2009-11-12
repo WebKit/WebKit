@@ -213,6 +213,10 @@ void HTMLMediaElement::parseMappedAttribute(MappedAttribute* attr)
         setAttributeEventListener(eventNames().volumechangeEvent, createAttributeEventListener(this, attr));
     else if (attrName == onwaitingAttr)
         setAttributeEventListener(eventNames().waitingEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onwebkitbeginfullscreenAttr)
+        setAttributeEventListener(eventNames().webkitbeginfullscreenEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onwebkitendfullscreenAttr)
+        setAttributeEventListener(eventNames().webkitendfullscreenEvent, createAttributeEventListener(this, attr));
     else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -1795,25 +1799,59 @@ void HTMLMediaElement::finishParsingChildren()
 void HTMLMediaElement::enterFullscreen()
 {
     ASSERT(!m_isFullscreen);
-    if (!renderer())
-        return;
-    if (document() && document()->page())
+    if (document() && document()->page()) {
         document()->page()->chrome()->client()->enterFullscreenForNode(this);
-    m_isFullscreen = true;
+        scheduleEvent(eventNames().webkitbeginfullscreenEvent);
+        m_isFullscreen = true;
+    }
 }
 
 void HTMLMediaElement::exitFullscreen()
 {
     ASSERT(m_isFullscreen);
-    if (document() && document()->page())
+    if (document() && document()->page()) {
         document()->page()->chrome()->client()->exitFullscreenForNode(this);
+        scheduleEvent(eventNames().webkitendfullscreenEvent);
+    }
     m_isFullscreen = false;
 }
 
 PlatformMedia HTMLMediaElement::platformMedia() const
 {
     return m_player ? m_player->platformMedia() : NoPlatformMedia;
-}        
+}
+
+void HTMLMediaElement::webkitEnterFullScreen(ExceptionCode& ec)
+{
+    if (m_isFullscreen)
+        return;
+
+    // Generate an exception if this isn't called in response to a user gesture, or if the 
+    // element does not support fullscreen.
+    if (!processingUserGesture() || !supportsFullscreen()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    enterFullscreen();
+}
+
+void HTMLMediaElement::webkitExitFullScreen()
+{
+    if (m_isFullscreen)
+        exitFullscreen();
+}
+
+bool HTMLMediaElement::webkitSupportsFullscreen()
+{
+    return supportsFullscreen();
+}
+
+bool HTMLMediaElement::webkitDisplayingFullscreen()
+{
+    return m_isFullscreen;
+}
+
 }
 
 #endif

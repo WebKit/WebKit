@@ -1,3 +1,45 @@
+2009-11-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7388969> Add DOM API for fullscreen video
+        
+        DOM API for fullscreen <video>.
+
+        Tests: media/media-fullscreen-inline.html
+               media/media-fullscreen-not-in-document.html
+
+        * dom/EventNames.h:
+            Add webkitbeginfullscreen and webkitendfullscreen.
+
+        * html/HTMLAttributeNames.in:
+            Add onwebkitbeginfullscreen and onwebkitendfullscreen.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseMappedAttribute):
+            Deal with onwebkitbeginfullscreen and onwebkitendfullscreen.
+        (WebCore::HTMLMediaElement::enterFullscreen):
+            Schedule webkitbeginfullscreenEvent event, don't set m_isFullscreen unless we
+            actually do enter fullscreen.
+        (WebCore::HTMLMediaElement::exitFullscreen):
+            Schedule webkitendfullscreenEvent event.
+        (WebCore::HTMLMediaElement::webkitEnterFullScreen):
+        (WebCore::HTMLMediaElement::webkitExitFullScreen):
+        (WebCore::HTMLMediaElement::webkitSupportsFullscreen):
+        (WebCore::HTMLMediaElement::webkitDisplayingFullscreen):
+            New, access to fullscreen properties and methods.
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+            Declare methods needed for fullscreen API.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen):
+            Return false if a movie does not have video.
+
+        * page/DOMWindow.h:
+            Add webkitbeginfullscreen and webkitendfullscreen.
+
 2009-11-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

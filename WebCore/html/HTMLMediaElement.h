@@ -131,6 +131,12 @@ public:
     void setLoop(bool b);
     void play();
     void pause();
+
+// fullscreen
+    void webkitEnterFullScreen(ExceptionCode&);
+    void webkitExitFullScreen();
+    bool webkitSupportsFullscreen();
+    bool webkitDisplayingFullscreen();
     
 // controls
     bool controls() const;

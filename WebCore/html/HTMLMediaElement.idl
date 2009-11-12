@@ -77,7 +77,14 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
         setter raises (DOMException);
     attribute boolean muted;
     
-    // WebKit extension
+    // WebKit extensions
     attribute boolean webkitPreservesPitch;
+
+    readonly attribute boolean webkitSupportsFullscreen;
+    readonly attribute boolean webkitDisplayingFullscreen;
+
+    void webkitEnterFullScreen()
+        raises (DOMException);
+    void webkitExitFullScreen();
 };
 }

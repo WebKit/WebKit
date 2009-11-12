@@ -127,6 +127,9 @@ namespace WebCore {
     macro(volumechange) \
     macro(waiting) \
     \
+    macro(webkitbeginfullscreen) \
+    macro(webkitendfullscreen) \
+    \
     macro(progress) \
     macro(stalled) \
     macro(suspend) \

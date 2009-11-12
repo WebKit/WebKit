@@ -302,6 +302,8 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(volumechange);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(waiting);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitbeginfullscreen);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitendfullscreen);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(stalled);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(suspend);

@@ -1,3 +1,23 @@
+2009-11-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7388969> Add DOM API for fullscreen video
+        
+        Tests for fullscreen <video> DOM API.
+
+        * media/media-fullscreen-inline-expected.txt: Added.
+        * media/media-fullscreen-inline.html: Added.
+        * media/media-fullscreen-not-in-document-expected.txt: Added.
+        * media/media-fullscreen-not-in-document.html: Added.
+        * media/media-fullscreen.js: Added.
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+            Skipped on platforms that don't support fullscreen yet.
+
 2009-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by David Levin.
