@@ -1,3 +1,16 @@
+2009-11-12  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: breakpoints in named evals are not restored after a reload
+        https://bugs.webkit.org/show_bug.cgi?id=31375
+
+        Manual test added
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.addScript):
+        * manual-tests/inspector/bp-in-named-eval-after-reload.html: Added.
+
 2009-11-12  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

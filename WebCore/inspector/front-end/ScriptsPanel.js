@@ -276,6 +276,11 @@ WebInspector.ScriptsPanel.prototype = {
             resource.addScript(script);
         }
 
+        sourceURL = script.sourceURL;
+
+        if (sourceID)
+            this._sourceIDMap[sourceID] = (resource || script);
+
         if (sourceURL in this._breakpointsURLMap && sourceID) {
             var breakpoints = this._breakpointsURLMap[sourceURL];
             var breakpointsLength = breakpoints.length;
@@ -293,9 +298,6 @@ WebInspector.ScriptsPanel.prototype = {
                 }
             }
         }
-
-        if (sourceID)
-            this._sourceIDMap[sourceID] = (resource || script);
 
         this._addScriptToFilesMenu(script);
     },
