@@ -210,7 +210,8 @@ WebInspector.TimelinePanel.prototype = {
             return WebInspector.displayNameForURL(record.data.url);
         case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
         case WebInspector.TimelineAgent.RecordType.ResourceFinish:
-            return WebInspector.displayNameForURL(this._sendRequestRecords[record.data.identifier].data.url);
+            var sendRequestRecord = this._sendRequestRecords[record.data.identifier];
+            return sendRequestRecord ? WebInspector.displayNameForURL(sendRequestRecord.data.url) : "";
         case WebInspector.TimelineAgent.RecordType.MarkTimeline:
             return record.data.message;
         default:
@@ -532,20 +533,24 @@ WebInspector.TimelineRecordTreeElement.prototype = {
 
             this.dataElement = document.createElement("span");
             this.dataElement.className = "data dimmed";
-            this.dataElement.textContent = "(" + this._record.details + ")";
-            this.dataElement.title = this._record.details;
+            this._updateDetails();
 
             this.listItemElement.appendChild(separatorElement);
             this.listItemElement.appendChild(this.dataElement);
         }
     },
 
+    _updateDetails: function() {
+        if (this.dataElement && this._record.details !== this._details) {
+            this._details = this._record.details;
+            this.dataElement.textContent = "(" + this._details + ")";
+            this.dataElement.title = this._details;
+        }
+    },
+
     refresh: function()
     {
-        if (this._record.details) {
-            this.dataElement.textContent = "(" + this._record.details + ")";
-            this.dataElement.title = this._record.details;
-        }
+        this._updateDetails();
 
         if (this._record.count <= 1)
             return;

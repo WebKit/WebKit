@@ -1,3 +1,17 @@
+2009-11-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Minor timeline fixes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31417
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        (WebInspector.TimelineRecordTreeElement.prototype._updateDetails):
+        (WebInspector.TimelineRecordTreeElement.prototype.refresh):
+
 2009-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         SnowLeopard build fix.
