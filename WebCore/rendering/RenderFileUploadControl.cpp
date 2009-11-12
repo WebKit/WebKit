@@ -64,9 +64,11 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
     , m_button(0)
 {
+    FileList* list = input->files();
     Vector<String> filenames;
-    // FIXME: The following code passes only the first file even if the input has multiple files.
-    filenames.append(input->value());
+    unsigned length = list ? list->length() : 0;
+    for (unsigned i = 0; i < length; ++i)
+        filenames.append(list->item(i)->path());
     m_fileChooser = FileChooser::create(this, filenames);
 }
 

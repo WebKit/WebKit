@@ -1,3 +1,20 @@
+2009-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A test for a bug that RenderFileUploadControl isn't initialized with
+        multiple files. This test is skipped on ports which have no
+        eventSender.beginDragWithFiles().
+        https://bugs.webkit.org/show_bug.cgi?id=31195
+
+        * fast/forms/input-file-re-render.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/forms/input-file-re-render-expected.checksum: Added.
+        * platform/mac/fast/forms/input-file-re-render-expected.png: Added.
+        * platform/mac/fast/forms/input-file-re-render-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-11-11  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

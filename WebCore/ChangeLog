@@ -1,3 +1,15 @@
+2009-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that RenderFileUploadControl isn't initialized with multiple files.
+        https://bugs.webkit.org/show_bug.cgi?id=31195
+
+        Test: fast/forms/input-file-re-render.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+
 2009-11-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
