@@ -78,32 +78,30 @@ static CGColorSpaceRef sRGBColorSpaceRef()
 #endif
 }
 
-static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
+static CGColorRef createCGColorWithColorSpace(const Color& color, ColorSpace colorSpace)
 {
     CGFloat components[4];
     color.getRGBA(components[0], components[1], components[2], components[3]);
 
-    CGColorRef cgColor;
+    CGColorRef cgColor = 0;
     if (colorSpace == sRGBColorSpace)
         cgColor = CGColorCreate(sRGBColorSpaceRef(), components);
     else
         cgColor = CGColorCreate(deviceRGBColorSpaceRef(), components);
 
+    return cgColor;
+}
+
+static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
+{
+    CGColorRef cgColor = createCGColorWithColorSpace(color, colorSpace);
     CGContextSetFillColorWithColor(context, cgColor);
     CFRelease(cgColor);
 }
 
 static void setCGStrokeColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
 {
-    CGFloat components[4];
-    color.getRGBA(components[0], components[1], components[2], components[3]);
-
-    CGColorRef cgColor;
-    if (colorSpace == sRGBColorSpace)
-        cgColor = CGColorCreate(sRGBColorSpaceRef(), components);
-    else
-        cgColor = CGColorCreate(deviceRGBColorSpaceRef(), components);
-
+    CGColorRef cgColor = createCGColorWithColorSpace(color, colorSpace);
     CGContextSetStrokeColorWithColor(context, cgColor);
     CFRelease(cgColor);
 }
@@ -764,7 +762,7 @@ void GraphicsContext::endTransparencyLayer()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Color& color)
+void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
@@ -811,7 +809,7 @@ void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Col
     if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(width, height), blurRadius);
     else {
-        RetainPtr<CGColorRef> colorCG(AdoptCF, createCGColor(color));
+        RetainPtr<CGColorRef> colorCG(AdoptCF, createCGColorWithColorSpace(color, colorSpace));
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(width, height),
                                     blurRadius,

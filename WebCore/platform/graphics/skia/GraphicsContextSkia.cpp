@@ -975,7 +975,8 @@ void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
 
 void GraphicsContext::setPlatformShadow(const IntSize& size,
                                         int blurInt,
-                                        const Color& color)
+                                        const Color& color,
+                                        ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;

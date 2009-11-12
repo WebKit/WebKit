@@ -264,7 +264,7 @@ namespace WebCore {
         void beginTransparencyLayer(float opacity);
         void endTransparencyLayer();
 
-        void setShadow(const IntSize&, int blur, const Color&);
+        void setShadow(const IntSize&, int blur, const Color&, ColorSpace);
         bool getShadow(IntSize&, int&, Color&) const;
         void clearShadow();
 
@@ -406,7 +406,7 @@ namespace WebCore {
 
         void setPlatformShouldAntialias(bool b);
 
-        void setPlatformShadow(const IntSize&, int blur, const Color&);
+        void setPlatformShadow(const IntSize&, int blur, const Color&, ColorSpace);
         void clearPlatformShadow();
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);

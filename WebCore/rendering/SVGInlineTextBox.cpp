@@ -382,7 +382,8 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
     bool setShadow = false;
     if (styleToUse->textShadow()) {
         paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
-                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
+                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color,
+                                     styleToUse->colorSpace());
         setShadow = true;
     }
 

@@ -280,7 +280,7 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
                 extraOffset = IntSize(0, 2 * h + max(0, shadowOffset.height()) + shadowBlur);
                 shadowOffset -= extraOffset;
             }
-            context->setShadow(shadowOffset, shadowBlur, shadowColor);
+            context->setShadow(shadowOffset, shadowBlur, shadowColor, fillColorSpace);
         } else if (!opaque)
             context->setFillColor(fillColor, fillColorSpace);
 
@@ -661,6 +661,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         setClip = true;
     }
 
+    ColorSpace colorSpace = renderer()->style()->colorSpace();
     bool setShadow = false;
     
     do {
@@ -670,24 +671,24 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
                 ty -= extraOffset;
                 extraOffset = 0;
             }
-            context->setShadow(IntSize(shadow->x, shadow->y - extraOffset), shadow->blur, shadow->color);
+            context->setShadow(IntSize(shadow->x, shadow->y - extraOffset), shadow->blur, shadow->color, colorSpace);
             setShadow = true;
             shadow = shadow->next;
         }
 
         if (deco & UNDERLINE) {
-            context->setStrokeColor(underline, renderer()->style()->colorSpace());
+            context->setStrokeColor(underline, colorSpace);
             context->setStrokeStyle(SolidStroke);
             // Leave one pixel of white between the baseline and the underline.
             context->drawLineForText(IntPoint(tx, ty + baseline + 1), width, isPrinting);
         }
         if (deco & OVERLINE) {
-            context->setStrokeColor(overline, renderer()->style()->colorSpace());
+            context->setStrokeColor(overline, colorSpace);
             context->setStrokeStyle(SolidStroke);
             context->drawLineForText(IntPoint(tx, ty), width, isPrinting);
         }
         if (deco & LINE_THROUGH) {
-            context->setStrokeColor(linethrough, renderer()->style()->colorSpace());
+            context->setStrokeColor(linethrough, colorSpace);
             context->setStrokeStyle(SolidStroke);
             context->drawLineForText(IntPoint(tx, ty + 2 * baseline / 3), width, isPrinting);
         }

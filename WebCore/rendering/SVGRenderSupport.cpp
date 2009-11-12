@@ -95,7 +95,7 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     }
 
     if (ShadowData* shadow = svgStyle->shadow())
-        paintInfo.context->setShadow(IntSize(shadow->x, shadow->y), shadow->blur, shadow->color); 
+        paintInfo.context->setShadow(IntSize(shadow->x, shadow->y), shadow->blur, shadow->color, style->colorSpace()); 
 
 #if ENABLE(FILTERS)
     AtomicString filterId(svgStyle->filter());

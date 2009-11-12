@@ -974,6 +974,7 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
             setClip = true;
         }
 
+        ColorSpace colorSpace = renderer()->style()->colorSpace();
         bool setShadow = false;
         do {
             if (shadow) {
@@ -982,24 +983,24 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
                     ty -= extraOffset;
                     extraOffset = 0;
                 }
-                context->setShadow(IntSize(shadow->x, shadow->y - extraOffset), shadow->blur, shadow->color);
+                context->setShadow(IntSize(shadow->x, shadow->y - extraOffset), shadow->blur, shadow->color, colorSpace);
                 setShadow = true;
                 shadow = shadow->next;
             }
 
             if (paintUnderline) {
-                context->setStrokeColor(underline, renderer()->style()->colorSpace());
+                context->setStrokeColor(underline, colorSpace);
                 context->setStrokeStyle(SolidStroke);
                 // Leave one pixel of white between the baseline and the underline.
                 context->drawLineForText(IntPoint(tx, ty + baselinePos + 1), w, isPrinting);
             }
             if (paintOverline) {
-                context->setStrokeColor(overline, renderer()->style()->colorSpace());
+                context->setStrokeColor(overline, colorSpace);
                 context->setStrokeStyle(SolidStroke);
                 context->drawLineForText(IntPoint(tx, ty), w, isPrinting);
             }
             if (paintLineThrough) {
-                context->setStrokeColor(linethrough, renderer()->style()->colorSpace());
+                context->setStrokeColor(linethrough, colorSpace);
                 context->setStrokeStyle(SolidStroke);
                 context->drawLineForText(IntPoint(tx, ty + 2 * baselinePos / 3), w, isPrinting);
             }

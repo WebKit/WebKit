@@ -726,7 +726,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
     notImplemented();
 }
 
-void GraphicsContext::setPlatformShadow(IntSize const&, int, Color const&)
+void GraphicsContext::setPlatformShadow(IntSize const&, int, Color const&, ColorSpace)
 {
     notImplemented();
 }

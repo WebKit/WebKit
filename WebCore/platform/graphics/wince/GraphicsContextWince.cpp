@@ -1545,7 +1545,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         fillRect(rect, fillColor(), DeviceColorSpace);
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize&, int, const Color&, ColorSpace colorSpace)
+void GraphicsContext::setPlatformShadow(const IntSize&, int, const Color&, ColorSpace)
 {
     notImplemented();
 }

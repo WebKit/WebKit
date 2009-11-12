@@ -1,3 +1,58 @@
+2009-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=31382
+        Make -webkit-color-correction work with shadows
+
+        From canvas, just send DeviceColorSpace to setShadow() for now. 
+        Will fix soon when I address https://bugs.webkit.org/show_bug.cgi?id=31319
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+
+        setShadow() and setPlatformShadow() now take a ColorSpace.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShadow):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::createCGColorWithColorSpace): New helper to create a 
+        color in a ColorSpace.
+        (WebCore::setCGFillColor): Call new helper.
+        (WebCore::setCGStrokeColor): Call new helper.
+        (WebCore::GraphicsContext::setPlatformShadow): Call new helper.
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
+        Send appropriate ColorSpace to setShadow().
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+
+        Attempt to keep ports building.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2009-11-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

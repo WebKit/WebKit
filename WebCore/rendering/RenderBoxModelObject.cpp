@@ -1198,7 +1198,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             shadowOffset -= extraOffset;
             fillRect.move(extraOffset);
 
-            context->setShadow(shadowOffset, shadowBlur, shadowColor);
+            context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
             if (hasBorderRadius) {
                 IntRect rectToClipOut = rect;
                 IntSize topLeftToClipOut = topLeft;
@@ -1321,7 +1321,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
             context->setFillRule(RULE_EVENODD);
             context->setFillColor(fillColor, s->colorSpace());
-            context->setShadow(shadowOffset, shadowBlur, shadowColor);
+            context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
             context->fillPath();
 
             context->restore();

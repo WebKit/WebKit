@@ -115,6 +115,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
+    ColorSpace fillColorSpace = context->fillColorSpace();
     context->getShadow(shadowSize, shadowBlur, shadowColor);
 
     bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
@@ -122,7 +123,6 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();
         Color fillColor = context->fillColor();
-        ColorSpace fillColorSpace = context->fillColorSpace();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         context->setFillColor(shadowFillColor, fillColorSpace);
         CGContextSetTextPosition(cgContext, point.x() + shadowSize.width(), point.y() + shadowSize.height());
@@ -142,7 +142,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     }
 
     if (hasSimpleShadow)
-        context->setShadow(shadowSize, shadowBlur, shadowColor);
+        context->setShadow(shadowSize, shadowBlur, shadowColor, fillColorSpace);
 
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);

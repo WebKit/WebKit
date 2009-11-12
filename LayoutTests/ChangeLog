@@ -1,3 +1,19 @@
+2009-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=31382
+        Make -webkit-color-correction work with shadows
+
+        * fast/css/color-correction-on-box-shadow.html: Added.
+        * fast/css/color-correction-on-text-shadow.html: Added.
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+
 2009-11-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
