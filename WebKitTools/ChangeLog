@@ -1,3 +1,9 @@
+2009-11-11  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, removing duplicate entry for myself in committers.py.
+
+        * Scripts/modules/committers.py:
+
 2009-11-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler and Mark Rowe.
