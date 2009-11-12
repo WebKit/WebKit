@@ -89,7 +89,7 @@
         var actualDropEffect = e.dataTransfer.dropEffect;
         
         if (isDropEffectAllowed(chosenDropEffect, chosenEffectAllowed))
-            shouldEvaluateTo('event.dataTransfer.dropEffect', 'dropEffectElem.options[dropEffectElem.selectedIndex].value');
+            shouldBeEqualToString('event.dataTransfer.dropEffect', dropEffectElem.options[dropEffectElem.selectedIndex].value);
         else
             shouldBeEqualToString('event.dataTransfer.dropEffect', 'none');
             

@@ -1,3 +1,15 @@
+2009-11-11  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31326
+
+        Makes the output for test fast/events/drag-and-drop.html pretty.
+        Now, it is easier to read for a human to read understand the results.
+
+        * fast/events/drag-and-drop-expected.txt: Rebased result.
+        * fast/events/drag-and-drop.html: Modified to make the output pretty.
+
 2009-11-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
