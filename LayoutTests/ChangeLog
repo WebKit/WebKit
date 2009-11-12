@@ -1,3 +1,16 @@
+2009-11-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Rewrite the test to run on a wider variety of screen configurations
+        (and pixel depths).
+
+        https://bugs.webkit.org/show_bug.cgi?id=31373
+
+        * fast/dom/Window/window-screen-properties-expected.txt:
+        * fast/dom/Window/window-screen-properties.html:
+        * platform/win/fast/dom/Window/window-screen-properties-expected.txt: Removed.
+
 2009-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

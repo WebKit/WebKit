@@ -1,2 +1,2 @@
-The current pixel depth returned by window.screen.pixelDepth is: 24 
-The current color depth returned by window.screen.colorDepth is: 24
+PASS: window.screen.pixelDepth is either 16, 24, or 32
+PASS: window.screen.colorDepth is either 16, 24, or 32

@@ -1,13 +1,19 @@
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
-</script>
-The current pixel depth returned by window.screen.pixelDepth is:
-<script>
-document.write(window.screen.pixelDepth);
-</script>
-<br>
-The current color depth returned by window.screen.colorDepth is:
-<script>
-document.write(window.screen.colorDepth);
+depth = window.screen.pixelDepth;
+if (depth == 16 || depth == 24 || depth == 32) {
+  document.write("PASS: window.screen.pixelDepth is either 16, 24, or 32");
+}  else {
+  document.write("FAIL: window.screen.pixelDepth is " + depth +
+                 ", expected either 16, 24, or 32");
+}
+document.write("<br />");
+depth = window.screen.colorDepth;
+if (depth == 16 || depth == 24 || depth == 32) {
+  document.write("PASS: window.screen.colorDepth is either 16, 24, or 32");
+}  else {
+  document.write("FAIL: window.screen.colorDepth is " + depth +
+                 ", expected either 16, 24, or 32");
+}
 </script>

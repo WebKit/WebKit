@@ -1,2 +1,0 @@
-The current pixel depth returned by window.screen.pixelDepth is: 32 
-The current color depth returned by window.screen.colorDepth is: 32
