@@ -1,3 +1,26 @@
+2009-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31426
+        Some WebSocket tests don't properly listen to close event
+
+        * websocket/tests/script-tests/handshake-error.js:
+        * websocket/tests/script-tests/simple.js:
+        Made the tests clear second-chance timer on finish, avoiding confusing output when running
+        them in Safari.
+
+        * websocket/tests/script-tests/frame-length-longer-than-buffer.js:
+        * websocket/tests/script-tests/frame-length-skip.js:
+        * websocket/tests/frame-length-longer-than-buffer-expected.txt:
+        * websocket/tests/frame-length-skip-expected.txt:
+        These tests now finish properly.
+
+        * websocket/tests/handshake-error-expected.txt:
+        * websocket/tests/simple-expected.txt:
+        I'm getting an extra empty line for these tests, which is surprising. But since I didn't
+        change anything, I assume that it should be there.
+
 2009-11-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

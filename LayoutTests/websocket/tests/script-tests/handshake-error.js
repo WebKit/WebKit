@@ -7,6 +7,7 @@ if (window.layoutTestController) {
 function endTest()
 {
     isSuccessfullyParsed();
+    clearTimeout(timeoutID);
     if (window.layoutTestController) {
         layoutTestController.notifyDone();
     }
@@ -37,6 +38,6 @@ function timeOutCallback()
     endTest();
 }
 
-window.setTimeout(timeOutCallback, 3000);
+var timeoutID = setTimeout(timeOutCallback, 3000);
 
 var successfullyParsed = true;
