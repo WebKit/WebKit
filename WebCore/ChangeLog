@@ -1,3 +1,19 @@
+2009-11-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix WebSocket frame parser of frame_type with high-order bit set.
+        https://bugs.webkit.org/show_bug.cgi?id=30668
+
+        If buffer is smaller than frame's length, it should break the loop
+        instead of reading next byte.
+
+        Tests: websocket/tests/frame-length-longer-than-buffer.html
+               websocket/tests/frame-length-skip.html
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData):
+
 2009-11-11  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Adam Barth.

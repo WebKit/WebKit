@@ -1,3 +1,19 @@
+2009-11-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix WebSocket frame parser of frame_type with high-order bit set.
+        https://bugs.webkit.org/show_bug.cgi?id=30668
+
+        * websocket/tests/frame-length-longer-than-buffer-expected.txt: Added.
+        * websocket/tests/frame-length-longer-than-buffer.html: Added.
+        * websocket/tests/frame-length-longer-than-buffer_wsh.py: Added.
+        * websocket/tests/frame-length-skip-expected.txt: Added.
+        * websocket/tests/frame-length-skip.html: Added.
+        * websocket/tests/frame-length-skip_wsh.py: Added.
+        * websocket/tests/script-tests/frame-length-longer-than-buffer.js: Added.
+        * websocket/tests/script-tests/frame-length-skip.js: Added.
+
 2009-11-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Put tests into skiplist added in r50830 and r50839 because

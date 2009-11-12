@@ -197,7 +197,8 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             if (p + length < end) {
                 p += length;
                 nextFrame = p;
-            }
+            } else
+                break;
         } else {
             const char* msgStart = p;
             while (p < end && *p != '\xff')
