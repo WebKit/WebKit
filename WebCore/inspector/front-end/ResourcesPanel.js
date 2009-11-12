@@ -959,6 +959,7 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         // FIXME: should actually add handler to parent, to be resolved via
         // https://bugs.webkit.org/show_bug.cgi?id=30227
         this._listItemNode.addEventListener("dragstart", this.ondragstart.bind(this), false);
+        this.updateErrorsAndWarnings();
     },
 
     onselect: function()

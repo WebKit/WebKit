@@ -1,3 +1,20 @@
+2009-11-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Resource errors/warnings not shown in the Resource tree.
+
+        Error/Warning bubbles are not displayed next to the resource in the 
+        Resources panel if those occur before the resource is attached to the tree.
+        https://bugs.webkit.org/show_bug.cgi?id=31404
+
+        Test: manual-tests/inspector/styled-error-bubbles-in-scripts.html
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.removeItem):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.onattach):
+
 2009-11-12  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Jan Alonzo.
