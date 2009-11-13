@@ -50,6 +50,7 @@
 #include <QFocusEvent>
 #include <QFontDatabase>
 #include <QNetworkRequest>
+#include <QUndoStack>
 
 #include <qwebpage.h>
 #include <qwebframe.h>
@@ -317,6 +318,8 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     m_controller->reset();
     qt_drt_resetOriginAccessWhiteLists();
+
+    m_page->undoStack()->clear();
 
     QLocale qlocale;
     QLocale::setDefault(qlocale);

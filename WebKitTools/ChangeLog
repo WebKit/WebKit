@@ -1,3 +1,14 @@
+2009-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Clear the undo stack in before each new test run.
+
+        Locally fixes 3 incorrect layouts, 9 timeouts and 7 crashes.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2009-11-13  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
