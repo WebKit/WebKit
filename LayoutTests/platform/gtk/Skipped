@@ -2759,6 +2759,7 @@ fast/parser/title-error-test.html
 fast/parser/xhtml-alternate-entities.xml
 fast/reflections/abs-position-in-reflection.html
 fast/reflections/inline-crash.html
+fast/reflections/opacity-reflection-transform.html
 fast/reflections/reflection-direction.html
 fast/reflections/reflection-masks-opacity.html
 fast/reflections/reflection-masks.html

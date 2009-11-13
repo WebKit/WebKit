@@ -1,3 +1,9 @@
+2009-11-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip one more new test.
+
+        * platform/gtk/Skipped:
+
 2009-11-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.
