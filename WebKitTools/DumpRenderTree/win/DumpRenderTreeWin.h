@@ -30,6 +30,7 @@
 #define DumpRenderTreeWin_h
 
 struct IWebFrame;
+struct IWebScriptWorld;
 struct IWebView;
 struct PolicyDelegate;
 typedef const struct __CFString* CFStringRef;
@@ -54,6 +55,8 @@ WindowToWebViewMap& windowToWebViewMap();
 
 void setPersistentUserStyleSheetLocation(CFStringRef);
 bool setAlwaysAcceptCookies(bool alwaysAcceptCookies);
+
+unsigned worldIDForWorld(IWebScriptWorld*);
 
 extern UINT_PTR waitToDumpWatchdog;
 

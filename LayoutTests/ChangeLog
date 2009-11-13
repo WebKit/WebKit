@@ -1,3 +1,18 @@
+2009-11-04  Adam Roben  <aroben@apple.com>
+
+        Test that delegates can modify global objects in isolated worlds
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Reviewed by Dave Hyatt.
+
+        * http/tests/security/isolatedWorld/didClearWindowObject-expected.txt: Added.
+        * http/tests/security/isolatedWorld/didClearWindowObject.html: Added.
+        Tests that the global object in the normal world does not have a
+        __worldID property, and that the global object in isolated worlds has
+        a __worldID property whose value is equal to the world's ID.
+
 2009-11-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.

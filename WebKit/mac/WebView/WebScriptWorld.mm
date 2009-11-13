@@ -40,6 +40,13 @@ using namespace WebCore;
 @implementation WebScriptWorldPrivate
 @end
 
+typedef HashMap<DOMWrapperWorld*, WebScriptWorld*> WorldMap;
+static WorldMap& allWorlds()
+{
+    static WorldMap& map = *new WorldMap;
+    return map;
+}
+
 @implementation WebScriptWorld
 
 - (id)initWithWorld:(PassRefPtr<DOMWrapperWorld>)world
@@ -55,6 +62,9 @@ using namespace WebCore;
     _private = [[WebScriptWorldPrivate alloc] init];
     _private->world = world;
 
+    ASSERT_ARG(world, !allWorlds().contains(_private->world.get()));
+    allWorlds().add(_private->world.get(), self);
+
     return self;
 }
 
@@ -65,6 +75,9 @@ using namespace WebCore;
 
 - (void)dealloc
 {
+    ASSERT(allWorlds().contains(_private->world.get()));
+    allWorlds().remove(_private->world.get());
+
     [_private release];
     _private = nil;
     [super dealloc];
@@ -81,9 +94,26 @@ using namespace WebCore;
     return [[[self alloc] init] autorelease];
 }
 
+@end
+
+@implementation WebScriptWorld (WebInternal)
+
 DOMWrapperWorld* core(WebScriptWorld *world)
 {
     return world ? world->_private->world.get() : 0;
+}
+
++ (WebScriptWorld *)findOrCreateWorld:(DOMWrapperWorld*) world
+{
+    ASSERT_ARG(world, world);
+
+    if (world == mainThreadNormalWorld())
+        return [self standardWorld];
+
+    if (WebScriptWorld *existingWorld = allWorlds().get(world))
+        return existingWorld;
+
+    return [[[self alloc] initWithWorld:world] autorelease];
 }
 
 @end

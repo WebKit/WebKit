@@ -831,8 +831,11 @@ String FrameLoaderClientWx::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClientWx::windowObjectCleared()
+void FrameLoaderClientWx::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
+    if (world != mainThreadNormalWorld())
+        return;
+
     if (m_webView) {
         wxWebViewWindowObjectClearedEvent wkEvent(m_webView);
         Frame* coreFrame = m_webView->GetMainFrame()->GetFrame();

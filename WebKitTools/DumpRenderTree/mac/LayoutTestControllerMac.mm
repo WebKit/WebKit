@@ -532,6 +532,24 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     [[[mainFrame webView] inspector] evaluateInFrontend:nil callId:callId script:scriptNS];
 }
 
+typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
+static WorldMap& worldMap()
+{
+    static WorldMap& map = *new WorldMap;
+    return map;
+}
+
+unsigned worldIDForWorld(WebScriptWorld *world)
+{
+    WorldMap::const_iterator end = worldMap().end();
+    for (WorldMap::const_iterator it = worldMap().begin(); it != end; ++it) {
+        if (it->second == world)
+            return it->first;
+    }
+
+    return 0;
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
@@ -543,9 +561,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
     if (!worldID)
         world = [WebScriptWorld world];
     else {
-        typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
-        static WorldMap& worldMap = *new WorldMap;
-        RetainPtr<WebScriptWorld>& worldSlot = worldMap.add(worldID, 0).first->second;
+        RetainPtr<WebScriptWorld>& worldSlot = worldMap().add(worldID, 0).first->second;
         if (!worldSlot)
             worldSlot.adoptNS([[WebScriptWorld alloc] init]);
         world = worldSlot.get();

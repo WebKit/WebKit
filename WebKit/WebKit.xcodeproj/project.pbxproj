@@ -336,6 +336,7 @@
 		C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B1F7E510AC8E3100C925D9 /* WebScriptWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0B1F7E910AC8E3100C925D9 /* WebScriptWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0B1F7E610AC8E3100C925D9 /* WebScriptWorld.mm */; };
 		C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B1F7E710AC8E3100C925D9 /* WebScriptWorldInternal.h */; };
+		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
@@ -627,6 +628,7 @@
 		C0B1F7E510AC8E3100C925D9 /* WebScriptWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptWorld.h; sourceTree = "<group>"; };
 		C0B1F7E610AC8E3100C925D9 /* WebScriptWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptWorld.mm; sourceTree = "<group>"; };
 		C0B1F7E710AC8E3100C925D9 /* WebScriptWorldInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptWorldInternal.h; sourceTree = "<group>"; };
+		C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1109,6 +1111,7 @@
 				F5143A370221DCCE01A80181 /* WebFrame.mm */,
 				930D02BD06275F710076701E /* WebFrameInternal.h */,
 				5152FAE5033FC52200CA2ACD /* WebFrameLoadDelegate.h */,
+				C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */,
 				9CF0E249021361B00ECA16EA /* WebFramePrivate.h */,
 				51A8B52E04282B5900CA2D3A /* WebFrameView.h */,
 				51A8B52F04282B5900CA2D3A /* WebFrameView.mm */,
@@ -1524,6 +1527,7 @@
 				0A2D87FD107AF52B00CDDEE3 /* WebPluginHalterClient.h in Headers */,
 				C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */,
 				C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */,
+				C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

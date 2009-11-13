@@ -49,6 +49,7 @@ struct WebResourceDelegateImplementationCache {
 
 struct WebFrameLoadDelegateImplementationCache {
     IMP didClearWindowObjectForFrameFunc;
+    IMP didClearWindowObjectForFrameInScriptWorldFunc;
     IMP didClearInspectorWindowObjectForFrameFunc;
     IMP windowScriptObjectAvailableFunc;
     IMP didHandleOnloadEventsForFrameFunc;

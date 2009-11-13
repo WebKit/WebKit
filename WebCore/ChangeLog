@@ -1,3 +1,51 @@
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Tell FrameLoaderClient when window objects in isolated worlds are
+        cleared
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Test: http/tests/security/isolatedWorld/didClearWindowObject.html
+
+        Reviewed by Dave Hyatt.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::WebCoreJSClientData::getAllWorlds): Added. Copies all the
+        worlds in m_worldSet to the passed-in Vector.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::getAllWorlds): Added. Calls through to
+        WebCoreJSClientData.
+        (WebCore::ScriptController::initScript): Changed to call
+        FrameLoader::dispatchDidClearWindowObjectInWorld.
+
+        * bindings/js/ScriptController.h: Added getAllWorlds.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        Updated for FrameLoaderClient change.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::begin):
+        Changed to call dispatchDidClearWindowObjectsInAllWorlds.
+
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectsInAllWorlds):
+        Added. Retrieves all the worlds, then calls through to
+        dispatchDidClearWindowObjectInWorld for each one.
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld): Replaces
+        dispatchWindowObjectAvailable. Calls up to the client, then, if the
+        world is the mainThreadNormalWorld(), tells the Inspector about it,
+        too.
+
+        * loader/FrameLoader.h: Replaced dispatchWindowObjectAvailable with
+        dispatchDidClearWindowObjectInWorld. Added
+        dispatchDidClearWindowObjectsInAllWorlds.
+
+        * loader/FrameLoaderClient.h: Replaced windowObjectCleared with
+        dispatchDidClearWindowObjectForWorld.
+
 2009-11-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

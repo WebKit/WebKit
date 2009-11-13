@@ -18,6 +18,60 @@
 
 2009-11-13  Adam Roben  <aroben@apple.com>
 
+        Add support for
+        http/tests/security/isolatedWorld/didClearWindowObject.html
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Reviewed by Dave Hyatt.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Declared worldIDForWorld.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        Added. Moved code here from -webView:didClearWindowObject:forFrame:.
+        (-[FrameLoadDelegate didClearWindowObjectForFrame:inIsolatedWorld:]):
+        Added. Sets a __worldID property on the global object whose value is
+        the ID of this world.
+        (-[FrameLoadDelegate webView:didClearWindowObjectForFrame:inScriptWorld:]):
+        Respond to this new delegate callback by calling through to one of the
+        above new methods.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (worldMap): Added. Returns a HashMap containing all the worlds we've
+        created.
+        (worldIDForWorld): Added. Returns the ID for this world, or 0 if we
+        haven't kept track of this world.
+        (LayoutTestController::evaluateScriptInIsolatedWorld): Use worldMap()
+        instead of declaring our own.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Declared worldIDForWorld.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didClearWindowObject): Moved code from hear to
+        didClearWindowObjectForFrameInStandardWorld.
+        (FrameLoadDelegate::didClearWindowObjectForFrameInScriptWorld):
+        Respond to this new delegate callback by calling through to one of the
+        below new methods.
+        (FrameLoadDelegate::didClearWindowObjectForFrameInIsolatedWorld):
+        Added. Sets a __worldID property on the gobal object whose value is
+        the ID of this world.
+        (FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld):
+        Added. Moved code here from didClearWindowObject.
+
+        * DumpRenderTree/win/FrameLoadDelegate.h: Added the
+        didClearWindowObjectForFrame* functions.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (worldMap): Added. Returns a HashMap containing all the worlds we've
+        created.
+        (worldIDForWorld): Added. Returns the ID of this world, or 0 if we
+        haven't kept track of this world.
+        (LayoutTestController::evaluateScriptInIsolatedWorld): Use worldMap()
+        instead of declaring our own.
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
         Finish replacing worldIDs with world objects
 
         The only remaining use of worldIDs was in a method only used by DRT

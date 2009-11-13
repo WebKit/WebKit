@@ -48,6 +48,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <wtf/Assertions.h>
 
@@ -236,11 +237,8 @@
     ASSERT_NOT_REACHED();
 }
 
-- (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
+- (void)didClearWindowObjectInStandardWorldForFrame:(WebFrame *)frame
 {
-    ASSERT(obj == [frame windowObject]);
-    ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
-
     // Make New-Style LayoutTestController
     JSContextRef context = [frame globalContext];
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
@@ -258,7 +256,9 @@
 
     // Make Old-Style controllers
 
-    AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
+    WebView *webView = [frame webView];
+    WebScriptObject *obj = [frame windowObject];
+    AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:webView];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
 
@@ -282,9 +282,30 @@
 
     [obj setValue:[PlainTextController sharedPlainTextController] forKey:@"plainText"];
 
-    TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
+    TextInputController *tic = [[TextInputController alloc] initWithWebView:webView];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
+}
+
+- (void)didClearWindowObjectForFrame:(WebFrame *)frame inIsolatedWorld:(WebScriptWorld *)world
+{
+    JSGlobalContextRef ctx = [frame _globalContextForScriptWorld:world];
+    if (!ctx)
+        return;
+
+    JSObjectRef globalObject = JSContextGetGlobalObject(ctx);
+    if (!globalObject)
+        return;
+
+    JSObjectSetProperty(ctx, globalObject, JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("__worldID")).get(), JSValueMakeNumber(ctx, worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
+}
+
+- (void)webView:(WebView *)sender didClearWindowObjectForFrame:(WebFrame *)frame inScriptWorld:(WebScriptWorld *)world
+{
+    if (world == [WebScriptWorld standardWorld])
+        [self didClearWindowObjectInStandardWorldForFrame:frame];
+    else
+        [self didClearWindowObjectForFrame:frame inIsolatedWorld:world];
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame

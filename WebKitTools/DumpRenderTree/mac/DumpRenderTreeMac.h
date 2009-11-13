@@ -42,6 +42,7 @@
 @class NavigationController;
 @class PolicyDelegate;
 @class WebFrame;
+@class WebScriptWorld;
 @class WebView;
 
 typedef const struct __CFString* CFStringRef;
@@ -61,5 +62,7 @@ extern CFRunLoopTimerRef waitToDumpWatchdog;
 
 WebView* createWebViewAndOffscreenWindow();
 void setPersistentUserStyleSheetLocation(CFStringRef);
+
+unsigned worldIDForWorld(WebScriptWorld *);
 
 #endif // DumpRenderTreeMac_h 

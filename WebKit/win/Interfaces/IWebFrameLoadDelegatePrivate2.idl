@@ -31,8 +31,9 @@ import "IWebView.idl";
 #endif
 
 interface IWebFrame;
-interface IWebView;
+interface IWebScriptWorld;
 interface IWebSecurityOrigin;
+interface IWebView;
 
 [
     object,
@@ -45,4 +46,6 @@ interface IWebFrameLoadDelegatePrivate2 : IWebFrameLoadDelegatePrivate
     HRESULT didDisplayInsecureContent([in] IWebView* sender);
 
     HRESULT didRunInsecureContent([in] IWebView* sender, [in] IWebSecurityOrigin* origin);
+
+    HRESULT didClearWindowObjectForFrameInScriptWorld([in] IWebView* webView, [in] IWebFrame* frame, [in] IWebScriptWorld*);
 }

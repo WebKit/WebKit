@@ -1,5 +1,42 @@
 2009-11-13  Adam Roben  <aroben@apple.com>
 
+        Tell the WebFrameLoadDelegate when window objects in isolated worlds
+        are cleared
+
+        Fixes <http://webkit.org/b/31124>.
+
+        Reviewed by Dave Hyatt.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        Replaced windowObjectCleared with this function. If the delegate
+        implements it, call
+        -webView:didClearWindowObjectForFrame:inScriptWorld:. Otherwise, if
+        the passed-in world is the mainThreadNormalWorld(), call
+        -webView:didClearWindowObject:forFrame:.
+
+        * WebView/WebDelegateImplementationCaching.h: Added a new entry in the
+        frame load delegate implementation cache for the new delegate method.
+
+        * WebView/WebFrameLoadDelegatePrivate.h:
+        * WebView/WebScriptWorld.mm:
+        (allWorlds): Added. Returns a HashMap of all the WebScriptWorlds in
+        existence.
+        (-[WebScriptWorld initWithWorld:]): Add ourselves to allWorlds().
+        (-[WebScriptWorld dealloc]): Remove ourselves from allWorlds().
+        (+[WebScriptWorld findOrCreateWorld:]): Returns the existing
+        WebScriptWorld for this DOMWrapperWorld, or a new one if one doesn't
+        already exist.
+
+        * WebView/WebScriptWorldInternal.h: Declared +findOrCreateWorld:.
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Cache the
+        implementation of the new frame load delegate method.
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
         Finish replacing worldIDs with world objects
 
         The only remaining use of worldIDs was in a method only used by DRT

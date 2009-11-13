@@ -289,12 +289,53 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::willCloseFrame(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didClearWindowObject( 
-    /* [in] */ IWebView*webView,
-    /* [in] */ JSContextRef context,
-    /* [in] */ JSObjectRef windowObject,
-    /* [in] */ IWebFrame* frame)
+HRESULT FrameLoadDelegate::didClearWindowObject(IWebView*, JSContextRef, JSObjectRef, IWebFrame*)
 {
+    return E_NOTIMPL;
+}
+
+HRESULT FrameLoadDelegate::didClearWindowObjectForFrameInScriptWorld(IWebView* webView, IWebFrame* frame, IWebScriptWorld* world)
+{
+    ASSERT_ARG(webView, webView);
+    ASSERT_ARG(frame, frame);
+    ASSERT_ARG(world, world);
+    if (!webView || !frame || !world)
+        return E_POINTER;
+
+    COMPtr<IWebScriptWorld> standardWorld;
+    if (FAILED(world->standardWorld(&standardWorld)))
+        return S_OK;
+
+    if (world == standardWorld)
+        didClearWindowObjectForFrameInStandardWorld(frame);
+    else
+        didClearWindowObjectForFrameInIsolatedWorld(frame, world);
+    return S_OK;
+}
+
+void FrameLoadDelegate::didClearWindowObjectForFrameInIsolatedWorld(IWebFrame* frame, IWebScriptWorld* world)
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return;
+
+    JSGlobalContextRef ctx = framePrivate->globalContextForScriptWorld(world);
+    if (!ctx)
+        return;
+
+    JSObjectRef globalObject = JSContextGetGlobalObject(ctx);
+    if (!globalObject)
+        return;
+
+    JSObjectSetProperty(ctx, globalObject, JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("__worldID")).get(), JSValueMakeNumber(ctx, worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
+    return;
+}
+
+void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* frame)
+{
+    JSGlobalContextRef context = frame->globalContext();
+    JSObjectRef windowObject = JSContextGetGlobalObject(context);
+
     JSValueRef exception = 0;
 
     ::gLayoutTestController->makeWindowObject(context, windowObject, &exception);
@@ -310,8 +351,6 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didClearWindowObject(
     JSValueRef eventSender = makeEventSender(context);
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
-
-    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishDocumentLoadForFrame( 

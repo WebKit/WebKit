@@ -1,5 +1,40 @@
 2009-11-13  Adam Roben  <aroben@apple.com>
 
+        Tell the WebFrameLoadDelegate when window objects in isolated worlds
+        are cleared
+
+        Fixes <http://webkit.org/b/31124>.
+
+        Reviewed by Dave Hyatt.
+
+        * Interfaces/IWebFrameLoadDelegatePrivate2.idl: Added
+        didClearWindowObjectForFrameInScriptWorld.
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDidClearWindowObjectInWorld):
+        * WebFrame.h:
+        Replaced windowObjectCleared with this function. If the delegate
+        implements IWebFrameLoadDelegatePrivate2, call
+        didClearWindowObjectForFrameInScriptWorld. Otherwise, if the passed-in
+        world is the mainThreadNormalWorld(), call
+        didClearWindowObjectForFrame.
+
+        * WebScriptWorld.cpp:
+        (allWorlds): Added. Returns a HashMap of all the WebScriptWorlds in
+        existence.
+        (WebScriptWorld::WebScriptWorld): Add ourselves to allWorlds().
+        (WebScriptWorld::~WebScriptWorld): Remove ourselves from allWorlds().
+        (WebScriptWorld::standardWorld): Added this non-COM getter for the
+        standard world, which the COM getter now calls through to.
+        (WebScriptWorld::findOrCreateWorld): Added. Returns the existing
+        WebScriptWorld for this DOMWrapperWorld, or a new one if one doesn't
+        already exist.
+
+        * WebScriptWorld.h: Added new standardWorld overload, made one
+        overload of createInstance private, and added findOrCreateWorld.
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
         Build fix
 
         * Interfaces/WebKit.idl: Un-sort the #includes again. Apparently they

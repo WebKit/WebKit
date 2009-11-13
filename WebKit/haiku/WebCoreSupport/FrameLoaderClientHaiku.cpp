@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
+#include "ScriptController.h"
 #include "WebView.h"
 
 #include <Message.h>
@@ -759,8 +760,11 @@ String FrameLoaderClientHaiku::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClientHaiku::windowObjectCleared()
+void FrameLoaderClientHaiku::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
+    if (world != mainThreadNormalWorld())
+        return;
+
     if (m_webView) {
         BMessage message(JAVASCRIPT_WINDOW_OBJECT_CLEARED);
         m_messenger->SendMessage(&message);

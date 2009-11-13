@@ -50,6 +50,7 @@ class AuthenticationChallenge;
 class CachedFrameBase;
 class CachedPage;
 class CachedResource;
+class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
 class Event;
@@ -246,7 +247,7 @@ public:
 
     PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
-    void dispatchWindowObjectAvailable();
+    void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
     void dispatchDocumentElementAvailable();
 
     // Mixed content related functions.
@@ -394,6 +395,7 @@ private:
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
     void dispatchDidCommitLoad();
+    void dispatchDidClearWindowObjectsInAllWorlds();
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   

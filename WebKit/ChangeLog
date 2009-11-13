@@ -1,3 +1,15 @@
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Add WebFrameLoadDelegatePrivat.h to WebKit.xcodeproj
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Reviewed by Dave Hyatt.
+
+        * WebKit.xcodeproj/project.pbxproj: Added
+        WebFrameLoadDelegatePrivate.h, which already existed.
+
 2009-11-12  Adam Roben  <aroben@apple.com>
 
         Replace worldIDs with world objects

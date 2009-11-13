@@ -69,6 +69,7 @@
 #import "WebPolicyDelegatePrivate.h"
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
+#import "WebScriptWorldInternal.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -128,6 +129,7 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
+using namespace std;
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 @interface NSView (WebJavaPluginDetails)
@@ -1689,12 +1691,23 @@ String WebFrameLoaderClient::overrideMediaType() const
 void WebFrameLoaderClient::documentElementAvailable() {
 }
 
-void WebFrameLoaderClient::windowObjectCleared()
+void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
-    Frame *frame = core(m_webFrame.get());
-    ScriptController *script = frame->script();
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+
+    if (implementations->didClearWindowObjectForFrameInScriptWorldFunc) {
+        CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameInScriptWorldFunc,
+            webView, @selector(webView:didClearWindowObjectForFrame:inScriptWorld:), m_webFrame.get(), [WebScriptWorld findOrCreateWorld:world]);
+        return;
+    }
+
+    if (world != mainThreadNormalWorld())
+        return;
+
+    Frame *frame = core(m_webFrame.get());
+    ScriptController *script = frame->script();
+
     if (implementations->didClearWindowObjectForFrameFunc) {
         CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:),
             script->windowScriptObject(), m_webFrame.get());

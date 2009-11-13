@@ -500,8 +500,11 @@ String FrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClient::windowObjectCleared()
+void FrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
+    if (world != mainThreadNormalWorld())
+        return;
+
     // Is this obsolete now?
     g_signal_emit_by_name(m_frame, "cleared");
 

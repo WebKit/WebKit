@@ -31,11 +31,21 @@
 
 using namespace WebCore;
 
+typedef HashMap<DOMWrapperWorld*, WebScriptWorld*> WorldMap;
+static WorldMap& allWorlds()
+{
+    static WorldMap& map = *new WorldMap;
+    return map;
+}
+
 inline WebScriptWorld::WebScriptWorld(PassRefPtr<DOMWrapperWorld> world)
     : m_refCount(0)
     , m_world(world)
 {
     ASSERT_ARG(world, m_world);
+
+    ASSERT_ARG(world, !allWorlds().contains(m_world.get()));
+    allWorlds().add(m_world.get(), this);
 
     ++gClassCount;
     gClassNameCount.add("WebScriptWorld");
@@ -43,8 +53,17 @@ inline WebScriptWorld::WebScriptWorld(PassRefPtr<DOMWrapperWorld> world)
 
 WebScriptWorld::~WebScriptWorld()
 {
+    ASSERT(allWorlds().contains(m_world.get()));
+    allWorlds().remove(m_world.get());
+
     --gClassCount;
     gClassNameCount.remove("WebScriptWorld");
+}
+
+WebScriptWorld* WebScriptWorld::standardWorld()
+{
+    static WebScriptWorld* standardWorld = createInstance(mainThreadNormalWorld()).releaseRef();
+    return standardWorld;
 }
 
 COMPtr<WebScriptWorld> WebScriptWorld::createInstance()
@@ -55,6 +74,17 @@ COMPtr<WebScriptWorld> WebScriptWorld::createInstance()
 COMPtr<WebScriptWorld> WebScriptWorld::createInstance(PassRefPtr<DOMWrapperWorld> world)
 {
     return new WebScriptWorld(world);
+}
+
+COMPtr<WebScriptWorld> WebScriptWorld::findOrCreateWorld(DOMWrapperWorld* world)
+{
+    if (world == mainThreadNormalWorld())
+        return standardWorld();
+
+    if (WebScriptWorld* existingWorld = allWorlds().get(world))
+        return existingWorld;
+
+    return createInstance(world);
 }
 
 ULONG WebScriptWorld::AddRef()
@@ -94,9 +124,7 @@ HRESULT WebScriptWorld::standardWorld(IWebScriptWorld** outWorld)
     if (!outWorld)
         return E_POINTER;
 
-    static WebScriptWorld* standardWorld = createInstance(mainThreadNormalWorld()).releaseRef();
-
-    *outWorld = standardWorld;
-    standardWorld->AddRef();
+    *outWorld = standardWorld();
+    (*outWorld)->AddRef();
     return S_OK;
 }

@@ -293,7 +293,7 @@ public:
     virtual String overrideMediaType() const { return String(); }
 
     virtual void redirectDataToPlugin(Widget*) { }
-    virtual void windowObjectCleared() { }
+    virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*) { }
     virtual void documentElementAvailable() { }
     virtual void didPerformFirstNavigation() const { }
 
