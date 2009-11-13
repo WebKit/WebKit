@@ -1255,6 +1255,7 @@ fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-empty-image-pattern.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
+fast/canvas/canvas-shadow.html
 fast/canvas/canvas-transform-identity.html
 fast/canvas/canvas-transform-infinity.html
 fast/canvas/canvas-transform-multiply.html

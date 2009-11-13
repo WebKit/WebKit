@@ -1,3 +1,18 @@
+2009-11-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [CAIRO] shadow support for Canvas and SVG
+        [https://bugs.webkit.org/show_bug.cgi?id=30960]
+        
+        This is the fix of a regression, caused by the shadow patch
+        from the bug above. Reinserted the save and restore calls
+        that were accidently removed by the previous patch.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill):
+        (WebCore::setPlatformStroke):
+
 2009-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Reverting r50908 since it makes inspector tests

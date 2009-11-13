@@ -1,3 +1,12 @@
+2009-11-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Skip fast/canvas/canvas-shadow.html we need to enable filters
+        on cairo to pass this test.
+
+        * platform/gtk/Skipped:
+
 2009-11-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip one more new test.
