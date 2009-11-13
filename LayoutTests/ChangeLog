@@ -1,3 +1,11 @@
+2009-11-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Add failing tests to Skipped list.
+
+        * platform/win/Skipped:
+
 2009-11-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping tests that fail intermitently.
