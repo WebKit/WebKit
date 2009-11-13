@@ -1,3 +1,25 @@
+2009-11-12  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add postTaskToMainThread to ScriptExecutionContext.
+        Move the code to post task to the main thread into a new method on ScriptExecutionContext,
+        to use as a helper implementation of the virtual ScriptExecutionContext::postTask(Task) in
+        contexts that live on the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31427
+
+        No new tests - simply moving the code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContextTaskTimer::ScriptExecutionContextTaskTimer):
+        (WebCore::ScriptExecutionContextTaskTimer::fired):
+        (WebCore::PerformTaskData::PerformTaskData):
+        (WebCore::PerformTaskData::performTask):
+        (WebCore::ScriptExecutionContext::postTaskToMainThread):
+        * dom/ScriptExecutionContext.h:
+
 2009-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

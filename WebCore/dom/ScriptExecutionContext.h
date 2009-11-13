@@ -114,6 +114,9 @@ namespace WebCore {
         //       that already contains content.
         void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
 
+        // Helper for contexts that live on the main thread.
+        void postTaskToMainThread(PassOwnPtr<Task>);
+
     private:
         virtual const KURL& virtualURL() const = 0;
         virtual KURL virtualCompleteURL(const String&) const = 0;
