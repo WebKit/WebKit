@@ -1,3 +1,11 @@
+2009-11-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction.  No review.
+
+        The WinCairo build requires ENABLE_FILTERS to work properly.
+
+        * win/tools/vsprops/WinCairo.vsprops:
+
 2009-11-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

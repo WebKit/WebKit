@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="WIN_CAIRO=1"
+		PreprocessorDefinitions="WIN_CAIRO=1;ENABLE_FILTERS"
 		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;"
 	/>
 	<Tool
