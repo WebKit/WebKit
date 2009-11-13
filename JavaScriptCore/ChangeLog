@@ -1,3 +1,22 @@
+2009-11-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        JSValueProtect and JSValueUnprotect don't protect API wrapper values
+        https://bugs.webkit.org/show_bug.cgi?id=31485
+
+        Make JSValueProtect/Unprotect use a new 'toJS' function, 'toJSForGC' that
+        does not attempt to to strip out API wrapper objects.
+
+        * API/APICast.h:
+        (toJSForGC):
+        * API/JSValueRef.cpp:
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * API/tests/testapi.c:
+        (makeGlobalNumberValue):
+        (main):
+
 2009-11-13  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Antti Koivisto.

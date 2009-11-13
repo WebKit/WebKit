@@ -307,7 +307,7 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    JSValue jsValue = toJS(exec, value);
+    JSValue jsValue = toJSForGC(exec, value);
     gcProtect(jsValue);
 }
 
@@ -317,6 +317,6 @@ void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    JSValue jsValue = toJS(exec, value);
+    JSValue jsValue = toJSForGC(exec, value);
     gcUnprotect(jsValue);
 }

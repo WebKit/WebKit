@@ -73,6 +73,18 @@ inline JSC::JSValue toJS(JSC::ExecState*, JSValueRef v)
 #endif
 }
 
+inline JSC::JSValue toJSForGC(JSC::ExecState*, JSValueRef v)
+{
+#if USE(JSVALUE32_64)
+    JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
+    if (!jsCell)
+        return JSC::JSValue();
+    return jsCell;
+#else
+    return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+#endif
+}
+
 inline JSC::JSObject* toJS(JSObjectRef o)
 {
     return reinterpret_cast<JSC::JSObject*>(o);

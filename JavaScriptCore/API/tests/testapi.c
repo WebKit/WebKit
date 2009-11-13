@@ -737,6 +737,15 @@ static void testInitializeFinalize()
     ASSERT(JSObjectGetPrivate(o) == (void*)3);
 }
 
+static JSValueRef jsNumberValue =  NULL;
+
+static void makeGlobalNumberValue(JSContextRef context) {
+    JSValueRef v = JSValueMakeNumber(context, 420);
+    JSValueProtect(context, v);
+    jsNumberValue = v;
+    v = NULL;
+}
+
 int main(int argc, char* argv[])
 {
     const char *scriptPath = "testapi.js";
@@ -948,10 +957,12 @@ int main(int argc, char* argv[])
     CFRelease(cfEmptyString);
     
     jsGlobalValue = JSObjectMake(context, NULL, NULL);
+    makeGlobalNumberValue(context);
     JSValueProtect(context, jsGlobalValue);
     JSGarbageCollect(context);
     ASSERT(JSValueIsObject(context, jsGlobalValue));
     JSValueUnprotect(context, jsGlobalValue);
+    JSValueUnprotect(context, jsNumberValue);
 
     JSStringRef goodSyntax = JSStringCreateWithUTF8CString("x = 1;");
     JSStringRef badSyntax = JSStringCreateWithUTF8CString("x := 1;");
