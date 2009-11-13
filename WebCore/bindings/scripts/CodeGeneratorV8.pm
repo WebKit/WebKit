@@ -642,12 +642,12 @@ END
     }
 
     if (IsSVGTypeNeedingContextParameter($attrType) && !$skipContext) {
-        my $resultObject = $result;
         if ($attrIsPodType) {
-            $resultObject = "wrapper";
+            push(@implContentDecls, GenerateSVGContextAssignment($implClassName, "wrapper.get()", "    "));
+        } else {
+            push(@implContentDecls, GenerateSVGContextRetrieval($implClassName, "    "));
+            $result = "V8Proxy::withSVGContext($result, context)";
         }
-        push(@implContentDecls, GenerateSVGContextRetrieval($implClassName, "    "));
-        $result = "V8Proxy::withSVGContext($resultObject, context)";
     }
 
     if ($attrIsPodType) {
