@@ -262,7 +262,7 @@ static void destroyCounterNodeChildren(const AtomicString& identifier, CounterNo
     for (CounterNode* child = node->lastDescendant(); child && child != node; child = previous) {
         previous = child->previousInPreOrder();
         child->parent()->removeChild(child, identifier);
-        ASSERT(counterMaps().get(child->renderer())->get(identifier->impl()) == child);
+        ASSERT(counterMaps().get(child->renderer())->get(identifier.impl()) == child);
         counterMaps().get(child->renderer())->remove(identifier.impl());
         if (!child->renderer()->documentBeingDestroyed()) {
             RenderObjectChildList* children = child->renderer()->virtualChildren();
