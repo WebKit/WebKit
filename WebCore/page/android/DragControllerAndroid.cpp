@@ -45,7 +45,11 @@ DragOperation DragController::dragOperation(DragData* dragData)
         return DragOperationCopy;
 
     return DragOperationNone;
-} 
+}
+
+void DragController::cleanupAfterSystemDrag()
+{
+}
 
 const float DragController::DragImageAlpha = 1.0f;
 static IntSize dummy;

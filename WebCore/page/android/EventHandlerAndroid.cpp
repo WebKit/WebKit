@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
-
 bool EventHandler::tabsToAllControls(KeyboardEvent*) const
 {
     return true;
@@ -121,6 +119,11 @@ class Clipboard : public RefCounted<Clipboard> {
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
     return PassRefPtr<Clipboard>(0);
+}
+
+unsigned EventHandler::accessKeyModifiers()
+{
+    return PlatformKeyboardEvent::AltKey;
 }
 
 const double EventHandler::TextDragDelay = 0.0;
