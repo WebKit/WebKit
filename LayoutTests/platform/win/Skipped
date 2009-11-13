@@ -693,3 +693,7 @@ fast/multicol/single-line.html
 # inspector/timeline-paint passes by itself, but fails when run with other Inspector tests.
 # http://webkit.org/b/31402.
 inspector/timeline-paint.html
+
+# WebSocket server doesn't start on Windows.
+# https://bugs.webkit.org/show_bug.cgi?id=31479
+websocket

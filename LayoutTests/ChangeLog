@@ -1,3 +1,11 @@
+2009-11-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable websocket tests on Windows, as the server cannot start on buildbot.
+
+        Filed <https://bugs.webkit.org/show_bug.cgi?id=31479> to investigate this issue.
+
+        * platform/win/Skipped:
+
 2009-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
