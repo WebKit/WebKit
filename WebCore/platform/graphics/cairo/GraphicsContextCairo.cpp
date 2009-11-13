@@ -78,9 +78,9 @@ static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr, Graphi
     cairo_save(cr);
     switch (gcp->state.fillType) {
     case SolidColorType: {
-        Color fillColor = colorWithOverrideAlpha(context->fillColor().rgb(), context->fillColor().alpha() / 255.f * gcp->state.globalAlpha);
-        setColor(cr, fillColor);
-        cairo_fill_preserve(cr);
+        setColor(cr, context->fillColor());
+        cairo_clip_preserve(cr);
+        cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
         break;
     }
     case PatternType: {
