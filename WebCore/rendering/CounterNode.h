@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class AtomicString;
 class RenderObject;
 
 class CounterNode : public Noncopyable {
@@ -51,13 +52,19 @@ public:
     CounterNode* nextSibling() const { return m_nextSibling; }
     CounterNode* firstChild() const { return m_firstChild; }
     CounterNode* lastChild() const { return m_lastChild; }
+    CounterNode* lastDescendant() const;
+    CounterNode* previousInPreOrder() const;
+    CounterNode* nextInPreOrder(const CounterNode* stayWithin = 0) const;
+    CounterNode* nextInPreOrderAfterChildren(const CounterNode* stayWithin = 0) const;
 
-    void insertAfter(CounterNode* newChild, CounterNode* beforeChild);
-    void removeChild(CounterNode*);
+    void insertAfter(CounterNode* newChild, CounterNode* beforeChild, const AtomicString& identifier);
+    void removeChild(CounterNode*, const AtomicString& identifier);
 
 private:
     int computeCountInParent() const;
-    void recount();
+    void recount(const AtomicString& identifier);
+    void resetRenderer(const AtomicString& identifier) const;
+    void resetRenderers(const AtomicString& identifier) const;
 
     bool m_isReset;
     int m_value;

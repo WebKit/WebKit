@@ -44,7 +44,58 @@ CounterNode::CounterNode(RenderObject* o, bool isReset, int value)
     , m_nextSibling(0)
     , m_firstChild(0)
     , m_lastChild(0)
-{   
+{
+}
+
+CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
+{
+    if (this == stayWithin)
+        return 0;
+
+    CounterNode* next = m_nextSibling;
+    if (next)
+        return next;
+    next = m_parent;
+    while (next && !next->m_nextSibling) {
+        if (next == stayWithin)
+            return 0;
+        next = next->m_parent;
+    }
+    if (next)
+        return next->m_nextSibling;
+    return 0;
+}
+
+CounterNode* CounterNode::nextInPreOrder(const CounterNode* stayWithin) const
+{
+    if (CounterNode* next = m_firstChild)
+        return next;
+
+    return nextInPreOrderAfterChildren(stayWithin);
+}
+
+CounterNode* CounterNode::lastDescendant() const
+{
+    CounterNode* last = m_lastChild;
+    if (!last)
+        return 0;
+
+    while (CounterNode* lastChild = last->m_lastChild)
+        last = lastChild;
+
+    return last;
+}
+
+CounterNode* CounterNode::previousInPreOrder() const
+{
+    CounterNode* previous = m_previousSibling;
+    if (!previous)
+        return m_parent;
+
+    while (CounterNode* lastChild = previous->m_lastChild)
+        previous = lastChild;
+
+    return previous;
 }
 
 int CounterNode::computeCountInParent() const
@@ -56,26 +107,37 @@ int CounterNode::computeCountInParent() const
     return m_parent->m_value + increment;
 }
 
-void CounterNode::recount()
+
+void CounterNode::resetRenderer(const AtomicString& identifier) const
 {
-    for (CounterNode* c = this; c; c = c->m_nextSibling) {
-        int oldCount = c->m_countInParent;
-        int newCount = c->computeCountInParent();
+    if (!m_renderer || m_renderer->documentBeingDestroyed())
+        return;
+    if (RenderObjectChildList* children = m_renderer->virtualChildren())
+        children->invalidateCounters(m_renderer, identifier);
+}
+
+void CounterNode::resetRenderers(const AtomicString& identifier) const
+{
+    const CounterNode* node = this;
+    do {
+        node->resetRenderer(identifier);
+        node = node->nextInPreOrder(this);
+    } while (node);
+}
+
+void CounterNode::recount(const AtomicString& identifier)
+{
+    for (CounterNode* node = this; node; node = node->m_nextSibling) {
+        int oldCount = node->m_countInParent;
+        int newCount = node->computeCountInParent();
         if (oldCount == newCount)
             break;
-        c->m_countInParent = newCount;
-        // m_renderer contains the parent of the render node
-        // corresponding to a CounterNode. Let's find the counter
-        // child and make this re-layout.
-        for (RenderObject* o = c->m_renderer->firstChild(); o; o = o->nextSibling())
-            if (!o->documentBeingDestroyed() && o->isCounter()) {
-                o->setNeedsLayoutAndPrefWidthsRecalc();
-                break;
-            }
+        node->m_countInParent = newCount;
+        node->resetRenderers(identifier);
     }
 }
 
-void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild)
+void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, const AtomicString& identifier)
 {
     ASSERT(newChild);
     ASSERT(!newChild->m_parent);
@@ -107,61 +169,41 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild)
 
     newChild->m_countInParent = newChild->computeCountInParent();
     if (next)
-        next->recount();
+        next->recount(identifier);
 }
 
-void CounterNode::removeChild(CounterNode* oldChild)
+void CounterNode::removeChild(CounterNode* oldChild, const AtomicString& identifier)
 {
     ASSERT(oldChild);
     ASSERT(!oldChild->m_firstChild);
     ASSERT(!oldChild->m_lastChild);
 
     CounterNode* next = oldChild->m_nextSibling;
-    CounterNode* prev = oldChild->m_previousSibling;
+    CounterNode* previous = oldChild->m_previousSibling;
 
     oldChild->m_nextSibling = 0;
     oldChild->m_previousSibling = 0;
     oldChild->m_parent = 0;
 
-    if (prev) 
-        prev->m_nextSibling = next;
+    if (previous) 
+        previous->m_nextSibling = next;
     else {
         ASSERT(m_firstChild == oldChild);
         m_firstChild = next;
     }
-    
+
     if (next)
-        next->m_previousSibling = prev;
+        next->m_previousSibling = previous;
     else {
         ASSERT(m_lastChild == oldChild);
-        m_lastChild = prev;
+        m_lastChild = previous;
     }
-    
+
     if (next)
-        next->recount();
+        next->recount(identifier);
 }
 
 #ifndef NDEBUG
-
-static const CounterNode* nextInPreOrderAfterChildren(const CounterNode* node)
-{
-    CounterNode* next = node->nextSibling();
-    if (!next) {
-        next = node->parent();
-        while (next && !next->nextSibling())
-            next = next->parent();
-        if (next)
-            next = next->nextSibling();
-    }
-    return next;
-}
-
-static const CounterNode* nextInPreOrder(const CounterNode* node)
-{
-    if (CounterNode* child = node->firstChild())
-        return child;
-    return nextInPreOrderAfterChildren(node);
-}
 
 static void showTreeAndMark(const CounterNode* node)
 {

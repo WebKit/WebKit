@@ -1,3 +1,61 @@
+2009-11-13  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        The CounterNode class is missing some basic tree navigation methods common in other WebKit trees such as the rendering tree
+        https://bugs.webkit.org/show_bug.cgi?id=31213
+        Added tree navigation methods that permit full implementation of CSS2.1
+        counter feature without using recursion proportional to the counter
+        tree depth.
+        No new tests because I did not find any bug that is fixed by this
+        commit yet, this just reduces the size of the patch for 11031 and
+        helps respond to some concerns regarding that patch.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+
+        (WebCore::CounterNode::nextInPreOrderAfterChildren):
+        (WebCore::CounterNode::nextInPreOrder):
+        Added to support non-recursive tree traversal necessary for
+        efficient full implementation of CSS2.1 counters.
+
+        (WebCore::CounterNode::lastDescendant):
+        (WebCore::CounterNode::previousInPreOrder):
+        Moved this methods such that they occupy a place similar to that of
+        identically named methods on the render tree. This allows for their
+        broader use needed in full implementation of CSS2.1 counters.
+
+        (WebCore::CounterNode::resetRenderer):
+        (WebCore::CounterNode::resetRenderers):
+        (WebCore::CounterNode::recount):
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        Changed such that insertion/removal of a counter, triggers not only
+        recalculation of PrefixWidths, but also reassesment of values in
+        counter nodes. This is the basis full implementation of CSS2.1
+        counters. It does not change current behavior by much because of
+        changes needed to the recalculation algorithm, but those are comming
+        in the patch for 11031.
+        (WebCore::showTreeAndMark):
+        * rendering/CounterNode.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::counter):
+        Only changed argument type to prepare for implementation of Darin
+        Adler's recommendation for the patch to 11031.
+
+        (WebCore::RenderCounter::invalidate):
+        (WebCore::destroyCounterNodeChildren):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        * rendering/RenderCounter.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::invalidateCountersInContainer):
+        (WebCore::RenderObjectChildList::invalidateCounters):
+        * rendering/RenderObjectChildList.h:
+        Added the ability to restrict invalidation to counters with a given
+        identifier.
+        Also invalidated counters that are on the child container itself
+        which were missed by the previous algorithm, but were a valid case.
+
 2009-11-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -53,30 +53,6 @@ static inline RenderObject* previousSiblingOrParent(RenderObject* object)
     return object->parent();
 }
 
-static CounterNode* lastDescendant(CounterNode* node)
-{
-    CounterNode* last = node->lastChild();
-    if (!last)
-        return 0;
-
-    while (CounterNode* lastChild = last->lastChild())
-        last = lastChild;
-
-    return last;
-}
-
-static CounterNode* previousInPreOrder(CounterNode* node)
-{
-    CounterNode* previous = node->previousSibling();
-    if (!previous)
-        return node->parent();
-
-    while (CounterNode* lastChild = previous->lastChild())
-        previous = lastChild;
-
-    return previous;
-}
-
 static bool planCounter(RenderObject* object, const AtomicString& counterName, bool& isReset, int& value)
 {
     ASSERT(object);
@@ -204,7 +180,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& co
     CounterNode* newNode;
     if (findPlaceForCounter(object, counterName, isReset, newParent, newPreviousSibling)) {
         newNode = new CounterNode(object, isReset, value);
-        newParent->insertAfter(newNode, newPreviousSibling);
+        newParent->insertAfter(newNode, newPreviousSibling, counterName);
     } else {
         // Make a reset node for counters that aren't inside an existing reset node.
         newNode = new CounterNode(object, true, value);
@@ -272,24 +248,26 @@ void RenderCounter::calcPrefWidths(int lead)
     RenderText::calcPrefWidths(lead);
 }
 
-void RenderCounter::invalidate()
+void RenderCounter::invalidate(const AtomicString& identifier)
 {
+    if (m_counter.identifier() != identifier)
+        return;
     m_counterNode = 0;
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-static void destroyCounterNodeChildren(AtomicStringImpl* identifier, CounterNode* node)
+static void destroyCounterNodeChildren(const AtomicString& identifier, CounterNode* node)
 {
     CounterNode* previous;
-    for (CounterNode* child = lastDescendant(node); child && child != node; child = previous) {
-        previous = previousInPreOrder(child);
-        child->parent()->removeChild(child);
-        ASSERT(counterMaps().get(child->renderer())->get(identifier) == child);
-        counterMaps().get(child->renderer())->remove(identifier);
+    for (CounterNode* child = node->lastDescendant(); child && child != node; child = previous) {
+        previous = child->previousInPreOrder();
+        child->parent()->removeChild(child, identifier);
+        ASSERT(counterMaps().get(child->renderer())->get(identifier->impl()) == child);
+        counterMaps().get(child->renderer())->remove(identifier.impl());
         if (!child->renderer()->documentBeingDestroyed()) {
             RenderObjectChildList* children = child->renderer()->virtualChildren();
             if (children)
-                children->invalidateCounters(child->renderer());
+                children->invalidateCounters(child->renderer(), identifier);
         }
         delete child;
     }
@@ -306,9 +284,10 @@ void RenderCounter::destroyCounterNodes(RenderObject* object)
     CounterMap::const_iterator end = map->end();
     for (CounterMap::const_iterator it = map->begin(); it != end; ++it) {
         CounterNode* node = it->second;
-        destroyCounterNodeChildren(it->first.get(), node);
+        AtomicString identifier(it->first.get());
+        destroyCounterNodeChildren(identifier, node);
         if (CounterNode* parent = node->parent())
-            parent->removeChild(node);
+            parent->removeChild(node, identifier);
         delete node;
     }
 
