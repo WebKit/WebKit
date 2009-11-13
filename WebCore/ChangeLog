@@ -1,3 +1,15 @@
+2009-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chromium: [REGRESSION] Crash while stopping on a breakpoint.
+        Rolling back r50890.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31467
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::canAccessPrivate):
+
 2009-11-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Gustavo Noronha.
