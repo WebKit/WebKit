@@ -1,3 +1,11 @@
+2009-11-13  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Antti Koivisto.
+
+        Fix typo, ce_time.cpp should be ce_time.c
+
+        * JavaScriptCore.pri:
+
 2009-11-12  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by Adam Barth.
