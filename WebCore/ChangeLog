@@ -1,3 +1,32 @@
+2009-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31441
+        Implement SocketStreamHandleCFNet
+
+        Existing WebSocket tests now pass on Mac. No proxy support yet.
+
+        * platform/network/SocketStreamHandleClient.h:
+        * platform/network/cf/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::shouldUseSSL):
+        (WebCore::SocketStreamHandle::refAuthenticationClient):
+        (WebCore::SocketStreamHandle::derefAuthenticationClient):
+        (WebCore::SocketStreamHandle::):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::chooseProxy):
+        (WebCore::SocketStreamHandle::createStreams):
+        (WebCore::SocketStreamHandle::copyCFStreamDescription):
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::SocketStreamHandle::receivedCredential):
+        (WebCore::SocketStreamHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::SocketStreamHandle::receivedCancellation):
+
 2009-11-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

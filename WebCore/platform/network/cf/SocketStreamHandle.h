@@ -32,10 +32,9 @@
 #ifndef SocketStreamHandle_h
 #define SocketStreamHandle_h
 
+#include "AuthenticationClient.h"
 #include "SocketStreamHandleBase.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -43,24 +42,53 @@ namespace WebCore {
     class Credential;
     class SocketStreamHandleClient;
 
-    class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+    class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase, public AuthenticationClient {
     public:
         static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
 
         virtual ~SocketStreamHandle();
 
-    protected:
+        using RefCounted<SocketStreamHandle>::ref;
+        using RefCounted<SocketStreamHandle>::deref;
+
+    private:
         virtual int platformSend(const char* data, int length);
         virtual void platformClose();
 
-    private:
         SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
+        void createStreams();
+        void chooseProxy();
+
+        bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
+
+        static CFStringRef copyCFStreamDescription(void* streamInfo);
+        static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void* clientCallBackInfo);
+        static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void* clientCallBackInfo);
+
+        void readStreamCallback(CFStreamEventType);
+        void writeStreamCallback(CFStreamEventType);
 
         // No authentication for streams per se, but proxy may ask for credentials.
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-        void receivedCredential(const AuthenticationChallenge&, const Credential&);
-        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-        void receivedCancellation(const AuthenticationChallenge&);
+        virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
+        virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+        virtual void receivedCancellation(const AuthenticationChallenge&);
+
+        virtual void refAuthenticationClient() { ref(); }
+        virtual void derefAuthenticationClient() { deref(); }
+
+        enum ConnectingSubstate { New, FetchingProxyAutoConfigurationFile, WaitingForCredentials, WaitingForConnect, Connected };
+        ConnectingSubstate m_connectingSubstate;
+
+        enum ConnectionType { Unknown, Direct, SOCKSProxy, CONNECTProxy };
+        ConnectionType m_connectionType;
+        RetainPtr<CFStringRef> m_proxyHost;
+        RetainPtr<CFNumberRef> m_proxyPort;
+
+        RetainPtr<CFHTTPMessageRef> m_proxyResponseMessage;
+        RetainPtr<CFReadStreamRef> m_readStream;
+        RetainPtr<CFWriteStreamRef> m_writeStream;
+
+        RetainPtr<CFURLRef> m_httpURL; // ws(s): replaced with http(s):
     };
 
 }  // namespace WebCore

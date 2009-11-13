@@ -49,6 +49,7 @@ namespace WebCore {
 
         virtual void didFail(SocketStreamHandle*, const SocketStreamError&) { }
 
+        // No authentication for streams per se, but proxy may ask for credentials.
         virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) { }
         virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) { }
     };
