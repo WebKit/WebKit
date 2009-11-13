@@ -1,3 +1,20 @@
+2009-11-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+        
+        The document-open.html test was flaky at times. The test invokes the layout test plugin
+        which in its destroy stream handler opens a new document. This basically tears down the
+        stream and the associated plugin instance, which causes a crash when the plugin stream
+        dereferences an invalid m_client pointer which points to the PluginView instance which
+        is invalid at this time. Fix is to set the m_client pointer to NULL in the stop function
+        and check for the same.
+       
+        https://bugs.webkit.org/show_bug.cgi?id=31067
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::stop):
+        (WebCore::PluginStream::destroyStream):
+
 2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

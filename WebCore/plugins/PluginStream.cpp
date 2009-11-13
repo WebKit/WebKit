@@ -120,6 +120,8 @@ void PluginStream::stop()
         m_loader->cancel();
         m_loader = 0;
     }
+
+    m_client = 0;
 }
 
 void PluginStream::startStream()
@@ -305,7 +307,7 @@ void PluginStream::destroyStream()
 
     m_streamState = StreamStopped;
 
-    if (!m_loadManually)
+    if (!m_loadManually && m_client)
         m_client->streamDidFinishLoading(this);
 
     if (!m_path.isNull()) {

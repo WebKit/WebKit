@@ -1,3 +1,25 @@
+2009-11-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        The document-open.html test was flaky at times. The test invokes the layout test plugin
+        which in its destroy stream handler opens a new document. This basically tears down the
+        stream and the associated plugin instance. The pluginLog function in the layout test
+        plugin attempts to retrieve the window script object on a torn down plugin instance
+        which crashed consistently on windows in the debugger. The functions which issue
+        these logs already have a valid window script object. We now have variants of the pluginLog
+        function which take in a window script object with and without variable arguments. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=31067
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginLogWithWindowObject):
+        (pluginLogWithWindowObjectVariableArgs):
+        (pluginLog):
+        (notifyTestCompletion):
+        (testDocumentOpen):
+        (testWindowOpen):
+
 2009-11-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -5,9 +5,6 @@
         layoutTestController.setCanOpenWindows();
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
-       
-        // If we are not done within 50 ms then we assume that the test failed.
-        setTimeout('layoutTestController.notifyDone()', 50);
      }
      
 </script>
