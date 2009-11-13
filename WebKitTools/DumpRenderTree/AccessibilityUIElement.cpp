@@ -429,6 +429,18 @@ static JSValueRef getAccessibilityValueCallback(JSContextRef context, JSObjectRe
     return JSValueMakeString(context, accessibilityValue.get());
 }
 
+static JSValueRef getDocumentEncodingCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> documentEncoding(Adopt, toAXElement(thisObject)->documentEncoding());
+    return JSValueMakeString(context, documentEncoding.get());
+}
+
+static JSValueRef getDocumentURICallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> documentURI(Adopt, toAXElement(thisObject)->documentURI());
+    return JSValueMakeString(context, documentURI.get());
+}
+
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
@@ -471,6 +483,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "isExpanded", getIsExpandedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "valueDescription", getValueDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hierarchicalLevel", hierarchicalLevelCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "documentEncoding", getDocumentEncodingCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "documentURI", getDocumentURICallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 

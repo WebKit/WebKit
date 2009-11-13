@@ -1,3 +1,23 @@
+2009-11-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30997
+        [Gtk] Implemment AtkDocument
+
+        Added testing support.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (getDocumentEncodingCallback):
+        (getDocumentURICallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::documentEncoding):
+        (AccessibilityUIElement::documentURI):
+
 2009-11-12  Adam Roben  <aroben@apple.com>
 
         Replace worldIDs with world objects

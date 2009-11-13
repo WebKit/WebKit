@@ -1,3 +1,17 @@
+2009-11-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30997
+        [Gtk] Implemment AtkDocument
+
+        Added testing support for AtkDocument implementation.
+
+        * accessibility/document-attributes.html: Added.
+        * accessibility/document-attributes-expected.txt: Added.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2009-11-11  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Fraser.

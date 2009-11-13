@@ -431,3 +431,14 @@ JSStringRef AccessibilityUIElement::accessibilityValue() const
 
     return JSStringCreateWithCharacters(value.data(), value.length());
 }
+
+
+JSStringRef AccessibilityUIElement::documentEncoding()
+{
+    return JSStringCreateWithCharacters(0, 0);
+}
+
+JSStringRef AccessibilityUIElement::documentURI()
+{
+    return JSStringCreateWithCharacters(0, 0);
+}

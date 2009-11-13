@@ -98,3 +98,6 @@ fast/ruby
 
 # Missing SocketStreamHandle implementation
 websocket/tests
+
+# Accessibility tests without results
+accessibility/document-attributes.html
