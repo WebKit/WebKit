@@ -1,3 +1,21 @@
+2009-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        When exiting full-screen video, rather than resetting the system UI
+        mode, restore it to what it was when full-screen mode was entered.
+
+        * WebView/WebVideoFullscreenController.h: Cleaned up style, removed
+        unnecessary imports, and added _savedUIMode and _savedUIOptions ivars.
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController delegate]): Cleaned up style.
+        (-[WebVideoFullscreenController setDelegate:]): Ditto.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Restore the
+        system UI mode.
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]): Save the
+        system UI mode.
+        * WebView/WebView.mm: Added now-necessary import.
+
 2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

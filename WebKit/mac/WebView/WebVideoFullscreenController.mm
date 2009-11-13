@@ -10,34 +10,30 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #if ENABLE(VIDEO)
 
-#import <QTKit/QTKit.h>
-#import <objc/objc-runtime.h>
-#import <HIToolbox/HIToolbox.h>
-
-#import <wtf/UnusedParam.h>
-#import <WebCore/SoftLinking.h>
-#import <WebCore/IntRect.h>
-
 #import "WebVideoFullscreenController.h"
-#import "WebVideoFullscreenHUDWindowController.h"
-#import "WebKitSystemInterface.h"
+
 #import "WebTypesInternal.h"
+#import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
+#import <QTKit/QTKit.h>
+#import <WebCore/HTMLMediaElement.h>
+#import <WebCore/SoftLinking.h>
+#import <objc/objc-runtime.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieView)
@@ -126,12 +122,12 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     }
 }
 
-- (id<WebVideoFullscreenControllerDelegate>)delegate
+- (id <WebVideoFullscreenControllerDelegate>)delegate
 {
     return _delegate;
 }
 
-- (void)setDelegate:(id<WebVideoFullscreenControllerDelegate>)delegate;
+- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
 {
     _delegate = delegate;
 }
@@ -154,7 +150,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];
-    SetSystemUIMode(kUIModeNormal, 0);
+    SetSystemUIMode(_savedUIMode, _savedUIOptions);
     [_hudController setDelegate:nil];
     [_hudController release];
     _hudController = nil;
@@ -174,6 +170,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     _hudController = [[WebVideoFullscreenHUDWindowController alloc] init];
     [_hudController setDelegate:self];
 
+    GetSystemUIMode(&_savedUIMode, &_savedUIOptions);
     SetSystemUIMode(kUIModeAllSuppressed , 0);
     [NSCursor setHiddenUntilMouseMoves:YES];
     
