@@ -1,3 +1,14 @@
+2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Renaming some parameters passed to DB-related methods to better
+        indicate their purpose.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31449
+
+        * platform/chromium/ChromiumBridge.h:
+
 2009-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

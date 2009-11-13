@@ -137,16 +137,16 @@ public:
     // Opens a database file; dirHandle should be 0 if the caller does not need
     // a handle to the directory containing this file
     virtual FileHandle databaseOpenFile(
-        const WebString& fileName, int desiredFlags, FileHandle* dirHandle) = 0;
+        const WebString& vfsFileName, int desiredFlags, FileHandle* dirHandle) = 0;
 
     // Deletes a database file and returns the error code
-    virtual int databaseDeleteFile(const WebString& fileName, bool syncDir) = 0;
+    virtual int databaseDeleteFile(const WebString& vfsFileName, bool syncDir) = 0;
 
     // Returns the attributes of the given database file
-    virtual long databaseGetFileAttributes(const WebString& fileName) = 0;
+    virtual long databaseGetFileAttributes(const WebString& vfsFileName) = 0;
 
     // Returns the size of the given database file
-    virtual long long databaseGetFileSize(const WebString& fileName) = 0;
+    virtual long long databaseGetFileSize(const WebString& vfsFileName) = 0;
 
 
     // Keygen --------------------------------------------------------------

@@ -306,24 +306,24 @@ String ChromiumBridge::getFontFamilyForCharacters(const UChar* characters, size_
 // HTML5 DB -------------------------------------------------------------------
 
 #if ENABLE(DATABASE)
-PlatformFileHandle ChromiumBridge::databaseOpenFile(const String& fileName, int desiredFlags, PlatformFileHandle* dirHandle)
+PlatformFileHandle ChromiumBridge::databaseOpenFile(const String& vfsFileName, int desiredFlags, PlatformFileHandle* dirHandle)
 {
-    return webKitClient()->databaseOpenFile(WebString(fileName), desiredFlags, dirHandle);
+    return webKitClient()->databaseOpenFile(WebString(vfsFileName), desiredFlags, dirHandle);
 }
 
-int ChromiumBridge::databaseDeleteFile(const String& fileName, bool syncDir)
+int ChromiumBridge::databaseDeleteFile(const String& vfsFileName, bool syncDir)
 {
-    return webKitClient()->databaseDeleteFile(WebString(fileName), syncDir);
+    return webKitClient()->databaseDeleteFile(WebString(vfsFileName), syncDir);
 }
 
-long ChromiumBridge::databaseGetFileAttributes(const String& fileName)
+long ChromiumBridge::databaseGetFileAttributes(const String& vfsFileName)
 {
-    return webKitClient()->databaseGetFileAttributes(WebString(fileName));
+    return webKitClient()->databaseGetFileAttributes(WebString(vfsFileName));
 }
 
-long long ChromiumBridge::databaseGetFileSize(const String& fileName)
+long long ChromiumBridge::databaseGetFileSize(const String& vfsFileName)
 {
-    return webKitClient()->databaseGetFileSize(WebString(fileName));
+    return webKitClient()->databaseGetFileSize(WebString(vfsFileName));
 }
 #endif
 

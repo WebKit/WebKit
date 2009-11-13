@@ -118,13 +118,13 @@ namespace WebCore {
         // HTML5 DB -----------------------------------------------------------
 #if ENABLE(DATABASE)
         // Returns a handle to the DB file and ooptionally a handle to its containing directory
-        static PlatformFileHandle databaseOpenFile(const String& fileName, int desiredFlags, PlatformFileHandle* dirHandle = 0);
+        static PlatformFileHandle databaseOpenFile(const String& vfsFleName, int desiredFlags, PlatformFileHandle* dirHandle = 0);
         // Returns a SQLite code (SQLITE_OK = 0, on success)
-        static int databaseDeleteFile(const String& fileName, bool syncDir = false);
+        static int databaseDeleteFile(const String& vfsFileName, bool syncDir = false);
         // Returns the attributes of the DB file
-        static long databaseGetFileAttributes(const String& fileName);
+        static long databaseGetFileAttributes(const String& vfsFileName);
         // Returns the size of the DB file
-        static long long databaseGetFileSize(const String& fileName);
+        static long long databaseGetFileSize(const String& vfsFileName);
 #endif
 
         // JavaScript ---------------------------------------------------------
