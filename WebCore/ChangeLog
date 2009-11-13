@@ -1,3 +1,38 @@
+2009-11-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        [CAIRO] shadow support for Canvas and SVG.
+        [https://bugs.webkit.org/show_bug.cgi?id=30960]
+
+        Implement Canvas/SVG shadow support for Cairo.  This patch
+        uses the filter code from SVG Filters.  That means that it is
+        necessary to activate filters to see the shadows.
+
+        Test: fast/canvas/canvas-shadow.html
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj: Add new ImageBufferFilter files.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (GraphicsContext::calculateShadowBufferDimensions): New helper routine.
+        (WebCore::setPlatformFill):
+        (WebCore::setPlatformStroke):
+        (WebCore::copyContextProperties):
+        (WebCore::drawPathShadow):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::createPlatformShadow):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw): Add filter effect.
+        * platform/graphics/filters/Filter.h: Correct 'const' signatures.
+        * platform/graphics/filters/ImageBufferFilter.cpp: Added.
+        * platform/graphics/filters/ImageBufferFilter.h: Added.
+        * svg/graphics/filters/SVGFilter.cpp: Correct 'const' signatures.
+        * svg/graphics/filters/SVGFilter.h: Correct 'const' signatures.
+
 2009-11-12  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

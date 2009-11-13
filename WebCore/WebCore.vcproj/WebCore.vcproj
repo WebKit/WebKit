@@ -7723,10 +7723,6 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
-				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -7775,6 +7771,10 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
+				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.h"
@@ -22125,7 +22125,7 @@
 					RelativePath="..\platform\graphics\Color.h"
 					>
 				</File>
-                <File
+				<File
 					RelativePath="..\platform\graphics\ColorPath.h"
 					>
 				</File>
@@ -23938,6 +23938,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FilterEffect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\ImageBufferFilter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\ImageBufferFilter.h"
 						>
 					</File>
 					<File

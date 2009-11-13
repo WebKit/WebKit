@@ -1,8 +1,9 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
+ * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +33,17 @@
 #if PLATFORM(CAIRO)
 
 #include "CairoPath.h"
+#include "FEGaussianBlur.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "ImageBuffer.h"
+#include "ImageBufferFilter.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "SimpleFontData.h"
+#include "SourceGraphic.h"
 #include "TransformationMatrix.h"
 
 #include <cairo.h>
@@ -69,6 +73,55 @@ static inline void setColor(cairo_t* cr, const Color& col)
     cairo_set_source_rgba(cr, red, green, blue, alpha);
 }
 
+static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr, GraphicsContextPrivate* gcp)
+{
+    switch (gcp->state.fillType) {
+    case SolidColorType: {
+        Color fillColor = colorWithOverrideAlpha(context->fillColor().rgb(), context->fillColor().alpha() / 255.f * gcp->state.globalAlpha);
+        setColor(cr, fillColor);
+        cairo_fill_preserve(cr);
+        break;
+    }
+    case PatternType: {
+        TransformationMatrix affine;
+        cairo_set_source(cr, gcp->state.fillPattern->createPlatformPattern(affine));
+        cairo_clip_preserve(cr);
+        cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
+        break;
+    }
+    case GradientType:
+        cairo_set_source(cr, gcp->state.fillGradient->platformGradient());
+        cairo_clip_preserve(cr);
+        cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
+        break;
+    }
+}
+
+static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr, GraphicsContextPrivate* gcp)
+{
+    switch (gcp->state.strokeType) {
+    case SolidColorType: {
+        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * gcp->state.globalAlpha);
+        setColor(cr, strokeColor);
+        break;
+    }
+    case PatternType: {
+        TransformationMatrix affine;
+        cairo_set_source(cr, gcp->state.strokePattern->createPlatformPattern(affine));
+        break;
+    }
+    case GradientType:
+        cairo_set_source(cr, gcp->state.strokeGradient->platformGradient());
+        break;
+    }
+    if (gcp->state.globalAlpha < 1.0f && gcp->state.strokeType != SolidColorType) {
+        cairo_push_group(cr);
+        cairo_paint_with_alpha(cr, gcp->state.globalAlpha);
+        cairo_pop_group_to_source(cr);
+    }
+    cairo_stroke_preserve(cr);
+}
+
 // A fillRect helper
 static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const Color& col)
 {
@@ -76,6 +129,74 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
+}
+
+static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
+{
+    cairo_set_antialias(dstCr, cairo_get_antialias(srcCr));
+    double dashes, offset;
+    cairo_get_dash(srcCr, &dashes, &offset);
+    cairo_set_dash(dstCr, &dashes, cairo_get_dash_count(srcCr), offset);
+    cairo_set_line_cap(dstCr, cairo_get_line_cap(srcCr));
+    cairo_set_line_join(dstCr, cairo_get_line_join(srcCr));
+    cairo_set_line_width(dstCr, cairo_get_line_width(srcCr));
+    cairo_set_miter_limit(dstCr, cairo_get_miter_limit(srcCr));
+    cairo_set_fill_rule(dstCr, cairo_get_fill_rule(srcCr));
+}
+
+void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& kernelSize, const FloatRect& sourceRect, const IntSize& shadowSize, int shadowBlur)
+{
+#if ENABLE(FILTERS)
+    // calculate the kernel size according to the HTML5 canvas shadow specification
+    kernelSize = (shadowBlur < 8 ? shadowBlur / 2.f : sqrt(shadowBlur * 2.f));
+    int blurRadius = ceil(kernelSize);
+
+    shadowBufferSize = IntSize(sourceRect.width() + blurRadius * 2, sourceRect.height() + blurRadius * 2);
+
+    // determine dimensions of shadow rect
+    shadowRect = FloatRect(sourceRect.location(), shadowBufferSize);
+    shadowRect.move(shadowSize.width() - kernelSize, shadowSize.height() - kernelSize);
+#endif
+}
+
+static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPrivate* gcp, bool fillShadow, bool strokeShadow)
+{
+#if ENABLE(FILTERS)
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (!context->getShadow(shadowSize, shadowBlur, shadowColor))
+        return;
+    
+    //calculate filter values
+    cairo_t* cr = context->platformContext();
+    cairo_path_t* path = cairo_copy_path(cr);
+    double x0, x1, y0, y1;
+    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
+    FloatRect rect(x0, y0, x1 - x0, y1 - y0);
+
+    IntSize shadowBufferSize;
+    FloatRect shadowRect;
+    float kernelSize (0.0);
+    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, rect, shadowSize, shadowBlur);
+
+    // create suitably-sized ImageBuffer to hold the shadow
+    OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
+
+    //draw shadow into a new ImageBuffer
+    cairo_t* shadowContext = shadowBuffer->context()->platformContext();
+    copyContextProperties(cr, shadowContext);
+    cairo_translate(shadowContext, -rect.x() + kernelSize, -rect.y() + kernelSize);
+    cairo_new_path(shadowContext);
+    cairo_append_path(shadowContext, path);
+
+    if (fillShadow)
+        setPlatformFill(context, shadowContext, gcp);
+    if (strokeShadow)
+        setPlatformStroke(context, shadowContext, gcp);
+
+    context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+#endif
 }
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* cr)
@@ -387,30 +508,12 @@ void GraphicsContext::fillPath()
         return;
 
     cairo_t* cr = m_data->cr;
-    cairo_save(cr);
 
     cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    switch (m_common->state.fillType) {
-    case SolidColorType:
-        setColor(cr, fillColor());
-        cairo_clip(cr);
-        cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
-        break;
-    case PatternType: {
-        TransformationMatrix affine;
-        cairo_set_source(cr, m_common->state.fillPattern->createPlatformPattern(affine));
-        cairo_clip(cr);
-        cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
-        break;
-    }
-    case GradientType:
-        cairo_pattern_t* pattern = m_common->state.fillGradient->platformGradient();
-        cairo_set_source(cr, pattern);
-        cairo_clip(cr);
-        cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
-        break;
-    }
-    cairo_restore(cr);
+    drawPathShadow(this, m_common, true, false);
+
+    setPlatformFill(this, cr, m_common);
+    cairo_new_path(cr);
 }
 
 void GraphicsContext::strokePath()
@@ -419,45 +522,26 @@ void GraphicsContext::strokePath()
         return;
 
     cairo_t* cr = m_data->cr;
-    cairo_save(cr);
-    switch (m_common->state.strokeType) {
-    case SolidColorType:
-        float red, green, blue, alpha;
-        strokeColor().getRGBA(red, green, blue, alpha);
-        if (m_common->state.globalAlpha < 1.0f)
-            alpha *= m_common->state.globalAlpha;
-        cairo_set_source_rgba(cr, red, green, blue, alpha);
-        cairo_stroke(cr);
-        break;
-    case PatternType: {
-        TransformationMatrix affine;
-        cairo_set_source(cr, m_common->state.strokePattern->createPlatformPattern(affine));
-        if (m_common->state.globalAlpha < 1.0f) {
-            cairo_push_group(cr);
-            cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
-            cairo_pop_group_to_source(cr);
-        }
-        cairo_stroke(cr);
-        break;
-    }
-    case GradientType:
-        cairo_pattern_t* pattern = m_common->state.strokeGradient->platformGradient();
-        cairo_set_source(cr, pattern);
-        if (m_common->state.globalAlpha < 1.0f) {
-            cairo_push_group(cr);
-            cairo_paint_with_alpha(cr, m_common->state.globalAlpha);
-            cairo_pop_group_to_source(cr);
-        }
-        cairo_stroke(cr);
-        break;
-    }
-    cairo_restore(cr);
+    drawPathShadow(this, m_common, false, true);
+
+    setPlatformStroke(this, cr, m_common);
+    cairo_new_path(cr);
+
 }
 
 void GraphicsContext::drawPath()
 {
-    fillPath();
-    strokePath();
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+
+    cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    drawPathShadow(this, m_common, true, true);
+
+    setPlatformFill(this, cr, m_common);
+    setPlatformStroke(this, cr, m_common);
+    cairo_new_path(cr);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -726,9 +810,48 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
     notImplemented();
 }
 
-void GraphicsContext::setPlatformShadow(IntSize const&, int, Color const&, ColorSpace)
+void GraphicsContext::setPlatformShadow(IntSize const& size, int, Color const&, ColorSpace)
 {
-    notImplemented();
+    // Cairo doesn't support shadows natively, they are drawn manually in the draw*
+    // functions
+
+    if (m_common->state.shadowsIgnoreTransforms) {
+        // Meaning that this graphics context is associated with a CanvasRenderingContext
+        // We flip the height since CG and HTML5 Canvas have opposite Y axis
+        m_common->state.shadowSize = IntSize(size.width(), -size.height());
+    }
+}
+
+void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float kernelSize)
+{
+#if ENABLE(FILTERS)
+    cairo_t* cr = m_data->cr;
+
+    // draw the shadow without blurring, if kernelSize is zero
+    if (!kernelSize) {
+        setColor(cr, shadowColor);
+        cairo_mask_surface(cr, buffer->image()->nativeImageForCurrentFrame(), shadowRect.x(), shadowRect.y());
+        return;
+    }
+
+    // limit kernel size to 1000, this is what CG is doing.
+    kernelSize = std::min(1000.f, kernelSize);
+
+    // create filter
+    RefPtr<Filter> filter = ImageBufferFilter::create();
+    filter->setSourceImage(buffer.release());
+    RefPtr<FilterEffect> source = SourceGraphic::create();
+    source->setSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    source->setIsAlphaImage(true);
+    RefPtr<FilterEffect> blur = FEGaussianBlur::create(source.get(), kernelSize, kernelSize);
+    blur->setSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    blur->apply(filter.get());
+
+    // Mask the filter with the shadow color and draw it to the context.
+    // Masking makes it possible to just blur the alpha channel.
+    setColor(cr, shadowColor);
+    cairo_mask_surface(cr, blur->resultImage()->image()->nativeImageForCurrentFrame(), shadowRect.x(), shadowRect.y());
+#endif
 }
 
 void GraphicsContext::clearPlatformShadow()

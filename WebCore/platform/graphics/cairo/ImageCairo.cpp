@@ -132,6 +132,30 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
     cairo_pattern_set_matrix(pattern, &matrix);
 
+    // Draw the shadow
+#if ENABLE(FILTERS)
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
+        IntSize shadowBufferSize;
+        FloatRect shadowRect;
+        float kernelSize (0.0);
+        GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, dstRect, shadowSize, shadowBlur);
+        shadowColor = colorWithOverrideAlpha(shadowColor.rgb(), (shadowColor.alpha() *  context->getAlpha()) / 255.f);
+
+        //draw shadow into a new ImageBuffer
+        OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
+        cairo_t* shadowContext = shadowBuffer->context()->platformContext();
+        cairo_set_source(shadowContext, pattern);
+        cairo_translate(shadowContext, -dstRect.x(), -dstRect.y());
+        cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
+        cairo_fill(shadowContext);
+
+        context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+    }
+#endif
+
     // Draw the image.
     cairo_translate(cr, dstRect.x(), dstRect.y());
     cairo_set_source(cr, pattern);

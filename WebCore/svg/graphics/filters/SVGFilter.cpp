@@ -32,7 +32,7 @@ SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool
 {
 }
 
-void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
+void SVGFilter::calculateEffectSubRegion(FilterEffect* effect) const
 {
     FloatRect subRegionBBox = effect->subRegion();
     FloatRect useBBox = effect->unionOfChildEffectSubregions();

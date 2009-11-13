@@ -1,3 +1,13 @@
+2009-11-11  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Some tests for canvas shadow.
+
+        * fast/canvas/canvas-shadow-expected.txt: Added.
+        * fast/canvas/canvas-shadow.html: Added.
+        * fast/canvas/script-tests/canvas-shadow.js: Added.
+
 2009-11-12  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Steve Falkenburg.

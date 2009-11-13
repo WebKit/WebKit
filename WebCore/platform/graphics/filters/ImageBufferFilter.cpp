@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ *  Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  *
  *   This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,42 +18,23 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef Filter_h
-#define Filter_h
+#include "config.h"
 
 #if ENABLE(FILTERS)
-#include "FloatRect.h"
-#include "ImageBuffer.h"
-#include "StringHash.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "ImageBufferFilter.h"
 
 namespace WebCore {
 
-    class FilterEffect;
+ImageBufferFilter::ImageBufferFilter()
+    : Filter()
+{
+}
 
-    class Filter : public RefCounted<Filter> {
-    public:
-        virtual ~Filter() { }
-
-        void setSourceImage(PassOwnPtr<ImageBuffer> sourceImage) { m_sourceImage = sourceImage; }
-        ImageBuffer* sourceImage() { return m_sourceImage.get(); }
-
-        virtual FloatRect sourceImageRect() const = 0;
-        virtual FloatRect filterRegion() const = 0;
-
-        // SVG specific
-        virtual void calculateEffectSubRegion(FilterEffect*) const = 0;
-        virtual bool effectBoundingBoxMode() const = 0;
-
-    private:
-        OwnPtr<ImageBuffer> m_sourceImage;
-    };
+PassRefPtr<ImageBufferFilter> ImageBufferFilter::create()
+{
+    return adoptRef(new ImageBufferFilter());
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)
-
-#endif // Filter_h
