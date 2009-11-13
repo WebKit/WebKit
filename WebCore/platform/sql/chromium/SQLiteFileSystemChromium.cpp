@@ -58,7 +58,8 @@ int SQLiteFileSystem::openDatabase(const String& fileName, sqlite3** database)
     // open databases using the default VFS
     // in renderers, it should be Chromium's VFS; in the browser process it should be SQLite's default VFS
     return sqlite3_open_v2(fileName.utf8().data(), database,
-                           SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, 0);
+                           SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX,
+                           "chromium_vfs");
 }
 
 String SQLiteFileSystem::getFileNameForNewDatabase(

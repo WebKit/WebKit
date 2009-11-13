@@ -169,7 +169,7 @@ void SQLiteFileSystem::registerSQLiteVFS()
         win32_vfs->xCurrentTime,
         win32_vfs->xGetLastError
     };
-    sqlite3_vfs_register(&chromium_vfs, 1);
+    sqlite3_vfs_register(&chromium_vfs, 0);
 }
 
 } // namespace WebCore

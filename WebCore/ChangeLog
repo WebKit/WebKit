@@ -1,3 +1,20 @@
+2009-11-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Do not register Chromium's HTML5 DB VFS as the default
+        VFS. Otherwise, other sqlite DB users in the same process will
+        stop working.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31462
+
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+
 2009-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix
