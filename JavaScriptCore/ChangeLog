@@ -1,3 +1,16 @@
+2009-11-12  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Calculate the time offset only if we were able to parse
+        the date string. This saves an IPC in Chromium for
+        invalid date strings.
+        https://bugs.webkit.org/show_bug.cgi?id=31416
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (JSC::parseDateFromNullTerminatedCharacters):
+
 2009-11-12  Oliver Hunt  <oliver@apple.com>
 
         Rollout r50896 until i can work out why it causes failures.
