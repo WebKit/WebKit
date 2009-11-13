@@ -1,3 +1,12 @@
+2009-11-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Improve SecurityOrigin::toString comment
+        https://bugs.webkit.org/show_bug.cgi?id=31041
+
+        * page/SecurityOrigin.h:
+
 2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
