@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSConsole.h"
 #include "JavaScriptProfile.h"
+#include "ScriptCallStack.h"
 #include <runtime/JSArray.h>
 
 #include "Console.h"
@@ -48,6 +49,22 @@ JSValue JSConsole::profiles(ExecState* exec) const
         list.append(toJS(exec, iter->get()));
 
     return constructArray(exec, list);
+}
+
+JSValue JSConsole::profile(ExecState* exec, const ArgList& args)
+{
+    ScriptCallStack callStack(exec, args, 1);
+    const UString title = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
+    impl()->profile(title, &callStack);
+    return jsUndefined();
+}
+
+JSValue JSConsole::profileEnd(ExecState* exec, const ArgList& args)
+{
+    ScriptCallStack callStack(exec, args, 1);
+    const UString title = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
+    impl()->profileEnd(title, &callStack);
+    return jsUndefined();
 }
 
 #endif

@@ -493,6 +493,9 @@ namespace WebCore {
 #endif
         DECLARE_CALLBACK(InspectorBackendWrapCallback);
 
+        DECLARE_CALLBACK(ConsoleProfile);
+        DECLARE_CALLBACK(ConsoleProfileEnd);
+
         DECLARE_CALLBACK(NodeIteratorNextNode);
         DECLARE_CALLBACK(NodeIteratorPreviousNode);
 

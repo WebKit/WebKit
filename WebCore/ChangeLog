@@ -1,3 +1,21 @@
+2009-11-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Enable 'console.profile()' and 'console.profileEnd()'
+        regardless of JAVASCRIPT_DEBUGGER.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31293
+
+        * WebCore.gypi:
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profile):
+        (WebCore::JSConsole::profileEnd):
+        * bindings/v8/custom/V8ConsoleCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * page/Console.idl:
+
 2009-11-12  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY.

@@ -50,10 +50,8 @@ module window {
         [DontEnum] DOMString lastWMLErrorMessage();
 #endif
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
-        [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
-#endif
+        [Custom] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [Custom] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
 
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
