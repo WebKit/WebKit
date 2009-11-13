@@ -1,3 +1,77 @@
+2009-11-13  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Bring the platform/android files inline with Android 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=31423
+
+        No new tests required: these are all Android-specific files.
+
+        * platform/android/ClipboardAndroid.cpp:
+        (WebCore::ClipboardAndroid::files):
+        * platform/android/ClipboardAndroid.h:
+        * platform/android/FileChooserAndroid.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        (WebCore::fileButtonChooseFileLabel):
+        * platform/android/KeyEventAndroid.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/android/LocalizedStringsAndroid.cpp:
+        (WebCore::contextMenuItemTagOpenLinkInNewWindow):
+        (WebCore::contextMenuItemTagDownloadLinkToDisk):
+        (WebCore::contextMenuItemTagCopyLinkToClipboard):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        (WebCore::contextMenuItemTagDownloadImageToDisk):
+        (WebCore::contextMenuItemTagCopyImageToClipboard):
+        (WebCore::contextMenuItemTagOpenFrameInNewWindow):
+        (WebCore::contextMenuItemTagCopy):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagStop):
+        (WebCore::contextMenuItemTagReload):
+        (WebCore::contextMenuItemTagCut):
+        (WebCore::contextMenuItemTagPaste):
+        (WebCore::contextMenuItemTagNoGuessesFound):
+        (WebCore::contextMenuItemTagIgnoreSpelling):
+        (WebCore::contextMenuItemTagLearnSpelling):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::contextMenuItemTagOpenLink):
+        (WebCore::contextMenuItemTagIgnoreGrammar):
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckSpelling):
+        (WebCore::contextMenuItemTagCheckSpellingWhileTyping):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebCore::contextMenuItemTagFontMenu):
+        (WebCore::contextMenuItemTagBold):
+        (WebCore::contextMenuItemTagItalic):
+        (WebCore::contextMenuItemTagUnderline):
+        (WebCore::contextMenuItemTagOutline):
+        (WebCore::contextMenuItemTagWritingDirectionMenu):
+        (WebCore::contextMenuItemTagTextDirectionMenu):
+        (WebCore::contextMenuItemTagDefaultDirection):
+        (WebCore::contextMenuItemTagLeftToRight):
+        (WebCore::contextMenuItemTagRightToLeft):
+        (WebCore::mediaElementLoadingStateText):
+        (WebCore::mediaElementLiveBroadcastStateText):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        * platform/android/RenderThemeAndroid.cpp:
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeAndroid::baselinePosition):
+        (WebCore::RenderThemeAndroid::paintButton):
+        (WebCore::adjustMenuListStyleCommon):
+        (WebCore::RenderThemeAndroid::paintCombo):
+        * platform/android/ScreenAndroid.cpp:
+        * platform/android/ScrollViewAndroid.cpp:
+        (WebCore::ScrollView::platformOffscreenContentRectangle):
+        * platform/android/TemporaryLinkStubs.cpp:
+        (JSC::Bindings::dispatchJNICall):
+        * platform/android/WidgetAndroid.cpp:
+        (WebCore::Widget::setFrameRect):
+
 2009-11-13  Norbert Leser  <norbert.leser&nokia.com>
 
         Reviewed by Eric Seidel.

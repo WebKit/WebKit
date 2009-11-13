@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "SkRegion.h"
 #include "WebCoreFrameBridge.h"
 #include "WebCoreViewBridge.h"
 #include "WebViewCore.h"
@@ -96,9 +97,17 @@ void ScrollView::platformRepaintContentRectangle(const IntRect &rect, bool now)
 }
 
 #ifdef ANDROID_CAPTURE_OFFSCREEN_PAINTS
-void ScrollView::platformOffscreenContentRectangle(const IntRect& rect)
+//  Compute the offscreen parts of the drawn rectangle by subtracting
+//  vis from rect. This can compute up to four rectangular slices.
+void ScrollView::platformOffscreenContentRectangle(const IntRect& vis, const IntRect& rect)
 {
-    android::WebViewCore::getWebViewCore(this)->offInvalidate(rect);
+    SkRegion rectRgn = SkRegion(rect);
+    rectRgn.op(vis, SkRegion::kDifference_Op);
+    SkRegion::Iterator iter(rectRgn);
+    for (; !iter.done(); iter.next()) {
+        const SkIRect& diff = iter.rect();
+        android::WebViewCore::getWebViewCore(this)->offInvalidate(diff);
+    }
 }
 #endif
 

@@ -27,7 +27,7 @@
 #include "RenderThemeAndroid.h"
 
 #include "Color.h"
-#include "FormControlElement.h"
+#include "Element.h"
 #include "GraphicsContext.h"
 #include "PlatformGraphicsContext.h"
 #include "RenderSkinAndroid.h"
@@ -37,8 +37,6 @@
 #include "SkCanvas.h"
 
 namespace WebCore {
-
-const int MAX_COMBO_HEIGHT = 20;
 
 // Add a constant amount of padding to the textsize to get the final height
 // of buttons, so that our button images are large enough to properly fit
@@ -63,6 +61,17 @@ RenderTheme* theme()
 {
     static RenderThemeAndroid androidTheme;
     return &androidTheme;
+}
+
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+{
+    static RenderTheme* rt = RenderThemeAndroid::create().releaseRef();
+    return rt;
+}
+
+PassRefPtr<RenderTheme> RenderThemeAndroid::create()
+{
+    return adoptRef(new RenderThemeAndroid());
 }
 
 RenderThemeAndroid::RenderThemeAndroid()
@@ -119,7 +128,7 @@ int RenderThemeAndroid::baselinePosition(const RenderObject* obj) const
     // controls that need to do this.
     //
     // Our checkboxes and radio buttons need to be offset to line up properly.
-    return RenderTheme::baselinePosition(obj) - 5;
+    return RenderTheme::baselinePosition(obj) - 2;
 }
 
 void RenderThemeAndroid::addIntrinsicMargins(RenderStyle* style) const
@@ -181,8 +190,8 @@ bool RenderThemeAndroid::paintButton(RenderObject* obj, const RenderObject::Pain
 {
     // If it is a disabled button, simply paint it to the master picture.
     Node* node = obj->node();
-    FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(node));
-    if (formControlElement && !formControlElement->isEnabled())
+    Element* formControlElement = static_cast<Element*>(node);
+    if (formControlElement && !formControlElement->isEnabledFormControl())
         RenderSkinButton::Draw(getCanvasFromInfo(info), rect, RenderSkinAndroid::kDisabled);
     else
         // Store all the important information in the platform context.
@@ -253,12 +262,6 @@ static void adjustMenuListStyleCommon(RenderStyle* style, Element* e)
 {
     // Added to make room for our arrow.
     style->setPaddingRight(Length(RenderSkinCombo::extraWidth(), Fixed));
-    // Code copied from RenderThemeMac.mm
-    // Makes sure that the text shows up on our treatment
-    bool isEnabled = true;
-    if (FormControlElement* formControlElement = toFormControlElement(e))
-        isEnabled = formControlElement->isEnabled();
-    style->setColor(isEnabled ? Color::black : Color::darkGray);
 }
 
 void RenderThemeAndroid::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element* e) const
@@ -271,16 +274,7 @@ bool RenderThemeAndroid::paintCombo(RenderObject* obj, const RenderObject::Paint
 {
     if (obj->style() && !obj->style()->backgroundColor().alpha())
         return true;
-    Node* node = obj->node();
-    int height = rect.height();
-    int y = rect.y();
-    // If the combo box is too large, leave it at its max height, and center it.
-    if (height > MAX_COMBO_HEIGHT) {
-        y += (height - MAX_COMBO_HEIGHT) >> 1;
-        height = MAX_COMBO_HEIGHT;
-    }
-    return RenderSkinCombo::Draw(getCanvasFromInfo(info), node, rect.x(), y,
-            rect.width(), height);
+    return RenderSkinCombo::Draw(getCanvasFromInfo(info), obj->node(), rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 bool RenderThemeAndroid::paintMenuList(RenderObject* obj, const RenderObject::PaintInfo& info, const IntRect& rect) 

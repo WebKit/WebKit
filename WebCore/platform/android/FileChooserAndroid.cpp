@@ -36,9 +36,11 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         return String();
     // FIXME: This could be a lot faster, but assuming the data will not
     // often be much longer than the provided width, this may be fast enough.
+    // If this does not need to be threadsafe, we can use crossThreadString().
+    // See http://trac.webkit.org/changeset/49160.
     String output = m_filenames[0].threadsafeCopy();
     while (font.width(TextRun(output.impl())) > width && output.length() > 4)
-        output = output.replace(output.length() - 4, 4, String("..."));
+        output = output.replace(0, 4, String("..."));
     return output;
 }
 
@@ -48,7 +50,7 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
 // second string is rendered on the screen when no file has been selected.
 String fileButtonChooseFileLabel()
 {
-    return String("Uploads Disabled");
+    return String("Upload a file");
 }
 
 String fileButtonNoFileSelectedLabel()
@@ -57,4 +59,3 @@ String fileButtonNoFileSelectedLabel()
 }
 
 } // namesapce WebCore
-

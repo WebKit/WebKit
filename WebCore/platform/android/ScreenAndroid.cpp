@@ -29,13 +29,15 @@
 #include "config.h"
 #include "Screen.h"
 
+// This include must come first.
+#undef LOG // FIXME: Still have to do this to get the log to show up
+#include "utils/Log.h"
+
 #include "FloatRect.h"
 #include "Widget.h"
 #include "ui/DisplayInfo.h"
 #include "ui/PixelFormat.h"
 #include "ui/SurfaceComposerClient.h"
-#undef LOG // FIXME: Still have to do this to get the log to show up
-#include "utils/Log.h"
 
 namespace WebCore {
 

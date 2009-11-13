@@ -45,7 +45,257 @@ String unknownFileSizeText()
     return String("Unknown");
 }
 
+String contextMenuItemTagOpenLinkInNewWindow()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagDownloadLinkToDisk()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCopyLinkToClipboard()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagOpenImageInNewWindow()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagDownloadImageToDisk()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCopyImageToClipboard()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagOpenFrameInNewWindow()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCopy()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagGoBack()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagGoForward()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagStop()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagReload()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCut()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagPaste()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagNoGuessesFound()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagIgnoreSpelling()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagLearnSpelling()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagSearchWeb()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagLookUpInDictionary()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagOpenLink()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagIgnoreGrammar()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagSpellingMenu()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagShowSpellingPanel(bool show)
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCheckSpelling()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCheckSpellingWhileTyping()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagFontMenu()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagBold()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagItalic()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagUnderline()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagOutline()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagWritingDirectionMenu()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagTextDirectionMenu()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagDefaultDirection()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagLeftToRight()
+{
+    notImplemented();
+    return String();
+}
+
+String contextMenuItemTagRightToLeft()
+{
+    notImplemented();
+    return String();
+}
+
 String imageTitle(const String& filename, const IntSize& size)
+{
+    notImplemented();
+    return String();
+}
+
+String mediaElementLoadingStateText()
+{
+    notImplemented();
+    return String();
+}
+
+String mediaElementLiveBroadcastStateText()
+{
+    notImplemented();
+    return String();
+}
+
+String searchableIndexIntroduction()
+{
+    notImplemented();
+    return String();
+}
+
+String resetButtonDefaultLabel()
+{
+    return String("Reset");
+}
+
+String submitButtonDefaultLabel()
+{
+    return String("Submit");
+}
+
+String inputElementAltText()
 {
     notImplemented();
     return String();

@@ -47,7 +47,7 @@ struct ThemeData {
 
 class RenderThemeAndroid : public RenderTheme {
 public:
-    RenderThemeAndroid();
+    static PassRefPtr<RenderTheme> create();
     ~RenderThemeAndroid();
     
     virtual bool stateChanged(RenderObject*, ControlState) const;
@@ -97,10 +97,12 @@ protected:
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
+    RenderThemeAndroid();
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
     bool supportsFocus(ControlPart);
+    friend RenderTheme* theme();
 };
 
 } // namespace WebCore

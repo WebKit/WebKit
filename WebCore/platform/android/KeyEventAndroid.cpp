@@ -211,9 +211,8 @@ static inline String singleCharacterString(UChar32 c)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(int keyCode, UChar32 unichar,
-                                             Type type, int repeatCount,
-                                             ModifierKey mods)
-    : m_type(type)
+        int repeatCount, bool down, bool cap, bool alt, bool sym)
+    : m_type(down ? KeyDown : KeyUp)
     , m_text(singleCharacterString(unichar))
     , m_unmodifiedText(singleCharacterString(unichar))
     , m_keyIdentifier(keyIdentifierForAndroidKeyCode(keyCode))
@@ -221,10 +220,10 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(int keyCode, UChar32 unichar,
     , m_windowsVirtualKeyCode(windowsKeyCodeForKeyEvent(keyCode))
     , m_nativeVirtualKeyCode(keyCode)
     , m_isKeypad(false)
-    , m_shiftKey((mods & ShiftKey))
-    , m_ctrlKey((mods & CtrlKey))
-    , m_altKey((mods & AltKey))
-    , m_metaKey((mods & MetaKey))
+    , m_shiftKey(cap ? ShiftKey : 0)
+    , m_ctrlKey(sym ? CtrlKey : 0)
+    , m_altKey(alt ? AltKey : 0)
+    , m_metaKey(0)
     // added for android
     , m_repeatCount(repeatCount)
     , m_unichar(unichar)

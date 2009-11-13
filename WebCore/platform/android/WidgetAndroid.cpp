@@ -96,7 +96,7 @@ void Widget::hide()
 void Widget::setFrameRect(const IntRect& rect)
 {
     // FIXME: set m_frame instead?
-    // platformWidget() is NULL when called from Scrollbar
+    // platformWidget() is 0 when called from Scrollbar
     if (!platformWidget())
         return;
     platformWidget()->setLocation(rect.x(), rect.y());
