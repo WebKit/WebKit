@@ -1,3 +1,15 @@
+2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        externalRepresentation should take Frame as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=31393
+
+        No new tests as this is just a refactoring.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::renderTreeDump):
+
 2009-11-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Jan Alonzo.

@@ -490,7 +490,7 @@ QString QWebFrame::renderTreeDump() const
     if (d->frame->view() && d->frame->view()->layoutPending())
         d->frame->view()->layout();
 
-    return externalRepresentation(d->frame->contentRenderer());
+    return externalRepresentation(d->frame);
 }
 
 /*!

@@ -1,3 +1,15 @@
+2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        externalRepresentation should take Frame as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=31393
+
+        No new tests as this is just a refactoring.
+
+        * WebFrame.cpp:
+        (WebFrame::renderTreeAsExternalRepresentation):
+
 2009-11-12  Adam Roben  <aroben@apple.com>
 
         Replace worldIDs with world objects

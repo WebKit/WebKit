@@ -539,8 +539,9 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
            << "selection end:   position " << selection.end().deprecatedEditingOffset() << " of " << nodePosition(selection.end().node()) << "\n";
 }
 
-String externalRepresentation(RenderObject* o)
+String externalRepresentation(Frame* frame)
 {
+    RenderObject* o = frame->contentRenderer();
     if (!o)
         return String();
 

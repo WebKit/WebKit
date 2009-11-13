@@ -1,3 +1,17 @@
+2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        externalRepresentation should take Frame as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=31393
+
+        No new tests as this is just a refactoring.
+
+        * WebCore.base.exp:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+        * rendering/RenderTreeAsText.h:
+
 2009-11-12  Ben Murdoch  <benm@google.com>
 
         Reviewed by Dimitri Glazkov.

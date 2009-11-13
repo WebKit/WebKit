@@ -242,7 +242,7 @@ using namespace WebCore;
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-    return externalRepresentation(_private->coreFrame->contentRenderer());
+    return externalRepresentation(_private->coreFrame);
 }
 
 - (NSString *)counterValueForElement:(DOMElement*)element

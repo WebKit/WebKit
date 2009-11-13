@@ -824,7 +824,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = BString(externalRepresentation(coreFrame->contentRenderer())).release();
+    *result = BString(externalRepresentation(coreFrame)).release();
     return S_OK;
 }
 

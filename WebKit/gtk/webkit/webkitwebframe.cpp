@@ -794,7 +794,7 @@ gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame)
     if (view && view->layoutPending())
         view->layout();
 
-    String string = externalRepresentation(coreFrame->contentRenderer());
+    String string = externalRepresentation(coreFrame);
     return g_strdup(string.utf8().data());
 }
 
