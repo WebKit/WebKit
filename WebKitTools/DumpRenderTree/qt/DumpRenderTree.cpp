@@ -140,12 +140,12 @@ void WebPage::resetSettings()
     // layoutTestController.overridePreference() or similar.
 
     settings()->resetFontSize(QWebSettings::DefaultFontSize);
-
     settings()->resetAttribute(QWebSettings::JavascriptCanOpenWindows);
     settings()->resetAttribute(QWebSettings::JavascriptEnabled);
     settings()->resetAttribute(QWebSettings::PrivateBrowsingEnabled);
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
+    QWebSettings::setMaximumPagesInCache(0); // reset to default
 }
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
