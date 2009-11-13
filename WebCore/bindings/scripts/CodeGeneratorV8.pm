@@ -646,8 +646,8 @@ END
         if ($attrIsPodType) {
             $resultObject = "wrapper";
         }
-        $resultObject = "WTF::getPtr(" . $resultObject . ")";
-        push(@implContentDecls, GenerateSVGContextAssignment($implClassName, $resultObject, "    "));
+        push(@implContentDecls, GenerateSVGContextRetrieval($implClassName, "    "));
+        $result = "V8Proxy::withSVGContext($resultObject, context)";
     }
 
     if ($attrIsPodType) {
