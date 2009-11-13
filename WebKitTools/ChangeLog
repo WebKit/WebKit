@@ -1,3 +1,12 @@
+2009-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Set the locale to C and not to the current one in use on the system.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Finish replacing worldIDs with world objects
