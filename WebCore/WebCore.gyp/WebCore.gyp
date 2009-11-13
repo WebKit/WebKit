@@ -152,6 +152,7 @@
       '../rendering',
       '../rendering/style',
       '../storage',
+      '../storage/chromium',
       '../svg',
       '../svg/animation',
       '../svg/graphics',
@@ -672,6 +673,13 @@
 
         # Exclude some DB-related files.
         ['exclude', 'platform/sql/SQLiteFileSystem.cpp'],
+        ['exclude', 'storage/DatabaseTracker.cpp'],
+        ['exclude', 'storage/DatabaseTrackerClient.h'],
+        ['exclude', 'storage/OriginQuotaManager.cpp'],
+        ['exclude', 'storage/OriginQuotaManager.h'],
+        ['exclude', 'storage/OriginUsageRecord.cpp'],
+        ['exclude', 'storage/OriginUsageRecord.h'],
+        ['exclude', 'storage/SQLTransactionClient.cpp'],
       ],
       'sources!': [
         # A few things can't be excluded by patterns.  List them individually.

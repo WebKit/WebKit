@@ -1,3 +1,28 @@
+2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding Chromium's DatabaseTracker implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31440
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::exceededDatabaseQuota):
+        * src/DatabaseObserver.cpp: Added.
+        (WebCore::DatabaseObserver::databaseOpened):
+        (WebCore::DatabaseObserver::databaseModified):
+        (WebCore::DatabaseObserver::databaseClosed):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::name):
+        (WebKit::WebDatabase::displayName):
+        (WebKit::WebDatabase::estimatedSize):
+        (WebKit::WebDatabase::securityOrigin):
+        (WebKit::WebDatabase::updateDatabaseSize):
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::toString):
+        (WebKit::WebSecurityOrigin::databaseIdentifier):
+
 2009-11-13  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

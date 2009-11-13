@@ -81,20 +81,14 @@ bool WebSecurityOrigin::isEmpty() const
 
 WebString WebSecurityOrigin::toString() const
 {
-    // FIXME: We should not support calling this method when m_private is null.
-    if (m_private)
-        return m_private->toString();
-
-    return WebString::fromUTF8("null");
+    ASSERT(m_private);
+    return m_private->toString();
 }
 
 WebString WebSecurityOrigin::databaseIdentifier()
 {
-    // FIXME: We should not support calling this method when m_private is null.
-    if (m_private)
-        return m_private->databaseIdentifier();
-
-    return WebString::fromUTF8("null");
+    ASSERT(m_private);
+    return m_private->databaseIdentifier();
 }
 
 WebSecurityOrigin::WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>& origin)

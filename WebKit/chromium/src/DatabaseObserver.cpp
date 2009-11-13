@@ -29,41 +29,32 @@
  */
 
 #include "config.h"
-#include "QuotaTracker.h"
+#include "DatabaseObserver.h"
 
-#include "CString.h"
-#include <wtf/StdLibExtras.h>
+#include "Database.h"
+#include "WebDatabase.h"
+#include "WebDatabaseObserver.h"
+
+using namespace WebKit;
 
 namespace WebCore {
 
-QuotaTracker& QuotaTracker::instance()
+void DatabaseObserver::databaseOpened(Database* database)
 {
-    DEFINE_STATIC_LOCAL(QuotaTracker, tracker, ());
-    return tracker;
+    ASSERT(isMainThread());
+    WebDatabase::observer()->databaseOpened(WebDatabase(database));
 }
 
-void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
-    const String& originIdentifier, const String& databaseName,
-    unsigned long long* databaseSize, unsigned long long* spaceAvailable)
+void DatabaseObserver::databaseModified(Database* database)
 {
-    MutexLocker lockData(m_dataGuard);
-    ASSERT(m_databaseSizes.contains(originIdentifier));
-    HashMap<String, SizeMap>::const_iterator it = m_databaseSizes.find(originIdentifier);
-    ASSERT(it->second.contains(databaseName));
-    *databaseSize = it->second.get(databaseName);
-
-    ASSERT(m_spaceAvailableToOrigins.contains(originIdentifier));
-    *spaceAvailable = m_spaceAvailableToOrigins.get(originIdentifier);
+    ASSERT(isMainThread());
+    WebDatabase::observer()->databaseModified(WebDatabase(database));
 }
 
-void QuotaTracker::updateDatabaseSizeAndSpaceAvailableToOrigin(
-    const String& originIdentifier, const String& databaseName,
-    unsigned long long databaseSize, unsigned long long spaceAvailable)
+void DatabaseObserver::databaseClosed(Database* database)
 {
-    MutexLocker lockData(m_dataGuard);
-    m_spaceAvailableToOrigins.set(originIdentifier, spaceAvailable);
-    HashMap<String, SizeMap>::iterator it = m_databaseSizes.add(originIdentifier, SizeMap()).first;
-    it->second.set(databaseName, databaseSize);
+    ASSERT(isMainThread());
+    WebDatabase::observer()->databaseClosed(WebDatabase(database));
 }
 
-}
+} // namespace WebCore

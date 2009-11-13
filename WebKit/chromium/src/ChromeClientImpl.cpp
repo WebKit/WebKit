@@ -544,10 +544,7 @@ void ChromeClientImpl::print(Frame* frame)
 
 void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    // set a reasonable quota for now -- 5Mb should be enough for anybody
-    // TODO(dglazkov): this should be configurable
-    SecurityOrigin* origin = frame->document()->securityOrigin();
-    DatabaseTracker::tracker().setQuota(origin, 1024 * 1024 * 5);
+    // Chromium users cannot currently change the default quota
 }
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

@@ -188,6 +188,7 @@
                 'src/ChromiumThreading.cpp',
                 'src/ContextMenuClientImpl.cpp',
                 'src/ContextMenuClientImpl.h',
+                'src/DatabaseObserver.cpp',
                 'src/DOMUtilitiesPrivate.cpp',
                 'src/DOMUtilitiesPrivate.h',
                 'src/DragClientImpl.cpp',

@@ -1,3 +1,21 @@
+2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding Chromium's DatabaseTracker implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31440
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * storage/DatabaseTracker.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        * storage/chromium/QuotaTracker.cpp:
+        (WebCore::QuotaTracker::updateDatabaseSize):
+        * storage/chromium/QuotaTracker.h:
+
 2009-11-13  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

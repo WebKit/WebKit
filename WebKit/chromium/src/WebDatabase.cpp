@@ -35,6 +35,7 @@
 #include "DatabaseThread.h"
 #include "Document.h"
 #include "KURL.h"
+#include "QuotaTracker.h"
 #include "SecurityOrigin.h"
 #include "WebDatabaseObserver.h"
 #include "WebString.h"
@@ -65,37 +66,26 @@ void WebDatabase::assign(const WebDatabase& other)
 
 WebString WebDatabase::name() const
 {
-    if (m_private)
-        return m_private->stringIdentifier();
-
-    return WebString::fromUTF8("null");
+    ASSERT(m_private);
+    return m_private->stringIdentifier();
 }
 
 WebString WebDatabase::displayName() const
 {
-// FIXME: add the Database::displayName() method.
-//     if (m_private)
-//         return m_private->displayName();
-
-    return WebString::fromUTF8("null");
+    ASSERT(m_private);
+    return m_private->displayName();
 }
 
 unsigned long WebDatabase::estimatedSize() const
 {
-// FIXME: add the Database::estimatedSize() method.
-//    if (m_private)
-//        return m_private->estimatedSize();
-
-    return -1;
+    ASSERT(m_private);
+    return m_private->estimatedSize();
 }
 
 WebSecurityOrigin WebDatabase::securityOrigin() const
 {
-// FIXME: add the Database::threadSafeSecurityOrigin() method.
-//     if (m_private)
-//         return WebSecurityOrigin(m_private->threadSafeSecurityOrigin());
-
-    return WebSecurityOrigin();
+    ASSERT(m_private);
+    return WebSecurityOrigin(m_private->securityOrigin());
 }
 
 void WebDatabase::setObserver(WebDatabaseObserver* observer)
@@ -112,9 +102,8 @@ void WebDatabase::updateDatabaseSize(
     const WebString& originIdentifier, const WebString& databaseName,
     unsigned long long databaseSize, unsigned long long spaceAvailable)
 {
-// FIXME: add the QuotaTracker class.
-//     WebCore::QuotaTracker::instance().updateDatabaseSize(
-//         originIdentifier, databaseName, databaseSize, spaceAvailable);
+    WebCore::QuotaTracker::instance().updateDatabaseSizeAndSpaceAvailableToOrigin(
+        originIdentifier, databaseName, databaseSize, spaceAvailable);
 }
 
 WebDatabase::WebDatabase(const WTF::PassRefPtr<Database>& database)
