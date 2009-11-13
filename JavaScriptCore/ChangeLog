@@ -1,3 +1,14 @@
+2009-11-12  Oliver Hunt  <oliver@apple.com>
+
+        Rollout r50896 until i can work out why it causes failures.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * parser/Nodes.cpp:
+        (JSC::EvalNode::emitBytecode):
+
 2009-11-12  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Stephanie Lewis.

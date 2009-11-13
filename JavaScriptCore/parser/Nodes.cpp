@@ -1977,7 +1977,7 @@ RegisterID* EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     emitStatementsBytecode(generator, dstRegister.get());
 
     generator.emitDebugHook(DidExecuteProgram, firstLine(), lastLine());
-    generator.emitReturn(dstRegister.get());
+    generator.emitEnd(dstRegister.get());
     return 0;
 }
 
