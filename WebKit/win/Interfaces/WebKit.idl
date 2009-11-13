@@ -55,6 +55,8 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
+#include "WebScrollbarTypes.idl"
+#include "IWebScriptObject.idl"
 #include "DOMCSS.idl"
 #include "DOMCore.idl"
 #include "DOMEvents.idl"
@@ -98,7 +100,6 @@ import "ocidl.idl";
 #include "IWebInspectorPrivate.idl"
 #include "IWebJavaScriptCollector.idl"
 #include "IWebKitStatistics.idl"
-#include "IWebMutableURLRequest.idl"
 #include "IWebMutableURLRequestPrivate.idl"
 #include "IWebNavigationData.idl"
 #include "IWebNotification.idl"
@@ -112,7 +113,6 @@ import "ocidl.idl";
 #include "IWebResource.idl"
 #include "IWebResourceLoadDelegate.idl"
 #include "IWebResourceLoadDelegatePrivate.idl"
-#include "IWebScriptObject.idl"
 #include "IWebScriptWorld.idl"
 #include "IWebScrollBarDelegatePrivate.idl"
 #include "IWebScrollBarPrivate.idl"
@@ -123,6 +123,7 @@ import "ocidl.idl";
 #include "IWebUIDelegatePrivate.idl"
 #include "IWebURLAuthenticationChallenge.idl"
 #include "IWebURLRequest.idl"
+#include "IWebMutableURLRequest.idl"
 #include "IWebURLResponse.idl"
 #include "IWebURLResponsePrivate.idl"
 #include "IWebUndoManager.idl"
@@ -130,7 +131,6 @@ import "ocidl.idl";
 #include "IWebView.idl"
 #include "IWebViewPrivate.idl"
 #include "IWebWorkersPrivate.idl"
-#include "WebScrollbarTypes.idl"
 
 #define __TYPELIB_VERSION__ __BUILD_NUMBER_MAJOR__##.##__BUILD_NUMBER_MINOR__
 

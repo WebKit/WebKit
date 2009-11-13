@@ -1,5 +1,12 @@
 2009-11-13  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * Interfaces/WebKit.idl: Un-sort the #includes again. Apparently they
+        are order-dependent!
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
         Touch WebKit.idl to fix the Windows build
 
         * Interfaces/WebKit.idl: Sorted #includes.
