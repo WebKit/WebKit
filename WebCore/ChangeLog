@@ -1,3 +1,12 @@
+2009-11-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Release build fix.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        Use ASSERT_UNUSED for unused stream parameter.
+
 2009-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
