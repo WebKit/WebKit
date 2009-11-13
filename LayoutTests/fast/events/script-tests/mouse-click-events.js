@@ -5,14 +5,24 @@ div.style.width = "100px";
 div.style.height = "100px";
 div.style.backgroundColor = "blue";
 
-function logEvent() {
-    debug(event.type + "(" + event.button + ")");
+var eventLog = "";
+
+function appendEventLog() {
+    if (window.eventSender) {
+        eventLog += event.type + "(" + event.button + ") ";
+    } else {
+        debug(event.type + "(" + event.button + ")");
+    }
 }
 
-div.addEventListener("click", logEvent, false);
-div.addEventListener("dblclick", logEvent, false);
-div.addEventListener("mousedown", logEvent, false);
-div.addEventListener("mouseup", logEvent, false);
+function clearEventLog() {
+    eventLog = "";
+}
+
+div.addEventListener("click", appendEventLog, false);
+div.addEventListener("dblclick", appendEventLog, false);
+div.addEventListener("mousedown", appendEventLog, false);
+div.addEventListener("mouseup", appendEventLog, false);
 document.body.insertBefore(div, document.body.firstChild);
 
 if (window.eventSender)
@@ -30,16 +40,18 @@ function sendEvents(button) {
     // could test dragging here too
 }
 
-debug("Left Mouse Button");
-sendEvents(0);
+function testEvents(description, button, expectedString) {
+    debug(description);
+    sendEvents(button);
+    shouldBeEqualToString("eventLog", expectedString);
+    clearEventLog();
+}
 
-debug("Middle Mouse Button");
-sendEvents(1);
-
-debug("Right Mouse Button");
-sendEvents(2);
-
-debug("4th Mouse Button");
-sendEvents(3);
+if (window.eventSender) {
+    testEvents("Left Mouse Button", 0, "mousedown(0) mouseup(0) click(0) mousedown(0) mouseup(0) click(0) dblclick(0) ");
+    testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) click(1) mousedown(1) mouseup(1) click(1) dblclick(1) ");
+    testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(2) mousedown(2) mouseup(2) ");
+    testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) click(1) mousedown(1) mouseup(1) click(1) dblclick(1) ");
+}
 
 var successfullyParsed = true;

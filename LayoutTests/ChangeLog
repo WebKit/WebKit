@@ -1,3 +1,14 @@
+2009-11-12  Kinuko Yasuda  <kinuko@google.com>
+
+        Reviewed by Adam Barth.
+
+        Makes the output of fast/events/mouse-click-events.html independent
+        of the window size.
+        https://bugs.webkit.org/show_bug.cgi?id=31405
+
+        * fast/events/mouse-click-events-expected.txt:
+        * fast/events/script-tests/mouse-click-events.js:
+
 2009-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
