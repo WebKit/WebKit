@@ -60,8 +60,8 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 
     CFStreamClientContext clientContext = { 0, this, 0, 0, copyCFStreamDescription };
     // FIXME: Pass specific events we're interested in instead of -1.
-    CFReadStreamSetClient(m_readStream.get(), -1, readStreamCallback, &clientContext);
-    CFWriteStreamSetClient(m_writeStream.get(), -1, writeStreamCallback, &clientContext);
+    CFReadStreamSetClient(m_readStream.get(), static_cast<CFOptionFlags>(-1), readStreamCallback, &clientContext);
+    CFWriteStreamSetClient(m_writeStream.get(), static_cast<CFOptionFlags>(-1), writeStreamCallback, &clientContext);
 
     CFReadStreamScheduleWithRunLoop(m_readStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
     CFWriteStreamScheduleWithRunLoop(m_writeStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
