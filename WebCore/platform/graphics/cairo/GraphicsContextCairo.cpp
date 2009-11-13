@@ -138,9 +138,13 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
 static inline void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 {
     cairo_set_antialias(dstCr, cairo_get_antialias(srcCr));
-    double dashes, offset;
-    cairo_get_dash(srcCr, &dashes, &offset);
-    cairo_set_dash(dstCr, &dashes, cairo_get_dash_count(srcCr), offset);
+
+    size_t dashCount = cairo_get_dash_count(srcCr);
+    Vector<double> dashes(dashCount);
+
+    double offset;
+    cairo_get_dash(srcCr, dashes.data(), &offset);
+    cairo_set_dash(dstCr, dashes.data(), dashCount, offset);
     cairo_set_line_cap(dstCr, cairo_get_line_cap(srcCr));
     cairo_set_line_join(dstCr, cairo_get_line_join(srcCr));
     cairo_set_line_width(dstCr, cairo_get_line_width(srcCr));
@@ -176,7 +180,10 @@ static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPriva
     cairo_t* cr = context->platformContext();
     cairo_path_t* path = cairo_copy_path(cr);
     double x0, x1, y0, y1;
-    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
+    if (strokeShadow)
+        cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
+    else
+        cairo_fill_extents(cr, &x0, &y0, &x1, &y1);
     FloatRect rect(x0, y0, x1 - x0, y1 - y0);
 
     IntSize shadowBufferSize;

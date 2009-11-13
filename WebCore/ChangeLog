@@ -1,3 +1,19 @@
+2009-11-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [CAIRO] shadow support for Canvas and SVG.
+        [https://bugs.webkit.org/show_bug.cgi?id=30960]
+
+        Incorporate Benjamin Otte's recommendations to avoid
+        a buffer overrun, and small performance improvement.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::copyContextProperties): Correctly size output
+         storage for cairo_get_dash to avoid buffer overrun.
+        (WebCore::drawPathShadow): Prefer cairo_fill_extents
+         to slower cairo_stroke_extents when not drawing shadows.
+
 2009-11-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
