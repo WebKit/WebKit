@@ -1,3 +1,25 @@
+2009-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Transformed reflected elements are clipped inside element with opacity
+        https://bugs.webkit.org/show_bug.cgi?id=30957
+        
+        transparencyClipBox() attemped to minimize the size of the transparency layer by mapping
+        each clip rect into painting space before taking the unions. This, however, did not work
+        correctly with combinations of reflections and transforms. Fixed by unioning the
+        clipRect and mapping through transforms along the way.
+        
+        Also leave some #ifdeffed code in beginTransparencyLayers() that makes it easy to see
+        where the transparency layers are.
+
+        Test: fast/reflections/opacity-reflection-transform.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+
 2009-11-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

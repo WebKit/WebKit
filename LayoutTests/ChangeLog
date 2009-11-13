@@ -1,3 +1,17 @@
+2009-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Transformed reflected elements are clipped inside element with opacity
+        https://bugs.webkit.org/show_bug.cgi?id=30957
+        
+        Testcase for reflected and transformed elements inside an opacity layer.
+
+        * fast/reflections/opacity-reflection-transform.html: Added.
+        * platform/mac/fast/reflections/opacity-reflection-transform-expected.checksum: Added.
+        * platform/mac/fast/reflections/opacity-reflection-transform-expected.png: Added.
+        * platform/mac/fast/reflections/opacity-reflection-transform-expected.txt: Added.
+
 2009-11-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.
