@@ -1,3 +1,13 @@
+2009-11-13  Norbert Leser  <norbert.leser&nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Added macros for USERINCLUDE paths within symbian blocks
+        to guarantee inclusion of respective header files from local path
+        first (to avoid clashes with same names of header files in system include path).
+
+        * WebCore.pro:
+
 2009-11-13  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Oliver Hunt.
