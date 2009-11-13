@@ -251,7 +251,7 @@ void QWebView::setPage(QWebPage* page)
 
     \note The view remains the same until enough data has arrived to display the new \a url.
 
-    \sa setUrl(), url(), urlChanged(), guessUrlFromString()
+    \sa setUrl(), url(), urlChanged(), QUrl::fromUserInput()
 */
 void QWebView::load(const QUrl &url)
 {

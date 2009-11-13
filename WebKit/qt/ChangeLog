@@ -25,6 +25,18 @@
 
         Reviewed by Simon Hausmann.
 
+        Update documentation for the Qt API
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebelement.cpp:
+        * Api/qwebframe.cpp:
+        * Api/qwebsettings.cpp:
+        * Api/qwebview.cpp:
+
+2009-11-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Use correct install-path when running qdoc3
 
         * docs/docs.pri:
