@@ -1,3 +1,12 @@
+2009-11-13  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a link error in unofficial GCC 4.4 builds on Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=31477
+
+        * bindings/v8/V8Binding.cpp:  Add explicit instantiations of v8StringToWebCoreString template.
+
 2009-11-13  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
