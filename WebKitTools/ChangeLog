@@ -1,3 +1,17 @@
+2009-11-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update committers.py based on svn records
+        https://bugs.webkit.org/show_bug.cgi?id=31366
+
+        This list was generated using validate-committer-lists from
+        https://bugs.webkit.org/show_bug.cgi?id=30970
+        and makes committers.py current for committers who have
+        committed in the last 3 years.
+
+        * Scripts/modules/committers.py:
+
 2009-11-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.
