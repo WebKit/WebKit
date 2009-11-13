@@ -1,3 +1,21 @@
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Finish replacing worldIDs with world objects
+
+        The only remaining use of worldIDs was in a method only used by DRT
+        for the isolated worlds tests.
+
+        Fixes <http://webkit.org/b/31414> Replace worldIDs with world objects
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        Updated for changes to WebFrame. Now holds the map of worldID -> world
+        at this level instead of making WebKit do it.
+
 2009-11-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

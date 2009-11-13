@@ -97,7 +97,7 @@ typedef enum {
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 #endif
 
-- (NSString *)_stringByEvaluatingJavaScriptInIsolatedWorld:(unsigned)worldID WithGlobalObject:(JSObjectRef)globalObject FromString:(NSString *)string;
+- (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObject inScriptWorld:(WebScriptWorld *)world;
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world;
 
 // Pause a given CSS animation or transition on the target node at a specific time.

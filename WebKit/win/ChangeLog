@@ -1,3 +1,22 @@
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Finish replacing worldIDs with world objects
+
+        The only remaining use of worldIDs was in a method only used by DRT
+        for the isolated worlds tests.
+
+        Fixes <http://webkit.org/b/31414> Replace worldIDs with world objects
+
+        Reviewed by Mark Rowe.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::stringByEvaluatingJavaScriptInScriptWorld):
+        * WebFrame.h:
+        Renamed from stringByEvaluatingJavaScriptInIsolatedWorld. Now takes an
+        IWebScriptWorld instead of a worldID, so we don't need to maintain a
+        map of worldID -> world anymore.
+
 2009-11-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1191,7 +1191,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return SecurityOrigin::canLoad(URL, String(), _private->coreFrame->document());
 }
 
-- (NSString *)_stringByEvaluatingJavaScriptInIsolatedWorld:(unsigned)worldID WithGlobalObject:(JSObjectRef)globalObjectRef FromString:(NSString *)string
+- (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObjectRef inScriptWorld:(WebScriptWorld *)world
 {
     // Start off with some guess at a frame and a global object, we'll try to do better...!
     JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script()->globalObject(mainThreadNormalWorld());
@@ -1204,22 +1204,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->impl()->frame();
     ASSERT(frame->document());
-
-    // Get the world to execute in based on the worldID. DRT expects that a
-    // worldID of 0 always corresponds to a newly-created world, while any
-    // other worldID corresponds to a world that is created once and then
-    // cached forever.
-    RefPtr<DOMWrapperWorld> world;
-    if (!worldID)
-        world = ScriptController::createWorld();
-    else {
-        static HashMap<unsigned, RefPtr<DOMWrapperWorld> >& worlds = *new HashMap<unsigned, RefPtr<DOMWrapperWorld> >;
-        RefPtr<DOMWrapperWorld>& worldSlot = worlds.add(worldID, 0).first->second;
-        if (!worldSlot)
-            worldSlot = ScriptController::createWorld();
-        world = worldSlot;
-    }
-    JSValue result = frame->script()->executeScriptInWorld(world.get(), string, true).jsValue();
+    JSValue result = frame->script()->executeScriptInWorld(core(world), string, true).jsValue();
 
     if (!frame) // In case the script removed our frame from the page.
         return @"";

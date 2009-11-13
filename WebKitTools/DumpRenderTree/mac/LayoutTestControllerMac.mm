@@ -63,6 +63,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWorkersPrivate.h>
+#import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
@@ -535,5 +536,20 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
 {
     RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
-    [mainFrame _stringByEvaluatingJavaScriptInIsolatedWorld:worldID WithGlobalObject:globalObject FromString:scriptNS];
+
+    // A worldID of 0 always corresponds to a new world. Any other worldID corresponds to a world
+    // that is created once and cached forever.
+    WebScriptWorld *world;
+    if (!worldID)
+        world = [WebScriptWorld world];
+    else {
+        typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
+        static WorldMap& worldMap = *new WorldMap;
+        RetainPtr<WebScriptWorld>& worldSlot = worldMap.add(worldID, 0).first->second;
+        if (!worldSlot)
+            worldSlot.adoptNS([[WebScriptWorld alloc] init]);
+        world = worldSlot.get();
+    }
+
+    [mainFrame _stringByEvaluatingJavaScriptFromString:scriptNS withGlobalObject:globalObject inScriptWorld:world];
 }
