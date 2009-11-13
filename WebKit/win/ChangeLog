@@ -1,5 +1,11 @@
 2009-11-13  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * Interfaces/WebKit.idl: Touch this to force interfaces to rebuild.
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
         Tell the WebFrameLoadDelegate when window objects in isolated worlds
         are cleared
 
