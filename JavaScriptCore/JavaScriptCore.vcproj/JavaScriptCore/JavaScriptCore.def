@@ -1,5 +1,3 @@
-LIBRARY    "JavaScriptCore"
-
 EXPORTS
     
     ??0Collator@WTF@@QAE@PBD@Z
