@@ -1,3 +1,13 @@
+2009-11-13  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rolling Chromium dependencies to match Chromium revision 31834. 
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31445
+
+        * DEPS:
+
 2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
