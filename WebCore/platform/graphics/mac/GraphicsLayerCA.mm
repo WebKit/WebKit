@@ -47,6 +47,7 @@
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
 #import <limits.h>
+#import <objc/objc-auto.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
 #import <wtf/RetainPtr.h>
@@ -296,6 +297,18 @@ static void setLayerBackgroundColor(PlatformLayer* layer, const Color& color)
 static void clearLayerBackgroundColor(PlatformLayer* layer)
 {
     [layer setBackgroundColor:0];
+}
+
+static void safeSetSublayers(CALayer* layer, NSArray* sublayers)
+{
+    // Workaround for <rdar://problem/7390716>: -[CALayer setSublayers:] crashes if sublayers is an empty array, or nil, under GC.
+    if (objc_collectingEnabled() && ![sublayers count]) {
+        while ([[layer sublayers] count])
+            [[[layer sublayers] objectAtIndex:0] removeFromSuperlayer];
+        return;
+    }
+    
+    [layer setSublayers:sublayers];
 }
 
 static bool caValueFunctionSupported()
@@ -882,17 +895,16 @@ void GraphicsLayerCA::updateSublayerList()
     [newSublayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
 
     if (m_transformLayer) {
-        [m_transformLayer.get() setSublayers:newSublayers];
+        safeSetSublayers(m_transformLayer.get(), newSublayers);
 
         if (m_contentsLayer) {
             // If we have a transform layer, then the contents layer is parented in the 
             // primary layer (which is itself a child of the transform layer).
-            [m_layer.get() setSublayers:nil];
+            safeSetSublayers(m_layer.get(), nil);
             [m_layer.get() addSublayer:m_contentsLayer.get()];
         }
-    } else {
-        [m_layer.get() setSublayers:newSublayers];
-    }
+    } else
+        safeSetSublayers(m_layer.get(), newSublayers);
 
     [newSublayers release];
 }
@@ -1757,7 +1769,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     }
     
     [m_layer.get() setLayerOwner:this];
-    [m_layer.get() setSublayers:[oldLayer.get() sublayers]];
+    safeSetSublayers(m_layer.get(), [oldLayer.get() sublayers]);
     
     [[oldLayer.get() superlayer] replaceSublayer:oldLayer.get() with:m_layer.get()];
 
