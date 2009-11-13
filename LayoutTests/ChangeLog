@@ -1,3 +1,14 @@
+2009-11-13  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix worker-timeout.html layout test that fails in Chromium harness.
+        https://bugs.webkit.org/show_bug.cgi?id=31452
+
+        * fast/workers/worker-timeout.html:
+        Stop logging timer messages at the same time as calling NotifyDone() because
+        in test harness Chromium uses for workers it does not capture the output immediately.
+
 2009-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Adam Barth.
