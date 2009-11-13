@@ -1,3 +1,13 @@
+2009-11-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove the unnecessary call to dumpDatabaseCallbacks().
+
+        https://bugs.webkit.org/show_bug.cgi?id=31495
+
+        * storage/hash-change-with-xhr.html:
+
 2009-11-13  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Oliver Hunt.
