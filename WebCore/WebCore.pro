@@ -331,6 +331,7 @@ IDL_BINDINGS += \
     dom/Clipboard.idl \
     dom/CDATASection.idl \
     dom/Comment.idl \
+    dom/CompositionEvent.idl \
     dom/DocumentFragment.idl \
     dom/Document.idl \
     dom/DocumentType.idl \
@@ -852,6 +853,7 @@ SOURCES += \
     dom/Clipboard.cpp \
     dom/ClipboardEvent.cpp \
     dom/Comment.cpp \
+    dom/CompositionEvent.cpp \
     dom/ContainerNode.cpp \
     dom/CSSMappedAttributeDeclaration.cpp \
     dom/Document.cpp \

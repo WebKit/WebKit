@@ -1224,6 +1224,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventToV8Object(Event* event)
         else if (event->isSVGZoomEvent())
             type = V8ClassIndex::SVGZOOMEVENT;
 #endif
+        else if (event->isCompositionEvent())
+            type = V8ClassIndex::COMPOSITIONEVENT;
         else
             type = V8ClassIndex::UIEVENT;
     } else if (event->isMutationEvent())

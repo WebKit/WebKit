@@ -41,6 +41,9 @@ namespace WebCore {
     macro(checking) \
     macro(click) \
     macro(close) \
+    macro(compositionend) \
+    macro(compositionstart) \
+    macro(compositionupdate) \
     macro(connect) \
     macro(contextmenu) \
     macro(copy) \

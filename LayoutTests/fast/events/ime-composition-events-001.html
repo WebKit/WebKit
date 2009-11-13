@@ -1,0 +1,53 @@
+<html>
+<head>
+<title></title>
+</head>
+<body>
+<p>This tests that calling input-method functions sends Composition Events and Text Events introduced in DOM Level 3.</p>
+<p>To test manually, enable an IME, input CJK characters, and see this page doesn't show 'FAILED' lines.</p>
+<input id="test" type="text"/>
+<ul id="console"></ul>
+<script language="javascript" type="text/javascript">
+function log(str) {
+   var li = document.createElement('li');
+   li.appendChild(document.createTextNode(str));
+   var console = document.getElementById('console');
+   console.appendChild(li);
+}
+
+function logEvent(e) {
+    var target = e.target;
+    var type = e.type;
+    if (e.type == 'compositionstart' || e.type == 'compositionupdate' || e.type == 'compositionend' || e.type == 'textInput')
+        log('SUCCESS: ' + target.tagName + ' - ' + e.type + ' - "' + e.data + '"');
+    else
+        log('FAILED: ' + target.tagName + ' - ' + e.type + ' - "' + e.data + '"');
+}
+
+var test = document.getElementById('test');
+test.focus();
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+    // Add event listeners to the <input> node.
+    test.addEventListener("compositionstart", logEvent, false);
+    test.addEventListener("compositionupdate", logEvent, false);
+    test.addEventListener("compositionend", logEvent, false);
+    test.addEventListener("textInput", logEvent, false);
+
+    // Case 1: Compose a text and commit it.
+    textInputController.setMarkedText('1', 0, 1);
+    textInputController.setMarkedText('2', 0, 1);
+    textInputController.setMarkedText('3', 0, 1);
+    textInputController.insertText('4');
+
+    // Case 2: Compose a text but cancel it.
+    textInputController.setMarkedText('5', 0, 1);
+    textInputController.setMarkedText('6', 0, 1);
+    textInputController.setMarkedText('7', 0, 1);
+    textInputController.setMarkedText('', 0, 0);
+}
+</script>
+</body>
+</html>

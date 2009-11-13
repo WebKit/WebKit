@@ -1,3 +1,47 @@
+2009-11-13  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Implement composition events introduced in DOM Level 3.
+        This change adds a new IDL which defines the composition events, adds a class which
+        implements the composition events, and sends the composition events according to
+        the specification.
+        https://bugs.webkit.org/show_bug.cgi?id=26310
+
+        Test: fast/events/ime-composition-events-001.html
+
+        * DerivedSources.make: Added CompositionEvent so we can compile "CompositionEvent.idl".
+        * GNUmakefile.am: Added "CompositionEvent.{cpp,h,idl}".
+        * WebCore.gypi: ditto.
+        * WebCore.pro: ditto
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: Added "CompositionEvent.{cpp,h,idl}" and "JSCompositionEvent.{cpp,h}".
+        * WebCoreSources.bkl: Added "JSCompositionEvent.{cpp,h}".
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS): Call isCompositionEvent() to create the CompositionEvent wrapper.
+        * bindings/v8/DOMObjectsInclude.h: Added "JSCompositionEvent.h".
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Added "JSCompositionEvent.cpp".
+        * bindings/v8/V8DOMWrapper.cpp: Call isCompositionEvent() to identify an event as a CompositionEvent.
+        (WebCore::V8DOMWrapper::convertEventToV8Object):
+        * bindings/v8/V8Index.cpp: Added "V8CompositionEvent.h".
+        * bindings/v8/V8Index.h: Added V8Index::COMPOSITIONEVENT.
+        * dom/CompositionEvent.cpp: Implements the CompositionEvent class.
+        (WebCore::CompositionEvent::CompositionEvent):
+        (WebCore::CompositionEvent::~CompositionEvent):
+        (WebCore::CompositionEvent::initCompositionEvent):
+        (WebCore::CompositionEvent::isCompositionEvent):
+        * dom/CompositionEvent.h: Declares the CompositionEvent class.
+        (WebCore::CompositionEvent::create):
+        (WebCore::CompositionEvent::data):
+        * dom/CompositionEvent.idl: Added the IDL of DOM CompositionEvent.
+        * dom/Event.cpp:
+        (WebCore::Event::isCompositionEvent): Added a method to identify an event is a CompositionEvent.
+        * dom/Event.h:
+        * dom/EventNames.h: Added composition{start,update,end} to eventNames.
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition): Sent a CompositionEnd event.
+        (WebCore::Editor::setComposition): Sent a Composition{Start,Update,End} event.
+
 2009-11-13  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Dimitri Glazkov.

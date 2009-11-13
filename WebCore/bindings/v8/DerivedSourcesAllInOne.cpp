@@ -62,6 +62,7 @@
 #include "bindings/V8ClientRectList.cpp"
 #include "bindings/V8Clipboard.cpp"
 #include "bindings/V8Comment.cpp"
+#include "bindings/V8CompositionEvent.cpp"
 #include "bindings/V8Console.cpp"
 #include "bindings/V8Counter.cpp"
 #include "bindings/V8CSSCharsetRule.cpp"

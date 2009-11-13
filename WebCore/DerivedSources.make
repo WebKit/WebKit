@@ -96,6 +96,7 @@ DOM_CLASSES = \
     ClientRectList \
     Clipboard \
     Comment \
+    CompositionEvent \
     Console \
     Coordinates \
     Counter \

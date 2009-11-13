@@ -61,6 +61,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "Clipboard.h"
+#include "CompositionEvent.h"
 #include "Console.h"
 #include "Counter.h"
 #include "CSSCharsetRule.h"

@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "ApplyStyleCommand.h"
 #include "CharacterNames.h"
+#include "CompositionEvent.h"
 #include "CreateLinkCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
@@ -1370,6 +1371,16 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
         return;
     }
     
+    // Dispatch a compositionend event to the focused node.
+    // We should send this event before sending a TextEvent as written in Section 6.2.2 and 6.2.3 of
+    // the DOM Event specification.
+    Node* target = m_frame->document()->focusedNode();
+    if (target) {
+        RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->domWindow(), text);
+        ExceptionCode ec = 0;
+        target->dispatchEvent(event, ec);
+    }
+
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty())
@@ -1396,7 +1407,38 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         setIgnoreCompositionSelectionChange(false);
         return;
     }
-    
+
+    Node* target = m_frame->document()->focusedNode();
+    if (target) {
+        // Dispatch an appropriate composition event to the focused node.
+        // We check the composition status and choose an appropriate composition event since this
+        // function is used for three purposes:
+        // 1. Starting a new composition.
+        //    Send a compositionstart event when this function creates a new composition node, i.e.
+        //    m_compositionNode == 0 && !text.isEmpty().
+        // 2. Updating the existing composition node.
+        //    Send a compositionupdate event when this function updates the existing composition
+        //    node, i.e. m_compositionNode != 0 && !text.isEmpty().
+        // 3. Canceling the ongoing composition.
+        //    Send a compositionend event when function deletes the existing composition node, i.e.
+        //    m_compositionNode != 0 && test.isEmpty().
+        RefPtr<CompositionEvent> event;
+        if (!m_compositionNode) {
+            // We should send a compositionstart event only when the given text is not empty because this
+            // function doesn't create a composition node when the text is empty.
+            if (!text.isEmpty())
+                event = CompositionEvent::create(eventNames().compositionstartEvent, m_frame->domWindow(), text);
+        } else {
+            if (!text.isEmpty())
+                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->domWindow(), text);
+            else
+              event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->domWindow(), text);
+        }
+        ExceptionCode ec = 0;
+        if (event.get())
+            target->dispatchEvent(event, ec);
+    }
+
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty())

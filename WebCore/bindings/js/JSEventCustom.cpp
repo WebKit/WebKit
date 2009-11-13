@@ -30,9 +30,11 @@
 #include "JSEvent.h"
 
 #include "Clipboard.h"
+#include "CompositionEvent.h"
 #include "Event.h"
 #include "JSBeforeLoadEvent.h"
 #include "JSClipboard.h"
+#include "JSCompositionEvent.h"
 #include "JSErrorEvent.h"
 #include "JSKeyboardEvent.h"
 #include "JSMessageEvent.h"
@@ -107,6 +109,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
         else if (event->isSVGZoomEvent())
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGZoomEvent, event);
 #endif
+        else if (event->isCompositionEvent())
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, CompositionEvent, event);
         else
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, UIEvent, event);
     } else if (event->isMutationEvent())

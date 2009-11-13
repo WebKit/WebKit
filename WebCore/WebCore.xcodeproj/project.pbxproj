@@ -1215,6 +1215,10 @@
 		7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7693BACF106C2DCA007B0823 /* PluginHalter.cpp */; };
 		7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD0106C2DCA007B0823 /* PluginHalter.h */; };
 		7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79AC9216109945C80021266E /* JSCompositionEvent.cpp */; };
+		79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AC9217109945C80021266E /* JSCompositionEvent.h */; };
+		79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F2F59E1091939A000D87CB /* CompositionEvent.cpp */; };
+		79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F2F59F1091939A000D87CB /* CompositionEvent.h */; };
 		7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */; };
 		7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1E88F4101CC384000C4DF5 /* ScriptArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
@@ -6517,6 +6521,11 @@
 		7693BACF106C2DCA007B0823 /* PluginHalter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginHalter.cpp; sourceTree = "<group>"; };
 		7693BAD0106C2DCA007B0823 /* PluginHalter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalter.h; sourceTree = "<group>"; };
 		7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalterClient.h; sourceTree = "<group>"; };
+		79AC9216109945C80021266E /* JSCompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCompositionEvent.cpp; path = JSCompositionEvent.cpp; sourceTree = "<group>"; };
+		79AC9217109945C80021266E /* JSCompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCompositionEvent.h; path = JSCompositionEvent.h; sourceTree = "<group>"; };
+		79F2F59E1091939A000D87CB /* CompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositionEvent.cpp; sourceTree = "<group>"; };
+		79F2F59F1091939A000D87CB /* CompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositionEvent.h; sourceTree = "<group>"; };
+		79F2F5A01091939A000D87CB /* CompositionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CompositionEvent.idl; sourceTree = "<group>"; };
 		7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArray.cpp; sourceTree = "<group>"; };
 		7A1E88F4101CC384000C4DF5 /* ScriptArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArray.h; sourceTree = "<group>"; };
 		7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMAgent.cpp; sourceTree = "<group>"; };
@@ -13390,6 +13399,8 @@
 			children = (
 				BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */,
 				BC946347107A936600857193 /* JSBeforeLoadEvent.h */,
+				79AC9216109945C80021266E /* JSCompositionEvent.cpp */,
+				79AC9217109945C80021266E /* JSCompositionEvent.h */,
 				2ECF7ADA10162B3800427DE7 /* JSErrorEvent.cpp */,
 				2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */,
 				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
@@ -15488,6 +15499,9 @@
 				6550B697099DF0270090D781 /* Comment.cpp */,
 				6550B698099DF0270090D781 /* Comment.h */,
 				85089CC70A98C22600A275AA /* Comment.idl */,
+				79F2F59E1091939A000D87CB /* CompositionEvent.cpp */,
+				79F2F59F1091939A000D87CB /* CompositionEvent.h */,
+				79F2F5A01091939A000D87CB /* CompositionEvent.idl */,
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */,
@@ -15835,6 +15849,7 @@
 				6550B6A2099DF0270090D781 /* Comment.h in Headers */,
 				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
 				93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */,
+				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */,
 				41F0618E0F5F069800A07EAC /* ConsoleMessage.h in Headers */,
@@ -17002,6 +17017,7 @@
 				51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */,
 				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
+				79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */,
 				1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */,
 				BC77D16A0FF19F560070887B /* JSDataGridColumn.h in Headers */,
 				BC77D16C0FF19F560070887B /* JSDataGridColumnList.h in Headers */,
@@ -18466,6 +18482,7 @@
 				37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.cpp in Sources */,
 				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,
 				93309DDC099E64920056E581 /* CompositeEditCommand.cpp in Sources */,
+				79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */,
 				BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */,
 				41F0618F0F5F069800A07EAC /* ConsoleMessage.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */,
@@ -19134,6 +19151,7 @@
 				BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */,
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
+				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
 				BC98543D0CD3D98B00069BC1 /* JSConsole.cpp in Sources */,
 				C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,

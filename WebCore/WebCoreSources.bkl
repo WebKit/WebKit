@@ -274,6 +274,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSClientRectList.cpp
         DerivedSources/WebCore/JSClipboard.cpp
         DerivedSources/WebCore/JSComment.cpp
+        DerivedSources/WebCore/JSCompositionEvent.cpp
         DerivedSources/WebCore/JSConsole.cpp
         DerivedSources/WebCore/JSCoordinates.cpp
         DerivedSources/WebCore/JSCounter.cpp
@@ -454,6 +455,7 @@ This file contains the list of files needed to build WebCore.
         dom/Clipboard.cpp
         dom/ClipboardEvent.cpp
         dom/Comment.cpp
+        dom/CompositionEvent.cpp
         dom/ContainerNode.cpp
         dom/DOMImplementation.cpp
         dom/Document.cpp

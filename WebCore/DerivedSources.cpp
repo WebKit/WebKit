@@ -42,6 +42,7 @@
 #include "JSClientRectList.cpp"
 #include "JSClipboard.cpp"
 #include "JSComment.cpp"
+#include "JSCompositionEvent.cpp"
 #include "JSConsole.cpp"
 #include "JSCounter.cpp"
 #include "JSCSSCharsetRule.cpp"

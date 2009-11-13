@@ -638,6 +638,7 @@ http/tests/loading/preload-img-test.html
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
+fast/events/ime-composition-events-001.html
 
 # Failing media tests on windows <http://webkit.org/b/29047>
 media/audio-delete-while-step-button-clicked.html

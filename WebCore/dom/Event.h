@@ -103,6 +103,7 @@ namespace WebCore {
         virtual bool isMutationEvent() const;
         virtual bool isKeyboardEvent() const;
         virtual bool isTextEvent() const;
+        virtual bool isCompositionEvent() const;
         virtual bool isDragEvent() const; // a subset of mouse events
         virtual bool isClipboardEvent() const;
         virtual bool isMessageEvent() const;

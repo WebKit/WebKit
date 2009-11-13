@@ -332,6 +332,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(CLIENTRECTLIST, ClientRectList)                                   \
     V(CLIPBOARD, Clipboard)                                             \
     V(CONSOLE, Console)                                                 \
+    V(COMPOSITIONEVENT, CompositionEvent)                               \
     V(COUNTER, Counter)                                                 \
     V(CSSCHARSETRULE, CSSCharsetRule)                                   \
     V(CSSFONTFACERULE, CSSFontFaceRule)                                 \

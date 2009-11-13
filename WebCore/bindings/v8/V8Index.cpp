@@ -46,6 +46,7 @@
 #include "V8ClientRectList.h"
 #include "V8Clipboard.h"
 #include "V8Comment.h"
+#include "V8CompositionEvent.h"
 #include "V8Console.h"
 #include "V8Counter.h"
 #include "V8CSSStyleDeclaration.h"
