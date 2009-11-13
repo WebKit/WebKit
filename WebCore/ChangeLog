@@ -1,3 +1,12 @@
+2009-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Reverting r50908 since it makes inspector tests
+        time out.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31439
+
+        * inspector/front-end/inspector.js:
+
 2009-11-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

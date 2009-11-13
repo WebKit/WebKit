@@ -46,27 +46,6 @@ var Preferences = {
     resourcesLargeRows: true
 }
 
-function preloadImages()
-{
-    (new Image()).src = "Images/clearConsoleButtonGlyph.png";
-    (new Image()).src = "Images/consoleButtonGlyph.png";
-    (new Image()).src = "Images/dockButtonGlyph.png";
-    (new Image()).src = "Images/enableOutlineButtonGlyph.png";
-    (new Image()).src = "Images/enableSolidButtonGlyph.png";
-    (new Image()).src = "Images/excludeButtonGlyph.png";
-    (new Image()).src = "Images/focusButtonGlyph.png";
-    (new Image()).src = "Images/largerResourcesButtonGlyph.png";
-    (new Image()).src = "Images/nodeSearchButtonGlyph.png";
-    (new Image()).src = "Images/pauseOnExceptionButtonGlyph.png";
-    (new Image()).src = "Images/percentButtonGlyph.png";
-    (new Image()).src = "Images/recordButtonGlyph.png";
-    (new Image()).src = "Images/recordToggledButtonGlyph.png";
-    (new Image()).src = "Images/reloadButtonGlyph.png";
-    (new Image()).src = "Images/undockButtonGlyph.png";
-}
-
-preloadImages();
-
 var WebInspector = {
     resources: {},
     resourceURLMap: {},
