@@ -1267,7 +1267,7 @@ sub openDumpTool()
     }
 
     if ($useValgrind) {
-        unshift @args, "valgrind";
+        unshift @args, "valgrind", "--suppressions=$platformBaseDirectory/qt/SuppressedValgrindErrors";
     } 
     
     $ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;

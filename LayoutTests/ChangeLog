@@ -1,3 +1,11 @@
+2009-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add a file for suppressing invalid valgrind errors (Qt / Linux only)
+
+        * platform/qt/SuppressedValgrindErrors: Added.
+
 2009-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         Disable websocket tests on Windows, as the server cannot start on buildbot.

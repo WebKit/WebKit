@@ -1,0 +1,16 @@
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN3JSC4Heap18markConservativelyERNS_9MarkStackEPvS3_
+   fun:_ZN3JSC4Heap39markCurrentThreadConservativelyInternalERNS_9MarkStackE
+   fun:_ZN3JSC4Heap31markCurrentThreadConservativelyERNS_9MarkStackE
+   fun:_ZN3JSC4Heap7collectEv
+   fun:_ZN7WebCore12GCController12gcTimerFiredEPNS_5TimerIS0_EE
+   fun:_ZN7WebCore12ThreadTimers24sharedTimerFiredInternalEv
+   fun:_ZN7WebCore13SharedTimerQtD0Ev
+   fun:_ZN14QObjectPrivate14deleteChildrenEv
+   fun:_ZN7QObjectD2Ev
+   fun:_ZN16QCoreApplicationD2Ev
+   fun:_ZN12QApplicationD1Ev
+   fun:main
+}

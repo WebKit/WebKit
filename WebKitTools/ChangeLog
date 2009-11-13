@@ -2,6 +2,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Make the Qt Linux only --valgrind feature, suppress errors
+        defined in the SuppressedValgrindErrors file.
+
+        * Scripts/run-webkit-tests:
+
+2009-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Set the locale to C and not to the current one in use on the system.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
