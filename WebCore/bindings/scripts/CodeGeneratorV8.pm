@@ -528,6 +528,18 @@ END
       }
         HolderToNative($dataNode, $implClassName, $classIndex, "info");
     } else {
+        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+        if ($getterStringUsesImp && $reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
+            # Generate super-compact call for regular attribute getter:
+            my $contentAttributeName = $reflect eq "1" ? $attrName : $reflect;
+            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+            $implIncludes{"${namespace}.h"} = 1;
+            push(@implContentDecls, "    return getElementStringAttr(info, ${namespace}::${contentAttributeName}Attr);\n");
+            push(@implContentDecls, "  }\n\n");
+            return;
+            # Skip the rest of the function!
+        }
+        
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
@@ -709,6 +721,20 @@ END
       }
         HolderToNative($dataNode, $implClassName, $classIndex, "info");
     } else {
+        my $attrType = GetTypeFromSignature($attribute->signature);
+        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+        if (($reflect || $reflectURL) && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
+            # Generate super-compact call for regular attribute setter:
+            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
+            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
+            $implIncludes{"${namespace}.h"} = 1;
+            push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
+            push(@implContentDecls, "  }\n\n");
+            return;
+            # Skip the rest of the function!
+        }
+
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
@@ -871,11 +897,23 @@ END
 "      return v8::Handle<v8::Value>();\n" .
 "    }\n");
     }
+    
+    my $raisesExceptions = @{$function->raisesExceptions};
+    if (!$raisesExceptions) {
+        foreach my $parameter (@{$function->parameters}) {
+            if (TypeCanFailConversion($parameter) or $parameter->extendedAttributes->{"IsIndex"}) {
+                $raisesExceptions = 1;
+            }
+        }
+    }
 
-
-    if (@{$function->raisesExceptions}) {
+    if ($raisesExceptions) {
         $implIncludes{"ExceptionCode.h"} = 1;
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
+        push(@implContentDecls, "    {\n");
+        # The brace here is needed to prevent the ensuing 'goto fail's from jumping past constructors
+        # of objects (like Strings) declared later, causing compile errors. The block scope ends
+        # right before the label 'fail:'.
     }
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
@@ -917,8 +955,8 @@ END
             $implIncludes{"ExceptionCode.h"} = 1;
             push(@implContentDecls,
 "    if (UNLIKELY(!$parameterName" . (BasicTypeCanFailConversion($parameter) ? "Ok" : "") . ")) {\n" .
-"      V8Proxy::setDOMException(TYPE_MISMATCH_ERR);\n" .
-"      return v8::Handle<v8::Value>();\n" .
+"      ec = TYPE_MISMATCH_ERR;\n" .
+"      goto fail;\n" .
 "    }\n");
         }
 
@@ -926,8 +964,8 @@ END
             $implIncludes{"ExceptionCode.h"} = 1;
             push(@implContentDecls,
 "    if (UNLIKELY($parameterName < 0)) {\n" .
-"      V8Proxy::setDOMException(INDEX_SIZE_ERR);\n" .
-"      return v8::Handle<v8::Value>();\n" .
+"      ec = INDEX_SIZE_ERR;\n" .
+"      goto fail;\n" .
 "    }\n");
         }
 
@@ -937,6 +975,14 @@ END
     # Build the function call string.
     my $callString = GenerateFunctionCallString($function, $paramIndex, "    ", $implClassName);
     push(@implContentDecls, "$callString");
+
+    if ($raisesExceptions) {
+        push(@implContentDecls, "    }\n");
+        push(@implContentDecls, "  fail:\n");
+        push(@implContentDecls, "    V8Proxy::setDOMException(ec);\n");
+        push(@implContentDecls, "    return v8::Handle<v8::Value>();\n");
+    }
+    
     push(@implContentDecls, "  }\n\n");
 }
 
@@ -1591,7 +1637,7 @@ sub GenerateFunctionCallString()
         # appendChild functions from Node.
         $result .= $indent . "bool success = $functionString;\n";
         if (@{$function->raisesExceptions}) {
-            $result .= GenerateSetDOMException($indent);
+            $result .= $indent . "if (UNLIKELY(ec)) goto fail;\n";
         }
         $result .= $indent . "if (success)\n";
         $result .= $indent . "    " .
@@ -1615,7 +1661,7 @@ sub GenerateFunctionCallString()
     }
 
     if (@{$function->raisesExceptions}) {
-        $result .= GenerateSetDOMException($indent);
+        $result .= $indent . "if (UNLIKELY(ec)) goto fail;\n";
     }
 
     # If the return type is a POD type, separate out the wrapper generation

@@ -1,3 +1,18 @@
+2009-11-12  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        The last of the V8 binding optimizations.
+        - Replace string-valued element accessors with a shared getter/setter function.
+        - Change error handling flow of control to avoid extra branches and function calls.
+        https://bugs.webkit.org/show_bug.cgi?id=31443
+        
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::getElementStringAttr):  Body of string-valued Element getter function.
+        (WebCore::setElementStringAttr):  Body of string-valued Element setter function.
+        * bindings/v8/V8Binding.h:
+
 2009-11-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

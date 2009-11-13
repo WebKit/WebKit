@@ -33,8 +33,10 @@
 
 #include "AtomicString.h"
 #include "CString.h"
+#include "Element.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
+#include "QualifiedName.h"
 #include "StdLibExtras.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
@@ -422,6 +424,22 @@ void createCallback(v8::Local<v8::ObjectTemplate> proto,
     proto->Set(v8::String::New(name),
                v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
                attribute);
+}
+    
+v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo& info,
+                                           const QualifiedName& name) 
+{
+    Element *imp = v8DOMWrapperToNode<Element>(info);
+    return v8ExternalString(imp->getAttribute(name));
+}
+
+void setElementStringAttr(const v8::AccessorInfo& info,
+                          const QualifiedName& name,
+                          v8::Local<v8::Value> value)
+{
+    Element* imp = v8DOMWrapperToNode<Element>(info);
+    AtomicString v = toAtomicWebCoreStringWithNullCheck(value);
+    imp->setAttribute(name, v);
 }
 
 } // namespace WebCore
