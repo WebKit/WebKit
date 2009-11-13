@@ -1,3 +1,13 @@
+2009-11-12  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY.
+
+        Chromium build fix.
+
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::evaluateInWorld): Add a dummy
+         method which isn't called in chromium to make things compile.
+
 2009-11-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.
