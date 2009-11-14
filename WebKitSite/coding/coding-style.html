@@ -705,6 +705,9 @@ Don't bother to organize them in a logical order.
 
 <ol>
 
+<li>Do not use "using namespace" statements in header files.
+</li>
+
 <li>Any "using namespace" statements for a nested namespace whose parent namespace 
 is also defined in a file must be declared within that namespace definition.
 
@@ -729,6 +732,7 @@ namespace WebCore {
 
 } // namespace WebCore
 </pre>
+</li>
 
 <li>Any other "using namespace" statements must be declared before the first namespace 
 definition in the file.
@@ -753,6 +757,8 @@ using namespace std;
 
 } // namespace WebCore
 </pre>
+</li>
+
 </ol>
 
 <?php

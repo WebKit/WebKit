@@ -1,3 +1,12 @@
+2009-11-13  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Added to the WebKit Coding Style Guidelines not to use 
+        "using namespace" statements in header files.
+
+        * coding/coding-style.html:
+
 2009-11-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
