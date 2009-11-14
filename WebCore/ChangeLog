@@ -1,3 +1,13 @@
+2009-11-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::externalRepresentation should update layout before getting render object
+        https://bugs.webkit.org/show_bug.cgi?id=31459
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Tell FrameLoaderClient when window objects in isolated worlds are

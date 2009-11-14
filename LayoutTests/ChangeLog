@@ -1,3 +1,15 @@
+2009-11-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::externalRepresentation should update layout before getting render object
+        https://bugs.webkit.org/show_bug.cgi?id=31459
+
+        Before this change, the render tree output for this test was wrong.
+        Note that #FF0000 (red) becomes #008000 (green) now.
+
+        * platform/mac/svg/custom/gradient-stop-style-change-expected.txt:
+
 2009-11-04  Adam Roben  <aroben@apple.com>
 
         Test that delegates can modify global objects in isolated worlds

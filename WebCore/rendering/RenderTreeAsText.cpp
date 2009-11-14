@@ -541,6 +541,8 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
 
 String externalRepresentation(Frame* frame)
 {
+    frame->document()->updateLayout();
+
     RenderObject* o = frame->contentRenderer();
     if (!o)
         return String();
@@ -549,8 +551,6 @@ String externalRepresentation(Frame* frame)
 #if ENABLE(SVG)
     writeRenderResources(ts, o->document());
 #endif
-    if (o->view()->frameView())
-        o->view()->frameView()->layout();
     if (o->hasLayer()) {
         RenderLayer* l = toRenderBox(o)->layer();
         writeLayers(ts, l, l, IntRect(l->x(), l->y(), l->width(), l->height()));
