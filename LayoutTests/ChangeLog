@@ -1,3 +1,14 @@
+2009-11-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add tests for reading/writing .type property of HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=29004
+
+        * fast/forms/input-type-change3-expected.txt: Added.
+        * fast/forms/input-type-change3.html: Added.
+        * fast/forms/script-tests/input-type-change3.js: Added.
+
 2009-11-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip new test that needs new DRT infrastructure, with bug filled.

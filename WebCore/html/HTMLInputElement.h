@@ -40,7 +40,7 @@ class VisibleSelection;
 class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
 public:
     enum InputType {
-        TEXT,
+        TEXT = 0, // TEXT must be 0.
         PASSWORD,
         ISINDEX,
         CHECKBOX,
@@ -57,9 +57,17 @@ public:
         NUMBER,
         TELEPHONE,
         URL,
-        COLOR
+        COLOR,
+        DATE,
+        DATETIME,
+        DATETIMELOCAL,
+        MONTH,
+        TIME,
+        WEEK,
+        // If you add new types or change the order of enum values, update numberOfTypes below.
     };
-    
+    static const int numberOfTypes = WEEK + 1;
+
     enum AutoCompleteSetting {
         Uninitialized,
         On,
@@ -105,7 +113,7 @@ public:
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
-    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX || m_type == EMAIL || m_type == NUMBER || m_type == TELEPHONE || m_type == URL || m_type == COLOR; }
+    virtual bool isTextField() const;
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }

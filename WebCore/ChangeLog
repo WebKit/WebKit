@@ -1,3 +1,37 @@
+2009-11-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        - Recognizes date/datetime/datetime-local/month/time/week types of INPUT element.
+          They have no dedicated UI and no type validation for now.
+        - Clean up setInputType() and formControlType() of HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=29004
+
+        Test: fast/forms/input-type-change3.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueMissing):
+        (WebCore::HTMLInputElement::patternMismatch):
+        (WebCore::HTMLInputElement::tooLong):
+        (WebCore::createTypeMap):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::createFormControlTypes):
+        (WebCore::HTMLInputElement::formControlType):
+        (WebCore::HTMLInputElement::saveFormControlState):
+        (WebCore::HTMLInputElement::restoreFormControlState):
+        (WebCore::HTMLInputElement::accessKeyAction):
+        (WebCore::HTMLInputElement::rendererIsNeeded):
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::isTextField):
+        (WebCore::HTMLInputElement::valueWithDefault):
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::isRequiredFormControl):
+        (WebCore::HTMLInputElement::dataList):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::):
+
 2009-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
