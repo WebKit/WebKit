@@ -2,6 +2,15 @@
 
         Unreviewed fix for Chromium build.
 
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        Provide an empty implementation of this method because I don't know
+        what it is supposed to do on Chromium.
+
+2009-11-13  Aaron Boodman  <aa@chromium.org>
+
+        Unreviewed fix for Chromium build.
+
         * loader/FrameLoader.h: Make dispatchDidClearWindowObjectsInAllWorlds()
         public, as Chromium's V8Proxy calls it.
 
