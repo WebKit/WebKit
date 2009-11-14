@@ -1109,7 +1109,7 @@ void V8Proxy::initContextIfNeeded()
 
     // FIXME: This is wrong. We should actually do this for the proper world once
     // we do isolated worlds the WebCore way.
-     m_frame->loader()->dispatchDidClearWindowObjectsInAllWorlds();
+    m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
 }
 
 void V8Proxy::setDOMException(int exceptionCode)

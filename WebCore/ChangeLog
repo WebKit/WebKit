@@ -1,3 +1,16 @@
+2009-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Fix build to catch up with http://trac.webkit.org/changeset/50973.
+        This is just enough changes to unbreak the port.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::mainThreadNormalWorld):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::initContextIfNeeded):
+        * loader/FrameLoaderClient.h:
+
 2009-11-13  Aaron Boodman  <aa@chromium.org>
 
         Unreviewed fix for Chromium build.
