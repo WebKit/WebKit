@@ -68,6 +68,7 @@ public:
     virtual WebSize scrollOffset() const;
     virtual WebSize contentsSize() const;
     virtual int contentsPreferredWidth() const;
+    virtual int documentElementScrollHeight() const;
     virtual bool hasVisibleContent() const;
     virtual WebView* view() const;
     virtual WebFrame* opener() const;

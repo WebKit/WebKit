@@ -1,3 +1,20 @@
+2009-11-13  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Adds a way to get the document element's scrollHeight,
+        which is sort of the moral equivalent to
+        RenderBox::minPrefWidth().
+
+        https://bugs.webkit.org/show_bug.cgi?id=31036
+
+        * public/WebFrame.h: Declare documentElementScrollHeight()
+        * src/WebFrameImpl.h: Ditto
+        * src/WebFrameImpl.cpp: Implement documentElementScrollHeight()
+        (WebKit::WebFrameImpl::documentElementScrollHeight): Return the
+        scroll height of the document element, or zero if there's no
+        documentElement.
+
 2009-11-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

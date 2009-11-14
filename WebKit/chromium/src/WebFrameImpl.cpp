@@ -412,6 +412,13 @@ int WebFrameImpl::contentsPreferredWidth() const
     return 0;
 }
 
+int WebFrameImpl::documentElementScrollHeight() const
+{
+    if (m_frame->document() && m_frame->document()->documentElement())
+        return m_frame->document()->documentElement()->scrollHeight();
+    return 0;
+}
+
 bool WebFrameImpl::hasVisibleContent() const
 {
     return frame()->view()->visibleWidth() > 0 && frame()->view()->visibleHeight() > 0;
