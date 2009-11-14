@@ -1,3 +1,15 @@
+2009-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA: checkbox does not determine its label from text content
+        https://bugs.webkit.org/show_bug.cgi?id=31456
+
+        * accessibility/aria-checkbox-text.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/accessibility/aria-checkbox-text-expected.txt: Added.
+        * platform/win/Skipped:
+
 2009-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         Disable websocket tests on Tiger, as they time out.

@@ -44,6 +44,7 @@
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
+accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html

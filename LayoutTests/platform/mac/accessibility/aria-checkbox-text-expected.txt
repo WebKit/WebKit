@@ -1,0 +1,15 @@
+One
+Two
+Three
+This tests that ARIA checkboxes use accessible name computation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS checkbox.title is 'AXTitle: One'
+PASS checkbox.title is 'AXTitle: Two'
+PASS checkbox.title is 'AXTitle: Three'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

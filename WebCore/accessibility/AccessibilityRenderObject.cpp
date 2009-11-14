@@ -1054,6 +1054,7 @@ String AccessibilityRenderObject::title() const
         || ariaRole == MenuItemRole
         || ariaRole == MenuButtonRole
         || ariaRole == RadioButtonRole
+        || ariaRole == CheckBoxRole
         || ariaRole == TabRole
         || isHeading())
         return textUnderElement();

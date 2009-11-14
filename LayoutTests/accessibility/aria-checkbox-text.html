@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="radiobuttongroup">
+        <div role="checkbox" id="check1" tabindex="0" aria-checked="true">One</div>
+        <div role="checkbox" id="check2" tabindex="0">Two</div>
+        <div role="checkbox" id="check3" tabindex="0" id="foo" aria-labelledby="foo">Three</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA checkboxes use accessible name computation.");
+
+    if (window.accessibilityController) {
+
+          var checkbox = document.getElementById("check1");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          shouldBe("checkbox.title", "'AXTitle: One'");
+
+          checkbox = document.getElementById("check2");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          shouldBe("checkbox.title", "'AXTitle: Two'");
+
+          checkbox = document.getElementById("check3");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          shouldBe("checkbox.title", "'AXTitle: Three'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
