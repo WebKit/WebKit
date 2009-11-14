@@ -181,7 +181,7 @@ wxString wxWebFrame::GetExternalRepresentation()
     if (m_impl->frame->view() && m_impl->frame->view()->layoutPending())
         m_impl->frame->view()->layout();
 
-    return externalRepresentation(m_impl->frame->contentRenderer());
+    return externalRepresentation(m_impl->frame);
 }
 
 wxString wxWebFrame::RunScript(const wxString& javascript)

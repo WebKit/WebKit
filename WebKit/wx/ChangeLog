@@ -1,3 +1,10 @@
+2009-11-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after r50923 change to externalRepresentation.
+
+        * WebFrame.cpp:
+        (wxWebFrame::GetExternalRepresentation):
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Update for changes to FrameLoaderClient
