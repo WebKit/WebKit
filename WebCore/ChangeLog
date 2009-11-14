@@ -1,3 +1,10 @@
+2009-11-13  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed partial build fix for Chromium.
+
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::getAllWorlds):
+
 2009-11-13  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
