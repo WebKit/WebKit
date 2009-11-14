@@ -19,23 +19,23 @@ function testQuota(storageString)
         data += data;
     shouldBe("data.length", "65536");
 
-    debug("Putting 'data' into 40 " + storageString + " buckets.");
-    for (var i=0; i<40; i++)
+    debug("Putting 'data' into 39 " + storageString + " buckets.");
+    for (var i=0; i<39; i++)
         storage[i] = data;
 
     debug("Putting 'data' into another bucket.h");
     try {
-        storage[40] = data;
+        storage[39] = data;
         testFailed("Did not hit quota error.");
     } catch (e) {
         testPassed("Hit exception as expected");
     }
 
     debug("Verify that data was never inserted.");
-    shouldBeNull("storage.getItem(40)");
+    shouldBeNull("storage.getItem(39)");
 
-    debug("Removing bucket 39.");
-    storage.removeItem('39');
+    debug("Removing bucket 38.");
+    storage.removeItem('38');
 
     debug("Adding 'Hello!' into a new bucket.");
     try {

@@ -1,3 +1,19 @@
+2009-11-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        LocalStorage quota should include key sizes in its count
+        https://bugs.webkit.org/show_bug.cgi?id=31451
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItem):
+            Count keys in the quota when adding a new item.
+        (WebCore::StorageMap::removeItem):
+            Remove the key's length from the quota if we're removing the item.
+        (WebCore::StorageMap::importItem):
+            Assume that we're adding things for the first time.
+            Count keys in the quota.
+
 2009-11-13  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Eric Seidel.

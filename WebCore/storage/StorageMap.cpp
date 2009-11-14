@@ -111,12 +111,21 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
         return newStorageMap.release();
     }
 
-    // Quota tracking.  If the quota is enabled and this would go over it, bail.
+    // Quota tracking.  This is done in a couple of steps to keep the overflow tracking simple.
+    unsigned newLength = m_currentLength;
+    bool overflow = newLength + value.length() < newLength;
+    newLength += value.length();
+
     oldValue = m_map.get(key);
-    unsigned newLength = m_currentLength + value.length() - oldValue.length();
+    overflow |= newLength - oldValue.length() > newLength;
+    newLength -= oldValue.length();
+
+    unsigned adjustedKeyLength = oldValue.isNull() ? key.length() : 0;
+    overflow |= newLength + adjustedKeyLength < newLength;
+    newLength += adjustedKeyLength;
+
+    ASSERT(!overflow);  // Overflow is bad...even if quotas are off.
     bool overQuota = newLength > m_quotaSize / sizeof(UChar);
-    bool overflow = (newLength > m_currentLength) != (value.length() > oldValue.length());
-    ASSERT(!overflow);  // If we're debugging, make a fuss.  But it's still worth checking this in the following if statement.
     if (m_quotaSize != noQuota && (overflow || overQuota)) {
         quotaException = true;
         return 0;
@@ -143,10 +152,11 @@ PassRefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValu
     }
 
     oldValue = m_map.take(key);
-    if (!oldValue.isNull())
+    if (!oldValue.isNull()) {
         invalidateIterator();
-
-    // Update quota.
+        ASSERT(m_currentLength - key.length() <= m_currentLength);
+        m_currentLength -= key.length();
+    }
     ASSERT(m_currentLength - oldValue.length() <= m_currentLength);
     m_currentLength -= oldValue.length();
 
@@ -162,12 +172,11 @@ void StorageMap::importItem(const String& key, const String& value)
 {
     // Be sure to copy the keys/values as items imported on a background thread are destined
     // to cross a thread boundary
-    pair<HashMap<String, String>::iterator, bool> result = m_map.add(key.threadsafeCopy(), String());
+    pair<HashMap<String, String>::iterator, bool> result = m_map.add(key.threadsafeCopy(), value.threadsafeCopy());
+    ASSERT(result.second);  // True if the key didn't exist previously.
 
-    if (result.second)
-        result.first->second = value.threadsafeCopy();
-
-    // Update quota.
+    ASSERT(m_currentLength + key.length() >= m_currentLength);
+    m_currentLength += key.length();
     ASSERT(m_currentLength + value.length() >= m_currentLength);
     m_currentLength += value.length();
 }

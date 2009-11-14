@@ -1,3 +1,14 @@
+2009-11-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Now that we're tracking key size in the quota, we can't fit as much in.
+        https://bugs.webkit.org/show_bug.cgi?id=31451
+
+        * storage/domstorage/quota-expected.txt:
+        * storage/domstorage/script-tests/quota.js:
+        (testQuota):
+
 2009-11-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
