@@ -1014,6 +1014,7 @@ _wkHitTestMediaUIPart
 _wkInitializeMaximumHTTPConnectionCountPerHost
 _wkIsLatchingWheelEvent
 _wkMeasureMediaUIPart
+_wkMediaControllerThemeAvailable
 _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate

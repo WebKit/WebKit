@@ -1,3 +1,13 @@
+2009-11-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7287487> 
+        Do not use QuickTime version to detect media controller theme
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Initialize wkMediaControllerThemeAvailable.
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Tell the WebFrameLoadDelegate when window objects in isolated worlds

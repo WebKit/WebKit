@@ -1427,8 +1427,6 @@ typedef enum {
 
 static int mediaControllerTheme()
 {
-    static const long minimumQuickTimeVersion = 0x07630000; // 7.6.3
-    static SInt32 quickTimeVersion = 0;
     static int controllerTheme = -1;
     
     if (controllerTheme != -1)
@@ -1436,23 +1434,17 @@ static int mediaControllerTheme()
 
     controllerTheme = MediaControllerThemeClassic;
 
-    if (!quickTimeVersion) {
-        OSErr err;
-        err = Gestalt(gestaltQuickTime, &quickTimeVersion);
-        if (err != noErr)
-            return controllerTheme;
-    }
-    if (quickTimeVersion < minimumQuickTimeVersion)
+    if (!wkMediaControllerThemeAvailable(MediaControllerThemeQuickTime))
         return controllerTheme;
 
     Boolean validKey;
-    Boolean useQTMediaUI = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
+    Boolean useQTMediaUIPref = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    if (validKey && !useQTMediaUI)
+    if (validKey && !useQTMediaUIPref)
         return controllerTheme;
 #else
-    if (!validKey || !useQTMediaUI)
+    if (!validKey || !useQTMediaUIPref)
         return controllerTheme;
 #endif
 

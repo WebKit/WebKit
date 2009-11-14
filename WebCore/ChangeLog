@@ -1,3 +1,18 @@
+2009-11-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7287487> 
+        Do not use QuickTime version to detect media controller theme
+
+        * WebCore.base.exp: Export wkMediaControllerThemeAvailable
+        * platform/mac/WebCoreSystemInterface.h: Ditto.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::mediaControllerTheme): Use wkMediaControllerThemeAvailable instead of the
+        QuickTime version to see if it is possible to use MediaControllerThemeQuickTime.
+
 2009-11-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
