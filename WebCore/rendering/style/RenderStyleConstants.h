@@ -321,6 +321,8 @@ enum ETransformStyle3D {
 enum EBackfaceVisibility {
     BackfaceVisibilityVisible, BackfaceVisibilityHidden
 };
+    
+enum ELineClampType { LineClampLineCount, LineClampPercentage };
 
 } // namespace WebCore
 

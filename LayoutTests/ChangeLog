@@ -1,3 +1,14 @@
+2009-11-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for <rdar://problem/6946165> Would like to be able to specify the number of visible lines when using -webkit-line-clamp
+
+        * fast/overflow/line-clamp.html: Added.
+        * platform/mac/fast/overflow/line-clamp-expected.checksum: Added.
+        * platform/mac/fast/overflow/line-clamp-expected.png: Added.
+        * platform/mac/fast/overflow/line-clamp-expected.txt: Added.
+
 2009-11-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

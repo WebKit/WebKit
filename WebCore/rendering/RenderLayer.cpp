@@ -1054,7 +1054,7 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
 
     bool restrictedByLineClamp = false;
     if (renderer()->parent())
-        restrictedByLineClamp = renderer()->parent()->style()->lineClamp() >= 0;
+        restrictedByLineClamp = !renderer()->parent()->style()->lineClamp().isNone();
 
     if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {
         int newOffsetX = scrollXOffset() + xDelta;
@@ -1198,7 +1198,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
     bool restrictedByLineClamp = false;
     if (renderer()->parent()) {
         parentLayer = renderer()->parent()->enclosingLayer();
-        restrictedByLineClamp = renderer()->parent()->style()->lineClamp() >= 0;
+        restrictedByLineClamp = !renderer()->parent()->style()->lineClamp().isNone();
     }
 
     if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {

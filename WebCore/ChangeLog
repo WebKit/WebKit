@@ -1,3 +1,39 @@
+2009-11-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6946165> Would like to be able to specify the number of visible lines when using -webkit-line-clamp
+
+        Test: fast/overflow/line-clamp.html
+
+        * css/CSSComputedStyleDeclaration.cpp: (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Updated to handle different types of values.
+        * css/CSSParser.cpp: (WebCore::CSSParser::parseValue): ditto.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::applyProperty): ditto.
+
+        * rendering/RenderFlexibleBox.cpp: (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        Use the line count value if available.  Otherwise, convert the percentage to the line count, as we did before.  Also,
+        if there is anchor as the last child box, still allow adding the ellipsis.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollByRecursively): Call isNone on the LineClampValue to see if the line-clamp property has been set.
+        (WebCore::RenderLayer::scrollRectToVisible): ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Added LineClampValue.h
+        * rendering/style/LineClampValue.h: Added.
+        (WebCore::LineClampValue::LineClampValue):
+        (WebCore::LineClampValue::value):
+        (WebCore::LineClampValue::isPercentage):
+        (WebCore::LineClampValue::isNone):
+        (WebCore::LineClampValue::operator==):
+        (WebCore::LineClampValue::operator!=):
+        * rendering/style/RenderStyleConstants.h: (WebCore::): Define ELineClampType enum for percentage or line count.
+
+        * rendering/style/RenderStyle.h: Use LineClampValue.
+        (WebCore::InheritedFlags::lineClamp):
+        (WebCore::InheritedFlags::setLineClamp):
+        (WebCore::InheritedFlags::initialLineClamp):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2009-11-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

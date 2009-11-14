@@ -1492,7 +1492,9 @@ bool CSSParser::parseValue(int propId, bool important)
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
     case CSSPropertyWebkitLineClamp:
-        valid_primitive = (!id && validUnit(value, FPercent, false));
+        // When specifying number of lines, don't allow 0 as a valid value
+        // When specifying either type of unit, require non-negative integers
+        valid_primitive = (!id && (value->unit == CSSPrimitiveValue::CSS_PERCENTAGE || value->fValue) && validUnit(value, FInteger | FPercent | FNonNeg, false));
         break;
     case CSSPropertyWebkitTextSizeAdjust:
         if (id == CSSValueAuto || id == CSSValueNone)

@@ -3272,6 +3272,7 @@
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
 		AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = AB247A6B0AFD6383003FA5FD /* RenderSlider.h */; };
+		AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB40484D0E083FA8007D6920 /* MediaDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB40484B0E083FA8007D6920 /* MediaDocument.cpp */; };
 		AB40484E0E083FA8007D6920 /* MediaDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = AB40484C0E083FA8007D6920 /* MediaDocument.h */; };
 		AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AB4261D70A2F6C9700BDD17D /* missingImage.tiff */; };
@@ -8253,6 +8254,7 @@
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
 		AB247A6B0AFD6383003FA5FD /* RenderSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSlider.h; sourceTree = "<group>"; };
+		AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineClampValue.h; path = style/LineClampValue.h; sourceTree = "<group>"; };
 		AB40484B0E083FA8007D6920 /* MediaDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDocument.cpp; sourceTree = "<group>"; };
 		AB40484C0E083FA8007D6920 /* MediaDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDocument.h; sourceTree = "<group>"; };
 		AB4261D70A2F6C9700BDD17D /* missingImage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = missingImage.tiff; sourceTree = "<group>"; };
@@ -14542,6 +14544,7 @@
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
 				BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */,
 				BC5EBA0F0E823E4700B25965 /* KeyframeList.h */,
+				AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */,
 				BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */,
 				BCEF43DC0E674012001C1287 /* NinePieceImage.h */,
 				BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */,
@@ -18123,6 +18126,7 @@
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
+				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
