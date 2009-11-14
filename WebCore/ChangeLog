@@ -1,5 +1,12 @@
 2009-11-13  Aaron Boodman  <aa@chromium.org>
 
+        Unreviewed fix to Chromium build.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::getAllWorlds): 
+
+2009-11-13  Aaron Boodman  <aa@chromium.org>
+
         Unreviewed fix for Chromium build.
 
         * platform/text/TextBoundaries.cpp: Use longer path to refer to Unicode.h.
