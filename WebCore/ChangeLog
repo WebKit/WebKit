@@ -1,3 +1,26 @@
+2009-11-13  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Eric Seidel.
+
+        Unify TextBoundaries implementations by only relying on WTF Unicode abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=31468
+
+        Moving TextBoundariesICU.cpp to TextBoundaries.cpp
+        by removing the direct ICU dependency and replacing it
+        with WTF functions and WebCore's own TextBreakIterator
+        abstractions.
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        * platform/text/TextBoundaries.cpp: Added.
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+        * platform/text/TextBoundariesICU.cpp: Removed.
+        * platform/text/TextBreakIterator.h:
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::textBreakLast):
+        (WebCore::textBreakPrevious):
+
 2009-11-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

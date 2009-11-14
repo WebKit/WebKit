@@ -90,9 +90,19 @@ int textBreakFirst(TextBreakIterator* bi)
     return ubrk_first(bi);
 }
 
+int textBreakLast(TextBreakIterator* bi)
+{
+    return ubrk_last(bi);
+}
+
 int textBreakNext(TextBreakIterator* bi)
 {
     return ubrk_next(bi);
+}
+
+int textBreakPrevious(TextBreakIterator* bi)
+{
+    return ubrk_previous(bi);
 }
 
 int textBreakPreceding(TextBreakIterator* bi, int pos)

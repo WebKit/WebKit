@@ -39,8 +39,6 @@
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
 #include <cairo.h>
-#include <unicode/uchar.h>
-#include <unicode/unorm.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

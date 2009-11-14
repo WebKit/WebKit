@@ -1,3 +1,18 @@
+2009-11-13  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Eric Seidel.
+
+        Unify TextBoundaries implementations by only relying on WTF Unicode abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=31468
+
+        Adding isAlphanumeric abstraction, required
+        by TextBoundaries.cpp.
+
+        * wtf/unicode/glib/UnicodeGLib.h:
+        (WTF::Unicode::isAlphanumeric):
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::isAlphanumeric):
+
 2009-11-13  Norbert Leser  <norbert.leser&nokia.com>
 
         Reviewed by Eric Seidel.

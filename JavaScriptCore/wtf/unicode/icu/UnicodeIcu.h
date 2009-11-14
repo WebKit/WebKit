@@ -164,6 +164,11 @@ inline bool isArabicChar(UChar32 c)
       return ublock_getCode(c) == UBLOCK_ARABIC;
 }
 
+inline bool isAlphanumeric(UChar32 c)
+{
+    return u_isalnum(c);
+}
+
 inline bool isSeparatorSpace(UChar32 c)
 {
     return u_charType(c) == U_SPACE_SEPARATOR;

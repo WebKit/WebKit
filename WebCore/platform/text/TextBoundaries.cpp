@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Dominik Röttsches <dominik.roettsches@access-company.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,39 +27,40 @@
 #include "config.h"
 #include "TextBoundaries.h"
 
-#include <unicode/ubrk.h>
-#include <unicode/uchar.h>
-
 #include "StringImpl.h"
 #include "TextBreakIterator.h"
+#include <Unicode.h>
+
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {
-    UBreakIterator* it = wordBreakIterator(chars, len);
+    TextBreakIterator* it = wordBreakIterator(chars, len);
 
     if (forward) {
-        position = ubrk_following(it, position);
-        while (position != UBRK_DONE) {
+        position = textBreakFollowing(it, position);
+        while (position != TextBreakDone) {
             // We stop searching when the character preceeding the break
             // is alphanumeric.
-            if (position < len && u_isalnum(chars[position - 1]))
+            if (position < len && isAlphanumeric(chars[position - 1]))
                 return position;
 
-            position = ubrk_following(it, position);
+            position = textBreakFollowing(it, position);
         }
 
         return len;
     } else {
-        position = ubrk_preceding(it, position);
-        while (position != UBRK_DONE) {
+        position = textBreakPreceding(it, position);
+        while (position != TextBreakDone) {
             // We stop searching when the character following the break
             // is alphanumeric.
-            if (position > 0 && u_isalnum(chars[position]))
+            if (position > 0 && isAlphanumeric(chars[position]))
                 return position;
 
-            position = ubrk_preceding(it, position);
+            position = textBreakPreceding(it, position);
         }
 
         return 0;
@@ -67,11 +69,11 @@ int findNextWordFromIndex(const UChar* chars, int len, int position, bool forwar
 
 void findWordBoundary(const UChar* chars, int len, int position, int* start, int* end)
 {
-    UBreakIterator* it = wordBreakIterator(chars, len);
-    *end = ubrk_following(it, position);
+    TextBreakIterator* it = wordBreakIterator(chars, len);
+    *end = textBreakFollowing(it, position);
     if (*end < 0)
-        *end = ubrk_last(it);
-    *start = ubrk_previous(it);
+        *end = textBreakLast(it);
+    *start = textBreakPrevious(it);
 }
 
 } // namespace WebCore

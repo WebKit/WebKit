@@ -152,6 +152,11 @@ inline bool isArabicChar(UChar32 c)
     return c >= 0x0600 && c <= 0x06FF;
 }
 
+inline bool isAlphanumeric(UChar32 c)
+{
+    return g_unichar_isalnum(c);
+}
+
 inline bool isFormatChar(UChar32 c)
 {
     return g_unichar_type(c) == G_UNICODE_FORMAT;

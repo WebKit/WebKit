@@ -1639,7 +1639,7 @@ webcore_sources += \
 	WebCore/platform/text/StringImpl.cpp \
 	WebCore/platform/text/StringImpl.h \
 	WebCore/platform/text/TextBoundaries.h \
-	WebCore/platform/text/TextBoundariesICU.cpp \
+	WebCore/platform/text/TextBoundaries.cpp \
 	WebCore/platform/text/TextBreakIterator.h \
 	WebCore/platform/text/TextBreakIteratorICU.cpp \
 	WebCore/platform/text/TextBreakIteratorInternalICU.h \
@@ -2031,7 +2031,6 @@ if USE_ICU_UNICODE
 webcoregtk_sources += \
 	WebCore/platform/text/TextCodecICU.cpp \
 	WebCore/platform/text/TextCodecICU.h
-
 endif
 
 # ----
