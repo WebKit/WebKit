@@ -25178,7 +25178,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextBoundariesICU.cpp"
+					RelativePath="..\platform\text\TextBoundaries.cpp"
 					>
 				</File>
 				<File

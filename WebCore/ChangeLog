@@ -1,3 +1,15 @@
+2009-11-13  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Fix Windows and Chromium builds after http://trac.webkit.org/changeset/50977.
+
+        Unify TextBoundaries implementations by only relying on WTF Unicode abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=31468
+
+        * WebCore.gypi: Rename TextBoundariesICU -> TextBoundaries
+        * WebCore.vcproj/WebCore.vcproj: Rename TextBoundariesICU -> TextBoundaries
+
 2009-11-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dmitry Titov.

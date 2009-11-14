@@ -2581,7 +2581,7 @@
             'platform/text/StringImpl.cpp',
             'platform/text/StringImpl.h',
             'platform/text/TextBoundaries.h',
-            'platform/text/TextBoundariesICU.cpp',
+            'platform/text/TextBoundaries.cpp',
             'platform/text/TextBreakIterator.h',
             'platform/text/TextBreakIteratorICU.cpp',
             'platform/text/TextBreakIteratorInternalICU.h',
