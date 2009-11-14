@@ -1,5 +1,12 @@
 2009-11-13  Aaron Boodman  <aa@chromium.org>
 
+        Unreviewed fix for Chromium build.
+
+        * loader/FrameLoader.h: Make dispatchDidClearWindowObjectsInAllWorlds()
+        public, as Chromium's V8Proxy calls it.
+
+2009-11-13  Aaron Boodman  <aa@chromium.org>
+
         Unreviewed fix to Chromium build.
 
         * bindings/v8/ScriptController.cpp:

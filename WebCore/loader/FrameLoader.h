@@ -248,6 +248,7 @@ public:
     PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
+    void dispatchDidClearWindowObjectsInAllWorlds();
     void dispatchDocumentElementAvailable();
 
     // Mixed content related functions.
@@ -395,7 +396,6 @@ private:
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
     void dispatchDidCommitLoad();
-    void dispatchDidClearWindowObjectsInAllWorlds();
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   
