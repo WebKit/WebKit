@@ -1,3 +1,9 @@
+2009-11-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip new test that needs new DRT infrastructure, with bug filled.
+
+        * platform/gtk/Skipped:
+
 2009-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
