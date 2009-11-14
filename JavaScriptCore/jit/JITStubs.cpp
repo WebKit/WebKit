@@ -56,6 +56,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include <wtf/StdLibExtras.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -268,6 +269,40 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ldr lr, [sp, #0x20]" "\n"
     "add sp, sp, #0x3c" "\n"
     "bx lr" "\n"
+);
+
+#elif COMPILER(GCC) && PLATFORM(ARM_TRADITIONAL)
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "stmdb sp!, {r1-r3}" "\n"
+    "stmdb sp!, {r4-r8, lr}" "\n"
+    "sub sp, sp, #68" "\n"
+    "mov r4, r2" "\n"
+    "mov r5, #512" "\n"
+    // r0 contains the code
+    "mov lr, pc" "\n"
+    "mov pc, r0" "\n"
+    "add sp, sp, #68" "\n"
+    "ldmia sp!, {r4-r8, lr}" "\n"
+    "add sp, sp, #12" "\n"
+    "mov pc, lr" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "mov r0, sp" "\n"
+    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
+
+// Both has the same return sequence
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "add sp, sp, #68" "\n"
+    "ldmia sp!, {r4-r8, lr}" "\n"
+    "add sp, sp, #12" "\n"
+    "mov pc, lr" "\n"
 );
 
 #elif COMPILER(MSVC)
@@ -906,6 +941,14 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 #elif PLATFORM(ARM_TRADITIONAL) && COMPILER(GCC)
 
+#if USE(JSVALUE32_64)
+#define THUNK_RETURN_ADDRESS_OFFSET 64
+#else
+#define THUNK_RETURN_ADDRESS_OFFSET 32
+#endif
+
+COMPILE_ASSERT(offsetof(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET, JITStackFrame_thunkReturnAddress_offset_mismatch);
+
 #define DEFINE_STUB_FUNCTION(rtype, op) \
     extern "C" { \
         rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
@@ -913,9 +956,9 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
     asm volatile ( \
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
         SYMBOL_STRING(cti_##op) ":" "\n" \
-        "str lr, [sp, #32]" "\n" \
+        "str lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
         "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
-        "ldr lr, [sp, #32]" "\n" \
+        "ldr lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
         "mov pc, lr" "\n" \
         ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)

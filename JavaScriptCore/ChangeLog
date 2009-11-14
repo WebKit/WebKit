@@ -1,3 +1,38 @@
+2009-11-14  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31050
+
+        Adding JSVALUE32_64 support for ARM (but not turning it
+        on by default). All optimizations must be disabled, since
+        this patch is only the first of a series of patches.
+
+        During the work, a lot of x86 specific code revealed and
+        made platform independent.
+        See revisions: 50531 50541 50593 50594 50595
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::fdivd_r):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::neg32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::branchOr32):
+        (JSC::MacroAssemblerARM::set8):
+        (JSC::MacroAssemblerARM::setTest8):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::divDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::zeroDouble):
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        * wtf/StdLibExtras.h:
+
 2009-11-13  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Eric Seidel.

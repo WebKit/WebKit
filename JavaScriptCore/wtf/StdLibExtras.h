@@ -48,6 +48,10 @@
 // NULL can cause compiler problems, especially in cases of multiple inheritance.
 #define OBJECT_OFFSETOF(class, field) (reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<class*>(0x4000)->field)) - 0x4000)
 
+// STRINGIZE: Can convert any value to quoted string, even expandable macros
+#define STRINGIZE(exp) #exp
+#define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
+
 namespace WTF {
 
     /*

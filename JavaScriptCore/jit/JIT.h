@@ -465,6 +465,8 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 11;
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
+#elif PLATFORM(ARM_TRADITIONAL)
+// patchOffset... values should go here; JIT optimizations currently not supported on ARM with JSVALUE32_64.
 #else
 #error "JSVALUE32_64 not supported on this platform."
 #endif

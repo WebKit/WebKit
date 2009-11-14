@@ -121,6 +121,7 @@ namespace JSC {
             MUL = 0x00000090,
             MULL = 0x00c00090,
             FADDD = 0x0e300b00,
+            FDIVD = 0x0e800b00,
             FSUBD = 0x0e300b40,
             FMULD = 0x0e200b00,
             FCMPD = 0x0eb40b40,
@@ -398,6 +399,11 @@ namespace JSC {
         void faddd_r(int dd, int dn, int dm, Condition cc = AL)
         {
             emitInst(static_cast<ARMWord>(cc) | FADDD, dd, dn, dm);
+        }
+
+        void fdivd_r(int dd, int dn, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FDIVD, dd, dn, dm);
         }
 
         void fsubd_r(int dd, int dn, int dm, Condition cc = AL)
