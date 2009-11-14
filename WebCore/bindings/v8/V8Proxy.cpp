@@ -1106,7 +1106,10 @@ void V8Proxy::initContextIfNeeded()
     setSecurityToken();
 
     m_frame->loader()->client()->didCreateScriptContextForFrame();
-    m_frame->loader()->dispatchWindowObjectAvailable();
+
+    // FIXME: This is wrong. We should actually do this for the proper world once
+    // we do isolated worlds the WebCore way.
+     m_frame->loader()->dispatchDidClearWindowObjectsInAllWorlds();
 }
 
 void V8Proxy::setDOMException(int exceptionCode)

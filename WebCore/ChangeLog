@@ -1,5 +1,15 @@
 2009-11-13  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed partial build fix for Chromium.  Should fix failure #4.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::getAllWorlds):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::initContextIfNeeded):
+
+2009-11-13  Adam Barth  <abarth@webkit.org>
+
         Unreviewed partial build fix for Chromium.
 
         * bindings/v8/ScriptController.h:
