@@ -466,7 +466,46 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
 #elif PLATFORM(ARM_TRADITIONAL)
-// patchOffset... values should go here; JIT optimizations currently not supported on ARM with JSVALUE32_64.
+        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetPutByIdStructure = 4;
+        static const int patchOffsetPutByIdExternalLoad = 16;
+        static const int patchLengthPutByIdExternalLoad = 4;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 20;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 28;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdStructure = 4;
+        static const int patchOffsetGetByIdBranchToSlowCase = 16;
+        static const int patchOffsetGetByIdExternalLoad = 16;
+        static const int patchLengthGetByIdExternalLoad = 4;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 20;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 28;
+        static const int patchOffsetGetByIdPutResult = 36;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 32;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 12;
+
+        static const int patchOffsetMethodCheckProtoObj = 12;
+        static const int patchOffsetMethodCheckProtoStruct = 20;
+        static const int patchOffsetMethodCheckPutFunction = 32;
+
+        // sequenceOpCall
+        static const int sequenceOpCallInstructionSpace = 12;
+        static const int sequenceOpCallConstantSpace = 2;
+        // sequenceMethodCheck
+        static const int sequenceMethodCheckInstructionSpace = 40;
+        static const int sequenceMethodCheckConstantSpace = 6;
+        // sequenceGetByIdHotPath
+        static const int sequenceGetByIdHotPathInstructionSpace = 36;
+        static const int sequenceGetByIdHotPathConstantSpace = 4;
+        // sequenceGetByIdSlowCase
+        static const int sequenceGetByIdSlowCaseInstructionSpace = 40;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 2;
+        // sequencePutById
+        static const int sequencePutByIdInstructionSpace = 36;
+        static const int sequencePutByIdConstantSpace = 4;
 #else
 #error "JSVALUE32_64 not supported on this platform."
 #endif
@@ -631,10 +670,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 12;
         static const int patchOffsetMethodCheckProtoStruct = 20;
         static const int patchOffsetMethodCheckPutFunction = 32;
-#endif
-#endif // USE(JSVALUE32_64)
 
-#if PLATFORM(ARM_TRADITIONAL)
         // sequenceOpCall
         static const int sequenceOpCallInstructionSpace = 12;
         static const int sequenceOpCallConstantSpace = 2;
@@ -651,6 +687,7 @@ namespace JSC {
         static const int sequencePutByIdInstructionSpace = 28;
         static const int sequencePutByIdConstantSpace = 3;
 #endif
+#endif // USE(JSVALUE32_64)
 
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
 #define BEGIN_UNINTERRUPTED_SEQUENCE(name) beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace)
