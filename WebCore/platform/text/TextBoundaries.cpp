@@ -29,7 +29,7 @@
 
 #include "StringImpl.h"
 #include "TextBreakIterator.h"
-#include <Unicode.h>
+#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;

@@ -1,3 +1,9 @@
+2009-11-13  Aaron Boodman  <aa@chromium.org>
+
+        Unreviewed fix for Chromium build.
+
+        * platform/text/TextBoundaries.cpp: Use longer path to refer to Unicode.h.
+
 2009-11-13  Adam Barth  <abarth@webkit.org>
 
         Unreviewed partial build fix for Chromium.  Should fix failure #4.
