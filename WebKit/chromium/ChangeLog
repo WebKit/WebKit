@@ -1,3 +1,13 @@
+2009-11-13  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium WebKit Port to compile as dynamic lib
+
+        https://bugs.webkit.org/show_bug.cgi?id=31478
+
+        * WebKit.gyp:
+
 2009-11-13  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Eric Seidel.

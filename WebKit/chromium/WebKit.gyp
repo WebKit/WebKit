@@ -34,14 +34,17 @@
     ],
     'variables': {
         'conditions': [
-            # Location of the chromium src directory.
+            # Location of the chromium src directory and target type is different
+            # if webkit is built inside chromium or as standalone project.
             ['inside_chromium_build==0', {
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '.',
+                'webkit_target_type': 'shared_library',
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '../../../..',
+                'webkit_target_type': 'static_library',
             }],
             # We can't turn on warnings on Windows and Linux until we upstream the
             # WebKit API.
@@ -53,7 +56,7 @@
     'targets': [
         {
             'target_name': 'webkit',
-            'type': '<(library)',
+            'type': '<(webkit_target_type)',
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
