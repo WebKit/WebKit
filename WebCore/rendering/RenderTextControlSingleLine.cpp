@@ -150,7 +150,7 @@ void RenderTextControlSingleLine::hidePopup()
 
 void RenderTextControlSingleLine::subtreeHasChanged()
 {
-    bool wasEdited = isEdited();
+    bool wasChanged = wasChangedSinceLastChangeEvent();
     RenderTextControl::subtreeHasChanged();
 
     InputElement* input = inputElement();
@@ -167,7 +167,7 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     if (input->searchEventsShouldBeDispatched())
         startSearchEventTimer();
 
-    if (!wasEdited && node()->focused()) {
+    if (!wasChanged && node()->focused()) {
         if (Frame* frame = document()->frame())
             frame->textFieldDidBeginEditing(static_cast<Element*>(node()));
     }

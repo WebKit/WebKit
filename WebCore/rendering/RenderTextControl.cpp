@@ -70,8 +70,8 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
 RenderTextControl::RenderTextControl(Node* node, bool placeholderVisible)
     : RenderBlock(node)
     , m_placeholderVisible(placeholderVisible)
-    , m_edited(false)
-    , m_userEdited(false)
+    , m_wasChangedSinceLastChangeEvent(false)
+    , m_lastChangeWasUserEdit(false)
 {
 }
 
@@ -195,17 +195,16 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
             ASSERT(!ec);
         }
 
-        // We set m_userEdited to false since this change was not explicty made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
-        m_userEdited = false;
+        m_lastChangeWasUserEdit = false;
     }
 
     static_cast<Element*>(node())->setFormControlValueMatchesRenderer(true);
 }
 
-void RenderTextControl::setUserEdited(bool isUserEdited)
+void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
 {
-    m_userEdited = isUserEdited;
-    document()->setIgnoreAutofocus(isUserEdited);
+    m_lastChangeWasUserEdit = lastChangeWasUserEdit;
+    document()->setIgnoreAutofocus(lastChangeWasUserEdit);
 }
 
 int RenderTextControl::selectionStart()
@@ -312,8 +311,8 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
 
 void RenderTextControl::subtreeHasChanged()
 {
-    m_edited = true;
-    m_userEdited = true;
+    m_wasChangedSinceLastChangeEvent = true;
+    m_lastChangeWasUserEdit = true;
 }
 
 String RenderTextControl::finishText(Vector<UChar>& result) const
