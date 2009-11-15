@@ -477,7 +477,7 @@ void GraphicsContext::setPlatformFont(const Font& font)
     m_data->m_view->SetFont(font.primaryFont()->platformData().font());
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSPace colorSpace)
+void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
