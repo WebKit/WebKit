@@ -1,3 +1,13 @@
+2009-11-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add bugzilla-tool check-style
+        https://bugs.webkit.org/show_bug.cgi?id=31515
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+
 2009-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

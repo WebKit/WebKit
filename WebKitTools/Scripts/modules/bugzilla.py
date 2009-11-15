@@ -163,8 +163,10 @@ class Bugzilla:
 
     def _parse_attachment_flag(self, element, flag_name, attachment, result_key):
         flag = element.find('flag', attrs={'name' : flag_name})
-        if flag and flag['status'] == '+':
-            attachment[result_key] = flag['setter']
+        if flag:
+            attachment[flag_name] = flag['status']
+            if flag['status'] == '+':
+                attachment[result_key] = flag['setter']
 
     def _parse_attachment_element(self, element, bug_id):
         attachment = {}
@@ -232,6 +234,13 @@ class Bugzilla:
 
     def _validate_committer(self, patch, reject_invalid_patches):
         return self._validate_setter_email(patch, 'committer', self.committers.committer_by_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
+
+    def fetch_unreviewed_patches_from_bug(self, bug_id):
+        unreviewed_patches = []
+        for attachment in self.fetch_attachments_from_bug(bug_id):
+            if attachment.get('review') == '?' and not attachment['is_obsolete']:
+                unreviewed_patches.append(attachment)
+        return unreviewed_patches
 
     def fetch_reviewed_patches_from_bug(self, bug_id, reject_invalid_patches=False):
         reviewed_patches = []

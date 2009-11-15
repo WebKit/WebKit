@@ -135,6 +135,34 @@ class ReviewedPatchesOnBug(Command):
             print "%s" % patch['url']
 
 
+class CheckStyleOnBug(Command):
+    def __init__(self):
+        options = WebKitLandingScripts.cleaning_options()
+        Command.__init__(self, 'Runs check-webkit-style on the r? patches on a bug', 'BUGID', options=options)
+
+    @classmethod
+    def check_style(cls, bug_id, patch, options, tool):
+        tool.scm().update_webkit()
+        log("Checking style for patch %s from bug %s." % (patch['id'], bug_id))
+        try:
+            tool.scm().apply_patch(patch)
+            WebKitLandingScripts.run_webkit_script("check-webkit-style")
+        except ScriptError, e:
+            log("Patch failed to apply and check style")
+            log(e.output)
+
+        tool.scm().ensure_clean_working_directory(True)
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        patches = tool.bugs.fetch_unreviewed_patches_from_bug(bug_id)
+
+        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
+
+        for patch in patches:
+            self.check_style(bug_id, patch, options, tool)
+
+
 class ApplyPatchesFromBug(Command):
     def __init__(self):
         options = [
@@ -812,6 +840,7 @@ class BugzillaTool:
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
+            { 'name' : 'check-style', 'object' : CheckStyleOnBug() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
             { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
