@@ -1,3 +1,15 @@
+2009-11-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool should post git binary diff
+        https://bugs.webkit.org/show_bug.cgi?id=31458
+
+        Add --binary option to Git.create_patch.
+
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py:
+
 2009-11-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

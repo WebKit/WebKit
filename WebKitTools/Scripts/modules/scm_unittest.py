@@ -560,5 +560,35 @@ class GitTest(SCMTest):
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()
 
+    def test_create_binary_patch(self):
+        # Create a git binary patch and check the contents.
+        scm = detect_scm_system(self.git_checkout_path)
+        test_file_path = os.path.join(self.git_checkout_path, 'binary_file')
+        file_contents = ''.join(map(chr, range(256)))
+        write_into_file_at_path(test_file_path, file_contents)
+        run(['git', 'add', test_file_path])
+        patch = scm.create_patch()
+        self.assertTrue(re.search(r'\nliteral 0\n', patch))
+        self.assertTrue(re.search(r'\nliteral 256\n', patch))
+
+        # Check if we can apply the created patch.
+        run(['git', 'rm', '-f', test_file_path])
+        self._setup_webkittools_scripts_symlink(scm)
+        self.scm.apply_patch(self._create_patch(patch))
+        self.assertEqual(file_contents, read_from_path(test_file_path))
+
+        # Check if we can create a patch from a local commit.
+        write_into_file_at_path(test_file_path, file_contents)
+        run(['git', 'add', test_file_path])
+        run(['git', 'commit', '-m', 'binary diff'])
+        patch_from_local_commit = scm.create_patch_from_local_commit('HEAD')
+        self.assertTrue(re.search(r'\nliteral 0\n', patch_from_local_commit))
+        self.assertTrue(re.search(r'\nliteral 256\n', patch_from_local_commit))
+        patch_since_local_commit = scm.create_patch_since_local_commit('HEAD^1')
+        self.assertTrue(re.search(r'\nliteral 0\n', patch_since_local_commit))
+        self.assertTrue(re.search(r'\nliteral 256\n', patch_since_local_commit))
+        self.assertEqual(patch_from_local_commit, patch_since_local_commit)
+
+
 if __name__ == '__main__':
     unittest.main()

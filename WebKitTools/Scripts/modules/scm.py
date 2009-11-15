@@ -452,7 +452,7 @@ class Git(SCM):
         return "git"
 
     def create_patch(self):
-        return self.run_command(['git', 'diff', 'HEAD'])
+        return self.run_command(['git', 'diff', '--binary', 'HEAD'])
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
@@ -495,10 +495,10 @@ class Git(SCM):
     # Git-specific methods:
 
     def create_patch_from_local_commit(self, commit_id):
-        return self.run_command(['git', 'diff', commit_id + "^.." + commit_id])
+        return self.run_command(['git', 'diff', '--binary', commit_id + "^.." + commit_id])
 
     def create_patch_since_local_commit(self, commit_id):
-        return self.run_command(['git', 'diff', commit_id])
+        return self.run_command(['git', 'diff', '--binary', commit_id])
 
     def commit_locally_with_message(self, message):
         self.run_command(['git', 'commit', '--all', '-F', '-'], input=message)
