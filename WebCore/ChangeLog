@@ -1,3 +1,17 @@
+2009-11-15  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by George Staikos.
+        
+        Compare UChars single unit at a time as opposed to the uint32_t
+        approach as casting to unaligned addresses may cause a bus failure
+        on ARMv5 and below. This change replicates the same defines that
+        exists in AtomicString.cpp
+
+        https://bugs.webkit.org/show_bug.cgi?id=31475
+        
+        * platform/text/StringHash.h:
+        (WebCore::StringHash::equal):
+
 2009-11-15  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Barth.
