@@ -1495,10 +1495,12 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(Node* node, v8::Local<v
     return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
 }
 
+#if ENABLE(SVG)
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
 {
     return getEventListener(element->correspondingElement(), value, isAttribute, lookup);
 }
+#endif
 
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(AbstractWorker* worker, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
 {
