@@ -167,7 +167,7 @@
 - (BOOL)_isEdited
 {
     WebCore::RenderObject *renderer = core(self)->renderer();
-    return renderer && [self _isTextField] && static_cast<WebCore::RenderTextControl *>(renderer)->lastChangeWasUserEdit();
+    return renderer && [self _isTextField] && static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
 }
 
 @end
@@ -177,7 +177,7 @@
 - (BOOL)_isEdited
 {
     WebCore::RenderObject* renderer = core(self)->renderer();
-    return renderer && static_cast<WebCore::RenderTextControl*>(renderer)->lastChangeWasUserEdit();
+    return renderer && static_cast<WebCore::RenderTextControl*>(renderer)->isUserEdited();
 }
 
 @end

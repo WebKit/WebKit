@@ -1,5 +1,34 @@
 2009-11-15  Daniel Bates  <dbates@webkit.org>
 
+        No review, rolling out r50999.
+        http://trac.webkit.org/changeset/50999
+
+        Need to fix some issues in the Windows build. Missed some places where
+        RenderTextControl::isEdited is called.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isEdited]):
+        (-[DOMHTMLTextAreaElement _isEdited]):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::setUserEdited):
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::isEdited):
+        (WebCore::RenderTextControl::setEdited):
+        (WebCore::RenderTextControl::isUserEdited):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::defaultEventHandler):
+
+2009-11-15  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=31186

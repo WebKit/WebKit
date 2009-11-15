@@ -1584,12 +1584,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
         // Fire onChange for text fields.
         RenderObject* r = renderer();
-        if (r && r->isTextField() && toRenderTextControl(r)->wasChangedSinceLastChangeEvent()) {
+        if (r && r->isTextField() && toRenderTextControl(r)->isEdited()) {
             dispatchFormControlChangeEvent();
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();
             if (r && r->isTextField())
-                toRenderTextControl(r)->setChangedSinceLastChangeEvent(false);
+                toRenderTextControl(r)->setEdited(false);
         }
 
         RefPtr<HTMLFormElement> formForSubmission = form();
