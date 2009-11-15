@@ -28,14 +28,6 @@
 
 namespace WebCore {
 
-FileChooser::FileChooser(FileChooserClient* client, const String& filename)
-    : m_client(client)
-    , m_filenames()
-    , m_icon(chooseIcon(filename))
-{
-    m_filenames.append(filename);
-}
-
 String FileChooser::basenameForWidth(const Font&, int width) const
 {
     notImplemented();

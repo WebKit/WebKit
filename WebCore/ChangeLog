@@ -2,6 +2,14 @@
 
         Reviewed by Adam Barth.
 
+        [Haiku] Build fix. The FileChooser constructor doesn't need to be redefined.
+
+        * platform/haiku/FileChooserHaiku.cpp:
+
+2009-11-15  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Adam Barth.
+
         [Haiku] Build fix. ColorSpace name had a wrong CamelCase.
 
         * platform/graphics/haiku/GraphicsContextHaiku.cpp:
