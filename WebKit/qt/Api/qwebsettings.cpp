@@ -339,6 +339,8 @@ QWebSettings* QWebSettings::globalSettings()
         web application cache feature is enabled or not. Disabled by default.
     \value LocalStorageEnabled Specifies whether support for the HTML 5
         local storage feature is enabled or not. Disabled by default.
+    \value LocalStorageDatabaseEnabled \e{This enum value is deprecated.} Use
+        QWebSettings::LocalStorageEnabled instead.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
 */
 

@@ -453,7 +453,7 @@ bool QWebElement::hasAttributes() const
 }
 
 /*!
-    Return the list of attributes for the namespace given as an argument.
+    Return the list of attributes for the namespace given as \a namespaceUri.
 
     \sa attribute(), setAttribute()
 */

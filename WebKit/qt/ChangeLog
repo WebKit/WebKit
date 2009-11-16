@@ -1,3 +1,13 @@
+2009-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        API documentation fixes.
+
+        * Api/qgraphicswebview.cpp: Removed duplicate docs.
+        * Api/qwebelement.cpp: Added missing docs.
+        * Api/qwebsettings.cpp: Ditto.
+
 2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Antti Koivisto.
