@@ -1,5 +1,13 @@
 2009-11-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2009-11-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adele Peterson.
 
         Update Security Group Members list.
