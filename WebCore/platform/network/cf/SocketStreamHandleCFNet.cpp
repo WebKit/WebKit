@@ -36,6 +36,18 @@
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#include <SystemConfiguration/SystemConfiguration.h>
+#endif
+
+#if PLATFORM(WIN)
+#include <CFNetwork/CFSocketStreamPriv.h>
+#else
+extern const CFStringRef kCFStreamPropertyCONNECTProxy;
+extern const CFStringRef kCFStreamPropertyCONNECTProxyHost;
+extern const CFStringRef kCFStreamPropertyCONNECTProxyPort;
+#endif
+
 namespace WebCore {
 
 SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
@@ -74,7 +86,97 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 
 void SocketStreamHandle::chooseProxy()
 {
-    // FIXME: Retrieve proxy information.
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, CFNetworkCopySystemProxySettings());
+#else
+    // We don't need proxy information often, so there is no need to set up a permanent dynamic store session.
+    RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, SCDynamicStoreCopyProxies(0));
+#endif
+
+    // SOCKS or HTTPS (AKA CONNECT) proxies are supported.
+    // WebSocket protocol relies on handshake being transferred unchanged, so we need a proxy that will not modify headers.
+    // Since HTTP proxies must add Via headers, they are highly unlikely to work.
+    // Many CONNECT proxies limit connectivity to port 443, so we prefer SOCKS, if configured.
+
+    if (!proxyDictionary) {
+        m_connectionType = Direct;
+        return;
+    }
+
+#ifndef BUILDING_ON_TIGER
+    // CFNetworkCopyProxiesForURL doesn't know about WebSocket schemes, so pretend to use http.
+    // Always use "https" to get HTTPS proxies in result - we'll try to use those for ws:. even though many are configured to reject connections to ports other than 443.
+    KURL httpsURL(KURL(), "https://" + m_url.host());
+    RetainPtr<CFURLRef> httpsURLCF(AdoptCF, httpsURL.createCFURL());
+
+    RetainPtr<CFArrayRef> proxyArray(AdoptCF, CFNetworkCopyProxiesForURL(httpsURLCF.get(), proxyDictionary.get()));
+    CFIndex proxyArrayCount = CFArrayGetCount(proxyArray.get());
+
+    // FIXME: Support PAC files (always the preferred entry).
+
+    CFDictionaryRef chosenProxy = 0;
+    for (CFIndex i = 0; i < proxyArrayCount; ++i) {
+        CFDictionaryRef proxyInfo = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(proxyArray.get(), i));
+        CFTypeRef proxyType = CFDictionaryGetValue(proxyInfo, kCFProxyTypeKey);
+        if (proxyType && CFGetTypeID(proxyType) == CFStringGetTypeID()) {
+            if (CFEqual(proxyType, kCFProxyTypeSOCKS)) {
+                m_connectionType = SOCKSProxy;
+                chosenProxy = proxyInfo;
+                break;
+            }
+            if (CFEqual(proxyType, kCFProxyTypeHTTPS)) {
+                m_connectionType = CONNECTProxy;
+                chosenProxy = proxyInfo;
+                // Keep looking for proxies, as a SOCKS one is preferable.
+            }
+        }
+    }
+
+    if (chosenProxy) {
+        ASSERT(m_connectionType != Unknown);
+        ASSERT(m_connectionType != Direct);
+
+        CFTypeRef proxyHost = CFDictionaryGetValue(chosenProxy, kCFProxyHostNameKey);
+        CFTypeRef proxyPort = CFDictionaryGetValue(chosenProxy, kCFProxyPortNumberKey);
+
+        if (proxyHost && CFGetTypeID(proxyHost) == CFStringGetTypeID() && proxyPort && CFGetTypeID(proxyPort) == CFNumberGetTypeID()) {
+            m_proxyHost = static_cast<CFStringRef>(proxyHost);
+            m_proxyPort = static_cast<CFNumberRef>(proxyPort);
+            return;
+        }
+    }
+#else // BUILDING_ON_TIGER
+    // FIXME: check proxy bypass list and ExcludeSimpleHostnames.
+    // FIXME: Support PAC files.
+
+    CFTypeRef socksEnableCF = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSEnable);
+    int socksEnable;
+    if (socksEnableCF && CFGetTypeID(socksEnableCF) == CFNumberGetTypeID() && CFNumberGetValue(static_cast<CFNumberRef>(socksEnableCF), kCFNumberIntType, &socksEnable) && socksEnable) {
+        CFTypeRef proxyHost = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSProxy);
+        CFTypeRef proxyPort = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesSOCKSPort);
+        if (proxyHost && CFGetTypeID(proxyHost) == CFStringGetTypeID() && proxyPort && CFGetTypeID(proxyPort) == CFNumberGetTypeID()) {
+            m_proxyHost = static_cast<CFStringRef>(proxyHost);
+            m_proxyPort = static_cast<CFNumberRef>(proxyPort);
+            m_connectionType = SOCKSProxy;
+            return;
+        }
+    }
+
+    CFTypeRef httpsEnableCF = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSEnable);
+    int httpsEnable;
+    if (httpsEnableCF && CFGetTypeID(httpsEnableCF) == CFNumberGetTypeID() && CFNumberGetValue(static_cast<CFNumberRef>(httpsEnableCF), kCFNumberIntType, &httpsEnable) && httpsEnable) {
+        CFTypeRef proxyHost = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSProxy);
+        CFTypeRef proxyPort = CFDictionaryGetValue(proxyDictionary.get(), kSCPropNetProxiesHTTPSPort);
+
+        if (proxyHost && CFGetTypeID(proxyHost) == CFStringGetTypeID() && proxyPort && CFGetTypeID(proxyPort) == CFNumberGetTypeID()) {
+            m_proxyHost = static_cast<CFStringRef>(proxyHost);
+            m_proxyPort = static_cast<CFNumberRef>(proxyPort);
+            m_connectionType = CONNECTProxy;
+            return;
+        }
+    }
+#endif
+
     m_connectionType = Direct;
 }
 
@@ -97,7 +199,29 @@ void SocketStreamHandle::createStreams()
     m_readStream.adoptCF(readStream);
     m_writeStream.adoptCF(writeStream);
 
-    // FIXME: Apply proxy information to streams.
+    switch (m_connectionType) {
+    case Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    case Direct:
+        break;
+    case SOCKSProxy: {
+        // FIXME: SOCKS5 doesn't do challenge-response, should we try to apply credentials from Keychain right away?
+        // But SOCKS5 credentials don't work at the time of this writing anyway, see <rdar://6776698>.
+        const void* proxyKeys[] = { kCFStreamPropertySOCKSProxyHost, kCFStreamPropertySOCKSProxyPort };
+        const void* proxyValues[] = { m_proxyHost.get(), m_proxyPort.get() };
+        RetainPtr<CFDictionaryRef> connectDictionary(AdoptCF, CFDictionaryCreate(0, proxyKeys, proxyValues, sizeof(proxyKeys) / sizeof(*proxyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySOCKSProxy, connectDictionary.get());
+        break;
+        }
+    case CONNECTProxy: {
+        const void* proxyKeys[] = { kCFStreamPropertyCONNECTProxyHost, kCFStreamPropertyCONNECTProxyPort };
+        const void* proxyValues[] = { m_proxyHost.get(), m_proxyPort.get() };
+        RetainPtr<CFDictionaryRef> connectDictionary(AdoptCF, CFDictionaryCreate(0, proxyKeys, proxyValues, sizeof(proxyKeys) / sizeof(*proxyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertyCONNECTProxy, connectDictionary.get());
+        break;
+        }
+    }
 
     if (shouldUseSSL()) {
         const void* keys[] = { kCFStreamSSLPeerName, kCFStreamSSLLevel };
