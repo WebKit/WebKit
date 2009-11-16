@@ -34,40 +34,19 @@ import unittest
 
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
-class WorkQueueTest(unittest.TestCase, WorkQueueDelegate):
-    def test_trivial(self):
-        self.set_up()
-        work_queue = WorkQueue(self)
-        work_queue.run()
-        self.assertEquals(self.callbacks, [
-            'queue_log_path',
-            'status_host',
-            'begin_work_queue',
-            'should_continue_work_queue',
-            'next_work_item',
-            'should_proceed_with_work_item',
-            'work_logs_directory',
-            'process_work_item',
-            'should_continue_work_queue'])
-        self.clean_up()
-
-    def set_up(self):
+class LoggingDelegate(WorkQueueDelegate):
+    def __init__(self, test):
+        self.test = test
         self.callbacks = []
         self.run_before = False
-        self.temp_dir = tempfile.mkdtemp(suffix="work_queue_test_logs")
-
-    def clean_up(self):
-        os.path.exists(self.queue_log_path())
-        os.path.exists(os.path.join(self.work_logs_directory(), "42.log"))
-        shutil.rmtree(self.temp_dir)
 
     def queue_log_path(self):
         self.callbacks.append("queue_log_path")
-        return os.path.join(self.temp_dir, "queue_log_path")
+        return os.path.join(self.test.temp_dir, "queue_log_path")
 
     def work_logs_directory(self):
         self.callbacks.append("work_logs_directory")
-        return os.path.join(self.temp_dir, "work_log_path")
+        return os.path.join(self.test.temp_dir, "work_log_path")
 
     def status_host(self):
         self.callbacks.append("status_host")
@@ -89,16 +68,40 @@ class WorkQueueTest(unittest.TestCase, WorkQueueDelegate):
 
     def should_proceed_with_work_item(self, work_item):
         self.callbacks.append("should_proceed_with_work_item")
-        self.assertEquals(work_item, "work_item")
+        self.test.assertEquals(work_item, "work_item")
         return (True, "waiting_message", 42)
 
     def process_work_item(self, work_item):
         self.callbacks.append("process_work_item")
-        self.assertEquals(work_item, "work_item")
+        self.test.assertEquals(work_item, "work_item")
 
     def handle_unexpected_error(self, work_item, message):
         self.callbacks.append("handle_unexpected_error")
-        self.assertEquals(work_item, "work_item")
+        self.test.assertEquals(work_item, "work_item")
+
+class WorkQueueTest(unittest.TestCase):
+    def test_trivial(self):
+        delegate = LoggingDelegate(self)
+        work_queue = WorkQueue(delegate)
+        work_queue.run()
+        self.assertEquals(delegate.callbacks, [
+            'queue_log_path',
+            'status_host',
+            'begin_work_queue',
+            'should_continue_work_queue',
+            'next_work_item',
+            'should_proceed_with_work_item',
+            'work_logs_directory',
+            'process_work_item',
+            'should_continue_work_queue'])
+        self.assertTrue(os.path.exists(delegate.queue_log_path()))
+        self.assertTrue(os.path.exists(os.path.join(delegate.work_logs_directory(), "42.log")))
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp(suffix="work_queue_test_logs")
+
+    def tearDown(self):
+        shutil.rmtree(self.temp_dir)
 
 
 if __name__ == '__main__':
