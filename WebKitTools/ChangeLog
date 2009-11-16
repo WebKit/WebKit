@@ -1,3 +1,18 @@
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Unit test WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=31531
+
+        Adds basic unit testing for WorkQueue.  Just runs through one cycle.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/statusbot.py:
+        * Scripts/modules/workqueue.py:
+        * Scripts/modules/workqueue_unittest.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-11-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

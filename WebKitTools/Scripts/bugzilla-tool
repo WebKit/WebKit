@@ -722,6 +722,9 @@ class LandPatchesFromCommitQueue(Command, WorkQueueDelegate):
                 error("User declined.")
         log("Running WebKit Commit Queue. %s" % datetime.now().strftime(WorkQueue.log_date_format))
 
+    def should_continue_work_queue(self):
+        return True
+
     def next_work_item(self):
         # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
         patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)

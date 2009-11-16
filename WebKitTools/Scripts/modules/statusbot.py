@@ -56,6 +56,9 @@ class StatusBot:
         self.browser = Browser()
 
     def update_status(self, status, bug_id=None, patch_id=None):
+        # During unit testing, statusbot_host is None
+        if not self.statusbot_host:
+            return
         self.browser.open(self.update_status_url)
         self.browser.select_form(name="update_status")
         if bug_id:

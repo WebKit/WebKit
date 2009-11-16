@@ -33,9 +33,9 @@ import time
 
 from datetime import datetime, timedelta
 
-from logging import log, OutputTee
-from scm import ScriptError
-from statusbot import StatusBot
+from modules.logging import log, OutputTee
+from modules.scm import ScriptError
+from modules.statusbot import StatusBot
 
 class WorkQueueDelegate:
     def queue_log_path(self):
@@ -48,6 +48,9 @@ class WorkQueueDelegate:
         raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def should_continue_work_queue(self):
         raise NotImplementedError, "subclasses must implement"
 
     def next_work_item(self):
@@ -78,7 +81,7 @@ class WorkQueue:
         self.status_bot = StatusBot(host=self._delegate.status_host())
 
         self._delegate.begin_work_queue()
-        while (True):
+        while (self._delegate.should_continue_work_queue()):
             self._ensure_work_log_closed()
             try:
                 work_item = self._delegate.next_work_item()
