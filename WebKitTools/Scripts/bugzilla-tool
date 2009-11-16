@@ -674,23 +674,29 @@ class CheckTreeStatus(Command):
             print "%s : %s" % (status_string.ljust(4), builder['name'])
 
 
-class LandPatchesFromCommitQueue(Command):
+class OutputTee:
     def __init__(self):
-        options = [
-            make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
-            make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
-        ]
-        Command.__init__(self, 'Run the commit queue.', options=options)
         self._original_stdout = None
         self._original_stderr = None
         self._files_for_output = []
 
-    queue_log_path = 'commit_queue.log'
-    bug_logs_directory = 'commit_queue_logs'
+    def add_log(self, path):
+        log_file = self._open_log_file(path)
+        self._files_for_output.append(log_file)
+        self._tee_outputs_to_files(self._files_for_output)
+        return log_file
 
-    log_date_format = "%Y-%m-%d %H:%M:%S"
-    sleep_duration_text = "5 mins"
-    seconds_to_sleep = 300
+    def remove_log(self, log_file):
+        self._files_for_output.remove(log_file)
+        self._tee_outputs_to_files(self._files_for_output)
+        log_file.close()
+
+    @staticmethod
+    def _open_log_file(log_path):
+        (log_directory, log_name) = os.path.split(log_path)
+        if log_directory and not os.path.exists(log_directory):
+            os.makedirs(log_directory)
+        return open(log_path, 'a+')
 
     def _tee_outputs_to_files(self, files):
         if not self._original_stdout:
@@ -702,6 +708,92 @@ class LandPatchesFromCommitQueue(Command):
         else:
             sys.stdout = self._original_stdout
             sys.stderr = self._original_stderr
+
+
+class WorkQueueDelegate:
+    def queue_log_path(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def work_logs_directory(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def status_host(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def begin_work_queue(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def next_work_item(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def should_proceed_with_work_item(self, work_item):
+        # returns (safe_to_proceed, waiting_message, bug_id)
+        raise NotImplementedError, "subclasses must implement"
+
+    def process_work_item(self, work_item):
+        raise NotImplementedError, "subclasses must implement"
+
+    def handle_unexpected_error(self, work_item, message):
+        raise NotImplementedError, "subclasses must implement"
+
+
+class WorkQueue:
+    def __init__(self, delegate):
+        self._delegate = delegate
+        self._output_tee = OutputTee()
+
+    log_date_format = "%Y-%m-%d %H:%M:%S"
+    sleep_duration_text = "5 mins"
+    seconds_to_sleep = 300
+
+    def run(self):
+        self._begin_logging()
+        self.status_bot = StatusBot(host=self._delegate.status_host())
+
+        self._delegate.begin_work_queue()
+        while (True):
+            self._ensure_work_log_closed()
+            try:
+                work_item = self._delegate.next_work_item()
+                if not work_item:
+                    self._update_status_and_sleep("Empty queue.")
+                    continue
+                (safe_to_proceed, waiting_message, bug_id) = self._delegate.should_proceed_with_work_item(work_item)
+                if not safe_to_proceed:
+                    self._update_status_and_sleep(waiting_message, bug_ig=bug_id)
+                    continue
+                self.status_bot.update_status(waiting_message, bug_id=bug_id)
+            except Exception, e:
+                # Don't try tell the status bot, in case telling it causes an exception.
+                self._sleep("Exception while preparing queue: %s." % e)
+                continue
+
+            self._open_work_log(bug_id)
+            try:
+                self._delegate.process_work_item(work_item)
+            except ScriptError, e:
+                # exit(2) is a special exit code we use to indicate that the error was already
+                # handled by and we should keep looping anyway.
+                if e.exit_code == 2:
+                    continue
+                message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
+                self._delegate.handle_unexpected_error(work_item, message)
+        # Never reached.
+        self._ensure_work_log_closed()
+
+    def _begin_logging(self):
+        self._queue_log = self._output_tee.add_log(self._delegate.queue_log_path())
+        self._work_log = None
+
+    def _open_work_log(self, bug_id):
+        work_log_path = os.path.join(self._delegate.work_logs_directory(), "%s.log" % bug_id)
+        self._work_log = self._output_tee.add_log(work_log_path)
+
+    def _ensure_work_log_closed(self):
+        # If we still have a bug log open, close it.
+        if self._work_log:
+            self._output_tee.remove_log(self._work_log)
+            self._work_log = None
 
     @classmethod
     def _sleep_message(cls, message):
@@ -719,94 +811,71 @@ class LandPatchesFromCommitQueue(Command):
         log(status_message)
         time.sleep(self.seconds_to_sleep)
 
-    @staticmethod
-    def _open_log_file(log_path):
-        (log_directory, log_name) = os.path.split(log_path)
-        if log_directory and not os.path.exists(log_directory):
-            os.makedirs(log_directory)
-        return open(log_path, 'a+')
 
-    def _add_log_to_output_tee(self, path):
-        log_file = self._open_log_file(path)
-        self._files_for_output.append(log_file)
-        self._tee_outputs_to_files(self._files_for_output)
-        return log_file
+class LandPatchesFromCommitQueue(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
+            make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
+        ]
+        Command.__init__(self, 'Run the commit queue.', options=options)
 
-    def _remove_log_from_output_tee(self, log_file):
-        self._files_for_output.remove(log_file)
-        self._tee_outputs_to_files(self._files_for_output)
-        log_file.close()
+    def queue_log_path(self):
+        return 'commit_queue.log'
 
-    def execute(self, options, args, tool):
-        log("CAUTION: commit-queue will discard all local changes in %s" % tool.scm().checkout_root)
-        if options.confirm:
+    def work_logs_directory(self):
+        return 'commit_queue_logs'
+
+    def status_host(self):
+        return self.options.status_host
+
+    def begin_work_queue(self):
+        log("CAUTION: commit-queue will discard all local changes in %s" % self.tool.scm().checkout_root)
+        if self.options.confirm:
             response = raw_input("Are you sure?  Type 'yes' to continue: ")
             if (response != 'yes'):
                 error("User declined.")
+        log("Running WebKit Commit Queue. %s" % datetime.now().strftime(WorkQueue.log_date_format))
 
-        queue_log = self._add_log_to_output_tee(self.queue_log_path)
-        log("Running WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))
+    def next_work_item(self):
+        # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
+        patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+        if not len(patches):
+            return None
+        patch_ids = map(lambda patch: patch['id'], patches)
+        log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
+        return patches[0]['bug_id']
 
-        self.status_bot = StatusBot(host=options.status_host)
+    def should_proceed_with_work_item(self, bug_id):
+        red_builders_names = self.tool.buildbot.red_core_builders_names()
+        if red_builders_names:
+            red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
+            return (False, "Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
+        return (True, "Landing patches from bug %s." % bug_id, bug_id)
 
-        bug_log = None
-        while (True):
-            # If we still have a bug log open from the last loop, close it.
-            if bug_log:
-                self._remove_log_from_output_tee(bug_log)
-                bug_log = None
-            # Either of these calls could throw URLError which shouldn't stop the queue.
-            # We catch all exceptions just in case.
-            try:
-                # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
-                patches = tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
-                if not len(patches):
-                    self._update_status_and_sleep("Empty queue.")
-                    continue
-                patch_ids = map(lambda patch: patch['id'], patches)
-                first_bug_id = patches[0]['bug_id']
-                log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
+    def process_work_item(self, bug_id):
+        bugzilla_tool_path = __file__ # re-execute this script
+        bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id]
+        WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
 
-                red_builders_names = tool.buildbot.red_core_builders_names()
-                if red_builders_names:
-                    red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
-                    self._update_status_and_sleep("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names))
-                    continue
+    def handle_unexpected_error(self, bug_id, message):
+        # We don't have a patch id at this point, so try to grab the first patch off
+        # of the bug in question.  We plan to update the commit-queue to opearate
+        # off of patch ids in the near future.
+        patches = self.tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
+        non_obsolete_patches = filter(lambda patch: not patch['is_obsolete'], patches)
+        if not len(non_obsolete_patches):
+            # If there are no patches left on the bug, assume land-patches already closed it before dying, and just continue.
+            log(message)
+            return
+        bug_id = non_obsolete_patches[0]['id']
+        self.tool.bugs.reject_patch_from_commit_queue(bug_id, message)
 
-                self.status_bot.update_status("Landing patches from bug %s." % first_bug_id, bug_id=first_bug_id)
-            except Exception, e:
-                # Don't try tell the status bot, in case telling it causes an exception.
-                self._sleep("Exception while checking queue and bots: %s." % e)
-                continue
-
-            # Try to land patches on the first bug in the queue before looping
-            bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % first_bug_id)
-            bug_log = self._add_log_to_output_tee(bug_log_path)
-            bugzilla_tool_path = __file__ # re-execute this script
-            bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id]
-            try:
-                WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
-            except ScriptError, e:
-                # Unexpected failure!  Mark the patch as commit-queue- and comment in the bug.
-                # exit(2) is a special exit code we use to indicate that the error was already handled by land-patches and we should keep looping anyway.
-                if e.exit_code == 2:
-                    continue
-                message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
-                # We don't have a patch id at this point, so try to grab the first patch off of the bug in question.
-                patches = tool.bugs.fetch_commit_queue_patches_from_bug(first_bug_id)
-                non_obsolete_patches = filter(lambda patch: not patch['is_obsolete'], patches)
-                if not len(non_obsolete_patches):
-                    # If there are no patches left on the bug, assume land-patches already closed it before dying, and just continue.
-                    log(message)
-                    continue
-                first_patch_id = non_obsolete_patches[0]['id']
-                tool.bugs.reject_patch_from_commit_queue(first_patch_id, message)
-
-        # Never reached.
-        if bug_log:
-            self._remove_log_from_output_tee(bug_log)
-        self._remove_log_from_output_tee(queue_log)
-
+    def execute(self, options, args, tool):
+        self.options = options
+        self.tool = tool
+        work_queue = WorkQueue(self)
+        work_queue.run()
 
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
     def __init__(self):

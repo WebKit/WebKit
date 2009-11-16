@@ -1,3 +1,15 @@
+2009-11-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor bugzilla-tool to allow for multiple queues
+        https://bugs.webkit.org/show_bug.cgi?id=31513
+
+        Divide the commit queue class into three class to make creating
+        additional queues easier.
+
+        * Scripts/bugzilla-tool:
+
 2009-11-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
