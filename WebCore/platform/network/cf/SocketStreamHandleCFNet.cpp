@@ -40,6 +40,10 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
+#if BUILDING_ON_TIGER
+#define CFN_EXPORT export
+#endif
+
 extern "C" {
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
