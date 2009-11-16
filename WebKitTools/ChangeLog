@@ -1,6 +1,20 @@
 2009-11-16  Adam Barth  <abarth@webkit.org>
 
-        Reviewed by Eric Siedel.
+        Reviewed by Eric Seidel.
+
+        Move WorkQueue to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=31529
+
+        WorkQueue and WorkQueueDelegate are separate concerns from
+        bugzilla-tool.  Also added a missing include to logging.py.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/logging.py:
+        * Scripts/modules/workqueue.py:
+
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
 
         Move OutputTee to logging.py.
 

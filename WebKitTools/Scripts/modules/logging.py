@@ -29,6 +29,7 @@
 #
 # WebKit's Python module for logging
 
+import os
 import sys
 
 def log(string):
