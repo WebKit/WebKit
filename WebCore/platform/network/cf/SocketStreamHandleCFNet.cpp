@@ -40,9 +40,11 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
+extern "C" {
 extern const CFStringRef kCFStreamPropertyCONNECTProxy;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyHost;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyPort;
+}
 
 namespace WebCore {
 
