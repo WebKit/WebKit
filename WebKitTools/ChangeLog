@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Implement a StyleQueue
+        https://bugs.webkit.org/show_bug.cgi?id=31537
+
+        The first iteration of the style queue only produces output locally.
+        There is also a limit of 10 patches because it's not that useful to
+        iterate through the entire review queue at this point.  We can remove
+        the limit later.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Unit test WorkQueue
         https://bugs.webkit.org/show_bug.cgi?id=31531
 

@@ -697,33 +697,63 @@ class CheckTreeStatus(Command):
             print "%s : %s" % (status_string.ljust(4), builder['name'])
 
 
-class LandPatchesFromCommitQueue(Command, WorkQueueDelegate):
-    def __init__(self):
+class AbstractQueue(Command, WorkQueueDelegate):
+    def __init__(self, name):
+        self._name = name
         options = [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
         ]
-        Command.__init__(self, 'Run the commit queue.', options=options)
+        Command.__init__(self, 'Run the %s.' % self._name, options=options)
 
     def queue_log_path(self):
-        return 'commit_queue.log'
+        return '%s.log' % self._name
 
     def work_logs_directory(self):
-        return 'commit_queue_logs'
+        return '%s-logs' % self._name
 
     def status_host(self):
         return self.options.status_host
 
     def begin_work_queue(self):
-        log("CAUTION: commit-queue will discard all local changes in %s" % self.tool.scm().checkout_root)
+        log("CAUTION: %s will discard all local changes in %s" % (self._name, self.tool.scm().checkout_root))
         if self.options.confirm:
             response = raw_input("Are you sure?  Type 'yes' to continue: ")
             if (response != 'yes'):
                 error("User declined.")
-        log("Running WebKit Commit Queue. %s" % datetime.now().strftime(WorkQueue.log_date_format))
+        log("Running WebKit %s. %s" % (self._name, datetime.now().strftime(WorkQueue.log_date_format)))
 
     def should_continue_work_queue(self):
         return True
+
+    def next_work_item(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def should_proceed_with_work_item(self, work_item):
+        raise NotImplementedError, "subclasses must implement"
+
+    def process_work_item(self, work_item):
+        raise NotImplementedError, "subclasses must implement"
+
+    def handle_unexpected_error(self, work_item, message):
+        raise NotImplementedError, "subclasses must implement"
+
+    @staticmethod
+    def run_bugzilla_tool(args):
+        bugzilla_tool_path = __file__ # re-execute this script
+        bugzilla_tool_args = [bugzilla_tool_path] + args
+        WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
+
+    def execute(self, options, args, tool):
+        self.options = options
+        self.tool = tool
+        work_queue = WorkQueue(self)
+        work_queue.run()
+
+
+class CommitQueue(AbstractQueue):
+    def __init__(self):
+        AbstractQueue.__init__(self, "commit-queue")
 
     def next_work_item(self):
         # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
@@ -742,9 +772,7 @@ class LandPatchesFromCommitQueue(Command, WorkQueueDelegate):
         return (True, "Landing patches from bug %s." % bug_id, bug_id)
 
     def process_work_item(self, bug_id):
-        bugzilla_tool_path = __file__ # re-execute this script
-        bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id]
-        WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
+        self.run_bugzilla_tool(['land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id])
 
     def handle_unexpected_error(self, bug_id, message):
         # We don't have a patch id at this point, so try to grab the first patch off
@@ -759,11 +787,30 @@ class LandPatchesFromCommitQueue(Command, WorkQueueDelegate):
         bug_id = non_obsolete_patches[0]['id']
         self.tool.bugs.reject_patch_from_commit_queue(bug_id, message)
 
-    def execute(self, options, args, tool):
-        self.options = options
-        self.tool = tool
-        work_queue = WorkQueue(self)
-        work_queue.run()
+
+class StyleQueue(AbstractQueue):
+    def __init__(self):
+        self.patches = []
+        AbstractQueue.__init__(self, "style-queue")
+
+    def next_work_item(self):
+        if not len(self.patches):
+            self.patches = self.tool.bugs.fetch_patches_from_review_queue(limit=10)
+            if not len(self.patches):
+                return None
+        patch_ids = map(lambda patch: patch['id'], self.patches)
+        log("%s in review queue [%s]" % (pluralize('patch', len(self.patches)), ", ".join(patch_ids)))
+        return self.patches.pop(0)['bug_id']
+
+    def should_proceed_with_work_item(self, bug_id):
+        return (True, "Checking style for bug %s." % bug_id, bug_id)
+
+    def process_work_item(self, bug_id):
+        self.run_bugzilla_tool(['check-style', '--force-clean', bug_id])
+
+    def handle_unexpected_error(self, bug_id, message):
+        log(message)
+
 
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
     def __init__(self):
@@ -804,7 +851,8 @@ class BugzillaTool:
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
             { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
             { 'name' : 'tree-status', 'object' : CheckTreeStatus() },
-            { 'name' : 'commit-queue', 'object' : LandPatchesFromCommitQueue() },
+            { 'name' : 'commit-queue', 'object' : CommitQueue() },
+            { 'name' : 'style-queue', 'object' : StyleQueue() },
             { 'name' : 'rollout', 'object' : RolloutCommit() },
         ]
 

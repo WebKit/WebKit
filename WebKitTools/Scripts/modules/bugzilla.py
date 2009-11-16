@@ -304,6 +304,29 @@ class Bugzilla:
             patches_to_land += patches
         return patches_to_land
 
+    def fetch_bug_ids_from_review_queue(self):
+        review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
+
+        page = urllib2.urlopen(review_queue_url)
+        soup = BeautifulSoup(page)
+
+        bug_ids = []
+        # Grab the cells in the first column (which happens to be the bug ids)
+        for bug_link_cell in soup('td', "first-child"): # tds with the class "first-child"
+            bug_link = bug_link_cell.find("a")
+            bug_ids.append(bug_link.string) # the contents happen to be the bug id
+
+        return bug_ids
+
+    def fetch_patches_from_review_queue(self, limit):
+        patches_to_review = []
+        for bug_id in self.fetch_bug_ids_from_review_queue():
+            if len(patches_to_review) >= limit:
+                break
+            patches = self.fetch_unreviewed_patches_from_bug(bug_id)
+            patches_to_review += patches
+        return patches_to_review
+
     def authenticate(self):
         if self.authenticated:
             return
