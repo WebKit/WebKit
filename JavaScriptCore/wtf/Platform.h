@@ -375,6 +375,8 @@
 #   if Q_BYTE_ORDER == Q_BIG_EDIAN
 #       define WTF_PLATFORM_BIG_ENDIAN 1
 #   endif
+
+#   include <ce_time.h>
 #endif
 
 /* Compiler */

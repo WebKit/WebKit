@@ -66,6 +66,7 @@ win32-* {
 }
 
 wince* {
+    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
     SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.c
     DEFINES += WINCEBASIC
 }

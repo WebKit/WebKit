@@ -1,3 +1,12 @@
+2009-11-16  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix Qt build on Windows CE 6.
+
+        * JavaScriptCore.pri: Add missing include path.
+        * wtf/Platform.h: Include ce_time.h for Windows CE 6.
+
 2009-11-13  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
