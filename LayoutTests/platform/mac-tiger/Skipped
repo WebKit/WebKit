@@ -33,6 +33,8 @@ platform/mac/editing/selection/word-thai.html
 # Tests of table accessibility functionality not supported on Tiger
 platform/mac/accessibility/table-multi-bodies.html
 platform/mac/accessibility/table-updating.html
+# Lists are not supported on Leopard.
+platform/mac/accessibility/aria-directory.html
 
 # Tests of font features not supported by ATSUI
 platform/mac/fast/text/myanmar-shaping.html

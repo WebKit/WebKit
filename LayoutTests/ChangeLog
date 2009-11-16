@@ -1,3 +1,16 @@
+2009-11-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Fixing broken layout test.
+
+        Need to implement ARIA role="directory"
+        https://bugs.webkit.org/show_bug.cgi?id=31516
+
+        Lists are not supported on Leopard or Tiger, so the test for this
+        bug needs to be skipped.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2009-11-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
