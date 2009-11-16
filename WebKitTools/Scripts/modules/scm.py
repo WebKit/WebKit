@@ -146,8 +146,8 @@ class SCM:
     def script_path(self, script_name):
         return os.path.join(self.scripts_directory(), script_name)
 
-    def ensure_clean_working_directory(self, force):
-        if not force and not self.working_directory_is_clean():
+    def ensure_clean_working_directory(self, force_clean):
+        if not force_clean and not self.working_directory_is_clean():
             print self.run_command(self.status_command(), error_handler=ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
