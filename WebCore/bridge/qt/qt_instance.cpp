@@ -58,6 +58,14 @@ public:
             instance->markAggregate(markStack);
     }
 
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType,  StructureFlags));
+    }
+
+protected:
+    static const unsigned StructureFlags = RuntimeObjectImp::StructureFlags | OverridesMarkChildren;
+
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }
 };

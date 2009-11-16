@@ -151,10 +151,12 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType,  OverridesGetOwnPropertySlot | OverridesMarkChildren));
+        return Structure::create(prototype, TypeInfo(ObjectType,  StructureFlags));
     }
 
 protected:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags | OverridesMarkChildren;
+
     QtRuntimeMethodData *d_func() const {return d_ptr;}
     QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst);
     QtRuntimeMethodData *d_ptr;
