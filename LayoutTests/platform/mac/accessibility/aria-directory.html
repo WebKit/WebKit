@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="directory" role="directory">
+<div>Item 1</div>
+<div>Item 2</div>
+<div>Item 3</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA directory is exposed correctly.");
+
+    if (window.accessibilityController) {
+
+          var dir = document.getElementById("directory");
+          dir.focus();
+          dir = accessibilityController.focusedElement;
+          shouldBe("dir.role", "'AXRole: AXList'");
+          shouldBe("dir.subrole", "'AXSubrole: AXContentList'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

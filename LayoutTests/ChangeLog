@@ -1,3 +1,13 @@
+2009-11-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need to implement ARIA role="directory"
+        https://bugs.webkit.org/show_bug.cgi?id=31516
+
+        * platform/mac/accessibility/aria-directory-expected.txt: Added.
+        * platform/mac/accessibility/aria-directory.html: Added.
+
 2009-11-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

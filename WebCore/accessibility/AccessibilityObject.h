@@ -166,6 +166,7 @@ enum AccessibilityRole {
     TabPanelRole,
     TreeRole,
     TreeItemRole,
+    DirectoryRole,
     
     // ARIA Grouping roles
     LandmarkApplicationRole,

@@ -87,7 +87,11 @@ bool AccessibilityList::isOrderedList() const
 {
     if (!m_renderer)
         return false;
-    
+
+    // ARIA says a directory is like a static table of contents, which sounds like an ordered list.
+    if (ariaRoleAttribute() == DirectoryRole)
+        return true;
+
     Node* node = m_renderer->node();
     return node && node->hasTagName(olTag);    
 }

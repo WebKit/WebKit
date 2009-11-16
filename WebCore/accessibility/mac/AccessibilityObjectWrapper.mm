@@ -981,6 +981,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { GroupRole, NSAccessibilityGroupRole },
         { RadioGroupRole, NSAccessibilityRadioGroupRole },
         { ListRole, NSAccessibilityListRole },
+        { DirectoryRole, NSAccessibilityListRole },
         { ScrollBarRole, NSAccessibilityScrollBarRole },
         { ValueIndicatorRole, NSAccessibilityValueIndicatorRole },
         { ImageRole, NSAccessibilityImageRole },
