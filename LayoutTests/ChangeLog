@@ -1,3 +1,10 @@
+2009-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Disabling WebSocket tests on Tiger and Windows again, as they still time out.
+
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+
 2009-11-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
