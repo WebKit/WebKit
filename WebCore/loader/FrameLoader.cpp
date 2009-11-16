@@ -2892,8 +2892,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 // delegate callback.
                 if (pdl == m_provisionalDocumentLoader)
                     clearProvisionalLoad();
-                else if (m_provisionalDocumentLoader) {
-                    KURL unreachableURL = m_provisionalDocumentLoader->unreachableURL();
+                else if (activeDocumentLoader()) {
+                    KURL unreachableURL = activeDocumentLoader()->unreachableURL();
                     if (!unreachableURL.isEmpty() && unreachableURL == pdl->request().url())
                         shouldReset = false;
                 }

@@ -1,3 +1,19 @@
+2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Broken back/forward after using ErrorPageExtension to set error page
+        https://bugs.webkit.org/show_bug.cgi?id=30573
+
+        Skipped fast/history/back-forward-reset-after-error-handling.html
+        in mac, gtk and win DRT, because their DRT do not support yet
+        error pages handling.
+
+        * fast/history/back-forward-reset-after-error-handling.html:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann.

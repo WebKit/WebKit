@@ -1657,6 +1657,22 @@ void tst_QWebPage::errorPageExtension()
     QCOMPARE(page->history()->canGoBack(), true);
     QCOMPARE(page->history()->canGoForward(), false);
 
+    page->triggerAction(QWebPage::Back);
+    QTest::qWait(2000);
+    QCOMPARE(page->history()->canGoBack(), false);
+    QCOMPARE(page->history()->canGoForward(), true);
+
+    page->triggerAction(QWebPage::Forward);
+    QTest::qWait(2000);
+    QCOMPARE(page->history()->canGoBack(), true);
+    QCOMPARE(page->history()->canGoForward(), false);
+
+    page->triggerAction(QWebPage::Back);
+    QTest::qWait(2000);
+    QCOMPARE(page->history()->canGoBack(), false);
+    QCOMPARE(page->history()->canGoForward(), true);
+    QCOMPARE(page->history()->currentItem().url(), QUrl("qrc:///frametest/index.html"));
+
     m_view->setPage(0);
 }
 

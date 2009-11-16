@@ -5673,3 +5673,6 @@ http/tests/xmlhttprequest/interactive-state.html
 # New test infrastructure required
 # See https://bugs.webkit.org/show_bug.cgi?id=31508
 http/tests/security/isolatedWorld/didClearWindowObject.html
+
+# Need to add functionality to DumpRenderTree to handle error pages
+fast/history/back-forward-reset-after-error-handling.html

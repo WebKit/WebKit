@@ -1,3 +1,22 @@
+2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Broken back/forward after using ErrorPageExtension to set error page
+        https://bugs.webkit.org/show_bug.cgi?id=30573
+
+        Make FrameLoader::checkLoadCompleteForThisFrame method
+        to check for any working DocumentLoader instance (through
+        activeDocumentLoader()) instead of only checking for
+        'm_provisionalDocumentLoader' in order to decide to if
+        it is going to reset of not the back and forward history.
+        after an error page has been loaded.
+
+        Test: LayoutTests/fast/history/back-forward-reset-after-error-handling.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2009-11-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -98,3 +98,6 @@ fast/ruby
 
 # Accessibility tests without results
 accessibility/document-attributes.html
+
+# Need to add functionality to DumpRenderTree to handle error pages
+fast/history/back-forward-reset-after-error-handling.html
