@@ -136,20 +136,21 @@ class ReviewedPatchesOnBug(Command):
             print "%s" % patch['url']
 
 
-class CheckStyleOnBug(Command):
+class CheckStyle(Command):
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, 'Runs check-webkit-style on the r? patches on a bug', 'BUGID', options=options)
+        Command.__init__(self, 'Runs check-webkit-style on the specified attachment', 'ATTACHMENT_ID', options=options)
 
     @classmethod
-    def check_style(cls, bug_id, patch, options, tool):
+    def check_style(cls, patch, options, tool):
         tool.scm().update_webkit()
-        log("Checking style for patch %s from bug %s." % (patch['id'], bug_id))
+        log("Checking style for patch %s from bug %s." % (patch['id'], patch['bug_id']))
         try:
+            # FIXME: check-webkit-style shouldn't really have to apply the patch to check the style.
             tool.scm().apply_patch(patch)
             WebKitLandingScripts.run_webkit_script("check-webkit-style")
         except ScriptError, e:
-            log("Patch failed to apply and check style")
+            log("Patch %s from bug %s failed to apply and check style." % (patch['id'], patch['bug_id']))
             log(e.output)
 
         # This is safe because in order to get here the working directory had to be
@@ -157,13 +158,11 @@ class CheckStyleOnBug(Command):
         tool.scm().ensure_clean_working_directory(force_clean=True)
 
     def execute(self, options, args, tool):
-        bug_id = args[0]
-        patches = tool.bugs.fetch_unreviewed_patches_from_bug(bug_id)
+        attachment_id = args[0]
+        attachment = tool.bugs.fetch_attachment(attachment_id)
 
         WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
-
-        for patch in patches:
-            self.check_style(bug_id, patch, options, tool)
+        self.check_style(attachment, options, tool)
 
 
 class ApplyAttachment(Command):
@@ -796,21 +795,21 @@ class StyleQueue(AbstractQueue):
         AbstractQueue.__init__(self, "style-queue")
 
     def next_work_item(self):
-        if not len(self.patches):
+        if not self.patches:
             self.patches = self.tool.bugs.fetch_patches_from_review_queue(limit=10)
-            if not len(self.patches):
+            if not self.patches:
                 return None
         patch_ids = map(lambda patch: patch['id'], self.patches)
         log("%s in review queue [%s]" % (pluralize('patch', len(self.patches)), ", ".join(patch_ids)))
-        return self.patches.pop(0)['bug_id']
+        return self.patches.pop(0)
 
-    def should_proceed_with_work_item(self, bug_id):
-        return (True, "Checking style for bug %s." % bug_id, bug_id)
+    def should_proceed_with_work_item(self, patch):
+        return (True, "Checking style for patch %s on bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])
 
-    def process_work_item(self, bug_id):
-        self.run_bugzilla_tool(['check-style', '--force-clean', bug_id])
+    def process_work_item(self, patch):
+        self.run_bugzilla_tool(['check-style', '--force-clean', patch['id']])
 
-    def handle_unexpected_error(self, bug_id, message):
+    def handle_unexpected_error(self, patch, message):
         log(message)
 
 
@@ -847,7 +846,7 @@ class BugzillaTool:
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
-            { 'name' : 'check-style', 'object' : CheckStyleOnBug() },
+            { 'name' : 'check-style', 'object' : CheckStyle() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
             { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
