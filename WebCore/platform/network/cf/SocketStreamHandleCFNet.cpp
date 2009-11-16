@@ -40,13 +40,9 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <CFNetwork/CFSocketStreamPriv.h>
-#else
 extern const CFStringRef kCFStreamPropertyCONNECTProxy;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyHost;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyPort;
-#endif
 
 namespace WebCore {
 
