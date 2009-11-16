@@ -1,3 +1,12 @@
+2009-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        A better Windows build fix
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: (WebCore::SocketStreamHandle::createStreams):
+        Use a macro that inserts __declspec(dllimport) when appropriate for CFNetwork imports.
+
 2009-11-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
