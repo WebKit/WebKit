@@ -214,6 +214,29 @@ bool WebPage::acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& r
     return QWebPage::acceptNavigationRequest(frame, request, type);
 }
 
+bool WebPage::supportsExtension(QWebPage::Extension extension) const
+{
+    if (extension == QWebPage::ErrorPageExtension)
+        return m_drt->layoutTestController()->shouldHandleErrorPages();
+
+    return false;
+}
+
+bool WebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+{
+    const QWebPage::ErrorPageExtensionOption* info = static_cast<const QWebPage::ErrorPageExtensionOption*>(option);
+
+    // Lets handle error pages for the main frame for now.
+    if (info->frame != mainFrame())
+        return false;
+
+    QWebPage::ErrorPageExtensionReturn* errorPage = static_cast<QWebPage::ErrorPageExtensionReturn*>(output);
+
+    errorPage->content = QString("data:text/html,<body/>").toUtf8();
+
+    return true;
+}
+
 DumpRenderTree::DumpRenderTree()
     : m_dumpPixels(false)
     , m_stdin(0)

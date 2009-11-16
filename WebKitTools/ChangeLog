@@ -1,3 +1,26 @@
+2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Implement load error pages support for Qt's DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=31509
+
+        For now, it will not be a default feature, and layout tests
+        that want to make use of this have to explicitily call
+        'handleErrorPages();' for the test source.
+
+        Any of the other DumpRenderTree's (mac, win and gtk)
+        support handling error pages. Qt's will be the first.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::supportsExtension):
+        (WebCore::WebPage::extension):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::shouldHandleErrorPages):
+        (LayoutTestController::handleErrorPages):
+
 2009-11-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

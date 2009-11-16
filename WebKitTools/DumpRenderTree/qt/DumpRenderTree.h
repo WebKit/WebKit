@@ -68,6 +68,9 @@ public:
     void resetSettings();
     void enableTextOutput(bool enable) { m_enableTextOutput = enable; }
 
+    virtual bool supportsExtension(QWebPage::Extension extension) const;
+    virtual bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
+
 public slots:
     bool shouldInterruptJavaScript() { return false; }
 

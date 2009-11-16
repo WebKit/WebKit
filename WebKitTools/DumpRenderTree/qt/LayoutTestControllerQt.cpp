@@ -64,6 +64,7 @@ void LayoutTestController::reset()
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
     m_waitForPolicy = false;
+    m_handleErrorPages = false;
     qt_dump_editing_callbacks(false);
     qt_dump_resource_load_callbacks(false);
 }
