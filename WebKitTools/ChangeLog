@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        bugzilla-tool land-diff should know how to parse bug ids out of ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=31530
+
+        * Scripts/bugzilla-tool:
+
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         bugzilla-tool needs apply-attachment
         https://bugs.webkit.org/show_bug.cgi?id=31528
 

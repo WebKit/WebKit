@@ -349,11 +349,11 @@ class LandAndUpdateBug(Command):
             ChangeLog(changelog_path).set_reviewer(reviewer)
 
     def execute(self, options, args, tool):
-        bug_id = args[0] if len(args) else None
-        os.chdir(tool.scm().checkout_root)
+        bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
 
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
 
+        os.chdir(tool.scm().checkout_root)
         self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
 
         comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
