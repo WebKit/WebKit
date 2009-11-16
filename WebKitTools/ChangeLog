@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        Rename the --commit-queue flag on land-* now that the commit-queue needs no special treatment
+        https://bugs.webkit.org/show_bug.cgi?id=31549
+
+        Renamed --commit-queue to --non-interactive in most places
+        and remove the code in land-patches which is no longer needed.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         The commit-queue should use land-attachment
         https://bugs.webkit.org/show_bug.cgi?id=31548
 

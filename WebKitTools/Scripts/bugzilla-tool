@@ -233,7 +233,7 @@ class WebKitLandingScripts:
             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
-            make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
+            make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible."),
         ]
 
     @staticmethod
@@ -310,7 +310,7 @@ class WebKitLandingScripts:
             cls.build_webkit(quiet=options.quiet)
             if options.test:
                 # When running the commit-queue we don't want to launch Safari and we want to exit after the first failure.
-                cls.run_webkit_tests(launch_safari=not options.commit_queue, fail_fast=options.commit_queue, quiet=options.quiet)
+                cls.run_webkit_tests(launch_safari=not options.non_interactive, fail_fast=options.non_interactive, quiet=options.quiet)
         commit_message = commit_message_for_this_commit(scm)
         commit_log = scm.commit_with_message(commit_message.message())
         return bug_comment_from_commit_text(scm, commit_log)
@@ -331,7 +331,7 @@ class WebKitLandingScripts:
     def _land_patch(cls, patch, options, tool):
         tool.scm().update_webkit() # Update before every patch in case the tree has changed
         log("Applying %s from bug %s." % (patch['id'], patch['bug_id']))
-        tool.scm().apply_patch(patch, force=options.commit_queue)
+        tool.scm().apply_patch(patch, force=options.non_interactive)
 
         # Make sure the tree is still green after updating, before building this patch.
         # The first patch ends up checking tree status twice, but that's OK.
@@ -461,15 +461,9 @@ class LandPatchesFromBugs(AbstractPatchLandingCommand):
     def _fetch_list_of_patches_to_land(options, args, tool):
         all_patches = []
         for bug_id in args:
-            # FIXME: This is strange that --commit-queue gets special behavior here.
-            if options.commit_queue:
-                patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches=True)
-            else:
-                patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-
+            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
             log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
             all_patches += patches
-
         return all_patches
 
 
@@ -808,7 +802,7 @@ class CommitQueue(AbstractQueue):
         return (True, "Landing patch %s from bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(['land-attachment', '--force-clean', '--commit-queue', '--quiet', patch['id']])
+        self.run_bugzilla_tool(['land-attachment', '--force-clean', '--non-interactive', '--quiet', patch['id']])
 
     def handle_unexpected_error(self, patch, message):
         self.tool.bugs.reject_patch_from_commit_queue(patch['id'], message)
