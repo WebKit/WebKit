@@ -361,6 +361,7 @@ accessibility/aria-describedby-on-input.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html
 accessibility/aria-label.html
+accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-on-input.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html

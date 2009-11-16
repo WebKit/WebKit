@@ -1,3 +1,15 @@
+2009-11-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: aria-labelledby duplicates some of its WAI-ARIA label
+        https://bugs.webkit.org/show_bug.cgi?id=31565
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (titleUIElementCallback):
+        (getIsValidCallback):
+        (AccessibilityUIElement::getJSClass):
+
 2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

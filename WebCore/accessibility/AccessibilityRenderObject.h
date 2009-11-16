@@ -252,6 +252,7 @@ private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool ariaIsHidden() const;
+    bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
 
     Element* menuElementForMenuButton() const;

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<span id="labelShutdown"><label for="shutdownTime">Shut down computer after</label></span>
+<input id="shutdownTime" type="text" value="10" aria-labelledby="labelShutdown shutdownTime shutdownUnit" />
+<span id="shutdownUnit">minutes</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if aria-labelledby is used, then label elements are not used");
+
+    if (window.accessibilityController) {
+
+          var text = document.getElementById("shutdownTime");
+          text.focus();
+          text = accessibilityController.focusedElement;
+
+          shouldBe("text.title", "'AXTitle: Shut down computer after 10 minutes'");
+
+          // There should be no title UI element.
+          shouldBe("text.titleUIElement().isValid", "false");
+          
+          // The label element is in a group, in a group, in the web area.
+          var labelElement = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0);
+
+          // This just makes sure that the label element is still visible in the AX hierarchy, even though
+          // it's a label element (sometimes they are ignored).
+          shouldBe("labelElement.role", "'AXRole: AXStaticText'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
