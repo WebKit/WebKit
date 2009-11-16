@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Convert CommitQueue over to PatchCollection
+        https://bugs.webkit.org/show_bug.cgi?id=31547
+
+        Also fixes a bug in workqueue and adds a test!
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/workqueue.py:
+        * Scripts/modules/workqueue_unittest.py:
+
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move StyleQueue over to using PatchCollection
         https://bugs.webkit.org/show_bug.cgi?id=31544
 

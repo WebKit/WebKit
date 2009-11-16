@@ -766,29 +766,32 @@ class CommitQueue(AbstractQueue):
     def __init__(self):
         AbstractQueue.__init__(self, "commit-queue")
 
-    def next_work_item(self):
-        # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
-        patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
-        if not len(patches):
-            return None
-        patch_ids = map(lambda patch: patch['id'], patches)
-        log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
-        return patches[0]['bug_id']
+    def begin_work_queue(self):
+        AbstractQueue.begin_work_queue(self)
+        self._patches = PatchCollection(self.tool.bugs)
 
-    def should_proceed_with_work_item(self, bug_id):
+    def next_work_item(self):
+        if not len(self._patches):
+            # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
+            self._patches.add_patches(self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True))
+        self.log_progress(self._patches.patch_ids())
+        return self._patches.next()
+
+    def should_proceed_with_work_item(self, patch):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
         if red_builders_names:
             red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
             return (False, "Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
-        return (True, "Landing patches from bug %s." % bug_id, bug_id)
+        return (True, "Landing patches from bug %s." % patch['bug_id'], patch['bug_id'])
 
-    def process_work_item(self, bug_id):
-        self.run_bugzilla_tool(['land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id])
+    def process_work_item(self, patch):
+        self.run_bugzilla_tool(['land-patches', '--force-clean', '--commit-queue', '--quiet', patch['bug_id']])
 
-    def handle_unexpected_error(self, bug_id, message):
+    def handle_unexpected_error(self, patch, message):
         # We don't have a patch id at this point, so try to grab the first patch off
         # of the bug in question.  We plan to update the commit-queue to opearate
         # off of patch ids in the near future.
+        bug_id = patch['bug_id']
         patches = self.tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
         non_obsolete_patches = filter(lambda patch: not patch['is_obsolete'], patches)
         if not len(non_obsolete_patches):

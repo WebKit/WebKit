@@ -97,7 +97,7 @@ class WorkQueue:
                     continue
                 (safe_to_proceed, waiting_message, bug_id) = self._delegate.should_proceed_with_work_item(work_item)
                 if not safe_to_proceed:
-                    self._update_status_and_sleep(waiting_message, bug_ig=bug_id)
+                    self._update_status_and_sleep(waiting_message)
                     continue
                 self.status_bot.update_status(waiting_message, bug_id=bug_id)
             except Exception, e:

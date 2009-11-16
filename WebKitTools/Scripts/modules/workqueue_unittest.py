@@ -95,6 +95,7 @@ class LoggingDelegate(WorkQueueDelegate):
         self.record("handle_unexpected_error")
         self._test.assertEquals(work_item, "work_item")
 
+
 class ThrowErrorDelegate(LoggingDelegate):
     def __init__(self, test, error_code):
         LoggingDelegate.__init__(self, test)
@@ -103,6 +104,25 @@ class ThrowErrorDelegate(LoggingDelegate):
     def process_work_item(self, work_item):
         self.record("process_work_item")
         raise ScriptError(exit_code=self.error_code)
+
+
+class NotSafeToProceedDelegate(LoggingDelegate):
+    def should_proceed_with_work_item(self, work_item):
+        self.record("should_proceed_with_work_item")
+        self._test.assertEquals(work_item, "work_item")
+        return (False, "waiting_message", 42)
+
+
+class FastWorkQueue(WorkQueue):
+    def __init__(self, delegate):
+        WorkQueue.__init__(self, delegate)
+
+    # No sleep for the wicked.
+    seconds_to_sleep = 0
+
+    def _update_status_and_sleep(self, message):
+        pass
+
 
 class WorkQueueTest(unittest.TestCase):
     def test_trivial(self):
@@ -129,6 +149,19 @@ class WorkQueueTest(unittest.TestCase):
         work_queue = WorkQueue(delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
+
+    def test_not_safe_to_proceed(self):
+        delegate = NotSafeToProceedDelegate(self)
+        work_queue = FastWorkQueue(delegate)
+        work_queue.run()
+        expected_callbacks = LoggingDelegate.expected_callbacks[:]
+        next_work_item_index = expected_callbacks.index('next_work_item')
+        # We slice out the common part of the expected callbacks.
+        # We add 2 here to include should_proceed_with_work_item, which is
+        # a pain to search for directly because it occurs twice.
+        expected_callbacks = expected_callbacks[:next_work_item_index + 2]
+        expected_callbacks.append('should_continue_work_queue')
+        self.assertEquals(delegate._callbacks, expected_callbacks)
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(suffix="work_queue_test_logs")
