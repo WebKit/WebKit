@@ -16,6 +16,18 @@
 
         Reviewed by Adam Barth.
 
+        bugzilla-tool land-patches will close bugs with patches r=?
+        https://bugs.webkit.org/show_bug.cgi?id=28230
+
+        The commit-queue shouldn't close patches with outstanding reviews on them,
+        even if many reviewers seem to be against multi-patch bugs.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         bugzilla-tool check-style should work with attachment ids instead of bug ids
         https://bugs.webkit.org/show_bug.cgi?id=31540
 
