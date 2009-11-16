@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
+#include "V8WebGLIntArray.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -47,7 +48,7 @@ CALLBACK_FUNC_DECL(WebGLIntArrayConstructor)
 {
     INC_STATS("DOM.WebGLIntArray.Contructor");
 
-    return constructCanvasArray<WebGLIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLINTARRAY));
+    return constructWebGLArray<WebGLIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLINTARRAY));
 }
 
 // Get the specified value from the integer array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid pixel buffer range return "undefined".
@@ -76,6 +77,18 @@ INDEXED_PROPERTY_SETTER(WebGLIntArray)
         array->set(index, value->NumberValue());
     }
     return value;
+}
+
+CALLBACK_FUNC_DECL(WebGLIntArrayGet)
+{
+    INC_STATS("DOM.WebGLIntArray.get()");
+    return getWebGLArrayElement<WebGLIntArray, int>(args, V8ClassIndex::WEBGLINTARRAY);
+}
+
+CALLBACK_FUNC_DECL(WebGLIntArraySet)
+{
+    INC_STATS("DOM.WebGLIntArray.set()");
+    return setWebGLArray<WebGLIntArray, V8WebGLIntArray>(args, V8ClassIndex::WEBGLINTARRAY);
 }
 
 } // namespace WebCore

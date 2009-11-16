@@ -1,3 +1,13 @@
+2009-11-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update API of WebGLArray and friends
+        https://bugs.webkit.org/show_bug.cgi?id=31175
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Re-enabling WebSocket tests on Tiger and Windows, now that SSL is disabled.

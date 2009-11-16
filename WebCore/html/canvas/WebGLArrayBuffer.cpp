@@ -30,28 +30,29 @@
 #include "WebGLArrayBuffer.h"
 
 namespace WebCore {
-    
-    PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(unsigned sizeInBytes)
-    {
-        return adoptRef(new WebGLArrayBuffer(sizeInBytes));
-    }
-    
-    WebGLArrayBuffer::WebGLArrayBuffer(unsigned sizeInBytes) {
-        m_sizeInBytes = sizeInBytes;
-        m_data = WTF::fastZeroedMalloc(sizeInBytes);
-    }
-    
-    void* WebGLArrayBuffer::data() {
-        return m_data;
-    }
 
-    unsigned WebGLArrayBuffer::byteLength() const {
-        return m_sizeInBytes;
-    }
+PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(unsigned sizeInBytes)
+{
+    return adoptRef(new WebGLArrayBuffer(sizeInBytes));
+}
 
-    WebGLArrayBuffer::~WebGLArrayBuffer() {
-        WTF::fastFree(m_data);
-    }
+WebGLArrayBuffer::WebGLArrayBuffer(unsigned sizeInBytes) {
+    m_sizeInBytes = sizeInBytes;
+    m_data = WTF::fastZeroedMalloc(sizeInBytes);
+}
+
+void* WebGLArrayBuffer::data() {
+    return m_data;
+}
+
+unsigned WebGLArrayBuffer::byteLength() const {
+    return m_sizeInBytes;
+}
+
+WebGLArrayBuffer::~WebGLArrayBuffer() {
+    WTF::fastFree(m_data);
+}
+
 }
 
 #endif // ENABLE(3D_CANVAS)

@@ -531,30 +531,42 @@ namespace WebCore {
         DECLARE_NAMED_PROPERTY_GETTER(HTMLAllCollection);
         DECLARE_NAMED_PROPERTY_GETTER(HTMLCollection);
 
-#if ENABLE(3D_CANVAS)
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLByteArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLByteArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLFloatArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLFloatArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLIntArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLIntArray);
-#endif
-
         DECLARE_INDEXED_PROPERTY_GETTER(CanvasPixelArray);
         DECLARE_INDEXED_PROPERTY_SETTER(CanvasPixelArray);
 
 #if ENABLE(3D_CANVAS)
+        DECLARE_CALLBACK(WebGLByteArrayGet);
+        DECLARE_CALLBACK(WebGLByteArraySet);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLByteArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLByteArray);
+
+        DECLARE_CALLBACK(WebGLFloatArrayGet);
+        DECLARE_CALLBACK(WebGLFloatArraySet);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLFloatArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLFloatArray);
+
+        DECLARE_CALLBACK(WebGLIntArrayGet);
+        DECLARE_CALLBACK(WebGLIntArraySet);
+        DECLARE_INDEXED_PROPERTY_GETTER(WebGLIntArray);
+        DECLARE_INDEXED_PROPERTY_SETTER(WebGLIntArray);
+
+        DECLARE_CALLBACK(WebGLShortArrayGet);
+        DECLARE_CALLBACK(WebGLShortArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLShortArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLShortArray);
 
+        DECLARE_CALLBACK(WebGLUnsignedByteArrayGet);
+        DECLARE_CALLBACK(WebGLUnsignedByteArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedByteArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray);
 
+        DECLARE_CALLBACK(WebGLUnsignedIntArrayGet);
+        DECLARE_CALLBACK(WebGLUnsignedIntArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedIntArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedIntArray);
 
+        DECLARE_CALLBACK(WebGLUnsignedShortArrayGet);
+        DECLARE_CALLBACK(WebGLUnsignedShortArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedShortArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray);
 #endif

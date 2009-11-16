@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
+#include "V8WebGLUnsignedByteArray.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -47,7 +48,7 @@ CALLBACK_FUNC_DECL(WebGLUnsignedByteArrayConstructor)
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.Contructor");
 
-    return constructCanvasArray<WebGLUnsignedByteArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY));
+    return constructWebGLArray<WebGLUnsignedByteArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY));
 }
 
 // Get the specified value from the array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid array range return "undefined".
@@ -76,6 +77,18 @@ INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray)
         array->set(index, value->NumberValue());
     }
     return value;
+}
+
+CALLBACK_FUNC_DECL(WebGLUnsignedByteArrayGet)
+{
+    INC_STATS("DOM.WebGLUnsignedByteArray.get()");
+    return getWebGLArrayElement<WebGLUnsignedByteArray, unsigned char>(args, V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY);
+}
+
+CALLBACK_FUNC_DECL(WebGLUnsignedByteArraySet)
+{
+    INC_STATS("DOM.WebGLUnsignedByteArray.set()");
+    return setWebGLArray<WebGLUnsignedByteArray, V8WebGLUnsignedByteArray>(args, V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY);
 }
 
 } // namespace WebCore

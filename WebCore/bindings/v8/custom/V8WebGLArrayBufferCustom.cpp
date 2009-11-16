@@ -43,12 +43,22 @@ namespace WebCore {
 
 CALLBACK_FUNC_DECL(WebGLArrayBufferConstructor)
 {
-    INC_STATS("DOM.WebGLArrayBuffer.Contructor");
+    INC_STATS("DOM.WebGLArrayBuffer.Constructor");
 
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
     int argLen = args.Length();
+    if (argLen == 0) {
+        // This happens when we return a previously constructed
+        // WebGLArrayBuffer, e.g. from the call to WebGLArray.buffer.
+        // The V8DOMWrapper will set the internal pointer in the
+        // created object. Unfortunately it doesn't look like it's
+        // possible to distinguish between this case and that where
+        // the user calls "new WebGLArrayBuffer()" from JavaScript.
+        return args.Holder();
+    }
+
     // Supported constructors:
     // WebGLArrayBuffer(n) where n is an integer:
     //   -- create an empty buffer of n bytes

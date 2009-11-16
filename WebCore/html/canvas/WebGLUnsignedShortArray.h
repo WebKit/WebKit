@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,55 +34,63 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    
-    class WebGLUnsignedShortArray : public WebGLArray {
-    public:
-        virtual bool isUnsignedShortArray() const { return true; }
 
-        static PassRefPtr<WebGLUnsignedShortArray> create(unsigned length);
-        static PassRefPtr<WebGLUnsignedShortArray> create(unsigned short* array, unsigned length);
-        static PassRefPtr<WebGLUnsignedShortArray> create(PassRefPtr<WebGLArrayBuffer> buffer, int offset, unsigned length);
+class WebGLUnsignedShortArray : public WebGLArray {
+  public:
+    virtual bool isUnsignedShortArray() const { return true; }
 
-        unsigned short* data() { return static_cast<unsigned short*>(baseAddress()); }
-        
-        virtual unsigned length() const;
-        virtual unsigned sizeInBytes() const;
+    static PassRefPtr<WebGLUnsignedShortArray> create(unsigned length);
+    static PassRefPtr<WebGLUnsignedShortArray> create(unsigned short* array, unsigned length);
+    static PassRefPtr<WebGLUnsignedShortArray> create(PassRefPtr<WebGLArrayBuffer> buffer, int byteOffset, unsigned length);
 
-        void set(unsigned index, double value)
-        {
-            if (index >= m_size)
-                return;
-            if (isnan(value)) // Clamp NaN to 0
-                value = 0;
-            if (value < std::numeric_limits<unsigned short>::min())
-                value = std::numeric_limits<unsigned short>::min();
-            else if (value > std::numeric_limits<unsigned short>::max())
-                value = std::numeric_limits<unsigned short>::max();
-            unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
-            storage[index] = static_cast<unsigned short>(value);
-        }
-        
-        bool get(unsigned index, unsigned short& result) const
-        {
-            if (index >= m_size)
-                return false;
-            unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
-            result = storage[index];
-            return true;
-        }
-        
-        unsigned short item(unsigned index) const
-        {
-            ASSERT(index < m_size);
-            unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
-            return storage[index];
-        }
+    unsigned short* data() { return static_cast<unsigned short*>(baseAddress()); }
 
-    private:
-        WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer,int offset,unsigned length);
-        unsigned m_size;
-    };
-    
+    virtual unsigned length() const;
+    virtual unsigned byteLength() const;
+    virtual PassRefPtr<WebGLArray> slice(unsigned offset, unsigned length);
+
+    void set(unsigned index, double value)
+    {
+        if (index >= m_size)
+            return;
+        if (isnan(value)) // Clamp NaN to 0
+            value = 0;
+        if (value < std::numeric_limits<unsigned short>::min())
+            value = std::numeric_limits<unsigned short>::min();
+        else if (value > std::numeric_limits<unsigned short>::max())
+            value = std::numeric_limits<unsigned short>::max();
+        unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
+        storage[index] = static_cast<unsigned short>(value);
+    }
+
+    bool get(unsigned index, unsigned short& result) const
+    {
+        if (index >= m_size)
+            return false;
+        unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
+        result = storage[index];
+        return true;
+    }
+
+    unsigned short get(unsigned index) const
+    {
+        return item(index);
+    }
+
+    unsigned short item(unsigned index) const
+    {
+        ASSERT(index < m_size);
+        unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
+        return storage[index];
+    }
+
+    void set(WebGLUnsignedShortArray* array, unsigned offset, ExceptionCode& ec);
+
+  private:
+    WebGLUnsignedShortArray(PassRefPtr<WebGLArrayBuffer> buffer,int byteOffset,unsigned length);
+    unsigned m_size;
+};
+
 } // namespace WebCore
 
 #endif // WebGLUnsignedShortArray_h

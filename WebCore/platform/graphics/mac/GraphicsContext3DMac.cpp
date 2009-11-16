@@ -329,7 +329,7 @@ void GraphicsContext3D::bufferData(unsigned long target, WebGLArray* array, unsi
         return;
     
     ensureContext(m_contextObj);
-    ::glBufferData(target, array->sizeInBytes(), array->baseAddress(), usage);
+    ::glBufferData(target, array->byteLength(), array->baseAddress(), usage);
 }
 
 void GraphicsContext3D::bufferSubData(unsigned long target, long offset, WebGLArray* array)
@@ -338,7 +338,7 @@ void GraphicsContext3D::bufferSubData(unsigned long target, long offset, WebGLAr
         return;
     
     ensureContext(m_contextObj);
-    ::glBufferSubData(target, offset, array->sizeInBytes(), array->baseAddress());
+    ::glBufferSubData(target, offset, array->byteLength(), array->baseAddress());
 }
 
 unsigned long GraphicsContext3D::checkFramebufferStatus(unsigned long target)

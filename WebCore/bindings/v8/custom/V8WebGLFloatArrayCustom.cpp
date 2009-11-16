@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
+#include "V8WebGLFloatArray.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -47,7 +48,7 @@ CALLBACK_FUNC_DECL(WebGLFloatArrayConstructor)
 {
     INC_STATS("DOM.WebGLFloatArray.Contructor");
 
-    return constructCanvasArray<WebGLFloatArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLFLOATARRAY));
+    return constructWebGLArray<WebGLFloatArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLFLOATARRAY));
 }
 
 // Get the specified value from the array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid array range return "undefined".
@@ -73,6 +74,18 @@ INDEXED_PROPERTY_SETTER(WebGLFloatArray)
     if ((index >= 0) && (index < array->length()))
         array->set(index, value->NumberValue());
     return value;
+}
+
+CALLBACK_FUNC_DECL(WebGLFloatArrayGet)
+{
+    INC_STATS("DOM.WebGLFloatArray.get()");
+    return getWebGLArrayElement<WebGLFloatArray, float>(args, V8ClassIndex::WEBGLFLOATARRAY);
+}
+
+CALLBACK_FUNC_DECL(WebGLFloatArraySet)
+{
+    INC_STATS("DOM.WebGLFloatArray.set()");
+    return setWebGLArray<WebGLFloatArray, V8WebGLFloatArray>(args, V8ClassIndex::WEBGLFLOATARRAY);
 }
 
 } // namespace WebCore

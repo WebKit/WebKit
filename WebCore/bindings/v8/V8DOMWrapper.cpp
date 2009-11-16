@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
-#include "WebGLArray.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "ChromiumBridge.h"
 #include "DOMObjectsInclude.h"
@@ -51,6 +50,7 @@
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
 #include "V8Proxy.h"
+#include "WebGLArray.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
@@ -720,6 +720,27 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
     // Non DOM node
     v8::Persistent<v8::Object> result = isActiveDomObject ? getActiveDOMObjectMap().get(impl) : getDOMObjectMap().get(impl);
     if (result.IsEmpty()) {
+#if ENABLE(3D_CANVAS)
+        if (type == V8ClassIndex::WEBGLARRAY && impl) {
+            // Determine which subclass we are wrapping.
+            WebGLArray* array = reinterpret_cast<WebGLArray*>(impl);
+            if (array->isByteArray())
+                type = V8ClassIndex::WEBGLBYTEARRAY;
+            else if (array->isFloatArray())
+                type = V8ClassIndex::WEBGLFLOATARRAY;
+            else if (array->isIntArray())
+                type = V8ClassIndex::WEBGLINTARRAY;
+            else if (array->isShortArray())
+                type = V8ClassIndex::WEBGLSHORTARRAY;
+            else if (array->isUnsignedByteArray())
+                type = V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY;
+            else if (array->isUnsignedIntArray())
+                type = V8ClassIndex::WEBGLUNSIGNEDINTARRAY;
+            else if (array->isUnsignedShortArray())
+                type = V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY;
+        }
+#endif
+
         v8::Local<v8::Object> v8Object = instantiateV8Object(type, type, impl);
         if (!v8Object.IsEmpty()) {
             // Go through big switch statement, it has some duplications

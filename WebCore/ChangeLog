@@ -1,3 +1,176 @@
+2009-11-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update API of WebGLArray and friends
+        https://bugs.webkit.org/show_bug.cgi?id=31175
+
+        * bindings/js/JSWebGLArrayCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWebGLArrayHelper.h: Added.
+        (WebCore::setWebGLArrayFromArray):
+        * bindings/js/JSWebGLByteArrayCustom.cpp:
+        (WebCore::JSWebGLByteArray::set):
+        * bindings/js/JSWebGLFloatArrayCustom.cpp:
+        (WebCore::JSWebGLFloatArray::set):
+        * bindings/js/JSWebGLIntArrayCustom.cpp:
+        (WebCore::JSWebGLIntArray::set):
+        * bindings/js/JSWebGLShortArrayCustom.cpp:
+        (WebCore::JSWebGLShortArray::set):
+        * bindings/js/JSWebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedByteArray::set):
+        * bindings/js/JSWebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedIntArray::set):
+        * bindings/js/JSWebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedShortArray::set):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        (WebCore::constructWebGLArray):
+        (WebCore::getWebGLArrayElement):
+        (WebCore::setWebGLArrayFromArray):
+        (WebCore::setWebGLArray):
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * html/canvas/WebGLArray.cpp:
+        (WebCore::WebGLArray::WebGLArray):
+        (WebCore::WebGLArray::~WebGLArray):
+        (WebCore::WebGLArray::setImpl):
+        * html/canvas/WebGLArray.h:
+        (WebCore::WebGLArray::isByteArray):
+        (WebCore::WebGLArray::isUnsignedByteArray):
+        (WebCore::WebGLArray::isShortArray):
+        (WebCore::WebGLArray::isUnsignedShortArray):
+        (WebCore::WebGLArray::isIntArray):
+        (WebCore::WebGLArray::isUnsignedIntArray):
+        (WebCore::WebGLArray::isFloatArray):
+        (WebCore::WebGLArray::buffer):
+        (WebCore::WebGLArray::baseAddress):
+        (WebCore::WebGLArray::byteOffset):
+        * html/canvas/WebGLArray.idl:
+        * html/canvas/WebGLArrayBuffer.cpp:
+        (WebCore::WebGLArrayBuffer::create):
+        (WebCore::WebGLArrayBuffer::WebGLArrayBuffer):
+        (WebCore::WebGLArrayBuffer::data):
+        (WebCore::WebGLArrayBuffer::byteLength):
+        (WebCore::WebGLArrayBuffer::~WebGLArrayBuffer):
+        * html/canvas/WebGLArrayBuffer.h:
+        * html/canvas/WebGLByteArray.cpp:
+        (WebCore::WebGLByteArray::create):
+        (WebCore::WebGLByteArray::byteLength):
+        (WebCore::WebGLByteArray::slice):
+        (WebCore::WebGLByteArray::set):
+        * html/canvas/WebGLByteArray.h:
+        (WebCore::WebGLByteArray::isByteArray):
+        (WebCore::WebGLByteArray::data):
+        (WebCore::WebGLByteArray::set):
+        (WebCore::WebGLByteArray::get):
+        (WebCore::WebGLByteArray::item):
+        * html/canvas/WebGLByteArray.idl:
+        * html/canvas/WebGLFloatArray.cpp:
+        (WebCore::WebGLFloatArray::create):
+        (WebCore::WebGLFloatArray::WebGLFloatArray):
+        (WebCore::WebGLFloatArray::length):
+        (WebCore::WebGLFloatArray::byteLength):
+        (WebCore::WebGLFloatArray::slice):
+        (WebCore::WebGLFloatArray::set):
+        * html/canvas/WebGLFloatArray.h:
+        (WebCore::WebGLFloatArray::isFloatArray):
+        (WebCore::WebGLFloatArray::data):
+        (WebCore::WebGLFloatArray::set):
+        (WebCore::WebGLFloatArray::get):
+        (WebCore::WebGLFloatArray::item):
+        * html/canvas/WebGLFloatArray.idl:
+        * html/canvas/WebGLIntArray.cpp:
+        (WebCore::WebGLIntArray::create):
+        (WebCore::WebGLIntArray::WebGLIntArray):
+        (WebCore::WebGLIntArray::length):
+        (WebCore::WebGLIntArray::byteLength):
+        (WebCore::WebGLIntArray::slice):
+        (WebCore::WebGLIntArray::set):
+        * html/canvas/WebGLIntArray.h:
+        (WebCore::WebGLIntArray::isIntArray):
+        (WebCore::WebGLIntArray::data):
+        (WebCore::WebGLIntArray::set):
+        (WebCore::WebGLIntArray::get):
+        (WebCore::WebGLIntArray::item):
+        * html/canvas/WebGLIntArray.idl:
+        * html/canvas/WebGLShortArray.cpp:
+        (WebCore::WebGLShortArray::create):
+        (WebCore::WebGLShortArray::WebGLShortArray):
+        (WebCore::WebGLShortArray::length):
+        (WebCore::WebGLShortArray::byteLength):
+        (WebCore::WebGLShortArray::slice):
+        (WebCore::WebGLShortArray::set):
+        * html/canvas/WebGLShortArray.h:
+        (WebCore::WebGLShortArray::isShortArray):
+        (WebCore::WebGLShortArray::data):
+        (WebCore::WebGLShortArray::set):
+        (WebCore::WebGLShortArray::get):
+        (WebCore::WebGLShortArray::item):
+        * html/canvas/WebGLShortArray.idl:
+        * html/canvas/WebGLUnsignedByteArray.cpp:
+        (WebCore::WebGLUnsignedByteArray::create):
+        (WebCore::WebGLUnsignedByteArray::WebGLUnsignedByteArray):
+        (WebCore::WebGLUnsignedByteArray::length):
+        (WebCore::WebGLUnsignedByteArray::byteLength):
+        (WebCore::WebGLUnsignedByteArray::slice):
+        (WebCore::WebGLUnsignedByteArray::set):
+        * html/canvas/WebGLUnsignedByteArray.h:
+        (WebCore::WebGLUnsignedByteArray::isUnsignedByteArray):
+        (WebCore::WebGLUnsignedByteArray::data):
+        (WebCore::WebGLUnsignedByteArray::set):
+        (WebCore::WebGLUnsignedByteArray::get):
+        (WebCore::WebGLUnsignedByteArray::item):
+        * html/canvas/WebGLUnsignedByteArray.idl:
+        * html/canvas/WebGLUnsignedIntArray.cpp:
+        (WebCore::WebGLUnsignedIntArray::create):
+        (WebCore::WebGLUnsignedIntArray::WebGLUnsignedIntArray):
+        (WebCore::WebGLUnsignedIntArray::length):
+        (WebCore::WebGLUnsignedIntArray::byteLength):
+        (WebCore::WebGLUnsignedIntArray::slice):
+        (WebCore::WebGLUnsignedIntArray::set):
+        * html/canvas/WebGLUnsignedIntArray.h:
+        (WebCore::WebGLUnsignedIntArray::isUnsignedIntArray):
+        (WebCore::WebGLUnsignedIntArray::data):
+        (WebCore::WebGLUnsignedIntArray::set):
+        (WebCore::WebGLUnsignedIntArray::get):
+        (WebCore::WebGLUnsignedIntArray::item):
+        * html/canvas/WebGLUnsignedIntArray.idl:
+        * html/canvas/WebGLUnsignedShortArray.cpp:
+        (WebCore::WebGLUnsignedShortArray::create):
+        (WebCore::WebGLUnsignedShortArray::WebGLUnsignedShortArray):
+        (WebCore::WebGLUnsignedShortArray::length):
+        (WebCore::WebGLUnsignedShortArray::byteLength):
+        (WebCore::WebGLUnsignedShortArray::slice):
+        (WebCore::WebGLUnsignedShortArray::set):
+        * html/canvas/WebGLUnsignedShortArray.h:
+        (WebCore::WebGLUnsignedShortArray::isUnsignedShortArray):
+        (WebCore::WebGLUnsignedShortArray::data):
+        (WebCore::WebGLUnsignedShortArray::set):
+        (WebCore::WebGLUnsignedShortArray::get):
+        (WebCore::WebGLUnsignedShortArray::item):
+        * html/canvas/WebGLUnsignedShortArray.idl:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

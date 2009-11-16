@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
+#include "V8WebGLShortArray.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -47,7 +48,7 @@ CALLBACK_FUNC_DECL(WebGLShortArrayConstructor)
 {
     INC_STATS("DOM.WebGLShortArray.Contructor");
 
-    return constructCanvasArray<WebGLShortArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLSHORTARRAY));
+    return constructWebGLArray<WebGLShortArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLSHORTARRAY));
 }
 
 // Get the specified value from the array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid array range return "undefined".
@@ -76,6 +77,18 @@ INDEXED_PROPERTY_SETTER(WebGLShortArray)
         array->set(index, value->NumberValue());
     }
     return value;
+}
+
+CALLBACK_FUNC_DECL(WebGLShortArrayGet)
+{
+    INC_STATS("DOM.WebGLShortArray.get()");
+    return getWebGLArrayElement<WebGLShortArray, short>(args, V8ClassIndex::WEBGLSHORTARRAY);
+}
+
+CALLBACK_FUNC_DECL(WebGLShortArraySet)
+{
+    INC_STATS("DOM.WebGLShortArray.set()");
+    return setWebGLArray<WebGLShortArray, V8WebGLShortArray>(args, V8ClassIndex::WEBGLSHORTARRAY);
 }
 
 } // namespace WebCore

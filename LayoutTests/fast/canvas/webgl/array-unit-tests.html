@@ -27,13 +27,26 @@ function pass() {
 }
 
 function fail(str) {
-  var exc = 'FAILED: ' + currentlyRunning + ': ' + str;
-  testFailed(str);
+  allPassed = false;
+  var exc;
+  if (str)
+    exc = currentlyRunning + ': ' + str;
+  else
+    exc = str;
+  testFailed(exc);
 }
 
 function assertEq(prefix, expected, val) {
   if (expected != val) {
-    fail(prefix + ': expected ' + expected + ', got ' + val);
+    var str = prefix + ': expected ' + expected + ', got ' + val;
+    throw str;
+  }
+}
+
+function assert(prefix, expected) {
+  if (!expected) {
+    var str = prefix + ': expected value / true';
+    throw str;
   }
 }
 
@@ -65,10 +78,41 @@ function testSetAndGet10To1(type, name) {
   }
 }
 
+function testSetAndGetMethods10To1(type, name) {
+  running('test ' + name + ' SetAndGetMethods10To1');
+  try {
+    var array = new type(10);
+    for (var i = 0; i < 10; i++) {
+      array.set(i, 10 - i);
+    }
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 10 - i, array.get(i));
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
 function testConstructWithArrayOfUnsignedValues(type, name) {
   running('test ' + name + ' ConstructWithArrayOfUnsignedValues');
   try {
     var array = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+    assertEq('Array length', 10, array.length);
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testConstructWithWebGLArrayOfUnsignedValues(type, name) {
+  running('test ' + name + ' ConstructWithWebGLArrayOfUnsignedValues');
+  try {
+    var tmp = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+    var array = new type(tmp);
     assertEq('Array length', 10, array.length);
     for (var i = 0; i < 10; i++) {
       assertEq('Element ' + i, 10 - i, array[i]);
@@ -99,6 +143,22 @@ function testSetAndGetPos10ToNeg10(type, name) {
   }
 }
 
+function testSetAndGetMethodsPos10ToNeg10(type, name) {
+  running('test ' + name + ' SetAndGetMethodsPos10ToNeg10');
+  try {
+    var array = new type(21);
+    for (var i = 0; i < 21; i++) {
+      array.set(i, 10 - i);
+    }
+    for (var i = 0; i < 21; i++) {
+      assertEq('Element ' + i, 10 - i, array.get(i));
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
 function testConstructWithArrayOfSignedValues(type, name) {
   running('test ' + name + ' ConstructWithArrayOfSignedValues');
   try {
@@ -113,9 +173,156 @@ function testConstructWithArrayOfSignedValues(type, name) {
   }
 }
 
+function testConstructWithWebGLArrayOfSignedValues(type, name) {
+  running('test ' + name + ' ConstructWithWebGLArrayOfSignedValues');
+  try {
+    var tmp = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10]);
+    var array = new type(tmp);
+    assertEq('Array length', 21, array.length);
+    for (var i = 0; i < 21; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
 //
 // Test cases for both signed and unsigned types
 //
+
+function testOffsetsAndSizes(type, name, elementSizeInBytes) {
+  running('test ' + name + ' OffsetsAndSizes');
+  try {
+    var len = 10;
+    var array = new type(len);
+    assert('array.buffer', array.buffer);
+    assertEq('array.byteOffset', array.byteOffset, 0);
+    assertEq('array.length', array.length, len);
+    assertEq('array.byteLength', array.byteLength, len * elementSizeInBytes);
+    array = new type(array.buffer, elementSizeInBytes, len - 1);
+    assert('array.buffer', array.buffer);
+    assertEq('array.byteOffset', array.byteOffset, elementSizeInBytes);
+    assertEq('array.length', array.length, len - 1);
+    assertEq('array.byteLength', array.byteLength, (len - 1) * elementSizeInBytes);
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testSetFromWebGLArray(type, name) {
+  running('test ' + name + ' SetFromWebGLArray');
+  try {
+    var array = new type(10);
+    var array2 = new type(5);
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 0, array[i]);
+    }
+    for (var i = 0; i < array2.length; i++) {
+      array2[i] = i;
+    }
+    array.set(array2);
+    for (var i = 0; i < array2.length; i++) {
+      assertEq('Element ' + i, i, array[i]);
+    }
+    array.set(array2, 5);
+    for (var i = 0; i < array2.length; i++) {
+      assertEq('Element ' + i, i, array[5 + i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function negativeTestSetFromWebGLArray(type, name) {
+  running('negativeTest ' + name + ' SetFromWebGLArray');
+  try {
+    var array = new type(5);
+    var array2 = new type(6);
+    for (var i = 0; i < 5; i++) {
+      assertEq('Element ' + i, 0, array[i]);
+    }
+    for (var i = 0; i < array2.length; i++) {
+      array2[i] = i;
+    }
+    try {
+      array.set(array2);
+      fail('Expected exception from array.set(array2)');
+      return;
+    } catch (e) {
+    }
+    try {
+      array2.set(array, 2);
+      fail('Expected exception from array2.set(array, 2)');
+      return;
+    } catch (e) {
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testSetFromArray(type, name) {
+  running('test ' + name + ' SetFromArray');
+  try {
+    var array = new type(10);
+    var array2 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 0, array[i]);
+    }
+    array.set(array2, 0);
+    for (var i = 0; i < array2.length; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testSlice(type, name) {
+  running('test ' + name + ' Slice');
+  try {
+    var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    var slice = array.slice(0, 5);
+    assertEq('slice.length', 5, slice.length);
+    for (var i = 0; i < 5; i++) {
+      assertEq('Element ' + i, i, slice[i]);
+    }
+    slice = array.slice(4, 6);
+    assertEq('slice.length', 6, slice.length);
+    for (var i = 0; i < 6; i++) {
+      assertEq('Element ' + i, 4 + i, slice[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function negativeTestSlice(type, name) {
+  running('negativeTest ' + name + ' Slice');
+  try {
+    var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    slice = array.slice(5, 6);
+    if (slice) {
+      fail();
+      return;
+    }
+    slice = array.slice(10, 0);
+    if (slice) {
+      fail();
+      return;
+    }
+    pass();
+  } catch (e) {
+    pass();
+  }
+}
 
 function testBoundaryConditions(type, name, lowValue, expectedLowValue, highValue, expectedHighValue) {
   running('test ' + name + ' BoundaryConditions(' +
@@ -146,42 +353,49 @@ function runTests() {
   var testCases =
     [ {name: "WebGLByteArray",
        unsigned: false,
+       elementSizeInBytes: 1,
        low: -128,
        expectedLow: -128,
        high: 127,
        expectedHigh: 127},
       {name: "WebGLFloatArray",
        unsigned: false,
+       elementSizeInBytes: 4,
        low: -500,
        expectedLow: -500,
        high: 500,
        expectedHigh: 500},
       {name: "WebGLIntArray",
        unsigned: false,
+       elementSizeInBytes: 4,
        low: -2147483648,
        expectedLow: -2147483648,
        high: 2147483647,
        expectedHigh: 2147483647},
       {name: "WebGLShortArray",
        unsigned: false,
+       elementSizeInBytes: 2,
        low: -32768,
        expectedLow: -32768,
        high: 32767,
        expectedHigh: 32767},
       {name: "WebGLUnsignedByteArray",
        unsigned: true,
+       elementSizeInBytes: 1,
        low: 0,
        expectedLow: 0,
        high: 255,
        expectedHigh: 255},
       {name: "WebGLUnsignedIntArray",
        unsigned: true,
+       elementSizeInBytes: 4,
        low: 0,
        expectedLow: 0,
        high: 4294967295,
        expectedHigh: 4294967295},
       {name: "WebGLUnsignedShortArray",
        unsigned: true,
+       elementSizeInBytes: 2,
        low: 0,
        expectedLow: 0,
        high: 65535,
@@ -198,11 +412,21 @@ function runTests() {
     var name = testCase.name;
     if (testCase.unsigned) {
       testSetAndGet10To1(type, name);
+      testSetAndGetMethods10To1(type, name);
       testConstructWithArrayOfUnsignedValues(type, name);
+      testConstructWithWebGLArrayOfUnsignedValues(type, name);
     } else {
       testSetAndGetPos10ToNeg10(type, name);
+      testSetAndGetMethodsPos10ToNeg10(type, name);
       testConstructWithArrayOfSignedValues(type, name);
+      testConstructWithWebGLArrayOfSignedValues(type, name);
     }
+    testOffsetsAndSizes(type, name, testCase.elementSizeInBytes);
+    testSetFromWebGLArray(type, name);
+    negativeTestSetFromWebGLArray(type, name);
+    testSetFromArray(type, name);
+    testSlice(type, name);
+    negativeTestSlice(type, name);
     testBoundaryConditions(type,
                            name,
                            testCase.low,

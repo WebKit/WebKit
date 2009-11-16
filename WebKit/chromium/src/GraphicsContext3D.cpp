@@ -1227,7 +1227,7 @@ void GraphicsContext3D::bufferData(unsigned long target, int size, unsigned long
 
 void GraphicsContext3D::bufferData(unsigned long target, WebGLArray* array, unsigned long usage)
 {
-    m_internal->bufferDataImpl(target, array->sizeInBytes(), array->baseAddress(), usage);
+    m_internal->bufferDataImpl(target, array->byteLength(), array->baseAddress(), usage);
 }
 
 void GraphicsContext3D::bufferSubData(unsigned long target, long offset, WebGLArray* array)
@@ -1247,7 +1247,7 @@ void GraphicsContext3D::bufferSubData(unsigned long target, long offset, WebGLAr
         // LogMessagef(("bufferSubData: no buffer bound"));
         return;
     }
-    glBufferSubData(target, offset, array->sizeInBytes(), array->baseAddress());
+    glBufferSubData(target, offset, array->byteLength(), array->baseAddress());
 }
 
 unsigned long GraphicsContext3D::checkFramebufferStatus(unsigned long target)

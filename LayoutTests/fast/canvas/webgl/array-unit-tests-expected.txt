@@ -3,25 +3,81 @@ Verifies the functionality of the new array-like objects in the WebGL spec
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS test WebGLByteArray SetAndGetPos10ToNeg10
+PASS test WebGLByteArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLByteArray ConstructWithArrayOfSignedValues
+PASS test WebGLByteArray ConstructWithWebGLArrayOfSignedValues
+PASS test WebGLByteArray OffsetsAndSizes
+PASS test WebGLByteArray SetFromWebGLArray
+PASS negativeTest WebGLByteArray SetFromWebGLArray
+PASS test WebGLByteArray SetFromArray
+PASS test WebGLByteArray Slice
+PASS negativeTest WebGLByteArray Slice
 PASS test WebGLByteArray BoundaryConditions(-128, -128, 127, 127)
 PASS test WebGLFloatArray SetAndGetPos10ToNeg10
+PASS test WebGLFloatArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLFloatArray ConstructWithArrayOfSignedValues
+PASS test WebGLFloatArray ConstructWithWebGLArrayOfSignedValues
+PASS test WebGLFloatArray OffsetsAndSizes
+PASS test WebGLFloatArray SetFromWebGLArray
+PASS negativeTest WebGLFloatArray SetFromWebGLArray
+PASS test WebGLFloatArray SetFromArray
+PASS test WebGLFloatArray Slice
+PASS negativeTest WebGLFloatArray Slice
 PASS test WebGLFloatArray BoundaryConditions(-500, -500, 500, 500)
 PASS test WebGLIntArray SetAndGetPos10ToNeg10
+PASS test WebGLIntArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLIntArray ConstructWithArrayOfSignedValues
+PASS test WebGLIntArray ConstructWithWebGLArrayOfSignedValues
+PASS test WebGLIntArray OffsetsAndSizes
+PASS test WebGLIntArray SetFromWebGLArray
+PASS negativeTest WebGLIntArray SetFromWebGLArray
+PASS test WebGLIntArray SetFromArray
+PASS test WebGLIntArray Slice
+PASS negativeTest WebGLIntArray Slice
 PASS test WebGLIntArray BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
 PASS test WebGLShortArray SetAndGetPos10ToNeg10
+PASS test WebGLShortArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLShortArray ConstructWithArrayOfSignedValues
+PASS test WebGLShortArray ConstructWithWebGLArrayOfSignedValues
+PASS test WebGLShortArray OffsetsAndSizes
+PASS test WebGLShortArray SetFromWebGLArray
+PASS negativeTest WebGLShortArray SetFromWebGLArray
+PASS test WebGLShortArray SetFromArray
+PASS test WebGLShortArray Slice
+PASS negativeTest WebGLShortArray Slice
 PASS test WebGLShortArray BoundaryConditions(-32768, -32768, 32767, 32767)
 PASS test WebGLUnsignedByteArray SetAndGet10To1
+PASS test WebGLUnsignedByteArray SetAndGetMethods10To1
 PASS test WebGLUnsignedByteArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedByteArray ConstructWithWebGLArrayOfUnsignedValues
+PASS test WebGLUnsignedByteArray OffsetsAndSizes
+PASS test WebGLUnsignedByteArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedByteArray SetFromWebGLArray
+PASS test WebGLUnsignedByteArray SetFromArray
+PASS test WebGLUnsignedByteArray Slice
+PASS negativeTest WebGLUnsignedByteArray Slice
 PASS test WebGLUnsignedByteArray BoundaryConditions(0, 0, 255, 255)
 PASS test WebGLUnsignedIntArray SetAndGet10To1
+PASS test WebGLUnsignedIntArray SetAndGetMethods10To1
 PASS test WebGLUnsignedIntArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedIntArray ConstructWithWebGLArrayOfUnsignedValues
+PASS test WebGLUnsignedIntArray OffsetsAndSizes
+PASS test WebGLUnsignedIntArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedIntArray SetFromWebGLArray
+PASS test WebGLUnsignedIntArray SetFromArray
+PASS test WebGLUnsignedIntArray Slice
+PASS negativeTest WebGLUnsignedIntArray Slice
 PASS test WebGLUnsignedIntArray BoundaryConditions(0, 0, 4294967295, 4294967295)
 PASS test WebGLUnsignedShortArray SetAndGet10To1
+PASS test WebGLUnsignedShortArray SetAndGetMethods10To1
 PASS test WebGLUnsignedShortArray ConstructWithArrayOfUnsignedValues
+PASS test WebGLUnsignedShortArray ConstructWithWebGLArrayOfUnsignedValues
+PASS test WebGLUnsignedShortArray OffsetsAndSizes
+PASS test WebGLUnsignedShortArray SetFromWebGLArray
+PASS negativeTest WebGLUnsignedShortArray SetFromWebGLArray
+PASS test WebGLUnsignedShortArray SetFromArray
+PASS test WebGLUnsignedShortArray Slice
+PASS negativeTest WebGLUnsignedShortArray Slice
 PASS test WebGLUnsignedShortArray BoundaryConditions(0, 0, 65535, 65535)
 Test passed.
 PASS successfullyParsed is true

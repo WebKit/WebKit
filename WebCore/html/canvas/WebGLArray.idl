@@ -25,8 +25,11 @@
 
 module html {
     interface [Conditional=3D_CANVAS, CustomToJS] WebGLArray {
-        readonly attribute long length;
-        int sizeInBytes();
-        int alignedSizeInBytes();
+        readonly attribute WebGLArrayBuffer buffer;
+        readonly attribute unsigned long byteOffset;
+        readonly attribute unsigned long byteLength;
+        readonly attribute unsigned long length;
+
+        WebGLArray slice(in unsigned long offset, in unsigned long length);
     };
 }

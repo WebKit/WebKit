@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
+#include "V8WebGLByteArray.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -47,7 +48,7 @@ CALLBACK_FUNC_DECL(WebGLByteArrayConstructor)
 {
     INC_STATS("DOM.WebGLByteArray.Contructor");
 
-    return constructCanvasArray<WebGLByteArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLBYTEARRAY));
+    return constructWebGLArray<WebGLByteArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLBYTEARRAY));
 }
 
 // Get the specified value from the byte buffer and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid byte buffer range return "undefined".
@@ -76,6 +77,18 @@ INDEXED_PROPERTY_SETTER(WebGLByteArray)
         array->set(index, value->NumberValue());
     }
     return value;
+}
+
+CALLBACK_FUNC_DECL(WebGLByteArrayGet)
+{
+    INC_STATS("DOM.WebGLByteArray.get()");
+    return getWebGLArrayElement<WebGLByteArray, signed char>(args, V8ClassIndex::WEBGLBYTEARRAY);
+}
+
+CALLBACK_FUNC_DECL(WebGLByteArraySet)
+{
+    INC_STATS("DOM.WebGLByteArray.set()");
+    return setWebGLArray<WebGLByteArray, V8WebGLByteArray>(args, V8ClassIndex::WEBGLBYTEARRAY);
 }
 
 } // namespace WebCore
