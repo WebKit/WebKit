@@ -131,7 +131,7 @@ class SCM:
             stdin = subprocess.PIPE if input else None
             string_to_communicate = input
         process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
-        output = process.communicate(string_to_communicate)[0].rstrip()
+        output = process.communicate(string_to_communicate)[0]
         exit_code = process.wait()
         if exit_code:
             script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
@@ -297,7 +297,7 @@ class SVN(SCM):
     @classmethod
     def value_from_svn_info(cls, path, field_name):
         svn_info_args = ['svn', 'info', path]
-        info_output = cls.run_command(svn_info_args)
+        info_output = cls.run_command(svn_info_args).rstrip()
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
             raise ScriptError(script_args=svn_info_args, message='svn info did not contain a %s.' % field_name)
@@ -396,7 +396,7 @@ class Git(SCM):
 
     @classmethod
     def in_working_directory(cls, path):
-        return cls.run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=ignore_error) == "true"
+        return cls.run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=ignore_error).rstrip() == "true"
 
     @classmethod
     def find_checkout_root(cls, path):
@@ -457,7 +457,7 @@ class Git(SCM):
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
         # git svn find-rev always exits 0, even when the revision is not found.
-        return cls.run_command(['git', 'svn', 'find-rev', 'r%s' % revision])
+        return cls.run_command(['git', 'svn', 'find-rev', 'r%s' % revision]).rstrip()
 
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)

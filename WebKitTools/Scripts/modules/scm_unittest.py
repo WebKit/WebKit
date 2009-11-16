@@ -126,10 +126,10 @@ class SCMClassTests(unittest.TestCase):
 
     def test_run_command_with_pipe(self):
         input_process = subprocess.Popen(['/bin/echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)
-        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input=input_process.stdout), "bar")
+        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input=input_process.stdout), "bar\n")
 
         # Test the non-pipe case too:
-        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input="foo\nbar"), "bar")
+        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input="foo\nbar"), "bar\n")
 
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
         # Test when the input pipe process fails.
