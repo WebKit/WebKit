@@ -382,10 +382,10 @@ class LandPatchesFromBugs(Command):
         exit(2) # Exit 2 insted of 1 to indicate to the commit-queue to indicate we handled the error, and that the queue should keep looping.
 
     @classmethod
-    def _close_bug_if_no_active_patches(cls, patch, option, tool):
+    def _close_bug_if_no_active_patches(cls, bugs, bug_id):
         # This should check to make sure there are no r? or r+ patches on the bug before closing.
         # https://bugs.webkit.org/show_bug.cgi?id=28230
-        tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
+        bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
 
     @classmethod
     def _land_patch(cls, patch, options, tool):
@@ -405,7 +405,7 @@ class LandPatchesFromBugs(Command):
             for patch in patches:
                 cls._land_patch(patch, options, tool)
             if options.close_bug and patches:
-                cls._close_bug_if_no_active_patches(patches[0]['bug_id'])
+                cls._close_bug_if_no_active_patches(tool.bugs, patches[0]['bug_id'])
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
