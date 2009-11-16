@@ -1,3 +1,10 @@
+2009-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Re-enabling WebSocket tests on Tiger and Windows, now that SSL is disabled.
+
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+
 2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Antti Koivisto.

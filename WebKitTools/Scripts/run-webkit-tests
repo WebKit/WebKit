@@ -120,7 +120,8 @@ my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
 my $ignoreMetrics = 0;
 my $webSocketPort = 8880;
-my $webSocketSecurePort = 9323;
+# wss is disabled until all platforms support pyOpenSSL.
+# my $webSocketSecurePort = 9323;
 my $ignoreTests = '';
 my $iterations = 1;
 my $launchSafari = 1;
@@ -491,7 +492,8 @@ my $lastDirectory = "";
 my $isHttpdOpen = 0;
 my $isWebSocketServerOpen = 0;
 my $webSocketServerPID = 0;
-my $webSocketSecureServerPID = 0;
+# wss is disabled until all platforms support pyOpenSSL.
+# my $webSocketSecureServerPID = 0;
 
 sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
@@ -616,7 +618,9 @@ for my $test (@tests) {
             openWebSocketServerIfNeeded();
             my $path = canonpath($test);
             if ($test =~ /^websocket\/tests\/ssl\//) {
-                print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
+                # wss is disabled until all platforms support pyOpenSSL.
+                print STDERR "Error: wss is disabled until all platforms support pyOpenSSL.";
+                # print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
             } else {
                 print OUT "http://127.0.0.1:$webSocketPort/$path\n";
             }
@@ -1417,20 +1421,22 @@ sub openWebSocketServerIfNeeded()
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
     );
-    my @argsSecure = (
-        "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
-        "-p", "$webSocketSecurePort",
-        "-d", "$webSocketHandlerDir",
-        "-t",
-        "-k", "$sslCertificate",
-        "-c", "$sslCertificate",
-    );
+    # wss is disabled until all platforms support pyOpenSSL.
+    # my @argsSecure = (
+    #     "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+    #     "-p", "$webSocketSecurePort",
+    #     "-d", "$webSocketHandlerDir",
+    #     "-t",
+    #     "-k", "$sslCertificate",
+    #     "-c", "$sslCertificate",
+    # );
 
     $ENV{"PYTHONPATH"} = $webSocketPythonPath;
     $webSocketServerPID = open3(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, \*WEBSOCKETSERVER_ERR, $webSocketServerPath, @args);
-    $webSocketSecureServerPID = open3(\*WEBSOCKETSECURESERVER_IN, \*WEBSOCKETSECURESERVER_OUT, \*WEBSOCKETSECURESERVER_ERR, $webSocketServerPath, @argsSecure);
-
-    my @listen = ("http://127.0.0.1:$webSocketPort", "https://127.0.0.1:$webSocketSecurePort");
+    # wss is disabled until all platforms support pyOpenSSL.
+    # $webSocketSecureServerPID = open3(\*WEBSOCKETSECURESERVER_IN, \*WEBSOCKETSECURESERVER_OUT, \*WEBSOCKETSECURESERVER_ERR, $webSocketServerPath, @argsSecure);
+    # my @listen = ("http://127.0.0.1:$webSocketPort", "https://127.0.0.1:$webSocketSecurePort");
+    my @listen = ("http://127.0.0.1:$webSocketPort");
     for (my $i = 0; $i < @listen; $i++) {
         my $retryCount = 10;
         while (system("/usr/bin/curl -k -q --silent --stderr - --output /dev/null $listen[$i]") && $retryCount) {
@@ -1452,10 +1458,11 @@ sub closeWebSocketServer()
     close WEBSOCKETSERVER_ERR;
     kill 15, $webSocketServerPID;
 
-    close WEBSOCKETSECURESERVER_IN;
-    close WEBSOCKETSECURESERVER_OUT;
-    close WEBSOCKETSECURESERVER_ERR;
-    kill 15, $webSocketSecureServerPID;
+    # wss is disabled until all platforms support pyOpenSSL.
+    # close WEBSOCKETSECURESERVER_IN;
+    # close WEBSOCKETSECURESERVER_OUT;
+    # close WEBSOCKETSECURESERVER_ERR;
+    # kill 15, $webSocketSecureServerPID;
 
     $isWebSocketServerOpen = 0;
 }

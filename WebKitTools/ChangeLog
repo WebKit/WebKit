@@ -1,3 +1,13 @@
+2009-11-16  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Disable wss until all platforms support pyOpenSSL
+
+        https://bugs.webkit.org/show_bug.cgi?id=31479
+
+        * Scripts/run-webkit-tests:
+
 2009-11-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
