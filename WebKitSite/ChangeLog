@@ -1,3 +1,11 @@
+2009-11-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
 2009-11-13  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Darin Adler.
