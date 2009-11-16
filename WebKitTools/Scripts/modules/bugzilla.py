@@ -283,10 +283,8 @@ class Bugzilla:
                 commit_queue_patches.append(attachment)
         return commit_queue_patches
 
-    def fetch_bug_ids_from_commit_queue(self):
-        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
-
-        page = urllib2.urlopen(commit_queue_url)
+    def _fetch_bug_ids_advanced_query(self, query):
+        page = urllib2.urlopen(query)
         soup = BeautifulSoup(page)
 
         bug_ids = []
@@ -296,6 +294,14 @@ class Bugzilla:
             bug_ids.append(bug_link.string) # the contents happen to be the bug id
 
         return bug_ids
+
+    def fetch_bug_ids_from_commit_queue(self):
+        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
+        return self._fetch_bug_ids_advanced_query(commit_queue_url)
+
+    def fetch_bug_ids_from_review_queue(self):
+        review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
+        return self._fetch_bug_ids_advanced_query(review_queue_url)
 
     def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
         patches_to_land = []
@@ -303,20 +309,6 @@ class Bugzilla:
             patches = self.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
             patches_to_land += patches
         return patches_to_land
-
-    def fetch_bug_ids_from_review_queue(self):
-        review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
-
-        page = urllib2.urlopen(review_queue_url)
-        soup = BeautifulSoup(page)
-
-        bug_ids = []
-        # Grab the cells in the first column (which happens to be the bug ids)
-        for bug_link_cell in soup('td', "first-child"): # tds with the class "first-child"
-            bug_link = bug_link_cell.find("a")
-            bug_ids.append(bug_link.string) # the contents happen to be the bug id
-
-        return bug_ids
 
     def fetch_patches_from_review_queue(self, limit):
         patches_to_review = []
