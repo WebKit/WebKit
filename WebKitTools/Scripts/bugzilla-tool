@@ -382,21 +382,30 @@ class LandPatchesFromBugs(Command):
         exit(2) # Exit 2 insted of 1 to indicate to the commit-queue to indicate we handled the error, and that the queue should keep looping.
 
     @classmethod
-    def land_patches(cls, bug_id, patches, options, tool):
-        try:
-            comment_text = ""
-            for patch in patches:
-                tool.scm().update_webkit() # Update before every patch in case the tree has changed
-                log("Applying %s from bug %s." % (patch['id'], bug_id))
-                tool.scm().apply_patch(patch, force=options.commit_queue)
-                # Make sure the tree is still green after updating, before building this patch.
-                # The first patch ends up checking tree status twice, but that's OK.
-                WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
-                comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
-                tool.bugs.clear_attachment_flags(patch['id'], comment_text)
+    def _close_bug_if_no_active_patches(cls, patch, option, tool):
+        # This should check to make sure there are no r? or r+ patches on the bug before closing.
+        # https://bugs.webkit.org/show_bug.cgi?id=28230
+        tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
 
-            if options.close_bug:
-                tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
+    @classmethod
+    def _land_patch(cls, patch, options, tool):
+        tool.scm().update_webkit() # Update before every patch in case the tree has changed
+        log("Applying %s from bug %s." % (patch['id'], patch['bug_id']))
+        tool.scm().apply_patch(patch, force=options.commit_queue)
+
+        # Make sure the tree is still green after updating, before building this patch.
+        # The first patch ends up checking tree status twice, but that's OK.
+        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
+        comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
+        tool.bugs.clear_attachment_flags(patch['id'], comment_text)
+
+    @classmethod
+    def land_patches(cls, patches, options, tool):
+        try:
+            for patch in patches:
+                cls._land_patch(patch, options, tool)
+            if options.close_bug and patches:
+                cls._close_bug_if_no_active_patches(patches[0]['bug_id'])
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
@@ -431,15 +440,13 @@ class LandPatchesFromBugs(Command):
         if not len(args):
             error("bug-id(s) required")
 
-        # Check the tree status here so we can fail early
+        # Check the tree status first so we can fail early.
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
-
         bugs_to_patches = self._fetch_list_of_patches_to_land(options, args, tool)
 
         WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
-
         for bug_id in bugs_to_patches.keys():
-            self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
+            self.land_patches(bugs_to_patches[bug_id], options, tool)
 
 
 class CommitMessageForCurrentDiff(Command):

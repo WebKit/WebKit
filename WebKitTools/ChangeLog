@@ -1,3 +1,15 @@
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        land-patches needs to be re-factored into smaller chunks
+        https://bugs.webkit.org/show_bug.cgi?id=31532
+
+        The next patch will move these methods into WebKitLandingScripts.
+
+        * Scripts/bugzilla-tool:
+         - Split out _land_patch and _close_bug_if_no_active_patches.
+
 2009-11-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
