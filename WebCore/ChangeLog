@@ -1,3 +1,16 @@
+2009-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [KURLGoogle] setHostAndPort doesn't handle arguments without port correctly.
+
+        Fix a bug in the code that was dormant until http://trac.webkit.org/changeset/50784.
+
+        Covered by existing test: LayoutTests/fast/dom/HTMLAnchorElement/set-href-attribute-host.html
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setHostAndPort): Added handling of arguments without port specified.
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Jon Honeycutt.

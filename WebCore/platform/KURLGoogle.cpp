@@ -577,21 +577,25 @@ void KURL::setHost(const String& host)
     m_url.replaceComponents(replacements);
 }
 
-// This function is used only in the JSC build.
 void KURL::setHostAndPort(const String& s)
 {
-    String newhost = s.left(s.find(":"));
-    String newport = s.substring(s.find(":") + 1);
+    String host = s;
+    String port;
+    int hostEnd = s.find(":");
+    if (hostEnd != -1) {
+        host = s.left(hostEnd);
+        port = s.substring(hostEnd + 1);
+    }
 
     KURLGooglePrivate::Replacements replacements;
     // Host can't be removed, so we always set.
-    replacements.SetHost(CharactersOrEmpty(newhost),
-                         url_parse::Component(0, newhost.length()));
+    replacements.SetHost(CharactersOrEmpty(host),
+                         url_parse::Component(0, host.length()));
 
-    if (newport.isEmpty())  // Port may be removed, so we support clearing.
+    if (port.isEmpty())  // Port may be removed, so we support clearing.
         replacements.ClearPort();
     else
-        replacements.SetPort(CharactersOrEmpty(newport), url_parse::Component(0, newport.length()));
+        replacements.SetPort(CharactersOrEmpty(port), url_parse::Component(0, port.length()));
     m_url.replaceComponents(replacements);
 }
 
