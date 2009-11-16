@@ -340,12 +340,11 @@ class WebKitLandingScripts:
         tool.bugs.clear_attachment_flags(patch['id'], comment_text)
 
     @classmethod
-    def land_patches(cls, patches, options, tool):
+    def land_patch_and_handle_errors(cls, patch, options, tool):
         try:
-            for patch in patches:
-                cls._land_patch(patch, options, tool)
-            if options.close_bug and patches:
-                cls._close_bug_if_no_active_patches(tool.bugs, patches[0]['bug_id'])
+            cls._land_patch(patch, options, tool)
+            if options.close_bug:
+                cls._close_bug_if_no_active_patches(tool.bugs, patch['bug_id'])
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
@@ -410,44 +409,68 @@ class LandAndUpdateBug(Command):
             log("No bug id provided.")
 
 
-class LandPatchesFromBugs(Command):
-    def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.land_options()
-        Command.__init__(self, 'Lands all patches on a bug optionally testing them first', 'BUGID', options=options)
+class AbstractPatchLandingCommand(Command):
+    def __init__(self, description, args_description):
+        options = WebKitLandingScripts.cleaning_options() + WebKitLandingScripts.land_options()
+        Command.__init__(self, description, args_description, options=options)
 
     @staticmethod
     def _fetch_list_of_patches_to_land(options, args, tool):
+        raise NotImplementedError, "subclasses must implement"
+
+    @staticmethod
+    def _collect_patches_by_bug(patches):
         bugs_to_patches = {}
-        patch_count = 0
+        for patch in patches:
+            bug_id = patch['bug_id']
+            bugs_to_patches[bug_id] = bugs_to_patches.get(bug_id, []).append(patch)
+        return bugs_to_patches
+
+    def execute(self, options, args, tool):
+        if not args:
+            error("%s required" % self.argument_names)
+
+        # Check the tree status first so we can fail early.
+        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
+        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
+
+        patches = self._fetch_list_of_patches_to_land(options, args, tool)
+
+        # It's nice to print out total statistics.
+        bugs_to_patches = self._collect_patches_by_bug(patches)
+        log("Landing %s from %s." % (pluralize("patch", len(patches)), pluralize("bug", len(bugs_to_patches))))
+
+        for patch in patches:
+            WebKitLandingScripts.land_patch_and_handle_errors(patch, options, tool)
+
+
+class LandAttachment(AbstractPatchLandingCommand):
+    def __init__(self):
+        AbstractPatchLandingCommand.__init__(self, 'Lands a patches from bugzilla, optionally building and testing them first', 'ATTACHMENT_ID [ATTACHMENT_IDS]')
+
+    @staticmethod
+    def _fetch_list_of_patches_to_land(options, args, tool):
+        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
+
+
+class LandPatchesFromBugs(AbstractPatchLandingCommand):
+    def __init__(self):
+        AbstractPatchLandingCommand.__init__(self, 'Lands all patches on the given bugs, optionally building and testing them first', 'BUGID [BUGIDS]')
+
+    @staticmethod
+    def _fetch_list_of_patches_to_land(options, args, tool):
+        all_patches = []
         for bug_id in args:
-            patches = []
+            # FIXME: This is strange that --commit-queue gets special behavior here.
             if options.commit_queue:
                 patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches=True)
             else:
                 patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
 
-            patches_found = len(patches)
-            log("%s found on bug %s." % (pluralize("reviewed patch", patches_found), bug_id))
+            log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
+            all_patches += patches
 
-            patch_count += patches_found
-            if patches_found:
-                bugs_to_patches[bug_id] = patches
-
-        log("Landing %s from %s." % (pluralize("patch", patch_count), pluralize("bug", len(args))))
-        return bugs_to_patches
-
-    def execute(self, options, args, tool):
-        if not len(args):
-            error("bug-id(s) required")
-
-        # Check the tree status first so we can fail early.
-        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
-        bugs_to_patches = self._fetch_list_of_patches_to_land(options, args, tool)
-
-        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
-        for bug_id in bugs_to_patches.keys():
-            WebKitLandingScripts.land_patches(bugs_to_patches[bug_id], options, tool)
+        return all_patches
 
 
 class CommitMessageForCurrentDiff(Command):
@@ -860,6 +883,7 @@ class BugzillaTool:
             { 'name' : 'apply-attachment', 'object' : ApplyAttachment() },
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
+            { 'name' : 'land-attachment', 'object' : LandAttachment() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
             { 'name' : 'check-style', 'object' : CheckStyle() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },

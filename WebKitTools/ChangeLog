@@ -28,6 +28,18 @@
 
         Reviewed by Adam Barth.
 
+        bugzilla-tool needs a land-attachment command
+        https://bugs.webkit.org/show_bug.cgi?id=31546
+
+        * Scripts/bugzilla-tool:
+         - Move all the logic into AbstractLandingCommand and
+           add a new LandAttachment command subclass.
+         - Split out _collect_patches_by_bug logging from _fetch_list_of_patches_to_land.
+
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Move more patch-landing code into WebKitLandingScripts in preparation for land-attachment
         https://bugs.webkit.org/show_bug.cgi?id=31543
 
