@@ -75,6 +75,13 @@ class WorkQueue:
     log_date_format = "%Y-%m-%d %H:%M:%S"
     sleep_duration_text = "5 mins"
     seconds_to_sleep = 300
+    handled_error_code = 2
+
+    # Child processes exit with a special code to the parent queue process can detect the error was handled.
+    @classmethod
+    def exit_after_handled_error(cls, error):
+        log(error)
+        exit(cls.handled_error_code)
 
     def run(self):
         self._begin_logging()
@@ -102,9 +109,9 @@ class WorkQueue:
             try:
                 self._delegate.process_work_item(work_item)
             except ScriptError, e:
-                # exit(2) is a special exit code we use to indicate that the error was already
-                # handled by and we should keep looping anyway.
-                if e.exit_code == 2:
+                # Use a special exit code to indicate that the error was already
+                # handled in the child process and we should just keep looping.
+                if e.exit_code == self.handled_error_code:
                     continue
                 message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
                 self._delegate.handle_unexpected_error(work_item, message)

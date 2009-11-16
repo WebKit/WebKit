@@ -2,6 +2,21 @@
 
         Reviewed by Adam Barth.
 
+        WorkQueue is the only place that should know about special exit codes
+        https://bugs.webkit.org/show_bug.cgi?id=31534
+
+        Move LandPatchesFromBugs.handled_error to WorkQueue.exit_after_handled_error
+        and add tests for handling exit codes.
+        I also cleaned up workqueue_unittest.py more.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/workqueue.py:
+        * Scripts/modules/workqueue_unittest.py:
+
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Re-factor workqueue_unittest to allow for more than one test.
         https://bugs.webkit.org/show_bug.cgi?id=31535
 

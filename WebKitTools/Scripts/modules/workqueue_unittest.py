@@ -32,70 +32,103 @@ import shutil
 import tempfile
 import unittest
 
+from modules.scm import ScriptError
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class LoggingDelegate(WorkQueueDelegate):
     def __init__(self, test):
-        self.test = test
-        self.callbacks = []
-        self.run_before = False
+        self._test = test
+        self._callbacks = []
+        self._run_before = False
+
+    expected_callbacks = [
+        'queue_log_path',
+        'status_host',
+        'begin_work_queue',
+        'should_continue_work_queue',
+        'next_work_item',
+        'should_proceed_with_work_item',
+        'work_logs_directory',
+        'process_work_item',
+        'should_continue_work_queue'
+    ]
+
+    def record(self, method_name):
+        self._callbacks.append(method_name)
 
     def queue_log_path(self):
-        self.callbacks.append("queue_log_path")
-        return os.path.join(self.test.temp_dir, "queue_log_path")
+        self.record("queue_log_path")
+        return os.path.join(self._test.temp_dir, "queue_log_path")
 
     def work_logs_directory(self):
-        self.callbacks.append("work_logs_directory")
-        return os.path.join(self.test.temp_dir, "work_log_path")
+        self.record("work_logs_directory")
+        return os.path.join(self._test.temp_dir, "work_log_path")
 
     def status_host(self):
-        self.callbacks.append("status_host")
+        self.record("status_host")
         return None
 
     def begin_work_queue(self):
-        self.callbacks.append("begin_work_queue")
+        self.record("begin_work_queue")
 
     def should_continue_work_queue(self):
-        self.callbacks.append("should_continue_work_queue")
-        if not self.run_before:
-            self.run_before = True
+        self.record("should_continue_work_queue")
+        if not self._run_before:
+            self._run_before = True
             return True
         return False
 
     def next_work_item(self):
-        self.callbacks.append("next_work_item")
+        self.record("next_work_item")
         return "work_item"
 
     def should_proceed_with_work_item(self, work_item):
-        self.callbacks.append("should_proceed_with_work_item")
-        self.test.assertEquals(work_item, "work_item")
+        self.record("should_proceed_with_work_item")
+        self._test.assertEquals(work_item, "work_item")
         return (True, "waiting_message", 42)
 
     def process_work_item(self, work_item):
-        self.callbacks.append("process_work_item")
-        self.test.assertEquals(work_item, "work_item")
+        self.record("process_work_item")
+        self._test.assertEquals(work_item, "work_item")
 
     def handle_unexpected_error(self, work_item, message):
-        self.callbacks.append("handle_unexpected_error")
-        self.test.assertEquals(work_item, "work_item")
+        self.record("handle_unexpected_error")
+        self._test.assertEquals(work_item, "work_item")
+
+class ThrowErrorDelegate(LoggingDelegate):
+    def __init__(self, test, error_code):
+        LoggingDelegate.__init__(self, test)
+        self.error_code = error_code
+
+    def process_work_item(self, work_item):
+        self.record("process_work_item")
+        raise ScriptError(exit_code=self.error_code)
 
 class WorkQueueTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
         work_queue = WorkQueue(delegate)
         work_queue.run()
-        self.assertEquals(delegate.callbacks, [
-            'queue_log_path',
-            'status_host',
-            'begin_work_queue',
-            'should_continue_work_queue',
-            'next_work_item',
-            'should_proceed_with_work_item',
-            'work_logs_directory',
-            'process_work_item',
-            'should_continue_work_queue'])
+        self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(delegate.queue_log_path()))
         self.assertTrue(os.path.exists(os.path.join(delegate.work_logs_directory(), "42.log")))
+
+    def test_unexpected_error(self):
+        delegate = ThrowErrorDelegate(self, 3)
+        work_queue = WorkQueue(delegate)
+        work_queue.run()
+        expected_callbacks = LoggingDelegate.expected_callbacks[:]
+        work_item_index = expected_callbacks.index('process_work_item')
+        # The unexpected error should be handled right after process_work_item starts
+        # but before any other callback.  Otherwise callbacks should be normal.
+        expected_callbacks.insert(work_item_index + 1, 'handle_unexpected_error')
+        self.assertEquals(delegate._callbacks, expected_callbacks)
+
+    def test_handled_error(self):
+        delegate = ThrowErrorDelegate(self, WorkQueue.handled_error_code)
+        work_queue = WorkQueue(delegate)
+        work_queue.run()
+        self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(suffix="work_queue_test_logs")
