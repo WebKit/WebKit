@@ -1,3 +1,19 @@
+2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Moved DumpRenderTree/gtk/TestNetscapePlugin to DumpRenderTree/unix/TestNetscapePlugin
+        as the implementation is being used by at least Qt and Gtk+.
+
+        Update buildsystems as well.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h:
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h:
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h:
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        * GNUmakefile.am:
+
 2009-11-16  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.

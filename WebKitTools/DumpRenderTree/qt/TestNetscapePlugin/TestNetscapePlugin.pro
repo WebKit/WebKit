@@ -1,7 +1,7 @@
 TEMPLATE = lib
 TARGET = TestNetscapePlugIn
 
-VPATH = ../../gtk/TestNetscapePlugin ../../TestNetscapePlugIn.subproj
+VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn.subproj
 include(../../../../WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/lib/plugins
@@ -18,8 +18,8 @@ mac {
 }
 
 INCLUDEPATH += ../../../../JavaScriptCore \
-               ../../gtk/TestNetscapePlugin/ForwardingHeaders \
-               ../../gtk/TestNetscapePlugin/ForwardingHeaders/WebKit \
+               ../../unix/TestNetscapePlugin/ForwardingHeaders \
+               ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
                ../../../../WebCore \
                ../../../../WebCore/bridge \
                ../../TestNetscapePlugIn.subproj
@@ -31,5 +31,5 @@ mac {
     SOURCES += ../../TestNetscapePlugIn.subproj/main.cpp
     LIBS += -framework Carbon
 } else {
-    SOURCES += ../../gtk/TestNetscapePlugin/TestNetscapePlugin.cpp
+    SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
