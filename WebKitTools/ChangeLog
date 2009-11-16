@@ -1,3 +1,12 @@
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Siedel.
+
+        Move OutputTee to logging.py.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/logging.py:
+
 2009-11-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
