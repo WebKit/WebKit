@@ -1,3 +1,14 @@
+2009-11-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Bring WebAccessibilityRole up to sync after
+        http://trac.webkit.org/changeset/51007.
+
+        * public/WebAccessibilityRole.h: Added WebAccessibilityRoleDirectory.
+        * src/AssertMatchingEnums.cpp: Added a match between DirectoryRole and
+          WebAccessibilityRoleDirectory.
+
 2009-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
