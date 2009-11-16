@@ -1,3 +1,10 @@
+2009-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Windows build fix.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: (WebCore::SocketStreamHandle::createStreams):
+        Disable CONNECT proxies on Windows until WebKitSupportLibrary includes support for those.
+
 2009-11-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

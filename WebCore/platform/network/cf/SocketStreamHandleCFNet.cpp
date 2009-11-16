@@ -40,11 +40,11 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
-extern "C" {
+#if PLATFORM(MAC) // WebKitSystemInterface doesn't include these symbols.
 extern const CFStringRef kCFStreamPropertyCONNECTProxy;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyHost;
 extern const CFStringRef kCFStreamPropertyCONNECTProxyPort;
-}
+#endif
 
 namespace WebCore {
 
@@ -213,10 +213,13 @@ void SocketStreamHandle::createStreams()
         break;
         }
     case CONNECTProxy: {
+#if PLATFORM(MAC)
+        // FIXME: Make CONNECT proxies work on Windows.
         const void* proxyKeys[] = { kCFStreamPropertyCONNECTProxyHost, kCFStreamPropertyCONNECTProxyPort };
         const void* proxyValues[] = { m_proxyHost.get(), m_proxyPort.get() };
         RetainPtr<CFDictionaryRef> connectDictionary(AdoptCF, CFDictionaryCreate(0, proxyKeys, proxyValues, sizeof(proxyKeys) / sizeof(*proxyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertyCONNECTProxy, connectDictionary.get());
+#endif
         break;
         }
     }
