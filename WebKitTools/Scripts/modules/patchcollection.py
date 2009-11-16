@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2009, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,18 +27,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+class PatchCollection:
+    def __init__(self, bugs, filter=None):
+        self._bugs = bugs
+        self._filter = filter
+        self._patches = []
 
-from modules.bugzilla_unittest import *
-from modules.buildbot_unittest import *
-from modules.changelogs_unittest import *
-from modules.committers_unittest import *
-from modules.cpp_style_unittest import *
-from modules.diff_parser_unittest import *
-from modules.logging_unittest import *
-from modules.patchcollection_unittest import *
-from modules.scm_unittest import *
-from modules.workqueue_unittest import *
+    def add(self, patch_id):
+        patch = self._bugs.fetch_attachment(patch_id)
+        if not patch:
+            return
+        if self._filter and not self._filter(patch):
+            return
+        self._patches.append(patch)
 
-if __name__ == "__main__":
-    unittest.main()
+    def add_all_from_bug(self, bug_id):
+        patches = self._bugs.fetch_patches_from_bug(bug_id)
+        for patch in patches:
+            if self._filter and not self._filter(patch):
+                continue
+            self._patches.append(patch)
+
+    def next(self):
+        return self._patches.pop(0)
+
+    def __len__(self):
+        return len(self._patches)

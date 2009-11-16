@@ -1,3 +1,17 @@
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement PatchCollection
+        https://bugs.webkit.org/show_bug.cgi?id=31541
+
+        This class holds a set of patches and lets clients iterate through
+        them.  Optionally, clients can install a filter.
+
+        * Scripts/modules/patchcollection.py: Added.
+        * Scripts/modules/patchcollection_unittest.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-11-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
