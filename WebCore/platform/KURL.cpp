@@ -1628,7 +1628,7 @@ bool protocolIsJavaScript(const String& url)
     return protocolIs(url, "javascript");
 }
 
-bool protocolIsValid(const String& protocol)
+bool isValidProtocol(const String& protocol)
 {
     if (!isSchemeFirstChar(protocol[0]))
         return false;

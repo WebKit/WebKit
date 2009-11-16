@@ -507,7 +507,7 @@ void HTMLAnchorElement::setProtocol(const String& value)
     KURL url = href();
     // Following Firefox 3.5.2 which removes anything after the first ":"
     String newProtocol = value.substring(0, separator);
-    if (!protocolIsValid(newProtocol))
+    if (!isValidProtocol(newProtocol))
         return;
     url.setProtocol(newProtocol);
 

@@ -262,7 +262,7 @@ const KURL& blankURL();
 
 bool protocolIs(const String& url, const char* protocol);
 bool protocolIsJavaScript(const String& url);
-bool protocolIsValid(const String& protocol);
+bool isValidProtocol(const String& protocol);
 
 String mimeTypeFromDataURL(const String& url);
 

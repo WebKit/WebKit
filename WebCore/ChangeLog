@@ -1,3 +1,22 @@
+2009-11-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Rename protocolIsValid to isValidProtocol.
+        https://bugs.webkit.org/show_bug.cgi?id=31503
+
+        This name change was suggested in https://bugs.webkit.org/show_bug.cgi?id=29972#c19.
+
+        No new tests since no new functionality was introduced.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setProtocol):
+        * platform/KURL.cpp:
+        (WebCore::isValidProtocol):
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+        (WebCore::isValidProtocol):
+
 2009-11-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
