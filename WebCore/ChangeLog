@@ -1,3 +1,10 @@
+2009-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the build.  Land a file that was missing from r51049.
+
+        * bindings/js/JSWebGLArrayHelper.h: Copied from WebCore/html/canvas/WebGLByteArray.idl.
+        (WebCore::setWebGLArrayFromArray):
+
 2009-11-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
