@@ -1,3 +1,18 @@
+2009-11-16  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Handle the case of a null NPObject* in NPN_SetException in
+        the V8 bindings.  This allow out of process plugins calling
+        NPN_SetException to just send null instead of sending an
+        NPObject* that would be an address in a different 
+        process's memory space.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31561
+
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_SetException): Allow null NPObject* and just throw a general error.
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.
