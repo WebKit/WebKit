@@ -1,3 +1,13 @@
+2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Added new Qt expected results for animation tests.
+
+        * platform/qt/animations/change-transform-in-end-event-expected.txt: Added.
+        * platform/qt/animations/state-at-end-event-expected.txt: Added.
+        * platform/qt/animations/state-at-end-event-transform-expected.txt: Added.
+
 2009-11-15  Chris Fleizach  <cfleizach@apple.com>
 
         Fixing broken layout test.
