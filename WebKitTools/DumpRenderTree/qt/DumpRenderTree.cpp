@@ -80,7 +80,8 @@ const unsigned int maxViewWidth = 800;
 const unsigned int maxViewHeight = 600;
 
 WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
-    : QWebPage(parent), m_drt(drt), m_enableTextOutput(false)
+    : QWebPage(parent)
+    , m_drt(drt)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
 
@@ -125,7 +126,7 @@ QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
 
 void WebPage::javaScriptAlert(QWebFrame*, const QString& message)
 {
-    if (!m_enableTextOutput)
+    if (!isTextOutputEnabled())
         return;
 
     fprintf(stdout, "ALERT: %s\n", message.toUtf8().constData());
@@ -141,7 +142,7 @@ static QString urlSuitableForTestResult(const QString& url)
 
 void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, const QString&)
 {
-    if (!m_enableTextOutput)
+    if (!isTextOutputEnabled())
         return;
 
     QString newMessage;
@@ -159,7 +160,7 @@ void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, c
 
 bool WebPage::javaScriptConfirm(QWebFrame*, const QString& msg)
 {
-    if (!m_enableTextOutput)
+    if (!isTextOutputEnabled())
         return true;
 
     fprintf(stdout, "CONFIRM: %s\n", msg.toUtf8().constData());
@@ -168,7 +169,7 @@ bool WebPage::javaScriptConfirm(QWebFrame*, const QString& msg)
 
 bool WebPage::javaScriptPrompt(QWebFrame*, const QString& msg, const QString& defaultValue, QString* result)
 {
-    if (!m_enableTextOutput)
+    if (!isTextOutputEnabled())
         return true;
 
     fprintf(stdout, "PROMPT: %s, default text: %s\n", msg.toUtf8().constData(), defaultValue.toUtf8().constData());
@@ -205,7 +206,7 @@ bool WebPage::acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& r
             typeDescription = "illegal value";
         }
 
-        if (m_enableTextOutput)
+        if (isTextOutputEnabled())
             fprintf(stdout, "Policy delegate: attempt to load %s with navigation type '%s'\n",
                     url.toUtf8().constData(), typeDescription.toUtf8().constData());
 
@@ -241,6 +242,7 @@ DumpRenderTree::DumpRenderTree()
     : m_dumpPixels(false)
     , m_stdin(0)
     , m_notifier(0)
+    , m_enableTextOutput(false)
 {
     qt_drt_overwritePluginDirectories();
     QWebSettings::enablePersistentStorage();
@@ -365,7 +367,7 @@ void DumpRenderTree::open(const QUrl& aurl)
 #endif
 
     qt_dump_frame_loader(url.toString().contains("loading/"));
-    m_page->enableTextOutput(true);
+    setTextOutputEnabled(true);
     m_page->mainFrame()->load(url);
 }
 
@@ -649,7 +651,7 @@ QWebPage *DumpRenderTree::createWindow()
     container->resize(0, 0);
     container->move(-1, -1);
     container->hide();
-    QWebPage *page = new WebPage(container, this);
+    WebPage *page = new WebPage(container, this);
     connectFrame(page->mainFrame());
     connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
     windows.append(container);

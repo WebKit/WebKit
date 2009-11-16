@@ -51,43 +51,7 @@ class GCController;
 
 namespace WebCore {
 
-class DumpRenderTree;
-
-class WebPage : public QWebPage {
-    Q_OBJECT
-public:
-    WebPage(QWidget *parent, DumpRenderTree *drt);
-
-    QWebPage *createWindow(QWebPage::WebWindowType);
-
-    void javaScriptAlert(QWebFrame *frame, const QString& message);
-    void javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID);
-    bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
-    bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
-
-    void resetSettings();
-    void enableTextOutput(bool enable) { m_enableTextOutput = enable; }
-
-    virtual bool supportsExtension(QWebPage::Extension extension) const;
-    virtual bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
-
-public slots:
-    bool shouldInterruptJavaScript() { return false; }
-
-protected:
-    bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);
-
-private slots:
-    void setViewGeometry(const QRect &r)
-    {
-        QWidget *v = view();
-        if (v)
-            v->setGeometry(r);
-    }
-private:
-    DumpRenderTree *m_drt;
-    bool m_enableTextOutput;
-};
+class WebPage;
 
 class DumpRenderTree : public QObject {
 Q_OBJECT
@@ -101,6 +65,9 @@ public:
 
     // Initialize in single-file mode.
     void open(const QUrl& url);
+
+    void setTextOutputEnabled(bool enable) { m_enableTextOutput = enable; }
+    bool isTextOutputEnabled() { return m_enableTextOutput; }
 
     void setDumpPixels(bool);
 
@@ -151,6 +118,42 @@ private:
     QSocketNotifier* m_notifier;
 
     QList<QWidget *> windows;
+    bool m_enableTextOutput;
+};
+
+class WebPage : public QWebPage {
+    Q_OBJECT
+public:
+    WebPage(QWidget *parent, DumpRenderTree *drt);
+
+    QWebPage *createWindow(QWebPage::WebWindowType);
+
+    void javaScriptAlert(QWebFrame *frame, const QString& message);
+    void javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID);
+    bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
+    bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
+
+    void resetSettings();
+
+    virtual bool supportsExtension(QWebPage::Extension extension) const;
+    virtual bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
+
+public slots:
+    bool shouldInterruptJavaScript() { return false; }
+
+protected:
+    bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);
+    bool isTextOutputEnabled() { return m_drt->isTextOutputEnabled(); }
+
+private slots:
+    void setViewGeometry(const QRect &r)
+    {
+        QWidget *v = view();
+        if (v)
+            v->setGeometry(r);
+    }
+private:
+    DumpRenderTree *m_drt;
 };
 
 }

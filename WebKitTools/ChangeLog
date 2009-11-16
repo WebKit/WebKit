@@ -1,5 +1,30 @@
 2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Simon Hausmann.
+
+        r50942 broke output from created windows. Make the
+        m_enableTextOutput a member of the DRT and not the
+        WebPage.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::javaScriptAlert):
+        (WebCore::WebPage::javaScriptConsoleMessage):
+        (WebCore::WebPage::javaScriptConfirm):
+        (WebCore::WebPage::javaScriptPrompt):
+        (WebCore::WebPage::acceptNavigationRequest):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        (WebCore::DumpRenderTree::setTextOutputEnabled):
+        (WebCore::DumpRenderTree::isTextOutputEnabled):
+        (WebCore::WebPage::shouldInterruptJavaScript):
+        (WebCore::WebPage::isTextOutputEnabled):
+        (WebCore::WebPage::setViewGeometry):
+
+2009-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Gustavo Noronha Silva.
 
         Moved DumpRenderTree/gtk/TestNetscapePlugin to DumpRenderTree/unix/TestNetscapePlugin
