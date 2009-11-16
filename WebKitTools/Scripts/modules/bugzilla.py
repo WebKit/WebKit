@@ -194,6 +194,33 @@ class Bugzilla:
             attachments.append(attachment)
         return attachments
 
+    def _parse_bug_id_from_attachment_page(self, page):
+        up_link = BeautifulSoup(page).find('link', rel='Up') # The "Up" relation happens to point to the bug.
+        if not up_link:
+            return None # This attachment does not exist (or you don't have permissions to view it).
+        match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", up_link['href'])
+        return int(match.group('bug_id'))
+
+    def bug_id_for_attachment_id(self, attachment_id):
+        attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
+        log("Fetching: %s" % attachment_url)
+        page = urllib2.urlopen(attachment_url)
+        return self._parse_bug_id_from_attachment_page(page)
+
+    # This should really return an Attachment object
+    # which can lazily fetch any missing data.
+    def fetch_attachment(self, attachment_id):
+        # We could grab all the attachment details off of the attachment edit page
+        # but we already have working code to do so off of the bugs page, so re-use that.
+        bug_id = self.bug_id_for_attachment_id(attachment_id)
+        if not bug_id:
+            return None
+        attachments = self.fetch_attachments_from_bug(bug_id)
+        for attachment in attachments:
+            if attachment['id'] == attachment_id:
+                return attachment
+        return None # This should never be hit.
+
     def fetch_title_from_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         page = urllib2.urlopen(bug_url)

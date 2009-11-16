@@ -68,8 +68,10 @@ class BugzillaTest(unittest.TestCase):
         'url' : "https://bugs.webkit.org/attachment.cgi?id=33721",
         'name' : "Fixed whitespace issue",
         'type' : "text/plain",
+        'review' : '+',
         'reviewer_email' : 'one@test.com',
-        'committer_email' : 'two@test.com'
+        'commit-queue' : '+',
+        'committer_email' : 'two@test.com',
     }
 
     def test_attachment_parsing(self):
@@ -85,6 +87,21 @@ class BugzillaTest(unittest.TestCase):
 
         for key, expected_value in self._expected_example_attachment_parsing.items():
             self.assertEquals(attachment[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, attachment[key], expected_value)))
+
+    _sample_attachment_detail_page = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>
+  Attachment 41073 Details for Bug 27314</title>
+<link rel="Top" href="https://bugs.webkit.org/">
+    <link rel="Up" href="show_bug.cgi?id=27314">
+"""
+
+    def test_attachment_detail_bug_parsing(self):
+        bugzilla = Bugzilla()
+        self.assertEquals(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
 
 if __name__ == '__main__':
     unittest.main()

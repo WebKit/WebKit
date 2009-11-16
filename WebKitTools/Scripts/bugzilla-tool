@@ -160,42 +160,61 @@ class CheckStyleOnBug(Command):
         bug_id = args[0]
         patches = tool.bugs.fetch_unreviewed_patches_from_bug(bug_id)
 
-        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
+        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
 
         for patch in patches:
             self.check_style(bug_id, patch, options, tool)
 
 
+class ApplyAttachment(Command):
+    def __init__(self):
+        options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
+        Command.__init__(self, 'Applies an attachment to the local working directory.', 'ATTACHMENT_ID', options=options)
+
+    def execute(self, options, args, tool):
+        WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
+        attachment_id = args[0]
+        attachment = tool.bugs.fetch_attachment(attachment_id)
+        WebKitApplyingScripts.apply_patches_with_options(tool.scm(), [attachment], options)
+
+
 class ApplyPatchesFromBug(Command):
     def __init__(self):
-        options = [
+        options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
+        Command.__init__(self, 'Applies all patches on a bug to the local working directory.', 'BUGID', options=options)
+
+    def execute(self, options, args, tool):
+        WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
+        bug_id = args[0]
+        patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        WebKitApplyingScripts.apply_patches_with_options(tool.scm(), patches, options)
+
+
+class WebKitApplyingScripts:
+    @staticmethod
+    def apply_options():
+        return [
             make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
             make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch"),
         ]
-        options += WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, 'Applies all patches on a bug to the local working directory without committing.', 'BUGID', options=options)
 
     @staticmethod
-    def apply_patches(patches, scm, commit_each):
+    def setup_for_patch_apply(scm, options):
+        WebKitLandingScripts.prepare_clean_working_directory(scm, options, allow_local_commits=True)
+        if options.update:
+            scm.update_webkit()
+
+    @staticmethod
+    def apply_patches_with_options(scm, patches, options):
+        if options.local_commit and not scm.supports_local_commits():
+            error("--local-commit passed, but %s does not support local commits" % scm.display_name())
+
         for patch in patches:
+            log("Applying attachment %s from bug %s" % (patch['id'], patch['bug_id']))
             scm.apply_patch(patch)
-            if commit_each:
+            if options.local_commit:
                 commit_message = commit_message_for_this_commit(scm)
                 scm.commit_locally_with_message(commit_message.message() or patch['name'])
-
-    def execute(self, options, args, tool):
-        bug_id = args[0]
-        patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-        os.chdir(tool.scm().checkout_root)
-        if options.clean:
-            tool.scm().ensure_clean_working_directory(options.force_clean)
-        if options.update:
-            tool.scm().update_webkit()
-        
-        if options.local_commit and not tool.scm().supports_local_commits():
-            error("--local-commit passed, but %s does not support local commits" % tool.scm().display_name())
-        
-        self.apply_patches(patches, tool.scm(), options.local_commit)
 
 
 class WebKitLandingScripts:
@@ -278,9 +297,10 @@ class WebKitLandingScripts:
         cls.run_and_throw_if_fail(args)
 
     @staticmethod
-    def setup_for_landing(scm, options):
+    def prepare_clean_working_directory(scm, options, allow_local_commits=False):
         os.chdir(scm.checkout_root)
-        scm.ensure_no_local_commits(options.force_clean)
+        if not allow_local_commits:
+            scm.ensure_no_local_commits(options.force_clean)
         if options.clean:
             scm.ensure_clean_working_directory(force_clean=options.force_clean)
 
@@ -416,7 +436,7 @@ class LandPatchesFromBugs(Command):
 
         bugs_to_patches = self._fetch_list_of_patches_to_land(options, args, tool)
 
-        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
+        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
 
         for bug_id in bugs_to_patches.keys():
             self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
@@ -576,7 +596,7 @@ class RolloutCommit(Command):
             else:
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
-        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
+        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
         tool.scm().update_webkit()
         tool.scm().apply_reverse_diff(revision)
         self._create_changelogs_for_revert(tool.scm(), revision)
@@ -771,6 +791,7 @@ class BugzillaTool:
             { 'name' : 'patches-to-commit', 'object' : PatchesInCommitQueue() },
             { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
             { 'name' : 'create-bug', 'object' : CreateBug() },
+            { 'name' : 'apply-attachment', 'object' : ApplyAttachment() },
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
