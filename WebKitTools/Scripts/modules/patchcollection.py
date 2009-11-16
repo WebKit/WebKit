@@ -33,23 +33,27 @@ class PatchCollection:
         self._filter = filter
         self._patches = []
 
-    def add(self, patch_id):
-        patch = self._bugs.fetch_attachment(patch_id)
-        if not patch:
-            return
-        if self._filter and not self._filter(patch):
-            return
-        self._patches.append(patch)
+    def add(self, patch):
+        self.add_patches([patch])
 
-    def add_all_from_bug(self, bug_id):
-        patches = self._bugs.fetch_patches_from_bug(bug_id)
+    def add_patches(self, patches):
         for patch in patches:
+            if not patch:
+                continue
             if self._filter and not self._filter(patch):
                 continue
             self._patches.append(patch)
 
+    def add_patches_from_bug(self, bug_id):
+        self.add_patches(self._bugs.fetch_patches_from_bug(bug_id))
+
     def next(self):
+        if not self._patches:
+            return None
         return self._patches.pop(0)
+
+    def patch_ids(self):
+        return map(lambda patch: patch['id'], self._patches)
 
     def __len__(self):
         return len(self._patches)

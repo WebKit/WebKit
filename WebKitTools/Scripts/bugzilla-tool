@@ -45,6 +45,7 @@ from modules.bugzilla import Bugzilla, parse_bug_id
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import error, log, tee
+from modules.patchcollection import PatchCollection
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.buildbot import BuildBot
 from modules.statusbot import StatusBot
@@ -751,6 +752,9 @@ class AbstractQueue(Command, WorkQueueDelegate):
         bugzilla_tool_args = [bugzilla_tool_path] + args
         WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
 
+    def log_progress(self, patch_ids):
+        log("%s in %s [%s]" % (pluralize('patch', len(patch_ids)), self._name, ", ".join(patch_ids)))
+
     def execute(self, options, args, tool):
         self.options = options
         self.tool = tool
@@ -797,20 +801,19 @@ class CommitQueue(AbstractQueue):
 
 class StyleQueue(AbstractQueue):
     def __init__(self):
-        self.patches = []
         AbstractQueue.__init__(self, "style-queue")
 
     def status_host(self):
         return None # FIXME: A hack until we come up with a more generic status page.
 
+    def begin_work_queue(self):
+        AbstractQueue.begin_work_queue(self)
+        self._patches = PatchCollection(self.tool.bugs)
+        self._patches.add_patches(self.tool.bugs.fetch_patches_from_review_queue(limit=10))
+
     def next_work_item(self):
-        if not self.patches:
-            self.patches = self.tool.bugs.fetch_patches_from_review_queue(limit=10)
-            if not self.patches:
-                return None
-        patch_ids = map(lambda patch: patch['id'], self.patches)
-        log("%s in review queue [%s]" % (pluralize('patch', len(self.patches)), ", ".join(patch_ids)))
-        return self.patches.pop(0)
+        self.log_progress(self._patches.patch_ids())
+        return self._patches.next()
 
     def should_proceed_with_work_item(self, patch):
         return (True, "Checking style for patch %s on bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])

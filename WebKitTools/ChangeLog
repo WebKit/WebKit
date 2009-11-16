@@ -1,3 +1,16 @@
+2009-11-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move StyleQueue over to using PatchCollection
+        https://bugs.webkit.org/show_bug.cgi?id=31544
+
+        That's what the class it's for.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/patchcollection.py:
+        * Scripts/modules/patchcollection_unittest.py:
+
 2009-11-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

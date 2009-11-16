@@ -60,12 +60,12 @@ class PatchCollectionTest(unittest.TestCase):
         bugs = MockBugzilla()
         patches = PatchCollection(bugs, filter=test_filter)
         self.assertEqual(len(patches), 0)
-        patches.add(42)
+        patches.add(bugs.fetch_attachment(42))
         self.assertEqual(len(patches), 1)
         patch = patches.next()
         self.assertEqual(patch, MockBugzilla.patch_1)
         self.assertEqual(len(patches), 0)
-        patches.add_all_from_bug(38)
+        patches.add_patches_from_bug(38)
         # Notice that one of the patches gets filtered out.
         self.assertEqual(len(patches), 2)
         patch = patches.next()
@@ -79,10 +79,28 @@ class PatchCollectionTest(unittest.TestCase):
         bugs = MockEmptyBugzilla()
         patches = PatchCollection(bugs, filter=test_filter)
         self.assertEqual(len(patches), 0)
-        patches.add(42)
+        patches.add(bugs.fetch_attachment(42))
         self.assertEqual(len(patches), 0)
-        patches.add_all_from_bug(38)
+        patches.add_patches_from_bug(38)
         self.assertEqual(len(patches), 0)
+
+    def test_add_patches(self):
+        patches = PatchCollection(None)
+        self.assertEqual(patches.patch_ids(), [])
+        patches.add_patches([{'id': 42}, {'id': 74}])
+        self.assertEqual(len(patches), 2)
+        self.assertEqual(patches.patch_ids(), [42, 74])
+
+    def test_patch_ids(self):
+        patches = PatchCollection(None)
+        self.assertEqual(patches.patch_ids(), [])
+        patches.add({'id': 42})
+        patches.add({'id': 74})
+        self.assertEqual(patches.patch_ids(), [42, 74])
+
+    def test_empty(self):
+        patches = PatchCollection(None)
+        self.assertEqual(patches.next(), None)
 
 if __name__ == '__main__':
     unittest.main()
