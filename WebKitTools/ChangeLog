@@ -1,3 +1,11 @@
+2009-11-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Disable the style queue from posting to the commit queue status page.
+
+        * Scripts/bugzilla-tool:
+
 2009-11-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

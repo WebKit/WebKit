@@ -709,7 +709,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         self._name = name
         options = [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
-            make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
+            make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
         Command.__init__(self, 'Run the %s.' % self._name, options=options)
 
@@ -799,6 +799,9 @@ class StyleQueue(AbstractQueue):
     def __init__(self):
         self.patches = []
         AbstractQueue.__init__(self, "style-queue")
+
+    def status_host(self):
+        return None # FIXME: A hack until we come up with a more generic status page.
 
     def next_work_item(self):
         if not self.patches:
