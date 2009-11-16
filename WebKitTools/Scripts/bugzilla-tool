@@ -805,24 +805,13 @@ class CommitQueue(AbstractQueue):
         if red_builders_names:
             red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
             return (False, "Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
-        return (True, "Landing patches from bug %s." % patch['bug_id'], patch['bug_id'])
+        return (True, "Landing patch %s from bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(['land-patches', '--force-clean', '--commit-queue', '--quiet', patch['bug_id']])
+        self.run_bugzilla_tool(['land-attachment', '--force-clean', '--commit-queue', '--quiet', patch['id']])
 
     def handle_unexpected_error(self, patch, message):
-        # We don't have a patch id at this point, so try to grab the first patch off
-        # of the bug in question.  We plan to update the commit-queue to opearate
-        # off of patch ids in the near future.
-        bug_id = patch['bug_id']
-        patches = self.tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
-        non_obsolete_patches = filter(lambda patch: not patch['is_obsolete'], patches)
-        if not len(non_obsolete_patches):
-            # If there are no patches left on the bug, assume land-patches already closed it before dying, and just continue.
-            log(message)
-            return
-        bug_id = non_obsolete_patches[0]['id']
-        self.tool.bugs.reject_patch_from_commit_queue(bug_id, message)
+        self.tool.bugs.reject_patch_from_commit_queue(patch['id'], message)
 
 
 class StyleQueue(AbstractQueue):
