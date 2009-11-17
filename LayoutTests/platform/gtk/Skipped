@@ -5642,6 +5642,7 @@ fast/multicol/single-line.html
 accessibility/aria-controls-with-tabs.html
 accessibility/aria-list-and-listitem.html
 accessibility/aria-presentational-role.html
+fast/overflow/line-clamp.html
 fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
 fast/css/color-correction-on-text-shadow.html
@@ -5677,3 +5678,10 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=31472
+inspector/console-dir.html
+inspector/console-dirxml.html
+inspector/console-format-collections.html
+inspector/console-format.html
+inspector/console-tests.html

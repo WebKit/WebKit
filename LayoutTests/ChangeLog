@@ -1,3 +1,11 @@
+2009-11-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Actually skip the inspector console tests while the problem
+        discussed in https://bugs.webkit.org/show_bug.cgi?id=31472 is
+        fixed.
+
+        * platform/gtk/Skipped:
+
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed, build fix. Follow up to r51072: rename skipped entries
