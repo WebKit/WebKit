@@ -1,3 +1,24 @@
+2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Make DRT show web inspector for tests in inspector/ folder.
+        - Updated DRT to show/close inspector for all tests under /inspector
+        - Introduced LayoutTestController::setTimelineProfilingEnabled and
+          WebInspector::setTimelineProfilingEnabled beside setJavaScriptProfilingEnabled
+        - Removed reload on each inspector test
+        - Renamed fast/inspector to fast/inspector-support in order not to trigger
+        inspector for those.
+        - Reimplemented timeline tests in order to get rid of reload there.
+        - Moved tests that don't require harness into the fast group.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31472
+
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_class_init):
+        (webkit_web_inspector_set_property):
+        (webkit_web_inspector_get_property):
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Update for changes to FrameLoaderClient

@@ -688,6 +688,11 @@ static bool shouldLogHistoryDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "/globalhistory/") || strstr(pathOrURL, "\\globalhistory\\");
 }
 
+static bool shouldOpenWebInspector(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "/inspector/") || strstr(pathOrURL, "\\inspector\\");
+}
+
 static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
 {
 #ifdef USE_MAC_FONTS
@@ -859,6 +864,9 @@ static void runTest(const string& testPathOrURL)
 
     resetWebViewToConsistentStateBeforeTesting();
 
+    if (shouldOpenWebInspector(pathOrURL.c_str()))
+        gLayoutTestController->showWebInspector();
+
     prevTestBFItem = 0;
     if (webView) {
         COMPtr<IWebBackForwardList> bfList;
@@ -892,6 +900,9 @@ static void runTest(const string& testPathOrURL)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    if (shouldOpenWebInspector(pathOrURL.c_str()))
+        gLayoutTestController->closeWebInspector();
 
     resetWebViewToConsistentStateBeforeTesting();
 

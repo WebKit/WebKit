@@ -148,6 +148,25 @@ using namespace WebCore;
         page->inspectorController()->disableProfiler();
 }
 
+- (BOOL)isTimelineProfilingEnabled
+{
+    if (Page* page = core(_webView))
+        return page->inspectorController()->timelineAgent() ? YES : NO;
+    return NO;
+}
+
+- (void)setTimelineProfilingEnabled:(BOOL)enabled
+{
+    Page* page = core(_webView);
+    if (!page)
+        return;
+
+    if (enabled)
+        page->inspectorController()->startTimelineProfiler();
+    else
+        page->inspectorController()->stopTimelineProfiler();
+}
+
 - (void)close:(id)sender 
 {
     if (Page* page = core(_webView))

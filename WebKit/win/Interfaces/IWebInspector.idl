@@ -54,4 +54,6 @@ interface IWebInspector : IUnknown
 
     HRESULT isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled);
     HRESULT setJavaScriptProfilingEnabled(BOOL enabled);
+    HRESULT isTimelineProfilingEnabled(BOOL* isEnabled);
+    HRESULT setTimelineProfilingEnabled(BOOL enabled);
 }

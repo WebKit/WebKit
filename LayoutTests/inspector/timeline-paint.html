@@ -4,25 +4,15 @@
 <script src="timeline-test.js"></script>
 <script>
 
-function analyzeTimelineData(timelineRecords) 
+function performActions()
 {
-    // Uncomment to debugging the list of data returned.
-    // dumpTimelineRecords(timelineRecords);
-
-    // Search for the first Paint record you can find
-    var numRecords = timelineRecords.length;
-    for (var i = 0 ; i < numRecords; ++i) {
-        var record = timelineRecords[i];
-        if (record.type === timelineAgentRecordType.Paint) {
-            printTimelineRecordProperties(record);
-            break;
-        }
-    }
+    if (window.layoutTestController)
+        layoutTestController.display();
 }
 
 function doit() 
 {
-    retrieveTimelineData(analyzeTimelineData);
+    printTimelineRecords(performActions, "Paint");
 }
 
 </script>

@@ -172,6 +172,7 @@ WebInspector.TimelinePanel.prototype = {
         formattedRecord.count = 1;
         formattedRecord.type = record.type;
         formattedRecord.endTime = (typeof record.endTime !== "undefined") ? record.endTime / 1000 : formattedRecord.startTime;
+        formattedRecord.record = record;
 
         // Make resource receive record last since request was sent; make finish record last since response received.
         if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {

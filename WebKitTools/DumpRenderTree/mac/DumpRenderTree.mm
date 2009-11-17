@@ -1102,6 +1102,11 @@ static bool shouldLogHistoryDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "globalhistory/");
 }
 
+static bool shouldOpenWebInspector(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "inspector/");
+}
+
 static void resetWebViewToConsistentStateBeforeTesting()
 {
     WebView *webView = [mainFrame webView];
@@ -1178,7 +1183,10 @@ static void runTest(const string& testPathOrURL)
         [[mainFrame webView] setHistoryDelegate:historyDelegate];
     else
         [[mainFrame webView] setHistoryDelegate:nil];
-    
+
+    if (shouldOpenWebInspector(pathOrURL.c_str()))
+        gLayoutTestController->showWebInspector();
+
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
     lastMousePosition = NSZeroPoint;
@@ -1202,6 +1210,7 @@ static void runTest(const string& testPathOrURL)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         [pool release];
     }
+
     pool = [[NSAutoreleasePool alloc] init];
     [EventSendingController clearSavedEvents];
     [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
@@ -1226,11 +1235,14 @@ static void runTest(const string& testPathOrURL)
         }
     }
 
+    if (shouldOpenWebInspector(pathOrURL.c_str()))
+        gLayoutTestController->closeWebInspector();
+
     resetWebViewToConsistentStateBeforeTesting();
 
     [mainFrame loadHTMLString:@"<html></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
     [mainFrame stopLoading];
-    
+
     [pool release];
 
     // We should only have our main window left open when we're done

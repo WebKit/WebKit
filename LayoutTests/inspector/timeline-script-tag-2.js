@@ -1,1 +1,2 @@
-console.markTimeline(timelineMark);
+console.markTimeline("SCRIPT TAG");
+window.scriptEvaluated = true;

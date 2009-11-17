@@ -272,3 +272,38 @@ HRESULT STDMETHODCALLTYPE  WebInspector::evaluateInFrontend(ULONG callId, BSTR b
     page->inspectorController()->evaluateForTestInFrontend(callId, script);
     return S_OK;
 }
+
+HRESULT STDMETHODCALLTYPE WebInspector::isTimelineProfilingEnabled(BOOL* isEnabled)
+{
+    if (!isEnabled)
+        return E_POINTER;
+
+    *isEnabled = FALSE;
+
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isEnabled = page->inspectorController()->timelineAgent() != 0;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebInspector::setTimelineProfilingEnabled(BOOL enabled)
+{
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    if (enabled)
+        page->inspectorController()->startTimelineProfiler();
+    else
+        page->inspectorController()->stopTimelineProfiler();
+
+    return S_OK;
+}

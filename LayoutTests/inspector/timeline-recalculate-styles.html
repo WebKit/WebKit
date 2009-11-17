@@ -2,27 +2,26 @@
 <head>
 <script src="inspector-test.js"></script>
 <script src="timeline-test.js"></script>
+
+<style>
+.test-style {
+    color: red;
+}
+</style>
+
 <script>
 
-function analyzeTimelineData(timelineRecords) 
+function performActions()
 {
-    // Uncomment to debugging the list of data returned.
-    // dumpTimelineRecords(timelineRecords);
-
-    // Search for the first RecalculateStyles record you can find
-    var numRecords = timelineRecords.length;
-    for (var i = 0 ; i < numRecords; ++i) {
-        var record = timelineRecords[i];
-        if (record.type === timelineAgentRecordType.RecalculateStyles) {
-            printTimelineRecordProperties(record);
-            break;
-        }
-    }
+    var element = document.createElement("div");
+    element.className = "test-style";
+    element.innerHTML = "Test data";
+    document.body.appendChild(element);
 }
 
 function doit() 
 {
-    retrieveTimelineData(analyzeTimelineData);
+    printTimelineRecords(performActions, "RecalculateStyles");
 }
 
 </script>

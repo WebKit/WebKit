@@ -6,72 +6,34 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-// We ignore initial load of the page, enable inspector and initiate reload. This allows inspector controller
-// to capture events that happen during the initial page load.
-var ignoreLoad = window.location.href.indexOf("?reload") === -1;
-if (ignoreLoad) {
-    // Start in a timer, as synchronous opening of web inspector may fail on Windows
-    setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.showWebInspector();
-    }, 0);
-}
-
 function onload()
 {
-    if (ignoreLoad) {
-        // Inject scripts into the frontend on the first pass.  Some other logic may want to
-        // use them before the reload.
-        var toInject = [];
-        for (var name in window) {
-            if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
-                toInject.push(window[name].toString());
-        }
-        // Invoke a setup method if it has been specified
-        if (window["frontend_setup"]) 
-            toInject.push("frontend_setup();");
-
-        evaluateInWebInspector(toInject.join("\n"), function(arg) {
-            window.location.href += "?reload";
-        });
-        return;
-    }
-
     var outputElement = document.createElement("div");
     outputElement.id = "output";
     document.body.appendChild(outputElement);
 
-    // Make sure web inspector has settled down before executing user code
-    evaluateInWebInspector("true", doit);
-
-    // Make sure web inspector window is closed before the test is interrupted.
-    setTimeout(function() {
-        alert("Internal timeout exceeded.")
-        if (window.layoutTestController) {
-            layoutTestController.closeWebInspector();
-            layoutTestController.notifyDone();
-        }
-    }, 10000);
+    var toInject = [];
+    for (var name in window) {
+        if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
+            toInject.push(window[name].toString());
+    }
+    evaluateInWebInspector(toInject.join("\n"), doit);
 }
 
 function evaluateInWebInspector(script, callback)
 {
     var callId = lastCallId++;
     callbacks[callId] = callback;
-    setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.evaluateInWebInspector(callId, script);
-    }, 0);
+    if (window.layoutTestController)
+        layoutTestController.evaluateInWebInspector(callId, script);
 }
 
 function notifyDone()
 {
-    setTimeout(function() {
-        if (window.layoutTestController) {
-            layoutTestController.closeWebInspector();
+    evaluateInWebInspector("true", function() {
+        if (window.layoutTestController)
             layoutTestController.notifyDone();
-        }
-    }, 0);
+    });
 }
 
 function output(text)

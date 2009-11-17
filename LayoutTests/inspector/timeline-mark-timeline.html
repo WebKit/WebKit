@@ -4,42 +4,14 @@
 <script src="timeline-test.js"></script>
 <script>
 
-var timelineMark = "MARK TIMELINE";
-
-function findMarkTimeline(record) 
+function performActions()
 {
-    if (record.type === timelineAgentRecordType.MarkTimeline && record.data.message === timelineMark) {
-        printTimelineRecordProperties(record);
-        return true;
-    }
-
-    var numChildren = record.children ? record.children.length : 0;
-    for (var i = 0; i < numChildren; ++i) {
-        if (findMarkTimeline(record.children[i]))
-            return true;
-    }
-    return false;
-}
-
-function analyzeTimelineData(timelineRecords) 
-{
-    // Uncomment to debugging the list of data returned.
-    // dumpTimelineRecords(timelineRecords);
-
-    var found = false;
-    var numRecords = timelineRecords.length;
-    for (var i = 0 ; i < numRecords; ++i) {
-        var record = timelineRecords[i];
-        if (found = findMarkTimeline(record))
-            break;
-    }
-    if (!found)
-        output("Couldn't find timeline mark: " + timelineMark);
+    console.markTimeline("MARK TIMELINE");
 }
 
 function doit() 
 {
-    retrieveTimelineData(analyzeTimelineData);
+    printTimelineRecords(performActions, "MarkTimeline");
 }
 
 </script>
@@ -49,10 +21,6 @@ function doit()
 <p>
 Tests the Timeline API mark feature
 </p>
-
-<script>
-    console.markTimeline(timelineMark);
-</script>
 
 </body>
 </html>

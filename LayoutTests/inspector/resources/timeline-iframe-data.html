@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+console.markTimeline("SCRIPT TAG");
+
+function iframeOnload()
+{
+    window.parent.iframeLoaded = true;
+}
+</script>
+</head>
+
+<body onload="iframeOnload()">
+    <div>Foo</div>
+</body>
+
+</html>

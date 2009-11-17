@@ -4,25 +4,16 @@
 <script src="timeline-test.js"></script>
 <script>
 
-function analyzeTimelineData(timelineRecords) 
+function performActions()
 {
-    // Uncomment to debugging the list of data returned.
-    // dumpTimelineRecords(timelineRecords);
-
-    // Search for the first ParseHTML record you can find
-    var numRecords = timelineRecords.length;
-    for (var i = 0 ; i < numRecords; ++i) {
-        var record = timelineRecords[i];
-        if (record.type === timelineAgentRecordType.ParseHTML) {
-            printTimelineRecordProperties(record);
-            break;
-        }
-    }
+    var element = document.createElement("div");
+    element.innerHTML = "Test data";
+    document.body.appendChild(element);
 }
 
 function doit() 
 {
-    retrieveTimelineData(analyzeTimelineData);
+    printTimelineRecords(performActions, "ParseHTML");
 }
 
 </script>

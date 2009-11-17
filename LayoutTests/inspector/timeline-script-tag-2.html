@@ -3,65 +3,31 @@
 <script src="inspector-test.js"></script>
 <script src="timeline-test.js"></script>
 <script>
-var timelineMark = "SCRIPT TAG";
 
-function analyzeEvaluateScript(record) 
+function runAfterScriptIsEvaluated(continuation)
 {
-    var numChildren = record.children ? record.children.length : 0;
-    for (var i = 0; i < numChildren; ++i) {
-        var child = record.children[i];
-        if (child.type === timelineAgentRecordType.MarkTimeline
-            && child.data.message === timelineMark
-            && record.data.url.indexOf("timeline-script-tag-2.js") !== -1) {
-
-            // Finish printing the record as a tree
-            dumpTimelineRecord(record, 1);
-            output("");
-
-            // Now print the important fields of the record
-            printTimelineRecordProperties(record);
-            return true;
-        }
+    function step()
+    {
+        if (!window.scriptEvaluated)
+            setTimeout(step, 100);
+        else
+            continuation();
     }
-    return false;
-}
-
-function analyzeParseHTML(record) 
-{
-    var numChildren = record.children ? record.children.length : 0;
-    for (var i = 0; i < numChildren; ++i) {
-        var child = record.children[i];
-        if (child.type === timelineAgentRecordType.EvaluateScript)
-            if (analyzeEvaluateScript(child))
-                return true;
-    }
-    return false;
-}  
-
-// Look for the ParseHtml->EvaluateScript->MarkTimeline that correlates 
-// to the <script> tag below.
-function analyzeTimelineData(timelineRecords) 
-{
-    // Uncomment to debugging the list of data returned.
-    // dumpTimelineRecords(timelineRecords);
-
-    // Search for a ParseHTML record
-    var numRecords = timelineRecords.length;
-    for (var i = 0 ; i < numRecords; ++i) {
-        var record = timelineRecords[i];
-        if (record.type === timelineAgentRecordType.ParseHTML) {
-            // Uncomment to debug the ParseHTML data record
-            // dumpTimelineRecord(record, 0);
-            output("ParseHTML");
-            if (!analyzeParseHTML(record))
-                output("Failed to find timeline mark: " + timelineMark);
-        }
-    }
+    setTimeout(step, 100);
 }
 
 function doit() 
 {
-    retrieveTimelineData(analyzeTimelineData);
+    if (window.layoutTestController)
+        layoutTestController.setTimelineProfilingEnabled(true);
+
+    var script = document.createElement("script");
+    script.src = "timeline-script-tag-2.js";
+    document.body.appendChild(script);
+
+    runAfterScriptIsEvaluated(function() {
+        printTimelineRecords(null, "EvaluateScript");
+    });
 }
 
 </script>
@@ -72,6 +38,5 @@ function doit()
 Tests the Timeline API instrumentation of a script tag with an external script.
 </p>
 
-<script src="timeline-script-tag-2.js"></script>
 </body>
 </html>

@@ -83,7 +83,8 @@ enum {
 
     PROP_WEB_VIEW,
     PROP_INSPECTED_URI,
-    PROP_JAVASCRIPT_PROFILING_ENABLED
+    PROP_JAVASCRIPT_PROFILING_ENABLED,
+    PROP_TIMELINE_PROFILING_ENABLED    
 };
 
 G_DEFINE_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
@@ -300,6 +301,22 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
                                         FALSE,
                                         WEBKIT_PARAM_READWRITE));
 
+    /**
+    * WebKitWebInspector:timeline-profiling-enabled
+    *
+    * This is enabling Timeline profiling in the Inspector.
+    *
+    * Since: 1.1.17
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_TIMELINE_PROFILING_ENABLED,
+                                    g_param_spec_boolean(
+                                        "timeline-profiling-enabled",
+                                        _("Enable Timeline profiling"),
+                                        _("Profile the WebCore instrumentation."),
+                                        FALSE,
+                                        WEBKIT_PARAM_READWRITE));
+
     g_type_class_add_private(klass, sizeof(WebKitWebInspectorPrivate));
 }
 
@@ -337,6 +354,15 @@ static void webkit_web_inspector_set_property(GObject* object, guint prop_id, co
             controller->disableProfiler();
         break;
     }
+    case PROP_TIMELINE_PROFILING_ENABLED: {
+        bool enabled = g_value_get_boolean(value);
+        WebCore::InspectorController* controller = priv->page->inspectorController();
+        if (enabled)
+            controller->startTimelineProfiler();
+        else
+            controller->stopTimelineProfiler();
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -357,6 +383,9 @@ static void webkit_web_inspector_get_property(GObject* object, guint prop_id, GV
         break;
     case PROP_JAVASCRIPT_PROFILING_ENABLED:
         g_value_set_boolean(value, priv->page->inspectorController()->profilerEnabled());
+        break;
+    case PROP_TIMELINE_PROFILING_ENABLED:
+        g_value_set_boolean(value, priv->page->inspectorController()->timelineAgent() != 0);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
