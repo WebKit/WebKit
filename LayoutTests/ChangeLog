@@ -1,5 +1,13 @@
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed, build fix. Follow up to r51072: rename skipped entries
+        for the tests that were moved.
+        
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Make DRT show web inspector for tests in inspector/ folder.

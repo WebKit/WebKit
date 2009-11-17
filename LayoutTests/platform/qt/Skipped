@@ -3018,8 +3018,8 @@ fast/innerHTML/001.html
 fast/innerHTML/002.html
 fast/innerHTML/003.html
 fast/innerHTML/006.html
-fast/inspector/matchedrules.html
-fast/inspector/style.html
+fast/inspector-support/matchedrules.html
+fast/inspector-support/style.html
 fast/invalid/001.html
 fast/invalid/002.html
 fast/invalid/003.html

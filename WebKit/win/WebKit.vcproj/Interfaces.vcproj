@@ -944,7 +944,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\Interfaces\IWebInspector.idl"
+			RelativePath="..\Interfaces\IWebInspector.idl" 
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
