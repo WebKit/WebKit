@@ -1,3 +1,32 @@
+2009-11-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] Style cleanup for GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=31506
+
+        Remove forward declaration in GOwnPtr and do some style cleanup.
+
+        * wtf/GOwnPtr.cpp:
+        * wtf/GOwnPtr.h:
+        (WTF::GOwnPtr::GOwnPtr):
+        (WTF::GOwnPtr::~GOwnPtr):
+        (WTF::GOwnPtr::get):
+        (WTF::GOwnPtr::release):
+        (WTF::GOwnPtr::outPtr):
+        (WTF::GOwnPtr::set):
+        (WTF::GOwnPtr::clear):
+        (WTF::GOwnPtr::operator*):
+        (WTF::GOwnPtr::operator->):
+        (WTF::GOwnPtr::operator!):
+        (WTF::GOwnPtr::operator UnspecifiedBoolType):
+        (WTF::GOwnPtr::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+        (WTF::freeOwnedGPtr):
+
 2009-11-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
