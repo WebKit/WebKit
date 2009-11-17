@@ -1,3 +1,12 @@
+2009-11-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Crashing tests after updating to Qt-4.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=31591
+
+        * platform/qt/Skipped: Put tests into skiplist temporarily.
+
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed, tests fix. Follow up to r51072: move
