@@ -1,3 +1,12 @@
+2009-11-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Pavel Feldman.
+
+        Skip inspector tests that are flaky on Windows Release - this is being tracked by:
+        https://bugs.webkit.org/show_bug.cgi?id=31596.
+
+        * platform/win/Skipped:
+
 2009-11-16  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Darin Adler.
