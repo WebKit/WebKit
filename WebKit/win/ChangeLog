@@ -1,5 +1,19 @@
 2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        DOMHTMLOptionElement is missing some functionality.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31491
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLOptionElement::text):
+        Cast m_element to an HTMLOptionElement, and call its text() function.
+        (DOMHTMLOptionElement::label):
+        Ditto, for label().
+
+2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
         DOMHTMLSelectElement is missing some implementation.
 
         https://bugs.webkit.org/show_bug.cgi?id=31489

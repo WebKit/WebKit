@@ -852,10 +852,19 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setDefaultSelected(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::text( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(optionTag));
+    HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(m_element);
+
+    *result = BString(optionElement->text()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::index( 
@@ -880,10 +889,19 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setDisabled(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::label( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(optionTag));
+    HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(m_element);
+
+    *result = BString(optionElement->label()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setLabel( 
