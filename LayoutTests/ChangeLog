@@ -1,5 +1,10 @@
 2009-11-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Not reviewed, follow up to r51072: rename skipped entries
+        * platform/qt/Skipped:
+
+2009-11-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Crashing tests after updating to Qt-4.6.0
