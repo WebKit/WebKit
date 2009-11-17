@@ -45,7 +45,7 @@ class Reviewer(Committer):
         Committer.__init__(self, name, email_or_emails)
         self.can_review = True
 
-# This is intended as a cannonical, machine-readable list of all non-reviewer committers for WebKit.
+# This is intended as a canonical, machine-readable list of all non-reviewer committers for WebKit.
 # If your name is missing here and you are a committer, please add it.  No review needed.
 # All reviewers are committers, so this list is only of committers who are not reviewers.
 committers_unable_to_review = [
@@ -132,7 +132,7 @@ committers_unable_to_review = [
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
 
-# This is intended as a cannonical, machine-readable list of all reviewers for WebKit.
+# This is intended as a canonical, machine-readable list of all reviewers for WebKit.
 # If your name is missing here and you are a reviewer, please add it.  No review needed.
 reviewers_list = [
     Reviewer("Ada Chan", "adachan@apple.com"),

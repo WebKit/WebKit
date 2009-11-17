@@ -1,3 +1,11 @@
+2009-11-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixed typos in comments.
+
+        * Scripts/modules/committers.py:
+
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
