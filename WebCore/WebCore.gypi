@@ -1503,6 +1503,8 @@
             'html/HTMLVideoElement.h',
             'html/HTMLViewSourceDocument.cpp',
             'html/HTMLViewSourceDocument.h',
+            'html/ISODateTime.cpp',
+            'html/ISODateTime.h',
             'html/ImageData.cpp',
             'html/ImageData.h',
             'html/MediaError.h',

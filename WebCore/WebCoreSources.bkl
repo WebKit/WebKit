@@ -674,6 +674,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLTokenizer.cpp
         html/HTMLUListElement.cpp
         html/HTMLViewSourceDocument.cpp
+        html/ISODateTime.cpp
         html/ImageData.cpp
         html/PreloadScanner.cpp
         html/ValidityState.cpp

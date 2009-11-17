@@ -1,3 +1,49 @@
+2009-11-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        Introduce WebCore::ISODateTime class.
+        https://bugs.webkit.org/show_bug.cgi?id=31340
+
+        This class represents a value of date/time types of the HTML5 INPUT
+        element, and has some parsing methods for ISO 8601.
+
+        This change has no tests because the class is not used yet.
+
+        * GNUmakefile.am: Add ISODateTime.cpp and ISODateTime.h.
+        * WebCore.gypi: ditto.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * WebCoreSources.bkl: ditto.
+        * html/ISODateTime.cpp: Added. Implementation of WebCore::ISODateTime class.
+        (WebCore::isLeapYear):
+        (WebCore::maxDayOfMonth):
+        (WebCore::dayOfWeek):
+        (WebCore::ISODateTime::maxWeekNumberInYear):
+        (WebCore::countDigits):
+        (WebCore::toInt):
+        (WebCore::ISODateTime::parseYear): Private helper for parseDate() and parseWeek().
+        (WebCore::ISODateTime::addDay): Private helper for parseTimeZone().
+        (WebCore::ISODateTime::addMinute): ditto.
+        (WebCore::ISODateTime::parseTimeZone): Private helper for parseDateTime().
+        (WebCore::ISODateTime::parseMonth): Parser for <input type=month>.
+        (WebCore::ISODateTime::parseDate): Parser for <input type=date>.
+        (WebCore::ISODateTime::parseWeek): Parser for <input type=week>.
+        (WebCore::ISODateTime::parseTime): Parser for <input type=time>.
+        (WebCore::ISODateTime::parseDateTimeLocal): Parser for <input type=datetime-local>.
+        (WebCore::ISODateTime::parseDateTime): Parser for <input type=datetime>.
+        * html/ISODateTime.h: Added.  Declare WebCore::ISODateTime class.
+        (WebCore::ISODateTime::ISODateTime):
+        (WebCore::ISODateTime::millisecond):
+        (WebCore::ISODateTime::second):
+        (WebCore::ISODateTime::minute):
+        (WebCore::ISODateTime::hour):
+        (WebCore::ISODateTime::monthDay):
+        (WebCore::ISODateTime::month):
+        (WebCore::ISODateTime::fullYear):
+        (WebCore::ISODateTime::week):
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Fix a typo in previous commit.

@@ -33795,6 +33795,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ISODateParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ISODateParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\ImageData.cpp"
 				>
 			</File>

@@ -1071,6 +1071,7 @@ SOURCES += \
     html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
+    html/ISODateTime.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
     html/ValidityState.cpp \
@@ -1751,6 +1752,7 @@ HEADERS += \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
+    html/ISODateTime.h \
     html/ImageData.h \
     html/PreloadScanner.h \
     html/TimeRanges.h \

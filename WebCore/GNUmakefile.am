@@ -1129,6 +1129,8 @@ webcore_sources += \
 	WebCore/html/HTMLUListElement.h \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/HTMLViewSourceDocument.h \
+	WebCore/html/ISODateTime.cpp \
+	WebCore/html/ISODateTime.h \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/ImageData.h \
 	WebCore/html/MediaError.h \
