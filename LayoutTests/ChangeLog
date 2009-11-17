@@ -1,3 +1,20 @@
+2009-11-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a test to check the behavior of submitting a GET form to <about:blank>.
+        
+        Currently Safari redirects the browser to <about:blank?>, while some other
+        browsers do not (including Firefox and Chromium). The objective of this test is
+        to express the current behavior of Safari and to become ready to remove
+        unintentional dependency on it from several tests.
+
+        Some HTTP tests submit a GET form to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=30423
+
+        * fast/forms/get-forms-to-about-blank-expected.txt: Added.
+        * fast/forms/get-forms-to-about-blank.html: Added.
+
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Disabling WebSocket tests on Tiger and Windows again, as they still time out.
