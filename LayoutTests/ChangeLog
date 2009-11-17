@@ -1,3 +1,15 @@
+2009-11-16  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Eliminate flakiness in char-encoding tests by removing setTimeout,
+        that was working around an old issue.
+        https://bugs.webkit.org/show_bug.cgi?id=31571
+
+        * fast/encoding/char-encoding-mac.html:
+        * fast/encoding/char-encoding.html:
+        * fast/encoding/resources/char-encoding-utils.js:
+
 2009-11-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Not reviewed, follow up to r51072: rename skipped entries
