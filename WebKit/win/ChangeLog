@@ -1,5 +1,20 @@
 2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Implement DOMHTMLInputElement::replaceCharactersInRange().
+
+        https://bugs.webkit.org/show_bug.cgi?id=31492
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::replaceCharactersInRange):
+        Get the text of the input field. Replace the given range with the
+        replacement text, and set this new string as the input element's value.
+        Select from index to the end of the field. This matches the
+        implementation in the Obj-C bindings.
+
+2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
         DOMHTMLOptionElement is missing some functionality.
 
         https://bugs.webkit.org/show_bug.cgi?id=31491
