@@ -41,7 +41,7 @@
 #endif
 
 #if BUILDING_ON_TIGER
-#define CFN_EXPORT export
+#define CFN_EXPORT extern
 #endif
 
 extern "C" {
