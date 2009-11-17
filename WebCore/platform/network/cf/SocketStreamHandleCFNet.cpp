@@ -40,7 +40,7 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
-#if BUILDING_ON_TIGER
+#ifdef BUILDING_ON_TIGER
 #define CFN_EXPORT extern
 #endif
 

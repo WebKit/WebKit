@@ -2,6 +2,12 @@
 
         Fix a typo in previous commit.
 
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: #ifdef, not #if.
+
+2009-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix a typo in previous commit.
+
         * platform/network/cf/SocketStreamHandleCFNet.cpp:
 
 2009-11-16  Alexey Proskuryakov  <ap@apple.com>
