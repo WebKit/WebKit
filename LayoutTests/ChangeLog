@@ -1,5 +1,30 @@
 2009-11-17  Yuta Kitamura  <yutak@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Fix http tests so that they do not submit a GET form to about:blank.
+        
+        Original tests expected that submitting an empty form to <about:blank> navigates
+        the browser to <about:blank?>, not <about:blank>. However, some other browsers
+        do not act like Safari, and in fact the layout test runner of Chromium was
+        failing to run these tests.
+        
+        Prior to this patch, a test that only checks this behavior was added, so now
+        we can remove the dependency on it from these tests.
+
+        Some HTTP tests submit a GET form to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=30423
+
+        * http/tests/navigation/onload-navigation-iframe-2-expected.txt:
+        * http/tests/navigation/onload-navigation-iframe-2.html:
+        * http/tests/navigation/onload-navigation-iframe-expected.txt:
+        * http/tests/navigation/onload-navigation-iframe-timeout-expected.txt:
+        * http/tests/navigation/onload-navigation-iframe-timeout.html:
+        * http/tests/navigation/onload-navigation-iframe.html:
+        * http/tests/navigation/resources/blank.txt: Added.
+
+2009-11-17  Yuta Kitamura  <yutak@chromium.org>
+
         Reviewed by Darin Adler.
 
         Add a test to check the behavior of submitting a GET form to <about:blank>.
