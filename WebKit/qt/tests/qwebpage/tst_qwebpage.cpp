@@ -147,6 +147,8 @@ private slots:
     void inputMethods();
     void defaultTextEncoding();
     void errorPageExtension();
+    void errorPageExtensionInIFrames();
+    void errorPageExtensionInFrameset();
 
     void crashTests_LazyInitializationOfMainFrame();
 
@@ -1629,12 +1631,8 @@ public:
         const ErrorPageExtensionOption* info = static_cast<const ErrorPageExtensionOption*>(option);
         ErrorPageExtensionReturn* errorPage = static_cast<ErrorPageExtensionReturn*>(output);
 
-        if (info->frame == mainFrame()) {
-            errorPage->content = "data:text/html,error";
-            return true;
-        }
-
-        return false;
+        errorPage->content = "data:text/html,error";
+        return true;
     }
 };
 
@@ -1645,11 +1643,10 @@ void tst_QWebPage::errorPageExtension()
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
 
-    page->mainFrame()->load(QUrl("qrc:///frametest/index.html"));
+    m_view->setUrl(QUrl("data:text/html,foo"));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
     page->mainFrame()->setUrl(QUrl("http://non.existent/url"));
-    QTest::qWait(2000);
     QTRY_COMPARE(spyLoadFinished.count(), 2);
     QCOMPARE(page->mainFrame()->toPlainText(), QString("data:text/html,error"));
     QCOMPARE(page->history()->count(), 2);
@@ -1671,7 +1668,38 @@ void tst_QWebPage::errorPageExtension()
     QTest::qWait(2000);
     QCOMPARE(page->history()->canGoBack(), false);
     QCOMPARE(page->history()->canGoForward(), true);
-    QCOMPARE(page->history()->currentItem().url(), QUrl("qrc:///frametest/index.html"));
+    QCOMPARE(page->history()->currentItem().url(), QUrl("data:text/html,foo"));
+
+    m_view->setPage(0);
+}
+
+void tst_QWebPage::errorPageExtensionInIFrames()
+{
+    ErrorPage* page = new ErrorPage;
+    m_view->setPage(page);
+
+    m_view->setHtml(QString("data:text/html,"
+                            "<h1>h1</h1>"
+                            "<iframe src='data:text/html,<p/>p'></iframe>"
+                            "<iframe src='non-existent.html'></iframe>"));
+    QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
+    QTRY_COMPARE(spyLoadFinished.count(), 1);
+
+    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("data:text/html,error"));
+
+    m_view->setPage(0);
+}
+
+void tst_QWebPage::errorPageExtensionInFrameset()
+{
+    ErrorPage* page = new ErrorPage;
+    m_view->setPage(page);
+
+    m_view->load(QUrl("qrc:///frametest/index.html"));
+
+    QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
+    QTRY_COMPARE(spyLoadFinished.count(), 1);
+    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("data:text/html,error"));
 
     m_view->setPage(0);
 }

@@ -1,3 +1,22 @@
+2009-11-17  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] better test coverage for ErrorPageExtension
+        https://bugs.webkit.org/show_bug.cgi?id=31583
+
+        Improved the coverage of current ErrorPageExtension tests by
+        adding autotests involving frameset and iframes.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (ErrorPage::extension): Make the ErrorPageExtension
+        to work for all frames, not only the main frame.
+        (tst_QWebPage::errorPageExtension): Stop using
+        the 'frameset.html' resouce in this method since
+        an autotest specific for frameset's is being added.
+        (tst_QWebPage::errorPageExtensionInIFrames): Added.
+        (tst_QWebPage::errorPageExtensionInFrameset): Added.
+
 2009-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
