@@ -13,6 +13,16 @@
 
 2009-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed buildbot fix.
+
+        Revert part of earlier patch and add comment, as it
+        was causing timeouts on the buildbot.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::notifyDone):
+
+2009-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Make the timeout 15 sec as for the other DRT's and make

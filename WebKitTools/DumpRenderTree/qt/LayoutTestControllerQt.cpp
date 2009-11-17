@@ -126,14 +126,16 @@ void LayoutTestController::notifyDone()
 {
     qDebug() << ">>>>notifyDone";
 
+    if (!m_timeoutTimer.isActive())
+        return;
+
+    m_timeoutTimer.stop();
+    emit done();
+
+    // FIXME: investigate why always resetting these result in timeouts
     m_isLoading = false;
     m_waitForDone = false;
     m_waitForPolicy = false;
-
-    if (!m_timeoutTimer.isActive())
-        return;
-    m_timeoutTimer.stop();
-    emit done();
 }
 
 int LayoutTestController::windowCount()
