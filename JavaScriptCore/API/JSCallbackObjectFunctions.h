@@ -131,13 +131,13 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
                 JSLock::DropAllLocks dropAllLocks(exec);
                 value = getProperty(ctx, thisRef, propertyNameRef.get(), &exception);
             }
-            exec->setException(toJS(exec, exception));
-            if (value) {
-                slot.setValue(toJS(exec, value));
+            if (exception) {
+                exec->setException(toJS(exec, exception));
+                slot.setValue(jsUndefined());
                 return true;
             }
-            if (exception) {
-                slot.setValue(jsUndefined());
+            if (value) {
+                slot.setValue(toJS(exec, value));
                 return true;
             }
         }
@@ -184,7 +184,8 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                 JSLock::DropAllLocks dropAllLocks(exec);
                 result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
             }
-            exec->setException(toJS(exec, exception));
+            if (exception)
+                exec->setException(toJS(exec, exception));
             if (result || exception)
                 return;
         }
@@ -202,7 +203,8 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                         JSLock::DropAllLocks dropAllLocks(exec);
                         result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
                     }
-                    exec->setException(toJS(exec, exception));
+                    if (exception)
+                        exec->setException(toJS(exec, exception));
                     if (result || exception)
                         return;
                 } else
@@ -240,7 +242,8 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
                 JSLock::DropAllLocks dropAllLocks(exec);
                 result = deleteProperty(ctx, thisRef, propertyNameRef.get(), &exception);
             }
-            exec->setException(toJS(exec, exception));
+            if (exception)
+                exec->setException(toJS(exec, exception));
             if (result || exception)
                 return true;
         }
@@ -301,7 +304,8 @@ JSObject* JSCallbackObject<Base>::construct(ExecState* exec, JSObject* construct
                 JSLock::DropAllLocks dropAllLocks(exec);
                 result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), &exception));
             }
-            exec->setException(toJS(exec, exception));
+            if (exception)
+                exec->setException(toJS(exec, exception));
             return result;
         }
     }
@@ -325,7 +329,8 @@ bool JSCallbackObject<Base>::hasInstance(ExecState* exec, JSValue value, JSValue
                 JSLock::DropAllLocks dropAllLocks(exec);
                 result = hasInstance(execRef, thisRef, valueRef, &exception);
             }
-            exec->setException(toJS(exec, exception));
+            if (exception)
+                exec->setException(toJS(exec, exception));
             return result;
         }
     }
@@ -363,7 +368,8 @@ JSValue JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObject, 
                 JSLock::DropAllLocks dropAllLocks(exec);
                 result = toJS(exec, callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception));
             }
-            exec->setException(toJS(exec, exception));
+            if (exception)
+                exec->setException(toJS(exec, exception));
             return result;
         }
     }
@@ -435,7 +441,8 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
             }
 
             double dValue;
-            return toJS(exec, value).getNumber(dValue) ? dValue : NaN;
+            if (value)
+                return toJS(exec, value).getNumber(dValue) ? dValue : NaN;
         }
             
     return Base::toNumber(exec);
@@ -459,7 +466,8 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
                 exec->setException(toJS(exec, exception));
                 return "";
             }
-            return toJS(exec, value).getString();
+            if (value)
+                return toJS(exec, value).getString();
         }
             
     return Base::toString(exec);
@@ -507,13 +515,14 @@ JSValue JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identif
                         JSLock::DropAllLocks dropAllLocks(exec);
                         value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
                     }
-                    exec->setException(toJS(exec, exception));
+                    if (exception) {
+                        exec->setException(toJS(exec, exception));
+                        return jsUndefined();
+                    }
                     if (value)
                         return toJS(exec, value);
-                    if (exception)
-                        return jsUndefined();
                 }
-                    
+
     return throwError(exec, ReferenceError, "Static value property defined with NULL getProperty callback.");
 }
 
@@ -560,11 +569,12 @@ JSValue JSCallbackObject<Base>::callbackGetter(ExecState* exec, const Identifier
                 JSLock::DropAllLocks dropAllLocks(exec);
                 value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
             }
-            exec->setException(toJS(exec, exception));
+            if (exception) {
+                exec->setException(toJS(exec, exception));
+                return jsUndefined();
+            }
             if (value)
                 return toJS(exec, value);
-            if (exception)
-                return jsUndefined();
         }
             
     return throwError(exec, ReferenceError, "hasProperty callback returned true for a property that doesn't exist.");

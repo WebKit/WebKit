@@ -166,6 +166,10 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
     if (JSStringIsEqualToUTF8CString(propertyName, "cantFind")) {
         return JSValueMakeUndefined(context);
     }
+    
+    if (JSStringIsEqualToUTF8CString(propertyName, "hasPropertyLie")) {
+        return 0;
+    }
 
     if (JSStringIsEqualToUTF8CString(propertyName, "throwOnGet")) {
         return JSEvaluateScript(context, JSStringCreateWithUTF8CString("throw 'an exception'"), object, JSStringCreateWithUTF8CString("test script"), 1, exception);
@@ -176,7 +180,7 @@ static JSValueRef MyObject_getProperty(JSContextRef context, JSObjectRef object,
         return JSValueMakeNumber(context, 1);
     }
     
-    return NULL;
+    return JSValueMakeNull(context);
 }
 
 static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
@@ -299,7 +303,7 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     }
 
     // string conversion -- forward to default object class
-    return NULL;
+    return JSValueMakeNull(context);
 }
 
 static JSStaticValue evilStaticValues[] = {
@@ -374,7 +378,7 @@ static JSValueRef EvilExceptionObject_convertToType(JSContextRef context, JSObje
         funcName = JSStringCreateWithUTF8CString("toStringExplicit");
         break;
     default:
-        return NULL;
+        return JSValueMakeNull(context);
         break;
     }
     
@@ -382,7 +386,7 @@ static JSValueRef EvilExceptionObject_convertToType(JSContextRef context, JSObje
     JSStringRelease(funcName);    
     JSObjectRef function = JSValueToObject(context, func, exception);
     if (!function)
-        return NULL;
+        return JSValueMakeNull(context);
     JSValueRef value = JSObjectCallAsFunction(context, function, object, 0, NULL, exception);
     if (!value) {
         JSStringRef errorString = JSStringCreateWithUTF8CString("convertToType failed"); 

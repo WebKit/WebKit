@@ -1,3 +1,18 @@
+2009-11-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Incorrect use of JavaScriptCore API in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=31577
+
+        Return undefined rather than a literal null.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setSelectedTextRangeCallback):
+        (incrementCallback):
+        (decrementCallback):
+        (showMenuCallback):
+
 2009-11-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
