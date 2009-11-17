@@ -1,3 +1,43 @@
+2009-11-17  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Android] Android is missing the implementation of the GeolocationService iface.
+        https://bugs.webkit.org/show_bug.cgi?id=31554
+
+        No new tests required as this is platform specific code.
+
+        * platform/android/GeolocationServiceAndroid.cpp: Added.
+        (WebCore::GeolocationServiceAndroid::create):
+        (WebCore::GeolocationServiceAndroid::GeolocationServiceAndroid):
+        (WebCore::GeolocationServiceAndroid::startUpdating):
+        (WebCore::GeolocationServiceAndroid::stopUpdating):
+        (WebCore::GeolocationServiceAndroid::suspend):
+        (WebCore::GeolocationServiceAndroid::resume):
+        (WebCore::GeolocationServiceAndroid::newPositionAvailable):
+        (WebCore::GeolocationServiceAndroid::newErrorAvailable):
+        (WebCore::GeolocationServiceAndroid::timerFired):
+        (WebCore::GeolocationServiceAndroid::isPositionMovement):
+        (WebCore::GeolocationServiceAndroid::isPositionMoreAccurate):
+        (WebCore::GeolocationServiceAndroid::isPositionMoreTimely):
+        * platform/android/GeolocationServiceAndroid.h: Added.
+        (WebCore::GeolocationServiceAndroid::~GeolocationServiceAndroid):
+        (WebCore::GeolocationServiceAndroid::lastPosition):
+        (WebCore::GeolocationServiceAndroid::lastError):
+        * platform/android/GeolocationServiceBridge.cpp: Added.
+        (WebCore::):
+        (WebCore::GeolocationServiceBridge::GeolocationServiceBridge):
+        (WebCore::GeolocationServiceBridge::~GeolocationServiceBridge):
+        (WebCore::GeolocationServiceBridge::start):
+        (WebCore::GeolocationServiceBridge::stop):
+        (WebCore::GeolocationServiceBridge::setEnableGps):
+        (WebCore::GeolocationServiceBridge::newLocationAvailable):
+        (WebCore::GeolocationServiceBridge::newErrorAvailable):
+        (WebCore::GeolocationServiceBridge::toGeoposition):
+        (WebCore::GeolocationServiceBridge::startJavaImplementation):
+        (WebCore::GeolocationServiceBridge::stopJavaImplementation):
+        * platform/android/GeolocationServiceBridge.h: Added.
+
 2009-11-16  Kent Tamura  <tkent@chromium.org>
 
         Unreviewd build fix.
