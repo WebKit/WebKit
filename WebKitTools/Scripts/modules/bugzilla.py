@@ -218,6 +218,7 @@ class Bugzilla:
         attachments = self.fetch_attachments_from_bug(bug_id)
         for attachment in attachments:
             if attachment['id'] == attachment_id:
+                self._validate_committer_and_reviewer(attachment)
                 return attachment
         return None # This should never be hit.
 
@@ -261,6 +262,13 @@ class Bugzilla:
 
     def _validate_committer(self, patch, reject_invalid_patches):
         return self._validate_setter_email(patch, 'committer', self.committers.committer_by_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
+
+    # FIXME: This is a hack until we have a real Attachment object.
+    # _validate_committer and _validate_reviewer fill in the 'reviewer' and 'committer'
+    # keys which other parts of the code expect to be filled in.
+    def _validate_committer_and_reviewer(self, patch):
+        self._validate_reviewer(patch, reject_invalid_patches=False)
+        self._validate_committer(patch, reject_invalid_patches=False)
 
     def fetch_unreviewed_patches_from_bug(self, bug_id):
         unreviewed_patches = []

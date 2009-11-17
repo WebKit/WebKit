@@ -330,7 +330,7 @@ class WebKitLandingScripts:
     @classmethod
     def _land_patch(cls, patch, options, tool):
         tool.scm().update_webkit() # Update before every patch in case the tree has changed
-        log("Applying %s from bug %s." % (patch['id'], patch['bug_id']))
+        log("Applying patch %s from bug %s." % (patch['id'], patch['bug_id']))
         tool.scm().apply_patch(patch, force=options.non_interactive)
 
         # Make sure the tree is still green after updating, before building this patch.

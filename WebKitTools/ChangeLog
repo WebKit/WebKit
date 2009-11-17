@@ -1,3 +1,16 @@
+2009-11-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        commit-queue is failing to set reviewer in ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=31592
+
+        * Scripts/bugzilla-tool: Clarify the "applying" log message.
+        * Scripts/modules/bugzilla.py:
+         - Add a new _validate_committer_and_reviewer function as a
+           temporary solution until we can make a real Attachment object
+           which knows how to fill in its committer/reviewer fields automatically.
+
 2009-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Oliver Hunt.
