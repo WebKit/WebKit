@@ -278,3 +278,4 @@ library WebKit
         [default] interface IWebScriptWorld;
     }
 }
+

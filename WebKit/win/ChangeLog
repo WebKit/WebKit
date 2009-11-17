@@ -1,3 +1,13 @@
+2009-11-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by NOBODY - Build Fix.
+
+        Touch files to try to fix the build.
+
+        * Interfaces/IWebInspector.idl:
+        * Interfaces/WebKit.idl:
+        * WebKit.vcproj/Interfaces.vcproj:
+
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
