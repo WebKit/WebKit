@@ -1231,12 +1231,12 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::rectOnScreen(
     if (!renderer || !view)
         return E_FAIL;
 
-    IntRect coreRect = renderer->absoluteBoundingBoxRect();
-    coreRect.setLocation(view->contentsToWindow(coreRect.location()));
+    IntRect coreRect = view->contentsToScreen(renderer->absoluteBoundingBoxRect());
     rect->left = coreRect.x();
     rect->top = coreRect.y();
     rect->right = coreRect.right();
     rect->bottom = coreRect.bottom();
+
     return S_OK;
 }
 

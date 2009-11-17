@@ -1,3 +1,15 @@
+2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        DOMHTMLInputElement::rectOnScreen() returns the wrong rect
+
+        https://bugs.webkit.org/show_bug.cgi?id=31487
+
+        Reviewed by Darin Adler.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::rectOnScreen):
+        Return the rect on screen, not the rect in the window.
+
 2009-11-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by NOBODY - Build Fix.
