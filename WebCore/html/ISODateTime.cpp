@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ISODateTime.h"
 
+#include <limits.h>
 #include <wtf/ASCIICType.h>
 
 namespace WebCore {
@@ -177,8 +178,8 @@ bool ISODateTime::addDay(int dayDiff)
                 day = maxDayOfMonth(year, month);
             }
             if (year < gregorianStartYear
-                    || year == gregorianStartYear && month < gregorianStartMonth
-                    || year == gregorianStartYear && month == gregorianStartMonth && day < gregorianStartDay)
+                    || (year == gregorianStartYear && month < gregorianStartMonth)
+                    || (year == gregorianStartYear && month == gregorianStartMonth && day < gregorianStartDay))
                 return false;
         }
         m_year = year;
