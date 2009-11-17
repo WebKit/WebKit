@@ -1,3 +1,13 @@
+2009-11-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by NOBODY - Build Fix.
+
+        Correct build error in Debug_Cairo target after @49705.
+
+        * WebKit.vcproj/WebKit.vcproj: Revise JavaScriptCore.lib
+          dependency to have proper "_debug" suffix needed by
+          the Debug_Cairo target.
+
 2009-11-17  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by NOBODY - Build Fix.
