@@ -1,3 +1,15 @@
+2009-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Make the timeout 15 sec as for the other DRT's and make
+        it print out the same output when a test timeout.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::timerEvent):
+
 2009-11-17  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
