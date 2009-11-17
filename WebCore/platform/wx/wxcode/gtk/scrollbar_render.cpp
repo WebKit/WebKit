@@ -116,9 +116,18 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc, const wxRect& rect, wx
     dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
     dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
 
+    // when going from Cairo -> Gdk, any Cairo context transformations are lost
+    // so we need to alter the coordinates to reflect their transformed point.
+    double xtrans = 0;
+    double ytrans = 0;
+    
+    wxGCDC* gcdc = wxDynamicCast(&dc, wxGCDC);
+    wxGraphicsContext* gc = gcdc->GetGraphicsContext();
+    gc->GetTransform().TransformPoint(&xtrans, &ytrans);
+
     wxRendererNative& renderer = wxRendererNative::Get();
-    int x = rect.x;
-    int y = rect.y;
+    int x = rect.x + (int)xtrans;
+    int y = rect.y + (int)ytrans;
 
     int buttonLength = 16;
 
@@ -138,13 +147,15 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc, const wxRect& rect, wx
     physicalLength -= buttonLength*2;
     int thumbStart = 0;
     int thumbLength = 0;
-    calcThumbStartAndLength(physicalLength, max + step, current, step, &thumbStart, &thumbLength);
+    calcThumbStartAndLength(physicalLength, max, current, step, &thumbStart, &thumbLength);
 
     if (horiz) {
-        buttonRect.x = thumbStart + buttonLength;
+        buttonRect.x = x + thumbStart + buttonLength;
+        buttonRect.y = y;
         buttonRect.width = thumbLength;
     } else {
-        buttonRect.y = thumbStart + buttonLength;
+        buttonRect.x = x;
+        buttonRect.y = y + thumbStart + buttonLength;
         buttonRect.height = thumbLength;
     }
 

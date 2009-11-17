@@ -30,6 +30,8 @@
 #include <wx/defs.h>
 
 #include <wx/dc.h>
+#include <wx/dcgraph.h>
+#include <wx/graphics.h>
 #include <wx/renderer.h>
 #include <wx/window.h>
 
@@ -131,8 +133,24 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
         part = SP_TRACKENDVERT;
 
     int xpState = TS_NORMAL;
+    wxRect transRect = rect;
+
+#if USE(WXGC)
+    // when going from GdiPlus -> Gdi, any GdiPlus transformations are lost
+    // so we need to alter the coordinates to reflect their transformed point.
+    double xtrans = 0;
+    double ytrans = 0;
+    
+    wxGCDC* gcdc = wxDynamicCast(&dc, wxGCDC);
+    wxGraphicsContext* gc = gcdc->GetGraphicsContext();
+    gc->GetTransform().TransformPoint(&xtrans, &ytrans);
+
+    transRect.x += (int)xtrans;
+    transRect.y += (int)ytrans;
+#endif
+
     RECT r;
-    wxCopyRectToRECT(rect, r);
+    wxCopyRectToRECT(transRect, r);
 
     // Unlike Mac, on MSW you draw the scrollbar piece by piece.
     // so we draw the track first, then the buttons
@@ -163,14 +181,14 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
         physicalLength -= buttonSize*2;
         int thumbStart = 0;
         int thumbLength = 0;
-        calcThumbStartAndLength(physicalLength, max + step, 
+        calcThumbStartAndLength(physicalLength, max, 
                             current, step, &thumbStart, &thumbLength);
         buttonRect = r;
         if (horiz) {
-            buttonRect.left = thumbStart + buttonSize;
+            buttonRect.left = buttonRect.left + thumbStart + buttonSize;
             buttonRect.right = buttonRect.left + thumbLength;
         } else {
-            buttonRect.top = thumbStart + buttonSize;
+            buttonRect.top = buttonRect.top + thumbStart + buttonSize;
             buttonRect.bottom = buttonRect.top + thumbLength;
         }
 

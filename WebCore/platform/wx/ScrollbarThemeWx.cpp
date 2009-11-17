@@ -28,6 +28,7 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
+#include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
 #include "ScrollbarClient.h"
 #include "scrollbar_render.h"
@@ -70,6 +71,11 @@ bool ScrollbarThemeWx::hasThumb(Scrollbar* scrollbar)
     return thumbLength(scrollbar) > 0;
 }
 
+int ScrollbarThemeWx::minimumThumbLength(Scrollbar* scrollbar)
+{
+    return 20;
+}
+
 IntSize ScrollbarThemeWx::buttonSize(Scrollbar*) 
 {
 #ifdef __WXMAC__
@@ -79,6 +85,22 @@ IntSize ScrollbarThemeWx::buttonSize(Scrollbar*)
 #endif
 }
 
+void ScrollbarThemeWx::splitTrack(Scrollbar* scrollbar, const IntRect& unconstrainedTrackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
+{
+    ScrollbarThemeComposite::splitTrack(scrollbar, unconstrainedTrackRect, beforeThumbRect, thumbRect, afterThumbRect);
+#ifdef __WXMAC__
+    // on Mac, there are a few pixels drawn above the actual track and so adjust
+    // the hit testing rects accordingly
+    int trackStart = 10; 
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        thumbRect.setX(thumbRect.x() + trackStart);
+        afterThumbRect.setX(afterThumbRect.x() - trackStart);
+    } else {
+        thumbRect.setY(thumbRect.y() + trackStart);
+        afterThumbRect.setY(afterThumbRect.y() - trackStart);
+    }
+#endif
+}
 
 IntRect ScrollbarThemeWx::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
 {
@@ -111,10 +133,16 @@ IntRect ScrollbarThemeWx::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart 
     IntSize size = buttonSize(scrollbar);
     int x, y;
     if (scrollbar->orientation() == HorizontalScrollbar) {
+#ifdef __WXMAC__
+        size.setWidth(size.width() + cMacButtonOverlap);
+#endif
         x = scrollbar->x() + scrollbar->width() - size.width();
         y = scrollbar->y();
     } else {
         x = scrollbar->x();
+#ifdef __WXMAC__
+        size.setHeight(size.height() + cMacButtonOverlap);
+#endif
         y = scrollbar->y() + scrollbar->height() - size.height();
     }
     return IntRect(x, y, size.width(), size.height());

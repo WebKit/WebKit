@@ -48,6 +48,10 @@ protected:
     virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
     virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
     virtual IntRect trackRect(Scrollbar*, bool painting = false);
+
+    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
+    
+    virtual int minimumThumbLength(Scrollbar*);
 };
 
 }

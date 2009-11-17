@@ -50,16 +50,17 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
                                        int current, wxScrollbarPart focusPart, wxScrollbarPart hoverPart, 
                                        int max, int step, int flags=0);
 
-inline void calcThumbStartAndLength(int physicalLength, int virtualLength, int current, 
+inline void calcThumbStartAndLength(int physicalLength, int max, int current, 
                                 int step, int *thumbStart, int *thumbLength)
 {
-        float proportion = (float)physicalLength / virtualLength;
-        float scale = (float)virtualLength / physicalLength;
-        int thumbSize = proportion * physicalLength;
-        int currentPos = current / scale;
-        
+        float proportion = ((float)physicalLength - 8)/ (max + step);
+        float thumbSize =  proportion * (float)physicalLength;
+        if (thumbSize < 20)
+            thumbSize = 20;
+
+        float thumbPos = ((float)current / (float)max) * ((float)physicalLength - thumbSize);
         if (thumbStart)
-            *thumbStart = currentPos;
+            *thumbStart = thumbPos;
         
         if (thumbLength)
             *thumbLength = thumbSize;
