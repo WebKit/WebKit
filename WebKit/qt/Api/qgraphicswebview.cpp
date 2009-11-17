@@ -242,6 +242,7 @@ QGraphicsWebView::QGraphicsWebView(QGraphicsItem* parent)
 #if QT_VERSION >= 0x040600
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
 #endif
+    setAcceptDrops(true);
     setAcceptHoverEvents(true);
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -875,10 +876,8 @@ bool QGraphicsWebView::focusNextPrevChild(bool next)
 void QGraphicsWebView::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    //if (d->page)
-    //    d->page->event(ev);
-    //Just remove this line below when the code above is working
-    Q_UNUSED(ev);
+    if (d->page)
+        d->page->event(ev);
 #else
     Q_UNUSED(ev);
 #endif
