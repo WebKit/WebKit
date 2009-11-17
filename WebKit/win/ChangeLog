@@ -1,5 +1,22 @@
 2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        DOMHTMLSelectElement is missing some implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31489
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLSelectElement::options):
+        Cast m_element to an HTMLSelectElement. If it has no options, return
+        E_FAIL. Otherwise, create a DOMHTMLOptionsCollection to wrap the
+        options, and return it.
+        (DOMHTMLSelectElement::activateItemAtIndex):
+        If the index is out of bounds, return E_FAIL. Otherwise, select the
+        item.
+
+2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
         DOMHTMLOptionsCollection is missing some implementation.
 
         https://bugs.webkit.org/show_bug.cgi?id=31488

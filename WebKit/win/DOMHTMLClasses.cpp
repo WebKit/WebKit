@@ -695,10 +695,22 @@ HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::form(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::options( 
-        /* [retval][out] */ IDOMHTMLOptionsCollection** /*result*/)
+        /* [retval][out] */ IDOMHTMLOptionsCollection** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(selectTag));
+    HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(m_element);
+
+    if (!selectElement->options())
+        return E_FAIL;
+
+    *result = DOMHTMLOptionsCollection::createInstance(selectElement->options().get());
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::disabled( 
@@ -789,10 +801,17 @@ HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::remove(
 // DOMHTMLSelectElement - IFormsAutoFillTransitionSelect ----------------------
 
 HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::activateItemAtIndex( 
-    /* [in] */ int /*index*/)
+    /* [in] */ int index)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;    
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(selectTag));
+    HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(m_element);
+
+    if (index >= selectElement->length())
+        return E_FAIL;
+
+    selectElement->setSelectedIndex(index);
+    return S_OK;
 }
 
 // DOMHTMLOptionElement - IUnknown --------------------------------------------
