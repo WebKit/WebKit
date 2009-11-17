@@ -1,3 +1,20 @@
+2009-11-16  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31050
+
+        Minor fixes for JSVALUE32_64: branchConvertDoubleToInt32
+        failed on a CortexA8 CPU, but not on a simulator; and
+        JITCall.cpp modifications was somehow not committed to mainline.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::fmrs_r):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
 2009-11-16  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.

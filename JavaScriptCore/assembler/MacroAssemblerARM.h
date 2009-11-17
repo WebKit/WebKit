@@ -829,12 +829,12 @@ public:
     // (specifically, in this case, 0).
     void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID fpTemp)
     {
-        m_assembler.ftosid_r(src, ARMRegisters::SD0);
-        m_assembler.fmrs_r(ARMRegisters::SD0, dest);
+        m_assembler.ftosid_r(ARMRegisters::SD0, src);
+        m_assembler.fmrs_r(dest, ARMRegisters::SD0);
 
         // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
         m_assembler.fsitod_r(ARMRegisters::SD0, ARMRegisters::SD0);
-        failureCases.append(branchDouble(DoubleNotEqual, src, ARMRegisters::SD0));
+        failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, ARMRegisters::SD0));
 
         // If the result is zero, it might have been -0.0, and 0.0 equals to -0.0
         failureCases.append(branchTest32(Zero, dest));
