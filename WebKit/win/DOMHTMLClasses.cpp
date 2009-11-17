@@ -39,6 +39,7 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLOptionElement.h>
+#include <WebCore/HTMLOptionsCollection.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/IntRect.h>
@@ -134,11 +135,34 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::QueryInterface(REFIID riid, 
 
 // DOMHTMLOptionsCollection ---------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::length( 
-    /* [retval][out] */ unsigned int* /*result*/)
+DOMHTMLOptionsCollection::DOMHTMLOptionsCollection(WebCore::HTMLOptionsCollection* collection)
+    : m_collection(collection)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+}
+
+IDOMHTMLOptionsCollection* DOMHTMLOptionsCollection::createInstance(WebCore::HTMLOptionsCollection* collection)
+{
+    if (!collection)
+        return 0;
+
+    IDOMHTMLOptionsCollection* optionsCollection = 0;
+    DOMHTMLOptionsCollection* newCollection = new DOMHTMLOptionsCollection(collection);
+    if (FAILED(newCollection->QueryInterface(IID_IDOMHTMLOptionsCollection, (void**)&optionsCollection))) {
+        delete newCollection;
+        return 0;
+    }
+
+    return optionsCollection;
+}
+
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::length( 
+    /* [retval][out] */ unsigned int* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = m_collection->length();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::setLength( 
@@ -149,16 +173,20 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::setLength(
 }
 
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::item( 
-    /* [in] */ unsigned int /*index*/,
-    /* [retval][out] */ IDOMNode** /*result*/)
+    /* [in] */ unsigned int index,
+    /* [retval][out] */ IDOMNode** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = DOMNode::createInstance(m_collection->item(index));
+
+    return *result ? S_OK : E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::namedItem( 
     /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDOMNode* /*result*/)
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

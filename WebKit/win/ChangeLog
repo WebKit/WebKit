@@ -1,5 +1,31 @@
 2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        DOMHTMLOptionsCollection is missing some implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31488
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLOptionsCollection::DOMHTMLOptionsCollection):
+        Initialize m_collection.
+        (DOMHTMLOptionsCollection::createInstance):
+        Create a DOMHTMLOptionsCollection. If we fail to query for
+        IDOMHTMLOptionsCollection, delete it, and return 0. Otherwise, return
+        the result.
+        (DOMHTMLOptionsCollection::length):
+        (DOMHTMLOptionsCollection::item):
+        Create a DOMNode for the WebCore Node. If this is 0, return E_FAIL.
+        (DOMHTMLOptionsCollection::namedItem):
+        Correct the signature of this function.
+
+        * DOMHTMLClasses.h:
+        Declare DOMHTMLOptionsCollection::createInstance(). Correct the
+        signature of namedItem() to match IDOMHTMLOptionsCollection. Add a
+        member to DOMHTMLOptionsCollection to hold the WebCore object.
+
+2009-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
         DOMHTMLInputElement::rectOnScreen() returns the wrong rect
 
         https://bugs.webkit.org/show_bug.cgi?id=31487
