@@ -1,3 +1,16 @@
+2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed, tests fix. Follow up to r51072: move
+        platform-specific results for fast/inspector into
+        fast/inspector-support.
+
+        * platform/mac/fast/inspector-support/matchedrules-expected.checksum: Renamed from LayoutTests/platform/mac/fast/inspector/matchedrules-expected.checksum.
+        * platform/mac/fast/inspector-support/matchedrules-expected.png: Renamed from LayoutTests/platform/mac/fast/inspector/matchedrules-expected.png.
+        * platform/mac/fast/inspector-support/matchedrules-expected.txt: Renamed from LayoutTests/platform/mac/fast/inspector/matchedrules-expected.txt.
+        * platform/mac/fast/inspector-support/style-expected.txt: Renamed from LayoutTests/platform/mac/fast/inspector/style-expected.txt.
+        * platform/qt/fast/inspector-support/matchedrules-expected.txt: Renamed from LayoutTests/platform/qt/fast/inspector/matchedrules-expected.txt.
+        * platform/qt/fast/inspector-support/style-expected.txt: Renamed from LayoutTests/platform/qt/fast/inspector/style-expected.txt.
+
 2009-11-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Actually skip the inspector console tests while the problem
