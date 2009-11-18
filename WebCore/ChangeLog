@@ -1,4 +1,20 @@
-2009-11-17  Jens Alfke  <snej@chromium.org>
+2009-11-18  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Reverting r50919 that has introduced a non-thread-safe refcounting in ScriptExecutionContext::postTaskToMainThread.
+        https://bugs.webkit.org/show_bug.cgi?id=31615
+
+        * dom/Document.cpp:
+        (WebCore::ScriptExecutionContextTaskTimer::ScriptExecutionContextTaskTimer):
+        (WebCore::ScriptExecutionContextTaskTimer::fired):
+        (WebCore::PerformTaskContext::PerformTaskContext):
+        (WebCore::performTask):
+        (WebCore::Document::postTask):
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+
+2009-11-18  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.
 
