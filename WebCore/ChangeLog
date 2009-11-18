@@ -1,5 +1,12 @@
 2009-11-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Touch InspectorController so that frontend
+        JS files are deployed on Windows.
+
+        * inspector/InspectorController.cpp:
+
+2009-11-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: clone timeline records array instead of
