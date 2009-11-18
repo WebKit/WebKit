@@ -182,10 +182,6 @@ bool PluginView::platformStart()
 
     show();
 
-    // TODO: Implement null timer throttling depending on plugin activation
-    m_nullEventTimer.set(new Timer<PluginView>(this, &PluginView::nullEventTimerFired));
-    m_nullEventTimer->startRepeating(0.02);
-
     return true;
 }
 
@@ -484,8 +480,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     EventRecord record;
 
     if (event->type() == eventNames().mousemoveEvent) {
-        // Mouse movement is handled by null timer events
-        return;
+        record.what = nullEvent;
     } else if (event->type() == eventNames().mouseoverEvent) {
         record.what = adjustCursorEvent;
     } else if (event->type() == eventNames().mouseoutEvent) {
@@ -590,22 +585,6 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         LOG(Events, "PluginView::handleKeyboardEvent(): Keyboard event type %d not accepted", record.what);
     else
         event->setDefaultHandled();
-}
-
-void PluginView::nullEventTimerFired(Timer<PluginView>*)
-{
-    EventRecord record;
-
-    record.what = nullEvent;
-    record.message = 0;
-    record.when = TickCount();
-    record.where = globalMousePosForPlugin();
-    record.modifiers = GetCurrentKeyModifiers();
-    if (!Button())
-        record.modifiers |= btnState;
-
-    if (!dispatchNPEvent(record))
-        LOG(Events, "PluginView::nullEventTimerFired(): Null event not accepted");
 }
 
 static int modifiersForEvent(UIEventWithKeyState* event)
