@@ -1,20 +1,45 @@
 <html>
 <head>
     <script>
-    function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            // Set this preference so the tab key will actually insert a tab character- like in Mail.
-            layoutTestController.setTabKeyCyclesThroughElements(false);
-        }
-        var ta = document.getElementById('ta');
-        ta.focus();
-        if (window.eventSender) {
+    function focusElementAndPressTabKey(el)
+    {
+        el.focus();
+        if (window.eventSender)
             eventSender.keyDown("\t");
-        }
-        var res = document.getElementById('res');
-        if (ta.value == "\t")
-            res.innerHTML = "Test Passed";
+    }
+
+    function test() {
+
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        var el = document.getElementById('ta');
+
+        // Test that default setting is to cycle through elements.
+        // This tab key press should not insert a tab.
+        focusElementAndPressTabKey(el);
+        if (el.value != "")
+            return;
+
+        if (window.layoutTestController)
+            layoutTestController.setTabKeyCyclesThroughElements(false);
+
+        // Test that activating the setting causes a tab character insertion.
+        focusElementAndPressTabKey(el);
+        if (el.value != "\t")
+            return;
+
+        // Set this preference so the tab key will actually insert a tab character- like in Mail.
+        if (window.layoutTestController)
+            layoutTestController.setTabKeyCyclesThroughElements(true);
+
+        // Test that deactivating the setting prevents a tab insertion.
+        el.value = "";
+        focusElementAndPressTabKey(el);
+        if (el.value != "")
+            return;
+
+        res.innerHTML = "Test Passed";
     }
     </script>
 </head>

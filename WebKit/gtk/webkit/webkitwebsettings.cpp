@@ -684,7 +684,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          "Tab key cycles through elements",
                                                          "Whether the tab key cycles through elements on the page.",
                                                          TRUE,
-                                                         WEBKIT_PARAM_READWRITE));
+                                                         flags));
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }

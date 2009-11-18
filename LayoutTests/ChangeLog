@@ -1,3 +1,16 @@
+2009-11-18  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Tab key does not cycle through elements by default
+        https://bugs.webkit.org/show_bug.cgi?id=31505
+
+        Improve fast/events/keypress-insert-tab.html to test that the
+        TabKeyCyclesThroughElements setting is true by default and
+        toggles correctly.
+
+        * fast/events/keypress-insert-tab.html:
+
 2009-11-18  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
