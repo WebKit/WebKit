@@ -2655,11 +2655,11 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
                 
         // Dispatch a change event for text fields or textareas that have been edited
         RenderObject* r = oldFocusedNode->renderer();
-        if (r && r->isTextControl() && toRenderTextControl(r)->isEdited()) {
+        if (r && r->isTextControl() && toRenderTextControl(r)->wasChangedSinceLastChangeEvent()) {
             oldFocusedNode->dispatchEvent(Event::create(eventNames().changeEvent, true, false));
             r = oldFocusedNode->renderer();
             if (r && r->isTextControl())
-                toRenderTextControl(r)->setEdited(false);
+                toRenderTextControl(r)->setChangedSinceLastChangeEvent(false);
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)

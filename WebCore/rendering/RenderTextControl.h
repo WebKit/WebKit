@@ -34,11 +34,11 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
-    bool isEdited() const { return m_edited; }
-    void setEdited(bool isEdited) { m_edited = isEdited; }
+    bool wasChangedSinceLastChangeEvent() const { return m_wasChangedSinceLastChangeEvent; }
+    void setChangedSinceLastChangeEvent(bool wasChangedSinceLastChangeEvent) { m_wasChangedSinceLastChangeEvent = wasChangedSinceLastChangeEvent; }
 
-    bool isUserEdited() const { return m_userEdited; }
-    void setUserEdited(bool isUserEdited);
+    bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
+    void setLastChangeWasUserEdit(bool lastChangeWasUserEdit);
 
     int selectionStart();
     int selectionEnd();
@@ -105,8 +105,8 @@ private:
 
     String finishText(Vector<UChar>&) const;
 
-    bool m_edited;
-    bool m_userEdited;
+    bool m_wasChangedSinceLastChangeEvent;
+    bool m_lastChangeWasUserEdit;
     RefPtr<TextControlInnerTextElement> m_innerText;
 };
 
