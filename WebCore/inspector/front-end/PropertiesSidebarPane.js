@@ -36,12 +36,11 @@ WebInspector.PropertiesSidebarPane.prototype = {
     {
         var body = this.bodyElement;
 
-        body.removeChildren();
-
-        this.sections = [];
-
-        if (!node)
+        if (!node) {
+            body.removeChildren();
+            this.sections = [];
             return;
+        }
 
         var self = this;
         var callback = function(prototypes) {
