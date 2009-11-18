@@ -947,10 +947,13 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(wchar_t character,
     result.text[0] = character;
     result.unmodifiedText[0] = character;
 
-    // Do not set |isSystemKey| in this constructor. This constructor is used
-    // to build key events that eventually become js |keypress()| events, which
-    // do not fire if |isSystemKey| is set. Since we trigger shortcuts after
-    // |keydown()|, it is ok to not set this anyway.
+    // Windows and Linux set |isSystemKey| if alt is down. WebKit looks at this
+    // flag to decide if it should handle a key or not. E.g. alt-left/right
+    // shouldn't be used by WebKit to scroll the current page, because we want
+    // to get that key back for it to do history navigation. Hence, the
+    // corresponding situation on OS X is to set this for cmd key presses.
+    if (result.modifiers & WebInputEvent::MetaKey)
+        result.isSystemKey = true;
 
     return result;
 }

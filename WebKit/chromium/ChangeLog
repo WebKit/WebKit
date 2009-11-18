@@ -1,3 +1,13 @@
+2009-11-17  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Fisher, Dmitry Titov.
+
+        Revert r50887, it regressed handling of cmd-left when a text box is focused.
+        https://bugs.webkit.org/show_bug.cgi?id=31566
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+
 2009-11-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
