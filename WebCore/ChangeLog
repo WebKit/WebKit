@@ -1,3 +1,20 @@
+2009-11-17  Hayato Ito  <hayato@google.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid infinite mutual recursion when deeply nested tags are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=30651
+
+        Test: fast/parser/block-nesting-cap-table.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+        (WebCore::tagPriorityOfNode):
+        (WebCore::HTMLParser::limitBlockDepth):
+        (WebCore::HTMLParser::insertNodeAfterLimitBlockDepth):
+        (WebCore::HTMLParser::insertNode):
+        * html/HTMLParser.h:
+
 2009-11-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Rubber-stamped by Alexey Proskuryakov.

@@ -111,6 +111,9 @@ private:
 
     void processCloseTag(Token*);
 
+    void limitBlockDepth(int tagPriority);
+
+    bool insertNodeAfterLimitBlockDepth(Node*, bool flat = false);
     bool insertNode(Node*, bool flat = false);
     bool handleError(Node*, bool flat, const AtomicString& localName, int tagPriority);
     

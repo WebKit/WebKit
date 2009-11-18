@@ -1,3 +1,14 @@
+2009-11-17  Hayato Ito  <hayato@google.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid infinite mutual recursion when deeply nested tags are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=30651
+
+        * fast/parser/block-nesting-cap-table-expected.txt: Added.
+        * fast/parser/block-nesting-cap-table.html: Added.
+        * fast/parser/script-tests/block-nesting-cap-table.js: Added.
+
 2009-11-17  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Darin Adler.
