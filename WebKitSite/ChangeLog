@@ -1,3 +1,16 @@
+2009-11-18  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31610
+
+        Adds property "min-width" to #title so that the width of the title
+        element on each page is at least 790px. In particular, this makes
+        the page <http://webkit.org/security/security-group-members.html>
+        consistent, in appearance, to the rest of the site.
+
+        * css/main.css:
+
 2009-11-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

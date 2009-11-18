@@ -52,6 +52,7 @@ p {
     right: 20px;
     margin: 0px;
     padding: 0px;
+    min-width: 790px;
 }
 
 #title h1 {
