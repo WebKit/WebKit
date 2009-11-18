@@ -1,3 +1,15 @@
+2009-11-18  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        HTMLAnchorElement is inconsistent with its internal handling of the value returned for the href attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=31593
+
+        Test: fast/dom/HTMLAnchorElement/set-href-attribute-whitespace.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::href): Add call to deprecatedParseURL.
+
 2009-11-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Touch InspectorController so that frontend

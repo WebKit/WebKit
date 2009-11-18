@@ -1,3 +1,14 @@
+2009-11-18  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        HTMLAnchorElement is inconsistent with its internal handling of the value returned for the href attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=31593
+
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-whitespace.js: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-whitespace-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-whitespace.html: Added.
+
 2009-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         Trying to enable WebSocket tests on Tiger again, now that bug 31603 is fixed.

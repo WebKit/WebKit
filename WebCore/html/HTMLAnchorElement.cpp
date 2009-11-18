@@ -327,7 +327,7 @@ bool HTMLAnchorElement::draggable() const
 
 KURL HTMLAnchorElement::href() const
 {
-    return document()->completeURL(getAttribute(hrefAttr));
+    return document()->completeURL(deprecatedParseURL(getAttribute(hrefAttr)));
 }
 
 void HTMLAnchorElement::setHref(const AtomicString& value)
