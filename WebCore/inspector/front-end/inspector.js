@@ -1680,6 +1680,8 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         if (isEnterKey(event)) {
             editingCommitted.call(element);
             event.preventDefault();
+            event.stopPropagation();
+            event.handled = true;
         } else if (event.keyCode === 27) { // Escape key
             editingCancelled.call(element);
             event.preventDefault();

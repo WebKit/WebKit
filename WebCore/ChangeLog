@@ -1,3 +1,29 @@
+2009-11-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fixes <http://webkit.org/b/31606>.
+        Web Inspector: Enter/Return key should enter edit mode for Editable Fields.
+        
+        This implements Enter starting editing mode in an editable DataGrid. If the
+        DataGrid is editable and the user hits return, startEditing the first child
+        of the selected node. Also refactored some editing functions to take an 
+        event target instead of the event itself, because the functions only needed
+        the target. Lastly, added had return in editing mode stop propogation, because
+        when enter was hit to confirm text, it would propagate back to the datagrid
+        and try to start editing again.
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._ondblclick):
+        (WebInspector.DataGrid.prototype._startEditing):
+        (WebInspector.DataGrid.prototype.handleKeyEvent):
+        (WebInspector.DataGrid.prototype.dataGridNodeFromEvent):
+        (WebInspector.DataGrid.prototype._mouseDownInDataTable):
+        (WebInspector.DataGrid.prototype._clickInDataTable):
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.element.handleKeyEvent):
+        (WebInspector.startEditing):
+
 2009-11-18  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.
