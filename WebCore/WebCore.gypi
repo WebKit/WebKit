@@ -635,7 +635,6 @@
             'bindings/v8/ChildThreadDOMData.h',
             'bindings/v8/custom/V8AbstractWorkerCustom.cpp',
             'bindings/v8/custom/V8AttrCustom.cpp',
-            'bindings/v8/custom/V8CanvasPixelArrayCustom.cpp',
             'bindings/v8/custom/V8WebGLArrayCustom.h',
             'bindings/v8/custom/V8WebGLArrayBufferCustom.cpp',
             'bindings/v8/custom/V8WebGLByteArrayCustom.cpp',

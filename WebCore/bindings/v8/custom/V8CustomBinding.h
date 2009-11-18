@@ -531,9 +531,6 @@ namespace WebCore {
         DECLARE_NAMED_PROPERTY_GETTER(HTMLAllCollection);
         DECLARE_NAMED_PROPERTY_GETTER(HTMLCollection);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(CanvasPixelArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(CanvasPixelArray);
-
 #if ENABLE(3D_CANVAS)
         DECLARE_CALLBACK(WebGLByteArrayGet);
         DECLARE_CALLBACK(WebGLByteArraySet);
