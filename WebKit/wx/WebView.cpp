@@ -338,6 +338,10 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setDatabasesEnabled(true);
 #endif
 
+#if __WXMSW__
+    settings->setPluginsEnabled(true);
+#endif
+
     m_isInitialized = true;
 
     return true;

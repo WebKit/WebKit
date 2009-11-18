@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Kevin Ollivier
  * Copyright (C) 2008 Collabora, Ltd.
+ * Copyright (C) 2009 Peter Laufenberg @ Inhance Digital Corp
  *
  * All rights reserved.
  * 
@@ -35,6 +36,10 @@
 
 #include <wx/wx.h>
 #include <wx/filename.h>
+#include <wx/dir.h>
+#include <wx/file.h>
+#include <wx/datetime.h>
+#include <wx/filefn.h>
 
 namespace WebCore {
 
@@ -114,16 +119,29 @@ int writeToFile(PlatformFileHandle, const char* data, int length)
     return 0;
 }
 
-bool unloadModule(PlatformModule)
+bool unloadModule(PlatformModule mod)
 {
+#if PLATFORM(WIN_OS)
+    return ::FreeLibrary(mod);
+#else
     notImplemented();
     return false;
+#endif
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)
 {
+    wxArrayString   file_paths;
+    
+    int n_files = wxDir::GetAllFiles(path, &file_paths, _T(""), wxDIR_FILES);
+
     Vector<String> entries;
-    notImplemented();
+    
+    for (int i = 0; i < n_files; i++)
+    {
+        entries.append(file_paths[i]);
+    }   
+    
     return entries;
 }
 

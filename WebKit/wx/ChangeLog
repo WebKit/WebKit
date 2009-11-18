@@ -1,3 +1,22 @@
+2009-11-18  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Enable wx plugin support using the Windows implementation as a base.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31636
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::FrameLoaderClientWx):
+        (WebCore::FrameLoaderClientWx::finishedLoading):
+        (WebCore::FrameLoaderClientWx::committedLoad):
+        (WebCore::FrameLoaderClientWx::createPlugin):
+        (WebCore::FrameLoaderClientWx::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientWx::shouldUsePluginDocument):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        * WebView.cpp:
+        (wxWebView::Create):
+
 2009-11-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after r50923 change to externalRepresentation.

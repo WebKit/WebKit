@@ -30,29 +30,35 @@ from settings import *
 webcore_sources = {}
 
 if build_port == "wx":
-    webcore_sources['plugins'] = [  'plugins/PluginDataNone.cpp',
-                                    'plugins/PluginViewNone.cpp'
-                                  ]
+    no_plugins = [      'plugins/PluginDataNone.cpp',
+                        'plugins/PluginViewNone.cpp',
+                        'plugins/PluginPackageNone.cpp'
+                 ]
     
     if building_on_win32:
-        webcore_dirs.append('platform/wx/wxcode/win')
+        webcore_dirs.extend(['platform/wx/wxcode/win', 'plugins/win'])
         webcore_sources['wx-win'] = [
                # wxTimer on Windows has a bug that causes it to eat crashes in callbacks
                # so we need to use the Win port's implementation until the wx bug fix is
                # widely available (it was fixed in 2.8.10).
                'platform/win/SharedTimerWin.cpp',
+               # Use the Windows plugin architecture
                'page/win/PageWin.cpp',
+               'plugins/win/PluginDataWin.cpp',
+               'plugins/win/PluginDatabaseWin.cpp',
+               'plugins/win/PluginMessageThrottlerWin.cpp',
                'plugins/win/PluginPackageWin.cpp',
+               'plugins/win/PluginViewWin.cpp',
         ]
     elif sys.platform.startswith('darwin'):
         webcore_dirs.append('platform/wx/wxcode/mac/carbon')
         webcore_sources['wx-mac'] = [
                'platform/mac/PurgeableBufferMac.cpp',
         ]
-        webcore_sources['plugins'].append('plugins/PluginPackageNone.cpp')
+        webcore_sources['plugins'] = no_plugins
     else:
         webcore_dirs.append('platform/wx/wxcode/gtk')
-        webcore_sources['plugins'].append('plugins/PluginPackageNone.cpp')
+        webcore_sources['plugins'] = no_plugins
         
 from TaskGen import taskgen, feature, after
 import Task, ccroot

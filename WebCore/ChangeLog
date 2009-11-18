@@ -1,3 +1,31 @@
+2009-11-18  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Enable wx plugin support using the Windows implementation as a base.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31636
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::unloadModule):
+        (WebCore::listDirectory):
+        * plugins/PluginDatabase.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::snapshot):
+        * wscript:
+
 2009-11-18  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Dimitri Glazkov.

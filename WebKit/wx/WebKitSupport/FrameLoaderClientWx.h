@@ -31,7 +31,9 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "PluginView.h"
 #include "ResourceResponse.h"
+#include "HTMLPlugInElement.h"
 
 class wxWebFrame;
 class wxWebView;
@@ -208,11 +210,15 @@ namespace WebCore {
         virtual void didPerformFirstNavigation() const;
         
         virtual void registerForIconNotification(bool listen = true);
+        
+        virtual bool shouldUsePluginDocument(const String &mimeType) const;
 
     private:
         wxWebFrame *m_webFrame;
         Frame* m_frame;
         wxWebView *m_webView;
+        PluginView* m_pluginView;
+        bool m_hasSentResponseToPlugin;
         ResourceResponse m_response;
         bool m_firstData;
     };
