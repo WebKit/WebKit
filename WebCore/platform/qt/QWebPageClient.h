@@ -26,6 +26,9 @@
 #ifndef QWebPageClient_h
 #define QWebPageClient_h
 
+#ifndef QT_NO_CURSOR
+#include <QCursor>;
+#endif
 #include <QRect>
 
 class QWebPageClient {
