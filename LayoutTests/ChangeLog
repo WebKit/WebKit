@@ -1,3 +1,14 @@
+2009-11-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Interpreter may do an out of range access when throwing an exception in the profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=31635
+
+        Correct this test so that it is actually testing what it is intended to.
+
+        * fast/profiler/throw-exception-from-eval.html:
+
 2009-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         Disabling WebSocket tests on Tiger back, they still hang.

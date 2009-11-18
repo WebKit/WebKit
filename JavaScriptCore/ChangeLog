@@ -1,3 +1,15 @@
+2009-11-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Interpreter may do an out of range access when throwing an exception in the profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=31635
+
+        Add bounds check.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+
 2009-11-18  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

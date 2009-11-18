@@ -7,10 +7,10 @@ if (window.layoutTestController) {
     layoutTestController.setJavaScriptProfilingEnabled(true);
 }
 
+console.profile("Throw within an eval.");
+
 function startTest()
 {
-    console.profile("Throw within an eval.");
-
     insertNewText();
 
     endTest();
