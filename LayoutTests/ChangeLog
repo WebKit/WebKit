@@ -1,3 +1,12 @@
+2009-11-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <http://webkit.org/b/31602> Failing to start the WebSocket server shouldn’t terminate entire test run
+
+        * websocket/resources/server-failed-to-start.html: Error page that will be loaded in place of websocket
+        tests when the server fails to start.
+
 2009-11-17  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Pavel Feldman.

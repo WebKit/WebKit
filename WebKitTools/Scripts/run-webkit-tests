@@ -492,6 +492,7 @@ my $lastDirectory = "";
 my $isHttpdOpen = 0;
 my $isWebSocketServerOpen = 0;
 my $webSocketServerPID = 0;
+my $failedToStartWebSocketServer = 0;
 # wss is disabled until all platforms support pyOpenSSL.
 # my $webSocketSecureServerPID = 0;
 
@@ -615,14 +616,21 @@ for my $test (@tests) {
             }
             print OUT "$testPath\n";
         } else {
-            openWebSocketServerIfNeeded();
-            my $path = canonpath($test);
-            if ($test =~ /^websocket\/tests\/ssl\//) {
-                # wss is disabled until all platforms support pyOpenSSL.
-                print STDERR "Error: wss is disabled until all platforms support pyOpenSSL.";
-                # print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
+            if (openWebSocketServerIfNeeded()) {
+                my $path = canonpath($test);
+                if ($test =~ /^websocket\/tests\/ssl\//) {
+                    # wss is disabled until all platforms support pyOpenSSL.
+                    print STDERR "Error: wss is disabled until all platforms support pyOpenSSL.";
+                    # print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
+                } else {
+                    print OUT "http://127.0.0.1:$webSocketPort/$path\n";
+                }
             } else {
-                print OUT "http://127.0.0.1:$webSocketPort/$path\n";
+                # We failed to launch the WebSocket server.  Display a useful error message rather than attempting
+                # to run tests that expect the server to be available.
+                my $errorMessagePath = "$testDirectory/websocket/resources/server-failed-to-start.html";
+                $errorMessagePath = isCygwin() ? toWindowsPath($errorMessagePath) : canonpath($errorMessagePath);
+                print OUT "$errorMessagePath\n";
             }
         }
     } else {
@@ -1408,7 +1416,8 @@ sub closeHTTPD()
 
 sub openWebSocketServerIfNeeded()
 {
-    return if $isWebSocketServerOpen;
+    return 1 if $isWebSocketServerOpen;
+    return 0 if $failedToStartWebSocketServer;
 
     my $webSocketServerPath = "/usr/bin/python";
     my $webSocketPythonPath = "WebKitTools/pywebsocket";
@@ -1443,10 +1452,15 @@ sub openWebSocketServerIfNeeded()
             sleep 1;
             --$retryCount;
         }
-        die "Timed out waiting for WebSocketServer to start" unless $retryCount;
+        unless ($retryCount) {
+            print STDERR "Timed out waiting for WebSocketServer to start.\n";
+            $failedToStartWebSocketServer = 1;
+            return 0;
+        }
     }
 
     $isWebSocketServerOpen = 1;
+    return 1;
 }
 
 sub closeWebSocketServer()

@@ -1,3 +1,14 @@
+2009-11-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <http://webkit.org/b/31602> Failing to start the WebSocket server shouldn’t terminate entire test run
+
+        If the WebSocket server fails to start have DRT load an error page in place of tests that require the
+        server to be up rather than having run-webkit-tests abort immediately.
+
+        * Scripts/run-webkit-tests:
+
 2009-11-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
