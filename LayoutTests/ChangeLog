@@ -1,3 +1,9 @@
+2009-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Trying to enable WebSocket tests on Tiger again, now that bug 31603 is fixed.
+
+        * platform/mac-tiger/Skipped:
+
 2009-11-18  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha.
