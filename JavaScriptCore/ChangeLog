@@ -1,3 +1,13 @@
+2009-11-18  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove Chromium's unnecessary dependency on wtf's tcmalloc files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31648
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2009-11-18  Thiago Macieira <thiago.macieira@nokia.com>
 
         Reviewed by Gavin Barraclough.
