@@ -269,7 +269,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
     invalidateAllItems: function()
     {
-        this._staleItems = this._items;
+        this._staleItems = this._items.slice();
     },
 
     refresh: function()
