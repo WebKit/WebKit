@@ -1,3 +1,19 @@
+2009-11-18  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Android] Add shared timer and sound utilities to platform/android
+        https://bugs.webkit.org/show_bug.cgi?id=31584
+
+        No new tests required, this is platform specific code.
+
+        * platform/android/SharedTimerAndroid.cpp: Added.
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+        * platform/android/SoundAndroid.cpp: Added.
+        (WebCore::systemBeep):
+
 2009-11-18  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
