@@ -31,11 +31,7 @@
 
 WebInspector.BottomUpProfileDataGridNode = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode, /*BottomUpProfileDataGridTree*/ owningTree)
 {
-    // In bottom up mode, our parents are our children since we display an inverted tree.
-    // However, we don't want to show the very top parent since it is redundant.
-    var hasChildren = !!(profileNode.parent && profileNode.parent.parent);
-
-    WebInspector.ProfileDataGridNode.call(this, profileView, profileNode, owningTree, hasChildren);
+    WebInspector.ProfileDataGridNode.call(this, profileView, profileNode, owningTree, this._willHaveChildren(profileNode));
 
     this._remainingNodeInfos = [];
 }
@@ -76,6 +72,14 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
 
         if (child)
             this._merge(child, true);
+    },
+
+    _restore: function()
+    {
+        WebInspector.ProfileDataGridNode.prototype._restore();
+
+        if (!this.children.length)
+            this.hasChildren = this._willHaveChildren();
     },
 
     _merge: function(/*ProfileDataGridNode*/ child, /*Boolean*/ shouldAbsorb)
@@ -128,6 +132,14 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
         }
 
         delete this._remainingNodeInfos;
+    },
+
+    _willHaveChildren: function(profileNode)
+    {
+        profileNode = profileNode || this.profileNode;
+        // In bottom up mode, our parents are our children since we display an inverted tree.
+        // However, we don't want to show the very top parent since it is redundant.
+        return !!(profileNode.parent && profileNode.parent.parent);
     }
 }
 

@@ -385,6 +385,7 @@ WebInspector.DataGrid.prototype = {
         delete child._depth;
         delete child._revealed;
         delete child._attached;
+        child._shouldRefreshChildren = true;
 
         var current = child.children[0];
         while (current) {
@@ -392,6 +393,7 @@ WebInspector.DataGrid.prototype = {
             delete current._depth;
             delete current._revealed;
             delete current._attached;
+            current._shouldRefreshChildren = true;
             current = current.traverseNextNode(false, child, true);
         }
 
@@ -1150,6 +1152,30 @@ WebInspector.DataGridNode.prototype = {
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._detach();
+    },
+
+    savePosition: function()
+    {
+        if (this._savedPosition)
+            return;
+
+        if (!this.parent)
+            throw("savePosition: Node must have a parent.");
+        this._savedPosition = {
+            parent: this.parent,
+            index: this.parent.children.indexOf(this)
+        };
+    },
+
+    restorePosition: function()
+    {
+        if (!this._savedPosition)
+            return;
+
+        if (this.parent !== this._savedPosition.parent)
+            this._savedPosition.parent.insertChild(this, this._savedPosition.index);
+
+        delete this._savedPosition;
     }
 }
 

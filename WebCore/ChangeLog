@@ -1,3 +1,29 @@
+2009-11-18  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix profile tree nodes loss after focus / restore actions.
+
+        Focusing on a node is currently implemented via nodes reattaching
+        with some caching involved. It seems that not all code was updated
+        to handle this scenario correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31553
+
+        * inspector/front-end/BottomUpProfileDataGridTree.js:
+        (WebInspector.BottomUpProfileDataGridNode):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._restore):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._sharedPopulate):
+        (WebInspector.BottomUpProfileDataGridNode.prototype._willHaveChildren):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertChild):
+        (WebInspector.DataGridNode.prototype._detach):
+        (WebInspector.DataGridNode.prototype.savePosition):
+        (WebInspector.DataGridNode.prototype.restorePosition):
+        * inspector/front-end/TopDownProfileDataGridTree.js:
+        (WebInspector.TopDownProfileDataGridTree.prototype.focus):
+        (WebInspector.TopDownProfileDataGridTree.prototype.restore):
+
 2009-11-18  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
