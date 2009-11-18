@@ -1,3 +1,11 @@
+2009-11-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make the Mac Geolocation API async.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove WebGeolocation.
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Add WebFrameLoadDelegatePrivat.h to WebKit.xcodeproj

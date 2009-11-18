@@ -25,7 +25,6 @@
 
 #import "WebGeolocationMockPrivate.h"
 
-#import "WebGeolocationInternal.h"
 #import <WebCore/GeolocationServiceMock.h>
 #import <WebCore/Geoposition.h>
 #import <WebCore/PositionError.h>

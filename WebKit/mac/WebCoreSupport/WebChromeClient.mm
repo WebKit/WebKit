@@ -35,7 +35,6 @@
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
-#import "WebGeolocationInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebKitPrefix.h"
@@ -91,10 +90,18 @@
 
 using namespace WebCore;
 
-@interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener> {
+@interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener>
+{
     FileChooser* _chooser;
 }
 - (id)initWithChooser:(PassRefPtr<FileChooser>)chooser;
+@end
+
+@interface WebGeolocationPolicyListener : NSObject <WebGeolocationPolicyListener>
+{
+    RefPtr<Geolocation> _geolocation;
+}
+- (id)initWithGeolocation:(Geolocation*)geolocation;
 @end
 
 WebChromeClient::WebChromeClient(WebView *webView) 
@@ -757,11 +764,19 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+    SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
+    if (![[m_webView UIDelegate] respondsToSelector:selector]) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-    WebGeolocation *webGeolocation = [[WebGeolocation alloc] _initWithWebCoreGeolocation:geolocation];
-    CallUIDelegate(m_webView, @selector(webView:frame:requestGeolocationPermission:securityOrigin:), kit(frame), webGeolocation, webOrigin);
+    WebGeolocationPolicyListener* listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation];
+
+    CallUIDelegate(m_webView, selector, webOrigin, kit(frame), listener);
+
     [webOrigin release];
-    [webGeolocation release];
+    [listener release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -824,6 +839,28 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
     _chooser->chooseFiles(names);
     _chooser->deref();
     _chooser = 0;
+}
+
+@end
+
+@implementation WebGeolocationPolicyListener
+
+- (id)initWithGeolocation:(Geolocation*)geolocation
+{
+    if (!(self = [super init]))
+        return nil;
+    _geolocation = geolocation;
+    return self;
+}
+
+- (void)allow
+{
+    _geolocation->setIsAllowed(true);
+}
+
+- (void)deny
+{
+    _geolocation->setIsAllowed(false);
 }
 
 @end

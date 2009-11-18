@@ -1,3 +1,26 @@
+2009-11-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make the Mac Geolocation API async.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestGeolocationPermissionForFrame):
+        (-[WebGeolocationPolicyListener initWithGeolocation:]):
+        (-[WebGeolocationPolicyListener allow]):
+        (-[WebGeolocationPolicyListener deny]):
+        Add WebGeolocationPolicyListener implementation of the new WebGeolocationPolicyListener
+        protocol and use if to implement requestGeolocationPermissionForFrame using the new async
+        API.
+        
+        * WebCoreSupport/WebGeolocation.mm: Removed.
+        * WebCoreSupport/WebGeolocationInternal.h: Removed.
+        * WebCoreSupport/WebGeolocationMock.mm: Remove bogus include.
+        * WebCoreSupport/WebGeolocationPrivate.h: Removed.
+        * WebView/WebUIDelegatePrivate.h: Remove requestGeolocationPermission and add
+        WebGeolocationPolicyListener protocol and decidePolicyForGeolocationRequestFromOrigin delegate
+        method.
+
 2009-11-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
