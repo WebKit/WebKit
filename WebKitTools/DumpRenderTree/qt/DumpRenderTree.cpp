@@ -653,7 +653,7 @@ QWebPage *DumpRenderTree::createWindow()
     container->hide();
     WebPage *page = new WebPage(container, this);
     connectFrame(page->mainFrame());
-    connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
+    connect(page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
     windows.append(container);
     return page;
 }
