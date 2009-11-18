@@ -247,17 +247,27 @@ DumpRenderTree::DumpRenderTree()
     qt_drt_overwritePluginDirectories();
     QWebSettings::enablePersistentStorage();
 
-    m_controller = new LayoutTestController(this);
-    connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
-
+    // create our primary testing page/view.
     QWebView *view = new QWebView(0);
     view->resize(QSize(maxViewWidth, maxViewHeight));
     m_page = new WebPage(view, this);
     view->setPage(m_page);
-    connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
+
+    // create out controllers. This has to be done before connectFrame,
+    // as it exports there to the JavaScript DOM window.
+    m_controller = new LayoutTestController(this);
+    connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
+    m_eventSender = new EventSender(m_page);
+    m_textInputController = new TextInputController(m_page);
+    m_gcController = new GCController(m_page);
+
+    // now connect our different signals
+    connect(m_page, SIGNAL(frameCreated(QWebFrame *)),
+            this, SLOT(connectFrame(QWebFrame *)));
     connectFrame(m_page->mainFrame());
 
-    connect(m_page->mainFrame(), SIGNAL(loadFinished(bool)), m_controller, SLOT(maybeDump(bool)));
+    connect(m_page->mainFrame(), SIGNAL(loadFinished(bool)),
+            m_controller, SLOT(maybeDump(bool)));
 
     connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),
             SLOT(titleChanged(const QString&)));
@@ -265,10 +275,6 @@ DumpRenderTree::DumpRenderTree()
             this, SLOT(dumpDatabaseQuota(QWebFrame*,QString)));
     connect(m_page, SIGNAL(statusBarMessage(const QString&)),
             this, SLOT(statusBarMessage(const QString&)));
-
-    m_eventSender = new EventSender(m_page);
-    m_textInputController = new TextInputController(m_page);
-    m_gcController = new GCController(m_page);
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     qt_drt_run(true);

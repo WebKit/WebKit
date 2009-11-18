@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        Change the initialization order so that the controllers
+        will be created before exporting them to the JS DOM window.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
+2009-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Fix a code copy and paste error. m_page should be page.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
