@@ -2,6 +2,15 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        <http://webkit.org/b/31603> WebSocket server is confused if WebKit tests run from within /tmp on Mac OS X
+
+        * pywebsocket/mod_pywebsocket/dispatch.py: Use os.path.realpath as it returns the canonical path of a file.
+        This prevents symlinks from confusing the descendant check.
+
+2009-11-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         <http://webkit.org/b/31602> Failing to start the WebSocket server shouldn’t terminate entire test run
 
         If the WebSocket server fails to start have DRT load an error page in place of tests that require the
