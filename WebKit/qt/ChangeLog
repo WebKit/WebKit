@@ -1,3 +1,15 @@
+2009-11-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add QtLauncher support for opening links in the default browser
+
+        This can be triggered by either the context menu or by clicking a link
+        while holding down the Alt key. Opening a link in a new windows is
+        triggered by holding down Shift.
+
+        * QtLauncher/main.cpp:
+
 2009-11-17  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
