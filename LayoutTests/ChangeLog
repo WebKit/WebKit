@@ -1,3 +1,9 @@
+2009-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Disabling WebSocket tests on Tiger back, they still hang.
+
+        * platform/mac-tiger/Skipped:
+
 2009-11-17  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Dmitry Titov.
