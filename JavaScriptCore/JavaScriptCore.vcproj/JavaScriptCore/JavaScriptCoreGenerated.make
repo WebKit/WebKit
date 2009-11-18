@@ -7,6 +7,7 @@ all:
     xcopy /y /d "..\..\API\JavaScript.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSBase.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSContextRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
+    xcopy /y /d "..\..\API\JSContextRefPrivate.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSObjectRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSStringRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSStringRefCF.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"

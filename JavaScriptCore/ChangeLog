@@ -1,3 +1,11 @@
+2009-11-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add JSContextRefPrivate.h to list of copied files.
+
+        Reviewed by Mark Rowe.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2009-11-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Adam Barth.
