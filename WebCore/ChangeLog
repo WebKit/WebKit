@@ -1,3 +1,16 @@
+2009-11-17  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix crash in Chromium/Mac where dropdowns weren't dismissed correctly
+        after navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=31609
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::showExternal): Set parent for external
+        dropdowns, so that |PopupListBox::hidePopup()| can successfully notify
+        its parent's client.
+
 2009-11-17  Hayato Ito  <hayato@google.com>
 
         Reviewed by Darin Adler.

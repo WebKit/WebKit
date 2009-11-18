@@ -370,6 +370,12 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
     ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
          v->frame()->page()->chrome()->client());
     client->popupOpened(this, popupRect, true, true);
+
+    // The popup sends its "closed" notification through its parent. Set the
+    // parent, even though external popups have no real on-screen widget but a
+    // native menu (see |PopupListBox::hidePopup()|);
+    if (!m_listBox->parent())
+        addChild(m_listBox.get());
 }
 
 void PopupContainer::hidePopup()
