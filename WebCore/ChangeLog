@@ -1,3 +1,42 @@
+2009-11-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add Settings for WebKitShowDebugBorders and WebKitShowRepaintCounter
+        https://bugs.webkit.org/show_bug.cgi?id=31601
+
+        These are used to debug accelerated compositing layers. I removed
+        the platform specific code from GraphicsLayerCA.mm and added calls
+        to GraphicsLayerClient to get it from the higher levels. The values 
+        now get cached in RenderLayerCompositing and are queried from there
+        by RenderLayerBacking (which implements the GraphicsLayerClient interface).
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setShowDebugBorders):
+        (WebCore::Settings::setShowRepaintCounter):
+        * page/Settings.h:
+        (WebCore::Settings::showDebugBorders):
+        (WebCore::Settings::showRepaintCounter):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::showDebugBorders):
+        (WebCore::GraphicsLayer::showRepaintCounter):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::showDebugBorders):
+        (WebCore::RenderLayerBacking::showRepaintCounter):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::showDebugBorders):
+        (WebCore::RenderLayerCompositor::showRepaintCounter):
+
 2009-11-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

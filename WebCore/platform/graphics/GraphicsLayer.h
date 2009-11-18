@@ -292,8 +292,8 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    static bool showDebugBorders();
-    static bool showRepaintCounter();
+    bool showDebugBorders() { return m_client ? m_client->showDebugBorders() : false; }
+    bool showRepaintCounter() { return m_client ? m_client->showRepaintCounter() : false; }
     
     void updateDebugIndicators();
     

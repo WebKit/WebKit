@@ -351,6 +351,8 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitShowDebugBordersPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         nil];
@@ -1149,6 +1151,26 @@ static NSString *classIBCreatorID = nil;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
+}
+
+- (BOOL)showDebugBorders
+{
+    return [self _boolValueForKey:WebKitShowDebugBordersPreferenceKey];
+}
+
+- (void)setShowDebugBorders:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitShowDebugBordersPreferenceKey];
+}
+
+- (BOOL)showRepaintCounter
+{
+    return [self _boolValueForKey:WebKitShowRepaintCounterPreferenceKey];
+}
+
+- (void)setShowRepaintCounter:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitShowRepaintCounterPreferenceKey];
 }
 
 - (BOOL)webGLEnabled

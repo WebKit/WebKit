@@ -253,6 +253,12 @@ namespace WebCore {
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
+        void setShowDebugBorders(bool);
+        bool showDebugBorders() const { return m_showDebugBorders; }
+
+        void setShowRepaintCounter(bool);
+        bool showRepaintCounter() const { return m_showRepaintCounter; }
+
         void setExperimentalNotificationsEnabled(bool);
         bool experimentalNotificationsEnabled() const { return m_experimentalNotificationsEnabled; }
 
@@ -332,6 +338,8 @@ namespace WebCore {
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;
+        bool m_showDebugBorders : 1;
+        bool m_showRepaintCounter : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
 

@@ -115,6 +115,8 @@ Settings::Settings(Page* page)
     , m_downloadableBinaryFontsEnabled(true)
     , m_xssAuditorEnabled(false)
     , m_acceleratedCompositingEnabled(true)
+    , m_showDebugBorders(false)
+    , m_showRepaintCounter(false)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
 {
@@ -497,6 +499,24 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         return;
         
     m_acceleratedCompositingEnabled = enabled;
+    setNeedsReapplyStylesInAllFrames(m_page);
+}
+
+void Settings::setShowDebugBorders(bool enabled)
+{
+    if (m_showDebugBorders == enabled)
+        return;
+        
+    m_showDebugBorders = enabled;
+    setNeedsReapplyStylesInAllFrames(m_page);
+}
+
+void Settings::setShowRepaintCounter(bool enabled)
+{
+    if (m_showRepaintCounter == enabled)
+        return;
+        
+    m_showRepaintCounter = enabled;
     setNeedsReapplyStylesInAllFrames(m_page);
 }
 

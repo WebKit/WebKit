@@ -435,7 +435,7 @@ void FrameView::updateCompositingLayers()
         return;
 
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
-    view->compositor()->cacheAcceleratedCompositingEnabledFlag();
+    view->compositor()->cacheAcceleratedCompositingFlags();
     
     if (!view->usesCompositing())
         return;

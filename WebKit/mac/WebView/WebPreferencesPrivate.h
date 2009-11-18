@@ -149,6 +149,12 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)acceleratedCompositingEnabled;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
 
+- (BOOL)showDebugBorders;
+- (void)setShowDebugBorders:(BOOL)show;
+
+- (BOOL)showRepaintCounter;
+- (void)setShowRepaintCounter:(BOOL)show;
+
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 

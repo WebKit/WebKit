@@ -328,18 +328,6 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoord
     return CompositingCoordinatesBottomUp;
 }
 
-bool GraphicsLayer::showDebugBorders()
-{
-    static bool showDebugBorders = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerBorders"];
-    return showDebugBorders;
-}
-
-bool GraphicsLayer::showRepaintCounter()
-{
-    static bool showRepaintCounter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebCoreLayerRepaintCounter"];
-    return showRepaintCounter;
-}
-
 static NSDictionary* nullActionsDictionary()
 {
     NSNull* nullValue = [NSNull null];

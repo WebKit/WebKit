@@ -79,6 +79,8 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     : m_renderView(renderView)
     , m_rootPlatformLayer(0)
     , m_hasAcceleratedCompositing(true)
+    , m_showDebugBorders(false)
+    , m_showRepaintCounter(false)
     , m_compositingConsultsOverlap(true)
     , m_compositing(false)
     , m_rootLayerAttached(false)
@@ -109,16 +111,24 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
     }
 }
 
-void RenderLayerCompositor::cacheAcceleratedCompositingEnabledFlag()
+void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
 {
     bool hasAcceleratedCompositing = false;
-    if (Settings* settings = m_renderView->document()->settings())
+    bool showDebugBorders = false;
+    bool showRepaintCounter = false;
+    
+    if (Settings* settings = m_renderView->document()->settings()) {
         hasAcceleratedCompositing = settings->acceleratedCompositingEnabled();
+        showDebugBorders = settings->showDebugBorders();
+        showRepaintCounter = settings->showRepaintCounter();
+    }
 
-    if (hasAcceleratedCompositing != m_hasAcceleratedCompositing)
+    if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter)
         setCompositingLayersNeedRebuild();
         
     m_hasAcceleratedCompositing = hasAcceleratedCompositing;
+    m_showDebugBorders = showDebugBorders;
+    m_showRepaintCounter = showRepaintCounter;
 }
 
 void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)

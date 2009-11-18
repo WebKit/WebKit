@@ -119,6 +119,9 @@ public:
 
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip);
 
+    virtual bool showDebugBorders() const;
+    virtual bool showRepaintCounter() const;
+
     IntRect contentsBox() const;
     
 private:
