@@ -1,3 +1,14 @@
+2009-11-18  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Reduce flakiness in zero-duration-with-non-zero-delay-end.html by
+        increasing a timeout.
+     
+        https://bugs.webkit.org/show_bug.cgi?id=31646
+
+        * transitions/zero-duration-with-non-zero-delay-end.html:
+
 2009-11-18  Oliver Hunt  <oliver@apple.com>
 
         Update expected results of fixed test.

@@ -47,7 +47,9 @@
     
     function runTest() {
       window.setTimeout(sample0, 250);
-      window.setTimeout(sample1, 500);
+      // Note that since 0-delay transitions do not disptach transitionEnd events
+      // we have to use a timeout here.
+      window.setTimeout(sample1, 750);
     }
     
     function startTest() {
