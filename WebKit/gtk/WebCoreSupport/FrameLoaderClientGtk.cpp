@@ -149,6 +149,10 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
         frameLoader->setEncoding(encoding, userChosen);
         if (data)
             frameLoader->addData(data, length);
+
+        Frame* coreFrame = loader->frame();
+        if (coreFrame->document() && coreFrame->document()->isMediaDocument())
+            loader->cancelMainResourceLoad(frameLoader->client()->pluginWillHandleLoadError(loader->response()));
     }
 
     if (m_pluginView) {
@@ -986,9 +990,7 @@ ResourceError FrameLoaderClient::pluginWillHandleLoadError(const ResourceRespons
 
 bool FrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
-    // FIXME: Mac checks for WebKitErrorPlugInWillHandleLoad here to avoid
-    // loading plugin content twice. Do we need it?
-    return !(error.isCancellation() || error.errorCode() == WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE);
+    return !(error.isCancellation() || error.errorCode() == WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE || error.errorCode() == WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD);
 }
 
 bool FrameLoaderClient::canCachePage() const

@@ -1,3 +1,19 @@
+2009-11-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Failing test media/video-document-types.html
+        https://bugs.webkit.org/show_bug.cgi?id=31352
+
+        Match what Mac has been doing since r36001: cancel the main load,
+        and handle failures caused by 'will be handled by plugin' errors.
+
+        Covered by test media/video-document-types.html
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::committedLoad):
+        (WebKit::FrameLoaderClient::shouldFallBack):
+
 2009-11-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
