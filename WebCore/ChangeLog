@@ -1,3 +1,22 @@
+2009-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Elements don't drop out of compositing layers when animation ends
+        https://bugs.webkit.org/show_bug.cgi?id=31613
+        <rdar://problem/7402913>
+
+        Avoid setting the mustOverlapCompositedLayers flag on RenderLayers which
+        are compositing anyway for other reasons. Doing so can cause those layers
+        to stay in compositing mode even after animations finish, because needsToBeComposited()
+        continues to return true.
+        
+        No new tests because it's not possible to determine which elements are in
+        compositing layers from DRT output.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2009-11-18  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Tor Arne Vestb√.,
