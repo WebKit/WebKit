@@ -1,3 +1,18 @@
+2009-11-18  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] WebKit crashes when loading certain SVG images
+
+        Check if the familly exist before creating the PlatformData from it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29443
+
+        Test: svg/text/text-font-invalid.html
+
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        (WebCore::FontFallbackList::fontDataAt):
+
 2009-11-17  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Darin Fisher.

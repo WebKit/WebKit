@@ -102,7 +102,7 @@ const FontData* FontFallbackList::fontDataAt(const WebCore::Font* _font, unsigne
     const FontDescription& description = _font->fontDescription();
     const FontFamily* family = &description.family();
     while (family) {
-        if (m_fontSelector) {
+        if (family->family().length() && m_fontSelector) {
             FontData* data = m_fontSelector->getFontData(description, family->family());
             if (data) {
                 if (data->isLoading())

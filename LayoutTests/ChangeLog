@@ -1,3 +1,17 @@
+2009-11-18  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] WebKit crashes when loading certain SVG images
+
+        Added a test for a crash of QtWebkit when loading SVG images.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29443
+
+        * svg/text/resources/text-font-invalid.svg: Added.
+        * svg/text/text-font-invalid-expected.txt: Added.
+        * svg/text/text-font-invalid.html: Added.
+
 2009-11-17  Hayato Ito  <hayato@google.com>
 
         Reviewed by Darin Adler.
