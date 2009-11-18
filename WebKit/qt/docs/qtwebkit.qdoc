@@ -25,13 +25,10 @@
 
     Qt Commercial Edition licensees that wish to distribute applications that
     use the QtWebKit module need to be aware of their obligations under the
-    GNU Lesser General Public License (LGPL). 
+    GNU Library General Public License (LGPL).
 
     Developers using the Open Source Edition can choose to redistribute
-    the module under the appropriate version of the GNU LGPL; version 2.1
-    for applications and libraries licensed under the GNU GPL version 2,
-    or version 3 for applications and libraries licensed under the GNU
-    GPL version 2.
+    the module under the appropriate version of the GNU LGPL.
 
     \legalese
     WebKit is licensed under the GNU Library General Public License.
