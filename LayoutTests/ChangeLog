@@ -1,3 +1,17 @@
+2009-11-17  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        In all valid script tags for JavaScript, the event handler in <script...for> should not get executed.
+        Change the original test to pure js test, and test the situation about script tags which have text or language attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=31567
+
+        * fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution-expected.txt:
+        * fast/dom/HTMLScriptElement/script-for-attribute-unexpected-execution.html:
+        * fast/dom/HTMLScriptElement/script-tests: Added.
+        * fast/dom/HTMLScriptElement/script-tests/script-for-attribute-unexpected-execution.js: Added.
+        (ScriptForAttributeExecute):
+
 2009-11-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alexey Proskuryakov.
