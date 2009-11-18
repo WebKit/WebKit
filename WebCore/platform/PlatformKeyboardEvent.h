@@ -65,7 +65,7 @@ class BMessage;
 
 namespace WebCore {
 
-    class PlatformKeyboardEvent {
+    class PlatformKeyboardEvent : public FastAllocBase {
     public:
         enum Type {
             // KeyDown is sent by platforms such as Mac OS X, gtk and Qt, and has information about both physical pressed key, and its translation.

@@ -212,7 +212,7 @@ namespace WebCore {
     typedef void* PlatformMenuItemDescription;
 #endif
 
-    class ContextMenuItem {
+    class ContextMenuItem : public FastAllocBase {
     public:
         ContextMenuItem(PlatformMenuItemDescription);
         ContextMenuItem(ContextMenu* subMenu = 0);

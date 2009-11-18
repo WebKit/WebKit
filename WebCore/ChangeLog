@@ -1,3 +1,39 @@
+2009-11-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for the part of platform directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31473
+
+        Inherits the following classes from FastAllocBase because these are
+        instantiated by 'new':
+
+        class  AnimationList         - instantiated at WebCore/rendering/style/StyleRareNonInheritedData.cpp:85
+        class  Color                 - instantiated at WebCore/rendering/RenderTheme.cpp:48
+        struct Length                - instantiated at WebCore/platform/Length.cpp:103
+        class  PlatformKeyboardEvent - instantiated at WebCore/dom/KeyboardEvent.cpp:63
+        class  ContextMenuItem       - instantiated at WebCore/platform/ContextMenu.cpp:70
+        class  DeprecatedPtrList     - instantiated at WebCore/rendering/RenderBlock.cpp:2284
+
+        Inherits the following classes from Noncopyable because these are
+        instantiated by 'new' and no need to be copyable:
+
+        class  GraphicsContextPrivate - instantiated at WebCore/platform/graphics/GraphicsContext.cpp:78
+        class  FontCache              - instantiated at WebCore/platform/graphics/qt/FontCacheQt.cpp:43
+        struct MediaPlayerFactory     - instantiated at WebCore/platform/graphics/MediaPlayer.cpp:163
+        class  DeprecatedPtrListNode  - instantiated at WebCore/platform/DeprecatedPtrListImpl.cpp:53
+
+        * platform/ContextMenuItem.h:
+        * platform/DeprecatedPtrList.h:
+        * platform/DeprecatedPtrListImpl.cpp:
+        * platform/Length.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/animation/AnimationList.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/FontCache.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/MediaPlayer.cpp:
+
 2009-11-18  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

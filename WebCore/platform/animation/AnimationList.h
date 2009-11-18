@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class AnimationList {
+class AnimationList : public FastAllocBase {
 public:
     void fillUnsetProperties();
     bool operator==(const AnimationList& o) const;
