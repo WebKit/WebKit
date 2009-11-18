@@ -59,7 +59,7 @@ win32-* {
 
 # Rules when JIT enabled (not disabled)
 !contains(DEFINES, ENABLE_JIT=0) {
-    linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
+    linux*-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
         QMAKE_CXXFLAGS += -fno-stack-protector
         QMAKE_CFLAGS += -fno-stack-protector
     }

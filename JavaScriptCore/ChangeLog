@@ -1,3 +1,15 @@
+2009-11-18  Harald Fernengel  <harald.fernengel@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix detection of linux-g++
+
+        Never use "linux-g++*" to check for linux-g++, since this will break embedded
+        builds which use linux-arm-g++ and friends. Use 'linux*-g++*' to check for any
+        g++ on linux mkspec.
+
+        * JavaScriptCore.pri:
+
 2009-11-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add JSContextRefPrivate.h to list of copied files.
