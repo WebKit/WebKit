@@ -1,3 +1,13 @@
+2009-11-18  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Fix the clobber list of cacheFlush for ARM and Thumb2 on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=31631
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+
 2009-11-18  Harald Fernengel  <harald.fernengel@nokia.com>
 
         Reviewed by Simon Hausmann.

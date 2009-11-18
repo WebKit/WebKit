@@ -203,7 +203,7 @@ public:
             "pop     {r7}\n"
             :
             : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
-            : "r0", "r1");
+            : "r0", "r1", "r2");
     }
 #elif PLATFORM(SYMBIAN)
     static void cacheFlush(void* code, size_t size)
@@ -224,7 +224,7 @@ public:
             "pop     {r7}\n"
             :
             : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
-            : "r0", "r1");
+            : "r0", "r1", "r2");
     }
 #else
     #error "The cacheFlush support is missing on this platform."
