@@ -1,3 +1,19 @@
+2009-11-18  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [Qt] Implement symbol hiding for JSC's JIT functions.
+
+        These functions are implemented directly in assembly, so they need the
+        proper directives to enable/disable visibility. On ELF systems, it's
+        .hidden, whereas on Mach-O systems (Mac) it's .private_extern. On
+        Windows, it's not necessary since you have to explicitly export. I
+        also implemented the AIX idiom, though it's unlikely anyone will
+        implement AIX/POWER JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=30864
+
+        * jit/JITStubs.cpp:
+
 2009-11-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.

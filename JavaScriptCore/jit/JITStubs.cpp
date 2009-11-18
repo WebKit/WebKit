@@ -82,6 +82,19 @@ namespace JSC {
 #define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
 #endif
 
+#if PLATFORM(DARWIN)
+    // Mach-O platform
+#define HIDE_SYMBOL(name) ".private_extern _" #name
+#elif PLATFORM(AIX)
+    // IBM's own file format
+#define HIDE_SYMBOL(name) ".lglobl " #name
+#elif PLATFORM(LINUX) || PLATFORM(FREEBSD) || PLATFORM(OPENBSD) || PLATFORM(SOLARIS) || (PLATFORM(HPUX) && PLATFORM(IA64)) || PLATFORM(SYMBIAN) || PLATFORM(NETBSD)
+    // ELF platform
+#define HIDE_SYMBOL(name) ".hidden " #name
+#else
+#define HIDE_SYMBOL(name)
+#endif
+
 #if USE(JSVALUE32_64)
 
 #if COMPILER(GCC) && PLATFORM(X86)
@@ -96,6 +109,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x50, JITStackFrame_code_
 asm volatile (
 ".text\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebp" "\n"
     "movl %esp, %ebp" "\n"
@@ -116,6 +130,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
@@ -131,6 +146,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     
 asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addl $0x3c, %esp" "\n"
     "popl %ebx" "\n"
@@ -155,6 +171,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %rbp" "\n"
     "movq %rsp, %rbp" "\n"
@@ -181,6 +198,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
@@ -196,6 +214,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addq $0x48, %rsp" "\n"
     "popq %rbx" "\n"
@@ -217,6 +236,7 @@ asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
@@ -243,6 +263,7 @@ asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
@@ -382,7 +403,9 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 asm volatile (
+".text\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebp" "\n"
     "movl %esp, %ebp" "\n"
@@ -403,6 +426,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
@@ -418,6 +442,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     
 asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
@@ -440,7 +465,9 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x48, JITStackFrame_code_
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x78, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 asm volatile (
+".text\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %rbp" "\n"
     "movq %rsp, %rbp" "\n"
@@ -474,6 +501,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
@@ -489,6 +517,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addq $0x78, %rsp" "\n"
     "popq %rbx" "\n"
@@ -510,6 +539,7 @@ asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
@@ -536,6 +566,7 @@ asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
@@ -553,6 +584,7 @@ asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
@@ -567,7 +599,9 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #elif COMPILER(GCC) && PLATFORM(ARM_TRADITIONAL)
 
 asm volatile (
+".text\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "stmdb sp!, {r1-r3}" "\n"
     "stmdb sp!, {r4-r8, lr}" "\n"
@@ -584,12 +618,14 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "mov r0, sp" "\n"
     "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
 
 // Both has the same return sequence
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "add sp, sp, #36" "\n"
     "ldmia sp!, {r4-r8, lr}" "\n"
@@ -929,6 +965,7 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         ".text" "\n" \
         ".align 2" "\n" \
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        HIDE_SYMBOL(cti_##op) "\n"             \
         ".thumb" "\n" \
         ".thumb_func " THUMB_FUNC_PARAM(cti_##op) "\n" \
         SYMBOL_STRING(cti_##op) ":" "\n" \
