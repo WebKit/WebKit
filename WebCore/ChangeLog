@@ -1,3 +1,10 @@
+2009-11-18  Jens Alfke  <snej@chromium.org>
+
+        Build fix to my previous checkin, for Windows Chromium
+
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::PropertySynchronizer::synchronize): Fix implicit-conversion error on AtomicString.
+
 2009-11-18  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
