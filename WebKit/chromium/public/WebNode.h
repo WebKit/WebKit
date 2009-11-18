@@ -68,7 +68,7 @@ public:
 
     WEBKIT_API WebNode parentNode() const;
     WEBKIT_API WebString nodeName() const;
-    WebFrame* frame();
+    WEBKIT_API WebFrame* frame();
 
     template<typename T> T toElement()
     {

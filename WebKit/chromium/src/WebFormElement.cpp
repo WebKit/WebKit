@@ -64,9 +64,9 @@ bool WebFormElement::autoComplete() const
     return constUnwrap<HTMLFormElement>()->autoComplete();
 }
 
-WebString WebFormElement::action()
+WebString WebFormElement::action() const
 {
-    return unwrap<HTMLFormElement>()->action();
+    return constUnwrap<HTMLFormElement>()->action();
 }
 
 void WebFormElement::submit()

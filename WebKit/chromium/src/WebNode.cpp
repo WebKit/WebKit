@@ -97,10 +97,7 @@ void WebNode::assign(WebNodePrivate* p)
 
 WebFrame* WebNode::frame()
 {
-    FrameLoaderClientImpl* frame_loader_client =
-        static_cast<FrameLoaderClientImpl*>(m_private->document()->
-                                            frame()->loader()->client());
-    return static_cast<WebFrame*>(frame_loader_client->webFrame());
+    return WebFrameImpl::fromFrame(m_private->document()->frame());
 }
 
 } // namespace WebKit
