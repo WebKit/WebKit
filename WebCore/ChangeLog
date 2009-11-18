@@ -1,3 +1,22 @@
+2009-11-18  Aaron Golden  <agolden@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for certificates to WebCore::Credential so we can convert between NSURLCredential
+        objects and WebCore::Credential objects without losing certificate information.
+
+        * platform/network/Credential.cpp:
+        (WebCore::Credential::Credential):  Adding a constructor that takes an identity argument and a certificate chain argument
+        (WebCore::Credential::isEmpty):  Modifying isEmpty to support certificate based credentials (which don't have a username or password)
+        (WebCore::Credential::identity): Accessor for the m_identity property
+        (WebCore::Credential::certificates): Accessor for the m_certificates property
+        (WebCore::Credential::type):  Accessor for the m_type property
+        (WebCore::operator==):  Modifying == to compare the identity and certificate chains of certificate based credentials.
+        * platform/network/Credential.h:  Adding new fields to WebCore::Credential to support certificate based credentials.
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):  Modifying the mac() conversion method to correctly convert certificate based WebCore::Credential objects.
+        (WebCore::core):  Modifying the core() conversion method to correctly convert certificate based NSURLCredential objects.
+
 2009-11-18  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.
