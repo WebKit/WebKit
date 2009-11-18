@@ -500,7 +500,7 @@ var windowLoaded = function()
         localizedStringsScriptElement.addEventListener("load", WebInspector.loaded.bind(WebInspector), false);
         localizedStringsScriptElement.type = "text/javascript";
         localizedStringsScriptElement.src = localizedStringsURL;
-        document.getElementsByTagName("head").item(0).appendChild(localizedStringsScriptElement);
+        document.head.appendChild(localizedStringsScriptElement);
     } else
         WebInspector.loaded();
 

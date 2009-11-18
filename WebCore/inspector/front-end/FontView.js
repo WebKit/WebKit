@@ -36,7 +36,7 @@ WebInspector.FontView = function(resource)
 
     this.fontStyleElement = document.createElement("style");
     this.fontStyleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this.resource.url + "); }";
-    document.getElementsByTagName("head").item(0).appendChild(this.fontStyleElement);
+    document.head.appendChild(this.fontStyleElement);
 
     this.fontPreviewElement = document.createElement("div");
     this.fontPreviewElement.className = "preview";

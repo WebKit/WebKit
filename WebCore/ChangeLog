@@ -1,3 +1,22 @@
+2009-11-18  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Directly Access <head> Instead of Searching for It
+        https://bugs.webkit.org/show_bug.cgi?id=31641
+        
+        Changed old access of the head element (document.getElementsByTagName)
+        to just use the document.head accessor.
+
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.addStyleSelector):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        * inspector/front-end/inspector.js:
+        (windowLoaded):
+
 2009-11-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

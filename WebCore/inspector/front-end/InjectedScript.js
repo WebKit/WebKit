@@ -238,7 +238,7 @@ InjectedScript.addStyleSelector = function(newContent, selectedNodeId)
 
     var stylesheet = ownerDocument.__stylesheet;
     if (!stylesheet) {
-        var head = ownerDocument.getElementsByTagName("head")[0];
+        var head = ownerDocument.head;
         var styleElement = ownerDocument.createElement("style");
         styleElement.type = "text/css";
         head.appendChild(styleElement);

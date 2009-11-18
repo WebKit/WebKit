@@ -212,7 +212,7 @@ WebInspector.SourceFrame.prototype = {
         var shortcut = WebInspector.KeyboardShortcut.makeKey(69 /* 'E' */, platformSpecificModifier | WebInspector.KeyboardShortcut.Modifiers.Shift);
         this._shortcuts[shortcut] = this._evalSelectionInCallFrame.bind(this);
 
-        var headElement = this.element.contentDocument.getElementsByTagName("head")[0];
+        var headElement = this.element.contentDocument.head;
         if (!headElement) {
             headElement = this.element.contentDocument.createElement("head");
             this.element.contentDocument.documentElement.insertBefore(headElement, this.element.contentDocument.documentElement.firstChild);
