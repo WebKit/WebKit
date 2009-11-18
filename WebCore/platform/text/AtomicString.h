@@ -24,6 +24,14 @@
 #include "AtomicStringImpl.h"
 #include "PlatformString.h"
 
+// Define 'NO_IMPLICIT_ATOMICSTRING' before including this header,
+// to disallow (expensive) implicit String-->AtomicString conversions.
+#ifdef NO_IMPLICIT_ATOMICSTRING
+#define ATOMICSTRING_CONVERSION explicit
+#else
+#define ATOMICSTRING_CONVERSION
+#endif
+
 namespace WebCore {
 
 struct AtomicStringHash;
@@ -40,9 +48,9 @@ public:
     AtomicString(const JSC::UString& s) : m_string(add(s)) { }
     AtomicString(const JSC::Identifier& s) : m_string(add(s)) { }
 #endif
-    AtomicString(StringImpl* imp) : m_string(add(imp)) { }
+    ATOMICSTRING_CONVERSION AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
-    AtomicString(const String& s) : m_string(add(s.impl())) { }
+    ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }

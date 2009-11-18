@@ -1,3 +1,23 @@
+2009-11-17  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Eliminate unnecessary String-->AtomicString conversions from generated V8 bindings,
+        by causing the right v8-to-WebCore conversion function to be called for every parameter.
+        This no longer requires any IDL metadata, so I've removed the [HintAtomic] annotations.
+        To enforce correctness, I added a mode that disables implicit
+        String-->AtomicString conversions while compiling the generated bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=31168
+
+        * bindings/scripts/CodeGeneratorV8.pm:  Generate usage of V8Parameter class.
+        * bindings/v8/DerivedSourcesAllInOne.cpp:  Enable NO_IMPLICIT_ATOMICSTRING.
+        * bindings/v8/V8Binding.h:  Add V8Parameter class.
+        * css/WebKitCSSKeyframesRule.h:  Make AtomicString conversions explicit.
+        * dom/Document.idl:  Remove obsolete [HintAtomic] annotation.
+        * platform/text/AtomicString.h:  Added NO_IMPLICIT_ATOMICSTRING option.
+        * svg/SVGAnimatedTemplate.h:  Change some return types to String to avoid implicit conversion.
+        * svg/SVGAnimatedProperty.h: Adapt to changed return types in SVGAnimatedTemplate.
+
 2009-11-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

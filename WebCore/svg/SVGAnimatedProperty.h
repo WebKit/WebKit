@@ -474,7 +474,7 @@ namespace WebCore {
     struct PropertySynchronizer<OwnerElement, DecoratedType, true> : Noncopyable {
         static void synchronize(const OwnerElement* ownerElement, const QualifiedName& attributeName, DecoratedType baseValue)
         {
-            AtomicString value(SVGAnimatedTypeValue<DecoratedType>::toString(baseValue));
+            String value(SVGAnimatedTypeValue<DecoratedType>::toString(baseValue));
 
             NamedNodeMap* namedAttrMap = ownerElement->attributes(false); 
             Attribute* old = namedAttrMap->getAttributeItem(attributeName);
@@ -483,7 +483,7 @@ namespace WebCore {
             else if (!old && !value.isNull()) 
                 namedAttrMap->addAttribute(const_cast<OwnerElement*>(ownerElement)->createAttribute(attributeName, value));
             else if (old && !value.isNull()) 
-                old->setValue(value); 
+                old->setValue(AtomicString(value)); 
         }
     };
 

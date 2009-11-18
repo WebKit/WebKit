@@ -468,7 +468,7 @@ sub GenerateNormalAttrGetter
     my $attrType = GetTypeFromSignature($attribute->signature);
     my $attrIsPodType = IsPodType($attrType);
 
-    my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
+    my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
     my $isPodType = IsPodType($implClassName);
     my $skipContext = 0;
 
@@ -947,7 +947,7 @@ END
             push(@implContentDecls, "    bool ${parameterName}Ok;\n");
         }
 
-        push(@implContentDecls, "    " . GetNativeTypeFromSignature($parameter, 1) . " $parameterName = ");
+        push(@implContentDecls, "    " . GetNativeTypeFromSignature($parameter, $paramIndex) . " $parameterName = ");
         push(@implContentDecls, JSValueToNative($parameter, "args[$paramIndex]",
            BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ";\n");
 
@@ -1718,19 +1718,14 @@ sub GetTypeFromSignature
 {
     my $signature = shift;
 
-    my $type = $codeGenerator->StripModule($signature->type);
-    if (($type eq "DOMString") && ($signature->extendedAttributes->{"HintAtomic"} || $signature->extendedAttributes->{"Reflect"})) {
-        $type = "AtomicString";
-    }
-
-    return $type;
+    return $codeGenerator->StripModule($signature->type);
 }
 
 
 sub GetNativeTypeFromSignature
 {
     my $signature = shift;
-    my $isParameter = shift;
+    my $parameterIndex = shift;
 
     my $type = GetTypeFromSignature($signature);
 
@@ -1739,7 +1734,19 @@ sub GetNativeTypeFromSignature
         return "int";
     }
 
-    return GetNativeType($type, $isParameter);
+    $type = GetNativeType($type, $parameterIndex >= 0 ? 1 : 0);
+    
+    if ($parameterIndex >= 0 && $type eq "V8Parameter") {
+        my $mode = "";
+        if ($signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"}) {
+            $mode = "WithUndefinedOrNullCheck";
+        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
+            $mode = "WithNullCheck";
+        }
+        $type .= "<$mode>";
+    }
+    
+    return $type;
 }
 
 sub IsRefPtrType
@@ -1857,10 +1864,11 @@ sub GetNativeType
     my $type = shift;
     my $isParameter = shift;
 
-    if ($type eq "float" or $type eq "AtomicString" or $type eq "double") {
+    if ($type eq "float" or $type eq "double") {
         return $type;
     }
 
+    return "V8Parameter" if ($type eq "DOMString" or $type eq "DOMUserData") and $isParameter;
     return "int" if $type eq "int";
     return "int" if $type eq "short" or $type eq "unsigned short";
     return "unsigned" if $type eq "unsigned long";
@@ -1896,7 +1904,6 @@ sub GetNativeType
 
 
 my %typeCanFailConversion = (
-    "AtomicString" => 0,
     "Attr" => 1,
     "WebGLArray" => 0,
     "WebGLBuffer" => 0,
@@ -2011,21 +2018,8 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
 
-    if ($type eq "AtomicString") {
-        return "toAtomicWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
-        return "v8ValueToAtomicWebCoreString($value)";
-    }
-
-    if ($type eq "DOMUserData") {
-        return "toWebCoreString(args, $1)" if $value =~ /args\[(\d+)]/;
-        return "toWebCoreString($value)";
-    }
-    if ($type eq "DOMString") {
-        return "toWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
-        return "toWebCoreStringWithNullOrUndefinedCheck($value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
-        
-        return "toWebCoreString(args, $1)" if $value =~ /args\[(\d+)]/;
-        return "toWebCoreString($value)";
+    if ($type eq "DOMString" or $type eq "DOMUserData") {
+        return $value;
     }
 
     if ($type eq "SerializedScriptValue") {
@@ -2149,7 +2143,6 @@ sub RequiresCustomSignature
 
 my %non_wrapper_types = (
     'float' => 1,
-    'AtomicString' => 1,
     'double' => 1,
     'short' => 1,
     'unsigned short' => 1,

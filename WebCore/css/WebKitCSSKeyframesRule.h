@@ -64,7 +64,7 @@ public:
     // themselves, or know that it will get called later.
     void setNameInternal(const String& name)
     {   
-        m_name = name;
+        m_name = AtomicString(name);
     }
 
     CSSRuleList* cssRules() { return m_lstCSSRules.get(); }

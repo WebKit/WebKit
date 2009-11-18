@@ -229,6 +229,31 @@ namespace WebCore {
 
     v8::Handle<v8::Value> getElementEventHandlerAttr(const v8::AccessorInfo&,
                                                      const AtomicString&);
+    
+    // V8Parameter is an adapter class that converts V8 values to Strings
+    // or AtomicStrings as appropriate, using multiple typecast operators.
+    enum V8ParameterMode {
+        DefaultMode,
+        WithNullCheck,
+        WithUndefinedOrNullCheck
+    };
+    template <V8ParameterMode MODE = DefaultMode>
+    class V8Parameter {
+    public:
+        V8Parameter (v8::Local<v8::Value> object) :m_v8Object(object) { }
+        operator String();
+        operator AtomicString();
+    private:
+        v8::Local<v8::Value> m_v8Object;
+    };
+    
+    template<> inline V8Parameter<DefaultMode>::operator String() { return toWebCoreString(m_v8Object); }
+    template<> inline V8Parameter<WithNullCheck>::operator String() { return toWebCoreStringWithNullCheck(m_v8Object); }
+    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator String() { return toWebCoreStringWithNullOrUndefinedCheck(m_v8Object); }
+
+    template<> inline V8Parameter<DefaultMode>::operator AtomicString() { return v8ValueToAtomicWebCoreString(m_v8Object); }
+    template<> inline V8Parameter<WithNullCheck>::operator AtomicString() { return toAtomicWebCoreStringWithNullCheck(m_v8Object); }
+    template<> inline V8Parameter<WithUndefinedOrNullCheck>::operator AtomicString() { return toAtomicWebCoreStringWithNullCheck(m_v8Object); }
 
 } // namespace WebCore
 

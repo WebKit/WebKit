@@ -172,7 +172,7 @@ namespace WebCore {
         typedef Type* DecoratedType;
 
         static Type null() { return 0; }
-        static AtomicString toString(Type type) { return type ? AtomicString(type->valueAsString()) : nullAtom; }
+        static String toString(Type type) { return type ? type->valueAsString() : String(); }
     };
 
     template<>
@@ -181,7 +181,7 @@ namespace WebCore {
         typedef bool DecoratedType;
 
         static bool null() { return false; }
-        static AtomicString toString(bool type) { return type ? "true" : "false"; }
+        static String toString(bool type) { return type ? "true" : "false"; }
     };
 
     template<>
@@ -190,7 +190,7 @@ namespace WebCore {
         typedef int DecoratedType;
 
         static int null() { return 0; }
-        static AtomicString toString(int type) { return String::number(type); }
+        static String toString(int type) { return String::number(type); }
     };
 
     template<>
@@ -199,7 +199,7 @@ namespace WebCore {
         typedef long DecoratedType;
 
         static long null() { return 0l; }
-        static AtomicString toString(long type) { return String::number(type); }
+        static String toString(long type) { return String::number(type); }
     };
 
     template<>
@@ -208,7 +208,7 @@ namespace WebCore {
         typedef SVGLength DecoratedType;
 
         static SVGLength null() { return SVGLength(); }
-        static AtomicString toString(const SVGLength& type) { return type.valueAsString(); }
+        static String toString(const SVGLength& type) { return type.valueAsString(); }
     };
 
     template<>
@@ -217,7 +217,7 @@ namespace WebCore {
         typedef float DecoratedType;
 
         static float null() { return 0.0f; }
-        static AtomicString toString(float type) { return String::number(type); }
+        static String toString(float type) { return String::number(type); }
     };
 
     template<>
@@ -226,7 +226,7 @@ namespace WebCore {
         typedef FloatRect DecoratedType;
 
         static FloatRect null() { return FloatRect(); }
-        static AtomicString toString(const FloatRect& type) { return String::format("%f %f %f %f", type.x(), type.y(), type.width(), type.height()); }
+        static String toString(const FloatRect& type) { return String::format("%f %f %f %f", type.x(), type.y(), type.width(), type.height()); }
     };
 
     template<>
@@ -235,7 +235,7 @@ namespace WebCore {
         typedef String DecoratedType;
 
         static String null() { return String(); }
-        static AtomicString toString(const String& type) { return type; }
+        static String toString(const String& type) { return type; }
     };
 
     // Common type definitions, to ease IDL generation.

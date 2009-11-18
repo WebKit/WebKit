@@ -35,7 +35,7 @@ module core {
         readonly attribute [V8Custom] DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        [ReturnsNew] Element createElement(in [ConvertNullToNullString, HintAtomic] DOMString tagName)
+        [ReturnsNew] Element createElement(in [ConvertNullToNullString] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
         [ReturnsNew] Text createTextNode(in DOMString data);
@@ -64,7 +64,7 @@ module core {
             raises (DOMException);
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);
-        Element            getElementById(in [HintAtomic] DOMString elementId);
+        Element            getElementById(in DOMString elementId);
 
         // DOM Level 3 Core
 
