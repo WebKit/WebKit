@@ -5,6 +5,19 @@
         [GTK] Tab key does not cycle through elements by default
         https://bugs.webkit.org/show_bug.cgi?id=31505
 
+        Properly localize documentation strings for the
+        tab-key-cycles-through-elements property.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
+2009-11-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Tab key does not cycle through elements by default
+        https://bugs.webkit.org/show_bug.cgi?id=31505
+
         Ensure that WebKitWebSettings tab-key-cycles-through-elements
         property is true by default with the G_PARAM_CONSTRUCT_FLAG.
 
