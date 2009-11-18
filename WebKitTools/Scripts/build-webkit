@@ -50,8 +50,8 @@ my $minimal = 0;
 my $makeArgs;
 my $startTime = time();
 
-my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
-    $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
+my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $datalistSupport, 
+    $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
@@ -75,6 +75,9 @@ my @features = (
 
     { option => "datagrid", desc => "Toggle Datagrid Support",
       define => "ENABLE_DATAGRID", default => 1, value => \$datagridSupport },
+      
+    { option => "datalist", desc => "Toggle HTML5 datalist support",
+      define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },
           
     { option => "dom-storage", desc => "Toggle DOM Storage Support",
       define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },

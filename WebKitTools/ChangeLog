@@ -1,3 +1,12 @@
+2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add and option to toggle HTML5 datalist support to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=31599
+
+        * Scripts/build-webkit:
+
 2009-11-18  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
