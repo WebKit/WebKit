@@ -1,3 +1,16 @@
+2009-11-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix two Geolocation assertions.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::requestGeolocationPermissionForFrame): No need to use PageGroupLoadDeferrer since this
+        is not called from JS. 
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::Watchers::set): The PassRefPtr was getting nulled out, so we need to put it in
+        a RefPtr first.
+
 2009-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         Case sensitive file system build fix.

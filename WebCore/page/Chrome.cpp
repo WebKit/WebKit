@@ -407,11 +407,6 @@ void Chrome::print(Frame* frame)
 
 void Chrome::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    // Defer loads in case the client method runs a new event loop that would
-    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
-
-    ASSERT(frame);
     m_client->requestGeolocationPermissionForFrame(frame, geolocation);
 }
 
