@@ -1,5 +1,11 @@
 2009-11-18  Oliver Hunt  <oliver@apple.com>
 
+        Update expected results of fixed test.
+
+        * fast/profiler/throw-exception-from-eval-expected.txt:
+
+2009-11-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Interpreter may do an out of range access when throwing an exception in the profiler.
