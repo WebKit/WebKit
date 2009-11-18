@@ -30,8 +30,8 @@
 #define CERTIFICATE_CREDENTIALS_SUPPORTED ((PLATFORM(MAC) || PLATFORM(IPHONE)) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
-#include <WTF/RetainPtr.h>
 #include <Security/SecBase.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 namespace WebCore {
