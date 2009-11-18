@@ -1,3 +1,16 @@
+2009-11-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move FillOrStrokeType out of public header.
+
+        * platform/graphics/GraphicsContext.h: Updated copyright date to cover
+        some years we published Apple changes, sorted forward declarations,
+        removed FillOrStrokeType enum.
+        * platform/graphics/GraphicsContextPrivate.h: Updated copyright date
+        to cover some years we published Apple changes, sorted includes,
+        moved FillOrStrokeType enum here.
+
 2009-11-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

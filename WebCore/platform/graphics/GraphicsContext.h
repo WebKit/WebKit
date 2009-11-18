@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -106,17 +106,17 @@ namespace WebCore {
     const int cMisspellingLinePatternWidth = 4;
     const int cMisspellingLinePatternGapWidth = 1;
 
-    class TransformationMatrix;
     class Font;
     class Generator;
     class Gradient;
-    class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
+    class GraphicsContextPrivate;
     class ImageBuffer;
     class KURL;
     class Path;
     class Pattern;
     class TextRun;
+    class TransformationMatrix;
 
     // These bits can be ORed together for a total of 8 possible text drawing modes.
     const int cTextInvisible = 0;
@@ -129,12 +129,6 @@ namespace WebCore {
         SolidStroke,
         DottedStroke,
         DashedStroke
-    };
-
-    enum FillOrStrokeType {
-        SolidColorType,
-        PatternType,
-        GradientType
     };
 
     enum InterpolationQuality {

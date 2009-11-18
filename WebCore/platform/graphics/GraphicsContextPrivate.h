@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,14 @@
 #ifndef GraphicsContextPrivate_h
 #define GraphicsContextPrivate_h
 
-#include "TransformationMatrix.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
+
+    enum FillOrStrokeType { SolidColorType, PatternType, GradientType };
 
     struct GraphicsContextState {
         GraphicsContextState()
