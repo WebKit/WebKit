@@ -1,3 +1,14 @@
+2009-11-17  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Eliminate flakiness in file-URL-with-port-number by removing a setTimeout.
+        The timeout caused the test to fail about 2% of the time on the Chromium builders.
+        The timeout exists to catch cases where the iframe does not load, but the test
+        framework already will handle this (albeit with a longer timeout).
+
+        * fast/loader/file-URL-with-port-number.html:
+
 2009-11-18  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

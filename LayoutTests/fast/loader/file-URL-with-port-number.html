@@ -1,25 +1,10 @@
 <head>
 <script>
-var watchdog;
-
-function logResult(result)
-{
-    document.getElementById("result").appendChild(document.createTextNode(result));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-
 function subframeLoaded()
 {
-    if (watchdog) {
-        clearTimeout(watchdog);
-        logResult("SUCCESS: The subframe loaded.");
-    }
-}
-
-function watchdogFired()
-{
-    logResult("FAILURE: The subframe did not load within 100 ms.");
+    document.getElementById("result").appendChild(document.createTextNode("SUCCESS: The subframe loaded."));
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 function runTest()
@@ -32,8 +17,9 @@ function runTest()
     var subframeLocation = window.location + "";
     subframeLocation = subframeLocation.replace(/file:\/\/\//, "file://:1/");
     subframeLocation = subframeLocation.replace(/file-URL-with-port-number/, "resources/empty-subframe");
-    document.getElementById("subframe").contentWindow.location = subframeLocation;
-    watchdog = setTimeout(watchdogFired, 100);
+    var subframe = document.getElementById("subframe");
+    subframe.onload = subframeLoaded;
+    subframe.contentWindow.location = subframeLocation;
 }
 
 </script>
@@ -42,5 +28,5 @@ function runTest()
 <body onload="runTest()">
 <p>This tests whether we can load a file URL with a port number in the URL. It should be ignored, and so the load should succeed.</p>
 <p id="result"></p>
-<iframe id="subframe" onload="subframeLoaded()" width="20" height="20"></iframe>
+<iframe id="subframe" width="20" height="20"></iframe>
 </body>
