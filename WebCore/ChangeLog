@@ -1,3 +1,13 @@
+2009-11-18  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix Qt build without JavaScript debugger.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31575
+
+        * page/Console.idl:
+
 2009-11-18  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Dave Hyatt.
