@@ -1,3 +1,15 @@
+2009-11-19  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Fixing a bug in MessageQueue::removeIf() that leads to an
+        assertion failure.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31657
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::removeIf):
+
 2009-11-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
