@@ -52,8 +52,6 @@ win32-g++ {
     QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
-DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
-
 DEFINES += WTF_CHANGES=1
 
 include(JavaScriptCore.pri)
