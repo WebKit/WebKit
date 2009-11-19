@@ -1,3 +1,32 @@
+2009-11-19  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 31574 -  Crashing bug when removing <ruby> element
+        (https://bugs.webkit.org/show_bug.cgi?id=31574)
+
+        Cause of the bug:
+        1.) RenderBlock::destroy() of the RenderRubyRun called destroyLeftoverChildren()
+        2.) that called destroy() of the RenderRubyBase(), which in RenderObject::destroy() calls remove()
+        3.) remove() is being redirected as parent()->removeChild() in RenderObject.h
+        4.) this triggers the special handling of child removal in RenderRubyRun that
+            causes it to destroy itself
+        5.) On returning from all this the renderer crashes when accessing a member
+            or virtual function on this now illegal object.
+
+        I therefore added a flag that tracks if the ruby run is being destroyed.
+        If so, avoid doing the special handling in removeChild that caused this.
+        It's not the most elegant solution, but the easiest to implement without
+        touching unrelated code. Also, it's self-documenting.
+
+        Test: fast/ruby/ruby-remove.html
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::RenderRubyRun):
+        (WebCore::RenderRubyRun::destroy):
+        (WebCore::RenderRubyRun::removeChild):
+        * rendering/RenderRubyRun.h:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
