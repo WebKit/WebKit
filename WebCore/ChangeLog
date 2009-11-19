@@ -1,5 +1,13 @@
 2009-11-19  Beth Dakin  <bdakin@apple.com>
 
+        Build fix. No review needed.
+
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+
+2009-11-19  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=31321 Make -webkit-
