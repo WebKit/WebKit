@@ -27,7 +27,7 @@
 #define QWebPageClient_h
 
 #ifndef QT_NO_CURSOR
-#include <QCursor>;
+#include <QCursor>
 #endif
 #include <QRect>
 

@@ -2,6 +2,17 @@
 
         Unreviewed.
 
+        Fix a typo. Remove the trailing semicolon
+        from an include directive after r51137.
+
+        No new tests as there is no functional change.
+
+        * platform/qt/QWebPageClient.h:
+
+2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
         [Qt] Build fix for QtWebKit after r51159.
 
         Include float.h for DBL_MANT_DIG. Not sure why this
