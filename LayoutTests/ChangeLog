@@ -1,3 +1,16 @@
+2009-11-19  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Updated timeline paint test to ignore width and height.  GTK+ testing
+        uses a different top level window size than other platforms.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31402
+
+        * inspector/timeline-paint-expected.txt:
+        * inspector/timeline-test.js:
+        * platform/win/Skipped:
+
 2009-11-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

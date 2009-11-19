@@ -5,8 +5,8 @@ Paint Properties:
 + data : {
 +- x : 0
 +- y : 0
-+- width : 800
-+- height : 350
++- width : * DEFINED *
++- height : * DEFINED *
 + }
 + children : * DEFINED *
 + endTime : * DEFINED *

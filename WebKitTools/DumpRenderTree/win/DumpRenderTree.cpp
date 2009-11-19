@@ -286,7 +286,7 @@ static void initialize()
 void displayWebView()
 {
     ::InvalidateRect(webViewWindow, 0, TRUE);
-    ::UpdateWindow(webViewWindow);
+    ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
 }
 
 void dumpFrameScrollPosition(IWebFrame* frame)

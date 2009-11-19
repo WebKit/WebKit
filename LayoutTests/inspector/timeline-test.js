@@ -4,7 +4,9 @@ var timelineAgentRecordType = {};
 var timelineNonDeterministicProps = { 
     children : 1,
     endTime : 1, 
+    height : 1,
     startTime : 1,
+    width : 1,
     url : 1
 };
 
