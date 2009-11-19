@@ -639,24 +639,18 @@ void GraphicsContext::fillPath()
     QPainterPath path = m_data->currentPath;
     path.setFillRule(toQtFillRule(fillRule()));
 
-    if ((m_common->state.fillType != SolidColorType)
-            || (fillColor().alpha())) {
+    if (m_common->state.fillPattern || m_common->state.fillGradient || fillColor().alpha()) {
         drawFilledShadowPath(this, p, &path);
-        switch (m_common->state.fillType) {
-        case SolidColorType:
-            if (fillColor().alpha())
-                p->fillPath(path, p->brush());
-            break;
-        case PatternType: {
+        if (m_common->state.fillPattern) {
             TransformationMatrix affine;
             p->fillPath(path, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
-            break;
-        }
-        case GradientType:
+        } else if (m_common->state.fillGradient) {
             QBrush brush(*m_common->state.fillGradient->platformGradient());
             brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
             p->fillPath(path, brush);
-            break;
+        } else {
+            if (fillColor().alpha())
+                p->fillPath(path, p->brush());
         }
     }
     m_data->currentPath = QPainterPath();
@@ -672,8 +666,7 @@ void GraphicsContext::strokePath()
     QPainterPath path = m_data->currentPath;
     path.setFillRule(toQtFillRule(fillRule()));
 
-    if ((m_common->state.strokeType != SolidColorType)
-            || (strokeColor().alpha())) {
+    if (m_common->state.strokePattern || m_common->state.strokeGradient || strokeColor().alpha()) {
         IntSize shadowSize;
         int shadowBlur;
         Color shadowColor;
@@ -685,26 +678,20 @@ void GraphicsContext::strokePath()
             p->strokePath(path, shadowPen);
             p->setWorldTransform(t);
         }
-        switch (m_common->state.strokeType) {
-        case SolidColorType:
-            if (strokeColor().alpha())
-                p->strokePath(path, pen);
-            break;
-        case PatternType: {
+        if (m_common->state.strokePattern) {
             TransformationMatrix affine;
             pen.setBrush(QBrush(m_common->state.strokePattern->createPlatformPattern(affine)));
             p->setPen(pen);
             p->strokePath(path, pen);
-            break;
-        }
-        case GradientType: {
+        } else if (m_common->state.strokeGradient) {
             QBrush brush(*m_common->state.strokeGradient->platformGradient());
             brush.setTransform(m_common->state.strokeGradient->gradientSpaceTransform());
             pen.setBrush(brush);
             p->setPen(pen);
             p->strokePath(path, pen);
-            break;
-        }
+        } else {
+            if (strokeColor().alpha())
+                p->strokePath(path, pen);
         }
     }
     m_data->currentPath = QPainterPath();
@@ -729,24 +716,18 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     QPainter* p = m_data->p();
 
-    if ((m_common->state.fillType != SolidColorType)
-            || (fillColor().alpha())) {
+    if (m_common->state.fillPattern || m_common->state.fillGradient || fillColor().alpha()) {
         drawBorderlessRectShadow(this, p, rect);
-        switch (m_common->state.fillType) {
-        case SolidColorType:
-            if (fillColor().alpha())
-                p->fillRect(rect, p->brush());
-            break;
-        case PatternType: {
+        if (m_common->state.fillPattern) {
             TransformationMatrix affine;
             p->fillRect(rect, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
-            break;
-        }
-        case GradientType:
+        } else if (m_common->state.fillGradient) {
             QBrush brush(*m_common->state.fillGradient->platformGradient());
             brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
             p->fillRect(rect, brush);
-            break;
+        } else {
+            if (fillColor().alpha())
+                p->fillRect(rect, p->brush());
         }
     }
 }

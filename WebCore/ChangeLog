@@ -1,3 +1,52 @@
+2009-11-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of the redundant strokeType and fillType data members on
+        a GraphicsContext as well as the FillOrStrokeType enum. Use
+        null pointers instead.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokeColor): Null out the pattern
+        and gradient.
+        (WebCore::GraphicsContext::setFillColor): Ditto.
+        (WebCore::GraphicsContext::setStrokePattern): Null out the graident.
+        (WebCore::GraphicsContext::setFillPattern): Ditto.
+        (WebCore::GraphicsContext::setStrokeGradient): Null out the pattern.
+        (WebCore::GraphicsContext::setFillGradient): Ditto.
+
+        * platform/graphics/GraphicsContextPrivate.h: Remove all that stuff.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill): Use null checks on fillPattern and
+        fillGraident instead of a switch statement.
+        (WebCore::setPlatformStroke): Ditto.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::applyStrokePattern): Removed unneeded get.
+        (WebCore::GraphicsContext::applyFillPattern): Ditto.
+        (WebCore::calculateDrawingMode): Use fillPattern and strokePattern
+        to see if there is a pattern instead of fillType and strokeType.
+        (WebCore::GraphicsContext::drawPath): Use fillGradient, strokeGradient,
+        fillPattern, and strokePattern instead of fillType and strokeType.
+        (WebCore::GraphicsContext::fillPath): Added FIXME about color space that
+        is used in the pattern and gradient case probably erroneously. Moved
+        gradient code inside an if statement. Streamlined pattern code and
+        use an if statement. No switch any more.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::strokeRect): Ditto.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath): Use null checks on fillPattern and
+        fillGraident instead of a switch statement.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::fillPath): Removed unneeded check of fillType.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+
 2009-11-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

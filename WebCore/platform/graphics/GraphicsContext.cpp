@@ -122,9 +122,10 @@ void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
 
 void GraphicsContext::setStrokeColor(const Color& color, ColorSpace colorSpace)
 {
-    m_common->state.strokeType = SolidColorType;
     m_common->state.strokeColor = color;
     m_common->state.strokeColorSpace = colorSpace;
+    m_common->state.strokeGradient.clear();
+    m_common->state.strokePattern.clear();
     setPlatformStrokeColor(color, colorSpace);
 }
 
@@ -185,9 +186,10 @@ void GraphicsContext::setFillRule(WindRule fillRule)
 
 void GraphicsContext::setFillColor(const Color& color, ColorSpace colorSpace)
 {
-    m_common->state.fillType = SolidColorType;
     m_common->state.fillColor = color;
     m_common->state.fillColorSpace = colorSpace;
+    m_common->state.fillGradient.clear();
+    m_common->state.fillPattern.clear();
     setPlatformFillColor(color, colorSpace);
 }
 
@@ -219,7 +221,7 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
         setStrokeColor(Color::black, DeviceColorSpace);
         return;
     }
-    m_common->state.strokeType = PatternType;
+    m_common->state.strokeGradient.clear();
     m_common->state.strokePattern = pattern;
     setPlatformStrokePattern(m_common->state.strokePattern.get());
 }
@@ -231,7 +233,7 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
         setFillColor(Color::black, DeviceColorSpace);
         return;
     }
-    m_common->state.fillType = PatternType;
+    m_common->state.fillGradient.clear();
     m_common->state.fillPattern = pattern;
     setPlatformFillPattern(m_common->state.fillPattern.get());
 }
@@ -243,8 +245,8 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
         setStrokeColor(Color::black, DeviceColorSpace);
         return;
     }
-    m_common->state.strokeType = GradientType;
     m_common->state.strokeGradient = gradient;
+    m_common->state.strokePattern.clear();
     setPlatformStrokeGradient(m_common->state.strokeGradient.get());
 }
 
@@ -255,8 +257,8 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
         setFillColor(Color::black, DeviceColorSpace);
         return;
     }
-    m_common->state.fillType = GradientType;
     m_common->state.fillGradient = gradient;
+    m_common->state.fillPattern.clear();
     setPlatformFillGradient(m_common->state.fillGradient.get());
 }
 
