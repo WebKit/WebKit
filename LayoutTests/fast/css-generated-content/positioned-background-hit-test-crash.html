@@ -24,6 +24,9 @@
            }       
         </style>
         <script type="text/javascript">
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
             function finishTest()
             {
                 eventSender.mouseUp();
@@ -49,6 +52,6 @@
         </script>
    </head>
    <body onload="test()">
-       <h1 id="heading">Webpage test</h1>
+       <h1 id="heading">No crash means PASS</h1>
    </body>
 </html>
