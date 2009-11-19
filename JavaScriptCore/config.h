@@ -57,7 +57,6 @@
 
 /* FIXME: if all platforms have these, do they really need #defines? */
 #define HAVE_STDINT_H 1
-#define HAVE_STRING_H 1
 
 #define WTF_CHANGES 1
 
