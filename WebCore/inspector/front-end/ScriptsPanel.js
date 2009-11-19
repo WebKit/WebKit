@@ -501,12 +501,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     showScript: function(script, line)
     {
-        this._showScriptOrResource(script, line, true);
+        this._showScriptOrResource(script, {line: line, shouldHighlightLine: true});
     },
 
     showResource: function(resource, line)
     {
-        this._showScriptOrResource(resource, line, true);
+        this._showScriptOrResource(resource, {line: line, shouldHighlightLine: true});
     },
 
     showView: function(view)
@@ -574,8 +574,12 @@ WebInspector.ScriptsPanel.prototype = {
             return this.sourceFrameForScript(scriptOrResource);
     },
 
-    _showScriptOrResource: function(scriptOrResource, line, shouldHighlightLine, fromBackForwardAction)
+    _showScriptOrResource: function(scriptOrResource, options)
     {
+        // options = {line:, shouldHighlightLine:, fromBackForwardAction:, initialLoad:}
+        if (!options) 
+            options = {};
+
         if (!scriptOrResource)
             return;
 
@@ -601,7 +605,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (!view)
             return;
 
-        if (!fromBackForwardAction) {
+        var url = scriptOrResource.url || scriptOrResource.sourceURL;
+        if (url && !options.initialLoad)
+            InspectorController.setSetting("LastViewedScriptFile", url);
+
+        if (!options.fromBackForwardAction) {
             var oldIndex = this._currentBackForwardIndex;
             if (oldIndex >= 0)
                 this._backForwardList.splice(oldIndex + 1, this._backForwardList.length - oldIndex);
@@ -622,11 +630,11 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.visibleView = view;
 
-        if (line) {
+        if (options.line) {
             if (view.revealLine)
-                view.revealLine(line);
-            if (view.highlightLine && shouldHighlightLine)
-                view.highlightLine(line);
+                view.revealLine(options.line);
+            if (view.highlightLine && options.shouldHighlightLine)
+                view.highlightLine(options.line);
         }
 
         var option;
@@ -642,7 +650,6 @@ WebInspector.ScriptsPanel.prototype = {
 
             console.assert(option);
         } else {
-            var url = scriptOrResource.url;
             var script = this._scriptsForURLsInFilesSelect[url];
             if (script)
                option = script.filesSelectOption;
@@ -699,7 +706,14 @@ WebInspector.ScriptsPanel.prototype = {
         // Call _showScriptOrResource if the option we just appended ended up being selected.
         // This will happen for the first item added to the menu.
         if (select.options[select.selectedIndex] === option)
-            this._showScriptOrResource(option.representedObject);
+            this._showScriptOrResource(option.representedObject, {initialLoad: true});
+        else {
+            // if not first item, check to see if this was the last viewed
+            var url = option.representedObject.url || option.representedObject.sourceURL;
+            var lastURL = InspectorController.setting("LastViewedScriptFile");
+            if (url && url === lastURL)
+                this._showScriptOrResource(option.representedObject, {initialLoad: true});
+        }
     },
 
     _clearCurrentExecutionLine: function()
@@ -722,7 +736,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
 
         var scriptOrResource = this._sourceIDMap[currentFrame.sourceID];
-        this._showScriptOrResource(scriptOrResource, currentFrame.line);
+        this._showScriptOrResource(scriptOrResource, {line: currentFrame.line});
 
         this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
         if (this._executionSourceFrame)
@@ -841,7 +855,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
 
-        this._showScriptOrResource(this._backForwardList[--this._currentBackForwardIndex], null, false, true);
+        this._showScriptOrResource(this._backForwardList[--this._currentBackForwardIndex], {fromBackForwardAction: true});
         this._updateBackAndForwardButtons();
     },
 
@@ -852,7 +866,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
 
-        this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], null, false, true);
+        this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], {fromBackForwardAction: true});
         this._updateBackAndForwardButtons();
     },
 

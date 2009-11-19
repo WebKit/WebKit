@@ -1,3 +1,22 @@
+2009-11-18  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector - remember last script displayed in Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=27552
+
+        Manual test added
+        
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showScript):
+        (WebInspector.ScriptsPanel.prototype.showResource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.ScriptsPanel.prototype._goBack):
+        (WebInspector.ScriptsPanel.prototype._goForward):
+        * manual-tests/inspector/remember-last-script.html: Added.
+
 2009-11-18  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dimitri Glazkov.
