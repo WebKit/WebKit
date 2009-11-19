@@ -1,3 +1,13 @@
+2009-11-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Minor refactoring + more documentation.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::clearHistory):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2009-11-19  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
