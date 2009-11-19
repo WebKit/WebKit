@@ -1,3 +1,16 @@
+2009-11-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        -webkit-user-drag: element Drag images include overflow decorations from incorrect nodes
+        https://bugs.webkit.org/show_bug.cgi?id=31656
+
+        Make sure we're a child of the painting root before drawing overflow features.
+
+        * manual-tests/user-drag-with-decorations.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+
 2009-11-19  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, attempt to fix Chromium build.
