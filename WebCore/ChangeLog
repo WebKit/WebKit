@@ -1,5 +1,12 @@
 2009-11-19  Beth Dakin  <bdakin@apple.com>
 
+       Build fix. No review needed.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::paintMissingPluginIcon):
+
+2009-11-19  Beth Dakin  <bdakin@apple.com>
+
         Build fix. No review needed.
 
         * platform/graphics/win/ImageCGWin.cpp:
