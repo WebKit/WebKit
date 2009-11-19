@@ -1,3 +1,10 @@
+2009-11-19  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, attempt to fix Chromium build.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart): Add new enum values for Show/HideClosedCaptionButton to make it compile.
+
 2009-11-19  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Darin Adler.

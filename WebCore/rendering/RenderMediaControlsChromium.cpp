@@ -275,6 +275,8 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaRewindButton:
     case MediaReturnToRealtimeButton:
     case MediaStatusDisplay:
+    case MediaShowClosedCaptionsButton:
+    case MediaHideClosedCaptionsButton:
         ASSERT_NOT_REACHED();
         break;
     }
