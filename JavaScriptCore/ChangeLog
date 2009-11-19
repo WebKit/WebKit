@@ -1,3 +1,11 @@
+2009-11-19  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Build fix for 32-bit Sparc machines: these machines are big-endian.
+
+        * wtf/Platform.h:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
