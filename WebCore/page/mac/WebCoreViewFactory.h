@@ -150,6 +150,13 @@
 - (NSString*)localizedMediaControlElementHelpText:(NSString*)name;
 - (NSString*)localizedMediaTimeDescription:(float)time;
 
+- (NSString *)validationMessageValueMissingText;
+- (NSString *)validationMessageTypeMismatchText;
+- (NSString *)validationMessagePatternMismatchText;
+- (NSString *)validationMessageTooLongText;
+- (NSString *)validationMessageRangeUnderflowText;
+- (NSString *)validationMessageRangeOverflowText;
+- (NSString *)validationMessageStepMismatchText;
 
 @end
 

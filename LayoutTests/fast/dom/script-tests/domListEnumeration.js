@@ -141,7 +141,7 @@ shouldBe("resultArray[2].item", "document.getElementsByTagName('select')[2]");
 // HTMLSelectElement
 var htmlSelectElement = document.getElementsByTagName('select')[0];
 resultArray = iterateList(htmlSelectElement);
-shouldBe("resultArray.length", "140");
+shouldBe("resultArray.length", "141");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "document.getElementsByTagName('option')[0]");
 shouldBe("resultArray[1].i", "'1'");

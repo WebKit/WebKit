@@ -37,6 +37,7 @@ module html {
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
         readonly attribute boolean               willValidate;
+        readonly attribute DOMString             validationMessage;
         boolean  checkValidity();
         void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
         void click();

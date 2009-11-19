@@ -231,3 +231,10 @@ String WebCore::localizedMediaTimeDescription(float time)
 
 #endif  // ENABLE(VIDEO)
 
+String WebCore::validationMessageValueMissingText() { return String(LPCTSTR_UI_STRING("value missing", "Validation message for required form control elements that have no value")); }
+String WebCore::validationMessageTypeMismatchText() { return String(LPCTSTR_UI_STRING("type mismatch", "Validation message for input form controls with a value not matching type")); }
+String WebCore::validationMessagePatternMismatchText() { return String(LPCTSTR_UI_STRING("pattern mismatch", "Validation message for input form controls requiring a constrained value according to pattern")); }
+String WebCore::validationMessageTooLongText() { return String(LPCTSTR_UI_STRING("too long", "Validation message for form control elements with a value longer than maximum allowed length")); }
+String WebCore::validationMessageRangeUnderflowText() { return String(LPCTSTR_UI_STRING("range underflow", "Validation message for input form controls with value lower than allowed minimum")); }
+String WebCore::validationMessageRangeOverflowText() { return String(LPCTSTR_UI_STRING("range overflow", "Validation message for input form controls with value higher than allowed maximum")); }
+String WebCore::validationMessageStepMismatchText() { return String(LPCTSTR_UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute")); }

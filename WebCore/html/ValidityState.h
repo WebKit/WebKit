@@ -38,6 +38,7 @@ namespace WebCore {
 
         HTMLFormControlElement* control() const { return m_control; }
 
+        String validationMessage();
         void setCustomErrorMessage(const String& message) { m_customErrorMessage = message; }
 
         bool valueMissing() { return control()->valueMissing(); }

@@ -323,4 +323,46 @@ String AXDefinitionListDefinitionText()
     return String();
 }
 
+String validationMessageValueMissingText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessageTypeMismatchText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessagePatternMismatchText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessageTooLongText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessageRangeUnderflowText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessageRangeOverflowText()
+{
+    notImplemented();
+    return String();
+}
+
+String validationMessageStepMismatchText()
+{
+    notImplemented();
+    return String();
+}
+
 } // namespace WebCore

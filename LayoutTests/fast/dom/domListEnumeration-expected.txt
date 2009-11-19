@@ -41,7 +41,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is document.getElementsByTagName('select')[2]
 
 [object HTMLSelectElement]
-PASS resultArray.length is 140
+PASS resultArray.length is 141
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is document.getElementsByTagName('option')[0]
 PASS resultArray[1].i is '1'

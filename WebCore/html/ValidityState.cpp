@@ -26,6 +26,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KURL.h"
+#include "LocalizedStrings.h"
 #include "RegularExpression.h"
 #include <wtf/StdLibExtras.h>
 
@@ -41,6 +42,31 @@ ValidityState::ValidityState(HTMLFormControlElement* parent)
     : m_control(parent)
 {
     ASSERT(parent);
+}
+
+String ValidityState::validationMessage()
+{
+    if (!control()->willValidate())
+        return String();
+
+    if (customError())
+        return m_customErrorMessage;
+    if (valueMissing())
+        return validationMessageValueMissingText();
+    if (typeMismatch())
+        return validationMessageTypeMismatchText();
+    if (patternMismatch())
+        return validationMessagePatternMismatchText();
+    if (tooLong())
+        return validationMessageTooLongText();
+    if (rangeUnderflow())
+        return validationMessageRangeUnderflowText();
+    if (rangeOverflow())
+        return validationMessageRangeOverflowText();
+    if (stepMismatch())
+        return validationMessageStepMismatchText();
+
+    return String();
 }
 
 bool ValidityState::typeMismatch()

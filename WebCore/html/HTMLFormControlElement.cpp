@@ -288,6 +288,11 @@ bool HTMLFormControlElement::willValidate() const
     return form() && !name().isEmpty() && !disabled() && !isReadOnlyFormControl();
 }
 
+String HTMLFormControlElement::validationMessage()
+{
+    return validity()->validationMessage();
+}
+
 bool HTMLFormControlElement::checkValidity()
 {
     if (willValidate() && !isValidFormControlElement()) {

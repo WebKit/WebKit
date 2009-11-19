@@ -756,4 +756,39 @@
     return [NSString stringWithFormat:UI_STRING("%1$d seconds", "accessibility help text for media controller time value < 60 seconds"), seconds];
 }
 
+- (NSString *)validationMessageValueMissingText
+{
+    return UI_STRING("value missing", "Validation message for required form control elements that have no value");
+}
+
+- (NSString *)validationMessageTypeMismatchText
+{
+    return UI_STRING("type mismatch", "Validation message for input form controls with a value not matching type");
+}
+
+- (NSString *)validationMessagePatternMismatchText
+{
+    return UI_STRING("pattern mismatch", "Validation message for input form controls requiring a constrained value according to pattern");
+}
+
+- (NSString *)validationMessageTooLongText
+{
+    return UI_STRING("too long", "Validation message for form control elements with a value longer than maximum allowed length");
+}
+
+- (NSString *)validationMessageRangeUnderflowText
+{
+    return UI_STRING("range underflow", "Validation message for input form controls with value lower than allowed minimum");
+}
+
+- (NSString *)validationMessageRangeOverflowText
+{
+    return UI_STRING("range overflow", "Validation message for input form controls with value higher than allowed maximum");
+}
+
+- (NSString *)validationMessageStepMismatchText
+{
+    return UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute");
+}
+
 @end
