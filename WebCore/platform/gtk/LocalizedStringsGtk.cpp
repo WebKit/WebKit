@@ -477,44 +477,38 @@ String localizedMediaTimeDescription(float time)
 
 String validationMessageValueMissingText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("value missing"));
 }
 
 String validationMessageTypeMismatchText()
 {
     notImplemented();
-    return String();
+    return String::fromUTF8(_("type mismatch"));
 }
 
 String validationMessagePatternMismatchText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("pattern mismatch"));
 }
 
 String validationMessageTooLongText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("too long"));
 }
 
 String validationMessageRangeUnderflowText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("range underflow"));
 }
 
 String validationMessageRangeOverflowText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("range overflow"));
 }
 
 String validationMessageStepMismatchText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(_("step mismatch"));
 }
 
 }

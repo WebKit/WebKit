@@ -1,3 +1,19 @@
+2009-11-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Add translatable strings to cover validationMessage, after
+        r51172. Already covered by existing test.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::validationMessageValueMissingText):
+        (WebCore::validationMessageTypeMismatchText):
+        (WebCore::validationMessagePatternMismatchText):
+        (WebCore::validationMessageTooLongText):
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageRangeOverflowText):
+        (WebCore::validationMessageStepMismatchText):
+
 2009-11-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
