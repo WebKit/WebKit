@@ -368,7 +368,6 @@ bool QGraphicsWebView::event(QEvent* event)
 #endif // QT_NO_CONTEXTMENU
         {
 #ifndef QT_NO_CURSOR
-#if QT_VERSION >= 0x040400
             if (event->type() == QEvent::CursorChange) {
                 // An unsetCursor will set the cursor to Qt::ArrowCursor.
                 // Thus this cursor change might be a QWidget::unsetCursor()
@@ -381,7 +380,6 @@ bool QGraphicsWebView::event(QEvent* event)
                 if (cursor().shape() == Qt::ArrowCursor)
                     d->resetCursor();
             }
-#endif
 #endif
         }
     }

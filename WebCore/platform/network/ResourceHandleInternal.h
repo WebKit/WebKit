@@ -202,11 +202,7 @@ namespace WebCore {
         Frame* m_frame;
 #endif
 #if PLATFORM(QT)
-#if QT_VERSION < 0x040400
-        QWebNetworkJob* m_job;
-#else
         QNetworkReplyHandler* m_job;
-#endif
         QWebFrame* m_frame;
 #endif
 

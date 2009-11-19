@@ -44,9 +44,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QImageReader>
-#if QT_VERSION >= 0x040300
 #include <QTransform>
-#endif
 
 #include <QDebug>
 

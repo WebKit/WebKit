@@ -21,8 +21,6 @@
 #include "config.h"
 #include "QNetworkReplyHandler.h"
 
-#if QT_VERSION >= 0x040400
-
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceHandle.h"
@@ -466,5 +464,3 @@ void QNetworkReplyHandler::sendQueuedItems()
 }
 
 #include "moc_QNetworkReplyHandler.cpp"
-
-#endif

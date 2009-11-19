@@ -52,10 +52,8 @@ static String keyIdentifierForQtKeyCode(int keyCode)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             return "Enter";
-#if QT_VERSION >= 0x040200
         case Qt::Key_Execute:
             return "Execute";
-#endif
         case Qt::Key_F1:
             return "F1";
         case Qt::Key_F2:
@@ -290,10 +288,8 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad = false
             return VK_SELECT; // (29) SELECT key
         case Qt::Key_Print:
             return VK_PRINT; // (2A) PRINT key
-#if QT_VERSION >= 0x040200
         case Qt::Key_Execute:
             return VK_EXECUTE;// (2B) EXECUTE key
-#endif
             //dunno on this
             //case Qt::Key_PrintScreen:
             //      return VK_SNAPSHOT; // (2C) PRINT SCREEN key

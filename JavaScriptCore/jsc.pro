@@ -23,10 +23,6 @@ CONFIG(debug, debug|release) {
 OBJECTS_DIR_WTR = $$OBJECTS_DIR$${QMAKE_DIR_SEP}
 include($$PWD/JavaScriptCore.pri)
 
-lessThan(QT_MINOR_VERSION, 4) {
-    DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
-}
-
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
 

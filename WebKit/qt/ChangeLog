@@ -1,3 +1,44 @@
+2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Remove support for Qt v4.3 or older versions
+        https://bugs.webkit.org/show_bug.cgi?id=29469
+
+        * Api/qcookiejar.cpp: Removed.
+        * Api/qcookiejar.h: Removed.
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::event):
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebframe.h:
+        * Api/qwebkitglobal.h:
+        * Api/qwebnetworkinterface.cpp: Removed.
+        * Api/qwebnetworkinterface.h: Removed.
+        * Api/qwebnetworkinterface_p.h: Removed.
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::acceptNavigationRequest):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::action):
+        (QWebPage::userAgentForUrl):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::load):
+        (QWebView::event):
+        * Api/qwebview.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::print):
+        (MainWindow::setupUI):
+        (main):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2009-11-18  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

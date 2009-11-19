@@ -21,8 +21,6 @@
 
 #include <QObject>
 
-#if QT_VERSION >= 0x040400
-
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 
@@ -112,7 +110,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif // QNETWORKREPLYHANDLER_H

@@ -30,7 +30,6 @@
 
 #include <stdint.h>
 
-#if QT_VERSION >= 0x040300
 QT_BEGIN_NAMESPACE
 namespace QUnicodeTables {
     struct Properties {
@@ -55,7 +54,6 @@ namespace QUnicodeTables {
     Q_CORE_EXPORT const Properties * QT_FASTCALL properties(ushort ucs2);
 }
 QT_END_NAMESPACE
-#endif
 
 // ugly hack to make UChar compatible with JSChar in API/JSStringRef.h
 #if defined(Q_OS_WIN) || COMPILER(WINSCW)
@@ -185,8 +183,6 @@ enum CharCategory {
     Symbol_Other = U_MASK(QChar::Symbol_Other)
 };
 
-
-#if QT_VERSION >= 0x040300
 
 // FIXME: handle surrogates correctly in all methods
 
@@ -405,138 +401,6 @@ inline CharCategory category(UChar32 c)
 {
     return (CharCategory) U_MASK(QChar::category(c));
 }
-
-#else
-
-inline UChar32 toLower(UChar32 ch)
-{
-    if (ch > 0xffff)
-        return ch;
-    return QChar((unsigned short)ch).toLower().unicode();
-}
-
-inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
-{
-  *error = false;
-  if (resultLength < srcLength) {
-    *error = true;
-    return srcLength;
-  }
-  for (int i = 0; i < srcLength; ++i)
-    result[i] = QChar(src[i]).toLower().unicode();
-  return srcLength;
-}
-
-inline UChar32 toUpper(UChar32 ch)
-{
-    if (ch > 0xffff)
-        return ch;
-    return QChar((unsigned short)ch).toUpper().unicode();
-}
-
-inline int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
-{
-    *error = false;
-    if (resultLength < srcLength) {
-        *error = true;
-        return srcLength;
-    }
-    for (int i = 0; i < srcLength; ++i)
-        result[i] = QChar(src[i]).toUpper().unicode();
-    return srcLength;
-}
-
-inline int toTitleCase(UChar32 c)
-{
-    if (c > 0xffff)
-        return c;
-    return QChar((unsigned short)c).toUpper().unicode();
-}
-
-inline UChar32 foldCase(UChar32 c)
-{
-    if (c > 0xffff)
-        return c;
-    return QChar((unsigned short)c).toLower().unicode();
-}
-
-inline int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
-{
-    return toLower(result, resultLength, src, srcLength, error);
-}
-
-inline bool isPrintableChar(UChar32 c)
-{
-    return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPrint();
-}
-
-inline bool isArabicChar(UChar32 c)
-{
-    return c >= 0x0600 && c <= 0x06FF;
-}
-
-inline bool isSeparatorSpace(UChar32 c)
-{
-    return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Separator_Space;
-}
-
-inline bool isPunct(UChar32 c)
-{
-    return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPunct();
-}
-
-inline bool isLower(UChar32 c)
-{
-    return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Letter_Lowercase;
-}
-
-inline UChar32 mirroredChar(UChar32 c)
-{
-    if (c > 0xffff)
-        return c;
-    return QChar(c).mirroredChar().unicode();
-}
-
-inline uint8_t combiningClass(UChar32 c)
-{
-    if (c > 0xffff)
-        return 0;
-    return QChar((unsigned short)c).combiningClass();
-}
-
-inline DecompositionType decompositionType(UChar32 c)
-{
-    if (c > 0xffff)
-        return DecompositionNone;
-    return (DecompositionType)QChar(c).decompositionTag();
-}
-
-inline int umemcasecmp(const UChar* a, const UChar* b, int len)
-{
-    for (int i = 0; i < len; ++i) {
-        QChar c1 = QChar(a[i]).toLower();
-        QChar c2 = QChar(b[i]).toLower();
-        if (c1 != c2)
-        return c1.unicode() - c2.unicode();
-    }
-    return 0;
-}
-
-inline Direction direction(UChar32 c)
-{
-    if (c > 0xffff)
-        return LeftToRight;
-    return (Direction)QChar(c).direction();
-}
-
-inline CharCategory category(UChar32 c)
-{
-    if (c > 0xffff)
-        return NoCategory;
-    return (CharCategory) U_MASK(QChar(c).category());
-}
-
-#endif
 
 } }
 

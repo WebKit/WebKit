@@ -36,7 +36,6 @@
 #include <QDebug>
 #include <stdio.h>
 
-#if QT_VERSION >= 0x040400
 #include <qtextboundaryfinder.h>
 
 namespace WebCore {
@@ -76,48 +75,3 @@ void findWordBoundary(UChar const* buffer, int len, int position, int* start, in
 
 }
 
-#else
-namespace WebCore {
-
-int findNextWordFromIndex(UChar const* buffer, int len, int position, bool forward)
-{
-    QString str(reinterpret_cast<QChar const*>(buffer), len);
-    notImplemented();
-    return 0;
-}
-
-void findWordBoundary(UChar const* buffer, int len, int position, int* start, int* end)
-{
-    QString str(reinterpret_cast<QChar const*>(buffer), len);
-
-    if (position > str.length()) {
-        *start = 0;
-        *end = 0;
-        return;
-    }
-
-    int currentPosition = position - 1;
-    QString foundWord;
-    while (currentPosition >= 0 &&
-           str[currentPosition].isLetter()) {
-        foundWord.prepend(str[currentPosition]);
-        --currentPosition;
-    }
-
-    // currentPosition == 0 means the first char is not letter
-    // currentPosition == -1 means we reached the beginning
-    int startPos = (currentPosition < 0) ? 0 : ++currentPosition;
-    currentPosition = position;
-    if (str[currentPosition].isLetter()) {
-            while (str[currentPosition].isLetter()) {
-                foundWord.append(str[currentPosition]);
-                ++currentPosition;
-            }
-    }
-
-    *start = startPos;
-    *end = currentPosition;
-}
-
-}
-#endif

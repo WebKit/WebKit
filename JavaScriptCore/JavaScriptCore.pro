@@ -58,9 +58,5 @@ include(JavaScriptCore.pri)
 
 QMAKE_EXTRA_TARGETS += generated_files
 
-lessThan(QT_MINOR_VERSION, 4) {
-    DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
-}
-
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3

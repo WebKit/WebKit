@@ -41,7 +41,7 @@
 #include <QDebug>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkRequest>
-#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
+#if !defined(QT_NO_PRINTER)
 #include <QPrintPreviewDialog>
 #endif
 
@@ -274,7 +274,7 @@ protected slots:
     }
 
     void print() {
-#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
+#if !defined(QT_NO_PRINTER)
         QPrintPreviewDialog dlg(this);
         connect(&dlg, SIGNAL(paintRequested(QPrinter *)),
                 view, SLOT(print(QPrinter *)));
@@ -374,9 +374,7 @@ private:
 
         QMenu *fileMenu = menuBar()->addMenu("&File");
         QAction *newWindow = fileMenu->addAction("New Window", this, SLOT(newWindow()));
-#if QT_VERSION >= 0x040400
         fileMenu->addAction(tr("Print"), this, SLOT(print()), QKeySequence::Print);
-#endif
         QAction* screenshot = fileMenu->addAction("Screenshot", this, SLOT(screenshot()));
         fileMenu->addAction("Close", this, SLOT(close()));
 
@@ -569,9 +567,7 @@ int main(int argc, char **argv)
     QWebSettings::setMaximumPagesInCache(4);
 
     app.setApplicationName("QtLauncher");
-#if QT_VERSION >= 0x040400
     app.setApplicationVersion("0.1");
-#endif
 
     QWebSettings::setObjectCacheCapacities((16*1024*1024) / 8, (16*1024*1024) / 8, 16*1024*1024);
 

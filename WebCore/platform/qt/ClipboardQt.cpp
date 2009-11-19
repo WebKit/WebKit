@@ -95,21 +95,7 @@ void ClipboardQt::clearData(const String& type)
         return;
 
     if (m_writableData) {
-#if QT_VERSION >= 0x040400
         m_writableData->removeFormat(type);
-#else
-        const QString toClearType = type;
-        QMap<QString, QByteArray> formats;
-        foreach (QString format, m_writableData->formats()) {
-            if (format != toClearType)
-                formats[format] = m_writableData->data(format);
-        }
-
-        m_writableData->clear();
-        QMap<QString, QByteArray>::const_iterator it, end = formats.constEnd();
-        for (it = formats.begin(); it != end; ++it)
-            m_writableData->setData(it.key(), it.value());
-#endif
         if (m_writableData->formats().isEmpty()) {
             if (isForDragging())
                 delete m_writableData;
