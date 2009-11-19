@@ -1,3 +1,20 @@
+2009-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Instrumentation should account for painting in compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=31674
+
+        Add calls to InspectorTimelineAgent for painting into compositing layers,
+        which is not accounted for in FrameView::paintContents().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        Avoid fetching the FrameView multiple times.
+        
+        (WebCore::inspectorTimelineAgent):
+        (WebCore::RenderLayerBacking::paintContents):
+
 2009-11-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
