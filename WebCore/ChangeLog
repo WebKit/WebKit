@@ -1,3 +1,15 @@
+2009-11-19  Rahul Kuchhal  <kuchhal@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Do not assert when a high number is used for roman numerals in lists.
+        https://bugs.webkit.org/show_bug.cgi?id=31652
+
+        Test: fast/lists/ol-start-roman.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): Increase the char array size.
+
 2009-11-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Oliver Hunt.

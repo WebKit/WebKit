@@ -48,7 +48,9 @@ static String toRoman(int number, bool upper)
     if (number < 1 || number > 3999)
         return String::number(number);
 
-    const int lettersSize = 12; // big enough for three each of I, X, C, and M
+    // Big enough to store largest roman number less than 3999 which
+    // is 3888 (MMMDCCCLXXXVIII)
+    const int lettersSize = 15;
     UChar letters[lettersSize];
 
     int length = 0;
