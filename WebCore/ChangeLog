@@ -1,3 +1,36 @@
+2009-11-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Support for step attribute and ValidityStae.stepMismatch for
+        type=number and range.  stepMismatch will be false if the
+        difference between the current value and a multiple of the step
+        value is very small.
+
+        Change the behavior of RenderSlider so that it always has a value
+        rounded to the step attribute value.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31331
+
+        Tests: fast/forms/ValidityState-stepMismatch-number.html
+               fast/forms/ValidityState-stepMismatch-range.html
+               fast/forms/ValidityState-stepMismatch-unsupported.html
+               fast/forms/input-step.html
+
+        * html/HTMLAttributeNames.in: Add "step".
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepMismatch):
+        (WebCore::HTMLInputElement::getStepParameters):
+        (WebCore::HTMLInputElement::getAllowedValueStep):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Add "step".
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::stepMismatch): Forward to HTMLInputElement::stepMismatch().
+        * html/ValidityState.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderRange::SliderRange):
+        (WebCore::SliderRange::clampValue):
+
 2009-11-18  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

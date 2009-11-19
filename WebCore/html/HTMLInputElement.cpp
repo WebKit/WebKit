@@ -73,6 +73,10 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
+// Constant values for getAllowedValueStep().
+static const double numberDefaultStep = 1.0;
+static const double numberStepScaleFactor = 1.0;
+
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLTextFormControlElement(tagName, doc, f)
     , m_xPos(0)
@@ -306,6 +310,100 @@ double HTMLInputElement::rangeMaximum() const
         max = min < defaultMaximum ? defaultMaximum : min;
     }
     return max;
+}
+
+bool HTMLInputElement::stepMismatch() const
+{
+    double step;
+    if (!getAllowedValueStep(&step))
+        return false;
+    if (inputType() == NUMBER) {
+        double doubleValue;
+        if (!formStringToDouble(value(), &doubleValue))
+            return false;
+        double stepBase = 0.0;
+        formStringToDouble(getAttribute(minAttr), &stepBase);
+        doubleValue = fabs(doubleValue - stepBase);
+        if (isinf(doubleValue))
+            return false;
+        // double's fractional part size is DBL_MAN_DIG-bit.  If the current
+        // value is greater than step*2^DBL_MANT_DIG, the following fmod() makes
+        // no sense.
+        if (doubleValue / pow(2, DBL_MANT_DIG) > step)
+            return false;
+        double remainder = fmod(doubleValue, step);
+        // Accepts errors in lower 7-bit.
+        double acceptableError = step / pow(2, DBL_MANT_DIG - 7);
+        return acceptableError < remainder && remainder < (step - acceptableError);
+    }
+    // Non-RANGE types should be rejected by getAllowedValueStep().
+    ASSERT(inputType() == RANGE);
+    // stepMismatch doesn't occur for RANGE. RenderSlider guarantees the
+    // value matches to step.
+    return false;
+}
+
+bool HTMLInputElement::getStepParameters(double* defaultStep, double* stepScaleFactor) const
+{
+    ASSERT(defaultStep);
+    ASSERT(stepScaleFactor);
+    switch (inputType()) {
+    case NUMBER:
+    case RANGE:
+        *defaultStep = numberDefaultStep;
+        *stepScaleFactor = numberStepScaleFactor;
+        return true;
+    case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case MONTH:
+    case TIME:
+    case WEEK:
+        // FIXME: Implement for these types.
+        return false;
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case PASSWORD:
+    case RADIO:
+    case RESET:
+    case SEARCH:
+    case SUBMIT:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool HTMLInputElement::getAllowedValueStep(double* step) const
+{
+    ASSERT(step);
+    double defaultStep;
+    double stepScaleFactor;
+    if (!getStepParameters(&defaultStep, &stepScaleFactor))
+        return false;
+    const AtomicString& stepString = getAttribute(stepAttr);
+    if (stepString.isEmpty()) {
+        *step = defaultStep * stepScaleFactor;
+        return true;
+    }
+    if (equalIgnoringCase(stepString, "any"))
+        return false;
+    double parsed;
+    if (!formStringToDouble(stepString, &parsed) || parsed <= 0.0) {
+        *step = defaultStep * stepScaleFactor;
+        return true;
+    }
+    *step = parsed * stepScaleFactor;
+    return true;
 }
 
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)

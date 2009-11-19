@@ -110,6 +110,11 @@ public:
     // Returns the maximum value for type=range.  Don't call this for other types.
     // This always returns a value which is <= rangeMinimum().
     double rangeMaximum() const;
+    // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
+    // Returns false if there is no "allowed value step."
+    bool getAllowedValueStep(double*) const;
+    // For ValidityState.
+    bool stepMismatch() const;
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
@@ -265,7 +270,8 @@ private:
     virtual bool isRequiredFormControl() const;
 
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
-
+    // Helper for getAllowedValueStep();
+    bool getStepParameters(double* defaultStep, double* stepScaleFactor) const;
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif

@@ -93,6 +93,13 @@ bool ValidityState::rangeOverflow()
     return static_cast<HTMLInputElement*>(control())->rangeOverflow();
 }
 
+bool ValidityState::stepMismatch()
+{
+    if (!control()->hasTagName(inputTag))
+        return false;
+    return static_cast<HTMLInputElement*>(control())->stepMismatch();
+}
+
 bool ValidityState::valid()
 {
     bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow() ||

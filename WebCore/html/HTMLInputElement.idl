@@ -63,12 +63,14 @@ module html {
                  attribute unsigned long   size; // Changed string -> long as part of DOM level 2
 #endif
                  attribute [ConvertNullToNullString] DOMString src;
+                 attribute [Reflect] DOMString step;
                  attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLOptionElement selectedOption;
 #endif
+
         readonly attribute boolean         willValidate;
         boolean            checkValidity();
         void               setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);

@@ -1,3 +1,23 @@
+2009-11-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add tests for ValidityState.stepMismatch.
+        https://bugs.webkit.org/show_bug.cgi?id=31331
+
+        * fast/forms/ValidityState-stepMismatch-number-expected.txt: Added.
+        * fast/forms/ValidityState-stepMismatch-number.html: Added.
+        * fast/forms/ValidityState-stepMismatch-range-expected.txt: Added.
+        * fast/forms/ValidityState-stepMismatch-range.html: Added.
+        * fast/forms/ValidityState-stepMismatch-unsupported-expected.txt: Added.
+        * fast/forms/ValidityState-stepMismatch-unsupported.html: Added.
+        * fast/forms/input-step-expected.txt: Added.
+        * fast/forms/input-step.html: Added.
+        * fast/forms/script-tests/ValidityState-stepMismatch-number.js: Added.
+        * fast/forms/script-tests/ValidityState-stepMismatch-range.js: Added.
+        * fast/forms/script-tests/ValidityState-stepMismatch-unsupported.js: Added.
+        * fast/forms/script-tests/input-step.js: Added.
+
 2009-11-18  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

@@ -48,7 +48,8 @@ static const int defaultTrackLength = 129;
 // FIXME: The SliderRange class and functions are entirely based on the DOM,
 // and could be put with HTMLInputElement (possibly with a new name) instead of here.
 struct SliderRange {
-    bool isIntegral;
+    bool hasStep;
+    double step;
     double minimum;
     double maximum;  // maximum must be >= minimum.
 
@@ -75,10 +76,11 @@ struct SliderRange {
 
 SliderRange::SliderRange(HTMLInputElement* element)
 {
-    // FIXME: What's the right way to handle an integral range with non-integral minimum and maximum?
-    // Currently values are guaranteed to be integral but could be outside the range in that case.
-
-    isIntegral = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
+    if (element->hasAttribute(precisionAttr)) {
+        step = 1.0;
+        hasStep = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
+    } else
+        hasStep = element->getAllowedValueStep(&step);
 
     maximum = element->rangeMaximum();
     minimum = element->rangeMinimum();
@@ -87,7 +89,15 @@ SliderRange::SliderRange(HTMLInputElement* element)
 double SliderRange::clampValue(double value)
 {
     double clampedValue = max(minimum, min(value, maximum));
-    return isIntegral ? round(clampedValue) : clampedValue;
+    if (!hasStep)
+        return clampedValue;
+    // Rounds clampedValue to minimum + N * step.
+    clampedValue = minimum + round((clampedValue - minimum) / step) * step;
+    if (clampedValue > maximum)
+       clampedValue -= step;
+    ASSERT(clampedValue >= minimum);
+    ASSERT(clampedValue <= maximum);
+    return clampedValue;
 }
 
 double SliderRange::valueFromElement(HTMLInputElement* element, bool* wasClamped)
