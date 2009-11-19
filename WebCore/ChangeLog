@@ -1,3 +1,19 @@
+2009-11-18  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Need to ASSERT(isMainThread()) in ThreadShared methods.
+        https://bugs.webkit.org/show_bug.cgi?id=31637
+
+        Added ASSERT(IsMainThread()) to all following methods:
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::TreeShared):
+        (WebCore::TreeShared::~TreeShared):
+        (WebCore::TreeShared::ref):
+        (WebCore::TreeShared::deref):
+        (WebCore::TreeShared::setParent):
+        (WebCore::TreeShared::parent):
+
 2009-11-18  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Eric Seidel.
