@@ -260,7 +260,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         // Tell the widget to paint now.  This is the only time the widget is allowed
         // to paint itself.  That way it will composite properly with z-indexed layers.
         if (m_substituteImage)
-            paintInfo.context->drawImage(m_substituteImage.get(), m_widget->frameRect());
+            paintInfo.context->drawImage(m_substituteImage.get(), style()->colorSpace(), m_widget->frameRect());
         else
             m_widget->paint(paintInfo.context, paintInfo.rect);
 

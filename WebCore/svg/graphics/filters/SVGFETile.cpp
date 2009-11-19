@@ -67,7 +67,7 @@ void FETile::apply(Filter* filter)
 
     OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size());
     GraphicsContext* tileImageContext = tileImage->context();
-    tileImageContext->drawImage(m_in->resultImage()->image(), IntPoint());
+    tileImageContext->drawImage(m_in->resultImage()->image(), IntPoint(), DeviceColorSpace);
     RefPtr<Pattern> pattern = Pattern::create(tileImage->image(), true, true);
 
     TransformationMatrix matrix;

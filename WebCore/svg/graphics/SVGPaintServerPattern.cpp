@@ -131,7 +131,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
             tileImageContext->translate(0, patternBoundaries().height());
             for (int j = numX; j > 0; j--) {
                 tileImageContext->translate(patternBoundaries().width(), 0);
-                tileImageContext->drawImage(tile()->image(), tileRect, tileRect);
+                tileImageContext->drawImage(tile()->image(), object->style()->colorSpace(), tileRect, tileRect);
             }
             tileImageContext->translate(-patternBoundaries().width() * numX, 0);
         }

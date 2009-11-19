@@ -1,3 +1,107 @@
+2009-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=31321 Make -webkit-
+        color-correction work with untagged images
+
+        Image's draw(), drawPattern(), and fillWithSolidColor() functions 
+        now take a ColorSpace. A bunch of classes inherit from Image, so 
+        draw() and drawPattern() functions there must also take a 
+        ColorSpace.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::fillWithSolidColor):
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::draw):
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+
+        All of the drawImage() functions and drawTiled() functions of 
+        GraphicsContext now take a ColorSpace.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+
+        This is where the actual work is done.
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::imageWithColorSpace): New static function that returns a 
+        copy of the given image in the given ColorSpace *IF* we should use 
+        the given ColorSpace. We will ignore the color space if the image 
+        is tagged and return 0. 
+        (WebCore::BitmapImage::draw): Now takes a ColorSpace and uses it to 
+        call imageWithColorSpace(). 
+        (WebCore::Image::drawPattern): Same.
+
+        Attempt to keep all ports building. 
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/haiku/ImageHaiku.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+
+        Callers of GraphicsContext's drawImage() and drawTiled() functions 
+        now need to send a ColorSpace.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2009-11-19  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Adler.

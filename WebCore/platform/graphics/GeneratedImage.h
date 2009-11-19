@@ -57,9 +57,9 @@ public:
     virtual unsigned decodedSize() const { return 0; }
 
 protected:
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
-                             const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
+                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
     
     GeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)
         : m_generator(generator)

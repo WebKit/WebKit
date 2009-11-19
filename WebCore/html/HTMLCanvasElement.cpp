@@ -259,7 +259,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     if (m_imageBuffer) {
         Image* image = m_imageBuffer->image();
         if (image)
-            context->drawImage(image, r);
+            context->drawImage(image, DeviceColorSpace, r);
     }
 
 #if ENABLE(3D_CANVAS)

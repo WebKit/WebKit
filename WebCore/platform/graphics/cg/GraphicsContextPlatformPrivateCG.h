@@ -27,6 +27,25 @@
 
 namespace WebCore {
 
+// FIXME: This would be in GraphicsContextCG.h if that existed.
+inline CGColorSpaceRef deviceRGBColorSpaceRef()
+{
+    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
+    return deviceSpace;
+}
+
+// FIXME: This would be in GraphicsContextCG.h if that existed.
+inline CGColorSpaceRef sRGBColorSpaceRef()
+{
+    // FIXME: Windows should be able to use kCGColorSpaceSRGB, this is tracked by http://webkit.org/b/31363.
+#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
+    return deviceRGBColorSpaceRef();
+#else
+    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    return sRGBSpace;
+#endif
+}
+
 class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(CGContextRef cgContext)

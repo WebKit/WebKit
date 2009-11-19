@@ -94,7 +94,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+                        const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     QPixmap* framePixmap = nativeImageForCurrentFrame();
     if (!framePixmap) // If it's too early we won't have an image yet.
@@ -162,7 +162,7 @@ void BitmapImage::invalidatePlatformData()
 
 // Drawing Routines
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
-                       const FloatRect& src, CompositeOperator op)
+                       const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
     startAnimation();
 
@@ -171,7 +171,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         return;
 
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, dst, solidColor(), op);
+        fillWithSolidColor(ctxt, dst, solidColor(), styleColorSpace, op);
         return;
     }
 

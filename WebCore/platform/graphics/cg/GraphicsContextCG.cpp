@@ -61,23 +61,6 @@ using namespace std;
 
 namespace WebCore {
 
-static CGColorSpaceRef deviceRGBColorSpaceRef()
-{
-    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
-    return deviceSpace;
-}
-
-static CGColorSpaceRef sRGBColorSpaceRef()
-{
-    // FIXME: Windows should be able to use kCGColorSpaceSRGB, this is tracked by http://webkit.org/b/31363.
-#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
-    return deviceRGBColorSpaceRef();
-#else
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    return sRGBSpace;
-#endif
-}
-
 static CGColorRef createCGColorWithColorSpace(const Color& color, ColorSpace colorSpace)
 {
     CGFloat components[4];

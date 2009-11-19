@@ -83,7 +83,7 @@ void BitmapImage::invalidatePlatformData()
 }
 
 // Drawing Routines
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
     startAnimation();
 
@@ -92,7 +92,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         return;
 
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, dst, solidColor(), op);
+        fillWithSolidColor(ctxt, dst, solidColor(), styleColorSpace, op);
         return;
     }
 
@@ -109,7 +109,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
     ctxt->restore();
 }
 
-void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const TransformationMatrix& patternTransform, const FloatPoint& srcPoint, CompositeOperator op, const FloatRect& dstRect)
+void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const TransformationMatrix& patternTransform, const FloatPoint& srcPoint, ColorSpace, CompositeOperator op, const FloatRect& dstRect)
 {
     // FIXME: finish this to support also phased position (srcPoint)
     startAnimation();

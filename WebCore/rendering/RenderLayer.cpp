@@ -1964,7 +1964,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     // Paint the resizer control.
     DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
     IntPoint imagePoint(absRect.right() - resizeCornerImage->width(), absRect.bottom() - resizeCornerImage->height());
-    context->drawImage(resizeCornerImage.get(), imagePoint);
+    context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.

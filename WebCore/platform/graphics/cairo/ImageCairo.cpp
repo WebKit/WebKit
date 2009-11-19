@@ -89,7 +89,7 @@ BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)
     checkForSolidColor();
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
     FloatRect srcRect(src);
     FloatRect dstRect(dst);
@@ -105,7 +105,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         return;
 
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(context, dstRect, solidColor(), op);
+        fillWithSolidColor(context, dstRect, solidColor(), styleColorSpace, op);
         return;
     }
 
@@ -171,7 +171,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 }
 
 void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+                        const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     cairo_surface_t* image = nativeImageForCurrentFrame();
     if (!image) // If it's too early we won't have an image yet.

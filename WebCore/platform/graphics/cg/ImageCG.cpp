@@ -32,6 +32,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageObserver.h"
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
@@ -127,25 +128,46 @@ void BitmapImage::checkForSolidColor()
     }
 }
 
+static RetainPtr<CGImageRef> imageWithColorSpace(CGImageRef originalImage, ColorSpace colorSpace)
+{
+    CGColorSpaceRef originalColorSpace = CGImageGetColorSpace(originalImage);
+
+    // If the image already has a (non-device) color space, we don't want to
+    // override it, so return.
+    if (!originalColorSpace || !CFEqual(originalColorSpace, deviceRGBColorSpaceRef()))
+        return originalImage;
+
+    switch (colorSpace) {
+    case DeviceColorSpace:
+        return originalImage;
+    case sRGBColorSpace:
+        return RetainPtr<CGImageRef>(AdoptCF, CGImageCreateCopyWithColorSpace(originalImage, 
+            sRGBColorSpaceRef()));
+    }
+
+    ASSERT_NOT_REACHED();
+    return originalImage;
+}
+
 CGImageRef BitmapImage::getCGImageRef()
 {
     return frameAtIndex(0);
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
 {
     startAnimation();
 
-    CGImageRef image = frameAtIndex(m_currentFrame);
+    RetainPtr<CGImageRef> image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
     
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, solidColor(), compositeOp);
+        fillWithSolidColor(ctxt, destRect, solidColor(), styleColorSpace, compositeOp);
         return;
     }
 
-    float currHeight = CGImageGetHeight(image);
+    float currHeight = CGImageGetHeight(image.get());
     if (currHeight <= srcRect.y())
         return;
 
@@ -181,10 +203,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
-            image = CGImageCreateWithImageInRect(image, subimageRect);
+            image = CGImageCreateWithImageInRect(image.get(), subimageRect);
             if (currHeight < srcRect.bottom()) {
-                ASSERT(CGImageGetHeight(image) == currHeight - CGRectIntegral(srcRect).origin.y);
-                adjustedDestRect.setHeight(CGImageGetHeight(image) / yScale);
+                ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
+                adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
             }
         } else {
             adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
@@ -204,11 +226,11 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     CGContextScaleCTM(context, 1, -1);
     adjustedDestRect.setY(-adjustedDestRect.bottom());
 
-    // Draw the image.
-    CGContextDrawImage(context, adjustedDestRect, image);
+    // Adjust the color space.
+    image = imageWithColorSpace(image.get(), styleColorSpace);
 
-    if (shouldUseSubimage)
-        CGImageRelease(image);
+    // Draw the image.
+    CGContextDrawImage(context, adjustedDestRect, image.get());
 
     ctxt->restore();
 
@@ -223,7 +245,7 @@ static void drawPatternCallback(void* info, CGContextRef context)
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+                        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     if (!nativeImageForCurrentFrame())
         return;
@@ -260,6 +282,9 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         ASSERT(h == height());
         subImage.adoptCF(CGImageCreateWithImageInRect(tileImage, tileRect));
     }
+
+    // Adjust the color space.
+    subImage = imageWithColorSpace(subImage.get(), styleColorSpace);
     
 #ifndef BUILDING_ON_TIGER
     // Leopard has an optimized call for the tiling of image patterns, but we can only use it if the image has been decoded enough that

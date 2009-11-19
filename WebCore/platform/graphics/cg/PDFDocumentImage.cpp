@@ -145,7 +145,7 @@ int PDFDocumentImage::pageCount() const
     return m_document ? CGPDFDocumentGetNumberOfPages(m_document) : 0;
 }
 
-void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op)
+void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op)
 {
     if (!m_document || m_currentPage == -1)
         return;

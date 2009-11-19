@@ -545,7 +545,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
-        context->drawImage(m_image->image(this, marker.size()), marker.location());
+        context->drawImage(m_image->image(this, marker.size()), style()->colorSpace(), marker.location());
         if (selectionState() != SelectionNone) {
             // FIXME: selectionRect() is in absolute, not painting coordinates.
             context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());

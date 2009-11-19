@@ -173,7 +173,7 @@ bool SVGImage::hasRelativeHeight() const
     return rootElement->height().unitType() == LengthTypePercentage;
 }
 
-void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
     if (!m_page)
         return;

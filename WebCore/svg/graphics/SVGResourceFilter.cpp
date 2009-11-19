@@ -91,7 +91,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
     context = sourceGraphicContext;
 }
 
-void SVGResourceFilter::applyFilter(GraphicsContext*& context, const RenderObject*)
+void SVGResourceFilter::applyFilter(GraphicsContext*& context, const RenderObject* object)
 {
     if (!m_savedContext)
         return;
@@ -113,7 +113,10 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const RenderObjec
 #if !PLATFORM(CG)
             resultImage->transformColorSpace(LinearRGB, DeviceRGB);
 #endif
-            context->drawImage(resultImage->image(), lastEffect->subRegion());
+            ColorSpace colorSpace = DeviceColorSpace;
+            if (object)
+                colorSpace = object->style()->colorSpace();
+            context->drawImage(resultImage->image(), lastEffect->subRegion(), colorSpace);
         }
     }
 

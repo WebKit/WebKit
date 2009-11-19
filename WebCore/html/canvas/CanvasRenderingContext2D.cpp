@@ -1002,7 +1002,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     FloatRect sourceRect = c->roundToDevicePixels(srcRect);
     FloatRect destRect = c->roundToDevicePixels(dstRect);
     willDraw(destRect);
-    c->drawImage(cachedImage->image(), destRect, sourceRect, state().m_globalComposite);
+    c->drawImage(cachedImage->image(), DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y)
@@ -1052,7 +1052,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     if (!sourceCanvas->originClean())
         canvas()->setOriginTainted();
 
-    c->drawImage(buffer->image(), destRect, sourceRect, state().m_globalComposite);
+    c->drawImage(buffer->image(), DeviceColorSpace, destRect, sourceRect, state().m_globalComposite);
     willDraw(destRect); // This call comes after drawImage, since the buffer we draw into may be our own, and we need to make sure it is dirty.
                         // FIXME: Arguably willDraw should become didDraw and occur after drawing calls and not before them to avoid problems like this.
 }
@@ -1146,7 +1146,7 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
 
     FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
-    c->drawImage(cachedImage->image(), destRect, FloatRect(sx, sy, sw, sh), op);
+    c->drawImage(cachedImage->image(), DeviceColorSpace, destRect, FloatRect(sx, sy, sw, sh), op);
 }
 
 void CanvasRenderingContext2D::setAlpha(float alpha)

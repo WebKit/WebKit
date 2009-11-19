@@ -1,3 +1,20 @@
+2009-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=31321 Make 
+        -webkit-color-correction work with untagged images
+
+        * fast/css/color-correction-on-background-image.html: Added.
+        * fast/css/color-correction-untagged-images.html: Added.
+        * fast/css/resources/purple-noprofile.png: Added.
+        * platform/mac/fast/css/color-correction-on-background-image-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-on-background-image-expected.png: Added.
+        * platform/mac/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/mac/fast/css/color-correction-untagged-images-expected.checksum: Added.
+        * platform/mac/fast/css/color-correction-untagged-images-expected.png: Added.
+        * platform/mac/fast/css/color-correction-untagged-images-expected.txt: Added.
+
 2009-11-19  Michelangelo De Simone  <michelangelo@webkit.org>
 
         Fix for <https://bugs.webkit.org/show_bug.cgi?id=27959>
