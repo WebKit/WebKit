@@ -35,12 +35,27 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/UnusedParam.h>
 
+using namespace std;
+
 namespace WebCore {
 
 static const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 
 #if !PLATFORM(MAC)
-static void sharedBufferDerefCallback(void*, void* info)
+size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
+{
+    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
+    size_t sourceSize = sharedBuffer->size();
+    if (position >= sourceSize)
+        return 0;
+
+    const char* source = sharedBuffer->data() + position;
+    size_t amount = min<size_t>(count, sourceSize - position);
+    memcpy(buffer, source, amount);
+    return amount;
+}
+
+void sharedBufferRelease(void* info)
 {
     SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
     sharedBuffer->deref();
@@ -110,15 +125,17 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
     // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
     RetainPtr<CFDataRef> cfData(AdoptCF, data->createCFData());
-#else
-    // If no NSData is available, then we know SharedBuffer will always just be a vector.  That means no secret changes can occur to it behind the
-    // scenes.  We use CFDataCreateWithBytesNoCopy in that case. Ensure that the SharedBuffer lives as long as the CFDataRef.
-    data->ref();
-    CFAllocatorContext context = {0, data, 0, 0, 0, 0, 0, &sharedBufferDerefCallback, 0};
-    RetainPtr<CFAllocatorRef> derefAllocator(AdoptCF, CFAllocatorCreate(kCFAllocatorDefault, &context));
-    RetainPtr<CFDataRef> cfData(AdoptCF, CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data->data()), data->size(), derefAllocator.get()));
-#endif
     CGImageSourceUpdateData(m_decoder, cfData.get(), allDataReceived);
+#else
+    // Create a CGDataProvider to wrap the SharedBuffer.
+    data->ref();
+    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
+    // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
+    // is a requirement for using the GetBytePointer callback.
+    CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };
+    RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateDirect(data, data->size(), &providerCallbacks));
+    CGImageSourceUpdateDataProvider(m_decoder, dataProvider.get(), allDataReceived);
+#endif
 }
 
 String ImageSource::filenameExtension() const

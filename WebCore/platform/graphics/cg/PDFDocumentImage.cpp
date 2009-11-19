@@ -31,6 +31,9 @@
 
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
+#if !PLATFORM(MAC)
+#include "ImageSourceCG.h"
+#endif
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -69,12 +72,15 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
         // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
         // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
         RetainPtr<CFDataRef> data(AdoptCF, this->data()->createCFData());
-#else
-        // If no NSData is available, then we know SharedBuffer will always just be a vector.  That means no secret changes can occur to it behind the
-        // scenes.  We use CFDataCreateWithBytesNoCopy in that case.
-        RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(this->data()->data()), this->data()->size(), kCFAllocatorNull));
-#endif
         RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+#else
+        // Create a CGDataProvider to wrap the SharedBuffer.
+        // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
+        // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
+        // is a requirement for using the GetBytePointer callback.
+        CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, 0 };
+        RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateDirect(this->data(), this->data()->size(), &providerCallbacks));
+#endif
         m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
         setCurrentPage(0);
     }

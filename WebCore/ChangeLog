@@ -1,3 +1,18 @@
+2009-11-19  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Properly create a CGImageRef on non-PLATFORM(MAC).
+        https://bugs.webkit.org/show_bug.cgi?id=27777
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::sharedBufferGetBytesAtPosition):
+        (WebCore::sharedBufferRelease):
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/ImageSourceCG.h:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+
 2009-11-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dave Hyatt.
