@@ -188,6 +188,9 @@ typedef enum {
 
 int WKQTMovieGetType(QTMovie* movie);
 
+BOOL WKQTMovieHasClosedCaptions(QTMovie* movie);
+void WKQTMovieSetShowClosedCaptions(QTMovie* movie, BOOL showClosedCaptions);
+
 unsigned WKQTIncludeOnlyModernMediaFileTypes(void);
 int WKQTMovieDataRate(QTMovie* movie);
 float WKQTMovieMaxTimeLoaded(QTMovie* movie);
@@ -207,6 +210,7 @@ typedef enum {
     WKMediaUIPartSliderThumb,
     WKMediaUIPartRewindButton,
     WKMediaUIPartSeekToRealtimeButton,
+    WKMediaUIPartToggleClosedCaptionsButton,
     WKMediaUIPartUnMuteButton,
     WKMediaUIPartPauseButton,
     WKMediaUIPartBackground,

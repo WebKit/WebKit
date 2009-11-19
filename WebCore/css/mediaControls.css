@@ -124,3 +124,7 @@ audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewin
 audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
     display: none;
 }
+
+audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
+    display: none;
+}

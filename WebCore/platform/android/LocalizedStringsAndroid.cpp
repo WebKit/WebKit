@@ -279,6 +279,24 @@ String mediaElementLiveBroadcastStateText()
     return String();
 }
 
+String localizedMediaControlElementString(const String& controlName)
+{
+    notImplemented();
+    return String();
+}
+
+String localizedMediaControlElementHelpText(const String& controlName)
+{
+    notImplemented();
+    return String();
+}
+
+String localizedMediaTimeDescription(const String& controlName)
+{
+    notImplemented();
+    return String();
+}
+
 String searchableIndexIntroduction()
 {
     notImplemented();

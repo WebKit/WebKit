@@ -101,6 +101,9 @@ private:
     void setVolume(float);
     void setPreservesPitch(bool);
 
+    bool hasClosedCaptions() const;
+    void setClosedCaptionsVisible(bool);
+
     void setEndTime(float time);
 
     int dataRate() const;

@@ -76,6 +76,9 @@ public:
 
     virtual void setVolume(float) = 0;
 
+    virtual bool hasClosedCaptions() const { return false; }    
+    virtual void setClosedCaptionsVisible(bool) { }
+
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 

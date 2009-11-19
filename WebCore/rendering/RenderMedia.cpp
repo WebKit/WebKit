@@ -121,6 +121,8 @@ void RenderMedia::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
             m_rewindButton->updateStyle();
         if (m_returnToRealtimeButton)
             m_returnToRealtimeButton->updateStyle();
+        if (m_toggleClosedCaptionsButton)
+            m_toggleClosedCaptionsButton->updateStyle();
         if (m_statusDisplay)
             m_statusDisplay->updateStyle();
         if (m_timelineContainer)
@@ -223,6 +225,13 @@ void RenderMedia::createReturnToRealtimeButton()
     m_returnToRealtimeButton->attachToParent(m_panel.get());
 }
 
+void RenderMedia::createToggleClosedCaptionsButton()
+{
+    ASSERT(!m_toggleClosedCaptionsButton);
+    m_toggleClosedCaptionsButton = new MediaControlToggleClosedCaptionsButtonElement(document(), mediaElement());
+    m_toggleClosedCaptionsButton->attachToParent(m_panel.get());
+}
+
 void RenderMedia::createStatusDisplay()
 {
     ASSERT(!m_statusDisplay);
@@ -310,6 +319,7 @@ void RenderMedia::updateControls()
             m_volumeSliderContainer = 0;
             m_volumeSlider = 0;
             m_controlsShadowRoot = 0;
+            m_toggleClosedCaptionsButton = 0;
         }
         m_opacityAnimationTo = 1.0f;
         m_opacityAnimationTimer.stop();
@@ -324,6 +334,7 @@ void RenderMedia::updateControls()
             createRewindButton();
             createPlayButton();
             createReturnToRealtimeButton();
+            createToggleClosedCaptionsButton();
             createStatusDisplay();
             createTimelineContainer();
             if (m_timelineContainer) {
@@ -379,6 +390,8 @@ void RenderMedia::updateControls()
         m_rewindButton->update();
     if (m_returnToRealtimeButton)
         m_returnToRealtimeButton->update();
+    if (m_toggleClosedCaptionsButton)
+        m_toggleClosedCaptionsButton->update();
     if (m_statusDisplay)
         m_statusDisplay->update();
     if (m_fullscreenButton)
@@ -534,6 +547,9 @@ void RenderMedia::forwardEvent(Event* event)
 
         if (m_returnToRealtimeButton && m_returnToRealtimeButton->hitTest(point))
             m_returnToRealtimeButton->defaultEventHandler(event);
+
+       if (m_toggleClosedCaptionsButton && m_toggleClosedCaptionsButton->hitTest(point))
+            m_toggleClosedCaptionsButton->defaultEventHandler(event);
 
         if (m_timeline && m_timeline->hitTest(point))
             m_timeline->defaultEventHandler(event);

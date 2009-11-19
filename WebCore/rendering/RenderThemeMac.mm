@@ -1644,7 +1644,22 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Ren
     return false;
 }
 
+bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    HTMLInputElement* node = static_cast<HTMLInputElement*>(o->node());
+    if (!node)
+        return false;
+    
+    MediaControlToggleClosedCaptionsButtonElement* btn = static_cast<MediaControlToggleClosedCaptionsButtonElement*>(node);
+    if (!btn)
+        return false;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+
+    return false;
+}
+ 
 bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
@@ -1690,12 +1705,20 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
         return String();
 }
 
-bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* e)
+bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)
 {
     if (part == MediaFullscreenButtonPart)
         return mediaControllerTheme() == MediaControllerThemeQuickTime;
 
-    return RenderTheme::shouldRenderMediaControlPart(part, e);
+    if (part == MediaToggleClosedCaptionsButtonPart) {
+
+        // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaControllerTheme() != MediaControllerThemeQuickTime || !element->hasTagName(videoTag) || !mediaElement->hasVideo())
+            return false;
+    }
+
+    return RenderTheme::shouldRenderMediaControlPart(part, element);
 }
 
 #endif // ENABLE(VIDEO)

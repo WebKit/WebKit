@@ -48,7 +48,7 @@ enum ControlPart {
     NoControlPart, CheckboxPart, RadioPart, PushButtonPart, SquareButtonPart, ButtonPart,
     ButtonBevelPart, DefaultButtonPart, ListButtonPart, ListboxPart, ListItemPart,
     MediaFullscreenButtonPart, MediaMuteButtonPart, MediaPlayButtonPart, MediaSeekBackButtonPart, 
-    MediaSeekForwardButtonPart, MediaRewindButtonPart, MediaReturnToRealtimeButtonPart,
+    MediaSeekForwardButtonPart, MediaRewindButtonPart, MediaReturnToRealtimeButtonPart, MediaToggleClosedCaptionsButtonPart,
     MediaSliderPart, MediaSliderThumbPart, MediaVolumeSliderContainerPart, MediaVolumeSliderPart, MediaVolumeSliderThumbPart,
     MediaControlsBackgroundPart, MediaCurrentTimePart, MediaTimeRemainingPart,
     MenulistPart, MenulistButtonPart, MenulistTextPart, MenulistTextFieldPart,

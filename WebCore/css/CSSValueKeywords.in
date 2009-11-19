@@ -511,6 +511,7 @@ media-seek-back-button
 media-seek-forward-button
 media-rewind-button
 media-return-to-realtime-button
+media-toggle-closed-captions-button
 media-slider
 media-sliderthumb
 media-volume-slider-container

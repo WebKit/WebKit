@@ -1,0 +1,26 @@
+Test media element close caption API.
+
+Test before movie is open:
+EXPECTED (mediaElement.webkitHasClosedCaptions == 'false') OK
+EXPECTED (mediaElement.webkitClosedCaptionsVisible == 'false') OK
+
+Loading "content/test.wav". Audio-only file without captions.
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EXPECTED (mediaElement.webkitHasClosedCaptions == 'false') OK
+EXPECTED (mediaElement.webkitClosedCaptionsVisible == 'false') OK
+*** enabling captions
+EXPECTED (mediaElement.webkitClosedCaptionsVisible == 'false') OK
+
+Loading "content/counting-captioned.mov". QuickTime movie with captions..
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EXPECTED (mediaElement.webkitHasClosedCaptions == 'true') OK
+EXPECTED (mediaElement.webkitClosedCaptionsVisible == 'false') OK
+*** enabling captions
+EXPECTED (mediaElement.webkitClosedCaptionsVisible == 'true') OK
+
+END OF TEST
+

@@ -113,6 +113,8 @@ String AccessibilityMediaControl::controlTypeName() const
     DEFINE_STATIC_LOCAL(const String, mediaStatusDisplayName, ("StatusDisplay"));
     DEFINE_STATIC_LOCAL(const String, mediaCurrentTimeDisplay, ("CurrentTimeDisplay"));
     DEFINE_STATIC_LOCAL(const String, mediaTimeRemainingDisplay, ("TimeRemainingDisplay"));
+    DEFINE_STATIC_LOCAL(const String, mediaShowClosedCaptionsButtonName, ("ShowClosedCaptionsButton"));
+    DEFINE_STATIC_LOCAL(const String, mediaHideClosedCaptionsButtonName, ("HideClosedCaptionsButton"));
 
     switch (controlType()) {
     case MediaFullscreenButton:
@@ -139,6 +141,10 @@ String AccessibilityMediaControl::controlTypeName() const
         return mediaCurrentTimeDisplay;
     case MediaTimeRemainingDisplay:
         return mediaTimeRemainingDisplay;
+    case MediaShowClosedCaptionsButton:
+        return mediaShowClosedCaptionsButtonName;
+    case MediaHideClosedCaptionsButton:
+        return mediaHideClosedCaptionsButtonName;
 
     default:
         break;
@@ -187,6 +193,8 @@ AccessibilityRole AccessibilityMediaControl::roleValue() const
     case MediaReturnToRealtimeButton:
     case MediaUnMuteButton:
     case MediaPauseButton:
+    case MediaShowClosedCaptionsButton:
+    case MediaHideClosedCaptionsButton:
         return ButtonRole;
 
     case MediaStatusDisplay:

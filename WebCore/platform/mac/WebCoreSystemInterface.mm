@@ -59,6 +59,8 @@ float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
 float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
 int (*wkQTMovieGetType)(QTMovie* movie);
+BOOL (*wkQTMovieHasClosedCaptions)(QTMovie* movie);
+void (*wkQTMovieSetShowClosedCaptions)(QTMovie* movie, BOOL showClosedCaptions);
 void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);

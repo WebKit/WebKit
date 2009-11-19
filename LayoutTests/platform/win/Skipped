@@ -55,6 +55,9 @@ media/video-volume-slider.html
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 
+# Requires media engine closed caption support
+media/media-captions.html
+
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html

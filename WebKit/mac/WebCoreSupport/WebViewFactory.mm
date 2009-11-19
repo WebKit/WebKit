@@ -692,6 +692,11 @@
         return UI_STRING("fast forward", "accessibility role description for fast forward button");
     if ([name isEqualToString:@"SeekBackButton"])
         return UI_STRING("fast reverse", "accessibility role description for fast reverse button");
+    if ([name isEqualToString:@"ShowClosedCaptionsButton"])
+        return UI_STRING("show closed captions", "accessibility role description for show closed captions button");
+    if ([name isEqualToString:@"HideClosedCaptionsButton"])
+        return UI_STRING("hide closed captions", "accessibility role description for hide closed captions button");
+
     ASSERT_NOT_REACHED();
     return @"";
 }
@@ -731,6 +736,10 @@
         return UI_STRING("seek quickly forward", "accessibility help text for fast forward button");
     if ([name isEqualToString:@"FullscreenButton"])
         return UI_STRING("Play movie in fullscreen mode", "accessibility help text for enter fullscreen button");
+    if ([name isEqualToString:@"ShowClosedCaptionsButton"])
+        return UI_STRING("start displaying closed captions", "accessibility help text for show closed captions button");
+    if ([name isEqualToString:@"HideClosedCaptionsButton"])
+        return UI_STRING("stop displaying closed captions", "accessibility help text for hide closed captions button");
     ASSERT_NOT_REACHED();
     return @"";
 }

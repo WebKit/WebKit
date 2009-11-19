@@ -132,7 +132,7 @@ audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-f
     height: 16px;
     margin-left: 7px;
     margin-right: 7px;
-    -webkit-box-ordinal-group: 3; /* At the very end */
+    -webkit-box-ordinal-group: 4; /* At the very end */
 }
 
 audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
@@ -174,4 +174,14 @@ audio::-webkit-media-controls-status-display, video::-webkit-media-controls-stat
     text-transform: none;
     text-indent: 0;
     text-decoration: none;
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
+    -webkit-appearance: media-toggle-closed-captions-button;
+    display: -webkit-box;
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
+    -webkit-box-ordinal-group: 3; /* between mute and fullscreen */
 }

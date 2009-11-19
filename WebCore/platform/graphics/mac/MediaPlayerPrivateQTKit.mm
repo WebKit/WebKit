@@ -746,6 +746,27 @@ void MediaPlayerPrivate::setVolume(float volume)
         [m_qtMovie.get() setVolume:volume];  
 }
 
+bool MediaPlayerPrivate::hasClosedCaptions() const
+{
+    if (!metaDataAvailable())
+        return false;
+    return wkQTMovieHasClosedCaptions(m_qtMovie.get());  
+}
+
+void MediaPlayerPrivate::setClosedCaptionsVisible(bool closedCaptionsVisible)
+{
+    if (metaDataAvailable()) {
+        wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
+
+#if USE(ACCELERATED_COMPOSITING) && (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
+    if (closedCaptionsVisible && m_qtVideoLayer) {
+        // Captions will be rendered upsided down unless we flag the movie as flipped (again). See <rdar://7408440>.
+        [m_qtVideoLayer.get() setGeometryFlipped:YES];
+    }
+#endif
+    }
+}
+
 void MediaPlayerPrivate::setRate(float rate)
 {
     if (m_qtMovie)

@@ -174,6 +174,7 @@ namespace WebCore {
             PseudoMediaControlsVolumeSliderContainer,
             PseudoMediaControlsCurrentTimeDisplay,
             PseudoMediaControlsTimeRemainingDisplay,
+            PseudoMediaControlsToggleClosedCaptions,
             PseudoMediaControlsTimeline,
             PseudoMediaControlsVolumeSlider,
             PseudoMediaControlsSeekBackButton,

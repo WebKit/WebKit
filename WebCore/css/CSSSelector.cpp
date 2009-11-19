@@ -116,6 +116,7 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsSeekForwardButton, ("-webkit-media-controls-seek-forward-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsRewindButton, ("-webkit-media-controls-rewind-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsReturnToRealtimeButton, ("-webkit-media-controls-return-to-realtime-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsToggleClosedCaptionsButton, ("-webkit-media-controls-toggle-closed-captions-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsStatusDisplay, ("-webkit-media-controls-status-display"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsFullscreenButton, ("-webkit-media-controls-fullscreen-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimelineContainer, ("-webkit-media-controls-timeline-container"));
@@ -270,6 +271,9 @@ void CSSSelector::extractPseudoType() const
         element = true;
     } else if (m_value == mediaControlsReturnToRealtimeButton) {
         m_pseudoType = PseudoMediaControlsReturnToRealtimeButton;
+        element = true;
+    } else if (m_value == mediaControlsToggleClosedCaptionsButton) {
+        m_pseudoType = PseudoMediaControlsToggleClosedCaptions;
         element = true;
     } else if (m_value == mediaControlsStatusDisplay) {
         m_pseudoType = PseudoMediaControlsStatusDisplay;

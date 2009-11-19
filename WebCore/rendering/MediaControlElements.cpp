@@ -348,6 +348,9 @@ MediaControlInputElement::MediaControlInputElement(Document* document, PseudoId 
     case MEDIA_CONTROLS_VOLUME_SLIDER:
         m_displayType = MediaVolumeSlider;
         break;
+    case MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON:
+        m_displayType = MediaShowClosedCaptionsButton;
+        break;
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -573,6 +576,29 @@ void MediaControlReturnToRealtimeButtonElement::defaultEventHandler(Event* event
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
+}
+
+
+// ----------------------------
+
+MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement(Document* doc, HTMLMediaElement* element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON, "button", element)
+{
+}
+
+void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        m_mediaElement->setClosedCaptionsVisible(!m_mediaElement->closedCaptionsVisible());
+        setChecked(m_mediaElement->closedCaptionsVisible());
+        event->setDefaultHandled();
+    }
+    HTMLInputElement::defaultEventHandler(event);
+}
+
+void MediaControlToggleClosedCaptionsButtonElement::updateDisplayType()
+{
+    setDisplayType(m_mediaElement->closedCaptionsVisible() ? MediaHideClosedCaptionsButton : MediaShowClosedCaptionsButton);
 }
 
 

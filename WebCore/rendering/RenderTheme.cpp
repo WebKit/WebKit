@@ -1,7 +1,7 @@
 /**
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -278,6 +278,8 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintMediaRewindButton(o, paintInfo, r);
         case MediaReturnToRealtimeButtonPart:
             return paintMediaReturnToRealtimeButton(o, paintInfo, r);
+        case MediaToggleClosedCaptionsButtonPart:
+            return paintMediaToggleClosedCaptionsButton(o, paintInfo, r);
         case MediaSliderPart:
             return paintMediaSliderTrack(o, paintInfo, r);
         case MediaSliderThumbPart:
@@ -416,6 +418,8 @@ bool RenderTheme::shouldRenderMediaControlPart(ControlPart part, Element* e)
         return mediaElement->movieLoadType() == MediaPlayer::LiveStream;
     case MediaFullscreenButtonPart:
         return mediaElement->supportsFullscreen();
+    case MediaToggleClosedCaptionsButtonPart:
+        return mediaElement->hasClosedCaptions();
     default:
         return true;
     }

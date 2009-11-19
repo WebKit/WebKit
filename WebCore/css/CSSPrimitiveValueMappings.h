@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -229,6 +229,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
             break;
         case MediaReturnToRealtimeButtonPart:
             m_value.ident = CSSValueMediaReturnToRealtimeButton;
+            break;
+        case MediaToggleClosedCaptionsButtonPart:
+            m_value.ident = CSSValueMediaToggleClosedCaptionsButton;
             break;
         case MediaSliderPart:
             m_value.ident = CSSValueMediaSlider;

@@ -1,3 +1,134 @@
+2009-11-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7035231>
+        Support closed caption in <video> element
+
+        Test: media/media-captions.html
+
+        * WebCore.base.exp:
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::controlTypeName):
+            Define ShowClosedCaptionsButton and HideClosedCaptionsButton.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+            Add MediaToggleClosedCaptionsButtonPart.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+            Define and match mediaControlsToggleClosedCaptionsButton.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+            Define and match PseudoMediaControlsToggleClosedCaptions.
+
+        * css/CSSValueKeywords.in:
+            Define and use media-toggle-closed-captions-button.
+
+        * css/mediaControls.css:
+        * css/mediaControlsQuickTime.css:
+            Add webkit-media-controls-toggle-closed-captions-button.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): 
+            Initialize m_closedCaptionsVisible.
+        (WebCore::HTMLMediaElement::loadInternal): 
+            Set m_closedCaptionsVisible to false.
+        (WebCore::HTMLMediaElement::hasClosedCaptions): 
+        (WebCore::HTMLMediaElement::closedCaptionsVisible): 
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible): 
+            New, captions internal methods.
+        (WebCore::HTMLMediaElement::setWebkitClosedCaptionsVisible): 
+        (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): 
+        (WebCore::HTMLMediaElement::webkitHasClosedCaptions): 
+            New, captions DOM API.
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+            Declare methods needed for captions API.
+
+        * platform/ThemeTypes.h:
+            Add MediaToggleClosedCaptionsButtonPart.
+
+        * platform/android/LocalizedStringsAndroid.cpp:
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+            Add empty implmentations.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::hasClosedCaptions):
+        (WebCore::NullMediaPlayerPrivate::setClosedCaptionsVisible):
+            New, empty implementations of media engine closed caption functions.
+        (WebCore::MediaPlayer::hasClosedCaptions):
+        (WebCore::MediaPlayer::setClosedCaptionsVisible):
+            New, call media engine closed caption functions.
+
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::hasClosedCaptions):
+        (WebCore::MediaPlayerPrivateInterface::setClosedCaptionsVisible):
+            Declare new media engine methods.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::hasClosedCaptions):
+        (WebCore::MediaPlayerPrivate::setClosedCaptionsVisible):
+            New, QTKit implementation of closed caption methods.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+            Add help text for ShowClosedCaptionsButton and HideClosedCaptionsButton.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+            Declare and initialize wkQTMovieHasClosedCaptions and wkQTMovieSetShowClosedCaptions.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+            Deal with MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType):
+            New, implement the closed caption toggle button,
+
+        * rendering/MediaControlElements.h:
+            Define MediaShowClosedCaptionsButton and MediaHideClosedCaptionsButton,
+            declare MediaControlToggleClosedCaptionsButtonElement.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::styleDidChange):
+        (WebCore::RenderMedia::createToggleClosedCaptionsButton):
+        (WebCore::RenderMedia::createStatusDisplay):
+        (WebCore::RenderMedia::updateControls):
+        (WebCore::RenderMedia::forwardEvent):
+        * rendering/RenderMedia.h:
+            Deal with m_toggleClosedCaptionsButton.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+            Deal with MediaToggleClosedCaptionsButtonPart.
+
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+            Declare paintMediaToggleClosedCaptionsButton.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaToggleClosedCaptionsButton):
+            New.
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+            Don't render captions toggle button unless we are using the new theme, the
+            movie has captions, and the movie is in a <video> element since we currently
+            rely on QTKit to render the captions.
+
+        * rendering/style/RenderStyleConstants.h:
+            Define MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON.
+
 2009-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add missing header.

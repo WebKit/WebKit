@@ -1,3 +1,20 @@
+2009-11-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7035231>
+        Support closed caption in <video> element
+
+        * media/media-captions-expected.txt: Added.
+        * media/media-captions.html: Added.
+        * media/content/counting-captioned.mov: Added.
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+            Skipped on platforms that don't support closed captions yet.
+
 2009-11-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Gustavo Noronha Silva.

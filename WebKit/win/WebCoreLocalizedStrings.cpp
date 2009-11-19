@@ -151,6 +151,10 @@ String WebCore::localizedMediaControlElementString(const String& name)
         return String(LPCTSTR_UI_STRING("fast forward", "accessibility role description for fast forward button"));
     if (name == "SeekBackButton")
         return String(LPCTSTR_UI_STRING("fast reverse", "accessibility role description for fast reverse button"));
+    if (name == "ShowClosedCaptionsButton")
+        return String(LPCTSTR_UI_STRING("show closed captions", "accessibility role description for show closed captions button"));
+    if (name == "HideClosedCaptionsButton")
+        return String(LPCTSTR_UI_STRING("hide closed captions", "accessibility role description for hide closed captions button"));
 
     ASSERT_NOT_REACHED();
     return String();
@@ -190,6 +194,10 @@ String WebCore::localizedMediaControlElementHelpText(const String& name)
         return String(LPCTSTR_UI_STRING("seek quickly forward", "accessibility help text for fast forward button"));
     if (name == "FullscreenButton")
         return String(LPCTSTR_UI_STRING("Play movie in fullscreen mode", "accessibility help text for enter fullscreen button"));
+    if (name == "ShowClosedCaptionsButton")
+        return String(LPCTSTR_UI_STRING("start displaying closed captions", "accessibility help text for show closed captions button"));
+    if (name == "HideClosedCaptionsButton")
+        return String(LPCTSTR_UI_STRING("stop displaying closed captions", "accessibility help text for hide closed captions button"));
 
     ASSERT_NOT_REACHED();
     return String();
