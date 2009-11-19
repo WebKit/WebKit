@@ -12,5 +12,6 @@
     <file alias="copyCursor.png">Resources/copyCursor.png</file>
     <file alias="progressCursor.png">Resources/progressCursor.png</file>
     <file alias="aliasCursor.png">Resources/aliasCursor.png</file>
+    <file alias="deleteButton.png">Resources/deleteButton.png</file>
 </qresource>
 </RCC>

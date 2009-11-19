@@ -1,3 +1,16 @@
+2009-11-18  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Add support for displaying deleteButton.
+        https://bugs.webkit.org/show_bug.cgi?id=31560
+
+        Test: LayoutTests/editing/deleting/5408255.html
+
+        * Api/qwebsettings.cpp:
+        (graphics):
+        * Api/qwebsettings.h:
+
 2009-11-18  Paul Olav Tvete  <paul.tvete@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -1,3 +1,14 @@
+2009-11-18  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Update expected result after Qt4.6 upgrade.
+        https://bugs.webkit.org/show_bug.cgi?id=31560
+
+        Test: LayoutTests/editing/deleting/5408255.html
+
+        * platform/qt/editing/deleting/5408255-expected.txt:
+
 2009-11-18  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Dave Hyatt.

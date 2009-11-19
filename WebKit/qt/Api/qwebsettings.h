@@ -73,7 +73,8 @@ public:
         MissingImageGraphic,
         MissingPluginGraphic,
         DefaultFrameIconGraphic,
-        TextAreaSizeGripCornerGraphic
+        TextAreaSizeGripCornerGraphic,
+        DeleteButtonGraphic
     };
     enum FontSize {
         MinimumFontSize,

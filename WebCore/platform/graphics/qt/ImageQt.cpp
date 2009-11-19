@@ -64,6 +64,8 @@ static QPixmap loadResourcePixmap(const char *name)
         pixmap = QWebSettings::webGraphic(QWebSettings::DefaultFrameIconGraphic);
     else if (qstrcmp(name, "textAreaResizeCorner") == 0)
         pixmap = QWebSettings::webGraphic(QWebSettings::TextAreaSizeGripCornerGraphic);
+    else if (qstrcmp(name, "deleteButton") == 0)
+        pixmap = QWebSettings::webGraphic(QWebSettings::DeleteButtonGraphic);
 
     return pixmap;
 }
