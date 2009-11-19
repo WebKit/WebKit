@@ -36,7 +36,7 @@ class IntRect;
 class IntSize;
 class String;
 
-class MediaPlayerPrivateInterface {
+class MediaPlayerPrivateInterface : public Noncopyable {
 public:
     virtual ~MediaPlayerPrivateInterface() { }
 

@@ -26,6 +26,8 @@
 #ifndef NetworkStateNotifier_h
 #define NetworkStateNotifier_h
 
+#include <wtf/Noncopyable.h>
+
 #if PLATFORM(MAC)
 
 #include <wtf/RetainPtr.h>
@@ -46,7 +48,7 @@ typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 
 namespace WebCore {
 
-class NetworkStateNotifier {
+class NetworkStateNotifier : public Noncopyable {
 public:
     NetworkStateNotifier();
     void setNetworkStateChangedFunction(void (*)());

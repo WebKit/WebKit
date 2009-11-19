@@ -1,3 +1,38 @@
+2009-11-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for the other part of platform directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31585
+
+        Inherits the following classes from FastAllocBase because these are
+        instantiated by 'new':
+
+        class RegularExpression    - instantiated at: WebCore/page/Frame.cpp:415
+        class TransformationMatrix - instantiated at: WebCore/rendering/TransformState.cpp:62
+        class Path                 - instantiated at: WebCore/html/HTMLAreaElement.cpp:73
+        class FontPlatformData     - instantiated at: WebCore/platform/graphics/qt/FontCacheQt.cpp:188
+
+        Inherits the following classes from Noncopyable because these are
+        instantiated by 'new' and no need to be copyable:
+
+        class Cursors                         - instantiated at: WebCore/platform/qt/CursorQt.cpp:146
+        class NetworkStateNotifier            - instantiated at: WebCore/platform/network/NetworkStateNotifier.cpp:37
+        struct CrossThreadResourceRequestData - instantiated at: WebCore/platform/network/ResourceRequestBase.cpp:71
+
+        class ImageDecoder - its child class is instantiated at: WebCore/platform/graphics/qt/ImageDecoderQt.cpp:46
+        class MediaPlayerPrivateInterface - its child class is instantiated at: WebCore/platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:119
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/qt/FontPlatformData.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/qt/CursorQt.cpp:
+        * platform/text/RegularExpression.h:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.

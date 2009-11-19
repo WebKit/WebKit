@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class RegularExpression {
+class RegularExpression : public FastAllocBase {
 public:
     RegularExpression(const String&, TextCaseSensitivity);
     ~RegularExpression();

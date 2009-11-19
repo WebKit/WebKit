@@ -162,7 +162,7 @@ namespace WebCore {
     bool operator==(const ResourceRequestBase&, const ResourceRequestBase&);
     inline bool operator!=(ResourceRequestBase& a, const ResourceRequestBase& b) { return !(a == b); }
 
-    struct CrossThreadResourceRequestData {
+    struct CrossThreadResourceRequestData : Noncopyable {
         KURL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;

@@ -29,6 +29,7 @@
 #include "FloatPoint.h"
 #include "IntPoint.h"
 #include <string.h> //for memcpy
+#include <wtf/FastAllocBase.h>
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CGAffineTransform.h>
@@ -49,7 +50,7 @@ class FloatPoint3D;
 class FloatRect;
 class FloatQuad;
 
-class TransformationMatrix {
+class TransformationMatrix : public FastAllocBase {
 public:
     typedef double Matrix4[4][4];
 

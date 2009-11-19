@@ -31,7 +31,7 @@ namespace WebCore {
 
 class String;
 
-class FontPlatformData
+class FontPlatformData : public FastAllocBase
 {
 public:
 #if ENABLE(SVG_FONTS)

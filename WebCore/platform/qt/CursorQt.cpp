@@ -73,7 +73,7 @@ Cursor& Cursor::operator=(const Cursor& other)
 namespace {
 
 // FIXME: static deleter
-class Cursors {
+class Cursors : public Noncopyable {
 protected:
     Cursors()
 #ifndef QT_NO_CURSOR
