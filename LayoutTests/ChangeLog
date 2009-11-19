@@ -1,3 +1,16 @@
+2009-11-19  Kinuko Yasuda  <kinuko@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update the test fast/overflow/004.html to make it match the test
+        description and expected results.
+        https://bugs.webkit.org/show_bug.cgi?id=31455
+
+        * fast/overflow/004.html:
+        * platform/mac/fast/overflow/004-expected.checksum:
+        * platform/mac/fast/overflow/004-expected.png:
+        * platform/mac/fast/overflow/004-expected.txt:
+
 2009-11-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
