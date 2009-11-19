@@ -1,3 +1,15 @@
+2009-11-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bugzilla-tool command classes should match command names
+        https://bugs.webkit.org/show_bug.cgi?id=31666
+
+        I renamed all the commands except CommitMessageForCurrentDiff because
+        the new name would conflict with an existing class.
+
+        * Scripts/bugzilla-tool:
+
 2009-11-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Gustavo Noronha Silva.

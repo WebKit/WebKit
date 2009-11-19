@@ -105,7 +105,7 @@ class Command:
         raise NotImplementedError, "subclasses must implement"
 
 
-class BugsInCommitQueue(Command):
+class BugsToCommit(Command):
     def __init__(self):
         Command.__init__(self, "Bugs in the commit queue")
 
@@ -115,7 +115,7 @@ class BugsInCommitQueue(Command):
             print "%s" % bug_id
 
 
-class PatchesInCommitQueue(Command):
+class PatchesToCommit(Command):
     def __init__(self):
         Command.__init__(self, "Patches in the commit queue")
 
@@ -126,7 +126,7 @@ class PatchesInCommitQueue(Command):
             print "%s" % patch["url"]
 
 
-class ReviewedPatchesOnBug(Command):
+class ReviewedPatches(Command):
     def __init__(self):
         Command.__init__(self, "r+\'d patches on a bug", "BUGID")
 
@@ -178,7 +178,7 @@ class ApplyAttachment(Command):
         WebKitApplyingScripts.apply_patches_with_options(tool.scm(), [attachment], options)
 
 
-class ApplyPatchesFromBug(Command):
+class ApplyPatches(Command):
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Applies all patches on a bug to the local working directory.", "BUGID", options=options)
@@ -355,7 +355,7 @@ class WebKitLandingScripts:
             WorkQueue.exit_after_handled_error(e)
 
 
-class LandAndUpdateBug(Command):
+class LandDiff(Command):
     def __init__(self):
         options = [
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
@@ -453,7 +453,7 @@ class LandAttachment(AbstractPatchLandingCommand):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
 
-class LandPatchesFromBugs(AbstractPatchLandingCommand):
+class LandPatches(AbstractPatchLandingCommand):
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Lands all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
@@ -476,7 +476,7 @@ class CommitMessageForCurrentDiff(Command):
         print "%s" % commit_message_for_this_commit(tool.scm()).message()
 
 
-class ObsoleteAttachmentsOnBug(Command):
+class ObsoleteAttachments(Command):
     def __init__(self):
         Command.__init__(self, "Marks all attachments on a bug as obsolete.", "BUGID")
 
@@ -488,7 +488,7 @@ class ObsoleteAttachmentsOnBug(Command):
                 tool.bugs.obsolete_attachment(attachment["id"])
 
 
-class PostDiffAsPatchToBug(Command):
+class PostDiff(Command):
     def __init__(self):
         options = [
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
@@ -528,14 +528,14 @@ class PostDiffAsPatchToBug(Command):
         tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
-class PostCommitsAsPatchesToBug(Command):
+class PostCommits(Command):
     def __init__(self):
         options = [
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
             make_option("--add-log-as-comment", action="store_true", dest="add_log_as_comment", default=False, help="Add commit log message as a comment when uploading the patch."),
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: description from commit message)"),
         ]
-        options += PostDiffAsPatchToBug.posting_options()
+        options += PostDiff.posting_options()
         Command.__init__(self, "Attaches a range of local commits to bugs as patch files.", "COMMITISH", options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
@@ -569,7 +569,7 @@ class PostCommitsAsPatchesToBug(Command):
                 continue
 
             if options.obsolete_patches and bug_id not in have_obsoleted_patches:
-                PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
+                PostDiff.obsolete_patches_on_bug(bug_id, tool.bugs)
                 have_obsoleted_patches.add(bug_id)
 
             diff_file = self._diff_file_for_commit(tool, commit_id)
@@ -578,7 +578,7 @@ class PostCommitsAsPatchesToBug(Command):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
-class RolloutCommit(Command):
+class Rollout(Command):
     def __init__(self):
         options = WebKitLandingScripts.land_options()
         options += WebKitLandingScripts.cleaning_options()
@@ -672,7 +672,7 @@ class CreateBug(Command):
             options.bug_id = bug_id
             options.obsolete_patches = False
             # FIXME: We should pass through --no-comment switch as well.
-            PostCommitsAsPatchesToBug.execute(self, options, commit_ids[1:], tool)
+            PostCommits.execute(self, options, commit_ids[1:], tool)
 
     def create_bug_from_patch(self, options, args, tool):
         bug_title = ""
@@ -712,7 +712,7 @@ class CreateBug(Command):
             self.create_bug_from_patch(options, args, tool)
 
 
-class CheckTreeStatus(Command):
+class TreeStatus(Command):
     def __init__(self):
         Command.__init__(self, "Print out the status of the webkit builders.")
 
@@ -856,24 +856,24 @@ class BugzillaTool:
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.commands = [
-            { "name" : "bugs-to-commit", "object" : BugsInCommitQueue() },
-            { "name" : "patches-to-commit", "object" : PatchesInCommitQueue() },
-            { "name" : "reviewed-patches", "object" : ReviewedPatchesOnBug() },
+            { "name" : "bugs-to-commit", "object" : BugsToCommit() },
+            { "name" : "patches-to-commit", "object" : PatchesToCommit() },
+            { "name" : "reviewed-patches", "object" : ReviewedPatches() },
             { "name" : "create-bug", "object" : CreateBug() },
             { "name" : "apply-attachment", "object" : ApplyAttachment() },
-            { "name" : "apply-patches", "object" : ApplyPatchesFromBug() },
-            { "name" : "land-diff", "object" : LandAndUpdateBug() },
+            { "name" : "apply-patches", "object" : ApplyPatches() },
+            { "name" : "land-diff", "object" : LandDiff() },
             { "name" : "land-attachment", "object" : LandAttachment() },
-            { "name" : "land-patches", "object" : LandPatchesFromBugs() },
+            { "name" : "land-patches", "object" : LandPatches() },
             { "name" : "check-style", "object" : CheckStyle() },
             { "name" : "commit-message", "object" : CommitMessageForCurrentDiff() },
-            { "name" : "obsolete-attachments", "object" : ObsoleteAttachmentsOnBug() },
-            { "name" : "post-diff", "object" : PostDiffAsPatchToBug() },
-            { "name" : "post-commits", "object" : PostCommitsAsPatchesToBug() },
-            { "name" : "tree-status", "object" : CheckTreeStatus() },
+            { "name" : "obsolete-attachments", "object" : ObsoleteAttachments() },
+            { "name" : "post-diff", "object" : PostDiff() },
+            { "name" : "post-commits", "object" : PostCommits() },
+            { "name" : "tree-status", "object" : TreeStatus() },
             { "name" : "commit-queue", "object" : CommitQueue() },
             { "name" : "style-queue", "object" : StyleQueue() },
-            { "name" : "rollout", "object" : RolloutCommit() },
+            { "name" : "rollout", "object" : Rollout() },
         ]
 
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
