@@ -1,3 +1,30 @@
+2009-11-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Store cookie domains in the WebInspector object
+
+        The cookie domains have been moved from StoragePanel into WebInspector.
+        Also, the document URLs are now passed inside the WebInspector.addResource()
+        payload rather than pushed directly from InspectorController.
+        https://bugs.webkit.org/show_bug.cgi?id=31627
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didFinishLoading):
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.reset):
+        (WebInspector.StoragePanel.prototype.addCookieDomain):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+        (WebInspector.addCookieDomain):
+        (WebInspector.reset):
+
 2009-11-19  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

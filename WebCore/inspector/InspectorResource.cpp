@@ -128,6 +128,7 @@ void InspectorResource::createScriptObject(InspectorFrontend* frontend)
         ScriptObject requestHeaders = frontend->newScriptObject();
         populateHeadersObject(&requestHeaders, m_requestHeaderFields);
         jsonObject.set("requestHeaders", requestHeaders);
+        jsonObject.set("documentURL", m_frame->document()->url().string());
         jsonObject.set("requestURL", requestURL());
         jsonObject.set("host", m_requestURL.host());
         jsonObject.set("path", m_requestURL.path());
@@ -156,6 +157,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
     ScriptObject jsonObject = frontend->newScriptObject();
     if (m_changes.hasChange(RequestChange)) {
         jsonObject.set("url", requestURL());
+        jsonObject.set("documentURL", m_frame->document()->url().string());
         jsonObject.set("domain", m_requestURL.host());
         jsonObject.set("path", m_requestURL.path());
         jsonObject.set("lastPathComponent", m_requestURL.lastPathComponent());

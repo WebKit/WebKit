@@ -70,6 +70,7 @@ preloadImages();
 var WebInspector = {
     resources: {},
     resourceURLMap: {},
+    cookieDomains: {},
     missingLocalizedStrings: {},
 
     get previousFocusElement()
@@ -984,6 +985,10 @@ WebInspector.addResource = function(identifier, payload)
 
     if (this.panels.resources)
         this.panels.resources.addResource(resource);
+
+    var match = payload.documentURL.match(/^(http[s]?|file):\/\/([\/]*[^\/]+)/i);
+    if (match)
+        this.addCookieDomain(match[1].toLowerCase() === "file" ? "" : match[2]);
 }
 
 WebInspector.clearConsoleMessages = function()
@@ -1095,6 +1100,11 @@ WebInspector.addDatabase = function(payload)
 
 WebInspector.addCookieDomain = function(domain)
 {
+    // Eliminate duplicate domains from the list.
+    if (domain in this.cookieDomains)
+        return;
+    this.cookieDomains[domain] = true;
+
     if (!this.panels.storage)
         return;
     this.panels.storage.addCookieDomain(domain);
@@ -1195,6 +1205,7 @@ WebInspector.reset = function()
 
     this.resources = {};
     this.resourceURLMap = {};
+    this.cookieDomains = {};
     this.hoveredDOMNode = null;
 
     delete this.mainResource;

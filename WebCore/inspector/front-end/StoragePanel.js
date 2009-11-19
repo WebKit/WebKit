@@ -97,7 +97,6 @@ WebInspector.StoragePanel.prototype = {
 
         this._domStorage = [];
 
-        this._cookieDomains = {};
         this._cookieViews = {};
 
         this.databasesListTreeElement.removeChildren();
@@ -124,13 +123,8 @@ WebInspector.StoragePanel.prototype = {
     
     addCookieDomain: function(domain)
     {
-        // Eliminate duplicate domains from the list.
-        if (typeof this._cookieDomains[domain] !== "undefined")
-            return;
-
         var cookieDomainTreeElement = new WebInspector.CookieSidebarTreeElement(domain);
         this.cookieListTreeElement.appendChild(cookieDomainTreeElement);
-        this._cookieDomains[domain] = true;
     },
 
     addDOMStorage: function(domStorage)
