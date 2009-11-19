@@ -42,6 +42,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static inline void setRowHeightToRowStyleHeightIfNotRelative(RenderTableSection::RowStruct* row)
+{
+    ASSERT(row && row->rowRenderer);
+    row->height = row->rowRenderer->style()->height();
+    if (row->height.isRelative())
+        row->height = Length();
+}
+
 RenderTableSection::RenderTableSection(Node* node)
     : RenderBox(node)
     , m_gridRows(0)
@@ -122,11 +130,8 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     m_grid[m_cRow].rowRenderer = toRenderTableRow(child);
 
-    if (!beforeChild) {
-        m_grid[m_cRow].height = child->style()->height();
-        if (m_grid[m_cRow].height.isRelative())
-            m_grid[m_cRow].height = Length();
-    }
+    if (!beforeChild)
+        setRowHeightToRowStyleHeightIfNotRelative(&m_grid[m_cRow]);
 
     // If the next renderer is actually wrapped in an anonymous table row, we need to go up and find that.
     while (beforeChild && beforeChild->parent() != this)
@@ -1083,6 +1088,7 @@ void RenderTableSection::recalcCells()
             
             RenderTableRow* tableRow = toRenderTableRow(row);
             m_grid[m_cRow].rowRenderer = tableRow;
+            setRowHeightToRowStyleHeightIfNotRelative(&m_grid[m_cRow]);
 
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
                 if (cell->isTableCell())

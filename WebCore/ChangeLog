@@ -1,3 +1,32 @@
+2009-11-18  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24971
+        And
+        <rdar://problem/7138265>
+
+        Fixes an issue where setting the height of a table row programmatically
+        (via JavaScript) causes the table to be improperly rendered because the
+        height of each row in the table is not recalculated with respect to the
+        CSS height property.
+
+        In particular, programmatically setting the height of some table row causes
+        the rows of that table to be rendered with a height equal to the minimum
+        height required by the cells in that row, regardless of any specified cell
+        heights. Instead, when RenderTableSection::recalcCells is called, the height
+        of each row should be set to the CSS height property just as we do in
+        RenderTableSection::addChild.
+
+        Test: fast/table/row-height-recalc2.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::setRowHeightToRowStyleHeightIfNotRelative): Added.
+        (WebCore::RenderTableSection::addChild): Moved code that set row height into
+        method WebCore::setRowHeightToRowStyleHeightIfNotRelative.
+        (WebCore::RenderTableSection::recalcCells): Modified to call
+        WebCore::setRowHeightToRowStyleHeightIfNotRelative.
+
 2009-11-18  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

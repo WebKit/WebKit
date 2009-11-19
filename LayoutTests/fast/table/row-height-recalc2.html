@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+</head>
+<body>
+<p>
+    Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=24971">https://bugs.webkit.org/show_bug.cgi?id=24971</a>
+    Setting style.height = value in javascript doesn't work in tablerows(&lt;tr&gt;)</i>. This test PASSED if and only if you
+    see a solid green rectangle below.
+</p>
+<hr>
+<table cellspacing="0" cellpadding="0" style="height: 100px">
+    <tr style="background: green;" id="t">
+        <td style="width: 50px; height: 50px"></td>
+    </tr>
+    <tr style="background: red;">
+        <td></td>
+    </tr>
+</table>
+<script type="text/javascript">
+    document.getElementById("t").style.height='100px';
+</script>
+</body>
+</html>
