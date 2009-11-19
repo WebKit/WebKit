@@ -856,6 +856,9 @@ class HelpPrintingOptionParser(OptionParser):
 class MultiCommandTool:
     def __init__(self, commands):
         self.commands = commands
+        # FIXME: Calling self._commands_usage() in the constructor is bad because
+        # it calls self.should_show_command_help which is subclass-defined.
+        # The subclass will not be fully initialized at this point.
         self.global_option_parser = HelpPrintingOptionParser(usage=self._usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self._commands_usage())
 
     @staticmethod

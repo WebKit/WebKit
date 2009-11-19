@@ -1,5 +1,14 @@
 2009-11-19  Eric Seidel  <eric@webkit.org>
 
+        No review, just adding a FIXME.
+
+        Split out command parsing and help printing from BugzillaTool
+        https://bugs.webkit.org/show_bug.cgi?id=31688
+
+        * Scripts/bugzilla-tool: Add an extra comment about current design failures.
+
+2009-11-19  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Split out command parsing and help printing from BugzillaTool
