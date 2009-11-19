@@ -5179,3 +5179,6 @@ storage/domstorage/localstorage/window-open.html
 #crashed: svg/carto.net/frameless-svg-parse-error.html
 #crasher:
 storage/domstorage/sessionstorage/window-open.html
+
+# validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
+fast/forms/validationMessage.html

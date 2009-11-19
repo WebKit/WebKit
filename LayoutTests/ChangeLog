@@ -1,3 +1,11 @@
+2009-11-19  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=27959>
+        Files missed when landing patch.
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-11-19  Alexey Proskuryakov  <ap@apple.com>
 
         Trying to enable WebSocket tests on Tiger again, as the bot seems to behave now.
