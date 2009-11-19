@@ -1,3 +1,14 @@
+2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Build fix for QtWebKit after r51159.
+
+        Include float.h for DBL_MANT_DIG. Not sure why this
+        is not a problem for other ports.
+
+        * html/HTMLInputElement.cpp:
+
 2009-11-19  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.
