@@ -1,0 +1,41 @@
+This test aims to check for typeMismatch flag with type=month input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "" is a correct valid month string.
+PASS "1582-10" is a correct valid month string.
+PASS "9999-12" is a correct valid month string.
+PASS "2147483647-12" is a correct valid month string.
+PASS "2009-01" is a correct valid month string.
+PASS "2009-02" is a correct valid month string.
+PASS "2009-03" is a correct valid month string.
+PASS "2009-04" is a correct valid month string.
+PASS "2009-05" is a correct valid month string.
+PASS "2009-06" is a correct valid month string.
+PASS "2009-07" is a correct valid month string.
+PASS "2009-08" is a correct valid month string.
+PASS "2009-09" is a correct valid month string.
+PASS "2009-10" is a correct valid month string.
+PASS "2009-11" is a correct valid month string.
+PASS "2009-12" is a correct valid month string.
+PASS " 2009-09 " is a correct invalid month string.
+PASS "a" is a correct invalid month string.
+PASS "-1-09" is a correct invalid month string.
+PASS "1581-10" is a correct invalid month string.
+PASS "1582-09" is a correct invalid month string.
+PASS "2147483648-12" is a correct invalid month string.
+PASS "2009/09" is a correct invalid month string.
+PASS "200909" is a correct invalid month string.
+PASS "2009--2" is a correct invalid month string.
+PASS "2009-00" is a correct invalid month string.
+PASS "2009-13" is a correct invalid month string.
+PASS "2009-" is a correct invalid month string.
+PASS "2009-9" is a correct invalid month string.
+PASS "2009-009" is a correct invalid month string.
+PASS "2009-xx" is a correct invalid month string.
+PASS "2009" is a correct invalid month string.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

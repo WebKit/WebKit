@@ -2,6 +2,33 @@
 
         Reviewed by Darin Adler.
 
+        Tests for ValidityState.typeMismatch for the following types of INPUT element:
+            date, datetime, datetime-local, month, time and week
+        https://bugs.webkit.org/show_bug.cgi?id=31342
+
+        * fast/forms/ValidityState-typeMismatch-date-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-date.html: Added.
+        * fast/forms/ValidityState-typeMismatch-datetime-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-datetime.html: Added.
+        * fast/forms/ValidityState-typeMismatch-datetimelocal-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-datetimelocal.html: Added.
+        * fast/forms/ValidityState-typeMismatch-month-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-month.html: Added.
+        * fast/forms/ValidityState-typeMismatch-time-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-time.html: Added.
+        * fast/forms/ValidityState-typeMismatch-week-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-week.html: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-date.js: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetime.js: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetimelocal.js: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-month.js: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-time.js: Added.
+        * fast/forms/script-tests/ValidityState-typeMismatch-week.js: Added.
+
+2009-11-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Add tests for ValidityState.stepMismatch.
         https://bugs.webkit.org/show_bug.cgi?id=31331
 

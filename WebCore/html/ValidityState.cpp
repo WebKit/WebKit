@@ -74,6 +74,13 @@ bool ValidityState::typeMismatch()
 
         return false;
     }
+    case HTMLInputElement::DATE:
+    case HTMLInputElement::DATETIME:
+    case HTMLInputElement::DATETIMELOCAL:
+    case HTMLInputElement::MONTH:
+    case HTMLInputElement::TIME:
+    case HTMLInputElement::WEEK:
+        return !HTMLInputElement::formStringToISODateTime(input->inputType(), value, 0);
     default:
         return false;
     }

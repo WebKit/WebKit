@@ -1,3 +1,27 @@
+2009-11-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add support for ValidityState.typeMismatch for the following INPUT types:
+          date datetime datetime-local month time week
+        https://bugs.webkit.org/show_bug.cgi?id=31342
+
+        Tests: fast/forms/ValidityState-typeMismatch-date.html
+               fast/forms/ValidityState-typeMismatch-datetime.html
+               fast/forms/ValidityState-typeMismatch-datetimelocal.html
+               fast/forms/ValidityState-typeMismatch-month.html
+               fast/forms/ValidityState-typeMismatch-time.html
+               fast/forms/ValidityState-typeMismatch-week.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::formStringToISODateTime): Check the type
+          validity of the specified type and string using the ISODateTime class.
+        * html/HTMLInputElement.h:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch): Check the type validity
+          for date, datetime, datetime-local, month, time and week with
+          HTMLInputElemtn::formStringToISODateTime()
+
 2009-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

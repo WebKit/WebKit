@@ -45,6 +45,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
+#include "ISODateTime.h"
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
@@ -2005,6 +2006,34 @@ bool HTMLInputElement::formStringToDouble(const String& src, double* out)
     if (out)
         *out = value;
     return true;
+}
+
+bool HTMLInputElement::formStringToISODateTime(InputType type, const String& formString, ISODateTime* out)
+{
+    ISODateTime ignoredResult;
+    if (!out)
+        out = &ignoredResult;
+    const UChar* characters = formString.characters();
+    unsigned length = formString.length();
+    unsigned end;
+
+    switch (type) {
+    case DATE:
+        return out->parseDate(characters, length, 0, end) && end == length;
+    case DATETIME:
+        return out->parseDateTime(characters, length, 0, end) && end == length;
+    case DATETIMELOCAL:
+        return out->parseDateTimeLocal(characters, length, 0, end) && end == length;
+    case MONTH:
+        return out->parseMonth(characters, length, 0, end) && end == length;
+    case WEEK:
+        return out->parseWeek(characters, length, 0, end) && end == length;
+    case TIME:
+        return out->parseTime(characters, length, 0, end) && end == length;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
 #if ENABLE(DATALIST)
