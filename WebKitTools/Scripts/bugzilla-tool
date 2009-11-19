@@ -788,8 +788,11 @@ class CommitQueue(AbstractQueue):
 
     def next_work_item(self):
         patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+        if not patches:
+            return None
+        # Only bother logging if we have patches in the queue.
         self.log_progress([patch['id'] for patch in patches])
-        return patches[0] if patches else None
+        return patches[0]
 
     def should_proceed_with_work_item(self, patch):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
