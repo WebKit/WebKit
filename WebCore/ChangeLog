@@ -1,3 +1,17 @@
+2009-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31634
+        Ignore realm for proxy protection spaces
+
+        Only affects WebSocket proxy authentication, cannot be tested in DRT.
+
+        * platform/network/ProtectionSpace.cpp:
+        (WebCore::operator==):
+        * platform/network/ProtectionSpaceHash.h:
+        (WebCore::ProtectionSpaceHash::hash):
+
 2009-11-19  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon Hausmann.

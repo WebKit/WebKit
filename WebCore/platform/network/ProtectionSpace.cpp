@@ -111,7 +111,8 @@ bool operator==(const ProtectionSpace& a, const ProtectionSpace& b)
         return false;
     if (a.serverType() != b.serverType())
         return false;
-    if (a.realm() != b.realm())
+    // Ignore realm for proxies
+    if (!a.isProxy() && a.realm() != b.realm())
         return false;
     if (a.authenticationScheme() != b.authenticationScheme())
         return false;
