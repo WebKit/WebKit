@@ -140,7 +140,6 @@
 #else
 #define NO_ERRNO
 #endif
-#include <float.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>

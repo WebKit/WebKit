@@ -1,3 +1,18 @@
+2009-11-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Remove HAVE(FLOAT_H) guard
+        https://bugs.webkit.org/show_bug.cgi?id=31661
+
+        WebCore has a dependency on float.h, there is
+        no need to guard float.h.
+
+        No new tests as there is no functional change.
+
+        * html/HTMLInputElement.cpp: Remove include directive
+        for float.h as it is included in MathExtras.h already.
+
 2009-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Pavel Feldman.

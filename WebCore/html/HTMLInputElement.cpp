@@ -62,7 +62,6 @@
 #include "RenderTheme.h"
 #include "StringHash.h"
 #include "TextEvent.h"
-#include <float.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>

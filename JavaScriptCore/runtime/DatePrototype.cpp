@@ -28,7 +28,6 @@
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "DateInstance.h"
-#include <float.h>
 
 #if !PLATFORM(MAC) && HAVE(LANGINFO_H)
 #include <langinfo.h>

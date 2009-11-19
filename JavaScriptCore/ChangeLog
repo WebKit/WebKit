@@ -1,3 +1,21 @@
+2009-11-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Remove HAVE(FLOAT_H) guard
+        https://bugs.webkit.org/show_bug.cgi?id=31661
+
+        JavaScriptCore has a dependency on float.h, there is
+        no need to guard float.h.
+
+        * runtime/DatePrototype.cpp: Remove include directive 
+        for float.h as it is included in MathExtras.h already.
+        * runtime/Operations.cpp: Ditto.
+        * runtime/UString.cpp: Ditto.
+        * wtf/dtoa.cpp: Ditto.
+        * wtf/MathExtras.h: Remove HAVE(FLOAT_H) guard.
+        * wtf/Platform.h: Ditto.
+
 2009-11-19  Thiago Macieira <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.

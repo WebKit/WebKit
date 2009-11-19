@@ -30,7 +30,6 @@
 #include "Identifier.h"
 #include "Operations.h"
 #include <ctype.h>
-#include <float.h>
 #include <limits.h>
 #include <limits>
 #include <math.h>

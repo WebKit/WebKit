@@ -26,6 +26,7 @@
 #ifndef WTF_MathExtras_h
 #define WTF_MathExtras_h
 
+#include <float.h>
 #include <math.h>
 #include <stdlib.h>
 
@@ -43,11 +44,6 @@
 #include <stdlib.h>
 #endif
 #include <limits>
-
-#if HAVE(FLOAT_H)
-#include <float.h>
-#endif
-
 #endif
 
 #ifndef M_PI

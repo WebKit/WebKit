@@ -29,10 +29,6 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if HAVE(FLOAT_H)
-#include <float.h>
-#endif
-
 namespace JSC {
 
 bool JSValue::equalSlowCase(ExecState* exec, JSValue v1, JSValue v2)

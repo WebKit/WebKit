@@ -589,7 +589,6 @@
 
 #elif PLATFORM(WIN_OS)
 
-#define HAVE_FLOAT_H 1
 #if PLATFORM(WINCE)
 #define HAVE_ERRNO_H 0
 #else
