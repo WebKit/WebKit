@@ -235,7 +235,10 @@ namespace JSC {
 
     public:
         UString();
+        // Constructor for null-terminated ASCII string.
         UString(const char*);
+        // Constructor for non-null-terminated ASCII string.
+        UString(const char*, int length);
         UString(const UChar*, int length);
         UString(UChar*, int length, bool copy);
 

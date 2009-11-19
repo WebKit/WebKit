@@ -114,6 +114,7 @@ EXPORTS
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
+    ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z

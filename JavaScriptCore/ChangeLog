@@ -1,3 +1,32 @@
+2009-11-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move UString::from(double) implementation to new
+        WTF::doubleToStringInJavaScriptFormat(), and expose it because WebCore
+        code will use it.
+        https://bugs.webkit.org/show_bug.cgi?id=31330
+
+        - Introduce new function createRep(const char*, unsigned) and
+          UString::UString(const char*, unsigned) to reduce 2 calls to strlen().
+        - Fix a bug that dtoa() doesn't update *rve if the input value is NaN
+          or Infinity.
+
+        No new tests because this doesn't change the behavior.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/UString.cpp:
+        (JSC::createRep):
+        (JSC::UString::UString):
+        (JSC::UString::from): Move the code to doubleToStringInJavaScriptFormat().
+        * runtime/UString.h:
+        * wtf/dtoa.cpp:
+        (WTF::dtoa): Fix a bug about rve.
+        (WTF::append): A helper for doubleToStringInJavaScriptFormat().
+        (WTF::doubleToStringInJavaScriptFormat): Move the code from UString::from(double).
+        * wtf/dtoa.h:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -578,8 +578,30 @@ static PassRefPtr<UString::Rep> createRep(const char* c)
 
 }
 
+static inline PassRefPtr<UString::Rep> createRep(const char* c, int length)
+{
+    if (!c)
+        return &UString::Rep::null();
+
+    if (!length)
+        return &UString::Rep::empty();
+
+    UChar* d;
+    if (!allocChars(length).getValue(d))
+        return &UString::Rep::null();
+
+    for (int i = 0; i < length; i++)
+        d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+    return UString::Rep::create(d, length);
+}
+
 UString::UString(const char* c)
     : m_rep(createRep(c))
+{
+}
+
+UString::UString(const char* c, int length)
+    : m_rep(createRep(c, length))
 {
 }
 
@@ -1025,69 +1047,10 @@ UString UString::from(long l)
 
 UString UString::from(double d)
 {
-    // avoid ever printing -NaN, in JS conceptually there is only one NaN value
-    if (isnan(d))
-        return "NaN";
-    if (!d)
-        return "0"; // -0 -> "0"
-
-    char buf[80];
-    int decimalPoint;
-    int sign;
-    
-    char result[80];
-    WTF::dtoa(result, d, 0, &decimalPoint, &sign, NULL);
-    int length = static_cast<int>(strlen(result));
-  
-    int i = 0;
-    if (sign)
-        buf[i++] = '-';
-  
-    if (decimalPoint <= 0 && decimalPoint > -6) {
-        buf[i++] = '0';
-        buf[i++] = '.';
-        for (int j = decimalPoint; j < 0; j++)
-            buf[i++] = '0';
-        strcpy(buf + i, result);
-    } else if (decimalPoint <= 21 && decimalPoint > 0) {
-        if (length <= decimalPoint) {
-            strcpy(buf + i, result);
-            i += length;
-            for (int j = 0; j < decimalPoint - length; j++)
-                buf[i++] = '0';
-            buf[i] = '\0';
-        } else {
-            strncpy(buf + i, result, decimalPoint);
-            i += decimalPoint;
-            buf[i++] = '.';
-            strcpy(buf + i, result + decimalPoint);
-        }
-    } else if (result[0] < '0' || result[0] > '9')
-        strcpy(buf + i, result);
-    else {
-        buf[i++] = result[0];
-        if (length > 1) {
-            buf[i++] = '.';
-            strcpy(buf + i, result + 1);
-            i += length - 1;
-        }
-        
-        buf[i++] = 'e';
-        buf[i++] = (decimalPoint >= 0) ? '+' : '-';
-        // decimalPoint can't be more than 3 digits decimal given the
-        // nature of float representation
-        int exponential = decimalPoint - 1;
-        if (exponential < 0)
-            exponential = -exponential;
-        if (exponential >= 100)
-            buf[i++] = static_cast<char>('0' + exponential / 100);
-        if (exponential >= 10)
-            buf[i++] = static_cast<char>('0' + (exponential % 100) / 10);
-        buf[i++] = static_cast<char>('0' + exponential % 10);
-        buf[i++] = '\0';
-    }
-    
-    return UString(buf);
+    DtoaBuffer buffer;
+    unsigned length;
+    doubleToStringInJavaScriptFormat(d, buffer, &length);
+    return UString(buffer, length);
 }
 
 UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const
