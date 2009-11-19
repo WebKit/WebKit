@@ -64,8 +64,10 @@ WEBKIT_API void
 webkit_web_inspector_inspect_coordinates(WebKitWebInspector* web_inspector, gdouble x, gdouble y);
 
 WEBKIT_API void
-webkit_web_inspector_close(WebKitWebInspector* webInspector);
+webkit_web_inspector_show(WebKitWebInspector* webInspector);
 
+WEBKIT_API void
+webkit_web_inspector_close(WebKitWebInspector* webInspector);
 G_END_DECLS
 
 #endif /* webkitwebinspector_h */

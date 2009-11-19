@@ -504,7 +504,7 @@ void LayoutTestController::showWebInspector()
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
 
     g_object_set(webSettings, "enable-developer-extras", TRUE, NULL);
-    webkit_web_inspector_inspect_coordinates(inspector, 0, 0);
+    webkit_web_inspector_show(inspector);
 }
 
 void LayoutTestController::closeWebInspector()

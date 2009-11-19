@@ -466,6 +466,29 @@ webkit_web_inspector_set_inspector_client(WebKitWebInspector* web_inspector, Web
 }
 
 /**
+ * webkit_web_inspector_show:
+ * @web_inspector: the #WebKitWebInspector that will be shown
+ *
+ * Causes the Web Inspector to be shown.
+ *
+ * Since: 1.1.17
+ */
+void webkit_web_inspector_show(WebKitWebInspector* webInspector)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_INSPECTOR(webInspector));
+
+    WebKitWebInspectorPrivate* priv = webInspector->priv;
+
+    Frame* frame = priv->page->focusController()->focusedOrMainFrame();
+    FrameView* view = frame->view();
+
+    if (!view)
+        return;
+
+    priv->page->inspectorController()->show();
+}
+
+/**
  * webkit_web_inspector_inspect_coordinates:
  * @web_inspector: the #WebKitWebInspector that will do the inspection
  * @x: the X coordinate of the node to be inspected
