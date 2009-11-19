@@ -22,6 +22,15 @@
     }
 </style>
 <script>
+    function testVisibility() {
+        var flashPlugin = document.getElementById('flashPlugin');
+        if (flashPlugin.style.display == 'none') {
+            flashPlugin.style.display = 'block';
+        } else {
+            flashPlugin.style.display = 'none';
+        }
+    }
+
     function testResize() {
         var flashPlugin = document.getElementById('flashPlugin');
         flashPlugin.width = flashPlugin.width == "200" ? "100" : "200";
@@ -65,6 +74,9 @@
             the flash through the div contents. </div>
 
     <div style="clear:both"/>
+
+    <input type="checkbox" name="visibilityCheckBox"> Verify if the flash toggles visibility
+            <input type="button" id="visibilityButton" value="Test Visibility" onClick="testVisibility()"/><br/>
 
     <input type="checkbox" name="resizeCheckBox"> Verify if the flash resizes when element is resized
             <input type="button" id="resizeButton" value="Test Resize" onClick="testResize()"/><br/>

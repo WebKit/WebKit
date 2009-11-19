@@ -1,3 +1,14 @@
+2009-11-18  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Eric Seidel.
+
+        Add plugin visibility manual test
+
+        https://bugs.webkit.org/show_bug.cgi?id=31542
+
+        * manual-tests/plugins/windowed.html:
+        * manual-tests/plugins/windowless.html:
+
 2009-11-18  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Pavel Feldman.
