@@ -1,3 +1,14 @@
+2009-11-19  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        isMainThread() on Chromium (Mac and Linux) is so slow it timeouts LayoutTests..
+        https://bugs.webkit.org/show_bug.cgi?id=31693
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading): grab and use the pthread_t of the main thread instead of ThreadIdentifier.
+        (WTF::isMainThread): Ditto.
+
 2009-11-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
