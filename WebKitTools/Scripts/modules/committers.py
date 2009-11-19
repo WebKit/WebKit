@@ -106,6 +106,7 @@ committers_unable_to_review = [
     Committer("Matt Perry", "mpcomplete@chromium.org"),
     Committer("Maxime Britto", ["maxime.britto@gmail.com", "britto@apple.com"]),
     Committer("Maxime Simon", ["simon.maxime@gmail.com", "maxime.simon@webkit.org"]),
+    Committer("Michelangelo De Simone", "michelangelo@webkit.org"),
     Committer("Mike Belshe", "mike@belshe.com"),
     Committer("Mike Fenton", ["mike.fenton@torchmobile.com", "mifenton@rim.com"]),
     Committer("Mike Thole", ["mthole@mikethole.com", "mthole@apple.com"]),
