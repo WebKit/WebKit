@@ -1,3 +1,14 @@
+2009-11-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Normalize ' and " in bugzilla-tool
+        https://bugs.webkit.org/show_bug.cgi?id=31655
+
+        We decided " is better than ' and we should be consistent.
+
+        * Scripts/bugzilla-tool:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -53,10 +53,10 @@ from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 def plural(noun):
     # This is a dumb plural() implementation which was just enough for our uses.
-    if re.search('h$', noun):
-        return noun + 'es'
+    if re.search("h$", noun):
+        return noun + "es"
     else:
-        return noun + 's'
+        return noun + "s"
 
 def pluralize(noun, count):
     if count != 1:
@@ -79,7 +79,7 @@ def commit_message_for_this_commit(scm):
         changelog_messages.append(changelog_entry)
 
     # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
-    return CommitMessage(''.join(changelog_messages).splitlines())
+    return CommitMessage("".join(changelog_messages).splitlines())
 
 
 class Command:
@@ -107,7 +107,7 @@ class Command:
 
 class BugsInCommitQueue(Command):
     def __init__(self):
-        Command.__init__(self, 'Bugs in the commit queue')
+        Command.__init__(self, "Bugs in the commit queue")
 
     def execute(self, options, args, tool):
         bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
@@ -117,41 +117,41 @@ class BugsInCommitQueue(Command):
 
 class PatchesInCommitQueue(Command):
     def __init__(self):
-        Command.__init__(self, 'Patches in the commit queue')
+        Command.__init__(self, "Patches in the commit queue")
 
     def execute(self, options, args, tool):
         patches = tool.bugs.fetch_patches_from_commit_queue()
         log("Patches in commit queue:")
         for patch in patches:
-            print "%s" % patch['url']
+            print "%s" % patch["url"]
 
 
 class ReviewedPatchesOnBug(Command):
     def __init__(self):
-        Command.__init__(self, 'r+\'d patches on a bug', 'BUGID')
+        Command.__init__(self, "r+\'d patches on a bug", "BUGID")
 
     def execute(self, options, args, tool):
         bug_id = args[0]
         patches_to_land = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
         for patch in patches_to_land:
-            print "%s" % patch['url']
+            print "%s" % patch["url"]
 
 
 class CheckStyle(Command):
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, 'Runs check-webkit-style on the specified attachment', 'ATTACHMENT_ID', options=options)
+        Command.__init__(self, "Runs check-webkit-style on the specified attachment", "ATTACHMENT_ID", options=options)
 
     @classmethod
     def check_style(cls, patch, options, tool):
         tool.scm().update_webkit()
-        log("Checking style for patch %s from bug %s." % (patch['id'], patch['bug_id']))
+        log("Checking style for patch %s from bug %s." % (patch["id"], patch["bug_id"]))
         try:
             # FIXME: check-webkit-style shouldn't really have to apply the patch to check the style.
             tool.scm().apply_patch(patch)
             WebKitLandingScripts.run_webkit_script("check-webkit-style")
         except ScriptError, e:
-            log("Patch %s from bug %s failed to apply and check style." % (patch['id'], patch['bug_id']))
+            log("Patch %s from bug %s failed to apply and check style." % (patch["id"], patch["bug_id"]))
             log(e.output)
 
         # This is safe because in order to get here the working directory had to be
@@ -169,7 +169,7 @@ class CheckStyle(Command):
 class ApplyAttachment(Command):
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, 'Applies an attachment to the local working directory.', 'ATTACHMENT_ID', options=options)
+        Command.__init__(self, "Applies an attachment to the local working directory.", "ATTACHMENT_ID", options=options)
 
     def execute(self, options, args, tool):
         WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
@@ -181,7 +181,7 @@ class ApplyAttachment(Command):
 class ApplyPatchesFromBug(Command):
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, 'Applies all patches on a bug to the local working directory.', 'BUGID', options=options)
+        Command.__init__(self, "Applies all patches on a bug to the local working directory.", "BUGID", options=options)
 
     def execute(self, options, args, tool):
         WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
@@ -210,11 +210,11 @@ class WebKitApplyingScripts:
             error("--local-commit passed, but %s does not support local commits" % scm.display_name())
 
         for patch in patches:
-            log("Applying attachment %s from bug %s" % (patch['id'], patch['bug_id']))
+            log("Applying attachment %s from bug %s" % (patch["id"], patch["bug_id"]))
             scm.apply_patch(patch)
             if options.local_commit:
                 commit_message = commit_message_for_this_commit(scm)
-                scm.commit_locally_with_message(commit_message.message() or patch['name'])
+                scm.commit_locally_with_message(commit_message.message() or patch["name"])
 
 
 class WebKitLandingScripts:
@@ -244,7 +244,7 @@ class WebKitLandingScripts:
         # FIXME: This could be improved not to flatten output to stdout.
         while True:
             output_line = child_process.stdout.readline()
-            if output_line == '' and child_process.poll() != None:
+            if output_line == "" and child_process.poll() != None:
                 return child_process.poll()
             teed_output.write(output_line)
 
@@ -321,37 +321,37 @@ class WebKitLandingScripts:
         # Assume that r- patches are just previous patches someone forgot to obsolete.
         patches = bugs.fetch_patches_from_bug(bug_id)
         for patch in patches:
-            review_flag = patch.get('review')
-            if review_flag == '?' or review_flag == '+':
-                log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch['bug_id'], patch['id'], review_flag))
+            review_flag = patch.get("review")
+            if review_flag == "?" or review_flag == "+":
+                log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch["bug_id"], patch["id"], review_flag))
                 return
         bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
 
     @classmethod
     def _land_patch(cls, patch, options, tool):
         tool.scm().update_webkit() # Update before every patch in case the tree has changed
-        log("Applying patch %s from bug %s." % (patch['id'], patch['bug_id']))
+        log("Applying patch %s from bug %s." % (patch["id"], patch["bug_id"]))
         tool.scm().apply_patch(patch, force=options.non_interactive)
 
         # Make sure the tree is still green after updating, before building this patch.
         # The first patch ends up checking tree status twice, but that's OK.
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
         comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
-        tool.bugs.clear_attachment_flags(patch['id'], comment_text)
+        tool.bugs.clear_attachment_flags(patch["id"], comment_text)
 
     @classmethod
     def land_patch_and_handle_errors(cls, patch, options, tool):
         try:
             cls._land_patch(patch, options, tool)
             if options.close_bug:
-                cls._close_bug_if_no_active_patches(tool.bugs, patch['bug_id'])
+                cls._close_bug_if_no_active_patches(tool.bugs, patch["bug_id"])
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
             WorkQueue.exit_after_handled_error(e)
         except ScriptError, e:
             # Mark the patch as commit-queue- and comment in the bug.
-            tool.bugs.reject_patch_from_commit_queue(patch['id'], e.message_with_output())
+            tool.bugs.reject_patch_from_commit_queue(patch["id"], e.message_with_output())
             WorkQueue.exit_after_handled_error(e)
 
 
@@ -361,7 +361,7 @@ class LandAndUpdateBug(Command):
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
         ]
         options += WebKitLandingScripts.land_options()
-        Command.__init__(self, 'Lands the current working directory diff and updates the bug if provided.', '[BUGID]', options=options)
+        Command.__init__(self, "Lands the current working directory diff and updates the bug if provided.", "[BUGID]", options=options)
 
     def guess_reviewer_from_bug(self, bugs, bug_id):
         patches = bugs.fetch_reviewed_patches_from_bug(bug_id)
@@ -369,8 +369,8 @@ class LandAndUpdateBug(Command):
             log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
             return None
         patch = patches[0]
-        reviewer = patch['reviewer']
-        log('Guessing "%s" as reviewer from attachment %s on bug %s.' % (reviewer, patch['id'], bug_id))
+        reviewer = patch["reviewer"]
+        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (reviewer, patch["id"], bug_id))
         return reviewer
 
     def update_changelogs_with_reviewer(self, reviewer, bug_id, tool):
@@ -422,7 +422,7 @@ class AbstractPatchLandingCommand(Command):
     def _collect_patches_by_bug(patches):
         bugs_to_patches = {}
         for patch in patches:
-            bug_id = patch['bug_id']
+            bug_id = patch["bug_id"]
             bugs_to_patches[bug_id] = bugs_to_patches.get(bug_id, []).append(patch)
         return bugs_to_patches
 
@@ -446,7 +446,7 @@ class AbstractPatchLandingCommand(Command):
 
 class LandAttachment(AbstractPatchLandingCommand):
     def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, 'Lands a patches from bugzilla, optionally building and testing them first', 'ATTACHMENT_ID [ATTACHMENT_IDS]')
+        AbstractPatchLandingCommand.__init__(self, "Lands a patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
     @staticmethod
     def _fetch_list_of_patches_to_land(options, args, tool):
@@ -455,7 +455,7 @@ class LandAttachment(AbstractPatchLandingCommand):
 
 class LandPatchesFromBugs(AbstractPatchLandingCommand):
     def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, 'Lands all patches on the given bugs, optionally building and testing them first', 'BUGID [BUGIDS]')
+        AbstractPatchLandingCommand.__init__(self, "Lands all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
     @staticmethod
     def _fetch_list_of_patches_to_land(options, args, tool):
@@ -469,7 +469,7 @@ class LandPatchesFromBugs(AbstractPatchLandingCommand):
 
 class CommitMessageForCurrentDiff(Command):
     def __init__(self):
-        Command.__init__(self, 'Prints a commit message suitable for the uncommitted changes.')
+        Command.__init__(self, "Prints a commit message suitable for the uncommitted changes.")
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
@@ -478,23 +478,23 @@ class CommitMessageForCurrentDiff(Command):
 
 class ObsoleteAttachmentsOnBug(Command):
     def __init__(self):
-        Command.__init__(self, 'Marks all attachments on a bug as obsolete.', 'BUGID')
+        Command.__init__(self, "Marks all attachments on a bug as obsolete.", "BUGID")
 
     def execute(self, options, args, tool):
         bug_id = args[0]
         attachments = tool.bugs.fetch_attachments_from_bug(bug_id)
         for attachment in attachments:
-            if not attachment['is_obsolete']:
-                tool.bugs.obsolete_attachment(attachment['id'])
+            if not attachment["is_obsolete"]:
+                tool.bugs.obsolete_attachment(attachment["id"])
 
 
 class PostDiffAsPatchToBug(Command):
     def __init__(self):
         options = [
-            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
+            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
         ]
         options += self.posting_options()
-        Command.__init__(self, 'Attaches the current working directory diff to a bug as a patch file.', '[BUGID]', options=options)
+        Command.__init__(self, "Attaches the current working directory diff to a bug as a patch file.", "[BUGID]", options=options)
 
     @staticmethod
     def posting_options():
@@ -508,9 +508,9 @@ class PostDiffAsPatchToBug(Command):
     def obsolete_patches_on_bug(bug_id, bugs):
         patches = bugs.fetch_patches_from_bug(bug_id)
         if len(patches):
-            log("Obsoleting %s on bug %s" % (pluralize('old patch', len(patches)), bug_id))
+            log("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
             for patch in patches:
-                bugs.obsolete_attachment(patch['id'])
+                bugs.obsolete_attachment(patch["id"])
 
     def execute(self, options, args, tool):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
@@ -536,7 +536,7 @@ class PostCommitsAsPatchesToBug(Command):
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: description from commit message)"),
         ]
         options += PostDiffAsPatchToBug.posting_options()
-        Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options, requires_local_commits=True)
+        Command.__init__(self, "Attaches a range of local commits to bugs as patch files.", "COMMITISH", options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
         comment_text = None
@@ -556,7 +556,7 @@ class PostCommitsAsPatchesToBug(Command):
 
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
-            error("bugzilla-tool does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize('patch', len(commit_ids))))
+            error("bugzilla-tool does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize("patch", len(commit_ids))))
 
         have_obsoleted_patches = set()
         for commit_id in commit_ids:
@@ -583,7 +583,7 @@ class RolloutCommit(Command):
         options = WebKitLandingScripts.land_options()
         options += WebKitLandingScripts.cleaning_options()
         options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Experimental support for complete unsupervised rollouts, including re-opening the bug.  Not recommended."))
-        Command.__init__(self, 'Reverts the given revision and commits the revert and re-opens the original bug.', 'REVISION [BUGID]', options=options)
+        Command.__init__(self, "Reverts the given revision and commits the revert and re-opens the original bug.", "REVISION [BUGID]", options=options)
 
     @staticmethod
     def _create_changelogs_for_revert(scm, revision):
@@ -629,7 +629,7 @@ class RolloutCommit(Command):
         # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
         # Once we trust rollout we will remove this option.
         if not options.complete_rollout:
-            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use 'bugzilla-tool land-diff %s' to commit the rollout." % bug_id)
+            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
         else:
             comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
             self._reopen_bug_after_rollout(tool, bug_id, comment_text)
@@ -644,7 +644,7 @@ class CreateBug(Command):
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
-        Command.__init__(self, 'Create a bug from local changes or local commits.', '[COMMITISH]', options=options)
+        Command.__init__(self, "Create a bug from local changes or local commits.", "[COMMITISH]", options=options)
 
     def create_bug_from_commit(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
@@ -700,7 +700,7 @@ class CreateBug(Command):
             # FIXME: Figure out a way to get avoid the exception in the first
             # place.
             pass
-        comment_text = ''.join(lines)
+        comment_text = "".join(lines)
         return (bug_title, comment_text)
 
     def execute(self, options, args, tool):
@@ -714,12 +714,12 @@ class CreateBug(Command):
 
 class CheckTreeStatus(Command):
     def __init__(self):
-        Command.__init__(self, 'Print out the status of the webkit builders.')
+        Command.__init__(self, "Print out the status of the webkit builders.")
 
     def execute(self, options, args, tool):
         for builder in tool.buildbot.builder_statuses():
-            status_string = "ok" if builder['is_green'] else 'FAIL'
-            print "%s : %s" % (status_string.ljust(4), builder['name'])
+            status_string = "ok" if builder["is_green"] else "FAIL"
+            print "%s : %s" % (status_string.ljust(4), builder["name"])
 
 
 class AbstractQueue(Command, WorkQueueDelegate):
@@ -729,13 +729,13 @@ class AbstractQueue(Command, WorkQueueDelegate):
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
-        Command.__init__(self, 'Run the %s.' % self._name, options=options)
+        Command.__init__(self, "Run the %s." % self._name, options=options)
 
     def queue_log_path(self):
-        return '%s.log' % self._name
+        return "%s.log" % self._name
 
     def work_logs_directory(self):
-        return '%s-logs' % self._name
+        return "%s-logs" % self._name
 
     def status_host(self):
         return self.options.status_host
@@ -743,8 +743,8 @@ class AbstractQueue(Command, WorkQueueDelegate):
     def begin_work_queue(self):
         log("CAUTION: %s will discard all local changes in %s" % (self._name, self.tool.scm().checkout_root))
         if self.options.confirm:
-            response = raw_input("Are you sure?  Type 'yes' to continue: ")
-            if (response != 'yes'):
+            response = raw_input("Are you sure?  Type \"yes\" to continue: ")
+            if (response != "yes"):
                 error("User declined.")
         log("Running WebKit %s. %s" % (self._name, datetime.now().strftime(WorkQueue.log_date_format)))
 
@@ -770,7 +770,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):
-        log("%s in %s [%s]" % (pluralize('patch', len(patch_ids)), self._name, ", ".join(patch_ids)))
+        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self._name, ", ".join(patch_ids)))
 
     def execute(self, options, args, tool):
         self.options = options
@@ -794,15 +794,15 @@ class CommitQueue(AbstractQueue):
     def should_proceed_with_work_item(self, patch):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
         if red_builders_names:
-            red_builders_names = map(lambda name: '"%s"' % name, red_builders_names) # Add quotes around the names.
+            red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
             return (False, "Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
-        return (True, "Landing patch %s from bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])
+        return (True, "Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(['land-attachment', '--force-clean', '--non-interactive', '--quiet', patch['id']])
+        self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--quiet", patch["id"]])
 
     def handle_unexpected_error(self, patch, message):
-        self.tool.bugs.reject_patch_from_commit_queue(patch['id'], message)
+        self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
 
 
 class StyleQueue(AbstractQueue):
@@ -822,10 +822,10 @@ class StyleQueue(AbstractQueue):
         return self._patches.next()
 
     def should_proceed_with_work_item(self, patch):
-        return (True, "Checking style for patch %s on bug %s." % (patch['id'], patch['bug_id']), patch['bug_id'])
+        return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(['check-style', '--force-clean', patch['id']])
+        self.run_bugzilla_tool(["check-style", "--force-clean", patch["id"]])
 
     def handle_unexpected_error(self, patch, message):
         log(message)
@@ -846,7 +846,7 @@ class HelpPrintingOptionParser(OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
         error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
-        error_message += "\nType '" + self.get_prog_name() + " --help' to see usage.\n"
+        error_message += "\nType \"" + self.get_prog_name() + " --help\" to see usage.\n"
         self.exit(2, error_message)
 
 
@@ -856,24 +856,24 @@ class BugzillaTool:
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.commands = [
-            { 'name' : 'bugs-to-commit', 'object' : BugsInCommitQueue() },
-            { 'name' : 'patches-to-commit', 'object' : PatchesInCommitQueue() },
-            { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
-            { 'name' : 'create-bug', 'object' : CreateBug() },
-            { 'name' : 'apply-attachment', 'object' : ApplyAttachment() },
-            { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
-            { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
-            { 'name' : 'land-attachment', 'object' : LandAttachment() },
-            { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
-            { 'name' : 'check-style', 'object' : CheckStyle() },
-            { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
-            { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
-            { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
-            { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
-            { 'name' : 'tree-status', 'object' : CheckTreeStatus() },
-            { 'name' : 'commit-queue', 'object' : CommitQueue() },
-            { 'name' : 'style-queue', 'object' : StyleQueue() },
-            { 'name' : 'rollout', 'object' : RolloutCommit() },
+            { "name" : "bugs-to-commit", "object" : BugsInCommitQueue() },
+            { "name" : "patches-to-commit", "object" : PatchesInCommitQueue() },
+            { "name" : "reviewed-patches", "object" : ReviewedPatchesOnBug() },
+            { "name" : "create-bug", "object" : CreateBug() },
+            { "name" : "apply-attachment", "object" : ApplyAttachment() },
+            { "name" : "apply-patches", "object" : ApplyPatchesFromBug() },
+            { "name" : "land-diff", "object" : LandAndUpdateBug() },
+            { "name" : "land-attachment", "object" : LandAttachment() },
+            { "name" : "land-patches", "object" : LandPatchesFromBugs() },
+            { "name" : "check-style", "object" : CheckStyle() },
+            { "name" : "commit-message", "object" : CommitMessageForCurrentDiff() },
+            { "name" : "obsolete-attachments", "object" : ObsoleteAttachmentsOnBug() },
+            { "name" : "post-diff", "object" : PostDiffAsPatchToBug() },
+            { "name" : "post-commits", "object" : PostCommitsAsPatchesToBug() },
+            { "name" : "tree-status", "object" : CheckTreeStatus() },
+            { "name" : "commit-queue", "object" : CommitQueue() },
+            { "name" : "style-queue", "object" : StyleQueue() },
+            { "name" : "rollout", "object" : RolloutCommit() },
         ]
 
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
@@ -881,7 +881,7 @@ class BugzillaTool:
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
-        original_cwd = os.path.abspath('.')
+        original_cwd = os.path.abspath(".")
         if not self.cached_scm:
             self.cached_scm = detect_scm_system(original_cwd)
         
@@ -906,11 +906,11 @@ class BugzillaTool:
         command_rows = []
         scm_supports_local_commits = self.scm().supports_local_commits()
         for command in self.commands:
-            command_object = command['object']
+            command_object = command["object"]
             if command_object.requires_local_commits and not scm_supports_local_commits:
                 continue
-            command_name_and_args = command_object.name_with_arguments(command['name'])
-            command_rows.append({ 'name-and-args': command_name_and_args, 'object': command_object })
+            command_name_and_args = command_object.name_with_arguments(command["name"])
+            command_rows.append({ "name-and-args": command_name_and_args, "object": command_object })
             longest_name_length = max([longest_name_length, len(command_name_and_args)])
         
         # Use our own help formatter so as to indent enough.
@@ -919,15 +919,15 @@ class BugzillaTool:
         formatter.indent()
         
         for row in command_rows:
-            command_object = row['object']
-            commands_text += "  " + row['name-and-args'].ljust(longest_name_length + 3) + command_object.help_text + "\n"
+            command_object = row["object"]
+            commands_text += "  " + row["name-and-args"].ljust(longest_name_length + 3) + command_object.help_text + "\n"
             commands_text += command_object.option_parser.format_option_help(formatter)
         return commands_text
 
     def handle_global_args(self, args):
         (options, args) = self.global_option_parser.parse_args(args)
         if len(args):
-            # We'll never hit this because split_args splits at the first arg without a leading '-'
+            # We'll never hit this because split_args splits at the first arg without a leading "-"
             self.global_option_parser.error("Extra arguments before command: " + args)
         
         if options.dryrun:
@@ -936,10 +936,10 @@ class BugzillaTool:
     
     @staticmethod
     def split_args(args):
-        # Assume the first argument which doesn't start with '-' is the command name.
+        # Assume the first argument which doesn't start with "-" is the command name.
         command_index = 0
         for arg in args:
-            if arg[0] != '-':
+            if arg[0] != "-":
                 break
             command_index += 1
         else:
@@ -952,7 +952,7 @@ class BugzillaTool:
     
     def command_by_name(self, command_name):
         for command in self.commands:
-            if command_name == command['name']:
+            if command_name == command["name"]:
                 return command
         return None
     
@@ -969,7 +969,7 @@ class BugzillaTool:
         if not command:
             self.global_option_parser.error(command_name + " is not a recognized command")
 
-        command_object = command['object']
+        command_object = command["object"]
 
         if command_object.requires_local_commits and not self.scm().supports_local_commits():
             error(command_name + " requires local commits using %s in %s." % (self.scm().display_name(), self.scm().checkout_root))
