@@ -1,5 +1,14 @@
 2009-11-19  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Re-factor help printing to use modern python idioms
+        https://bugs.webkit.org/show_bug.cgi?id=31685
+
+        * Scripts/bugzilla-tool:
+
+2009-11-19  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         commit-queue empty queue logs twice

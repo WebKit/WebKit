@@ -89,7 +89,7 @@ class Command:
         self.options = options
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
         self.requires_local_commits = requires_local_commits
-    
+
     def name_with_arguments(self, command_name):
         usage_string = command_name
         if len(self.options) > 0:
@@ -903,29 +903,35 @@ class BugzillaTool:
     def usage_line():
         return "Usage: %prog [options] command [command-options] [command-arguments]"
 
-    def commands_usage(self):
-        commands_text = "Commands:\n"
-        longest_name_length = 0
-        command_rows = []
-        scm_supports_local_commits = self.scm().supports_local_commits()
-        for command in self.commands:
-            command_object = command["object"]
-            if command_object.requires_local_commits and not scm_supports_local_commits:
-                continue
-            command_name_and_args = command_object.name_with_arguments(command["name"])
-            command_rows.append({ "name-and-args": command_name_and_args, "object": command_object })
-            longest_name_length = max([longest_name_length, len(command_name_and_args)])
-        
+    # FIXME: This can all be simplified once Command objects know their own names.
+    @staticmethod
+    def _name_and_arguments(command):
+        return command['object'].name_with_arguments(command["name"])
+
+    def _command_help_formatter(self):
         # Use our own help formatter so as to indent enough.
         formatter = IndentedHelpFormatter()
         formatter.indent()
         formatter.indent()
-        
-        for row in command_rows:
-            command_object = row["object"]
-            commands_text += "  " + row["name-and-args"].ljust(longest_name_length + 3) + command_object.help_text + "\n"
-            commands_text += command_object.option_parser.format_option_help(formatter)
-        return commands_text
+        return formatter
+
+    @classmethod
+    def _help_for_command(cls, command, formatter, longest_name_length):
+        help_text = "  " + cls._name_and_arguments(command).ljust(longest_name_length + 3) + command['object'].help_text + "\n"
+        help_text += command['object'].option_parser.format_option_help(formatter)
+        return help_text
+
+    def commands_usage(self):
+        if not self.scm().supports_local_commits():
+            command_filter = lambda command: not command["object"].requires_local_commits
+        else:
+            command_filter = None
+
+        # Only show commands which are relevant to this checkout.  This might be confusing to some users?
+        relevant_commands = filter(command_filter, self.commands)
+        longest_name_length = max(map(lambda command: len(self._name_and_arguments(command)), relevant_commands))
+        command_help_texts = map(lambda command: self._help_for_command(command, self._command_help_formatter(), longest_name_length), relevant_commands)
+        return "Commands:\n" + "".join(command_help_texts)
 
     def handle_global_args(self, args):
         (options, args) = self.global_option_parser.parse_args(args)
@@ -967,7 +973,7 @@ class BugzillaTool:
         
         if not command_name:
             self.global_option_parser.error("No command specified")
-        
+
         command = self.command_by_name(command_name)
         if not command:
             self.global_option_parser.error(command_name + " is not a recognized command")
