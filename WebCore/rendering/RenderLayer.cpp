@@ -681,6 +681,27 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
 }
 #endif
 
+RenderLayer* RenderLayer::clippingRoot() const
+{
+    const RenderLayer* current = this;
+    while (current) {
+        if (current->renderer()->isRenderView())
+            return const_cast<RenderLayer*>(current);
+
+        current = compositingContainer(current);
+        ASSERT(current);
+        if (current->transform()
+#if USE(ACCELERATED_COMPOSITING)
+            || current->isComposited()
+#endif
+        )
+            return const_cast<RenderLayer*>(current);
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 IntPoint RenderLayer::absoluteToContents(const IntPoint& absolutePoint) const
 {
     // We don't use convertToLayerCoords because it doesn't know about transforms
@@ -2801,17 +2822,19 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 IntRect RenderLayer::childrenClipRect() const
 {
     RenderLayer* rootLayer = renderer()->view()->layer();
+    RenderLayer* clippingRootLayer = clippingRoot();
     IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
-    calculateRects(rootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
-    return foregroundRect;
+    calculateRects(clippingRootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(foregroundRect)).enclosingBoundingBox();
 }
 
 IntRect RenderLayer::selfClipRect() const
 {
     RenderLayer* rootLayer = renderer()->view()->layer();
+    RenderLayer* clippingRootLayer = clippingRoot();
     IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
-    calculateRects(rootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
-    return backgroundRect;
+    calculateRects(clippingRootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(backgroundRect)).enclosingBoundingBox();
 }
 
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect, const RenderLayer* rootLayer) const

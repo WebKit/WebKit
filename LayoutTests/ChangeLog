@@ -1,3 +1,16 @@
+2009-11-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Test for <rdar://problem/7398987> Assertion failure in
+        RenderLayer::updateClipRects when a plug-in’s enclosing layer is
+        enclosed by a transformed layer
+
+        * fast/layers/clip-rects-transformed-2-expected.txt: Added.
+        * fast/layers/clip-rects-transformed-2.html: Added.
+        * fast/layers/clip-rects-transformed-expected.txt: Added.
+        * fast/layers/clip-rects-transformed.html: Added.
+
 2009-11-18  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Darin Adler.

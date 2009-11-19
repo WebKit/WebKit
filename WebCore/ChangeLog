@@ -1,3 +1,25 @@
+2009-11-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed <rdar://problem/7398987> Assertion failure in
+        RenderLayer::updateClipRects when a plug-in’s enclosing layer is
+        enclosed by a transformed layer
+
+        Tests: fast/layers/clip-rects-transformed-2.html
+               fast/layers/clip-rects-transformed.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clippingRoot): Added. Finds the nearest ancestor
+        that is either transformed or composited. During painting and hit
+        testing, when a transformed or composited layer is hit, it becomes the
+        new root layer, which ultimately gets passed to calculateRects().
+        (WebCore::RenderLayer::childrenClipRect): Pass the clipping root as the
+        root layer to calculateRects(), and return the bounding box of the
+        transformed rectangle.
+        (WebCore::RenderLayer::selfClipRect): Ditto.
+        * rendering/RenderLayer.h:
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
