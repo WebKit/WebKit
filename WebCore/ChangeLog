@@ -1,3 +1,12 @@
+2009-11-19  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Normalize signal and slot signatures.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+
 2009-11-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

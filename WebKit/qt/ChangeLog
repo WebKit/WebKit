@@ -1,3 +1,22 @@
+2009-11-19  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Normalize signal and slot signatures.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::setPage):
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        * docs/webkitsnippets/qtwebkit_qwebinspector_snippet.cpp:
+        (wrapInFunction):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::modified):
+        (tst_QWebPage::database):
+
 2009-11-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

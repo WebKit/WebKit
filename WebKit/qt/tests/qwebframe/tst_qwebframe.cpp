@@ -2291,7 +2291,7 @@ void tst_QWebFrame::requestedUrl()
     qRegisterMetaType<QList<QSslError> >("QList<QSslError>");
     qRegisterMetaType<QNetworkReply* >("QNetworkReply*");
 
-    QSignalSpy spy2(page.networkAccessManager(), SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+    QSignalSpy spy2(page.networkAccessManager(), SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)));
     frame->setUrl(QUrl("qrc:/fake-ssl-error.html"));
     QTest::qWait(200);
     QCOMPARE(spy2.count(), 1);
@@ -2753,7 +2753,7 @@ void tst_QWebFrame::evaluateWillCauseRepaint()
     view.page()->mainFrame()->evaluateJavaScript(
         "document.getElementById('junk').style.display = 'none';");
 
-    ::waitForSignal(view.page(), SIGNAL(repaintRequested( const QRect &)));
+    ::waitForSignal(view.page(), SIGNAL(repaintRequested(QRect)));
 
     QTest::qWait(2000);
 }

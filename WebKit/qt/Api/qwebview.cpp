@@ -219,12 +219,12 @@ void QWebView::setPage(QWebPage* page)
         d->page->setPalette(palette());
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
-        connect(mainFrame, SIGNAL(titleChanged(const QString&)),
-                this, SIGNAL(titleChanged(const QString&)));
+        connect(mainFrame, SIGNAL(titleChanged(QString)),
+                this, SIGNAL(titleChanged(QString)));
         connect(mainFrame, SIGNAL(iconChanged()),
                 this, SIGNAL(iconChanged()));
-        connect(mainFrame, SIGNAL(urlChanged(const QUrl &)),
-                this, SIGNAL(urlChanged(const QUrl &)));
+        connect(mainFrame, SIGNAL(urlChanged(QUrl)),
+                this, SIGNAL(urlChanged(QUrl)));
 
         connect(d->page, SIGNAL(loadStarted()),
                 this, SIGNAL(loadStarted()));
@@ -232,10 +232,10 @@ void QWebView::setPage(QWebPage* page)
                 this, SIGNAL(loadProgress(int)));
         connect(d->page, SIGNAL(loadFinished(bool)),
                 this, SIGNAL(loadFinished(bool)));
-        connect(d->page, SIGNAL(statusBarMessage(const QString &)),
-                this, SIGNAL(statusBarMessage(const QString &)));
-        connect(d->page, SIGNAL(linkClicked(const QUrl &)),
-                this, SIGNAL(linkClicked(const QUrl &)));
+        connect(d->page, SIGNAL(statusBarMessage(QString)),
+                this, SIGNAL(statusBarMessage(QString)));
+        connect(d->page, SIGNAL(linkClicked(QUrl)),
+                this, SIGNAL(linkClicked(QUrl)));
 
         connect(d->page, SIGNAL(microFocusChanged()),
                 this, SLOT(updateMicroFocus()));

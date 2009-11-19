@@ -450,7 +450,7 @@ void tst_QWebPage::modified()
     m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fourth page"));
     QVERIFY(m_page->history()->count() == 2);
     m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fifth page"));
-    QVERIFY(::waitForSignal(m_page, SIGNAL(saveFrameStateRequested(QWebFrame*, QWebHistoryItem*))));
+    QVERIFY(::waitForSignal(m_page, SIGNAL(saveFrameStateRequested(QWebFrame*,QWebHistoryItem*))));
 }
 
 void tst_QWebPage::contextMenuCrash()
@@ -486,7 +486,7 @@ void tst_QWebPage::database()
         QFile::remove(dbFileName);
 
     qRegisterMetaType<QWebFrame*>("QWebFrame*");
-    QSignalSpy spy(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame *, QString)));
+    QSignalSpy spy(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame*,QString)));
     m_view->setHtml(QString("<html><head><script>var db; db=openDatabase('testdb', '1.0', 'test database API', 50000); </script></head><body><div></div></body></html>"), QUrl("http://www.myexample.com"));
     QTRY_COMPARE(spy.count(), 1);
     m_page->mainFrame()->evaluateJavaScript("var db2; db2=openDatabase('testdb', '1.0', 'test database API', 50000);");

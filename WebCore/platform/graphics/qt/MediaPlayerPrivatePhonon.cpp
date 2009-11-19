@@ -101,15 +101,15 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     foreach (QWidget* widget, qFindChildren<QWidget*>(m_videoWidget))
         widget->installEventFilter(this);
 
-    connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
-            this, SLOT(stateChanged(Phonon::State, Phonon::State)));
+    connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
+            this, SLOT(stateChanged(Phonon::State,Phonon::State)));
     connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(m_mediaObject, SIGNAL(seekableChanged(bool)), this, SLOT(seekableChanged(bool)));
     connect(m_mediaObject, SIGNAL(hasVideoChanged(bool)), this, SLOT(hasVideoChanged(bool)));
     connect(m_mediaObject, SIGNAL(bufferStatus(int)), this, SLOT(bufferStatus(int)));
     connect(m_mediaObject, SIGNAL(finished()), this, SLOT(finished()));
-    connect(m_mediaObject, SIGNAL(currentSourceChanged(const Phonon::MediaSource&)),
-            this, SLOT(currentSourceChanged(const Phonon::MediaSource&)));
+    connect(m_mediaObject, SIGNAL(currentSourceChanged(Phonon::MediaSource)),
+            this, SLOT(currentSourceChanged(Phonon::MediaSource)));
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
     connect(m_mediaObject, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
 }
