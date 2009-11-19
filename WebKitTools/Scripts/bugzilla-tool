@@ -853,54 +853,13 @@ class HelpPrintingOptionParser(OptionParser):
         self.exit(2, error_message)
 
 
-class BugzillaTool:
-    def __init__(self):
-        self.cached_scm = None
-        self.bugs = Bugzilla()
-        self.buildbot = BuildBot()
-        self.commands = [
-            { "name" : "bugs-to-commit", "object" : BugsToCommit() },
-            { "name" : "patches-to-commit", "object" : PatchesToCommit() },
-            { "name" : "reviewed-patches", "object" : ReviewedPatches() },
-            { "name" : "create-bug", "object" : CreateBug() },
-            { "name" : "apply-attachment", "object" : ApplyAttachment() },
-            { "name" : "apply-patches", "object" : ApplyPatches() },
-            { "name" : "land-diff", "object" : LandDiff() },
-            { "name" : "land-attachment", "object" : LandAttachment() },
-            { "name" : "land-patches", "object" : LandPatches() },
-            { "name" : "check-style", "object" : CheckStyle() },
-            { "name" : "commit-message", "object" : CommitMessageForCurrentDiff() },
-            { "name" : "obsolete-attachments", "object" : ObsoleteAttachments() },
-            { "name" : "post-diff", "object" : PostDiff() },
-            { "name" : "post-commits", "object" : PostCommits() },
-            { "name" : "tree-status", "object" : TreeStatus() },
-            { "name" : "commit-queue", "object" : CommitQueue() },
-            { "name" : "style-queue", "object" : StyleQueue() },
-            { "name" : "rollout", "object" : Rollout() },
-        ]
-
-        self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
-        self.global_option_parser.add_option("--dry-run", action="store_true", dest="dryrun", help="do not touch remote servers", default=False)
-
-    def scm(self):
-        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
-        original_cwd = os.path.abspath(".")
-        if not self.cached_scm:
-            self.cached_scm = detect_scm_system(original_cwd)
-        
-        if not self.cached_scm:
-            script_directory = os.path.abspath(sys.path[0])
-            webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
-            self.cached_scm = detect_scm_system(webkit_directory)
-            if self.cached_scm:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
-            else:
-                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
-        
-        return self.cached_scm
+class MultiCommandTool:
+    def __init__(self, commands):
+        self.commands = commands
+        self.global_option_parser = HelpPrintingOptionParser(usage=self._usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self._commands_usage())
 
     @staticmethod
-    def usage_line():
+    def _usage_line():
         return "Usage: %prog [options] command [command-options] [command-arguments]"
 
     # FIXME: This can all be simplified once Command objects know their own names.
@@ -921,14 +880,9 @@ class BugzillaTool:
         help_text += command['object'].option_parser.format_option_help(formatter)
         return help_text
 
-    def commands_usage(self):
-        if not self.scm().supports_local_commits():
-            command_filter = lambda command: not command["object"].requires_local_commits
-        else:
-            command_filter = None
-
+    def _commands_usage(self):
         # Only show commands which are relevant to this checkout.  This might be confusing to some users?
-        relevant_commands = filter(command_filter, self.commands)
+        relevant_commands = filter(self.should_show_command_help, self.commands)
         longest_name_length = max(map(lambda command: len(self._name_and_arguments(command)), relevant_commands))
         command_help_texts = map(lambda command: self._help_for_command(command, self._command_help_formatter(), longest_name_length), relevant_commands)
         return "Commands:\n" + "".join(command_help_texts)
@@ -936,15 +890,11 @@ class BugzillaTool:
     def handle_global_args(self, args):
         (options, args) = self.global_option_parser.parse_args(args)
         if len(args):
-            # We'll never hit this because split_args splits at the first arg without a leading "-"
+            # We'll never hit this because _split_args splits at the first arg without a leading "-"
             self.global_option_parser.error("Extra arguments before command: " + args)
-        
-        if options.dryrun:
-            self.scm().dryrun = True
-            self.bugs.dryrun = True
-    
+
     @staticmethod
-    def split_args(args):
+    def _split_args(args):
         # Assume the first argument which doesn't start with "-" is the command name.
         command_index = 0
         for arg in args:
@@ -958,19 +908,25 @@ class BugzillaTool:
         command = args[command_index]
         command_args = args[command_index + 1:]
         return (global_args, command, command_args)
-    
+
     def command_by_name(self, command_name):
         for command in self.commands:
             if command_name == command["name"]:
                 return command
         return None
-    
+
+    def should_show_command_help(self, command):
+        raise NotImplementedError, "subclasses must implement"
+
+    def should_execute_command(self, command):
+        raise NotImplementedError, "subclasses must implement"
+
     def main(self):
-        (global_args, command_name, args_after_command_name) = self.split_args(sys.argv[1:])
-        
+        (global_args, command_name, args_after_command_name) = self._split_args(sys.argv[1:])
+
         # Handle --help, etc:
         self.handle_global_args(global_args)
-        
+
         if not command_name:
             self.global_option_parser.error("No command specified")
 
@@ -980,16 +936,80 @@ class BugzillaTool:
 
         command_object = command["object"]
 
-        if command_object.requires_local_commits and not self.scm().supports_local_commits():
-            error(command_name + " requires local commits using %s in %s." % (self.scm().display_name(), self.scm().checkout_root))
+        (should_execute, failure_reason) = self.should_execute_command(command)
+        if not should_execute:
+            error(failure_reason)
 
         (command_options, command_args) = command_object.parse_args(args_after_command_name)
         return command_object.execute(command_options, command_args, self)
 
 
-def main():
-    tool = BugzillaTool()
-    return tool.main()
+class BugzillaTool(MultiCommandTool):
+    def __init__(self):
+        # HACK: Set self.cached_scm before calling MultiCommandTool.__init__ because
+        # MultiCommandTool._commands_usage() will call self.should_show_command_help which uses scm().
+        # This hack can be removed by overriding usage() printing in HelpPrintingOptionParser
+        # so that we don't need to create 'epilog' before constructing HelpPrintingOptionParser.
+        self.cached_scm = None
+        
+        # FIXME: Commands should know their own name and register themselves with the BugzillaTool instead of having a manual list.
+        MultiCommandTool.__init__(self, commands=[
+            { "name" : "bugs-to-commit", "object" : BugsToCommit() },
+            { "name" : "patches-to-commit", "object" : PatchesToCommit() },
+            { "name" : "reviewed-patches", "object" : ReviewedPatches() },
+            { "name" : "create-bug", "object" : CreateBug() },
+            { "name" : "apply-attachment", "object" : ApplyAttachment() },
+            { "name" : "apply-patches", "object" : ApplyPatches() },
+            { "name" : "land-diff", "object" : LandDiff() },
+            { "name" : "land-attachment", "object" : LandAttachment() },
+            { "name" : "land-patches", "object" : LandPatches() },
+            { "name" : "check-style", "object" : CheckStyle() },
+            { "name" : "commit-message", "object" : CommitMessageForCurrentDiff() },
+            { "name" : "obsolete-attachments", "object" : ObsoleteAttachments() },
+            { "name" : "post-diff", "object" : PostDiff() },
+            { "name" : "post-commits", "object" : PostCommits() },
+            { "name" : "tree-status", "object" : TreeStatus() },
+            { "name" : "commit-queue", "object" : CommitQueue() },
+            { "name" : "style-queue", "object" : StyleQueue() },
+            { "name" : "rollout", "object" : Rollout() },
+        ])
+        self.global_option_parser.add_option("--dry-run", action="callback", help="do not touch remote servers", callback=self.dry_run_callback)
+
+        self.bugs = Bugzilla()
+        self.buildbot = BuildBot()
+
+    def dry_run_callback(self, option, opt, value, parser):
+        self.scm().dryrun = True
+        self.bugs.dryrun = True
+
+    def scm(self):
+        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
+        original_cwd = os.path.abspath(".")
+        if not self.cached_scm:
+            self.cached_scm = detect_scm_system(original_cwd)
+
+        if not self.cached_scm:
+            script_directory = os.path.abspath(sys.path[0])
+            webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
+            self.cached_scm = detect_scm_system(webkit_directory)
+            if self.cached_scm:
+                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
+            else:
+                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
+
+        return self.cached_scm
+
+    def should_show_command_help(self, command):
+        if command["object"].requires_local_commits:
+            return self.scm().supports_local_commits()
+        return True
+
+    def should_execute_command(self, command):
+        if command["object"].requires_local_commits and not self.scm().supports_local_commits():
+            failure_reason = "%s requires local commits using %s in %s." % (command["name"], self.scm().display_name(), self.scm().checkout_root)
+            return (False, failure_reason)
+        return (True, None)
+
 
 if __name__ == "__main__":
-    main()
+    BugzillaTool().main()

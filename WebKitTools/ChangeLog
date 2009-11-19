@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        Split out command parsing and help printing from BugzillaTool
+        https://bugs.webkit.org/show_bug.cgi?id=31688
+
+        * Scripts/bugzilla-tool:
+         - Add new MultiCommandTool class to contain option parsing and help printing logic.
+         - Rename private methods to use _ pattern.
+         - MultiCommandTool has two abstract methods should_show_command_help and should_execute_command.
+         - 
+
+2009-11-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Re-factor help printing to use modern python idioms
         https://bugs.webkit.org/show_bug.cgi?id=31685
 
