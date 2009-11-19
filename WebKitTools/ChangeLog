@@ -1,3 +1,12 @@
+2009-11-19  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Ignore websocket tests when --no-http is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=31662
+
+        * Scripts/run-webkit-tests:
+
 2009-11-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -417,6 +417,7 @@ if (checkWebCoreSVGSupport(0)) {
 
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
+    $ignoredDirectories{'websocket'} = 1;
 }
 
 if (!$testMedia) {
