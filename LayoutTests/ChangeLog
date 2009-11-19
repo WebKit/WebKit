@@ -1,3 +1,15 @@
+2009-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA roles not supported on image map <area>
+        https://bugs.webkit.org/show_bug.cgi?id=31525
+
+        * accessibility/aria-used-on-image-maps-expected.txt: Added.
+        * accessibility/aria-used-on-image-maps.html: Added.
+        * platform/gtk/Skipped:
+        * platform/win/Skipped:
+
 2009-11-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

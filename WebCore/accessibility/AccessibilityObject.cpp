@@ -840,6 +840,90 @@ AccessibilityOrientation AccessibilityObject::orientation() const
 
     // A tie goes to horizontal.
     return AccessibilityOrientationHorizontal;
+}    
+
+typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
+
+struct RoleEntry {
+    String ariaRole;
+    AccessibilityRole webcoreRole;
+};
+
+static ARIARoleMap* createARIARoleMap()
+{
+    const RoleEntry roles[] = {
+        { "alert", ApplicationAlertRole },
+        { "alertdialog", ApplicationAlertDialogRole },
+        { "application", LandmarkApplicationRole },
+        { "article", DocumentArticleRole },
+        { "banner", LandmarkBannerRole },
+        { "button", ButtonRole },
+        { "checkbox", CheckBoxRole },
+        { "complementary", LandmarkComplementaryRole },
+        { "contentinfo", LandmarkContentInfoRole },
+        { "dialog", ApplicationDialogRole },
+        { "directory", DirectoryRole },
+        { "grid", TableRole },
+        { "gridcell", CellRole },
+        { "columnheader", ColumnHeaderRole },
+        { "combobox", ComboBoxRole },
+        { "definition", DefinitionListDefinitionRole },
+        { "document", DocumentRole },
+        { "rowheader", RowHeaderRole },
+        { "group", GroupRole },
+        { "heading", HeadingRole },
+        { "img", ImageRole },
+        { "link", WebCoreLinkRole },
+        { "list", ListRole },        
+        { "listitem", GroupRole },        
+        { "listbox", ListBoxRole },
+        { "log", ApplicationLogRole },
+        // "option" isn't here because it may map to different roles depending on the parent element's role
+        { "main", LandmarkMainRole },
+        { "marquee", ApplicationMarqueeRole },
+        { "menu", MenuRole },
+        { "menubar", GroupRole },
+        // "menuitem" isn't here because it may map to different roles depending on the parent element's role
+        { "menuitemcheckbox", MenuItemRole },
+        { "menuitemradio", MenuItemRole },
+        { "note", DocumentNoteRole },
+        { "navigation", LandmarkNavigationRole },
+        { "option", ListBoxOptionRole },
+        { "presentation", IgnoredRole },
+        { "progressbar", ProgressIndicatorRole },
+        { "radio", RadioButtonRole },
+        { "radiogroup", RadioGroupRole },
+        { "region", DocumentRegionRole },
+        { "row", RowRole },
+        { "range", SliderRole },
+        { "search", LandmarkSearchRole },
+        { "separator", SplitterRole },
+        { "slider", SliderRole },
+        { "spinbutton", ProgressIndicatorRole },
+        { "status", ApplicationStatusRole },
+        { "tab", TabRole },
+        { "tablist", TabListRole },
+        { "tabpanel", TabPanelRole },
+        { "textbox", TextAreaRole },
+        { "timer", ApplicationTimerRole },
+        { "toolbar", ToolbarRole },
+        { "tooltip", UserInterfaceTooltipRole },
+        { "tree", TreeRole },
+        { "treeitem", TreeItemRole }
+    };
+    ARIARoleMap* roleMap = new ARIARoleMap;
+    
+    const unsigned numRoles = sizeof(roles) / sizeof(roles[0]);
+    for (unsigned i = 0; i < numRoles; ++i)
+        roleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
+    return roleMap;
+}
+
+AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value)
+{
+    ASSERT(!value.isEmpty());
+    static const ARIARoleMap* roleMap = createARIARoleMap();
+    return roleMap->get(value);
 }
     
 } // namespace WebCore

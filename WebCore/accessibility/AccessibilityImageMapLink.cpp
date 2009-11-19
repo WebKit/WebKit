@@ -68,6 +68,18 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
     return m_mapElement->document()->axObjectCache()->getOrCreate(m_mapElement->renderer());
 }
     
+AccessibilityRole AccessibilityImageMapLink::roleValue() const
+{
+    if (!m_areaElement)
+        return WebCoreLinkRole;
+    
+    const AtomicString& ariaRole = m_areaElement->getAttribute(roleAttr);
+    if (!ariaRole.isEmpty())
+        return AccessibilityObject::ariaRoleToWebCoreRole(ariaRole);
+
+    return WebCoreLinkRole;
+}
+    
 Element* AccessibilityImageMapLink::actionElement() const
 {
     return anchorElement();
