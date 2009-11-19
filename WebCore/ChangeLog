@@ -1,3 +1,12 @@
+2009-11-18  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Implement TextBreakIterator for WINCE port.
+        https://bugs.webkit.org/show_bug.cgi?id=27371
+
+        * platform/text/wince/TextBreakIteratorWince.cpp: Added.
+
 2009-11-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
