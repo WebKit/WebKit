@@ -239,6 +239,14 @@ class Bugzilla:
     def _view_source_link(self, local_path):
         return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
+    def _flag_permission_rejection_message(self, setter_email, flag_name):
+        committer_list = "WebKitTools/Scripts/modules/committers.py"
+        contribution_guidlines_url = "http://webkit.org/coding/contributing.html"
+        rejection_message = "%s does not have %s permissions according to %s." % (setter_email, flag_name, self._view_source_link(committer_list))
+        rejection_message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed) and then set the %s flag again." % (flag_name, committer_list, flag_name)
+        rejection_message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (flag_name, contribution_guidlines_url)
+        return rejection_message
+
     def _validate_setter_email(self, patch, result_key, lookup_function, rejection_function, reject_invalid_patches):
         setter_email = patch.get(result_key + '_email')
         if not setter_email:
@@ -250,9 +258,7 @@ class Bugzilla:
             return patch[result_key]
 
         if reject_invalid_patches:
-            committer_list = "WebKitTools/Scripts/modules/committers.py"
-            failure_message = "%s does not have %s permissions according to %s." % (setter_email, result_key, self._view_source_link(committer_list))
-            rejection_function(patch['id'], failure_message)
+            rejection_function(patch['id'], self._flag_permission_rejection_message(setter_email, result_key))
         else:
             log("Warning, attachment %s on bug %s has invalid %s (%s)" % (patch['id'], patch['bug_id'], result_key, setter_email))
         return None

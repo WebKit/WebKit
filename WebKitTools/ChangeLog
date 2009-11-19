@@ -1,3 +1,14 @@
+2009-11-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        bugzilla-tool's reviewer/committer rejection message should be clearer
+        https://bugs.webkit.org/show_bug.cgi?id=31126
+
+        Add more explanatory prose to bugzilla-tool's flag permission rejection message.
+
+        * Scripts/modules/bugzilla.py:
+
 2009-11-19  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
