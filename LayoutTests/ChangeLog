@@ -1,3 +1,9 @@
+2009-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Trying to enable WebSocket tests on Tiger again, as the bot seems to behave now.
+
+        * platform/mac-tiger/Skipped:
+
 2009-11-19  Rahul Kuchhal  <kuchhal@chromium.org>
 
         Reviewed by Darin Adler.
