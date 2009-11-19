@@ -2,6 +2,14 @@
 
        Build fix. No review needed.
 
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+        * platform/graphics/qt/StillImageQt.h:
+
+2009-11-19  Beth Dakin  <bdakin@apple.com>
+
+       Build fix. No review needed.
+
         * rendering/RenderThemeWin.cpp:
         (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
         (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):
