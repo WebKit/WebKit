@@ -1,3 +1,14 @@
+2009-11-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        workqueue.py results in totally broken commit-queue UI
+        https://bugs.webkit.org/show_bug.cgi?id=31645
+
+        * Scripts/bugzilla-tool:
+         - Remove unneeded use of PatchCollection.
+         - Grab a new copy of the cq'd patches every run of the queue.
+
 2009-11-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

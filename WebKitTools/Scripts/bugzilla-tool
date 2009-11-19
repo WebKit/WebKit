@@ -785,14 +785,11 @@ class CommitQueue(AbstractQueue):
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
-        self._patches = PatchCollection(self.tool.bugs)
 
     def next_work_item(self):
-        if not len(self._patches):
-            # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
-            self._patches.add_patches(self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True))
-        self.log_progress(self._patches.patch_ids())
-        return self._patches.next()
+        patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+        self.log_progress([patch['id'] for patch in patches])
+        return patches[0] if patches else None
 
     def should_proceed_with_work_item(self, patch):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
