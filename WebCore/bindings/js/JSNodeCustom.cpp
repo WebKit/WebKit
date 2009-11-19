@@ -148,22 +148,28 @@ void JSNode::markChildren(MarkStack& markStack)
         return;
     }
 
-    // This is a node outside the document, so find the root of the tree it is in,
-    // and start marking from there.
+    // This is a node outside the document.
+    // Find the the root, and the highest ancestor with a wrapper.
     Node* root = node;
-    for (Node* current = m_impl.get(); current; current = current->parentNode())
+    Node* outermostNodeWithWrapper = node;
+    for (Node* current = m_impl.get(); current; current = current->parentNode()) {
         root = current;
+        if (getCachedDOMNodeWrapper(current->document(), current))
+            outermostNodeWithWrapper = current;
+    }
 
-    // Nodes in a subtree are marked by the tree's root, so, if the root is already
-    // marking the tree, we don't need to explicitly mark any other nodes.
-    if (root->inSubtreeMark())
+    // Only nodes that have no ancestors with wrappers mark the subtree. In the common
+    // case, the root of the detached subtree has a wrapper, so the tree will only
+    // get marked once. Nodes that aren't outermost need to mark the outermost
+    // in case it is otherwise unreachable.
+    if (node != outermostNodeWithWrapper) {
+        markDOMNodeWrapper(markStack, m_impl->document(), outermostNodeWithWrapper);
         return;
+    }
 
     // Mark the whole tree subtree.
-    root->setInSubtreeMark(true);
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode())
         markDOMNodeWrapper(markStack, m_impl->document(), nodeToMark);
-    root->setInSubtreeMark(false);
 }
 
 static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

@@ -289,9 +289,6 @@ public:
     void setNeedsStyleRecalc(StyleChangeType changeType = FullStyleChange);
     void setIsLink(bool b = true) { m_isLink = b; }
 
-    bool inSubtreeMark() const { return m_inSubtreeMark; }
-    void setInSubtreeMark(bool b = true) { m_inSubtreeMark = b; }
-
     void lazyAttach();
     virtual bool canLazyAttach();
 
@@ -623,7 +620,6 @@ private:
     bool m_hovered : 1;
     bool m_inActiveChain : 1;
     bool m_inDetach : 1;
-    bool m_inSubtreeMark : 1;
     bool m_hasRareData : 1;
     const bool m_isElement : 1;
     const bool m_isContainer : 1;

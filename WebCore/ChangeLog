@@ -1,3 +1,21 @@
+2009-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix REGRESSION (r47022): Performance of DocumentFragment.appendChild is 1000x slower sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=31237
+        
+        Also speeds up Dromaeo DOM Core tests by 1.31x.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren): Change marking algorithm to avoid O(N^2) behavior. The subtree
+        mark bit was no longer effective; instead I changed things so only a node that has no ancestors
+        with wrappers would do marking; there should be only one in the typical case (the root of the
+        detached subtree).
+        * dom/Node.cpp:
+        (WebCore::Node::Node): Remove now useless m_inSubtreeMark bit and related functions.
+        * dom/Node.h: ditto
+
 2009-11-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
