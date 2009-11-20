@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +51,9 @@ typedef struct HWND__* HWND;
 typedef HWND PlatformPluginWidget;
 #else
 typedef PlatformWidget PlatformPluginWidget;
+#if defined(XP_MACOSX) && PLATFORM(QT)
+#include <QPixmap>
+#endif
 #endif
 
 namespace JSC {
@@ -326,6 +330,11 @@ private:
         NP_CGContext m_npCgContext;
         NPDrawingModel m_drawingModel;
         NPEventModel m_eventModel;
+        CGContextRef m_contextRef;
+        WindowRef m_fakeWindow;
+#if PLATFORM(QT)
+        QPixmap m_pixmap;
+#endif
 
         void setNPWindowIfNeeded();
         Point globalMousePosForPlugin() const;

@@ -1,3 +1,43 @@
+2009-11-18  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        Patch by Yongjun Zhang <yongjun.zhang@nokia.com> and
+                 Girish Ramakrishnan <girish@forwardbias.in>
+        
+        [Qt] Implement support for rendering plugins on Qt/Mac when a page is used
+        without a QWebView or when inside QGraphicsWebView.
+        
+        Currently, the code provides the cgcontext of the PlatformPluginWidget to
+        the plugin. This approach does not work when we are printing, or using
+        QWebFrame::render() to render to a QImage/QPixmap since the plugin ends
+        up drawing on the QWebView (i.e platformPluginWidget's cgcontext) instead
+        of the QPaintDevice's context.
+        
+        To solve all cases and keep the code simple, we render the plugin to an
+        offscreen pixmap in all cases. This way, the plugin always renders to the
+        CGContext of the pixmap and we then use QPainter to blit the pixmap into
+        the QPaintDevice. We also create a fake window and set it's WindowRef in
+        NPWindow. Only with this WindowRef does Flash paint correctly to the QPixmap.
+        
+        Now, that's the theory. In practice, ATM, mouse events do not work when using
+        the fake window. So, setPlatformPluginWidget() is still called when using QWebView
+        so that there are no regressions after this patch. Once we get mouse events
+        working, setPlatformPluginWidget will be removed.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31183
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::invalidateRect):
+
 2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

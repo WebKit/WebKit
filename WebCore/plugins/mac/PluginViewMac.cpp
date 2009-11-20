@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +76,7 @@ using JSC::UString;
 #if PLATFORM(QT)
 #include <QWidget>
 #include <QKeyEvent>
+#include <QPainter>
 #include "QWebPageClient.h"
 QT_BEGIN_NAMESPACE
 #if QT_VERSION < 0x040500
@@ -173,12 +175,19 @@ bool PluginView::platformStart()
     }
 
 #if PLATFORM(QT)
+    // Set the platformPluginWidget only in the case of QWebView until we get mouse events working. 
+    // In all other cases, we use off-screen rendering
     if (QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient()) {
-        if (QWidget* widget = client->ownerWidget()) {
+        if (QWidget* widget = qobject_cast<QWidget*>(client->pluginParent()))
             setPlatformPluginWidget(widget);
-        }
     }
 #endif
+
+    // Create a fake window relative to which all events will be sent when using offscreen rendering
+    if (!platformPluginWidget()) {
+        ::Rect windowBounds = { 0, 0, 100, 100 };
+        CreateNewWindow(kDocumentWindowClass, kWindowStandardDocumentAttributes, &windowBounds, &m_fakeWindow);
+    }
 
     show();
 
@@ -189,6 +198,11 @@ void PluginView::platformDestroy()
 {
     if (platformPluginWidget())
         setPlatformPluginWidget(0);
+    else {
+        CGContextRelease(m_contextRef);
+        if (m_fakeWindow)
+            DisposeWindow(m_fakeWindow);
+    }
 }
 
 // Used before the plugin view has been initialized properly, and as a
@@ -353,15 +367,21 @@ void PluginView::setNPWindowIfNeeded()
     if (!m_isStarted || !parent() || !m_plugin->pluginFuncs()->setwindow)
         return;
 
-    CGContextRef newContextRef = cgHandleFor(platformPluginWidget());
-    if (!newContextRef)
+    CGContextRef newContextRef = 0;
+    WindowRef newWindowRef = 0;
+    if (platformPluginWidget()) {
+        newContextRef = cgHandleFor(platformPluginWidget());
+        newWindowRef = nativeWindowFor(platformPluginWidget());
+        m_npWindow.type = NPWindowTypeWindow;
+    } else {
+        newContextRef = m_contextRef;
+        newWindowRef = m_fakeWindow;
+        m_npWindow.type = NPWindowTypeDrawable;
+    }
+
+    if (!newContextRef || !newWindowRef)
         return;
 
-    WindowRef newWindowRef = nativeWindowFor(platformPluginWidget());
-    if (!newWindowRef)
-        return;
-
-    m_npWindow.type = NPWindowTypeWindow;
     m_npWindow.window = (void*)&m_npCgContext;
     m_npCgContext.window = newWindowRef;
     m_npCgContext.context = newContextRef;
@@ -405,6 +425,17 @@ void PluginView::updatePluginWidget()
     IntPoint offset = topLevelOffsetFor(platformPluginWidget());
     m_windowRect.move(offset.x(), offset.y());
 
+    if (!platformPluginWidget()) {
+        if (m_windowRect.size() != oldWindowRect.size()) {
+            CGContextRelease(m_contextRef);
+#if PLATFORM(QT)
+            m_pixmap = QPixmap(m_windowRect.size());
+            m_pixmap.fill(Qt::transparent);
+            m_contextRef = qt_mac_cg_context(&m_pixmap);
+#endif
+        }
+    }
+
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -429,8 +460,29 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     CGContextSaveGState(cgContext);
-    IntPoint offset = frameRect().location();
-    CGContextTranslateCTM(cgContext, offset.x(), offset.y());
+    if (platformPluginWidget()) {
+        IntPoint offset = frameRect().location();
+        CGContextTranslateCTM(cgContext, offset.x(), offset.y());
+    }
+
+    IntRect targetRect(frameRect());
+    targetRect.intersects(rect);
+
+    // clip the context so that plugin only updates the interested area.
+    CGRect r;
+    r.origin.x = targetRect.x() - frameRect().x();
+    r.origin.y = targetRect.y() - frameRect().y();
+    r.size.width = targetRect.width();
+    r.size.height = targetRect.height();
+    CGContextClipToRect(cgContext, r);
+
+    if (!platformPluginWidget() && m_isTransparent) { // clean the pixmap in transparent mode
+#if PLATFORM(QT)
+        QPainter painter(&m_pixmap);
+        painter.setCompositionMode(QPainter::CompositionMode_Clear);
+        painter.fillRect(QRectF(r.origin.x, r.origin.y, r.size.width, r.size.height), Qt::transparent);
+#endif
+    }
 
     EventRecord event;
     event.what = updateEvt;
@@ -444,18 +496,28 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         LOG(Events, "PluginView::paint(): Paint event not accepted");
 
     CGContextRestoreGState(cgContext);
+
+    if (!platformPluginWidget()) {
+#if PLATFORM(QT)
+        QPainter* painter = context->platformContext();
+        painter->drawPixmap(targetRect.x(), targetRect.y(), m_pixmap, 
+                            targetRect.x() - frameRect().x(), targetRect.y() - frameRect().y(), targetRect.width(), targetRect.height());
+#endif
+    }
 }
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
     if (platformPluginWidget())
         platformPluginWidget()->update(convertToContainingWindow(rect));
+    else
+        invalidateWindowlessPluginRect(rect);
 }
 
 void PluginView::invalidateRect(NPRect* rect)
 {
-    // TODO: optimize
-    invalidate();
+    IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
+    invalidateRect(r);
 }
 
 void PluginView::invalidateRegion(NPRegion region)
