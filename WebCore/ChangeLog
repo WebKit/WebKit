@@ -1,4 +1,15 @@
 2009-11-19  Beth Dakin  <bdakin@apple.com>
+      
+       Build fix. No review needed.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+        (WebCore::RenderThemeChromiumSkia::paintRadio):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+
+2009-11-19  Beth Dakin  <bdakin@apple.com>
 
        Build fix. No review needed.
 
