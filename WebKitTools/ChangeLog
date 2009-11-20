@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        bugzilla-tool needs per-command help
+        https://bugs.webkit.org/show_bug.cgi?id=31697
+
+        Added support for "bugzilla-tool help command-name"
+        and a unit test to make sure it works.
+
+        * Scripts/modules/multicommandtool.py:
+        * Scripts/modules/multicommandtool_unittest.py:
+
+2009-11-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Move MultiCommandTool and Command into a separate file and add some basic unit tests
         https://bugs.webkit.org/show_bug.cgi?id=31695
 

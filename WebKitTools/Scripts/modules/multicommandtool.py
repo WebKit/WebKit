@@ -35,6 +35,8 @@ import sys
 
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
+from modules.logging import log
+
 class Command:
     def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
         self.help_text = help_text
@@ -104,6 +106,10 @@ class MultiCommandTool:
         help_text += command['object'].option_parser.format_option_help(formatter)
         return help_text
 
+    @classmethod
+    def _standalone_help_for_command(cls, command):
+        return cls._help_for_command(command, IndentedHelpFormatter(), len(cls._name_and_arguments(command)))
+
     def _commands_usage(self):
         # Only show commands which are relevant to this checkout.  This might be confusing to some users?
         relevant_commands = filter(self.should_show_command_help, self.commands)
@@ -145,8 +151,9 @@ class MultiCommandTool:
     def should_execute_command(self, command):
         raise NotImplementedError, "subclasses must implement"
 
-    def main(self):
-        (global_args, command_name, args_after_command_name) = self._split_args(sys.argv[1:])
+
+    def main(self, argv=sys.argv):
+        (global_args, command_name, args_after_command_name) = self._split_args(argv[1:])
 
         # Handle --help, etc:
         self.handle_global_args(global_args)
@@ -154,13 +161,22 @@ class MultiCommandTool:
         if not command_name:
             self.global_option_parser.error("No command specified")
 
+        if command_name == "help":
+            if args_after_command_name:
+                command = self.command_by_name(args_after_command_name[0])
+                log(self._standalone_help_for_command(command))
+            else:
+                self.global_option_parser.print_help()
+            return 0
+
         command = self.command_by_name(command_name)
         if not command:
             self.global_option_parser.error(command_name + " is not a recognized command")
 
         (should_execute, failure_reason) = self.should_execute_command(command)
         if not should_execute:
-            error(failure_reason)
+            log(failure_reason)
+            return 0
 
         command_object = command["object"]
         (command_options, command_args) = command_object.parse_args(args_after_command_name)

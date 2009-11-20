@@ -26,8 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 from multicommandtool import MultiCommandTool, Command
+from StringIO import StringIO
 
 from optparse import make_option
 
@@ -60,6 +62,17 @@ class TrivialTool(MultiCommandTool):
 
 
 class MultiCommandToolTest(unittest.TestCase):
+
+    def _capture_stderr(self):
+        self.saved_stderr = sys.stderr
+        sys.stderr = StringIO()
+
+    def _release_stderr(self):
+        string = sys.stderr.getvalue()
+        sys.stderr = self.saved_stderr
+        self.saved_stderr = None
+        return string
+
     def _assert_split(self, args, expected_split):
         self.assertEqual(MultiCommandTool._split_args(args), expected_split)
 
@@ -83,6 +96,18 @@ class MultiCommandToolTest(unittest.TestCase):
 
         self.assertEqual(tool.command_by_name("foo_command"), foo_command)
         self.assertEqual(tool.command_by_name("bar"), None)
+
+    def test_command_help(self):
+        command_with_args = TrivialCommand(options=[make_option("--my_option")])
+        foo_command = { "name" : "foo_command", "object" :  command_with_args }
+        tool = TrivialTool([foo_command])
+
+        self._capture_stderr()
+        exit_code = tool.main(["tool", "help", "foo_command"])
+        help_text = self._release_stderr()
+        expected_subcommand_help = "  foo_command [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(help_text, expected_subcommand_help)
 
 
 if __name__ == "__main__":
