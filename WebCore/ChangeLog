@@ -1,3 +1,16 @@
+2009-11-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes <http://webkit.org/b/22754>.
+        Web Inspector: Keyboard shortcut for Element finder.
+
+        Use Command + Shift + C as a shortcut for Node Search, to 
+        match the Firebug shortcut to do the same thing.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.handleKeyEvent):
+
 2009-11-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
