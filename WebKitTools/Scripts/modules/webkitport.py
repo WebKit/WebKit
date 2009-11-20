@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2009, Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -26,21 +25,57 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# WebKit's Python module for understanding the various ports
 
-import unittest
+import os
 
-from modules.bugzilla_unittest import *
-from modules.buildbot_unittest import *
-from modules.changelogs_unittest import *
-from modules.committers_unittest import *
-from modules.cpp_style_unittest import *
-from modules.diff_parser_unittest import *
-from modules.logging_unittest import *
-from modules.multicommandtool_unittest import *
-from modules.patchcollection_unittest import *
-from modules.scm_unittest import *
-from modules.webkitport_unittest import *
-from modules.workqueue_unittest import *
+from optparse import make_option
 
-if __name__ == "__main__":
-    unittest.main()
+class WebKitPort():
+    # We might need to pass scm into this function for scm.checkout_root
+    @classmethod
+    def script_path(cls, script_name):
+        return os.path.join("WebKitTools", "Scripts", script_name)
+
+    @staticmethod
+    def port_options():
+        return [
+            make_option("--qt", action="store_true", dest="qt", default=False, help="Use the Qt port."),
+        ]
+
+    @staticmethod
+    def get_port(options):
+        if options.qt:
+            return QtPort
+        return MacPort
+
+    @classmethod
+    def name(cls):
+        raise NotImplementedError, "subclasses must implement"
+
+    @classmethod
+    def run_webkit_tests_command(cls):
+        return [cls.script_path("run-webkit-tests")]
+
+    @classmethod
+    def build_webkit_command(cls):
+        return [cls.script_path("build-webkit")]
+
+
+class MacPort(WebKitPort):
+    @classmethod
+    def name(cls):
+        return "Mac"
+
+
+class QtPort(WebKitPort):
+    @classmethod
+    def name(cls):
+        return "Qt"
+
+    @classmethod
+    def build_webkit_command(cls):
+        command = WebKitPort.build_webkit_command()
+        command.append("--qt")
+        return command

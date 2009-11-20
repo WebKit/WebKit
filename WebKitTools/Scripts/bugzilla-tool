@@ -50,6 +50,7 @@ from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.statusbot import StatusBot
+from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 
@@ -213,7 +214,7 @@ class WebKitLandingScripts:
             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
             make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible."),
-        ]
+        ] + WebKitPort.port_options()
 
     @staticmethod
     def run_command_with_teed_output(args, teed_output):
@@ -244,19 +245,15 @@ class WebKitLandingScripts:
         if exit_code:
             raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
 
-    # We might need to pass scm into this function for scm.checkout_root
-    @staticmethod
-    def webkit_script_path(script_name):
-        return os.path.join("WebKitTools", "Scripts", script_name)
-
     @classmethod
-    def run_webkit_script(cls, script_name, quiet=False):
+    def run_webkit_script(cls, script_name, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
-        cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
+        cls.run_and_throw_if_fail(port.script_path(script_name), quiet)
 
     @classmethod
-    def build_webkit(cls, quiet=False):
-        cls.run_webkit_script("build-webkit", quiet)
+    def build_webkit(cls, quiet=False, port=WebKitPort):
+        log("Building WebKit")
+        cls.run_and_throw_if_fail(port.build_webkit_command(), quiet)
 
     @staticmethod
     def ensure_builders_are_green(buildbot, options):
@@ -265,8 +262,8 @@ class WebKitLandingScripts:
         error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
 
     @classmethod
-    def run_webkit_tests(cls, launch_safari, fail_fast=False, quiet=False):
-        args = [cls.webkit_script_path("run-webkit-tests")]
+    def run_webkit_tests(cls, launch_safari, fail_fast=False, quiet=False, port=WebKitPort):
+        args = port.run_webkit_tests_command()
         if not launch_safari:
             args.append("--no-launch-safari")
         if quiet:
@@ -285,11 +282,12 @@ class WebKitLandingScripts:
 
     @classmethod
     def build_and_commit(cls, scm, options):
+        port = WebKitPort.get_port(options)
         if options.build:
-            cls.build_webkit(quiet=options.quiet)
+            cls.build_webkit(quiet=options.quiet, port=port)
             if options.test:
                 # When running the commit-queue we don't want to launch Safari and we want to exit after the first failure.
-                cls.run_webkit_tests(launch_safari=not options.non_interactive, fail_fast=options.non_interactive, quiet=options.quiet)
+                cls.run_webkit_tests(launch_safari=not options.non_interactive, fail_fast=options.non_interactive, quiet=options.quiet, port=port)
         commit_message = commit_message_for_this_commit(scm)
         commit_log = scm.commit_with_message(commit_message.message())
         return bug_comment_from_commit_text(scm, commit_log)

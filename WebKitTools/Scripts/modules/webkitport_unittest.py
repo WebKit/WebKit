@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2009, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,18 +29,19 @@
 
 import unittest
 
-from modules.bugzilla_unittest import *
-from modules.buildbot_unittest import *
-from modules.changelogs_unittest import *
-from modules.committers_unittest import *
-from modules.cpp_style_unittest import *
-from modules.diff_parser_unittest import *
-from modules.logging_unittest import *
-from modules.multicommandtool_unittest import *
-from modules.patchcollection_unittest import *
-from modules.scm_unittest import *
-from modules.webkitport_unittest import *
-from modules.workqueue_unittest import *
+from modules.webkitport import WebKitPort, MacPort, QtPort
 
-if __name__ == "__main__":
+class WebKitPortTest(unittest.TestCase):
+    def test_mac_port(self):
+        self.assertEquals(MacPort.name(), "Mac")
+        self.assertEquals(MacPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
+        self.assertEquals(MacPort.build_webkit_command(), [WebKitPort.script_path("build-webkit")])
+
+    def test_qt_port(self):
+        self.assertEquals(QtPort.name(), "Qt")
+        self.assertEquals(QtPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
+        self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt"])
+
+
+if __name__ == '__main__':
     unittest.main()
