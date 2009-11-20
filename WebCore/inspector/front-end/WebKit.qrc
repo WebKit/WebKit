@@ -9,6 +9,7 @@
     <file>CallStackSidebarPane.js</file>
     <file>ChangesView.js</file>
     <file>Color.js</file>
+    <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
     <file>CookieItemsView.js</file>
     <file>Database.js</file>
@@ -75,6 +76,7 @@
     <file>Images/closeButtons.png</file>
     <file>Images/consoleButtonGlyph.png</file>
     <file>Images/cookie.png</file>
+    <file>Images/consoleIcon.png</file>
     <file>Images/database.png</file>
     <file>Images/databaseTable.png</file>
     <file>Images/debuggerContinue.png</file>

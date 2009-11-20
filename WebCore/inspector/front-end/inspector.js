@@ -72,20 +72,21 @@ var WebInspector = {
     resourceURLMap: {},
     cookieDomains: {},
     missingLocalizedStrings: {},
-    
+    pendingDispatches: 0,
+
     get platform()
     {
         if (!("_platform" in this))
             this._platform = InspectorController.platform();
-        
+
         return this._platform;
     },
-    
+
     get port()
     {
         if (!("_port" in this))
             this._port = InspectorController.port();
-        
+
         return this._port;
     },
 
@@ -186,6 +187,8 @@ var WebInspector = {
 
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();
+        if (hiddenPanels.indexOf("console") === -1)
+            this.panels.console = new WebInspector.ConsolePanel();
     },
 
     _loadPreferences: function()
@@ -412,7 +415,6 @@ WebInspector.loaded = function()
     document.body.addStyleClass("port-" + port);
 
     this._loadPreferences();
-    this.pendingDispatches = 0;
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
@@ -551,6 +553,7 @@ WebInspector.windowResize = function(event)
 {
     if (this.currentPanel && this.currentPanel.resize)
         this.currentPanel.resize();
+    this.drawer.resize();
 }
 
 WebInspector.windowFocused = function(event)
@@ -640,8 +643,11 @@ WebInspector.documentKeyDown = function(event)
 
         switch (event.keyIdentifier) {
             case "U+001B": // Escape key
-                this.drawer.visible = !this.drawer.visible;
                 event.preventDefault();
+                if (this.drawer.fullPanel)
+                    return;
+
+                this.drawer.visible = !this.drawer.visible;
                 break;
 
             case "U+0046": // F key
@@ -765,29 +771,31 @@ WebInspector.mainCopy = function(event)
         this.currentPanel.handleCopyEvent(event);
 }
 
-WebInspector.animateStyle = function(animations, duration, callback, complete)
+WebInspector.animateStyle = function(animations, duration, callback)
 {
-    if (complete === undefined)
-        complete = 0;
-    var slice = (1000 / 30); // 30 frames per second
+    var interval;
+    var complete = 0;
 
-    var defaultUnit = "px";
-    var propertyUnit = {opacity: ""};
+    const intervalDuration = (1000 / 30); // 30 frames per second.
+    const animationsLength = animations.length;
+    const propertyUnit = {opacity: ""};
+    const defaultUnit = "px";
 
-    for (var i = 0; i < animations.length; ++i) {
+    function cubicInOut(t, b, c, d)
+    {
+        if ((t/=d/2) < 1) return c/2*t*t*t + b;
+        return c/2*((t-=2)*t*t + 2) + b;
+    }
+
+    // Pre-process animations.
+    for (var i = 0; i < animationsLength; ++i) {
         var animation = animations[i];
-        var element = null;
-        var start = null;
-        var current = null;
-        var end = null;
-        var key = null;
+        var element = null, start = null, end = null, key = null;
         for (key in animation) {
             if (key === "element")
                 element = animation[key];
             else if (key === "start")
                 start = animation[key];
-            else if (key === "current")
-                current = animation[key];
             else if (key === "end")
                 end = animation[key];
         }
@@ -795,49 +803,54 @@ WebInspector.animateStyle = function(animations, duration, callback, complete)
         if (!element || !end)
             continue;
 
-        var computedStyle = element.ownerDocument.defaultView.getComputedStyle(element);
         if (!start) {
+            var computedStyle = element.ownerDocument.defaultView.getComputedStyle(element);
             start = {};
             for (key in end)
                 start[key] = parseInt(computedStyle.getPropertyValue(key));
             animation.start = start;
-        } else if (complete == 0)
+        } else
             for (key in start)
                 element.style.setProperty(key, start[key] + (key in propertyUnit ? propertyUnit[key] : defaultUnit));
+    }
 
-        if (!current) {
-            current = {};
-            for (key in start)
-                current[key] = start[key];
-            animation.current = current;
-        }
+    function animateLoop()
+    {
+        // Advance forward.
+        complete += intervalDuration;
+        var next = complete + intervalDuration;
 
-        function cubicInOut(t, b, c, d)
-        {
-            if ((t/=d/2) < 1) return c/2*t*t*t + b;
-            return c/2*((t-=2)*t*t + 2) + b;
-        }
+        // Make style changes.
+        for (var i = 0; i < animationsLength; ++i) {
+            var animation = animations[i];
+            var element = animation.element;
+            var start = animation.start;
+            var end = animation.end;
+            if (!element || !end)
+                continue;
 
-        var style = element.style;
-        for (key in end) {
-            var startValue = start[key];
-            var currentValue = current[key];
-            var endValue = end[key];
-            if ((complete + slice) < duration) {
-                var delta = (endValue - startValue) / (duration / slice);
-                var newValue = cubicInOut(complete, startValue, endValue - startValue, duration);
-                style.setProperty(key, newValue + (key in propertyUnit ? propertyUnit[key] : defaultUnit));
-                current[key] = newValue;
-            } else {
-                style.setProperty(key, endValue + (key in propertyUnit ? propertyUnit[key] : defaultUnit));
+            var style = element.style;
+            for (key in end) {
+                var endValue = end[key];
+                if (next < duration) {
+                    var startValue = start[key];
+                    var newValue = cubicInOut(complete, startValue, endValue - startValue, duration);
+                    style.setProperty(key, newValue + (key in propertyUnit ? propertyUnit[key] : defaultUnit));
+                } else
+                    style.setProperty(key, endValue + (key in propertyUnit ? propertyUnit[key] : defaultUnit));
             }
+        }
+
+        // End condition.
+        if (complete >= duration) {
+            clearInterval(interval);
+            if (callback)
+                callback();
         }
     }
 
-    if (complete < duration)
-        setTimeout(WebInspector.animateStyle, slice, animations, duration, callback, complete + slice);
-    else if (callback)
-        callback();
+    interval = setInterval(animateLoop, intervalDuration);
+    return interval;
 }
 
 WebInspector.updateSearchLabel = function()
@@ -857,6 +870,7 @@ WebInspector.updateSearchLabel = function()
 WebInspector.toggleAttach = function()
 {
     this.attached = !this.attached;
+    this.drawer.resize();
 }
 
 WebInspector.toolbarDragStart = function(event)
@@ -980,6 +994,11 @@ WebInspector.showStoragePanel = function()
     this.currentPanel = this.panels.storage;
 }
 
+WebInspector.showConsolePanel = function()
+{
+    this.currentPanel = this.panels.console;
+}
+
 WebInspector.addResource = function(identifier, payload)
 {
     var resource = new WebInspector.Resource(
@@ -1070,7 +1089,7 @@ WebInspector.updateResource = function(identifier, payload)
             resource.responseReceivedTime = payload.responseReceivedTime;
         if (payload.endTime)
             resource.endTime = payload.endTime;
-        
+
         if (payload.loadEventTime) {
             // This loadEventTime is for the main resource, and we want to show it
             // for all resources on this page. This means we want to set it as a member
@@ -1078,7 +1097,7 @@ WebInspector.updateResource = function(identifier, payload)
             if (this.panels.resources)
                 this.panels.resources.mainResourceLoadTime = payload.loadEventTime;
         }
-        
+
         if (payload.domContentEventTime) {
             // This domContentEventTime is for the main resource, so it should go in
             // the resources panel for the same reasons as above.
@@ -1264,23 +1283,23 @@ WebInspector.log = function(message)
 {
     // remember 'this' for setInterval() callback
     var self = this;
-    
+
     // return indication if we can actually log a message
     function isLogAvailable()
     {
         return WebInspector.ConsoleMessage && WebInspector.ObjectProxy && self.console;
     }
-    
+
     // flush the queue of pending messages
     function flushQueue()
     {
         var queued = WebInspector.log.queued;
-        if (!queued) 
+        if (!queued)
             return;
-            
+
         for (var i = 0; i < queued.length; ++i)
             logMessage(queued[i]);
-        
+
         delete WebInspector.log.queued;
     }
 
@@ -1290,26 +1309,26 @@ WebInspector.log = function(message)
     {
         if (!isLogAvailable())
             return;
-            
+
         clearInterval(WebInspector.log.interval);
         delete WebInspector.log.interval;
-        
+
         flushQueue();
     }
-    
+
     // actually log the message
     function logMessage(message)
     {
         var repeatCount = 1;
         if (message == WebInspector.log.lastMessage)
             repeatCount = WebInspector.log.repeatCount + 1;
-    
+
         WebInspector.log.lastMessage = message;
         WebInspector.log.repeatCount = repeatCount;
-        
+
         // ConsoleMessage expects a proxy object
         message = new WebInspector.ObjectProxy(null, [], 0, message, false);
-        
+
         // post the message
         var msg = new WebInspector.ConsoleMessage(
             WebInspector.ConsoleMessage.MessageSource.Other,
@@ -1320,20 +1339,20 @@ WebInspector.log = function(message)
             null,
             repeatCount,
             message);
-    
+
         self.console.addMessage(msg);
     }
-    
+
     // if we can't log the message, queue it
     if (!isLogAvailable()) {
         if (!WebInspector.log.queued)
             WebInspector.log.queued = [];
-            
+
         WebInspector.log.queued.push(message);
-        
+
         if (!WebInspector.log.interval)
             WebInspector.log.interval = setInterval(flushQueueIfAvailable, 1000);
-        
+
         return;
     }
 
@@ -1473,7 +1492,8 @@ WebInspector.linkifyStringAsFragment = function(string)
     return container;
 }
 
-WebInspector.showProfileForURL = function(url) {
+WebInspector.showProfileForURL = function(url)
+{
     WebInspector.showProfilesPanel();
     WebInspector.panels.profiles.showProfileForURL(url);
 }

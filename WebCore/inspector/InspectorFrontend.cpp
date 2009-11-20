@@ -151,7 +151,7 @@ void InspectorFrontend::showPanel(int panel)
     const char* showFunctionName;
     switch (panel) {
         case InspectorController::ConsolePanel:
-            showFunctionName = "showConsole";
+            showFunctionName = "showConsolePanel";
             break;
         case InspectorController::ElementsPanel:
             showFunctionName = "showElementsPanel";

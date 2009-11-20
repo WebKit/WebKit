@@ -215,6 +215,10 @@ body.attached #search-results-matches {
     background-image: url(Images/profilesIcon.png);
 }
 
+.toolbar-item.console .toolbar-icon {
+    background-image: url(Images/consoleIcon.png);
+}
+
 #close-button-left, #close-button-right {
     width: 14px;
     height: 14px;

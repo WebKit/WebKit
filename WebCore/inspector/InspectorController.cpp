@@ -315,10 +315,7 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         setAttachedWindow(attached);
         populateScriptObjects();
 
-        // Console panel is implemented as a 'fast view', so there should be
-        // real panel opened along with it.
-        bool showConsole = m_showAfterVisible == ConsolePanel;
-        if (m_showAfterVisible == CurrentPanel || showConsole) {
+        if (m_showAfterVisible == CurrentPanel) {
           Setting lastActivePanelSetting = setting(lastActivePanelSettingName);
           if (lastActivePanelSetting.type() == Setting::StringType)
               m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting.string());
@@ -333,8 +330,6 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
             enableDebugger();
 #endif
         showPanel(m_showAfterVisible);
-        if (showConsole)
-            showPanel(ConsolePanel);
     } else {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         // If the window is being closed with the debugger enabled,
@@ -1811,6 +1806,8 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return ProfilesPanel;
     else if (panelName == "storage" || panelName == "databases")
         return StoragePanel;
+    else if (panelName == "console")
+        return ConsolePanel;
     else
         return ElementsPanel;
 }

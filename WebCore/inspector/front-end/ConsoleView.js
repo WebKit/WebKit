@@ -57,9 +57,6 @@ WebInspector.ConsoleView = function(drawer)
     this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     this.toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
 
-    var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
-    anchoredStatusBar.appendChild(this.toggleConsoleButton);
-    
     // Will hold the list of filter elements
     this.filterBarElement = document.getElementById("console-filter");
     

@@ -1,3 +1,69 @@
+2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Add Console Only Layout Mode
+        https://bugs.webkit.org/show_bug.cgi?id=30282
+
+        Adds a Console Panel, which allows for a Full size Console. This
+        extends the Drawer to the size of a Panel. This also fixes previous
+        resize issues with the Drawer.
+
+        * inspector/front-end/ConsolePanel.js: added.
+        (WebInspector.ConsolePanel):
+        (WebInspector.ConsolePanel.prototype.toolbarItemClass.get toolbarItemLabel):
+        (WebInspector.ConsolePanel.prototype.show):
+        (WebInspector.ConsolePanel.prototype.hide):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.get savedHeight): access the saved height of the variable console.
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide.animationFinished):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.resize): resize appropriately if full/non-full
+        (WebInspector.Drawer.prototype.enterPanelMode):
+        (WebInspector.Drawer.prototype.exitPanelMode):
+        (WebInspector.Drawer.prototype.immediatelyExitPanelMode):
+        (WebInspector.Drawer.prototype._cancelAnimationIfNeeded):
+        (WebInspector.Drawer.prototype._animateDrawerHeight.animationFinished):
+        (WebInspector.Drawer.prototype._animateDrawerHeight):
+        (WebInspector.Drawer.prototype._animationDuration):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        (WebInspector.Drawer.prototype._endStatusBarDragging):
+
+        Miscellaneous changes and cleanup.
+
+        * English.lproj/localizedStrings.js: "Console" toolbar title.
+        * inspector/front-end/ConsoleView.js: removed unnecessary element reordering  
+        * inspector/front-end/Images/consoleIcon.png: added.
+        * inspector/front-end/inspector.css: added icon.
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels): create console panel
+        (WebInspector.windowResize): resize drawer if necessary
+        (WebInspector.documentKeyDown): esc should not toggle the console when in panel mode
+        (WebInspector.animateStyle): start animation interval, returns the interval key
+        (WebInspector.toggleAttach): resize drawer if necessary
+        (WebInspector.showConsolePanel): restore the panel when the inspector restarts
+        (WebInspector.showProfileForURL): style fix
+
+        Restore the panel when the inspector restarts.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::specialPanelForJSName):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::showPanel):
+
+        Build files.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+
 2009-11-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.
