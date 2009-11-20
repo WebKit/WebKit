@@ -1,3 +1,18 @@
+2009-11-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://7409188> WebKit needs to be able to serialize and deserialize objects.
+
+        Expose WebCore object serialization to WebKit.
+
+        * WebCore.base.exp:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::~SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+
 2009-11-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.
