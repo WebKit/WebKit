@@ -1,3 +1,13 @@
+2009-11-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Test checking that CSS 'text-indent' does not affect ruby rendering by default.
+        (https://bugs.webkit.org/show_bug.cgi?id=31247)
+
+        * fast/ruby/ruby-text-indent-expected.txt: Added.
+        * fast/ruby/ruby-text-indent.html: Added.
+
 2009-11-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
