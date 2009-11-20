@@ -200,14 +200,29 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     return JSValueMakeUndefined(context);
 }
 
+static guint getStateFlags()
+{
+    guint state = 0;
+
+    if (down) {
+        if (currentEventButton == 1)
+            state = GDK_BUTTON1_MASK;
+        else if (currentEventButton == 2)
+            state = GDK_BUTTON2_MASK;
+        else if (currentEventButton == 3)
+            state = GDK_BUTTON3_MASK;
+    } else
+        state = 0;
+
+    return state;
+}
+
 static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     if (!view)
         return JSValueMakeUndefined(context);
-
-    down = false;
 
     GdkEvent event;
     memset(&event, 0, sizeof(event));
@@ -226,6 +241,9 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     event.button.window = GTK_WIDGET(view)->window;
     event.button.time = GDK_CURRENT_TIME;
     event.button.device = gdk_device_get_core_pointer();
+    event.button.state = getStateFlags();
+
+    down = false;
 
     int x_root, y_root;
 #if GTK_CHECK_VERSION(2,17,3)
@@ -286,16 +304,8 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
 
     event.motion.x_root = x_root;
     event.motion.y_root = y_root;
-
-    if (down) {
-        if (currentEventButton == 1)
-            event.motion.state = GDK_BUTTON1_MASK;
-        else if (currentEventButton == 2)
-            event.motion.state = GDK_BUTTON2_MASK;
-        else if (currentEventButton == 3)
-            event.motion.state = GDK_BUTTON3_MASK;
-    } else
-        event.motion.state = 0;
+    
+    event.motion.state = getStateFlags();
 
     if (dragMode && down && !replayingSavedEvents) {
         msgQueue[endOfQueue].event = event;
