@@ -35,9 +35,14 @@
 #include "Logging.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include <wtf/MainThread.h>
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 #include <SystemConfiguration/SystemConfiguration.h>
+#endif
+
+#if PLATFORM(WIN)
+#include "LoaderRunLoopCF.h"
 #endif
 
 #ifdef BUILDING_ON_TIGER
@@ -77,9 +82,14 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
     CFReadStreamSetClient(m_readStream.get(), static_cast<CFOptionFlags>(-1), readStreamCallback, &clientContext);
     CFWriteStreamSetClient(m_writeStream.get(), static_cast<CFOptionFlags>(-1), writeStreamCallback, &clientContext);
 
+#if PLATFORM(WIN)
+    CFReadStreamScheduleWithRunLoop(m_readStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFWriteStreamScheduleWithRunLoop(m_writeStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+#else
     CFReadStreamScheduleWithRunLoop(m_readStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
     CFWriteStreamScheduleWithRunLoop(m_writeStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
-    
+#endif
+
     CFReadStreamOpen(m_readStream.get());
     CFWriteStreamOpen(m_writeStream.get());
 
@@ -240,19 +250,51 @@ CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
     return ("WebKit socket stream, " + handle->m_url.string()).createCFString();
 }
 
+struct MainThreadEventCallbackInfo {
+    MainThreadEventCallbackInfo(CFStreamEventType type, SocketStreamHandle* handle) : type(type), handle(handle) { }
+    CFStreamEventType type;
+    SocketStreamHandle* handle;
+};
+
 void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_readStream.get());
+#if PLATFORM(WIN)
+    MainThreadEventCallbackInfo info(type, handle);
+    callOnMainThreadAndWait(readStreamCallbackMainThread, &info);
+#else
+    ASSERT(isMainThread());
     handle->readStreamCallback(type);
+#endif
 }
 
 void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_writeStream.get());
+#if PLATFORM(WIN)
+    MainThreadEventCallbackInfo info(type, handle);
+    callOnMainThreadAndWait(writeStreamCallbackMainThread, &info);
+#else
+    ASSERT(isMainThread());
     handle->writeStreamCallback(type);
+#endif
 }
+
+#if PLATFORM(WIN)
+void SocketStreamHandle::readStreamCallbackMainThread(void* invocation)
+{
+    MainThreadEventCallbackInfo* info = static_cast<MainThreadEventCallbackInfo*>(invocation);
+    info->handle->readStreamCallback(info->type);
+}
+
+void SocketStreamHandle::writeStreamCallbackMainThread(void* invocation)
+{
+    MainThreadEventCallbackInfo* info = static_cast<MainThreadEventCallbackInfo*>(invocation);
+    info->handle->writeStreamCallback(info->type);
+}
+#endif // PLATFORM(WIN)
 
 void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
 {

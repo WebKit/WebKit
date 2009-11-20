@@ -64,7 +64,10 @@ namespace WebCore {
         static CFStringRef copyCFStreamDescription(void* streamInfo);
         static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void* clientCallBackInfo);
         static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void* clientCallBackInfo);
-
+#if PLATFORM(WIN)
+        static void readStreamCallbackMainThread(void* invocation);
+        static void writeStreamCallbackMainThread(void* invocation);
+#endif
         void readStreamCallback(CFStreamEventType);
         void writeStreamCallback(CFStreamEventType);
 

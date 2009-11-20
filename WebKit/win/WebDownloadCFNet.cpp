@@ -48,6 +48,7 @@
 #include <WebCore/AuthenticationCF.h>
 #include <WebCore/BString.h>
 #include <WebCore/CredentialStorage.h>
+#include <WebCore/LoaderRunLoopCF.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
@@ -116,7 +117,7 @@ void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
     m_download.adoptCF(CFURLDownloadCreate(0, cfRequest, &client));
 
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
-    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 
     LOG(Download, "WebDownload - Initialized download of url %s in WebDownload %p", url.string().utf8().data(), this);
 }
@@ -154,7 +155,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
     }
 
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
-    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 
     LOG(Download, "WebDownload - initWithRequest complete, started download of url %s", webRequest->resourceRequest().url().string().utf8().data());
     return S_OK;
@@ -200,7 +201,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
         m_destination = String();
     
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
-    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 
     LOG(Download, "WebDownload - initWithRequest complete, resumed download of bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
     return S_OK;

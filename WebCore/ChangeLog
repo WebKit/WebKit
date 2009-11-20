@@ -1,3 +1,39 @@
+2009-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31690
+        Make SocketStreamHandleCFNet work on Windows
+
+        * WebCore.vcproj/WebCore.vcproj: Added LoaderRunLoopCF.
+
+        * platform/network/ResourceHandle.h: Removed loaderRunLoop().
+
+        * platform/network/cf/LoaderRunLoopCF.cpp: Added.
+        (WebCore::emptyPerform):
+        (WebCore::runLoaderThread):
+        (WebCore::loaderRunLoop):
+        * platform/network/cf/LoaderRunLoopCF.h: Added.
+        Moved the run loop that we use for CFNetwork from ResourceHandle to its own file, because
+        it's needed for more than just resource loading.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: Use loaderRunLoop() from its new location.
+
+        * platform/network/cf/DNSCFNet.cpp: (WebCore::DNSResolveQueue::resolve): Ditto.
+
+        * platform/network/cf/SocketStreamHandle.h: Added static callbacks for forwarding events to
+        main thread.
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle): Use loaderRunLoop() on Windows instead of
+        inoperable main run loop.
+
+        (WebCore::MainThreadEventCallbackInfo::MainThreadEventCallbackInfo): 
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        (WebCore::SocketStreamHandle::readStreamCallbackMainThread):
+        (WebCore::SocketStreamHandle::writeStreamCallbackMainThread):
+        Forward stream events to main thread on Windows.
+
 2009-11-19  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Adler.

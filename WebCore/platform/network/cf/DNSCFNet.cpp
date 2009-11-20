@@ -33,7 +33,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(WIN)
-#include "ResourceHandle.h" // for loaderRunLoop()
+#include "LoaderRunLoopCF.h"
 #endif
 
 #ifdef BUILDING_ON_TIGER
@@ -137,7 +137,7 @@ void DNSResolveQueue::resolve(const String& hostname)
     CFHostScheduleWithRunLoop(host.get(), CFRunLoopGetMain(), kCFRunLoopCommonModes);
 #else
     // On Windows, we run a separate thread with CFRunLoop, which is where clientCallback will be called.
-    CFHostScheduleWithRunLoop(host.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFHostScheduleWithRunLoop(host.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 #endif
     CFHostStartInfoResolution(host.get(), kCFHostAddresses, 0);
     host.releaseRef(); // The host will be released from clientCallback().

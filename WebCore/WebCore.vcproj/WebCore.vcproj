@@ -7779,6 +7779,10 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
+				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -7827,10 +7831,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
-				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.h"
@@ -24289,6 +24289,14 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\cf\LoaderRunLoopCF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\LoaderRunLoopCF.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\ResourceError.h"
 						>
 						<FileConfiguration
@@ -25174,11 +25182,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextBoundaries.h"
+					RelativePath="..\platform\text\TextBoundaries.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextBoundaries.cpp"
+					RelativePath="..\platform\text\TextBoundaries.h"
 					>
 				</File>
 				<File
@@ -33795,19 +33803,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\ISODateTime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\ISODateTime.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\ImageData.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\html\ImageData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ISODateTime.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ISODateTime.h"
 				>
 			</File>
 			<File
