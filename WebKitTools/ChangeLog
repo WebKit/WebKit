@@ -1,3 +1,17 @@
+2009-11-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove inserting stderr into patch in bugzilla-tool
+        https://bugs.webkit.org/show_bug.cgi?id=29914
+
+        Modify SCM python module's run_command function to avoid return of stderr
+        by default, so stderr won't be inserted into the patches.
+        Modify the related unit test.
+
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py:
+
 2009-11-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

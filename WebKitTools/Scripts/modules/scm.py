@@ -123,14 +123,18 @@ class SCM:
         self.dryrun = dryrun
 
     @staticmethod
-    def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False):
+    def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False, return_stderr=False):
         if hasattr(input, 'read'): # Check if the input is a file.
             stdin = input
             string_to_communicate = None
         else:
             stdin = subprocess.PIPE if input else None
             string_to_communicate = input
-        process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
+        if return_stderr:
+            stderr = subprocess.STDOUT
+        else:
+            stderr = None
+        process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd)
         output = process.communicate(string_to_communicate)[0]
         exit_code = process.wait()
         if exit_code:
