@@ -1,3 +1,14 @@
+2009-11-20  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add expected pixel result for layout test input-file-re-render
+
+        https://bugs.webkit.org/show_bug.cgi?id=31696
+
+        * platform/mac/fast/forms/input-file-re-render-expected.checksum: Added.
+        * platform/mac/fast/forms/input-file-re-render-expected.png: Added.
+
 2009-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
