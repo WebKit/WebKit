@@ -59,8 +59,11 @@ class LandingSequence:
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
             WorkQueue.exit_after_handled_error(e)
         except ScriptError, e:
-            # Mark the patch as commit-queue- and comment in the bug.
-            self._tool.bugs.reject_patch_from_commit_queue(self._patch["id"], e.message_with_output())
+            if not self._options.quiet:
+                log(e.message_with_output())
+            if self._options.non_interactive:
+                # Mark the patch as commit-queue- and comment in the bug.
+                self._tool.bugs.reject_patch_from_commit_queue(self._patch["id"], e.message_with_output())
             WorkQueue.exit_after_handled_error(e)
 
     def update(self):

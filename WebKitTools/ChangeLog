@@ -1,3 +1,17 @@
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement bugzilla-tool build-attachment
+        https://bugs.webkit.org/show_bug.cgi?id=31722
+
+        This command builds an attachment from bugzilla.  It leaves the built
+        patch in the working copy.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/landingsequence.py:
+        * Scripts/modules/webkitlandingscripts.py:
+
 2009-11-20  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

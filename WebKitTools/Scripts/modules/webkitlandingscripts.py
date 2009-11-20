@@ -68,15 +68,20 @@ class WebKitLandingScripts:
         ]
 
     @staticmethod
-    def land_options():
+    def build_options():
         return [
             make_option("--ignore-builders", action="store_false", dest="check_builders", default=True, help="Don't check to see if the build.webkit.org builders are green before landing."),
-            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
-            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
-            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
             make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible."),
         ] + WebKitPort.port_options()
+
+    @staticmethod
+    def land_options():
+        return [
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+        ]
 
     @staticmethod
     def run_command_with_teed_output(args, teed_output):
