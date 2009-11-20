@@ -1,5 +1,12 @@
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.  I failed to update LandingSequence.test
+        properly.
+
+        * Scripts/modules/landingsequence.py:
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Create LandingSequence as the all-sing, all-dance landing class
