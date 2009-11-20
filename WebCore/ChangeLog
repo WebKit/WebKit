@@ -2,6 +2,18 @@
 
         Reviewed by Tim Hatcher.
 
+        Fixes <http://webkit.org/b/31741>.
+        Web Inspector: User Entered Data on the console should show up no matter what filters.
+        
+        Always show .console-user-command-result, no matter what the filter say
+        we should do with the other classes.
+
+        * inspector/front-end/inspector.css:
+
+2009-11-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
         Fixes <http://webkit.org/b/31700>.
         Web Inspector: isMac should be in one central location + Cached.
         

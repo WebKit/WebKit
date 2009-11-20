@@ -2745,6 +2745,10 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     display: block;
 }
 
+.console-user-command-result {
+    display: block;
+}
+
 .resources-graph-bar.waiting {
     opacity: 0.35;
 }
