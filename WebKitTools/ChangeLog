@@ -1,3 +1,17 @@
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Create LandingSequence as the all-sing, all-dance landing class
+        https://bugs.webkit.org/show_bug.cgi?id=31709
+
+        Client can inherit from this class to carefully control exactly which
+        steps they wish to have happen in the landing sequence.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/landingsequence.py: Added.
+        * Scripts/modules/webkitlandingscripts.py: Added.
+
 2009-11-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
