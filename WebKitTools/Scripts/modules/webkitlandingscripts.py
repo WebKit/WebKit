@@ -36,7 +36,7 @@ import sys
 from optparse import make_option
 
 from modules.changelogs import ChangeLog
-from modules.logging import log, tee
+from modules.logging import error, log, tee
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.webkitport import WebKitPort
 
@@ -78,9 +78,10 @@ class WebKitLandingScripts:
     @staticmethod
     def land_options():
         return [
-            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory."),
             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
         ]
 
     @staticmethod

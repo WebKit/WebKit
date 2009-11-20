@@ -1,6 +1,18 @@
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
+        Reviewed by Eric Seidel.
+
+        BuildQueue should check if the tree is currently buildable
+        https://bugs.webkit.org/show_bug.cgi?id=31744
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/landingsequence.py:
+        * Scripts/modules/webkitlandingscripts.py:
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
 
         Move prepare_clean_working_directory into the LandingSequence
         https://bugs.webkit.org/show_bug.cgi?id=31743

@@ -111,6 +111,10 @@ class ConditionalLandingSequence(LandingSequence):
     def __init__(self, patch, options, tool):
         LandingSequence.__init__(self, patch, options, tool)
 
+    def update(self):
+        if self._options.update:
+            LandingSequence.update(self)
+
     def build(self):
         if self._options.build:
             LandingSequence.build(self)
