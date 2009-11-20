@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Make commit-queue and style-queue show up in help
+        https://bugs.webkit.org/show_bug.cgi?id=31724
+
+        We need to store their names on their class to make these commands
+        properly register themselves with MultiCommandTool.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Implement bugzilla-tool build-attachment
         https://bugs.webkit.org/show_bug.cgi?id=31722
 

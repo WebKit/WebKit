@@ -632,30 +632,29 @@ class TreeStatus(Command):
 
 
 class AbstractQueue(Command, WorkQueueDelegate):
-    def __init__(self, name):
-        self._name = name
+    def __init__(self):
         options = [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
-        Command.__init__(self, "Run the %s." % self._name, options=options)
+        Command.__init__(self, "Run the %s." % self.name, options=options)
 
     def queue_log_path(self):
-        return "%s.log" % self._name
+        return "%s.log" % self.name
 
     def work_logs_directory(self):
-        return "%s-logs" % self._name
+        return "%s-logs" % self.name
 
     def status_host(self):
         return self.options.status_host
 
     def begin_work_queue(self):
-        log("CAUTION: %s will discard all local changes in %s" % (self._name, self.tool.scm().checkout_root))
+        log("CAUTION: %s will discard all local changes in %s" % (self.name, self.tool.scm().checkout_root))
         if self.options.confirm:
             response = raw_input("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
-        log("Running WebKit %s. %s" % (self._name, datetime.now().strftime(WorkQueue.log_date_format)))
+        log("Running WebKit %s. %s" % (self.name, datetime.now().strftime(WorkQueue.log_date_format)))
 
     def should_continue_work_queue(self):
         return True
@@ -679,7 +678,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):
-        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self._name, ", ".join(patch_ids)))
+        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(patch_ids)))
 
     def execute(self, options, args, tool):
         self.options = options
@@ -689,8 +688,9 @@ class AbstractQueue(Command, WorkQueueDelegate):
 
 
 class CommitQueue(AbstractQueue):
+    name = "commit-queue"
     def __init__(self):
-        AbstractQueue.__init__(self, "commit-queue")
+        AbstractQueue.__init__(self)
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
@@ -718,8 +718,9 @@ class CommitQueue(AbstractQueue):
 
 
 class StyleQueue(AbstractQueue):
+    name = "style-queue"
     def __init__(self):
-        AbstractQueue.__init__(self, "style-queue")
+        AbstractQueue.__init__(self)
 
     def status_host(self):
         return None # FIXME: A hack until we come up with a more generic status page.
