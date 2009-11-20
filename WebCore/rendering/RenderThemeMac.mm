@@ -1707,9 +1707,6 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
 
 bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)
 {
-    if (part == MediaFullscreenButtonPart)
-        return mediaControllerTheme() == MediaControllerThemeQuickTime;
-
     if (part == MediaToggleClosedCaptionsButtonPart) {
 
         // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.

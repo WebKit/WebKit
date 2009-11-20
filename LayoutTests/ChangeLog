@@ -1,3 +1,15 @@
+2009-11-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7389945> QTKit based media engine should not claim to support fullscreen on Leopard
+
+        Update test results.
+
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+
 2009-11-20  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.

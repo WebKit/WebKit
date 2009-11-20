@@ -736,8 +736,13 @@ bool MediaPlayerPrivate::hasAudio() const
 }
 
 bool MediaPlayerPrivate::supportsFullscreen() const
-{   
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     return true;
+#else
+    // See <rdar://problem/7389945>
+    return false;
+#endif
 }
 
 void MediaPlayerPrivate::setVolume(float volume)

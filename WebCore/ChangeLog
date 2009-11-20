@@ -1,3 +1,19 @@
+2009-11-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7389945> QTKit based media engine should not claim to support 
+        fullscreen on Leopard
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::supportsFullscreen):
+            Only return true on SnowLeopard for now.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+            No need to special case MediaFullscreenButtonPart as the default implementation 
+            asks the media engine if it supports fullscreen.
+
 2009-11-18  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
