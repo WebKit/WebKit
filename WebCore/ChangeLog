@@ -1,5 +1,9 @@
 2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Removed .DS_Store accidentally added in last (r51245).
+
+2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Add Console Only Layout Mode
