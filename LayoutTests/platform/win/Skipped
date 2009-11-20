@@ -706,3 +706,7 @@ websocket
 
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html
+
+# Need to implement this in plugins code in WebKit
+plugins/reloadPlugins-and-pages.html
+plugins/reloadPlugins-no-pages.html

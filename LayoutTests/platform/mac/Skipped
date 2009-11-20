@@ -101,3 +101,8 @@ accessibility/document-attributes.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
+
+# Need to implement this in plugins code in WebKit
+plugins/reloadPlugins-and-pages.html
+plugins/reloadPlugins-no-pages.html
+

@@ -1,3 +1,15 @@
+2009-11-20  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        NPN_ReloadPlugins does not reload the page even if reloadPages is true.
+        https://bugs.webkit.org/show_bug.cgi?id=30460
+
+        Added code for calling NPN_ReloadPlugins with reloadPages true and false.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke):
+
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

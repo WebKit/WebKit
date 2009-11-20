@@ -1,3 +1,19 @@
+2009-11-20  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        NPN_ReloadPlugins does not reload the page even if reloadPages is true.
+        https://bugs.webkit.org/show_bug.cgi?id=30460
+
+        Replace call to PluginDatabase::installedPlugins()->refresh() with Page::refreshPlugins().
+        It already refreshes plugins and reloads pages when necessary.
+
+        Tests: plugins/reloadplugins-and-pages.html
+               plugins/reloadplugins-no-pages.html
+
+        * plugins/PluginInfoStore.cpp:
+        (WebCore::refreshPlugins):
+
 2009-11-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dave Hyatt.
