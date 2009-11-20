@@ -190,28 +190,25 @@ class LandDiffSequence(ConditionalLandingSequence):
     def __init__(self, patch, options, tool):
         ConditionalLandingSequence.__init__(self, patch, options, tool)
 
-    def update(self):
-        pass
+    def run(self):
+        self.build()
+        self.test()
+        commit_log = self.commit()
+        self.close_bug(commit_log)
 
-    def apply_patch(self):
-        pass
-
-    def close_patch(self, commit_log):
-        self._comment_test = bug_comment_from_commit_text(self._tool.scm(), commit_log)
-        # There is no patch to close.
-
-    def close_bug(self):
+    def close_bug(self, commit_log):
+        comment_test = bug_comment_from_commit_text(self._tool.scm(), commit_log)
         bug_id = self._patch["bug_id"]
         if bug_id:
             log("Updating bug %s" % bug_id)
             if self._options.close_bug:
-                self._tool.bugs.close_bug_as_fixed(bug_id, self._comment_test)
+                self._tool.bugs.close_bug_as_fixed(bug_id, comment_test)
             else:
                 # FIXME: We should a smart way to figure out if the patch is attached
                 # to the bug, and if so obsolete it.
-                self._tool.bugs.post_comment_to_bug(bug_id, self._comment_test)
+                self._tool.bugs.post_comment_to_bug(bug_id, comment_test)
         else:
-            log(self._comment_test)
+            log(comment_test)
             log("No bug id provided.")
 
 
@@ -304,6 +301,7 @@ class BuildAttachmentSequence(LandingSequence):
         LandingSequence.__init__(self, patch, options, tool)
 
     def run(self):
+        self.clean()
         self.update()
         self.apply_patch()
         self.build()
@@ -322,7 +320,6 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
-        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
 
     def _process_patch(self, patch, options, args, tool):
         sequence = BuildAttachmentSequence(patch, options, tool)
@@ -339,11 +336,11 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
-        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
 
     def _process_patch(self, patch, options, args, tool):
         sequence = ConditionalLandingSequence(patch, options, tool)
         sequence.run_and_handle_errors()
+
 
 class LandAttachment(AbstractPatchLandingCommand):
     name = "land-attachment"

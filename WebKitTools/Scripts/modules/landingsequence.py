@@ -43,6 +43,7 @@ class LandingSequence:
         self._port = WebKitPort.port(self._options)
 
     def run(self):
+        self.clean()
         self.update()
         self.apply_patch()
         self.build()
@@ -65,6 +66,9 @@ class LandingSequence:
                 # Mark the patch as commit-queue- and comment in the bug.
                 self._tool.bugs.reject_patch_from_commit_queue(self._patch["id"], e.message_with_output())
             WorkQueue.exit_after_handled_error(e)
+
+    def clean(self):
+        WebKitLandingScripts.prepare_clean_working_directory(self._tool.scm(), self._options)
 
     def update(self):
         self._tool.scm().update_webkit()
