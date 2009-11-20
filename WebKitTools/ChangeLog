@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Implement a build-queue
+        https://bugs.webkit.org/show_bug.cgi?id=31725
+
+        Currently this just builds the first 10 patches in the review queue.
+        We'll want to do something smarter soon.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make commit-queue and style-queue show up in help
         https://bugs.webkit.org/show_bug.cgi?id=31724
 

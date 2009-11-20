@@ -717,8 +717,7 @@ class CommitQueue(AbstractQueue):
         self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
 
 
-class StyleQueue(AbstractQueue):
-    name = "style-queue"
+class AbstractTryQueue(AbstractQueue):
     def __init__(self):
         AbstractQueue.__init__(self)
 
@@ -735,13 +734,38 @@ class StyleQueue(AbstractQueue):
         return self._patches.next()
 
     def should_proceed_with_work_item(self, patch):
+        raise NotImplementedError, "subclasses must implement"
+
+    def process_work_item(self, patch):
+        raise NotImplementedError, "subclasses must implement"
+
+    def handle_unexpected_error(self, patch, message):
+        log(message)
+
+
+class StyleQueue(AbstractTryQueue):
+    name = "style-queue"
+    def __init__(self):
+        AbstractTryQueue.__init__(self)
+
+    def should_proceed_with_work_item(self, patch):
         return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["check-style", "--force-clean", patch["id"]])
 
-    def handle_unexpected_error(self, patch, message):
-        log(message)
+
+class BuildQueue(AbstractTryQueue):
+    name = "build-queue"
+    def __init__(self):
+        AbstractTryQueue.__init__(self)
+
+    def should_proceed_with_work_item(self, patch):
+        # FIXME: We should check whether we're currently able to build!
+        return (True, "Building patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
+
+    def process_work_item(self, patch):
+        self.run_bugzilla_tool(["build-attachment", "--force-clean", patch["id"]])
 
 
 class BugzillaTool(MultiCommandTool):
