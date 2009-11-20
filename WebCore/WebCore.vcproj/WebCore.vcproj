@@ -42281,9 +42281,10 @@
 					RelativePath="..\inspector\front-end\Color.js"
 					>
 				</File>
-				<File
-					RelativePath="..\inspector\front-end\ConsolePanel.js"
-					>
+                <File
+                    RelativePath="..\inspector\front-end\ConsolePanel.js"
+                    >
+                </File>
 				<File
 					RelativePath="..\inspector\front-end\ConsoleView.js"
 					>
