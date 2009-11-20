@@ -1,3 +1,14 @@
+2009-11-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        MultiCommandTool should find Command objects automatically instead of with a manual list
+        https://bugs.webkit.org/show_bug.cgi?id=31710
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/multicommandtool.py:
+         - Use some wild python-fu to crawl all the known subclasses of Command.
+
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
         Unreviewed "build" fix.  Added missing import.

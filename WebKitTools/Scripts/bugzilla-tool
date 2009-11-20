@@ -69,6 +69,7 @@ def pluralize(noun, count):
 
 
 class BugsToCommit(Command):
+    name = "bugs-to-commit"
     def __init__(self):
         Command.__init__(self, "Bugs in the commit queue")
 
@@ -79,6 +80,7 @@ class BugsToCommit(Command):
 
 
 class PatchesToCommit(Command):
+    name = "patches-to-commit"
     def __init__(self):
         Command.__init__(self, "Patches in the commit queue")
 
@@ -90,8 +92,9 @@ class PatchesToCommit(Command):
 
 
 class ReviewedPatches(Command):
+    name = "reviewed-patches"
     def __init__(self):
-        Command.__init__(self, "r+\'d patches on a bug", "BUGID")
+        Command.__init__(self, "r+'d patches on a bug", "BUGID")
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -101,6 +104,7 @@ class ReviewedPatches(Command):
 
 
 class CheckStyle(Command):
+    name = "check-style"
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Runs check-webkit-style on the specified attachment", "ATTACHMENT_ID", options=options)
@@ -130,6 +134,7 @@ class CheckStyle(Command):
 
 
 class ApplyAttachment(Command):
+    name = "apply-attachment"
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Applies an attachment to the local working directory.", "ATTACHMENT_ID", options=options)
@@ -142,6 +147,7 @@ class ApplyAttachment(Command):
 
 
 class ApplyPatches(Command):
+    name = "apply-patches"
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Applies all patches on a bug to the local working directory.", "BUGID", options=options)
@@ -210,6 +216,7 @@ class LandDiffLandingSequence(ConditionalLandingSequence):
 
 
 class LandDiff(Command):
+    name = "land-diff"
     def __init__(self):
         options = [
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
@@ -259,8 +266,8 @@ class LandDiff(Command):
 
 
 class AbstractPatchProcessingCommand(Command):
-    def __init__(self, description, args_description, options):
-        Command.__init__(self, description, args_description, options=options)
+    def __init__(self, help_text, args_description, options):
+        Command.__init__(self, help_text, args_description, options=options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
@@ -292,9 +299,9 @@ class AbstractPatchProcessingCommand(Command):
 
 
 class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
-    def __init__(self, description, args_description):
+    def __init__(self, help_text, args_description):
         options = WebKitLandingScripts.cleaning_options() + WebKitLandingScripts.land_options()
-        AbstractPatchProcessingCommand.__init__(self, description, args_description, options)
+        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
 
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
@@ -306,6 +313,7 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
         sequence.run_and_handle_errors()
 
 class LandAttachment(AbstractPatchLandingCommand):
+    name = "land-attachment"
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Lands a patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
@@ -314,6 +322,7 @@ class LandAttachment(AbstractPatchLandingCommand):
 
 
 class LandPatches(AbstractPatchLandingCommand):
+    name = "land-patches"
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Lands all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
@@ -327,6 +336,7 @@ class LandPatches(AbstractPatchLandingCommand):
 
 
 class CommitMessageForCurrentDiff(Command):
+    name = "commit-message"
     def __init__(self):
         Command.__init__(self, "Prints a commit message suitable for the uncommitted changes.")
 
@@ -336,6 +346,7 @@ class CommitMessageForCurrentDiff(Command):
 
 
 class ObsoleteAttachments(Command):
+    name = "obsolete-attachments"
     def __init__(self):
         Command.__init__(self, "Marks all attachments on a bug as obsolete.", "BUGID")
 
@@ -348,6 +359,7 @@ class ObsoleteAttachments(Command):
 
 
 class PostDiff(Command):
+    name = "post-diff"
     def __init__(self):
         options = [
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
@@ -388,6 +400,7 @@ class PostDiff(Command):
 
 
 class PostCommits(Command):
+    name = "post-commits"
     def __init__(self):
         options = [
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
@@ -438,6 +451,7 @@ class PostCommits(Command):
 
 
 class Rollout(Command):
+    name = "rollout"
     def __init__(self):
         options = WebKitLandingScripts.land_options()
         options += WebKitLandingScripts.cleaning_options()
@@ -495,6 +509,7 @@ class Rollout(Command):
 
 
 class CreateBug(Command):
+    name = "create-bug"
     def __init__(self):
         options = [
             make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy."),
@@ -572,6 +587,7 @@ class CreateBug(Command):
 
 
 class TreeStatus(Command):
+    name = "tree-status"
     def __init__(self):
         Command.__init__(self, "Print out the status of the webkit builders.")
 
@@ -700,28 +716,7 @@ class BugzillaTool(MultiCommandTool):
         # This hack can be removed by overriding usage() printing in HelpPrintingOptionParser
         # so that we don't need to create 'epilog' before constructing HelpPrintingOptionParser.
         self.cached_scm = None
-        
-        # FIXME: Commands should know their own name and register themselves with the BugzillaTool instead of having a manual list.
-        MultiCommandTool.__init__(self, commands=[
-            { "name" : "bugs-to-commit", "object" : BugsToCommit() },
-            { "name" : "patches-to-commit", "object" : PatchesToCommit() },
-            { "name" : "reviewed-patches", "object" : ReviewedPatches() },
-            { "name" : "create-bug", "object" : CreateBug() },
-            { "name" : "apply-attachment", "object" : ApplyAttachment() },
-            { "name" : "apply-patches", "object" : ApplyPatches() },
-            { "name" : "land-diff", "object" : LandDiff() },
-            { "name" : "land-attachment", "object" : LandAttachment() },
-            { "name" : "land-patches", "object" : LandPatches() },
-            { "name" : "check-style", "object" : CheckStyle() },
-            { "name" : "commit-message", "object" : CommitMessageForCurrentDiff() },
-            { "name" : "obsolete-attachments", "object" : ObsoleteAttachments() },
-            { "name" : "post-diff", "object" : PostDiff() },
-            { "name" : "post-commits", "object" : PostCommits() },
-            { "name" : "tree-status", "object" : TreeStatus() },
-            { "name" : "commit-queue", "object" : CommitQueue() },
-            { "name" : "style-queue", "object" : StyleQueue() },
-            { "name" : "rollout", "object" : Rollout() },
-        ])
+        MultiCommandTool.__init__(self)
         self.global_option_parser.add_option("--dry-run", action="callback", help="do not touch remote servers", callback=self.dry_run_callback)
 
         self.bugs = Bugzilla()
@@ -749,13 +744,13 @@ class BugzillaTool(MultiCommandTool):
         return self.cached_scm
 
     def should_show_command_help(self, command):
-        if command["object"].requires_local_commits:
+        if command.requires_local_commits:
             return self.scm().supports_local_commits()
         return True
 
     def should_execute_command(self, command):
-        if command["object"].requires_local_commits and not self.scm().supports_local_commits():
-            failure_reason = "%s requires local commits using %s in %s." % (command["name"], self.scm().display_name(), self.scm().checkout_root)
+        if command.requires_local_commits and not self.scm().supports_local_commits():
+            failure_reason = "%s requires local commits using %s in %s." % (command.name, self.scm().display_name(), self.scm().checkout_root)
             return (False, failure_reason)
         return (True, None)
 

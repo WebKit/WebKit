@@ -37,7 +37,8 @@ from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_o
 
 from modules.logging import log
 
-class Command:
+class Command(object):
+    name = None
     def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
         self.help_text = help_text
         self.argument_names = argument_names
@@ -45,8 +46,8 @@ class Command:
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
         self.requires_local_commits = requires_local_commits
 
-    def name_with_arguments(self, command_name):
-        usage_string = command_name
+    def name_with_arguments(self):
+        usage_string = self.name
         if self.options:
             usage_string += " [options]"
         if self.argument_names:
@@ -58,7 +59,6 @@ class Command:
 
     def execute(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
-
 
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
     # The standard IndentedHelpFormatter paragraph-wraps the epilog, killing our custom formatting.
@@ -76,22 +76,30 @@ class HelpPrintingOptionParser(OptionParser):
         self.exit(1, error_message)
 
 
-class MultiCommandTool:
-    def __init__(self, commands):
-        self.commands = commands
+class MultiCommandTool(object):
+    def __init__(self):
+        self.commands = [cls() for cls in self._find_all_commands() if cls.name]
         # FIXME: Calling self._commands_usage() in the constructor is bad because
         # it calls self.should_show_command_help which is subclass-defined.
         # The subclass will not be fully initialized at this point.
         self.global_option_parser = HelpPrintingOptionParser(usage=self._usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self._commands_usage())
 
+    @classmethod
+    def _add_all_subclasses(cls, class_to_crawl, seen_classes):
+        for subclass in class_to_crawl.__subclasses__():
+            if subclass not in seen_classes:
+                seen_classes.add(subclass)
+                cls._add_all_subclasses(subclass, seen_classes)
+
+    @classmethod
+    def _find_all_commands(cls):
+        commands = set()
+        cls._add_all_subclasses(Command, commands)
+        return sorted(commands)
+
     @staticmethod
     def _usage_line():
         return "Usage: %prog [options] command [command-options] [command-arguments]"
-
-    # FIXME: This can all be simplified once Command objects know their own names.
-    @staticmethod
-    def _name_and_arguments(command):
-        return command['object'].name_with_arguments(command["name"])
 
     def _command_help_formatter(self):
         # Use our own help formatter so as to indent enough.
@@ -102,18 +110,18 @@ class MultiCommandTool:
 
     @classmethod
     def _help_for_command(cls, command, formatter, longest_name_length):
-        help_text = "  " + cls._name_and_arguments(command).ljust(longest_name_length + 3) + command['object'].help_text + "\n"
-        help_text += command['object'].option_parser.format_option_help(formatter)
+        help_text = "  " + command.name_with_arguments().ljust(longest_name_length + 3) + command.help_text + "\n"
+        help_text += command.option_parser.format_option_help(formatter)
         return help_text
 
     @classmethod
     def _standalone_help_for_command(cls, command):
-        return cls._help_for_command(command, IndentedHelpFormatter(), len(cls._name_and_arguments(command)))
+        return cls._help_for_command(command, IndentedHelpFormatter(), len(command.name_with_arguments()))
 
     def _commands_usage(self):
         # Only show commands which are relevant to this checkout.  This might be confusing to some users?
         relevant_commands = filter(self.should_show_command_help, self.commands)
-        longest_name_length = max(map(lambda command: len(self._name_and_arguments(command)), relevant_commands))
+        longest_name_length = max(map(lambda command: len(command.name_with_arguments()), relevant_commands))
         command_help_texts = map(lambda command: self._help_for_command(command, self._command_help_formatter(), longest_name_length), relevant_commands)
         return "Commands:\n" + "".join(command_help_texts)
 
@@ -141,7 +149,7 @@ class MultiCommandTool:
 
     def command_by_name(self, command_name):
         for command in self.commands:
-            if command_name == command["name"]:
+            if command_name == command.name:
                 return command
         return None
 
@@ -178,6 +186,5 @@ class MultiCommandTool:
             log(failure_reason)
             return 0
 
-        command_object = command["object"]
-        (command_options, command_args) = command_object.parse_args(args_after_command_name)
-        return command_object.execute(command_options, command_args, self)
+        (command_options, command_args) = command.parse_args(args_after_command_name)
+        return command.execute(command_options, command_args, self)
