@@ -72,6 +72,22 @@ var WebInspector = {
     resourceURLMap: {},
     cookieDomains: {},
     missingLocalizedStrings: {},
+    
+    get platform()
+    {
+        if (!("_platform" in this))
+            this._platform = InspectorController.platform();
+        
+        return this._platform;
+    },
+    
+    get port()
+    {
+        if (!("_port" in this))
+            this._port = InspectorController.port();
+        
+        return this._port;
+    },
 
     get previousFocusElement()
     {
@@ -390,9 +406,9 @@ var WebInspector = {
 
 WebInspector.loaded = function()
 {
-    var platform = InspectorController.platform();
+    var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
-    var port = InspectorController.port();
+    var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
     this._loadPreferences();
@@ -620,7 +636,7 @@ WebInspector.documentKeyDown = function(event)
         WebInspector[this.currentFocusElement.id + "KeyDown"](event);
 
     if (!event.handled) {
-        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+        var isMac = WebInspector.platform.indexOf("mac-") === 0;
 
         switch (event.keyIdentifier) {
             case "U+001B": // Escape key
@@ -845,7 +861,7 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
-    if ((!WebInspector.attached && InspectorController.platform() !== "mac-leopard") || InspectorController.port() == "qt")
+    if ((!WebInspector.attached && WebInspector.platform !== "mac-leopard") || WebInspector.port == "qt")
         return;
 
     var target = event.target;

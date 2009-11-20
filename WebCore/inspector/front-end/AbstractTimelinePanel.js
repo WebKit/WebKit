@@ -189,7 +189,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
     _updateFilter: function(e)
     {
-        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+        var isMac = WebInspector.platform.indexOf("mac-") === 0;
         var selectMultiple = false;
         if (isMac && e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey)
             selectMultiple = true;

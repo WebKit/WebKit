@@ -162,7 +162,7 @@ WebInspector.ScriptsPanel = function()
 
     this._shortcuts = {};
 
-    var isMac = InspectorController.platform().indexOf("mac-") === 0;
+    var isMac = WebInspector.platform.indexOf("mac-") === 0;
     var platformSpecificModifier = isMac ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
 
     // Continue.

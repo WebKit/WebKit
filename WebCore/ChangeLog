@@ -1,3 +1,32 @@
+2009-11-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixes <http://webkit.org/b/31699>.
+        Web Inspector: Should Cache Values of InspectorController.platform() and port().
+
+        Refactor the Inspector to cache the value of InspectorController.platform
+        and InspectorController.port, because those need to call into C++, they are
+        being called more and more as we add platform specific keyboard shortcuts, and
+        they shouldn't change in the lifecycle of the Web Inspector.
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype._updateFilter):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._updateFilter):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.handleKeyEvent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        * inspector/front-end/inspector.js:
+        (WebInspector.get platform):
+        (WebInspector.get port):
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector.toolbarDragStart):
+
 2009-11-20  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed build fix for filters enabled builds.
@@ -103,7 +132,7 @@
 
         Test: fast/ruby/ruby-text-indent.html
 
-        * css/html.css: reset text-indent on <ruby> and <rt> elements 
+        * css/html.css: reset text-indent on <ruby> and <rt> elements
 
 2009-11-19  Brian Weinstein  <bweinstein@apple.com>
 
