@@ -1,3 +1,9 @@
+2009-11-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Enabling WebSocket tests on Windows - let's see if they pass after the recent fixes.
+
+        * platform/win/Skipped:
+
 2009-11-20  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Adler.
