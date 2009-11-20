@@ -41,17 +41,24 @@ class WebKitPort():
     @staticmethod
     def port_options():
         return [
-            make_option("--qt", action="store_true", dest="qt", default=False, help="Use the Qt port."),
+            make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...)."),
         ]
 
     @staticmethod
-    def get_port(options):
-        if options.qt:
+    def port(options):
+        if options.port == "mac":
+            return MacPort
+        if options.port == "qt":
             return QtPort
+        # FIXME: We should default to WinPort on Windows.
         return MacPort
 
     @classmethod
     def name(cls):
+        raise NotImplementedError, "subclasses must implement"
+
+    @classmethod
+    def flag(cls):
         raise NotImplementedError, "subclasses must implement"
 
     @classmethod
@@ -68,11 +75,19 @@ class MacPort(WebKitPort):
     def name(cls):
         return "Mac"
 
+    @classmethod
+    def flag(cls):
+        return "--port=mac"
+
 
 class QtPort(WebKitPort):
     @classmethod
     def name(cls):
         return "Qt"
+
+    @classmethod
+    def flag(cls):
+        return "--port=qt"
 
     @classmethod
     def build_webkit_command(cls):

@@ -761,12 +761,16 @@ class BuildQueue(AbstractTryQueue):
         options = WebKitPort.port_options()
         AbstractTryQueue.__init__(self, options)
 
+    def begin_work_queue(self):
+        AbstractTryQueue.begin_work_queue(self)
+        self.port = WebKitPort.port(self.options)
+
     def should_proceed_with_work_item(self, patch):
         # FIXME: We should check whether we're currently able to build!
         return (True, "Building patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["build-attachment", "--force-clean", patch["id"]])
+        self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", patch["id"]])
 
 
 class BugzillaTool(MultiCommandTool):

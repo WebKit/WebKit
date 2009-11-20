@@ -34,11 +34,13 @@ from modules.webkitport import WebKitPort, MacPort, QtPort
 class WebKitPortTest(unittest.TestCase):
     def test_mac_port(self):
         self.assertEquals(MacPort.name(), "Mac")
+        self.assertEquals(MacPort.flag(), "--port=mac")
         self.assertEquals(MacPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
         self.assertEquals(MacPort.build_webkit_command(), [WebKitPort.script_path("build-webkit")])
 
     def test_qt_port(self):
         self.assertEquals(QtPort.name(), "Qt")
+        self.assertEquals(QtPort.flag(), "--port=qt")
         self.assertEquals(QtPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
         self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt"])
 
