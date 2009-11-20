@@ -386,13 +386,14 @@ class LandDiff(Command):
             log("No bug id provided.")
 
 
-class AbstractPatchLandingCommand(Command):
-    def __init__(self, description, args_description):
-        options = WebKitLandingScripts.cleaning_options() + WebKitLandingScripts.land_options()
+class AbstractPatchProcessingCommand(Command):
+    def __init__(self, description, args_description, options):
         Command.__init__(self, description, args_description, options=options)
 
-    @staticmethod
-    def _fetch_list_of_patches_to_land(options, args, tool):
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
+        raise NotImplementedError, "subclasses must implement"
+
+    def _prepare_to_process(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
 
     @staticmethod
@@ -407,26 +408,36 @@ class AbstractPatchLandingCommand(Command):
         if not args:
             error("%s required" % self.argument_names)
 
+        self._prepare_to_process(options, args, tool)
+        patches = self._fetch_list_of_patches_to_process(options, args, tool)
+
+        # It's nice to print out total statistics.
+        bugs_to_patches = self._collect_patches_by_bug(patches)
+        log("Processing %s from %s." % (pluralize("patch", len(patches)), pluralize("bug", len(bugs_to_patches))))
+
+        for patch in patches:
+            self._process_patch(patch, options, args, tool)
+
+
+class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
+    def __init__(self, description, args_description):
+        options = WebKitLandingScripts.cleaning_options() + WebKitLandingScripts.land_options()
+        AbstractPatchProcessingCommand.__init__(self, description, args_description, options)
+
+    def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
         WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
         WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
 
-        patches = self._fetch_list_of_patches_to_land(options, args, tool)
-
-        # It's nice to print out total statistics.
-        bugs_to_patches = self._collect_patches_by_bug(patches)
-        log("Landing %s from %s." % (pluralize("patch", len(patches)), pluralize("bug", len(bugs_to_patches))))
-
-        for patch in patches:
-            WebKitLandingScripts.land_patch_and_handle_errors(patch, options, tool)
+    def _process_patch(self, patch, options, args, tool):
+        WebKitLandingScripts.land_patch_and_handle_errors(patch, options, tool)
 
 
 class LandAttachment(AbstractPatchLandingCommand):
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Lands a patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
-    @staticmethod
-    def _fetch_list_of_patches_to_land(options, args, tool):
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
 
@@ -434,8 +445,7 @@ class LandPatches(AbstractPatchLandingCommand):
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Lands all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
-    @staticmethod
-    def _fetch_list_of_patches_to_land(options, args, tool):
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
             patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
