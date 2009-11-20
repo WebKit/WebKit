@@ -55,12 +55,48 @@ namespace WebKit {
         operator WTF::PassRefPtr<WebCore::HTMLInputElement>() const;
 #endif
 
-        void setActivatedSubmit(bool);
-        void setValue(const WebString& value);
-        WebString value();
-        void setAutofilled(bool);
-        void dispatchFormControlChangeEvent();
-        void setSelectionRange(size_t, size_t);
+        enum InputType {
+            Text = 0,
+            Password,
+            IsIndex,
+            CheckBox,
+            Radio,
+            Submit,
+            Reset,
+            File,
+            Hidden,
+            Image,
+            Button,
+            Search,
+            Range,
+            Email,
+            Number,
+            Telephone,
+            URL,
+            Color,
+            Date,
+            DateTime,
+            DateTimeLocal,
+            Month,
+            Time,
+            Week
+        };
+        
+        WEBKIT_API bool isEnabledFormControl() const;
+        WEBKIT_API InputType inputType() const;
+        WEBKIT_API WebString formControlType() const;
+        WEBKIT_API void setActivatedSubmit(bool);
+        WEBKIT_API void setValue(const WebString& value);
+        WEBKIT_API WebString value() const;
+        WEBKIT_API void setAutofilled(bool);
+        WEBKIT_API void dispatchFormControlChangeEvent();
+        WEBKIT_API void setSelectionRange(int, int);
+        WEBKIT_API WebString name() const;
+        // Returns the name that should be used for the specified |element| when
+        // storing autofill data.  This is either the field name or its id, an empty
+        // string if it has no name and no id.
+        WEBKIT_API WebString nameForAutofill() const;
+        
     };
 
 } // namespace WebKit

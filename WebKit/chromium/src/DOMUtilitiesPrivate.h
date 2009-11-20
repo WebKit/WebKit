@@ -50,9 +50,7 @@ WebCore::HTMLLinkElement* toHTMLLinkElement(WebCore::Node*);
 WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
 WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
 
-// Returns the name that should be used for the specified |element| when
-// storing autofill data.  This is either the field name or its id, an empty
-// string if it has no name and no id.
+// FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
 WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
 
 } // namespace WebKit

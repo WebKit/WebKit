@@ -54,7 +54,6 @@ namespace WebKit {
         WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
         operator WTF::PassRefPtr<WebCore::Element>() const;
 #endif
-
     };
 
 } // namespace WebKit

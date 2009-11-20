@@ -39,6 +39,8 @@
 #include "HTMLOptionElement.h"
 #include "Node.h"
 
+#include "WebInputElement.h"
+
 using namespace WebCore;
 
 namespace {
@@ -79,17 +81,7 @@ HTMLOptionElement* toHTMLOptionElement(Node* node)
 
 String nameOfInputElement(HTMLInputElement* element)
 {
-    String name = element->name();
-    String trimmedName = name.stripWhiteSpace();
-    if (!trimmedName.isEmpty())
-        return trimmedName;
-
-    name = element->getAttribute(HTMLNames::idAttr);
-    trimmedName = name.stripWhiteSpace();
-    if (!trimmedName.isEmpty())
-        return trimmedName;
-
-    return String();
+    return WebInputElement(element).nameForAutofill();
 }
 
 } // namespace WebKit

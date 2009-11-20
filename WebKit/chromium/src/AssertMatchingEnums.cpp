@@ -36,6 +36,7 @@
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
 #include "EditorInsertAction.h"
+#include "HTMLInputElement.h"
 #include "MediaPlayer.h"
 #include "NotificationPresenter.h"
 #include "PasteboardPrivate.h"
@@ -46,6 +47,7 @@
 #include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
+#include "WebInputElement.h"
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
 #include "WebTextAffinity.h"
@@ -214,6 +216,31 @@ COMPILE_ASSERT_MATCHING_ENUM(WebCursorInfo::TypeCustom, PlatformCursor::TypeCust
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionTyped, EditorInsertActionTyped);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionPasted, EditorInsertActionPasted);
 COMPILE_ASSERT_MATCHING_ENUM(WebEditingActionDropped, EditorInsertActionDropped);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Text, HTMLInputElement::TEXT);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Password, HTMLInputElement::PASSWORD);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::IsIndex, HTMLInputElement::ISINDEX);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::CheckBox, HTMLInputElement::CHECKBOX);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Radio, HTMLInputElement::RADIO);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Submit, HTMLInputElement::SUBMIT);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Reset, HTMLInputElement::RESET);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::File, HTMLInputElement::FILE);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Hidden, HTMLInputElement::HIDDEN);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Image, HTMLInputElement::IMAGE);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Button, HTMLInputElement::BUTTON);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Search, HTMLInputElement::SEARCH);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Range, HTMLInputElement::RANGE);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Email, HTMLInputElement::EMAIL);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Number, HTMLInputElement::NUMBER);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Telephone, HTMLInputElement::TELEPHONE);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::URL, HTMLInputElement::URL);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Color, HTMLInputElement::COLOR);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Date, HTMLInputElement::DATE);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::DateTime, HTMLInputElement::DATETIME);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::DateTimeLocal, HTMLInputElement::DATETIMELOCAL);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Month, HTMLInputElement::MONTH);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Time, HTMLInputElement::TIME);
+COMPILE_ASSERT_MATCHING_ENUM(WebInputElement::Week, HTMLInputElement::WEEK);
 
 #if ENABLE(VIDEO)
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::Empty, MediaPlayer::Empty);

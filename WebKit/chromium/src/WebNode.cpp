@@ -95,7 +95,7 @@ void WebNode::assign(WebNodePrivate* p)
     m_private = p;
 }
 
-WebFrame* WebNode::frame()
+WebFrame* WebNode::frame() const
 {
     return WebFrameImpl::fromFrame(m_private->document()->frame());
 }

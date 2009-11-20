@@ -45,6 +45,7 @@
 #include "WebEditingAction.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
+#include "WebInputElement.h"
 #include "WebNode.h"
 #include "WebPasswordAutocompleteListener.h"
 #include "WebRange.h"
@@ -706,7 +707,7 @@ bool EditorClientImpl::autofill(HTMLInputElement* inputElement,
         || !inputElement->autoComplete())
         return false;
 
-    WebString name = WebKit::nameOfInputElement(inputElement);
+    WebString name = WebInputElement(inputElement).nameForAutofill();
     if (name.isEmpty()) // If the field has no name, then we won't have values.
         return false;
 
@@ -769,7 +770,7 @@ void EditorClientImpl::doAutofill(Timer<EditorClientImpl>* timer)
     }
 
     // Then trigger form autofill.
-    WebString name = WebKit::nameOfInputElement(inputElement);
+    WebString name = WebInputElement(inputElement).nameForAutofill();
     ASSERT(static_cast<int>(name.length()) > 0);
 
     if (m_webView->client())

@@ -32,6 +32,7 @@
 #define WebFormElement_h
 
 #include "WebElement.h"
+#include "WebInputElement.h"
 #include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
@@ -60,8 +61,12 @@ namespace WebKit {
 
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API WebString action() const;
+        WEBKIT_API WebString name() const;
+        WEBKIT_API WebString method() const;
         WEBKIT_API void submit();
+        // FIXME: Deprecate and replace with WebVector<WebElement>.
         WEBKIT_API void getNamedElements(const WebString&, WebVector<WebNode>&);
+        WEBKIT_API void getInputElements(WebVector<WebInputElement>&) const;
     };
 
 } // namespace WebKit

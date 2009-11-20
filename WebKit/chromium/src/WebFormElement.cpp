@@ -31,7 +31,10 @@
 #include "config.h"
 #include "WebFormElement.h"
 
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include <wtf/PassRefPtr.h>
@@ -69,6 +72,16 @@ WebString WebFormElement::action() const
     return constUnwrap<HTMLFormElement>()->action();
 }
 
+WebString WebFormElement::name() const 
+{
+    return constUnwrap<HTMLFormElement>()->name();
+}
+
+WebString WebFormElement::method() const 
+{
+    return constUnwrap<HTMLFormElement>()->method();
+}
+    
 void WebFormElement::submit()
 {
     unwrap<HTMLFormElement>()->submit();
@@ -77,9 +90,21 @@ void WebFormElement::submit()
 void WebFormElement::getNamedElements(const WebString& name,
                                       WebVector<WebNode>& result)
 {
-    Vector<RefPtr<Node> > temp_vector;
-    unwrap<HTMLFormElement>()->getNamedElements(name, temp_vector);
-    result.assign(temp_vector);
+    Vector<RefPtr<Node> > tempVector;
+    unwrap<HTMLFormElement>()->getNamedElements(name, tempVector);
+    result.assign(tempVector);
+}
+    
+void WebFormElement::getInputElements(WebVector<WebInputElement>& result) const
+{
+    const HTMLFormElement* form = constUnwrap<HTMLFormElement>();
+    Vector<RefPtr<HTMLInputElement> > tempVector;
+    for (size_t i = 0; i < form->formElements.size(); i++) {
+        if (form->formElements[i]->hasLocalName(HTMLNames::inputTag))
+            tempVector.append(static_cast<HTMLInputElement*>(
+                form->formElements[i]));
+    }
+    result.assign(tempVector);
 }
 
 } // namespace WebKit

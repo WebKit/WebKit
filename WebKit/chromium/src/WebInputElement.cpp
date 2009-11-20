@@ -32,6 +32,7 @@
 #include "WebInputElement.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "WebString.h"
 #include <wtf/PassRefPtr.h>
 
@@ -55,22 +56,35 @@ WebInputElement::operator WTF::PassRefPtr<HTMLInputElement>() const
     return PassRefPtr<HTMLInputElement>(static_cast<HTMLInputElement*>(m_private));
 }
 
+bool WebInputElement::isEnabledFormControl() const
+{
+    return constUnwrap<HTMLInputElement>()->isEnabledFormControl();
+}
+
+WebInputElement::InputType WebInputElement::inputType() const
+{
+    return static_cast<InputType>(constUnwrap<HTMLInputElement>()->inputType());
+}
+
+WebString WebInputElement::formControlType() const
+{
+    return constUnwrap<HTMLInputElement>()->formControlType();
+}
+    
 void WebInputElement::setActivatedSubmit(bool activated)
 {
     unwrap<HTMLInputElement>()->setActivatedSubmit(activated);
 }
-
 
 void WebInputElement::setValue(const WebString& value)
 {
     unwrap<HTMLInputElement>()->setValue(value);
 }
 
-WebString WebInputElement::value()
+WebString WebInputElement::value() const
 {
-    return unwrap<HTMLInputElement>()->value();
+    return constUnwrap<HTMLInputElement>()->value();
 }
-
 
 void WebInputElement::setAutofilled(bool autoFilled)
 {
@@ -80,10 +94,29 @@ void WebInputElement::setAutofilled(bool autoFilled)
 void WebInputElement::dispatchFormControlChangeEvent()
 {
     unwrap<HTMLInputElement>()->dispatchFormControlChangeEvent();
-} // namespace WebKit
+}
 
-void WebInputElement::setSelectionRange(size_t start, size_t end)
+void WebInputElement::setSelectionRange(int start, int end)
 {
     unwrap<HTMLInputElement>()->setSelectionRange(start, end);
 }
+    
+WebString WebInputElement::name() const
+{
+    return constUnwrap<HTMLInputElement>()->name();
+}
+    
+WebString WebInputElement::nameForAutofill() const
+{
+    String name = constUnwrap<HTMLInputElement>()->name();
+    String trimmedName = name.stripWhiteSpace();
+    if (!trimmedName.isEmpty())
+        return trimmedName;
+    name = constUnwrap<HTMLInputElement>()->getAttribute(HTMLNames::idAttr);
+    trimmedName = name.stripWhiteSpace();
+    if (!trimmedName.isEmpty())
+        return trimmedName;
+    return String();
+}
+
 } // namespace WebKit
