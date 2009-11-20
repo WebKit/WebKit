@@ -1,3 +1,12 @@
+2009-11-19  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Quick style fix.
+        https://bugs.webkit.org/show_bug.cgi?id=27777
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+
 2009-11-19  Beth Dakin  <bdakin@apple.com>
 
        Build fix. No review needed.

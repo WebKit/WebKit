@@ -31,10 +31,11 @@
 
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
+#include <wtf/MathExtras.h>
+
 #if !PLATFORM(MAC)
 #include "ImageSourceCG.h"
 #endif
-#include <wtf/MathExtras.h>
 
 using namespace std;
 
