@@ -132,7 +132,8 @@
    || defined(__unix__)    \
    || defined(_AIX)        \
    || defined(__HAIKU__)   \
-   || defined(__QNXNTO__)
+   || defined(__QNXNTO__)  \
+   || defined(ANDROID)
 #define WTF_PLATFORM_UNIX 1
 #endif
 
@@ -182,6 +183,11 @@
 #define WTF_PLATFORM_IPHONE 0
 #endif
 
+/* PLATFORM(ANDROID) */
+#if defined(ANDROID)
+#define WTF_PLATFORM_ANDROID 1
+#endif
+
 /* Graphics engines */
 
 /* PLATFORM(CG) and PLATFORM(CI) */
@@ -205,7 +211,7 @@
 
 /* Makes PLATFORM(WIN) default to PLATFORM(CAIRO) */
 /* FIXME: This should be changed from a blacklist to a whitelist */
-#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !PLATFORM(WINCE) && !PLATFORM(HAIKU)
+#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !PLATFORM(WINCE) && !PLATFORM(HAIKU) && !PLATFORM(ANDROID)
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
@@ -252,7 +258,8 @@
 
 #elif !defined(__ARM_EABI__) \
    && !defined(__EABI__) \
-   && !defined(__VFP_FP__)
+   && !defined(__VFP_FP__) \
+   && !defined(ANDROID)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
 
 #endif
@@ -524,6 +531,18 @@
 #define HAVE_PTHREAD_RWLOCK 1
 #endif
 
+#if PLATFORM(ANDROID)
+#define WTF_USE_PTHREADS 1
+#define WTF_PLATFORM_SGL 1
+#define USE_SYSTEM_MALLOC 1
+#define ENABLE_MAC_JAVA_BRIDGE 1
+#define LOG_DISABLED 1
+// Prevents Webkit from drawing the caret in textfields and textareas
+// This prevents unnecessary invals.
+#define ENABLE_TEXT_CARET 1
+#define ENABLE_JAVASCRIPT_DEBUGGER 0
+#endif
+
 #if PLATFORM(WIN)
 #define WTF_USE_WININET 1
 #endif
@@ -559,7 +578,8 @@
 #endif
 
 #if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !PLATFORM(QNX) \
-    && !PLATFORM(SYMBIAN) && !PLATFORM(HAIKU) && !COMPILER(RVCT)
+    && !PLATFORM(SYMBIAN) && !PLATFORM(HAIKU) && !COMPILER(RVCT) \
+    && !PLATFORM(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -612,6 +632,16 @@
 #elif PLATFORM(QNX)
 
 #define HAVE_ERRNO_H 1
+#define HAVE_MMAP 1
+#define HAVE_SBRK 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_PARAM_H 1
+#define HAVE_SYS_TIME_H 1
+
+#elif PLATFORM(ANDROID)
+
+#define HAVE_ERRNO_H 1
+#define HAVE_LANGINFO_H 0
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
