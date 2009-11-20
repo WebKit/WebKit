@@ -632,8 +632,8 @@ class TreeStatus(Command):
 
 
 class AbstractQueue(Command, WorkQueueDelegate):
-    def __init__(self):
-        options = [
+    def __init__(self, options=[]):
+        options += [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
@@ -718,8 +718,8 @@ class CommitQueue(AbstractQueue):
 
 
 class AbstractTryQueue(AbstractQueue):
-    def __init__(self):
-        AbstractQueue.__init__(self)
+    def __init__(self, options=[]):
+        AbstractQueue.__init__(self, options)
 
     def status_host(self):
         return None # FIXME: A hack until we come up with a more generic status page.
@@ -758,7 +758,8 @@ class StyleQueue(AbstractTryQueue):
 class BuildQueue(AbstractTryQueue):
     name = "build-queue"
     def __init__(self):
-        AbstractTryQueue.__init__(self)
+        options = WebKitPort.port_options()
+        AbstractTryQueue.__init__(self, options)
 
     def should_proceed_with_work_item(self, patch):
         # FIXME: We should check whether we're currently able to build!
