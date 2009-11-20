@@ -1,5 +1,11 @@
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.  Added missing import.
+
+        * Scripts/bugzilla-tool:
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
         Unreviewed "build" fix.  I failed to update LandingSequence.test
         properly.
 

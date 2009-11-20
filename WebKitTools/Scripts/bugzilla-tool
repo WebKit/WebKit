@@ -41,6 +41,7 @@ from datetime import datetime, timedelta
 from optparse import make_option
 
 # Import WebKit-specific modules.
+from modules.comments import bug_comment_from_commit_text
 from modules.bugzilla import Bugzilla, parse_bug_id
 from modules.buildbot import BuildBot
 from modules.changelogs import ChangeLog
