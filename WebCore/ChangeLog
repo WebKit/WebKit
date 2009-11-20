@@ -1,3 +1,28 @@
+2009-11-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixes <http://webkit.org/b/31700>.
+        Web Inspector: isMac should be in one central location + Cached.
+        
+        We should cache the value of isMac, and make the indexOf call in one
+        single location, because we are calling it from multiple places, and saving
+        the result can save us time, and make the call sites simpler.
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype._updateFilter):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._updateFilter):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.handleKeyEvent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        (WebInspector.isMac):
+
 2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
 
         Removed .DS_Store accidentally added in last (r51245).

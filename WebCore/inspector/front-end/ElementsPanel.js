@@ -1001,8 +1001,7 @@ WebInspector.ElementsPanel.prototype = {
         // Cmd/Control + Shift + C should be a shortcut to clicking the Node Search Button.
         // This shortcut matches Firebug.
         if (event.keyIdentifier === "U+0043") {     // C key
-            var isMac = WebInspector.platform.indexOf("mac-") === 0;
-            if (isMac)
+            if (WebInspector.isMac())
                 var isNodeSearchKey = event.metaKey && !event.ctrlKey && !event.altKey && event.shiftKey;
             else
                 var isNodeSearchKey = event.ctrlKey && !event.metaKey && !event.altKey && event.shiftKey;

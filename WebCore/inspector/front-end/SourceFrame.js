@@ -207,8 +207,7 @@ WebInspector.SourceFrame.prototype = {
         this.element.contentDocument.addEventListener("webkitAnimationEnd", this._highlightLineEnds.bind(this), false);
 
         // Register 'eval' shortcut.
-        var isMac = WebInspector.platform.indexOf("mac-") === 0;
-        var platformSpecificModifier = isMac ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
+        var platformSpecificModifier = WebInspector.isMac() ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
         var shortcut = WebInspector.KeyboardShortcut.makeKey(69 /* 'E' */, platformSpecificModifier | WebInspector.KeyboardShortcut.Modifiers.Shift);
         this._shortcuts[shortcut] = this._evalSelectionInCallFrame.bind(this);
 

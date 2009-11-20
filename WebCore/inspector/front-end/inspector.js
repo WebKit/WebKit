@@ -639,7 +639,7 @@ WebInspector.documentKeyDown = function(event)
         WebInspector[this.currentFocusElement.id + "KeyDown"](event);
 
     if (!event.handled) {
-        var isMac = WebInspector.platform.indexOf("mac-") === 0;
+        var isMac = WebInspector.isMac();
 
         switch (event.keyIdentifier) {
             case "U+001B": // Escape key
@@ -1650,6 +1650,14 @@ WebInspector.UIString = function(string)
     }
 
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
+}
+
+WebInspector.isMac = function()
+{
+    if (!("_isMac" in this))
+        this._isMac = WebInspector.platform.indexOf("mac-") === 0;
+
+    return this._isMac;
 }
 
 WebInspector.isBeingEdited = function(element)

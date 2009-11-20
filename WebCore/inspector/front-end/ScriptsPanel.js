@@ -162,8 +162,7 @@ WebInspector.ScriptsPanel = function()
 
     this._shortcuts = {};
 
-    var isMac = WebInspector.platform.indexOf("mac-") === 0;
-    var platformSpecificModifier = isMac ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
+    var platformSpecificModifier = WebInspector.isMac() ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
 
     // Continue.
     var handler = this.pauseButton.click.bind(this.pauseButton);
