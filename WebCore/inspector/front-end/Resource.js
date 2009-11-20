@@ -111,7 +111,8 @@ WebInspector.Resource.Type = {
     Font:       3,
     Script:     4,
     XHR:        5,
-    Other:      6,
+    Media:      6,
+    Other:      7,
 
     isTextType: function(type)
     {
@@ -587,7 +588,7 @@ WebInspector.Resource.prototype = {
         if (this.mimeType in WebInspector.MIMETypes)
             return this.type in WebInspector.MIMETypes[this.mimeType];
 
-        return true;
+        return false;
     },
 
     _checkWarnings: function()

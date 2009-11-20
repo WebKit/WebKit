@@ -1,3 +1,13 @@
+2009-11-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Resync Resources Backend and Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=31705
+
+        * inspector/front-end/Resource.js: resync enum values with backend
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType): return false if all else fails, not true in all cases
+
 2009-11-19  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Fisher.
