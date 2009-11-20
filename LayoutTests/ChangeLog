@@ -1,5 +1,14 @@
 2009-11-20  Yael Aharon  <yael.aharon@nokia.com>
 
+        Unreviewed fix.
+
+        Fix file names in the skipped list, for files added in http://trac.webkit.org/changeset/51257.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
+2009-11-20  Yael Aharon  <yael.aharon@nokia.com>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         NPN_ReloadPlugins does not reload the page even if reloadPages is true.

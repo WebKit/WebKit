@@ -708,5 +708,5 @@ websocket
 fast/forms/validationMessage.html
 
 # Need to implement this in plugins code in WebKit
-plugins/reloadPlugins-and-pages.html
-plugins/reloadPlugins-no-pages.html
+plugins/reloadplugins-and-pages.html
+plugins/reloadplugins-no-pages.html
