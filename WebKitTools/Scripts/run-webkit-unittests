@@ -36,6 +36,7 @@ from modules.committers_unittest import *
 from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *
 from modules.logging_unittest import *
+from modules.multicommandtool_unittest import *
 from modules.patchcollection_unittest import *
 from modules.scm_unittest import *
 from modules.workqueue_unittest import *

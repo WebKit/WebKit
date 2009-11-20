@@ -38,18 +38,20 @@ import sys
 import time
 
 from datetime import datetime, timedelta
-from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
+from optparse import make_option
 
 # Import WebKit-specific modules.
 from modules.bugzilla import Bugzilla, parse_bug_id
+from modules.buildbot import BuildBot
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import error, log, tee
+from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
-from modules.buildbot import BuildBot
 from modules.statusbot import StatusBot
 from modules.workqueue import WorkQueue, WorkQueueDelegate
+
 
 def plural(noun):
     # This is a dumb plural() implementation which was just enough for our uses.
@@ -80,29 +82,6 @@ def commit_message_for_this_commit(scm):
 
     # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
     return CommitMessage("".join(changelog_messages).splitlines())
-
-
-class Command:
-    def __init__(self, help_text, argument_names="", options=[], requires_local_commits=False):
-        self.help_text = help_text
-        self.argument_names = argument_names
-        self.options = options
-        self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
-        self.requires_local_commits = requires_local_commits
-
-    def name_with_arguments(self, command_name):
-        usage_string = command_name
-        if len(self.options) > 0:
-            usage_string += " [options]"
-        if self.argument_names:
-            usage_string += " " + self.argument_names
-        return usage_string
-
-    def parse_args(self, args):
-        return self.option_parser.parse_args(args)
-
-    def execute(self, options, args, tool):
-        raise NotImplementedError, "subclasses must implement"
 
 
 class BugsToCommit(Command):
@@ -832,119 +811,6 @@ class StyleQueue(AbstractQueue):
 
     def handle_unexpected_error(self, patch, message):
         log(message)
-
-
-class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
-    def __init__(self):
-        IndentedHelpFormatter.__init__(self)
-
-    # The standard IndentedHelpFormatter paragraph-wraps the epilog, killing our custom formatting.
-    def format_epilog(self, epilog):
-        if epilog:
-            return "\n" + epilog + "\n"
-        return ""
-
-
-class HelpPrintingOptionParser(OptionParser):
-    def error(self, msg):
-        self.print_usage(sys.stderr)
-        error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
-        error_message += "\nType \"" + self.get_prog_name() + " --help\" to see usage.\n"
-        self.exit(2, error_message)
-
-
-class MultiCommandTool:
-    def __init__(self, commands):
-        self.commands = commands
-        # FIXME: Calling self._commands_usage() in the constructor is bad because
-        # it calls self.should_show_command_help which is subclass-defined.
-        # The subclass will not be fully initialized at this point.
-        self.global_option_parser = HelpPrintingOptionParser(usage=self._usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self._commands_usage())
-
-    @staticmethod
-    def _usage_line():
-        return "Usage: %prog [options] command [command-options] [command-arguments]"
-
-    # FIXME: This can all be simplified once Command objects know their own names.
-    @staticmethod
-    def _name_and_arguments(command):
-        return command['object'].name_with_arguments(command["name"])
-
-    def _command_help_formatter(self):
-        # Use our own help formatter so as to indent enough.
-        formatter = IndentedHelpFormatter()
-        formatter.indent()
-        formatter.indent()
-        return formatter
-
-    @classmethod
-    def _help_for_command(cls, command, formatter, longest_name_length):
-        help_text = "  " + cls._name_and_arguments(command).ljust(longest_name_length + 3) + command['object'].help_text + "\n"
-        help_text += command['object'].option_parser.format_option_help(formatter)
-        return help_text
-
-    def _commands_usage(self):
-        # Only show commands which are relevant to this checkout.  This might be confusing to some users?
-        relevant_commands = filter(self.should_show_command_help, self.commands)
-        longest_name_length = max(map(lambda command: len(self._name_and_arguments(command)), relevant_commands))
-        command_help_texts = map(lambda command: self._help_for_command(command, self._command_help_formatter(), longest_name_length), relevant_commands)
-        return "Commands:\n" + "".join(command_help_texts)
-
-    def handle_global_args(self, args):
-        (options, args) = self.global_option_parser.parse_args(args)
-        if len(args):
-            # We'll never hit this because _split_args splits at the first arg without a leading "-"
-            self.global_option_parser.error("Extra arguments before command: " + args)
-
-    @staticmethod
-    def _split_args(args):
-        # Assume the first argument which doesn't start with "-" is the command name.
-        command_index = 0
-        for arg in args:
-            if arg[0] != "-":
-                break
-            command_index += 1
-        else:
-            return (args[:], None, [])
-
-        global_args = args[:command_index]
-        command = args[command_index]
-        command_args = args[command_index + 1:]
-        return (global_args, command, command_args)
-
-    def command_by_name(self, command_name):
-        for command in self.commands:
-            if command_name == command["name"]:
-                return command
-        return None
-
-    def should_show_command_help(self, command):
-        raise NotImplementedError, "subclasses must implement"
-
-    def should_execute_command(self, command):
-        raise NotImplementedError, "subclasses must implement"
-
-    def main(self):
-        (global_args, command_name, args_after_command_name) = self._split_args(sys.argv[1:])
-
-        # Handle --help, etc:
-        self.handle_global_args(global_args)
-
-        if not command_name:
-            self.global_option_parser.error("No command specified")
-
-        command = self.command_by_name(command_name)
-        if not command:
-            self.global_option_parser.error(command_name + " is not a recognized command")
-
-        command_object = command["object"]
-
-        (should_execute, failure_reason) = self.should_execute_command(command)
-        if not should_execute:
-            error(failure_reason)
-
-        (command_options, command_args) = command_object.parse_args(args_after_command_name)
-        return command_object.execute(command_options, command_args, self)
 
 
 class BugzillaTool(MultiCommandTool):
