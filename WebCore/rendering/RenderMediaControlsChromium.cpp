@@ -63,7 +63,7 @@ static bool hasSource(const HTMLMediaElement* mediaElement)
 static bool paintMediaButton(GraphicsContext* context, const IntRect& rect, Image* image)
 {
     IntRect imageRect = image->rect();
-    context->drawImage(image, rect);
+    context->drawImage(image, DeviceColorSpace, rect);
     return true;
 }
 

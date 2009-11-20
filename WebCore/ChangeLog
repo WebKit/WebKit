@@ -1,4 +1,13 @@
 2009-11-19  Beth Dakin  <bdakin@apple.com>
+
+       Build fix. No review needed.
+
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::paintTickmarks):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaButton):
+
+2009-11-19  Beth Dakin  <bdakin@apple.com>
       
        Build fix. No review needed.
 
