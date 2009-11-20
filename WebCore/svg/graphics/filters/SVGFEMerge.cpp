@@ -79,7 +79,7 @@ void FEMerge::apply(Filter* filter)
 
     for (unsigned i = 0; i < m_mergeInputs.size(); i++) {
         FloatRect destRect = calculateDrawingRect(m_mergeInputs[i]->subRegion());
-        filterContext->drawImage(m_mergeInputs[i]->resultImage()->image(), destRect, DeviceColorSpace);
+        filterContext->drawImage(m_mergeInputs[i]->resultImage()->image(), DeviceColorSpace, destRect);
     }
 }
 

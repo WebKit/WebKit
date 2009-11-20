@@ -1,3 +1,22 @@
+2009-11-20  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed build fix for filters enabled builds.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2009-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
