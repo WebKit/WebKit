@@ -54,35 +54,6 @@ from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_fo
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
-class CheckStyle(Command):
-    name = "check-style"
-    def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, "Runs check-webkit-style on the specified attachment", "ATTACHMENT_ID", options=options)
-
-    @classmethod
-    def check_style(cls, patch, options, tool):
-        tool.scm().update_webkit()
-        log("Checking style for patch %s from bug %s." % (patch["id"], patch["bug_id"]))
-        try:
-            # FIXME: check-webkit-style shouldn't really have to apply the patch to check the style.
-            tool.scm().apply_patch(patch)
-            WebKitLandingScripts.run_webkit_script("check-webkit-style")
-        except ScriptError, e:
-            log("Patch %s from bug %s failed to apply and check style." % (patch["id"], patch["bug_id"]))
-            log(e.output)
-
-        # This is safe because in order to get here the working directory had to be
-        # clean at the beginning.  Clean it out again before we exit.
-        tool.scm().ensure_clean_working_directory(force_clean=True)
-
-    def execute(self, options, args, tool):
-        attachment_id = args[0]
-        attachment = tool.bugs.fetch_attachment(attachment_id)
-
-        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
-        self.check_style(attachment, options, tool)
-
 
 class BuildSequence(ConditionalLandingSequence):
     def __init__(self, options, tool):
@@ -268,6 +239,38 @@ class AbstractPatchProcessingCommand(Command):
 
         for patch in patches:
             self._process_patch(patch, options, args, tool)
+
+
+class CheckStyleSequence(LandingSequence):
+    def __init__(self, patch, options, tool):
+        ConditionalLandingSequence.__init__(self, patch, options, tool)
+
+    def run(self):
+        self.clean()
+        self.update()
+        self.apply_patch()
+        self.build()
+
+    def build(self):
+        # Instead of building, we check style.
+        WebKitLandingScripts.run_webkit_script("check-webkit-style")
+
+
+class CheckStyle(AbstractPatchProcessingCommand):
+    name = "check-style"
+    def __init__(self):
+        options = WebKitLandingScripts.cleaning_options()
+        AbstractPatchProcessingCommand.__init__(self, "Runs check-webkit-style on the specified attachments.", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
+
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
+        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
+
+    def _prepare_to_process(self, options, args, tool):
+        pass
+
+    def _process_patch(self, patch, options, args, tool):
+        sequence = CheckStyleSequence(patch, options, tool)
+        sequence.run_and_handle_errors()
 
 
 class BuildAttachmentSequence(LandingSequence):
