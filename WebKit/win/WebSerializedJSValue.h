@@ -36,15 +36,16 @@ namespace WebCore {
 
 class WebSerializedJSValue : public Noncopyable, public IWebSerializedJSValue {
 public:
-    static COMPtr<WebSerializedJSValue> createInstance(JSContextRef, JSValueRef value, JSValueRef* exception);
+    static COMPtr<WebSerializedJSValue> createInstance();
 
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
+    virtual HRESULT STDMETHODCALLTYPE serialize(JSContextRef, JSValueRef value, JSValueRef* exception);
     virtual HRESULT STDMETHODCALLTYPE deserialize(JSContextRef, JSValueRef* result);
 
 private:
-    WebSerializedJSValue(JSContextRef, JSValueRef, JSValueRef*);
+    WebSerializedJSValue();
     ~WebSerializedJSValue();
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);

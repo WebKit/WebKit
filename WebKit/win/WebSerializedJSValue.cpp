@@ -30,15 +30,9 @@
 
 using namespace WebCore;
 
-WebSerializedJSValue::WebSerializedJSValue(JSContextRef sourceContext, JSValueRef value, JSValueRef* exception)
+WebSerializedJSValue::WebSerializedJSValue()
     : m_refCount(0)
 {
-    ASSERT_ARG(value, value);
-    ASSERT_ARG(sourceContext, sourceContext);
-
-    if (value && sourceContext)
-        m_value = SerializedScriptValue::create(sourceContext, value, exception);
-
     ++gClassCount;
     gClassNameCount.add("WebSerializedJSValue");
 }
@@ -49,9 +43,9 @@ WebSerializedJSValue::~WebSerializedJSValue()
     gClassNameCount.remove("WebSerializedJSValue");
 }
 
-COMPtr<WebSerializedJSValue> WebSerializedJSValue::createInstance(JSContextRef sourceContext, JSValueRef value, JSValueRef* exception)
+COMPtr<WebSerializedJSValue> WebSerializedJSValue::createInstance()
 {
-    return new WebSerializedJSValue(sourceContext, value, exception);
+    return new WebSerializedJSValue();
 }
 
 ULONG WebSerializedJSValue::AddRef()
@@ -86,12 +80,25 @@ HRESULT WebSerializedJSValue::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
+HRESULT WebSerializedJSValue::serialize(JSContextRef sourceContext, JSValueRef value, JSValueRef* exception)
+{
+    ASSERT_ARG(value, value);
+    ASSERT_ARG(sourceContext, sourceContext);
+
+    if (!value || !sourceContext)
+        return E_POINTER;
+
+    m_value = SerializedScriptValue::create(sourceContext, value, exception);
+        
+    return S_OK;
+}
+
 HRESULT WebSerializedJSValue::deserialize(JSContextRef destinationContext, JSValueRef* outValue)
 {
     if (!outValue)
         return E_POINTER;
 
-    if (m_value)
+    if (!m_value)
         *outValue = 0;
     else
         *outValue = m_value->deserialize(destinationContext, 0);

@@ -1,3 +1,21 @@
+2009-11-20  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Change WebSerializedJSValue on Windows to have a zero-argument createInstance call.  Move the
+        serialization into a separate serialize() function that can be called after the object has been
+        created.
+
+        Fix a typo in serialize() caused when fixing build bustage (put a ! back in).
+
+        * Interfaces/IWebSerializedJSValue.idl:
+        * WebSerializedJSValue.cpp:
+        (WebSerializedJSValue::WebSerializedJSValue):
+        (WebSerializedJSValue::createInstance):
+        (WebSerializedJSValue::serialize):
+        (WebSerializedJSValue::deserialize):
+        * WebSerializedJSValue.h:
+
 2009-11-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Dave Hyatt.
