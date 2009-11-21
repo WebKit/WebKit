@@ -2,6 +2,20 @@
 
         Reviewed by Dave Hyatt.
 
+        Another go at the Windows Build Fix - this is a couple steps of it,
+        so a little more involved than most build fixes.
+
+        * Interfaces/IWebSerializedJSValue.idl:
+        * Interfaces/JavaScriptCoreAPITypes.idl:
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebSerializedJSValue.cpp:
+        (WebSerializedJSValue::deserialize):
+        * WebSerializedJSValue.h:
+
+2009-11-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Build fix for Windows - only declare JSContextRef once, instead
         of in two different idl files. Create a new file to hold the
         definition of JSContextRef.

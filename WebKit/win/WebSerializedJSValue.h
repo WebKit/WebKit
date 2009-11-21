@@ -44,7 +44,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE deserialize(JSContextRef, JSValueRef* result);
 
 private:
-    WebSerializedJSValue(JSContextRef, JSValueRef);
+    WebSerializedJSValue(JSContextRef, JSValueRef, JSValueRef*);
     ~WebSerializedJSValue();
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);

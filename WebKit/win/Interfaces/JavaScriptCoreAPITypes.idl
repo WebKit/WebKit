@@ -30,8 +30,11 @@ import "ocidl.idl";
 cpp_quote("// this is done to get midl to treat the JavaScriptCore API types as pointer types")
 cpp_quote("#if 0")
 typedef void* JSContextRef;
+typedef void* JSObjectRef;
 typedef void* JSValueRef;
 cpp_quote("#else")
-cpp_quote("typedef struct OpaqueJSValue* JSValueRef;")
+cpp_quote("typedef const struct OpaqueJSValue* JSValueRef;")
+cpp_quote("typedef struct OpaqueJSValue* JSObjectRef;")
 cpp_quote("typedef const struct OpaqueJSContext* JSContextRef;")
 cpp_quote("#endif")
+

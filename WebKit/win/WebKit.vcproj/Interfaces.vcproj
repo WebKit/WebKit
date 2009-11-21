@@ -1644,10 +1644,6 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\Interfaces\JavaScriptCoreAPITypes.idl"
-			>
-		</File>
-		<File
 			RelativePath="..\Interfaces\WebKit.idl"
 			>
 			<FileConfiguration
@@ -1669,6 +1665,26 @@
 		</File>
 		<File
 			RelativePath="..\Interfaces\WebScrollbarTypes.idl"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCMIDLTool"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				ExcludedFromBuild="true"
+				>
+				<Tool
+					Name="VCMIDLTool"
+				/>
+			</FileConfiguration>
+		</File>
+        <File
+			RelativePath="..\Interfaces\JavaScriptCoreAPITypes.idl"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"

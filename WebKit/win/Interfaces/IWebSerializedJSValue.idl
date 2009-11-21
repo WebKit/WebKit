@@ -35,5 +35,5 @@ import "JavaScriptCoreAPITypes.idl";
     pointer_default(unique)
 ]
 interface IWebSerializedJSValue : IUnknown {
-    HRESULT deserialize([in] JSContextRef context, [out, retval] JSValueRef* value);
+    [local] HRESULT deserialize([in] JSContextRef context, [out, retval] JSValueRef* value);
 }
