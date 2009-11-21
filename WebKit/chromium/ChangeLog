@@ -1,3 +1,11 @@
+2009-11-20  Jian Li  <jianli@chromium.org>
+
+        Not reviewed. Fix chromium build.
+
+        * public/WebAccessibilityRole.h:
+        (WebKit::):
+        * src/AssertMatchingEnums.cpp:
+
 2009-11-19  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.

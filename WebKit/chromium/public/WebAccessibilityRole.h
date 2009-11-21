@@ -127,6 +127,7 @@ enum WebAccessibilityRole {
 
     WebAccessibilityRoleDocument,
     WebAccessibilityRoleDocumentArticle,
+    WebAccessibilityRoleDocumentMath,
     WebAccessibilityRoleDocumentNote,
     WebAccessibilityRoleDocumentRegion,
 
