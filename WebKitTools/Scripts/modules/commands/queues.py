@@ -106,7 +106,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
     def execute(self, options, args, tool):
         self.options = options
         self.tool = tool
-        work_queue = WorkQueue(self)
+        work_queue = WorkQueue(self, self.name)
         work_queue.run()
 
 
@@ -131,7 +131,7 @@ class CommitQueue(AbstractQueue):
         if red_builders_names:
             red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
             return (False, "Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
-        return (True, "Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
+        return (True, "Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--quiet", patch["id"]])
@@ -172,7 +172,7 @@ class StyleQueue(AbstractTryQueue):
         AbstractTryQueue.__init__(self)
 
     def should_proceed_with_work_item(self, patch):
-        return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
+        return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["check-style", "--force-clean", patch["id"]])
@@ -193,7 +193,7 @@ class BuildQueue(AbstractTryQueue):
             self.run_bugzilla_tool(["build", self.port.flag(), "--force-clean", "--quiet"])
         except ScriptError, e:
             return (False, "Unable to perform a build.", None)
-        return (True, "Building patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch["bug_id"])
+        return (True, "Building patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", "--quiet", "--no-update", patch["id"]])

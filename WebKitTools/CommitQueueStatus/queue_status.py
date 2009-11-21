@@ -41,22 +41,36 @@ from google.appengine.ext import db
 
 webapp.template.register_template_library('filters.webkit_extras')
 
+
 class QueueStatus(db.Model):
     author = db.UserProperty()
+    queue_name = db.StringProperty()
     active_bug_id = db.IntegerProperty()
     active_patch_id = db.IntegerProperty()
     message = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
 
+
 class MainPage(webapp.RequestHandler):
     def get(self):
-        statuses_query = QueueStatus.all().order('-date')
+        statuses_query = QueueStatus.all().filter('queue_name =', 'commit-queue').order('-date')
         statuses = statuses_query.fetch(6)
+        if not statuses:
+            return self.response.out.write("No status to report.")
         template_values = {
             'last_status' : statuses[0],
             'recent_statuses' : statuses[1:],
         }
         self.response.out.write(template.render('index.html', template_values))
+
+
+class PatchStatus(webapp.RequestHandler):
+    def get(self, queue_name, attachment_id):
+        statuses = QueueStatus.all().filter('queue_name =', queue_name).filter('active_patch_id =', attachment_id).order('-date')
+        if not statuses:
+            self.error(404)
+        self.response.out.write(statuses[0].message)
+
 
 class UpdateStatus(webapp.RequestHandler):
     def get(self):
@@ -66,6 +80,7 @@ class UpdateStatus(webapp.RequestHandler):
         string_value = self.request.get(name)
         try:
             int_value = int(string_value)
+            return int_value
         except ValueError, TypeError:
             pass
         return None
@@ -76,15 +91,19 @@ class UpdateStatus(webapp.RequestHandler):
         if users.get_current_user():
             queue_status.author = users.get_current_user()
 
+        queue_name = self.request.get('queue_name')
+        queue_status.queue_name = queue_name
         queue_status.active_bug_id = self._int_from_request('bug_id')
         queue_status.active_patch_id = self._int_from_request('patch_id')
         queue_status.message = self.request.get('status')
         queue_status.put()
         self.redirect('/')
 
+
 routes = [
     ('/', MainPage),
-    ('/update_status', UpdateStatus)
+    ('/update-status', UpdateStatus),
+    (r'/patch-status/(.*)/(.*)', PatchStatus),
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)

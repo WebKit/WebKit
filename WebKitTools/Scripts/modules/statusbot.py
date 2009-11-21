@@ -46,24 +46,39 @@ http://wwwsearch.sourceforge.net/mechanize/
 """
     exit(1)
 
+import urllib2
+
+
 class StatusBot:
     default_host = "webkit-commit-queue.appspot.com"
 
     def __init__(self, host=default_host):
         self.statusbot_host = host
         self.statusbot_server_url = "http://%s" % self.statusbot_host
-        self.update_status_url = "%s/update_status" % self.statusbot_server_url
         self.browser = Browser()
 
-    def update_status(self, status, bug_id=None, patch_id=None):
+    def update_status(self, queue_name, status, patch):
         # During unit testing, statusbot_host is None
         if not self.statusbot_host:
             return
-        self.browser.open(self.update_status_url)
+
+        update_status_url = "%s/update-status" % self.statusbot_server_url
+        self.browser.open(update_status_url)
         self.browser.select_form(name="update_status")
-        if bug_id:
-            self.browser['bug_id'] = str(bug_id)
-        if patch_id:
-            self.browser['patch_id'] = str(patch_id)
+        self.browser['queue_name'] = queue_name
+        if patch:
+            if patch.get('bug_id'):
+                self.browser['bug_id'] = str(patch['bug_id'])
+            if patch.get('id'):
+                self.browser['patch_id'] = str(patch['id'])
         self.browser['status'] = status
         self.browser.submit()
+
+    def patch_status(self, queue_name, patch_id):
+        update_status_url = "%s/patch-status/%s/%s" % (self.statusbot_server_url, queue_name, patch_id)
+        try:
+            return urllib2.urlopen(update_status_url).read()
+        except urllib2.HTTPError, e:
+            if e.code == 404:
+                return None
+            raise e

@@ -38,6 +38,9 @@ from modules.scm import ScriptError
 from modules.statusbot import StatusBot
 
 class WorkQueueDelegate:
+    def queue_name(self):
+        raise NotImplementedError, "subclasses must implement"
+
     def queue_log_path(self):
         raise NotImplementedError, "subclasses must implement"
 
@@ -57,7 +60,7 @@ class WorkQueueDelegate:
         raise NotImplementedError, "subclasses must implement"
 
     def should_proceed_with_work_item(self, work_item):
-        # returns (safe_to_proceed, waiting_message, bug_id)
+        # returns (safe_to_proceed, waiting_message, patch)
         raise NotImplementedError, "subclasses must implement"
 
     def process_work_item(self, work_item):
@@ -68,7 +71,8 @@ class WorkQueueDelegate:
 
 
 class WorkQueue:
-    def __init__(self, delegate):
+    def __init__(self, name, delegate):
+        self._name = name
         self._delegate = delegate
         self._output_tee = OutputTee()
 
@@ -95,11 +99,11 @@ class WorkQueue:
                 if not work_item:
                     self._update_status_and_sleep("Empty queue.")
                     continue
-                (safe_to_proceed, waiting_message, bug_id) = self._delegate.should_proceed_with_work_item(work_item)
+                (safe_to_proceed, waiting_message, patch) = self._delegate.should_proceed_with_work_item(work_item)
                 if not safe_to_proceed:
                     self._update_status_and_sleep(waiting_message)
                     continue
-                self.status_bot.update_status(waiting_message, bug_id=bug_id)
+                self.status_bot.update_status(self._name, waiting_message, patch)
             except Exception, e:
                 # Don't try tell the status bot, in case telling it causes an exception.
                 self._sleep("Exception while preparing queue: %s." % e)

@@ -1,3 +1,29 @@
+2009-11-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach the StatusBot how to support more than just the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=31754
+
+        * CommitQueueStatus/index.yaml:
+         - Add indices required for the new queries.
+        * CommitQueueStatus/queue_status.py:
+         - Add a patch-status page and move update_status to update-status.
+         - Only display "commit-queue" status records for the commit-queue.
+         - Add support for a queue_name property on status records.
+         - Fix _int_from_request to actually work.
+        * CommitQueueStatus/update_status.html:
+         - Add support for a queue_name on status records.
+         - Remove unused list of bug ids.
+         * Scripts/modules/commands/queues.py
+          - Make the queues pass the patch instead of the bug_id to StatusBot.
+        * Scripts/modules/statusbot.py:
+         - Support passing the queue_name to the status updates.
+         - Support fetching patch status with patch_status().
+        * Scripts/modules/workqueue.py:
+         - Pass the patch to the StatusBot instead of the bug_id.
+         - Let WorkQueues have a name.
+
 2009-11-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
