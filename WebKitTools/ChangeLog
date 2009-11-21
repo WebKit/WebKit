@@ -1,5 +1,12 @@
 2009-11-21  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.  Turns out I was testing the wrong copy of
+        WebKitTools.
+
+        * Scripts/modules/commands/download.py:
+
+2009-11-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Convert check-style to use LandingSequence

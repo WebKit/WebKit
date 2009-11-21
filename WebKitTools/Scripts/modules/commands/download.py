@@ -243,7 +243,7 @@ class AbstractPatchProcessingCommand(Command):
 
 class CheckStyleSequence(LandingSequence):
     def __init__(self, patch, options, tool):
-        ConditionalLandingSequence.__init__(self, patch, options, tool)
+        LandingSequence.__init__(self, patch, options, tool)
 
     def run(self):
         self.clean()
@@ -260,6 +260,7 @@ class CheckStyle(AbstractPatchProcessingCommand):
     name = "check-style"
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
+        options += WebKitLandingScripts.build_options()
         AbstractPatchProcessingCommand.__init__(self, "Runs check-webkit-style on the specified attachments.", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
