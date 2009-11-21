@@ -1,5 +1,29 @@
 2009-11-21  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        bugzilla-tool --help spews way too much text
+        https://bugs.webkit.org/show_bug.cgi?id=31771
+
+        * Scripts/bugzilla-tool:
+         - Remove self.cached_scm initialization hack.
+        * Scripts/modules/buildbot.py:
+         - Make default_host accessible to callers.
+        * Scripts/modules/commands/download.py:
+         - Phrase help for all commands consistently and remove spurious help text punctuation.
+        * Scripts/modules/commands/queries.py: Ditto.
+        * Scripts/modules/commands/queues.py: Ditto.
+        * Scripts/modules/commands/upload.py: Ditto.
+        * Scripts/modules/multicommandtool.py:
+         - Add HelpPrintingOptionParser.format_epilog to replace
+           NonWrappingEpilogIndentedHelpFormatter and allow us to lazily initialize
+           per-command help (thus removing the need for the cached_scm hack in BugzillaTool).
+         - Make --help only show a list of commands like "svn help" and "git help" do --
+           previously --help was listing all commands and options.
+         - Sort list of commands alphabetically.
+
+2009-11-21  Eric Seidel  <eric@webkit.org>
+
         No review.  Fixing a typo from the previous patch for bug 31767.
 
         AbstractQueue.run_bugzilla_tool throws an exception

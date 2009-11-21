@@ -57,7 +57,7 @@ from modules.workqueue import WorkQueue, WorkQueueDelegate
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
     def __init__(self):
-        Command.__init__(self, "Prints a commit message suitable for the uncommitted changes.")
+        Command.__init__(self, "Print a commit message suitable for the uncommitted changes")
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
@@ -67,7 +67,7 @@ class CommitMessageForCurrentDiff(Command):
 class ObsoleteAttachments(Command):
     name = "obsolete-attachments"
     def __init__(self):
-        Command.__init__(self, "Marks all attachments on a bug as obsolete.", "BUGID")
+        Command.__init__(self, "Mark all attachments on a bug as obsolete", "BUGID")
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -84,7 +84,7 @@ class PostDiff(Command):
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
         ]
         options += self.posting_options()
-        Command.__init__(self, "Attaches the current working directory diff to a bug as a patch file.", "[BUGID]", options=options)
+        Command.__init__(self, "Attach the current working directory diff to a bug as a patch file", "[BUGID]", options=options)
 
     @staticmethod
     def posting_options():
@@ -127,7 +127,7 @@ class PostCommits(Command):
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: description from commit message)"),
         ]
         options += PostDiff.posting_options()
-        Command.__init__(self, "Attaches a range of local commits to bugs as patch files.", "COMMITISH", options=options, requires_local_commits=True)
+        Command.__init__(self, "Attach a range of local commits to bugs as patch files", "COMMITISH", options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
         comment_text = None
@@ -179,7 +179,7 @@ class CreateBug(Command):
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
-        Command.__init__(self, "Create a bug from local changes or local commits.", "[COMMITISH]", options=options)
+        Command.__init__(self, "Create a bug from local changes or local commits", "[COMMITISH]", options=options)
 
     def create_bug_from_commit(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)

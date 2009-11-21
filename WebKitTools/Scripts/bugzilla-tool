@@ -40,16 +40,12 @@ from modules.logging import log
 
 class BugzillaTool(MultiCommandTool):
     def __init__(self):
-        # HACK: Set self.cached_scm before calling MultiCommandTool.__init__ because
-        # MultiCommandTool._commands_usage() will call self.should_show_command_help which uses scm().
-        # This hack can be removed by overriding usage() printing in HelpPrintingOptionParser
-        # so that we don't need to create 'epilog' before constructing HelpPrintingOptionParser.
-        self.cached_scm = None
         MultiCommandTool.__init__(self)
         self.global_option_parser.add_option("--dry-run", action="callback", help="do not touch remote servers", callback=self.dry_run_callback)
 
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
+        self.cached_scm = None
 
     def dry_run_callback(self, option, opt, value, parser):
         self.scm().dryrun = True

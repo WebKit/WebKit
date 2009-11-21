@@ -60,7 +60,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
-        Command.__init__(self, "Run the %s." % self.name, options=options)
+        Command.__init__(self, "Run the %s" % self.name, options=options)
 
     def queue_log_path(self):
         return "%s.log" % self.name

@@ -39,7 +39,8 @@ from modules.logging import log
 from .BeautifulSoup import BeautifulSoup
 
 class BuildBot:
-    def __init__(self, host="build.webkit.org"):
+    default_host = "build.webkit.org"
+    def __init__(self, host=default_host):
         self.buildbot_host = host
         self.buildbot_server_url = "http://%s/" % self.buildbot_host
         

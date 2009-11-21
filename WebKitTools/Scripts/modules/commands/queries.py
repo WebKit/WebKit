@@ -57,7 +57,7 @@ from modules.workqueue import WorkQueue, WorkQueueDelegate
 class BugsToCommit(Command):
     name = "bugs-to-commit"
     def __init__(self):
-        Command.__init__(self, "Bugs in the commit queue")
+        Command.__init__(self, "List bugs in the commit-queue")
 
     def execute(self, options, args, tool):
         bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
@@ -68,7 +68,7 @@ class BugsToCommit(Command):
 class PatchesToCommit(Command):
     name = "patches-to-commit"
     def __init__(self):
-        Command.__init__(self, "Patches in the commit queue")
+        Command.__init__(self, "List patches in the commit-queue")
 
     def execute(self, options, args, tool):
         patches = tool.bugs.fetch_patches_from_commit_queue()
@@ -80,7 +80,7 @@ class PatchesToCommit(Command):
 class ReviewedPatches(Command):
     name = "reviewed-patches"
     def __init__(self):
-        Command.__init__(self, "r+'d patches on a bug", "BUGID")
+        Command.__init__(self, "List r+'d patches on a bug", "BUGID")
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -92,7 +92,7 @@ class ReviewedPatches(Command):
 class TreeStatus(Command):
     name = "tree-status"
     def __init__(self):
-        Command.__init__(self, "Print out the status of the webkit builders.")
+        Command.__init__(self, "Print the status of the %s buildbots" % BuildBot.default_host)
 
     def execute(self, options, args, tool):
         for builder in tool.buildbot.builder_statuses():

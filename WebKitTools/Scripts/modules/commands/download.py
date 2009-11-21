@@ -71,7 +71,7 @@ class Build(Command):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
         options += WebKitLandingScripts.land_options()
-        Command.__init__(self, "Updates working copy and does a build.", "", options)
+        Command.__init__(self, "Update working copy and build", "", options)
 
     def execute(self, options, args, tool):
         sequence = BuildSequence(options, tool)
@@ -82,7 +82,7 @@ class ApplyAttachment(Command):
     name = "apply-attachment"
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, "Applies an attachment to the local working directory.", "ATTACHMENT_ID", options=options)
+        Command.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID", options=options)
 
     def execute(self, options, args, tool):
         WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
@@ -95,7 +95,7 @@ class ApplyPatches(Command):
     name = "apply-patches"
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
-        Command.__init__(self, "Applies all patches on a bug to the local working directory.", "BUGID", options=options)
+        Command.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID", options=options)
 
     def execute(self, options, args, tool):
         WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
@@ -165,7 +165,7 @@ class LandDiff(Command):
         ]
         options += WebKitLandingScripts.build_options()
         options += WebKitLandingScripts.land_options()
-        Command.__init__(self, "Lands the current working directory diff and updates the bug if provided.", "[BUGID]", options=options)
+        Command.__init__(self, "Land the current working directory diff and updates the associated bug if any", "[BUGID]", options=options)
 
     def guess_reviewer_from_bug(self, bugs, bug_id):
         patches = bugs.fetch_reviewed_patches_from_bug(bug_id)
@@ -261,7 +261,7 @@ class CheckStyle(AbstractPatchProcessingCommand):
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
-        AbstractPatchProcessingCommand.__init__(self, "Runs check-webkit-style on the specified attachments.", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
+        AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
@@ -290,7 +290,7 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
-        AbstractPatchProcessingCommand.__init__(self, "Builds patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
+        AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
@@ -323,7 +323,7 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
 class LandAttachment(AbstractPatchLandingCommand):
     name = "land-attachment"
     def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, "Lands patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
+        AbstractPatchLandingCommand.__init__(self, "Land patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
@@ -332,7 +332,7 @@ class LandAttachment(AbstractPatchLandingCommand):
 class LandPatches(AbstractPatchLandingCommand):
     name = "land-patches"
     def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, "Lands all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
+        AbstractPatchLandingCommand.__init__(self, "Land all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
@@ -349,8 +349,8 @@ class Rollout(Command):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
         options += WebKitLandingScripts.land_options()
-        options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Experimental support for complete unsupervised rollouts, including re-opening the bug.  Not recommended."))
-        Command.__init__(self, "Reverts the given revision and commits the revert and re-opens the original bug.", "REVISION [BUGID]", options=options)
+        options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Commit the revert and re-open the original bug."))
+        Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=options)
 
     @staticmethod
     def _create_changelogs_for_revert(scm, revision):

@@ -60,30 +60,31 @@ class Command(object):
     def execute(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
 
-class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
-    # The standard IndentedHelpFormatter paragraph-wraps the epilog, killing our custom formatting.
-    def format_epilog(self, epilog):
-        if epilog:
-            return "\n" + epilog + "\n"
-        return ""
-
 
 class HelpPrintingOptionParser(OptionParser):
+    def __init__(self, epilog_method=None, *args, **kwargs):
+        self.epilog_method = epilog_method
+        OptionParser.__init__(self, *args, **kwargs)
+
     def error(self, msg):
         self.print_usage(sys.stderr)
         error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
         error_message += "\nType \"" + self.get_prog_name() + " --help\" to see usage.\n"
         self.exit(1, error_message)
 
+    # We override format_epilog to avoid the default formatting which would paragraph-wrap the epilog
+    # and also to allow us to compute the epilog lazily instead of in the constructor (allowing it to be context sensitive).
+    def format_epilog(self, epilog):
+        if self.epilog_method:
+            return "\n%s\n" % self.epilog_method()
+        return ""
+
 
 class MultiCommandTool(object):
     def __init__(self, commands=None):
         # Allow the unit tests to disable command auto-discovery.
         self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
-        # FIXME: Calling self._commands_usage() in the constructor is bad because
-        # it calls self.should_show_command_help which is subclass-defined.
-        # The subclass will not be fully initialized at this point.
-        self.global_option_parser = HelpPrintingOptionParser(usage=self._usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self._commands_usage())
+        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self._help_epilog, usage=self._usage_line())
 
     @classmethod
     def _add_all_subclasses(cls, class_to_crawl, seen_classes):
@@ -100,31 +101,24 @@ class MultiCommandTool(object):
 
     @staticmethod
     def _usage_line():
-        return "Usage: %prog [options] command [command-options] [command-arguments]"
-
-    def _command_help_formatter(self):
-        # Use our own help formatter so as to indent enough.
-        formatter = IndentedHelpFormatter()
-        formatter.indent()
-        formatter.indent()
-        return formatter
-
-    @classmethod
-    def _help_for_command(cls, command, formatter, longest_name_length):
-        help_text = "  " + command.name_with_arguments().ljust(longest_name_length + 3) + command.help_text + "\n"
-        help_text += command.option_parser.format_option_help(formatter)
-        return help_text
+        return "Usage: %prog [options] COMMAND [ARGS]"
 
     @classmethod
     def _standalone_help_for_command(cls, command):
-        return cls._help_for_command(command, IndentedHelpFormatter(), len(command.name_with_arguments()))
+        help_text = command.name_with_arguments().ljust(len(command.name_with_arguments()) + 3) + command.help_text + "\n"
+        help_text += command.option_parser.format_option_help(IndentedHelpFormatter())
+        return help_text
 
-    def _commands_usage(self):
-        # Only show commands which are relevant to this checkout.  This might be confusing to some users?
+    def _help_epilog(self):
+        # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
         relevant_commands = filter(self.should_show_command_help, self.commands)
-        longest_name_length = max(map(lambda command: len(command.name_with_arguments()), relevant_commands))
-        command_help_texts = map(lambda command: self._help_for_command(command, self._command_help_formatter(), longest_name_length), relevant_commands)
-        return "Commands:\n" + "".join(command_help_texts)
+        longest_name_length = max(map(lambda command: len(command.name), relevant_commands))
+        relevant_commands.sort(lambda a, b: cmp(a.name, b.name))
+        command_help_texts = map(lambda command: "   %s   %s\n" % (command.name.ljust(longest_name_length), command.help_text), relevant_commands)
+        epilog = "%prog supports the following commands:\n"
+        epilog += "%s\n" % "".join(command_help_texts)
+        epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
+        return self.global_option_parser.expand_prog_name(epilog)
 
     def handle_global_args(self, args):
         (options, args) = self.global_option_parser.parse_args(args)
