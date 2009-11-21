@@ -1,5 +1,13 @@
 2009-11-20  Dave Hyatt  <hyatt@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Make sure to export WebSerializedJSValue.
+
+        * WebKit.exp:
+
+2009-11-20  Dave Hyatt  <hyatt@apple.com>
+
         Reviewed by Oliver Hunt and Jon Honeycutt.
 
         Add support for WebSerializedJSValue to WebKit.  This object wraps the SerializedScriptValue functionality in WebCore
