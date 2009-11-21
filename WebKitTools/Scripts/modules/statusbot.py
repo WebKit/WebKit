@@ -57,7 +57,7 @@ class StatusBot:
         self.statusbot_server_url = "http://%s" % self.statusbot_host
         self.browser = Browser()
 
-    def update_status(self, queue_name, status, patch):
+    def update_status(self, queue_name, status, patch=None):
         # During unit testing, statusbot_host is None
         if not self.statusbot_host:
             return

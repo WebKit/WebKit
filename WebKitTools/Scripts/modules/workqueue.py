@@ -148,6 +148,6 @@ class WorkQueue:
 
     def _update_status_and_sleep(self, message):
         status_message = self._sleep_message(message)
-        self.status_bot.update_status(status_message)
+        self.status_bot.update_status(self._name, status_message)
         log(status_message)
         time.sleep(self.seconds_to_sleep)
