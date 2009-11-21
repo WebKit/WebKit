@@ -80,7 +80,6 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, bool canBubble, bool
 
 KeyboardEvent::~KeyboardEvent()
 {
-    delete m_keyEvent;
 }
 
 void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,

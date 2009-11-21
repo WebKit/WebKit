@@ -79,7 +79,7 @@ namespace WebCore {
 
         bool altGraphKey() const { return m_altGraphKey; }
     
-        const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent; }
+        const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent.get(); }
 
         int keyCode() const; // key code for keydown and keyup, character for keypress
         int charCode() const; // character code for keypress, 0 for keydown and keyup
@@ -99,7 +99,7 @@ namespace WebCore {
                       const String& keyIdentifier, unsigned keyLocation,
                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
 
-        PlatformKeyboardEvent* m_keyEvent;
+        OwnPtr<PlatformKeyboardEvent> m_keyEvent;
         String m_keyIdentifier;
         unsigned m_keyLocation;
         bool m_altGraphKey : 1;

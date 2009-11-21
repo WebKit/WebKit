@@ -1,3 +1,18 @@
+2009-11-21  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31647
+
+        Changed KeyboardEvent::m_keyEvent from a raw pointer to an OwnPtr.
+
+        No functionality was changed. So, no new tests.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::~KeyboardEvent):
+        * dom/KeyboardEvent.h: Changed m_keyEvent to OwnPtr.
+        (WebCore::KeyboardEvent::keyEvent):
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
