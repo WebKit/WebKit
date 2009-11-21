@@ -1,3 +1,13 @@
+2009-11-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Running code in the Console that ends with a
+        single line comment no longer produces a parse error.
+
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._evaluateOn):
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -579,7 +579,7 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
     InjectedScript._ensureCommandLineAPIInstalled(evalFunction, object);
     // Surround the expression in with statements to inject our command line API so that
     // the window object properties still take more precedent than our API functions.
-    expression = "with (window.console._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
+    expression = "with (window.console._inspectorCommandLineAPI) { with (window) {\n" + expression + "\n} }";
     var value = evalFunction.call(object, expression);
 
     // When evaluating on call frame error is not thrown, but returned as a value.
