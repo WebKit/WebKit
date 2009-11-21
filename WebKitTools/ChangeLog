@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Move bugzilla-tool commands into their own file
+        https://bugs.webkit.org/show_bug.cgi?id=31752
+
+        This will let us write unit tests.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/commands/__init__.py: Added.
+        * Scripts/modules/commands/download.py: Added.
+        * Scripts/modules/commands/queries.py: Added.
+        * Scripts/modules/commands/queues.py: Added.
+        * Scripts/modules/commands/upload.py: Added.
+        * Scripts/modules/grammar.py: Added.
+
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         BuildQueue should check if the tree is currently buildable
         https://bugs.webkit.org/show_bug.cgi?id=31744
 
