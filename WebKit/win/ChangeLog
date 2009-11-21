@@ -1,3 +1,23 @@
+2009-11-20  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt and Jon Honeycutt.
+
+        Add support for WebSerializedJSValue to WebKit.  This object wraps the SerializedScriptValue functionality in WebCore
+        and exposes the ability to do JS value serialization/deserialization to WebKit clients.
+
+        * Interfaces/IWebSerializedJSValue.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebSerializedJSValue.cpp: Added.
+        (WebSerializedJSValue::WebSerializedJSValue):
+        (WebSerializedJSValue::~WebSerializedJSValue):
+        (WebSerializedJSValue::createInstance):
+        (WebSerializedJSValue::AddRef):
+        (WebSerializedJSValue::Release):
+        (WebSerializedJSValue::QueryInterface):
+        (WebSerializedJSValue::deserialize):
+        * WebSerializedJSValue.h: Added.
+
 2009-11-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

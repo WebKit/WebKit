@@ -117,6 +117,7 @@ import "ocidl.idl";
 #include "IWebScrollBarDelegatePrivate.idl"
 #include "IWebScrollBarPrivate.idl"
 #include "IWebSecurityOrigin.idl"
+#include "IWebSerializedJSValue.idl"
 #include "IWebTextRenderer.idl"
 #include "IWebUIDelegate.idl"
 #include "IWebUIDelegate2.idl"
@@ -276,6 +277,11 @@ library WebKit
     [uuid(D3C301EE-D59A-49c0-A43A-9EA01CDB1590)]
     coclass WebScriptWorld {
         [default] interface IWebScriptWorld;
+    }
+    
+    [uuid(13C45703-A3B3-8797-276B-75632F6165C3)]
+    coclass WebSerializedJSValue {
+        [default] interface IWebSerializedJSValue;
     }
 }
 

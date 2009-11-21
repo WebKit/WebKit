@@ -725,6 +725,10 @@
 				RelativePath="..\WebScriptWorld.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\WebSerializedJSValue.h"
+				>
+			</File>
 			<File
 				RelativePath="..\WebKitStatistics.h"
 				>
@@ -1095,6 +1099,10 @@
 			</File>
 			<File
 				RelativePath="..\WebScriptWorld.cpp"
+				>
+			</File>
+                        <File
+				RelativePath="..\WebSerializedJSValue.cpp"
 				>
 			</File>
 			<File

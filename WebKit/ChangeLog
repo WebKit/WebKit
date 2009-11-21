@@ -1,3 +1,12 @@
+2009-11-20  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt and Jon Honeycutt.
+
+        Add support for WebSerializedJSValue to WebKit.  This object wraps the SerializedScriptValue functionality in WebCore
+        and exposes the ability to do JS value serialization/deserialization to WebKit clients.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
