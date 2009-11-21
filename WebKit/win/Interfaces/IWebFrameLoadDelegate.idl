@@ -29,17 +29,8 @@ import "ocidl.idl";
 import "IWebScriptObject.idl";
 import "IWebView.idl";
 import "IWebFrame.idl";
+import "JavaScriptCoreAPITypes.idl";
 #endif
-
-cpp_quote("// this is done to get midl to treat the JavaScriptCore API types as pointer types")
-cpp_quote("#if 0")
-typedef void* JSContextRef;
-typedef void* JSObjectRef;
-cpp_quote("#else")
-cpp_quote("typedef struct OpaqueJSValue* JSObjectRef;")
-cpp_quote("typedef const struct OpaqueJSContext* JSContextRef;")
-cpp_quote("#endif")
-
 
 interface IWebError;
 interface IWebFrame;

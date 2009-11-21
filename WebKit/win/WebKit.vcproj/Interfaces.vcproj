@@ -1644,6 +1644,10 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\Interfaces\JavaScriptCoreAPITypes.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\WebKit.idl"
 			>
 			<FileConfiguration

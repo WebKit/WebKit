@@ -1,3 +1,17 @@
+2009-11-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Build fix for Windows - only declare JSContextRef once, instead
+        of in two different idl files. Create a new file to hold the
+        definition of JSContextRef.
+
+        * Interfaces/IWebFrameLoadDelegate.idl:
+        * Interfaces/IWebSerializedJSValue.idl:
+        * Interfaces/JavaScriptCoreAPITypes.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebKit.vcproj/Interfaces.vcproj:
+
 2009-11-20  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt and Jon Honeycutt.

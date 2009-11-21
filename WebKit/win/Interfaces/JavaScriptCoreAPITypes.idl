@@ -25,15 +25,13 @@
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";
 import "ocidl.idl";
-import "JavaScriptCoreAPITypes.idl";
 #endif
 
-[
-    object,
-    oleautomation,
-    uuid(13B3F50A-C996-61A7-2247-3DCC88FB0B84),
-    pointer_default(unique)
-]
-interface IWebSerializedJSValue : IUnknown {
-    HRESULT deserialize([in] JSContextRef context, [out, retval] JSValueRef* value);
-}
+cpp_quote("// this is done to get midl to treat the JavaScriptCore API types as pointer types")
+cpp_quote("#if 0")
+typedef void* JSContextRef;
+typedef void* JSValueRef;
+cpp_quote("#else")
+cpp_quote("typedef struct OpaqueJSValue* JSValueRef;")
+cpp_quote("typedef const struct OpaqueJSContext* JSContextRef;")
+cpp_quote("#endif")
