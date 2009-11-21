@@ -1,3 +1,9 @@
+2009-11-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * Interfaces/IWebSerializedJSValue.idl:
+
 2009-11-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         DOMElement::tagName() is unimplemented
