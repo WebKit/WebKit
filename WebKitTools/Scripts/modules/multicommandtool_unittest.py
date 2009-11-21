@@ -34,6 +34,7 @@ from StringIO import StringIO
 from optparse import make_option
 
 class TrivialCommand(Command):
+    name = "trivial"
     def __init__(self, **kwargs):
         Command.__init__(self, "help text", **kwargs)
 
@@ -44,14 +45,14 @@ class TrivialCommand(Command):
 class CommandTest(unittest.TestCase):
     def test_name_with_arguments(self):
         command_with_args = TrivialCommand(argument_names="ARG1 ARG2")
-        self.assertEqual(command_with_args.name_with_arguments("simple"), "simple ARG1 ARG2")
+        self.assertEqual(command_with_args.name_with_arguments(), "trivial ARG1 ARG2")
 
         command_with_args = TrivialCommand(options=[make_option("--my_option")])
-        self.assertEqual(command_with_args.name_with_arguments("simple"), "simple [options]")
+        self.assertEqual(command_with_args.name_with_arguments(), "trivial [options]")
 
 
 class TrivialTool(MultiCommandTool):
-    def __init__(self, commands):
+    def __init__(self, commands=None):
         MultiCommandTool.__init__(self, commands)
 
     def should_show_command_help(self, command):
@@ -62,7 +63,6 @@ class TrivialTool(MultiCommandTool):
 
 
 class MultiCommandToolTest(unittest.TestCase):
-
     def _capture_stderr(self):
         self.saved_stderr = sys.stderr
         sys.stderr = StringIO()
@@ -91,21 +91,19 @@ class MultiCommandToolTest(unittest.TestCase):
         self._assert_split(full_args, full_args_expected)
 
     def test_command_by_name(self):
-        foo_command = { "name" : "foo_command", "object" :  TrivialCommand() }
-        tool = TrivialTool([foo_command])
-
-        self.assertEqual(tool.command_by_name("foo_command"), foo_command)
+        # This also tests Command auto-discovery.
+        tool = TrivialTool()
+        self.assertEqual(tool.command_by_name("trivial").name, "trivial")
         self.assertEqual(tool.command_by_name("bar"), None)
 
     def test_command_help(self):
-        command_with_args = TrivialCommand(options=[make_option("--my_option")])
-        foo_command = { "name" : "foo_command", "object" :  command_with_args }
-        tool = TrivialTool([foo_command])
+        command_with_options = TrivialCommand(options=[make_option("--my_option")])
+        tool = TrivialTool(commands=[command_with_options])
 
         self._capture_stderr()
-        exit_code = tool.main(["tool", "help", "foo_command"])
+        exit_code = tool.main(["tool", "help", "trivial"])
         help_text = self._release_stderr()
-        expected_subcommand_help = "  foo_command [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
+        expected_subcommand_help = "  trivial [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
         self.assertEqual(exit_code, 0)
         self.assertEqual(help_text, expected_subcommand_help)
 

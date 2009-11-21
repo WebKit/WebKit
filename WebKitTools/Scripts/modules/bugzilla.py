@@ -377,7 +377,7 @@ class Bugzilla:
         if self.dryrun:
             log(comment_text)
             return
-        
+
         self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
         self._fill_attachment_form(description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue, bug_id=bug_id)

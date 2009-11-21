@@ -109,6 +109,7 @@ class WorkQueue:
                 self._sleep("Exception while preparing queue: %s." % e)
                 continue
 
+            # FIXME: Work logs should not depend on bug_id specificaly.
             self._open_work_log(patch["bug_id"])
             try:
                 self._delegate.process_work_item(work_item)

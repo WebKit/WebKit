@@ -77,8 +77,9 @@ class HelpPrintingOptionParser(OptionParser):
 
 
 class MultiCommandTool(object):
-    def __init__(self):
-        self.commands = [cls() for cls in self._find_all_commands() if cls.name]
+    def __init__(self, commands=None):
+        # Allow the unit tests to disable command auto-discovery.
+        self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
         # FIXME: Calling self._commands_usage() in the constructor is bad because
         # it calls self.should_show_command_help which is subclass-defined.
         # The subclass will not be fully initialized at this point.

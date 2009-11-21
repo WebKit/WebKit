@@ -85,7 +85,8 @@ class LoggingDelegate(WorkQueueDelegate):
     def should_proceed_with_work_item(self, work_item):
         self.record("should_proceed_with_work_item")
         self._test.assertEquals(work_item, "work_item")
-        return (True, "waiting_message", 42)
+        fake_patch = { 'bug_id' : 42 }
+        return (True, "waiting_message", fake_patch)
 
     def process_work_item(self, work_item):
         self.record("process_work_item")
@@ -110,12 +111,13 @@ class NotSafeToProceedDelegate(LoggingDelegate):
     def should_proceed_with_work_item(self, work_item):
         self.record("should_proceed_with_work_item")
         self._test.assertEquals(work_item, "work_item")
-        return (False, "waiting_message", 42)
+        fake_patch = { 'bug_id' : 42 }
+        return (False, "waiting_message", fake_patch)
 
 
 class FastWorkQueue(WorkQueue):
     def __init__(self, delegate):
-        WorkQueue.__init__(self, delegate)
+        WorkQueue.__init__(self, "fast-queue", delegate)
 
     # No sleep for the wicked.
     seconds_to_sleep = 0
@@ -127,7 +129,7 @@ class FastWorkQueue(WorkQueue):
 class WorkQueueTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
-        work_queue = WorkQueue(delegate)
+        work_queue = WorkQueue("trivial-queue", delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(delegate.queue_log_path()))
@@ -135,7 +137,7 @@ class WorkQueueTest(unittest.TestCase):
 
     def test_unexpected_error(self):
         delegate = ThrowErrorDelegate(self, 3)
-        work_queue = WorkQueue(delegate)
+        work_queue = WorkQueue("error-queue", delegate)
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         work_item_index = expected_callbacks.index('process_work_item')
@@ -146,7 +148,7 @@ class WorkQueueTest(unittest.TestCase):
 
     def test_handled_error(self):
         delegate = ThrowErrorDelegate(self, WorkQueue.handled_error_code)
-        work_queue = WorkQueue(delegate)
+        work_queue = WorkQueue("handled-error-queue", delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
 

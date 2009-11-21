@@ -1,3 +1,21 @@
+2009-11-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix a bunch of unit test regressions from our recent bugzilla-toll hacking
+        https://bugs.webkit.org/show_bug.cgi?id=31758
+
+        * Scripts/modules/multicommandtool.py:
+         - Allow passing of explicit commands to MultiCommandTool.__init__
+        * Scripts/modules/multicommandtool_unittest.py:
+         - Use new Command.name naming system.
+         - Test Command auto-discovery.
+        * Scripts/modules/workqueue.py:
+         - bug_id no longer exists, use patch['bug_id'] instead.
+        * Scripts/modules/workqueue_unittest.py:
+         - WorkQueues require names now.
+         - should_proceed_with_work_item must return a patch object.
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
