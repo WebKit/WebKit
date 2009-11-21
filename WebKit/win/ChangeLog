@@ -1,5 +1,18 @@
 2009-11-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        DOMElement::tagName() is unimplemented
+
+        https://bugs.webkit.org/show_bug.cgi?id=31746
+
+        Reviewed by Darin Adler.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::tagName):
+        Create a BString from the element's tag name, and release its BSTR
+        into result.
+
+2009-11-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
         DOMNode::childNodes() is unimplemented
 
         https://bugs.webkit.org/show_bug.cgi?id=31745
