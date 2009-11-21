@@ -106,7 +106,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
     def execute(self, options, args, tool):
         self.options = options
         self.tool = tool
-        work_queue = WorkQueue(self, self.name)
+        work_queue = WorkQueue(self.name, self)
         work_queue.run()
 
 
