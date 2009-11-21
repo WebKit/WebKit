@@ -94,10 +94,8 @@ class AbstractQueue(Command, WorkQueueDelegate):
     def handle_unexpected_error(self, work_item, message):
         raise NotImplementedError, "subclasses must implement"
 
-    @staticmethod
-    def run_bugzilla_tool(args):
-        bugzilla_tool_path = __file__ # re-execute this script
-        bugzilla_tool_args = [bugzilla_tool_path] + args
+    def run_bugzilla_tool(self, args):
+        bugzilla_tool_args = [tool.path()] + args
         WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):

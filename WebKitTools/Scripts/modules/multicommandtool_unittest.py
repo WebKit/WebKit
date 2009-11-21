@@ -55,6 +55,9 @@ class TrivialTool(MultiCommandTool):
     def __init__(self, commands=None):
         MultiCommandTool.__init__(self, commands)
 
+    def path():
+        return __file__
+
     def should_show_command_help(self, command):
         return True
 

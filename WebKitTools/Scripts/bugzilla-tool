@@ -72,6 +72,9 @@ class BugzillaTool(MultiCommandTool):
 
         return self.cached_scm
 
+    def path(self):
+        return __file__
+
     def should_show_command_help(self, command):
         if command.requires_local_commits:
             return self.scm().supports_local_commits()

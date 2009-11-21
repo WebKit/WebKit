@@ -154,12 +154,14 @@ class MultiCommandTool(object):
                 return command
         return None
 
+    def path(self):
+        raise NotImplementedError, "subclasses must implement"
+
     def should_show_command_help(self, command):
         raise NotImplementedError, "subclasses must implement"
 
     def should_execute_command(self, command):
         raise NotImplementedError, "subclasses must implement"
-
 
     def main(self, argv=sys.argv):
         (global_args, command_name, args_after_command_name) = self._split_args(argv[1:])

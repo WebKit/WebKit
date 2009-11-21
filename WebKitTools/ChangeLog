@@ -1,3 +1,23 @@
+2009-11-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue fails to run with "permissions error" due to bad bugzilla-tool path
+        https://bugs.webkit.org/show_bug.cgi?id=31767
+
+        What we really want to test is BugzillaTool.path() instead of TrivialTool.path().
+        Since we don't have a good way to test BugzillaTool pieces, I've
+        left out a test for now.
+
+        * Scripts/bugzilla-tool:
+         - Add a path() implementation to expose bugzilla-tool's __file__ path to commit-queue.
+        * Scripts/modules/commands/queues.py:
+         - Use tool.path() instead of __file__.
+        * Scripts/modules/multicommandtool.py:
+         - Add a new path() method to MultiComandTool.
+        * Scripts/modules/multicommandtool_unittest.py:
+         - Provide a path() method.  Little point in testing this mock implementation.
+
 2009-11-21  Adam Barth  <abarth@webkit.org>
 
         Unreviewed "build" fix.  Turns out I was testing the wrong copy of
