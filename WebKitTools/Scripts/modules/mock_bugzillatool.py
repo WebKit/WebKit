@@ -1,20 +1,19 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
-#     * Redistributions of source code must retain the above copyright
+#
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -27,21 +26,33 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+class MockBugzilla():
+    patch1 = { "id": 197, "bug_id": 42, "url": "http://example.com/197" }
+    patch2 = { "id": 128, "bug_id": 42, "url": "http://example.com/128" }
 
-from modules.bugzilla_unittest import *
-from modules.buildbot_unittest import *
-from modules.changelogs_unittest import *
-from modules.commands.queries_unittest import *
-from modules.committers_unittest import *
-from modules.cpp_style_unittest import *
-from modules.diff_parser_unittest import *
-from modules.logging_unittest import *
-from modules.multicommandtool_unittest import *
-from modules.patchcollection_unittest import *
-from modules.scm_unittest import *
-from modules.webkitport_unittest import *
-from modules.workqueue_unittest import *
+    def fetch_bug_ids_from_commit_queue(self):
+        return [42, 75]
 
-if __name__ == "__main__":
-    unittest.main()
+    def fetch_patches_from_commit_queue(self):
+        return [self.patch1, self.patch2]
+
+    def fetch_reviewed_patches_from_bug(self, bug_id):
+        if bug_id == 42:
+            return [self.patch1, self.patch2]
+        return None
+
+
+class MockBuildBot():
+    def builder_statuses(self):
+        return [{
+            "name": "Builder1",
+            "is_green": True
+        }, {
+            "name": "Builder2",
+            "is_green": True
+        }]
+
+
+class MockBugzillaTool():
+    bugs = MockBugzilla()
+    buildbot = MockBuildBot()

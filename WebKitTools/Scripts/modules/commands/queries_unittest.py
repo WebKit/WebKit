@@ -1,20 +1,19 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
-#     * Redistributions of source code must retain the above copyright
+#
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,19 +28,19 @@
 
 import unittest
 
-from modules.bugzilla_unittest import *
-from modules.buildbot_unittest import *
-from modules.changelogs_unittest import *
-from modules.commands.queries_unittest import *
-from modules.committers_unittest import *
-from modules.cpp_style_unittest import *
-from modules.diff_parser_unittest import *
-from modules.logging_unittest import *
-from modules.multicommandtool_unittest import *
-from modules.patchcollection_unittest import *
-from modules.scm_unittest import *
-from modules.webkitport_unittest import *
-from modules.workqueue_unittest import *
+from modules.commands.queries import *
+from modules.mock_bugzillatool import *
 
-if __name__ == "__main__":
-    unittest.main()
+class QueryCommandsTest(unittest.TestCase):
+    def test_bugs_to_commit(self):
+        BugsToCommit().execute(None, None, MockBugzillaTool())
+
+    def test_patches_to_commit(self):
+        PatchesToCommit().execute(None, None, MockBugzillaTool())
+
+    def test_reviewed_patches(self):
+        args = [42]
+        ReviewedPatches().execute(None, args, MockBugzillaTool())
+
+    def test_tree_status(self):
+        TreeStatus().execute(None, None, MockBugzillaTool())

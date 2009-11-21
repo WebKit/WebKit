@@ -1,3 +1,16 @@
+2009-11-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Unit test query commands
+        https://bugs.webkit.org/show_bug.cgi?id=31755
+
+        These tests are pretty rough, but hopefully they'll grow.
+
+        * Scripts/modules/commands/queries_unittest.py: Added.
+        * Scripts/modules/mock_bugzillatool.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-11-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
