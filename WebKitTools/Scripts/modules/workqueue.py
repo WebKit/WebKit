@@ -109,7 +109,7 @@ class WorkQueue:
                 self._sleep("Exception while preparing queue: %s." % e)
                 continue
 
-            self._open_work_log(bug_id)
+            self._open_work_log(patch["bug_id"])
             try:
                 self._delegate.process_work_item(work_item)
             except ScriptError, e:

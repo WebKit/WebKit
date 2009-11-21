@@ -5,6 +5,15 @@
         Teach the StatusBot how to support more than just the commit-queue
         https://bugs.webkit.org/show_bug.cgi?id=31754
 
+        * Scripts/modules/workqueue.py: Another typo.
+
+2009-11-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach the StatusBot how to support more than just the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=31754
+
         * Scripts/modules/commands/queues.py: Fix silly typo.
 
 2009-11-20  Eric Seidel  <eric@webkit.org>
