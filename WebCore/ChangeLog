@@ -1,3 +1,30 @@
+2009-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for aria-owns
+        https://bugs.webkit.org/show_bug.cgi?id=31702
+
+        Re-organized how accessibilityAttributeNames are returned so 
+        that it's possible for an element to add an attribute based on 
+        a dynamic value. In this case, we only want to add AXOwn if the 
+        element actually supports aria-owns.
+  
+        Test: platform/mac/accessibility/aria-owns.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::supportsARIAOwns):
+        (WebCore::AccessibilityObject::ariaOwnsElements):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaOwnsElements):
+        (WebCore::AccessibilityRenderObject::supportsARIAOwns):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+
 2009-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

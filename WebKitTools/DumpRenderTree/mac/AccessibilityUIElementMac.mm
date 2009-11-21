@@ -40,6 +40,10 @@
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
 #endif
 
+#ifndef NSAccessibilityOwnsAttribute
+#define NSAccessibilityOwnsAttribute @"AXOwns"
+#endif
+
 @interface NSObject (WebKitAccessibilityArrayCategory)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 @end
@@ -232,6 +236,15 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 
     if (children.size() == 1)
         return children[0];
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
+{
+    NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityOwnsAttribute];
+    if (index < [objects count])
+        return [objects objectAtIndex:index];
+    
     return 0;
 }
 

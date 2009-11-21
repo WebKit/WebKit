@@ -24,6 +24,7 @@ aria-labeledby
 aria-labelledby
 aria-level
 aria-multiselectable
+aria-owns
 aria-pressed
 aria-readonly
 aria-required

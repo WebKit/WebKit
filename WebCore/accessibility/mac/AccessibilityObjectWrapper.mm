@@ -119,6 +119,10 @@ using namespace std;
 #define NSAccessibilityRequiredAttribute @"AXRequired"
 #endif
 
+#ifndef NSAccessibilityOwnsAttribute
+#define NSAccessibilityOwnsAttribute @"AXOwns"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -569,6 +573,18 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     return actions;
 }
 
+- (NSArray*)additionalAccessibilityAttributeNames
+{
+    if (!m_object)
+        return nil;
+
+    NSMutableArray *additional = [NSMutableArray array];
+    if (m_object->supportsARIAOwns())
+        [additional addObject:NSAccessibilityOwnsAttribute];
+
+    return additional;
+}
+
 - (NSArray*)accessibilityAttributeNames
 {
     if (!m_object)
@@ -600,10 +616,10 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* groupAttrs = nil;
     static NSArray* inputImageAttrs = nil;
     static NSArray* passwordFieldAttrs = nil;
-    static NSArray *tabListAttrs = nil;
-    static NSArray *comboBoxAttrs = nil;
-    static NSArray *outlineAttrs = nil;
-    static NSArray *outlineRowAttrs = nil;
+    static NSArray* tabListAttrs = nil;
+    static NSArray* comboBoxAttrs = nil;
+    static NSArray* outlineAttrs = nil;
+    static NSArray* outlineRowAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -830,62 +846,70 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray release];
     }
     
+    NSArray *objectAttributes = attributes;
+    
     if (m_object->isPasswordField())
-        return passwordFieldAttrs;
+        objectAttributes = passwordFieldAttrs;
 
-    if (m_object->isWebArea())
-        return webAreaAttrs;
+    else if (m_object->isWebArea())
+        objectAttributes = webAreaAttrs;
     
-    if (m_object->isTextControl())
-        return textAttrs;
+    else if (m_object->isTextControl())
+        objectAttributes = textAttrs;
 
-    if (m_object->isAnchor() || m_object->isImage() || m_object->isLink())
-        return anchorAttrs;
+    else if (m_object->isAnchor() || m_object->isImage() || m_object->isLink())
+        objectAttributes = anchorAttrs;
 
-    if (m_object->isDataTable())
-        return tableAttrs;
-    if (m_object->isTableRow())
-        return tableRowAttrs;
-    if (m_object->isTableColumn())
-        return tableColAttrs;
-    if (m_object->isTableCell())
-        return tableCellAttrs;
+    else if (m_object->isDataTable())
+        objectAttributes = tableAttrs;
+    else if (m_object->isTableRow())
+        objectAttributes = tableRowAttrs;
+    else if (m_object->isTableColumn())
+        objectAttributes = tableColAttrs;
+    else if (m_object->isTableCell())
+        objectAttributes = tableCellAttrs;
     
-    if (m_object->isTree())
-        return outlineAttrs;
-    if (m_object->isTreeItem())
-        return outlineRowAttrs;
+    else if (m_object->isTree())
+        objectAttributes = outlineAttrs;
+    else if (m_object->isTreeItem())
+        objectAttributes = outlineRowAttrs;
     
-    if (m_object->isListBox() || m_object->isList())
-        return listBoxAttrs;
+    else if (m_object->isListBox() || m_object->isList())
+        objectAttributes = listBoxAttrs;
 
-    if (m_object->isComboBox())
-        return comboBoxAttrs;
+    else if (m_object->isComboBox())
+        objectAttributes = comboBoxAttrs;
     
-    if (m_object->isProgressIndicator() || m_object->isSlider())
-        return rangeAttrs;
+    else if (m_object->isProgressIndicator() || m_object->isSlider())
+        objectAttributes = rangeAttrs;
 
-    if (m_object->isInputImage())
-        return inputImageAttrs;
+    else if (m_object->isInputImage())
+        objectAttributes = inputImageAttrs;
     
-    if (m_object->isControl())
-        return controlAttrs;
+    else if (m_object->isControl())
+        objectAttributes = controlAttrs;
     
-    if (m_object->isGroup())
-        return groupAttrs;
-    if (m_object->isTabList())
-        return tabListAttrs;
+    else if (m_object->isGroup())
+        objectAttributes = groupAttrs;
+    else if (m_object->isTabList())
+        objectAttributes = tabListAttrs;
     
-    if (m_object->isMenu())
-        return menuAttrs;
-    if (m_object->isMenuBar())
-        return menuBarAttrs;
-    if (m_object->isMenuButton())
-        return menuButtonAttrs;
-    if (m_object->isMenuItem())
-        return menuItemAttrs;
+    else if (m_object->isMenu())
+        objectAttributes = menuAttrs;
+    else if (m_object->isMenuBar())
+        objectAttributes = menuBarAttrs;
+    else if (m_object->isMenuButton())
+        objectAttributes = menuButtonAttrs;
+    else if (m_object->isMenuItem())
+        objectAttributes = menuItemAttrs;
 
-    return attributes;
+    NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
+    if ( [additionalAttributes count] > 0 )
+    {
+        objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
+    }
+    
+    return objectAttributes;
 }
 
 - (VisiblePositionRange)visiblePositionRangeForTextMarkerRange:(WebCoreTextMarkerRange*) textMarkerRange
@@ -1709,6 +1733,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityRequiredAttribute])
         return [NSNumber numberWithBool:m_object->isRequired()];
 
+    if ([attributeName isEqualToString:NSAccessibilityOwnsAttribute]) {
+        AccessibilityObject::AccessibilityChildrenVector ariaOwns;
+        m_object->ariaOwnsElements(ariaOwns);
+        return convertToNSArray(ariaOwns);
+    }
+    
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])
         return [NSValue valueWithPoint:m_object->clickPoint()];

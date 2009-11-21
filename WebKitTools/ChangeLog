@@ -1,3 +1,21 @@
+2009-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for aria-owns
+        https://bugs.webkit.org/show_bug.cgi?id=31702
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (ariaOwnsElementAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+
 2009-11-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

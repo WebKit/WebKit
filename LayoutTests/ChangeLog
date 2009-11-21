@@ -1,3 +1,13 @@
+2009-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for aria-owns
+        https://bugs.webkit.org/show_bug.cgi?id=31702
+
+        * platform/mac/accessibility/aria-owns-expected.txt: Added.
+        * platform/mac/accessibility/aria-owns.html: Added.
+
 2009-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

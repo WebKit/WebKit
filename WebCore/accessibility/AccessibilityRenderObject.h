@@ -141,6 +141,8 @@ public:
     virtual AccessibilityObject* correspondingControlForLabelElement() const;
     virtual AccessibilityObject* correspondingLabelForControlElement() const;
 
+    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const;
+    virtual bool supportsARIAOwns() const;
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
     virtual bool ariaRoleHasPresentationalChildren() const;
