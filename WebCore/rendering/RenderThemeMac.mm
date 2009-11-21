@@ -1710,8 +1710,7 @@ bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* ele
     if (part == MediaToggleClosedCaptionsButtonPart) {
 
         // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
-        if (mediaControllerTheme() != MediaControllerThemeQuickTime || !element->hasTagName(videoTag) || !mediaElement->hasVideo())
+        if (!element->hasTagName(videoTag))
             return false;
     }
 

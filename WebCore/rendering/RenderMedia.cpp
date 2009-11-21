@@ -334,7 +334,6 @@ void RenderMedia::updateControls()
             createRewindButton();
             createPlayButton();
             createReturnToRealtimeButton();
-            createToggleClosedCaptionsButton();
             createStatusDisplay();
             createTimelineContainer();
             if (m_timelineContainer) {
@@ -344,6 +343,7 @@ void RenderMedia::updateControls()
             }
             createSeekBackButton();
             createSeekForwardButton();
+            createToggleClosedCaptionsButton();
             createFullscreenButton();
             createMuteButton();
             createVolumeSliderContainer();

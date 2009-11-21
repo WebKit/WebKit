@@ -1,3 +1,22 @@
+2009-11-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7414396> Leopard & Tiger: Support closed caption in <video> element
+
+        * css/mediaControls.css:
+            Define closed caption toggle button.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls):
+            Create closed caption toggle button in display order.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+            Don't require MediaControllerThemeQuickTime theme for captions toggle button.
+            No need to check if the movie has video, a closed captions track is a video
+            track.
+
 2009-11-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

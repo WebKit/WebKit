@@ -126,5 +126,8 @@ audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-co
 }
 
 audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
-    display: none;
+    -webkit-appearance: media-toggle-closed-captions-button;
+    display: -webkit-box;
+    width: 16px;
+    height: 16px;
 }

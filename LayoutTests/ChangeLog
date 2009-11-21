@@ -1,3 +1,14 @@
+2009-11-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7414396> Leopard & Tiger: Support closed caption in <video> element
+
+        Remove closed captions test from skipped list.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

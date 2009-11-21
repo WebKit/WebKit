@@ -25,8 +25,5 @@ transforms/3d
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 
-# Requires media engine closed caption support
-media/media-captions.html
-
 # Tests of accessibility functionality not supported on Leopard
 accessibility/aria-list-and-listitem.html

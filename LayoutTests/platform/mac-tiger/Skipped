@@ -67,9 +67,6 @@ http/tests/loading/redirect-with-no-location-crash.html
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 
-# Requires media engine closed caption support
-media/media-captions.html
-
 # Tests of accessibility functionality not supported on Tiger
 accessibility/aria-list-and-listitem.html
 
