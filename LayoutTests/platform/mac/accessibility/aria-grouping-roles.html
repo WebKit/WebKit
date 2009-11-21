@@ -24,6 +24,7 @@ var successfullyParsed = false;
 <div role="search">search role</div>
 <div role="status">status role</div>
 <div role="tooltip">tooltip role</div>
+<div role="math">math role</div>
 <div role="definition">definition role</div>
 
 <p id="description"></p>
@@ -42,7 +43,7 @@ var successfullyParsed = false;
           var subroles = new Array("AXLandmarkApplication","AXDocumentArticle","AXLandmarkBanner","AXLandmarkComplementary",
                           "AXLandmarkContentInfo", "AXDocument", "AXApplicationLog", "AXLandmarkMain", "AXApplicationMarquee",
                           "AXDocumentNote", "AXLandmarkNavigation", "AXDocumentRegion", "AXLandmarkSearch", "AXApplicationStatus", 
-                          "AXUserInterfaceTooltip");
+                          "AXUserInterfaceTooltip", "AXDocumentMath");
 
           for (var k = 0; k < subroles.length; k++) {
               shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");

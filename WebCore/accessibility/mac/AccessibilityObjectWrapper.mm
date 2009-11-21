@@ -1047,6 +1047,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ApplicationTimerRole, NSAccessibilityGroupRole },
         { DocumentRole, NSAccessibilityGroupRole },
         { DocumentArticleRole, NSAccessibilityGroupRole },
+        { DocumentMathRole, NSAccessibilityGroupRole },
         { DocumentNoteRole, NSAccessibilityGroupRole },
         { DocumentRegionRole, NSAccessibilityGroupRole },
         { UserInterfaceTooltipRole, NSAccessibilityGroupRole },
@@ -1138,6 +1139,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXDocument";
         case DocumentArticleRole:
             return @"AXDocumentArticle";
+        case DocumentMathRole:
+            return @"AXDocumentMath";
         case DocumentNoteRole:
             return @"AXDocumentNote";
         case DocumentRegionRole:
@@ -1205,6 +1208,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXARIAContentGroupText(@"ARIADocument");
             case DocumentArticleRole:
                 return AXARIAContentGroupText(@"ARIADocumentArticle");
+            case DocumentMathRole:
+                return AXARIAContentGroupText(@"ARIADocumentMath");
             case DocumentNoteRole:
                 return AXARIAContentGroupText(@"ARIADocumentNote");
             case DocumentRegionRole:

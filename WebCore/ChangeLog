@@ -1,3 +1,14 @@
+2009-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for 'math' role
+        https://bugs.webkit.org/show_bug.cgi?id=31706
+
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+
 2009-11-20  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

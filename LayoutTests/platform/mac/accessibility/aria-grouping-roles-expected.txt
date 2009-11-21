@@ -13,6 +13,7 @@ region role
 search role
 status role
 tooltip role
+math role
 definition role
 This tests that each of these ARIA grouping type roles map to the right role and subrole.
 
@@ -49,6 +50,8 @@ PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXApplicationStatus"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXUserInterfaceTooltip"
+PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
+PASS obj.childAtIndex(k).subrole is "AXSubrole: AXDocumentMath"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).description is 'AXDescription: definition'
 PASS successfullyParsed is true

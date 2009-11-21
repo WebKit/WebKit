@@ -187,6 +187,7 @@ enum AccessibilityRole {
     
     DocumentRole,
     DocumentArticleRole,
+    DocumentMathRole,
     DocumentNoteRole,
     DocumentRegionRole,
     

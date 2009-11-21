@@ -595,6 +595,8 @@
         return UI_STRING("tooltip", "An ARIA accessibility group that acts as a tooltip.");    
     if ([ariaType isEqualToString:@"ARIATabPanel"])
         return UI_STRING("tab panel", "An ARIA accessibility group that contains the content of a tab.");
+    if ([ariaType isEqualToString:@"ARIADocumentMath"])
+        return UI_STRING("math", "An ARIA accessibility group that contains mathematical symbols.");
     return nil;
 }
 
