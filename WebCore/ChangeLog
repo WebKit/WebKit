@@ -2,6 +2,9 @@
 
         Reviewed by Adam Barth.
 
+        Disable access to file:/// directory listings
+        https://bugs.webkit.org/show_bug.cgi?id=31329
+
         Deny access to directory listings. This needs doing in WebKit for
         WebKit clients that do permit top-level navigation to file:///dir.
         This matches Firefox, plus the existing Safari implementation (which

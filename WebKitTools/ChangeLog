@@ -2,6 +2,9 @@
 
         Reviewed by Adam Barth.
 
+        Disable access to file:/// directory listings
+        https://bugs.webkit.org/show_bug.cgi?id=31329
+
         Implemented setAllowUniversalAccessFromFileURLs to support testing of
         file URL security.
 
