@@ -1,3 +1,19 @@
+2009-11-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Deny access to directory listings. This needs doing in WebKit for
+        WebKit clients that do permit top-level navigation to file:///dir.
+        This matches Firefox, plus the existing Safari implementation (which
+        does not support any directory access at all). It will fix the
+        LayoutTest named below for Chromium.
+
+        Test: fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
+
+        * page/SecurityOrigin.cpp: Deny access to directory listings.
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::canRequest):
+
 2009-11-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

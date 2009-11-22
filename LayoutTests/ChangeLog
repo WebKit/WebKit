@@ -1,3 +1,19 @@
+2009-11-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Updates the test to make sure it is disabling universal access for
+        file:/// URLs (if the API is supported). This is required to do
+        effective intra-file:/// access tests.
+        Note that Safari only passes by virtual of supporting no directory
+        listings at all.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-nonexistent-file-real.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html:
+        Disable universal access for file:/// URLs (if API available).
+        Run the real test in an iframe without universal access.
+
 2009-11-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

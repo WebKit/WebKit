@@ -1,3 +1,4 @@
+
 Bug 22475: REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
 
 In both cases, readyState 4 should be reached, and error handler should be invoked.

@@ -1,3 +1,23 @@
+2009-11-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implemented setAllowUniversalAccessFromFileURLs to support testing of
+        file URL security.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAllowUniversalAccessFromFileURLsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+
 2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

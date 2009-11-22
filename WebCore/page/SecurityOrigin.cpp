@@ -112,6 +112,11 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
 
     // By default, only local SecurityOrigins can load local resources.
     m_canLoadLocalResources = isLocal();
+    if (m_canLoadLocalResources) {
+        // Directories should never be readable.
+        if (!url.hasPath() || url.path().endsWith("/"))
+            m_noAccess = true;
+    }
 
     if (isDefaultPortForProtocol(m_port, m_protocol))
         m_port = 0;
@@ -207,6 +212,8 @@ bool SecurityOrigin::canRequest(const KURL& url) const
         return false;
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
+    if (targetOrigin->m_noAccess)
+        return false;
 
     // We call isSameSchemeHostPort here instead of canAccess because we want
     // to ignore document.domain effects.
