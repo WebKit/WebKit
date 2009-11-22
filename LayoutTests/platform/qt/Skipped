@@ -37,12 +37,15 @@ http/tests/incremental
 http/tests/media
 http/tests/navigation
 http/tests/plugins
-http/tests/ssl
 http/tests/webarchive
 http/tests/wml
 
 # Failing URL test
 http/tests/uri/escaped-entity.html
+
+# Failing HTTP SSL tests
+http/tests/ssl/referer-301.html
+http/tests/ssl/referer-303.html
 
 # Failing HTTP Loading tests
 http/tests/loading/bad-server-subframe.html

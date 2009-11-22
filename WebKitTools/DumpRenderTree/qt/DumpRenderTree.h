@@ -31,9 +31,14 @@
 #define DUMPRENDERTREE_H
 
 #include <QList>
+#include <QNetworkAccessManager>
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
+
+#ifndef QT_NO_SSL
+#include <QSslError>
+#endif
 
 #include <qwebpage.h>
 
@@ -119,6 +124,17 @@ private:
 
     QList<QWidget *> windows;
     bool m_enableTextOutput;
+};
+
+class NetworkAccessManager : public QNetworkAccessManager {
+    Q_OBJECT
+public:
+    NetworkAccessManager(QObject* parent);
+
+private slots:
+#ifndef QT_NO_SSL
+    void sslErrorsEncountered(QNetworkReply*, const QList<QSslError>&);
+#endif
 };
 
 class WebPage : public QWebPage {

@@ -1,3 +1,19 @@
+2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] DumpRenderTree should explicitly ignore any SSL certificate errors
+        for localhost and 127.0.0.1.
+        https://bugs.webkit.org/show_bug.cgi?id=31783
+
+        Unskip the http/tests/ssl/verify-ssl-enabled.php test, which is passing now.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::NetworkAccessManager::NetworkAccessManager):
+        (WebCore::NetworkAccessManager::sslErrorsEncountered):
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+
 2009-11-22  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
