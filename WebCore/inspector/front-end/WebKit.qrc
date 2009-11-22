@@ -62,6 +62,8 @@
     <file>TestController.js</file>
     <file>TextPrompt.js</file>
     <file>TimelineAgent.js</file>
+    <file>TimelineGrid.js</file>
+    <file>TimelineOverviewPane.js</file>
     <file>TimelinePanel.js</file>
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>

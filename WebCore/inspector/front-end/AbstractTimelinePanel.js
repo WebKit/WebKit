@@ -81,7 +81,8 @@ WebInspector.AbstractTimelinePanel.prototype = {
         this.summaryBar.element.id = "resources-summary";
         this._containerContentElement.appendChild(this.summaryBar.element);
 
-        this._timelineGrid = new WebInspector.TimelineGrid(this._containerContentElement);
+        this._timelineGrid = new WebInspector.TimelineGrid();
+        this._containerContentElement.appendChild(this._timelineGrid.element);
         this.itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
     },
 
@@ -300,7 +301,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
         if (boundariesChanged) {
             // The boundaries changed, so all item graphs are stale.
-            this._staleItems = this._items;
+            this._staleItems = this._items.slice();
             staleItemsLength = this._staleItems.length;
         }
 
@@ -349,7 +350,7 @@ WebInspector.AbstractTimelinePanel.prototype = {
         this._calculator = x;
         this._calculator.reset();
 
-        this._staleItems = this._items;
+        this._staleItems = this._items.slice();
         this.refresh();
     },
 
@@ -504,76 +505,5 @@ WebInspector.AbstractTimelineCategory.prototype = {
     toString: function()
     {
         return this.title;
-    }
-}
-
-WebInspector.TimelineGrid = function(container)
-{
-    this._itemsGraphsElement = document.createElement("div");
-    this._itemsGraphsElement.id = "resources-graphs";
-    container.appendChild(this._itemsGraphsElement);
-
-    this._dividersElement = document.createElement("div");
-    this._dividersElement.id = "resources-dividers";
-    container.appendChild(this._dividersElement);
-
-    this._eventDividersElement = document.createElement("div");
-    this._eventDividersElement.id = "resources-event-dividers";
-    container.appendChild(this._eventDividersElement);
-
-    this._dividersLabelBarElement = document.createElement("div");
-    this._dividersLabelBarElement.id = "resources-dividers-label-bar";
-    container.appendChild(this._dividersLabelBarElement);
-}
-
-WebInspector.TimelineGrid.prototype = {
-    get itemsGraphsElement()
-    {
-        return this._itemsGraphsElement;
-    },
-
-    updateDividers: function(force, calculator)
-    {
-        var dividerCount = Math.round(this._dividersElement.offsetWidth / 64);
-        var slice = calculator.boundarySpan / dividerCount;
-        if (!force && this._currentDividerSlice === slice)
-            return false;
-
-        this._currentDividerSlice = slice;
-
-        this._dividersElement.removeChildren();
-        this._eventDividersElement.removeChildren();
-        this._dividersLabelBarElement.removeChildren();
-
-        for (var i = 1; i <= dividerCount; ++i) {
-            var divider = document.createElement("div");
-            divider.className = "resources-divider";
-            if (i === dividerCount)
-                divider.addStyleClass("last");
-            divider.style.left = ((i / dividerCount) * 100) + "%";
-
-            this._dividersElement.appendChild(divider.cloneNode());
-
-            var label = document.createElement("div");
-            label.className = "resources-divider-label";
-            if (!isNaN(slice))
-                label.textContent = calculator.formatValue(slice * i);
-            divider.appendChild(label);
-
-            this._dividersLabelBarElement.appendChild(divider);
-        }
-        return true;
-    },
-
-    addEventDivider: function(divider)
-    {
-        this._eventDividersElement.appendChild(divider);
-    },
-
-    setScrollAndDividerTop: function(scrollTop, dividersTop)
-    {
-        this._dividersElement.style.top = scrollTop + "px";
-        this._eventDividersElement.style.top = scrollTop + "px";
-        this._dividersLabelBarElement.style.top = dividersTop + "px";
     }
 }

@@ -1,3 +1,79 @@
+2009-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Reimplement TimelinePanel to make it fast:
+        - Extract grid and overview into separate files
+        - Make timeline create only divs for visible rows
+
+        https://bugs.webkit.org/show_bug.cgi?id=31784
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.createInterface):
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        (WebInspector.AbstractTimelinePanel.prototype.set calculator):
+        * inspector/front-end/TimelineGrid.js: Added.
+        (WebInspector.TimelineGrid):
+        (WebInspector.TimelineGrid.prototype.get itemsGraphsElement):
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        (WebInspector.TimelineGrid.prototype.addEventDivider):
+        (WebInspector.TimelineGrid.prototype.setScrollAndDividerTop):
+        * inspector/front-end/TimelineOverviewPane.js: Added.
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype._onCheckboxClicked):
+        (WebInspector.TimelineOverviewPane.prototype.update):
+        (WebInspector.TimelineOverviewPane.prototype.setSidebarWidth):
+        (WebInspector.TimelineOverviewPane.prototype.updateMainViewWidth):
+        (WebInspector.TimelineOverviewPane.prototype.reset):
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindow):
+        (WebInspector.TimelineOverviewPane.prototype._windowResizeDragging):
+        (WebInspector.TimelineOverviewPane.prototype._dragWindow):
+        (WebInspector.TimelineOverviewPane.prototype._windowDragging):
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindowLeft):
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindowRight):
+        (WebInspector.TimelineOverviewPane.prototype._setWindowPosition):
+        (WebInspector.TimelineOverviewPane.prototype._endWindowDragging):
+        (WebInspector.TimelineOverviewCalculator):
+        (WebInspector.TimelineOverviewCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineOverviewCalculator.prototype.reset):
+        (WebInspector.TimelineOverviewCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineOverviewCalculator.prototype.get boundarySpan):
+        (WebInspector.TimelineOverviewCalculator.prototype.formatValue):
+        (WebInspector.TimelineCategoryTreeElement):
+        (WebInspector.TimelineCategoryTreeElement.prototype.onattach):
+        (WebInspector.TimelineCategoryGraph):
+        (WebInspector.TimelineCategoryGraph.prototype.get graphElement):
+        (WebInspector.TimelineCategoryGraph.prototype.addChunk):
+        (WebInspector.TimelineCategoryGraph.prototype.clearChunks):
+        (WebInspector.TimelineCategoryGraph.prototype.set dimmed):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype.setSidebarWidth):
+        (WebInspector.TimelinePanel.prototype.updateMainViewWidth):
+        (WebInspector.TimelinePanel.prototype.resize):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype.show):
+        (WebInspector.TimelinePanel.prototype._onScroll):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.prototype._adjustScrollPosition):
+        (WebInspector.TimelineCategory):
+        (WebInspector.TimelineCalculator):
+        (WebInspector.TimelineCalculator.prototype.get boundarySpan):
+        (WebInspector.TimelineRecordListRow):
+        (WebInspector.TimelineRecordListRow.prototype.update):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-11-22  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

@@ -3669,6 +3669,8 @@
             'inspector/front-end/TestController.js',
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TimelineAgent.js',
+            'inspector/front-end/TimelineOverviewPane.js',
+            'inspector/front-end/TimelineGrid.js',
             'inspector/front-end/TimelinePanel.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',
             'inspector/front-end/treeoutline.js',

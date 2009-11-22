@@ -1436,7 +1436,7 @@ body.inactive .placard.selected {
 }
 
 .event-bars .event-bar .header .subtitle {
-    color: rgba(90, 90, 90, 0.742188);
+    color: rgba(90, 90, 90, 0.75);
 }
 
 .event-bars .event-bar .header::before {
@@ -1781,8 +1781,8 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 .sidebar {
     position: absolute;
     top: 0;
+    min-height: 100%;
     left: 0;
-    bottom: 0;
     width: 200px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -2594,7 +2594,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 #resources-dividers-label-bar {
     position: absolute;
-    top: 93px;
+    top: 0;
     left: 0px;
     right: 0;
     background-color: rgba(255, 255, 255, 0.8);
@@ -2866,7 +2866,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 .sidebar-resizer-vertical {
     position: absolute;
     top: 0;
-    bottom: 0;
+    min-height: 100%;
     width: 5px;
     z-index: 500;
     cursor: col-resize;
@@ -3346,10 +3346,6 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     -webkit-box-shadow: white 1px 0 0, white -1px 0 0, white 0 1px 0, white 0 -1px 0;
 }
 
-.timeline .sidebar-resizer-vertical {
-    top: 90px;
-}
-
 #timeline-overview-grid #resources-graphs {
     position: absolute;
     top: 0;
@@ -3375,8 +3371,8 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-category-tree-item {
     height: 20px;
+    line-height: 20px;
     padding-left: 6px;
-    padding-top: 3px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -3417,6 +3413,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-tree-item {
     height: 18px;
+    line-height: 15px;
     padding-left: 10px;
     padding-top: 2px;
     white-space: nowrap;
@@ -3441,22 +3438,12 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     position: absolute;
 }
 
-.timeline-tree-item:nth-of-type(2n) {
+.timeline-tree-item.even {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
 .timeline-tree-item .data.dimmed {
     color: rgba(0, 0, 0, 0.7);
-}
-
-#timeline-container .timeline-category-loading, #timeline-container .timeline-category-scripting, #timeline-container .timeline-category-rendering {
-    display: none;
-}
-
-#timeline-container .filter-all .timeline-category-loading, #timeline-container .filter-loading .timeline-category-loading,
-#timeline-container .filter-all .timeline-category-scripting, #timeline-container .filter-scripting .timeline-category-scripting,
-#timeline-container .filter-all .timeline-category-rendering, #timeline-container .filter-rendering .timeline-category-rendering {
-    display: list-item;
 }
 
 #timeline-overview-graphs {
@@ -3518,7 +3505,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     pointer-events: none;
 }
 
-.timeline-graph-side:nth-of-type(2n) {
+.timeline-graph-side.even {
     background-color: rgba(0, 0, 0, 0.05);
 }
 

@@ -30,22 +30,53 @@
 
 WebInspector.TimelinePanel = function()
 {
-    WebInspector.AbstractTimelinePanel.call(this);
-
+    WebInspector.Panel.call(this);
     this.element.addStyleClass("timeline");
 
-    this._createOverview();
-    this.createInterface();
-    this.containerElement.id = "timeline-container";
-    this.summaryBar.element.id = "timeline-summary";
-    this.itemsGraphsElement.id = "timeline-graphs";
+    this._overviewPane = new WebInspector.TimelineOverviewPane(this.categories);
+    this._overviewPane.addEventListener("window changed", this._scheduleRefresh, this);
+    this._overviewPane.addEventListener("filter changed", this._refresh, this);
+    this.element.appendChild(this._overviewPane.element);
+
+    this._containerElement = document.createElement("div");
+    this._containerElement.id = "timeline-container";
+    this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
+    this.element.appendChild(this._containerElement);
+
+    this.createSidebar(this._containerElement, this._containerElement);
+    this.sidebarElement.id = "timeline-sidebar";
+    this.itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
+    this.itemsTreeElement.expanded = true;
+    this.sidebarTree.appendChild(this.itemsTreeElement);
+
+    this._sidebarListElement = document.createElement("div");
+    this.sidebarElement.appendChild(this._sidebarListElement);
+
+    this._containerContentElement = document.createElement("div");
+    this._containerContentElement.id = "resources-container-content";
+    this._containerElement.appendChild(this._containerContentElement);
+
+    this._timelineGrid = new WebInspector.TimelineGrid();
+    this._itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
+    this._itemsGraphsElement.id = "timeline-graphs";
+    this._containerContentElement.appendChild(this._timelineGrid.element);
+
+    this._topGapElement = document.createElement("div");
+    this._topGapElement.className = "timeline-gap";
+    this._itemsGraphsElement.appendChild(this._topGapElement);
+
+    this._graphRowsElement = document.createElement("div");
+    this._itemsGraphsElement.appendChild(this._graphRowsElement);
+
+    this._bottomGapElement = document.createElement("div");
+    this._bottomGapElement.className = "timeline-gap";
+    this._itemsGraphsElement.appendChild(this._bottomGapElement);
 
     this._createStatusbarButtons();
 
-    this.calculator = new WebInspector.TimelineCalculator();
-    for (category in this.categories)
-        this.showCategory(category);
+    this._records = [];
     this._sendRequestRecords = {};
+    this._calculator = new WebInspector.TimelineCalculator();
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -73,13 +104,6 @@ WebInspector.TimelinePanel.prototype = {
         return this._categories;
     },
 
-    populateSidebar: function()
-    {
-        this.itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
-        this.itemsTreeElement.expanded = true;
-        this.sidebarTree.appendChild(this.itemsTreeElement);
-    },
-
     _createStatusbarButtons: function()
     {
         this.toggleTimelineButton = new WebInspector.StatusBarButton("", "record-profile-status-bar-item");
@@ -87,6 +111,14 @@ WebInspector.TimelinePanel.prototype = {
 
         this.clearButton = new WebInspector.StatusBarButton("", "timeline-clear-status-bar-item");
         this.clearButton.addEventListener("click", this.reset.bind(this), false);
+    },
+
+    _toggleTimelineButtonClicked: function()
+    {
+        if (this.toggleTimelineButton.toggled)
+            InspectorController.stopTimelineProfiler();
+        else
+            InspectorController.startTimelineProfiler();
     },
 
     timelineWasStarted: function()
@@ -110,32 +142,14 @@ WebInspector.TimelinePanel.prototype = {
                 formattedRecord.startTime - this._lastRecord.endTime < 0.1) {
             this._lastRecord.endTime = formattedRecord.endTime;
             this._lastRecord.count++;
-            this.refreshItem(this._lastRecord);
         } else {
-            this.addItem(formattedRecord);
+            this._records.push(formattedRecord);
 
             for (var i = 0; record.children && i < record.children.length; ++i)
                 this.addRecordToTimeline(record.children[i]);
             this._lastRecord = record.children && record.children.length ? null : formattedRecord;
         }
-    },
-
-    createItemTreeElement: function(item)
-    {
-        return new WebInspector.TimelineRecordTreeElement(item);
-    },
-
-    createItemGraph: function(item)
-    {
-        return new WebInspector.TimelineGraph(item);
-    },
-
-    _toggleTimelineButtonClicked: function()
-    {
-        if (this.toggleTimelineButton.toggled)
-            InspectorController.stopTimelineProfiler();
-        else
-            InspectorController.startTimelineProfiler();
+        this._scheduleRefresh();
     },
 
     _formatRecord: function(record)
@@ -182,7 +196,6 @@ WebInspector.TimelinePanel.prototype = {
             sendRequestRecord._responseReceivedFormattedTime = formattedRecord.startTime;
             formattedRecord.startTime = sendRequestRecord.startTime;
             sendRequestRecord.details = this._getRecordDetails(record);
-            this.refreshItem(sendRequestRecord);
         } else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceFinish) {
             var sendRequestRecord = this._sendRequestRecords[record.data.identifier];
             if (sendRequestRecord) // False for main resource.
@@ -220,361 +233,160 @@ WebInspector.TimelinePanel.prototype = {
         }
     },
 
-    reset: function()
-    {
-        WebInspector.AbstractTimelinePanel.prototype.reset.call(this);
-        this._lastRecord = null;
-        this._overviewCalculator.reset();
-        for (var category in this.categories)
-            this._categoryGraphs[category].clearChunks();
-        this._setWindowPosition(0, this._overviewGridElement.clientWidth);
-        this._sendRequestRecords = {};
-    },
-
-    _createOverview: function()
-    {
-        var overviewPanelElement = document.createElement("div");
-        overviewPanelElement.id = "timeline-overview-panel";
-        this.element.appendChild(overviewPanelElement);
-
-        this._overviewSidebarElement = document.createElement("div");
-        this._overviewSidebarElement.id = "timeline-overview-sidebar";
-        overviewPanelElement.appendChild(this._overviewSidebarElement);
-
-        var overviewTreeElement = document.createElement("ol");
-        overviewTreeElement.className = "sidebar-tree";
-        this._overviewSidebarElement.appendChild(overviewTreeElement);
-        var sidebarTree = new TreeOutline(overviewTreeElement);
-
-        var categoriesTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("TIMELINES"), {}, true);
-        categoriesTreeElement.expanded = true;
-        sidebarTree.appendChild(categoriesTreeElement);
-
-        for (var category in this.categories)
-            categoriesTreeElement.appendChild(new WebInspector.TimelineCategoryTreeElement(this.categories[category]));
-
-        this._overviewGridElement = document.createElement("div");
-        this._overviewGridElement.id = "timeline-overview-grid";
-        overviewPanelElement.appendChild(this._overviewGridElement);
-        this._overviewGrid = new WebInspector.TimelineGrid(this._overviewGridElement);
-        this._overviewGrid.itemsGraphsElement.id = "timeline-overview-graphs";
-
-        this._categoryGraphs = {};
-        for (var category in this.categories) {
-            var categoryGraph = new WebInspector.TimelineCategoryGraph(this.categories[category]);
-            this._categoryGraphs[category] = categoryGraph;
-            this._overviewGrid.itemsGraphsElement.appendChild(categoryGraph.graphElement);
-        }
-        this._overviewGrid.setScrollAndDividerTop(0, 0);
-
-        this._overviewWindowElement = document.createElement("div");
-        this._overviewWindowElement.id = "timeline-overview-window";
-        this._overviewWindowElement.addEventListener("mousedown", this._dragWindow.bind(this), false);
-        this._overviewGridElement.appendChild(this._overviewWindowElement);
-
-        this._leftResizeElement = document.createElement("div");
-        this._leftResizeElement.className = "timeline-window-resizer";
-        this._leftResizeElement.style.left = 0;
-        this._overviewGridElement.appendChild(this._leftResizeElement);
-        this._leftResizeElement.addEventListener("mousedown", this._resizeWindow.bind(this, this._leftResizeElement), false);
-
-        this._rightResizeElement = document.createElement("div");
-        this._rightResizeElement.className = "timeline-window-resizer timeline-window-resizer-right";
-        this._rightResizeElement.style.right = 0;
-        this._overviewGridElement.appendChild(this._rightResizeElement);
-        this._rightResizeElement.addEventListener("mousedown", this._resizeWindow.bind(this, this._rightResizeElement), false);
-
-        this._overviewCalculator = new WebInspector.TimelineCalculator();
-
-        var separatorElement = document.createElement("div");
-        separatorElement.id = "timeline-overview-separator";
-        this.element.appendChild(separatorElement);
-    },
-
     setSidebarWidth: function(width)
     {
-        WebInspector.AbstractTimelinePanel.prototype.setSidebarWidth.call(this, width);
-        this._overviewSidebarElement.style.width = width + "px";
+        WebInspector.Panel.prototype.setSidebarWidth.call(this, width);
+        this._overviewPane.setSidebarWidth(width);
     },
 
     updateMainViewWidth: function(width)
     {
-        WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth.call(this, width);
-        this._overviewGridElement.style.left = width + "px";
+        this._containerContentElement.style.left = width + "px";
+        this._scheduleRefresh();
+        this._overviewPane.updateMainViewWidth(width);
     },
 
-    updateGraphDividersIfNeeded: function()
-    {
-        WebInspector.AbstractTimelinePanel.prototype.updateGraphDividersIfNeeded.call(this);
-        this._overviewGrid.updateDividers(true, this._overviewCalculator);
+    resize: function() {
+        this._scheduleRefresh();
     },
 
-    refresh: function()
+    reset: function()
     {
-        WebInspector.AbstractTimelinePanel.prototype.refresh.call(this);
-        this.adjustScrollPosition();
+        this._lastRecord = null;
+        this._sendRequestRecords = {};
+        this._overviewPane.reset();
+        this._records = [];
+        this._refresh();
+    },
 
-        // Clear summary bars.
-        var timelines = {};
-        for (var category in this.categories) {
-            timelines[category] = [];
-            this._categoryGraphs[category].clearChunks();
+    show: function()
+    {
+        WebInspector.Panel.prototype.show.call(this);
+
+        if (this._needsRefresh)
+            this._refresh();
+    },
+
+    _onScroll: function(event)
+    {
+        var scrollTop = this._containerElement.scrollTop;
+        var dividersTop = Math.max(0, scrollTop);
+        this._timelineGrid.setScrollAndDividerTop(scrollTop, dividersTop);
+        this._scheduleRefresh();
+    },
+
+    _scheduleRefresh: function()
+    {
+        if (this._needsRefresh)
+            return;
+        this._needsRefresh = true;
+
+        if (this.visible && !("_refreshTimeout" in this))
+            this._refreshTimeout = setTimeout(this._refresh.bind(this), 100);
+    },
+
+    _refresh: function()
+    {
+        this._needsRefresh = false;
+        if ("_refreshTimeout" in this) {
+            clearTimeout(this._refreshTimeout);
+            delete this._refreshTimeout;
+        }
+        this._overviewPane.update(this._records);
+        this._refreshRecords();
+    },
+
+    _refreshRecords: function()
+    {
+        this._calculator.windowLeft = this._overviewPane.windowLeft;
+        this._calculator.windowRight = this._overviewPane.windowRight;
+        this._calculator.reset();
+
+        for (var i = 0; i < this._records.length; ++i)
+            this._calculator.updateBoundaries(this._records[i]);
+
+        var recordsInWindow = [];
+        for (var i = 0; i < this._records.length; ++i) {
+            var record = this._records[i];
+            var percentages = this._calculator.computeBarGraphPercentages(record);
+            if (percentages.start < 100 && percentages.end >= 0 && !record.category.hidden)
+                recordsInWindow.push(record);
         }
 
-        // Create sparse arrays with 101 cells each to fill with chunks for a given category.
-        for (var i = 0; i < this.items.length; ++i) {
-            var record = this.items[i];
-            this._overviewCalculator.updateBoundaries(record);
-            var percentages = this._overviewCalculator.computeBarGraphPercentages(record);
-            var end = Math.round(percentages.end);
-            var categoryName = record.category.name;
-            for (var j = Math.round(percentages.start); j <= end; ++j)
-                timelines[categoryName][j] = true;
-        }
+        // Calculate the visible area.
+        var visibleTop = this._containerElement.scrollTop;
+        var visibleBottom = visibleTop + this._containerElement.clientHeight;
+        const rowHeight = 18;
 
-        // Convert sparse arrays to continuous segments, render graphs for each.
-        for (var category in this.categories) {
-            var timeline = timelines[category];
-            window.timelineSaved = timeline;
-            var chunkStart = -1;
-            for (var j = 0; j < 101; ++j) {
-                if (timeline[j]) {
-                    if (chunkStart === -1)
-                        chunkStart = j;
-                } else {
-                    if (chunkStart !== -1) {
-                        this._categoryGraphs[category].addChunk(chunkStart, j);
-                        chunkStart = -1;
-                    }
-                }
+        // Convert visible area to visible indexes.
+        var startIndex = Math.max(0, Math.floor(visibleTop / rowHeight) - 1);
+        var endIndex = Math.min(recordsInWindow.length, Math.ceil(visibleBottom / rowHeight));
+
+        var listRowElement = this._sidebarListElement.firstChild;
+        var graphRowElement = this._graphRowsElement.firstChild;
+        for (var i = startIndex; i < endIndex; ++i) {
+            var record = recordsInWindow[i];
+            var isEven = !(i % 2);
+
+            if (!listRowElement) {
+                listRowElement = new WebInspector.TimelineRecordListRow().element;
+                this._sidebarListElement.appendChild(listRowElement);
             }
-            if (chunkStart !== -1) {
-                this._categoryGraphs[category].addChunk(chunkStart, 100);
-                chunkStart = -1;
+            if (!graphRowElement) {
+                graphRowElement = new WebInspector.TimelineRecordGraphRow().element;
+                this._graphRowsElement.appendChild(graphRowElement);
             }
-        }
-        this._overviewGrid.updateDividers(true, this._overviewCalculator);
-    },
 
-    _resizeWindow: function(resizeElement, event)
-    {
-        WebInspector.elementDragStart(resizeElement, this._windowResizeDragging.bind(this, resizeElement), this._endWindowDragging.bind(this), event, "col-resize");
-    },
+            listRowElement.listRow.update(record, isEven);
+            graphRowElement.graphRow.update(record, isEven, this._calculator);
 
-    _windowResizeDragging: function(resizeElement, event)
-    {
-        if (resizeElement === this._leftResizeElement)
-            this._resizeWindowLeft(event.pageX - this._overviewGridElement.offsetLeft);
-        else
-            this._resizeWindowRight(event.pageX - this._overviewGridElement.offsetLeft);
-        event.preventDefault();
-    },
-
-    _dragWindow: function(event)
-    {
-        WebInspector.elementDragStart(this._overviewWindowElement, this._windowDragging.bind(this, event.pageX,
-            this._leftResizeElement.offsetLeft, this._rightResizeElement.offsetLeft), this._endWindowDragging.bind(this), event, "ew-resize");
-    },
-
-    _windowDragging: function(startX, windowLeft, windowRight, event)
-    {
-        var delta = event.pageX - startX;
-        var start = windowLeft + delta;
-        var end = windowRight + delta;
-        var windowSize = windowRight - windowLeft;
-
-        if (start < 0) {
-            start = 0;
-            end = windowSize;
+            listRowElement = listRowElement.nextSibling;
+            graphRowElement = graphRowElement.nextSibling;
         }
 
-        if (end > this._overviewGridElement.clientWidth) {
-            end = this._overviewGridElement.clientWidth;
-            start = end - windowSize;
+        while (listRowElement) {
+            var nextElement = listRowElement.nextSibling;
+            listRowElement.parentElement.removeChild(listRowElement);
+            listRowElement = nextElement;
         }
-        this._setWindowPosition(start, end);
 
-        event.preventDefault();
-    },
-
-    _resizeWindowLeft: function(start)
-    {
-        // Glue to edge.
-        if (start < 10)
-            start = 0;
-        this._setWindowPosition(start, null);
-    },
-
-    _resizeWindowRight: function(end)
-    {
-        // Glue to edge.
-        if (end > this._overviewGridElement.clientWidth - 10)
-            end = this._overviewGridElement.clientWidth;
-        this._setWindowPosition(null, end);
-    },
-
-    _setWindowPosition: function(start, end)
-    {
-        this.calculator.reset();
-        this.invalidateAllItems();
-        if (typeof start === "number") {
-            if (start > this._rightResizeElement.offsetLeft - 25)
-                start = this._rightResizeElement.offsetLeft - 25;
-
-            var windowLeft = start / this._overviewGridElement.clientWidth;
-            this.calculator.windowLeft = windowLeft;
-            this._leftResizeElement.style.left = windowLeft * 100 + "%";
-            this._overviewWindowElement.style.left = windowLeft * 100 + "%";
+        while (graphRowElement) {
+            var nextElement = graphRowElement.nextSibling;
+            graphRowElement.parentElement.removeChild(graphRowElement);
+            graphRowElement = nextElement;
         }
-        if (typeof end === "number") {
-            if (end < this._leftResizeElement.offsetLeft + 30)
-                end = this._leftResizeElement.offsetLeft + 30;
 
-            var windowRight = end / this._overviewGridElement.clientWidth;
-            this.calculator.windowRight = windowRight;
-            this._rightResizeElement.style.left = windowRight * 100 + "%";
-        }
-        this._overviewWindowElement.style.width = (this.calculator.windowRight - this.calculator.windowLeft) * 100 + "%";
-        this.needsRefresh = true;
+        this._timelineGrid.updateDividers(true, this._calculator);
+
+        const top = (startIndex * rowHeight) + "px";
+        this._topGapElement.style.height = top;
+        this.sidebarElement.style.top = top;
+        this.sidebarResizeElement.style.top = top;
+        this._bottomGapElement.style.height = (recordsInWindow.length - endIndex) * rowHeight + "px";
+        this._adjustScrollPosition((recordsInWindow.length + 1) * rowHeight);
     },
 
-    _endWindowDragging: function(event)
+    _adjustScrollPosition: function(totalHeight)
     {
-        WebInspector.elementDragEnd(event);
+        // Prevent the container from being scrolled off the end.
+        if ((this._containerElement.scrollTop + this._containerElement.offsetHeight) > totalHeight + 1)
+            this._containerElement.scrollTop = (totalHeight - this._containerElement.offsetHeight);
     }
 }
 
-WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.AbstractTimelinePanel.prototype;
+WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
 WebInspector.TimelineCategory = function(name, title, color)
 {
-    WebInspector.AbstractTimelineCategory.call(this, name, title, color);
+    this.name = name;
+    this.title = title;
+    this.color = color;
 }
-
-WebInspector.TimelineCategory.prototype = {
-}
-
-WebInspector.TimelineCategory.prototype.__proto__ = WebInspector.AbstractTimelineCategory.prototype;
-
-
-
-WebInspector.TimelineCategoryTreeElement = function(category)
-{
-    this._category = category;
-
-    // Pass an empty title, the title gets made later in onattach.
-    TreeElement.call(this, "", null, false);
-}
-
-WebInspector.TimelineCategoryTreeElement.prototype = {
-    onattach: function()
-    {
-        this.listItemElement.removeChildren();
-        this.listItemElement.addStyleClass("timeline-category-tree-item");
-        this.listItemElement.addStyleClass("timeline-category-" + this._category.name);
-
-        var label = document.createElement("label");
-
-        var checkElement = document.createElement("input");
-        checkElement.type = "checkbox";
-        checkElement.className = "timeline-category-checkbox";
-        checkElement.checked = true;
-        checkElement.addEventListener("click", this._onCheckboxClicked.bind(this));
-        label.appendChild(checkElement);
-
-        var typeElement = document.createElement("span");
-        typeElement.className = "type";
-        typeElement.textContent = this._category.title;
-        label.appendChild(typeElement);
-
-        this.listItemElement.appendChild(label);
-    },
-
-    _onCheckboxClicked: function (event) {
-        if (event.target.checked)
-            WebInspector.panels.timeline.showCategory(this._category.name);
-        else {
-            WebInspector.panels.timeline.hideCategory(this._category.name);
-            WebInspector.panels.timeline.adjustScrollPosition();
-        }
-        WebInspector.panels.timeline._categoryGraphs[this._category.name].dimmed = !event.target.checked;
-    }
-}
-
-WebInspector.TimelineCategoryTreeElement.prototype.__proto__ = TreeElement.prototype;
-
-
-WebInspector.TimelineRecordTreeElement = function(record)
-{
-    this._record = record;
-
-    // Pass an empty title, the title gets made later in onattach.
-    TreeElement.call(this, "", null, false);
-}
-
-WebInspector.TimelineRecordTreeElement.prototype = {
-    onattach: function()
-    {
-        this.listItemElement.removeChildren();
-        this.listItemElement.addStyleClass("timeline-tree-item");
-        this.listItemElement.addStyleClass("timeline-category-" + this._record.category.name);
-
-        var iconElement = document.createElement("span");
-        iconElement.className = "timeline-tree-icon";
-        this.listItemElement.appendChild(iconElement);
-
-        this.typeElement = document.createElement("span");
-        this.typeElement.className = "type";
-        this.typeElement.textContent = this._record.title;
-        this.listItemElement.appendChild(this.typeElement);
-
-        if (this._record.details) {
-            var separatorElement = document.createElement("span");
-            separatorElement.className = "separator";
-            separatorElement.textContent = " ";
-
-            this.dataElement = document.createElement("span");
-            this.dataElement.className = "data dimmed";
-            this._updateDetails();
-
-            this.listItemElement.appendChild(separatorElement);
-            this.listItemElement.appendChild(this.dataElement);
-        }
-    },
-
-    _updateDetails: function()
-    {
-        if (this.dataElement && this._record.details !== this._details) {
-            this._details = this._record.details;
-            this.dataElement.textContent = "(" + this._details + ")";
-            this.dataElement.title = this._details;
-        }
-    },
-
-    refresh: function()
-    {
-        this._updateDetails();
-
-        if (this._record.count <= 1)
-            return;
-
-        if (!this.repeatCountElement) {
-            this.repeatCountElement = document.createElement("span");
-            this.repeatCountElement.className = "count";
-            this.listItemElement.appendChild(this.repeatCountElement);
-        }
-
-        this.repeatCountElement.textContent = "\u2009\u00d7\u2009" + this._record.count;
-    }
-}
-
-WebInspector.TimelineRecordTreeElement.prototype.__proto__ = TreeElement.prototype;
 
 
 WebInspector.TimelineCalculator = function()
 {
-    WebInspector.AbstractTimelineCalculator.call(this);
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
     this._uiString = WebInspector.UIString.bind(WebInspector);
@@ -586,16 +398,6 @@ WebInspector.TimelineCalculator.prototype = {
         var start = (record.startTime - this.minimumBoundary) / this.boundarySpan * 100;
         var end = (record.endTime - this.minimumBoundary) / this.boundarySpan * 100;
         return {start: start, end: end};
-    },
-
-    computePercentageFromEventTime: function(eventTime)
-    {
-        return ((eventTime - this.minimumBoundary) / this.boundarySpan) * 100;
-    },
-
-    computeBarGraphLabels: function(record)
-    {
-        return {tooltip: record.title};
     },
 
     get minimumBoundary()
@@ -652,109 +454,88 @@ WebInspector.TimelineCalculator.prototype = {
         return didChange;
     },
 
+    get boundarySpan()
+    {
+        return this.maximumBoundary - this.minimumBoundary;
+    },
+
     formatValue: function(value)
     {
         return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, this._uiString);
     }
 }
 
-WebInspector.TimelineCalculator.prototype.__proto__ = WebInspector.AbstractTimelineCalculator.prototype;
 
-
-WebInspector.TimelineCategoryGraph = function(category)
+WebInspector.TimelineRecordListRow = function()
 {
-    this._category = category;
+    this.element = document.createElement("div");
+    this.element.listRow = this;
 
-    this._graphElement = document.createElement("div");
-    this._graphElement.className = "timeline-graph-side timeline-overview-graph-side";
+    var iconElement = document.createElement("span");
+    iconElement.className = "timeline-tree-icon";
+    this.element.appendChild(iconElement);
 
-    this._barAreaElement = document.createElement("div");
-    this._barAreaElement.className = "timeline-graph-bar-area timeline-category-" + category.name;
-    this._graphElement.appendChild(this._barAreaElement);
+    this._typeElement = document.createElement("span");
+    this._typeElement.className = "type";
+    this.element.appendChild(this._typeElement);
+
+    var separatorElement = document.createElement("span");
+    separatorElement.className = "separator";
+    separatorElement.textContent = " ";
+
+    this._dataElement = document.createElement("span");
+    this._dataElement.className = "data dimmed";
+
+    this._repeatCountElement = document.createElement("span");
+    this._repeatCountElement.className = "count";
+
+    this.element.appendChild(separatorElement);
+    this.element.appendChild(this._dataElement);
+    this.element.appendChild(this._repeatCountElement);
 }
 
-WebInspector.TimelineCategoryGraph.prototype = {
-    get graphElement()
+WebInspector.TimelineRecordListRow.prototype = {
+    update: function(record, isEven)
     {
-        return this._graphElement;
-    },
+        this.element.className = "timeline-tree-item timeline-category-" + record.category.name + (isEven ? " even" : "");
+        this._typeElement.textContent = record.title;
 
-    addChunk: function(start, end)
-    {
-        var chunk = document.createElement("div");
-        chunk.className = "timeline-graph-bar";
-        this._barAreaElement.appendChild(chunk);
-        chunk.style.setProperty("left", start + "%");
-        chunk.style.setProperty("width", (end - start) + "%");
-    },
+        if (record.details) {
+            this._dataElement.textContent = "(" + record.details + ")";
+            this._dataElement.title = record.details;
+        } else {
+            this._dataElement.textContent = "";
+            this._dataElement.title = "";
+        }
 
-    clearChunks: function()
-    {
-        this._barAreaElement.removeChildren();
-    },
-
-    set dimmed(dimmed)
-    {
-        if (dimmed)
-            this._barAreaElement.removeStyleClass("timeline-category-" + this._category.name);
+        if (record.count > 1)
+            this._repeatCountElement.textContent = "\u2009\u00d7\u2009" + record.count;
         else
-            this._barAreaElement.addStyleClass("timeline-category-" + this._category.name);
+            this._repeatCountElement.textContent = "";
     }
 }
 
 
-WebInspector.TimelineGraph = function(record)
+WebInspector.TimelineRecordGraphRow = function()
 {
-    this.record = record;
-
-    this._graphElement = document.createElement("div");
-    this._graphElement.className = "timeline-graph-side";
+    this.element = document.createElement("div");
+    this.element.graphRow = this;
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "timeline-graph-bar-area";
-    this._graphElement.appendChild(this._barAreaElement);
+    this.element.appendChild(this._barAreaElement);
 
     this._barElement = document.createElement("div");
     this._barElement.className = "timeline-graph-bar";
     this._barAreaElement.appendChild(this._barElement);
-
-    this._graphElement.addStyleClass("timeline-category-" + record.category.name);
-    this._hidden = false;
 }
 
-WebInspector.TimelineGraph.prototype = {
-    get graphElement()
+WebInspector.TimelineRecordGraphRow.prototype = {
+    update: function(record, isEven, calculator)
     {
-        return this._graphElement;
-    },
-
-    refreshLabelPositions: function()
-    {
-    },
-
-    refresh: function(calculator)
-    {
-        var percentages = calculator.computeBarGraphPercentages(this.record);
-        var labels = calculator.computeBarGraphLabels(this.record);
-
-        this._percentages = percentages;
-
-        if (percentages.start > 100 || percentages.end < 0) {
-            if (!this._hidden) {
-                this._graphElement.addStyleClass("hidden");
-                this.record._itemsTreeElement.listItemElement.addStyleClass("hidden");
-                this._hidden = true;
-            }
-        } else {
-            this._barElement.style.setProperty("left", percentages.start + "%");
-            this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
-            if (this._hidden) {
-                this._graphElement.removeStyleClass("hidden");
-                this.record._itemsTreeElement.listItemElement.removeStyleClass("hidden");
-                this._hidden = false;
-            }
-        }
-        var tooltip = (labels.tooltip || "");
-        this._barElement.title = tooltip;
+        this.element.className = "timeline-graph-side timeline-category-" + record.category.name + (isEven ? " even" : "");
+        var percentages = calculator.computeBarGraphPercentages(record);
+        this._barElement.style.setProperty("left", percentages.start + "%");
+        this._barElement.style.setProperty("right", (100 - percentages.end) + "%");
     }
 }
