@@ -1,3 +1,34 @@
+2009-11-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Support Ctrl+P and Ctrl+N, Readline keyboard shortcuts in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=31400
+
+        Handle the following when on a Mac:
+
+          Ctrl+P = Previous (like Up arrow)
+          Ctrl+N = Next (like Down arrow)
+
+        No longer rerun autocompletion when just pushing a modifier key
+        like Control, Alt, Shift, or Meta.
+
+        Improved arrow key behavior with Multiline code in the Console, with the following behavior:
+
+          Up   = Previous Command if on First Line (caret moves to the end of the first line)
+                 otherwise default caret movement in text.
+          Down = Next Command if on Last Line (caret naturally moves to the end)
+                 otherwise default caret movement in text.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.handleKeyEvent): handle new keyboard shortcuts
+        (WebInspector.TextPrompt.prototype.isCaretOnFirstLine): check if the caret is on the top line
+        (WebInspector.TextPrompt.prototype.isCaretOnLastLine): check if the caret is on the bottom line
+        (WebInspector.TextPrompt.prototype._upKeyPressed):
+        (WebInspector.TextPrompt.prototype._downKeyPressed):
+        (WebInspector.TextPrompt.prototype._moveBackInHistory):
+        (WebInspector.TextPrompt.prototype._moveForwardInHistory):
+
 2009-11-21  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Timothy Hatcher.
