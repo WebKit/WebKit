@@ -38,16 +38,19 @@ WebInspector.TimelinePanel = function()
     this._overviewPane.addEventListener("filter changed", this._refresh, this);
     this.element.appendChild(this._overviewPane.element);
 
+    this._sidebarBackgroundElement = document.createElement("div");
+    this._sidebarBackgroundElement.className = "sidebar timeline-sidebar-background";
+    this.element.appendChild(this._sidebarBackgroundElement);
+
     this._containerElement = document.createElement("div");
     this._containerElement.id = "timeline-container";
     this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
     this.element.appendChild(this._containerElement);
 
     this.createSidebar(this._containerElement, this._containerElement);
-    this.sidebarElement.id = "timeline-sidebar";
-    this.itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
-    this.itemsTreeElement.expanded = true;
-    this.sidebarTree.appendChild(this.itemsTreeElement);
+    var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
+    itemsTreeElement.expanded = true;
+    this.sidebarTree.appendChild(itemsTreeElement);
 
     this._sidebarListElement = document.createElement("div");
     this.sidebarElement.appendChild(this._sidebarListElement);
@@ -57,20 +60,20 @@ WebInspector.TimelinePanel = function()
     this._containerElement.appendChild(this._containerContentElement);
 
     this._timelineGrid = new WebInspector.TimelineGrid();
-    this._itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
-    this._itemsGraphsElement.id = "timeline-graphs";
+    var itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
+    itemsGraphsElement.id = "timeline-graphs";
     this._containerContentElement.appendChild(this._timelineGrid.element);
 
     this._topGapElement = document.createElement("div");
     this._topGapElement.className = "timeline-gap";
-    this._itemsGraphsElement.appendChild(this._topGapElement);
+    itemsGraphsElement.appendChild(this._topGapElement);
 
     this._graphRowsElement = document.createElement("div");
-    this._itemsGraphsElement.appendChild(this._graphRowsElement);
+    itemsGraphsElement.appendChild(this._graphRowsElement);
 
     this._bottomGapElement = document.createElement("div");
     this._bottomGapElement.className = "timeline-gap";
-    this._itemsGraphsElement.appendChild(this._bottomGapElement);
+    itemsGraphsElement.appendChild(this._bottomGapElement);
 
     this._createStatusbarButtons();
 
@@ -236,6 +239,7 @@ WebInspector.TimelinePanel.prototype = {
     setSidebarWidth: function(width)
     {
         WebInspector.Panel.prototype.setSidebarWidth.call(this, width);
+        this._sidebarBackgroundElement.style.width = width + "px";
         this._overviewPane.setSidebarWidth(width);
     },
 
@@ -272,17 +276,17 @@ WebInspector.TimelinePanel.prototype = {
         var scrollTop = this._containerElement.scrollTop;
         var dividersTop = Math.max(0, scrollTop);
         this._timelineGrid.setScrollAndDividerTop(scrollTop, dividersTop);
-        this._scheduleRefresh();
+        this._scheduleRefresh(true);
     },
 
-    _scheduleRefresh: function()
+    _scheduleRefresh: function(immediate)
     {
         if (this._needsRefresh)
             return;
         this._needsRefresh = true;
 
         if (this.visible && !("_refreshTimeout" in this))
-            this._refreshTimeout = setTimeout(this._refresh.bind(this), 100);
+            this._refreshTimeout = setTimeout(this._refresh.bind(this), immediate ? 0 : 100);
     },
 
     _refresh: function()

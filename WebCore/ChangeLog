@@ -2,6 +2,22 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Introduce sidebar background on timeline panel in order
+        to prevent it from flickering on scroll.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31789
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.setSidebarWidth):
+        (WebInspector.TimelinePanel.prototype._onScroll):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        * inspector/front-end/inspector.css:
+
+2009-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Reimplement TimelinePanel to make it fast:
         - Extract grid and overview into separate files
         - Make timeline create only divs for visible rows

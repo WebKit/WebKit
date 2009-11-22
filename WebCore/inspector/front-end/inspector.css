@@ -3275,20 +3275,17 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 /* Timeline Style */
 
-#timeline-summary {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-}
-
 #timeline-overview-panel {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 80px;
+}
+
+.timeline-sidebar-background {
+    top: 90px;
+    bottom: 0;
 }
 
 #timeline-overview-separator {
