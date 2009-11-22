@@ -11,6 +11,11 @@
     50% { left: 30px; }
     100% { left: 20px; }
   }
+  @-webkit-keyframes test-from-to {
+    from { left: 10px; }
+    50% { left: 30px; }
+    to { left: 20px; }
+  }
 </style>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
@@ -109,6 +114,19 @@ shouldBe("rule.type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
 shouldBe("rule.cssText", "'50% { left: 30px; }'");
 
 debug("");
+debug("Find a rule using from and to");
+
+var keyframesFromTo = document.styleSheets.item(1).cssRules.item(2);
+shouldBe("keyframesFromTo.type", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
+rule = keyframesFromTo.findRule("From");
+shouldBe("rule.type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 10px; }'");
+
+rule = keyframesFromTo.findRule("TO");
+shouldBe("rule.type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 20px; }'");
+
+debug("");
 debug("Try to find a rule that doesn't exist");
 
 rule = keyframes2.findRule("70%");
@@ -126,6 +144,16 @@ shouldBe("rules2.length", "2");
 shouldBe("rules2.item(0).type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
 shouldBe("rules2.item(0).keyText", "'0%'");
 shouldBe("rules2.item(1).keyText", "'100%'");
+
+debug("");
+debug("Delete a from rule");
+keyframesFromTo.deleteRule("0%");
+var rulesFromTo = keyframesFromTo.cssRules;
+shouldBe("rulesFromTo.length", "2");
+shouldBe("rulesFromTo.item(0).type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
+shouldBe("rulesFromTo.item(0).keyText", "'50%'");
+shouldBe("rulesFromTo.item(1).keyText", "'100%'");
+
 
 debug("");
 debug("Delete a rule that doesn't exist");

@@ -43,6 +43,13 @@ Find a rule
 PASS rule.type is window.CSSRule.WEBKIT_KEYFRAME_RULE
 PASS rule.cssText is '50% { left: 30px; }'
 
+Find a rule using from and to
+PASS keyframesFromTo.type is window.CSSRule.WEBKIT_KEYFRAMES_RULE
+PASS rule.type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 10px; }'
+PASS rule.type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 20px; }'
+
 Try to find a rule that doesn't exist
 PASS Non-existent rule was not found
 
@@ -51,6 +58,12 @@ PASS rules2.length is 2
 PASS rules2.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
 PASS rules2.item(0).keyText is '0%'
 PASS rules2.item(1).keyText is '100%'
+
+Delete a from rule
+PASS rulesFromTo.length is 2
+PASS rulesFromTo.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rulesFromTo.item(0).keyText is '50%'
+PASS rulesFromTo.item(1).keyText is '100%'
 
 Delete a rule that doesn't exist
 PASS rules2.length is 2

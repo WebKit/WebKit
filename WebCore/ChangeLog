@@ -1,3 +1,16 @@
+2009-11-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSSKeyframesRule::findRule() and deleteRule() should accept 'from' and 'to' as well as percentages
+        https://bugs.webkit.org/show_bug.cgi?id=31588
+        
+        In WebKitCSSKeyframesRule::findRuleIndex(), map 'from' to 0% an 'to' to 100%
+        so that findRule() and deleteRule() work with these keywords.
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::findRuleIndex):
+
 2009-11-21  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

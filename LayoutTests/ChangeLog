@@ -1,3 +1,15 @@
+2009-11-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSSKeyframesRule::findRule() and deleteRule() should accept 'from' and 'to' as well as percentages
+        https://bugs.webkit.org/show_bug.cgi?id=31588
+        
+        Add tests for finding and deleting keyframes using 'from' and 'to'.
+
+        * animations/keyframes-rule-expected.txt:
+        * animations/keyframes-rule.html:
+
 2009-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
