@@ -1,3 +1,15 @@
+2009-11-22  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] fast/history/back-forward-reset-after-error-handling.html failing due to WorkQueue not being un-frozen
+        https://bugs.webkit.org/show_bug.cgi?id=31638
+
+        Unfreeze WorkQueue after each test execution.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.

@@ -371,9 +371,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     qt_drt_clearFrameName(m_page->mainFrame());
 
     WorkQueue::shared()->clear();
-    // The below line is used in other ports, but for us it results in
-    // a timeout for fast/frames/frame-navigation.html
-    //WorkQueue::shared()->setFrozen(false);
+    WorkQueue::shared()->setFrozen(false);
 
     qt_drt_resetOriginAccessWhiteLists();
 
