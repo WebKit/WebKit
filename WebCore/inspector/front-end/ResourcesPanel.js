@@ -1043,6 +1043,8 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
 
             this.createIconElement();
         }
+
+        this.tooltip = this.resource.url;
     },
 
     resetBubble: function()

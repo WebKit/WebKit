@@ -1,3 +1,16 @@
+2009-11-21  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a tooltip containing the full url of the resource to each element
+        in the Resources panel so that it is possible to quickly see the query
+        parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=19103
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.refresh):
+        Set the tooltip to be the resource's url.
+
 2009-11-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
