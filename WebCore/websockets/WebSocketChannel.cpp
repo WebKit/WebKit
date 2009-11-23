@@ -69,7 +69,7 @@ WebSocketChannel::~WebSocketChannel()
 void WebSocketChannel::connect()
 {
     LOG(Network, "WebSocketChannel %p connect", this);
-    ASSERT(!m_handle.get());
+    ASSERT(!m_handle);
     m_handshake.reset();
     ref();
     m_handle = SocketStreamHandle::create(m_handshake.url(), this);
@@ -82,7 +82,7 @@ bool WebSocketChannel::send(const String& msg)
     buf.append('\0');  // frame type
     buf.append(msg.utf8().data(), msg.utf8().length());
     buf.append('\xff');  // frame end
-    if (!m_handle.get()) {
+    if (!m_handle) {
         m_unhandledBufferSize += buf.size();
         return false;
     }
@@ -92,7 +92,7 @@ bool WebSocketChannel::send(const String& msg)
 unsigned long WebSocketChannel::bufferedAmount() const
 {
     LOG(Network, "WebSocketChannel %p bufferedAmount", this);
-    if (!m_handle.get())
+    if (!m_handle)
         return m_unhandledBufferSize;
     return m_handle->bufferedAmount();
 }
@@ -100,7 +100,7 @@ unsigned long WebSocketChannel::bufferedAmount() const
 void WebSocketChannel::close()
 {
     LOG(Network, "WebSocketChannel %p close", this);
-    if (m_handle.get())
+    if (m_handle)
         m_handle->close();  // will call didClose()
 }
 
@@ -108,14 +108,14 @@ void WebSocketChannel::disconnect()
 {
     LOG(Network, "WebSocketChannel %p disconnect", this);
     m_client = 0;
-    if (m_handle.get())
+    if (m_handle)
         m_handle->close();
 }
 
 void WebSocketChannel::didOpen(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didOpen", this);
-    ASSERT(handle == m_handle.get());
+    ASSERT(handle == m_handle);
     const CString& handshakeMessage = m_handshake.clientHandshakeMessage();
     if (!handle->send(handshakeMessage.data(), handshakeMessage.length())) {
         LOG(Network, "Error in sending handshake message.");
@@ -126,8 +126,8 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
 void WebSocketChannel::didClose(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didClose", this);
-    ASSERT(handle == m_handle.get() || !m_handle.get());
-    if (m_handle.get()) {
+    ASSERT(handle == m_handle || !m_handle);
+    if (m_handle) {
         m_unhandledBufferSize = handle->bufferedAmount();
         WebSocketChannelClient* client = m_client;
         m_client = 0;
@@ -141,7 +141,7 @@ void WebSocketChannel::didClose(SocketStreamHandle* handle)
 void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* data, int len)
 {
     LOG(Network, "WebSocketChannel %p didReceiveData %d", this, len);
-    ASSERT(handle == m_handle.get());
+    ASSERT(handle == m_handle);
     if (!appendToBuffer(data, len)) {
         handle->close();
         return;
@@ -217,7 +217,7 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
 void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamError&)
 {
     LOG(Network, "WebSocketChannel %p didFail", this);
-    ASSERT(handle == m_handle.get() || !m_handle.get());
+    ASSERT(handle == m_handle || !m_handle);
     handle->close();
 }
 

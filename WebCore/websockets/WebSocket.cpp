@@ -110,7 +110,7 @@ WebSocket::WebSocket(ScriptExecutionContext* context)
 
 WebSocket::~WebSocket()
 {
-    if (m_channel.get())
+    if (m_channel)
         m_channel->disconnect();
 }
 
