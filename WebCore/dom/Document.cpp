@@ -3735,7 +3735,7 @@ void Document::repaintMarkers(DocumentMarker::MarkerType markerType)
     }
 }
 
-void Document::setRenderedRectForMarker(Node* node, DocumentMarker marker, const IntRect& r)
+void Document::setRenderedRectForMarker(Node* node, const DocumentMarker& marker, const IntRect& r)
 {
     MarkerMapVectorPair* vectorPair = m_markers.get(node);
     if (!vectorPair) {

@@ -1,3 +1,55 @@
+2009-11-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        DocumentMarkers need to be educated about transforms
+        https://bugs.webkit.org/show_bug.cgi?id=31751
+        
+        Find highlight is incorrect with transforms
+        <rdar://problem/6358394>
+
+        Allow callers to specify that Frame::selectionTextRects() takes transforms into account
+        when computing the set of rects that encompass a selection. For transformed elemenets, the
+        selection rect will be the bounding box of the selected content.
+        
+        Fix DocumentMarkers to cache rects in absolute coordinates, rather than painting coordinates.
+        
+        Test: editing/selection/transformed-selection-rects.html
+        
+        * WebCore.base.exp:
+        Frame::selectionTextRects() has a new parameter.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::setRenderedRectForMarker):
+        * dom/Document.h:
+        Pass the marker as a const reference.
+        
+        * dom/Range.h:
+        * dom/Range.cpp:
+        (WebCore::Range::textQuads):
+        Add a new method, textQuads(), which returns a list of quads, respecting transforms.
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionTextRects):
+        Add a new parameter, respectTransforms, and when that is RespectTransforms, use the quad
+        method to get quads for ranges, and then take their bounding boxes.
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        (WebCore::InlineTextBox::textPos):
+        (WebCore::InlineTextBox::offsetForPosition):
+        
+        Pass DocumentMarkers as a const references.
+        Convert the argument to setRenderedRectForMarker() into absolute coordinates.
+        
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+
 2009-11-23  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

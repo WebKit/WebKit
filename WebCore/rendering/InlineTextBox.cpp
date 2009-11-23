@@ -700,7 +700,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         context->clearShadow();
 }
 
-void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font& font, bool grammar)
+void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, int ty, const DocumentMarker& marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
     if (textRenderer()->document()->printing())
@@ -739,8 +739,11 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
         
         // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
         // display a toolTip. We don't do this for misspelling markers.
-        if (grammar)
+        if (grammar) {
+            markerRect.move(-tx, -ty);
+            markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
             renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+        }
     }
     
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
@@ -763,7 +766,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
     pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + m_x + start, ty + m_y + underlineOffset), width, grammar);
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, const DocumentMarker& marker, RenderStyle* style, const Font& font)
 {
     // Use same y positioning and height as for selection, so that when the selection and this highlight are on
     // the same word there are no pieces sticking out.
@@ -773,10 +776,10 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, Do
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
     TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
-    IntPoint startPoint = IntPoint(m_x + tx, y + ty);
     
-    // Always compute and store the rect associated with this marker
-    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
+    // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
+    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, y), h, sPos, ePos));
+    markerRect = root()->block()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
      
     // Optionally highlight the text
@@ -787,12 +790,12 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, Do
         pt->save();
         updateGraphicsContext(pt, color, color, 0, style->colorSpace());  // Don't draw text at all!
         pt->clip(IntRect(tx + m_x, ty + y, m_width, h));
-        pt->drawHighlightForText(font, run, startPoint, h, color, style->colorSpace(), sPos, ePos);
+        pt->drawHighlightForText(font, run, IntPoint(m_x + tx, y + ty), h, color, style->colorSpace(), sPos, ePos);
         pt->restore();
     }
 }
 
-void InlineTextBox::computeRectForReplacementMarker(int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font& font)
+void InlineTextBox::computeRectForReplacementMarker(int /*tx*/, int /*ty*/, const DocumentMarker& marker, RenderStyle* style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
     int y = selectionTop();
@@ -801,10 +804,11 @@ void InlineTextBox::computeRectForReplacementMarker(int tx, int ty, DocumentMark
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
     TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
-    IntPoint startPoint = IntPoint(m_x + tx, y + ty);
+    IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
+    markerRect = root()->block()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
 }
     
@@ -819,7 +823,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
     for ( ; markerIt != markers.end(); markerIt++) {
-        DocumentMarker marker = *markerIt;
+        const DocumentMarker& marker = *markerIt;
         
         // Paint either the background markers or the foreground markers, but not both
         switch (marker.type) {
@@ -938,7 +942,7 @@ int InlineTextBox::textPos() const
     if (x() == 0)
         return 0;
         
-    RenderBlock *blockElement = renderer()->containingBlock();
+    RenderBlock* blockElement = renderer()->containingBlock();
     return direction() == RTL ? x() - blockElement->borderRight() - blockElement->paddingRight()
                       : x() - blockElement->borderLeft() - blockElement->paddingLeft();
 }
@@ -949,7 +953,7 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
         return 0;
 
     RenderText* text = toRenderText(renderer());
-    RenderStyle *style = text->style(m_firstLine);
+    RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
     return f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered()),
                                 _x - m_x, includePartialGlyphs);

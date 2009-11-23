@@ -730,7 +730,7 @@ public:
     void removeMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void removeMarkers(Node*);
     void repaintMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    void setRenderedRectForMarker(Node*, DocumentMarker, const IntRect&);
+    void setRenderedRectForMarker(Node*, const DocumentMarker&, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
     void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void setMarkersActive(Range*, bool);

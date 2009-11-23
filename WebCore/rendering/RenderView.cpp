@@ -326,7 +326,13 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
     SelectionMap::iterator end = selectedObjects.end();
     for (SelectionMap::iterator i = selectedObjects.begin(); i != end; ++i) {
         RenderSelectionInfo* info = i->second;
-        selRect.unite(info->rect());
+        // RenderSelectionInfo::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
+        IntRect currRect = info->rect();
+        if (RenderBoxModelObject* repaintContainer = info->repaintContainer()) {
+            FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(FloatRect(currRect));
+            currRect = absQuad.enclosingBoundingBox(); 
+        }
+        selRect.unite(currRect);
         delete info;
     }
     return selRect;

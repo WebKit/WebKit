@@ -5911,7 +5911,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     
     Vector<FloatRect> list;
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->selectionTextRects(list);
+        coreFrame->selectionTextRects(list, Frame::RespectTransforms);
 
     unsigned size = list.size();
     NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];

@@ -1,3 +1,23 @@
+2009-11-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        DocumentMarkers need to be educated about transforms
+        https://bugs.webkit.org/show_bug.cgi?id=31751
+        
+        Find highlight is incorrect with transforms
+        <rdar://problem/6358394>
+        
+        Allow callers to specify that Frame::selectionTextRects() takes transforms into account
+        when computing the set of rects that encompass a selection. For transformed elemenets, the
+        selection rect will be the bounding box of the selected content.
+        
+        Fix DocumentMarkers to cache rects in absolute coordinates, rather than painting coordinates.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView selectionTextRects]):
+        Pass RespectTransforms to get a list of rects with transforms taken into account.
+
 2009-11-23  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Adam Roben.

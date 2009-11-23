@@ -1266,7 +1266,7 @@ FloatRect Frame::selectionBounds(bool clipToVisibleContent) const
     return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect()) : selectionRect;
 }
 
-void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleContent) const
+void Frame::selectionTextRects(Vector<FloatRect>& rects, SelectionRectRespectTransforms respectTransforms, bool clipToVisibleContent) const
 {
     RenderView* root = contentRenderer();
     if (!root)
@@ -1274,18 +1274,35 @@ void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleConte
 
     RefPtr<Range> selectedRange = selection()->toNormalizedRange();
 
-    Vector<IntRect> intRects;
-    selectedRange->textRects(intRects, true);
-
-    unsigned size = intRects.size();
     FloatRect visibleContentRect = m_view->visibleContentRect();
-    for (unsigned i = 0; i < size; ++i)
-        if (clipToVisibleContent)
-            rects.append(intersection(intRects[i], visibleContentRect));
-        else
-            rects.append(intRects[i]);
-}
+    
+    // FIMXE: we are appending empty rects to the list for those that fall outside visibleContentRect.
+    // We may not want to do that.
+    if (respectTransforms) {
+        Vector<FloatQuad> quads;
+        selectedRange->textQuads(quads, true);
 
+        unsigned size = quads.size();
+        for (unsigned i = 0; i < size; ++i) {
+            IntRect currRect = quads[i].enclosingBoundingBox();
+            if (clipToVisibleContent)
+                rects.append(intersection(currRect, visibleContentRect));
+            else
+                rects.append(currRect);
+        }
+    } else {
+        Vector<IntRect> intRects;
+        selectedRange->textRects(intRects, true);
+
+        unsigned size = intRects.size();
+        for (unsigned i = 0; i < size; ++i) {
+            if (clipToVisibleContent)
+                rects.append(intersection(intRects[i], visibleContentRect));
+            else
+                rects.append(intRects[i]);
+        }
+    }
+}
 
 // Scans logically forward from "start", including any child frames
 static HTMLFormElement *scanForForm(Node *start)

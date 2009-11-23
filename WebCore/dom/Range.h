@@ -105,7 +105,10 @@ public:
     Node* shadowTreeRootNode() const;
 
     IntRect boundingBox();
+    // Not transform-friendly
     void textRects(Vector<IntRect>&, bool useSelectionHeight = false);
+    // Transform-friendly
+    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false);
 
     void nodeChildrenChanged(ContainerNode*);
     void nodeWillBeRemoved(Node*);

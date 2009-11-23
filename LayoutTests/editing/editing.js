@@ -12,6 +12,8 @@ var selection = window.getSelection();
 function execSetSelectionCommand(sn, so, en, eo) {
     window.getSelection().setBaseAndExtent(sn, so, en, eo);
 }
+
+// Args are startNode, startOffset, endNode, endOffset
 function setSelectionCommand(sn, so, en, eo) {
     if (commandDelay > 0) {
         window.setTimeout(execSetSelectionCommand, commandCount * commandDelay, sn, so, en, eo);

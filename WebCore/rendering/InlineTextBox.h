@@ -131,9 +131,9 @@ protected:
 private:
     void paintDecoration(GraphicsContext*, int tx, int ty, int decoration, ShadowData*);
     void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font&, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font&);
-    void computeRectForReplacementMarker(int tx, int ty, DocumentMarker, RenderStyle*, const Font&);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, const DocumentMarker&, RenderStyle*, const Font&);
+    void computeRectForReplacementMarker(int tx, int ty, const DocumentMarker&, RenderStyle*, const Font&);
 };
 
 inline RenderText* InlineTextBox::textRenderer() const
