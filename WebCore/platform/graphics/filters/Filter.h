@@ -22,6 +22,7 @@
 
 #if ENABLE(FILTERS)
 #include "FloatRect.h"
+#include "FloatSize.h"
 #include "ImageBuffer.h"
 #include "StringHash.h"
 
@@ -40,15 +41,21 @@ namespace WebCore {
         void setSourceImage(PassOwnPtr<ImageBuffer> sourceImage) { m_sourceImage = sourceImage; }
         ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
+        FloatSize filterResolution() const { return m_filterResolution; }
+        void setFilterResolution(const FloatSize& filterResolution) { m_filterResolution = filterResolution; }
+
         virtual FloatRect sourceImageRect() const = 0;
         virtual FloatRect filterRegion() const = 0;
 
         // SVG specific
-        virtual void calculateEffectSubRegion(FilterEffect*) const = 0;
+        virtual void calculateEffectSubRegion(FilterEffect*) { }
+
+        virtual FloatSize maxImageSize() const = 0;
         virtual bool effectBoundingBoxMode() const = 0;
 
     private:
         OwnPtr<ImageBuffer> m_sourceImage;
+        FloatSize m_filterResolution;
     };
 
 } // namespace WebCore

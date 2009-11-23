@@ -32,6 +32,8 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 
+using std::max;
+
 namespace WebCore {
 
 FEGaussianBlur::FEGaussianBlur(FilterEffect* in, const float& x, const float& y)
@@ -111,10 +113,12 @@ void FEGaussianBlur::apply(Filter* filter)
     if (m_x == 0 || m_y == 0)
         return;
 
-    unsigned sdx = static_cast<unsigned>(floor(m_x * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
-    unsigned sdy = static_cast<unsigned>(floor(m_y * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
+    unsigned sdx = static_cast<unsigned>(floor(m_x * filter->filterResolution().width() * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
+    unsigned sdy = static_cast<unsigned>(floor(m_y * filter->filterResolution().height() * 3 * sqrt(2 * piDouble) / 4.f + 0.5f));
+    sdx = max(sdx, static_cast<unsigned>(1));
+    sdy = max(sdy, static_cast<unsigned>(1));
 
-    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->subRegion());
+    IntRect effectDrawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
     RefPtr<ImageData> srcImageData(m_in->resultImage()->getPremultipliedImageData(effectDrawingRect));
     CanvasPixelArray* srcPixelArray(srcImageData->data());
 

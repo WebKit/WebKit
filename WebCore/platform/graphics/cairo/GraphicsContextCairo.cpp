@@ -860,10 +860,10 @@ void GraphicsContext::createPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const
     RefPtr<Filter> filter = ImageBufferFilter::create();
     filter->setSourceImage(buffer.release());
     RefPtr<FilterEffect> source = SourceGraphic::create();
-    source->setSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    source->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
     source->setIsAlphaImage(true);
     RefPtr<FilterEffect> blur = FEGaussianBlur::create(source.get(), kernelSize, kernelSize);
-    blur->setSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
+    blur->setScaledSubRegion(FloatRect(FloatPoint(), shadowRect.size()));
     blur->apply(filter.get());
 
     // Mask the filter with the shadow color and draw it to the context.

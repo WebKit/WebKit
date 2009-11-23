@@ -25,6 +25,7 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "FloatRect.h"
+#include "FloatSize.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +42,9 @@ public:
 
     // SVG specific
     virtual bool effectBoundingBoxMode() const { return false; }
-    virtual void calculateEffectSubRegion(FilterEffect*) const { }
+
+    virtual FloatSize maxImageSize() const { return FloatSize(); }
+    virtual void calculateEffectSubRegion(FilterEffect*) { }
 
 private:
     ImageBufferFilter();

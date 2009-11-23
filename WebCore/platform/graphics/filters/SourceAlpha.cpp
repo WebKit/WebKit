@@ -50,6 +50,8 @@ FloatRect SourceAlpha::calculateEffectRect(Filter* filter)
     if (filter->sourceImageRect().y() < filter->filterRegion().y())
         clippedSourceRect.setY(filter->filterRegion().y());
     setSubRegion(clippedSourceRect);
+    clippedSourceRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
+    setScaledSubRegion(clippedSourceRect);
     return filter->filterRegion();
 }
 

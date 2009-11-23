@@ -53,6 +53,9 @@ public:
     
     virtual SVGResourceType resourceType() const { return FilterResourceType; }
 
+    void setFilterResolution(const FloatSize& filterResSize) { m_filterResSize = filterResSize; }
+    void setHasFilterResolution(bool filterRes) { m_filterRes = filterRes; }
+
     bool filterBoundingBoxMode() const { return m_filterBBoxMode; }
     void setFilterBoundingBoxMode(bool bboxMode) { m_filterBBoxMode = bboxMode; }
 
@@ -62,11 +65,16 @@ public:
     FloatRect filterRect() const { return m_filterRect; }
     void setFilterRect(const FloatRect& rect) { m_filterRect = rect; }
 
+    float scaleX() const { return m_scaleX; }
+    float scaleY() const { return m_scaleY; }
+
     FloatRect filterBoundingBox() { return m_filterBBox; }
     void setFilterBoundingBox(const FloatRect& rect) { m_filterBBox = rect; }
 
     void prepareFilter(GraphicsContext*&, const RenderObject*);
     void applyFilter(GraphicsContext*&, const RenderObject*);
+
+    bool fitsInMaximumImageSize(const FloatSize&);
 
     void addFilterEffect(SVGFilterPrimitiveStandardAttributes*, PassRefPtr<FilterEffect>);
 
@@ -81,9 +89,13 @@ private:
 
     bool m_filterBBoxMode : 1;
     bool m_effectBBoxMode : 1;
+    bool m_filterRes : 1;
+    float m_scaleX;
+    float m_scaleY;
 
     FloatRect m_filterRect;
     FloatRect m_filterBBox;
+    FloatSize m_filterResSize;
 
     OwnPtr<SVGFilterBuilder> m_filterBuilder;
     GraphicsContext* m_savedContext;

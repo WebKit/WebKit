@@ -35,6 +35,10 @@
 #include "SVGRenderTreeAsText.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
+static const float kMaxFilterSize = 5000.0f;
+
+using std::min;
+
 namespace WebCore {
 
 SVGResourceFilter::SVGResourceFilter(const SVGFilterElement* ownerElement)
@@ -42,6 +46,9 @@ SVGResourceFilter::SVGResourceFilter(const SVGFilterElement* ownerElement)
     , m_ownerElement(ownerElement)
     , m_filterBBoxMode(false)
     , m_effectBBoxMode(false)
+    , m_filterRes(false)
+    , m_scaleX(1.f)
+    , m_scaleY(1.f)
     , m_savedContext(0)
     , m_sourceGraphicBuffer(0)
 {
@@ -52,10 +59,31 @@ SVGResourceFilter::~SVGResourceFilter()
 {
 }
 
+static inline bool shouldProcessFilter(SVGResourceFilter* filter)
+{
+    return (!filter->scaleX() || !filter->scaleY() || !filter->filterBoundingBox().width()
+            || !filter->filterBoundingBox().height());
+}
+
 void SVGResourceFilter::addFilterEffect(SVGFilterPrimitiveStandardAttributes* effectAttributes, PassRefPtr<FilterEffect> effect)
 {
     effectAttributes->setStandardAttributes(this, effect.get());
     builder()->add(effectAttributes->result(), effect);
+}
+
+bool SVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size)
+{
+    bool matchesFilterSize = true;
+    if (size.width() > kMaxFilterSize) {
+        m_scaleX *= kMaxFilterSize / size.width();
+        matchesFilterSize = false;
+    }
+    if (size.height() > kMaxFilterSize) {
+        m_scaleY *= kMaxFilterSize / size.height();
+        matchesFilterSize = false;
+    }
+
+    return matchesFilterSize;
 }
 
 void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObject* object)
@@ -63,16 +91,40 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
     FloatRect targetRect = object->objectBoundingBox();
     m_ownerElement->buildFilter(targetRect);
 
+    if (shouldProcessFilter(this))
+        return;
+
     // clip sourceImage to filterRegion
     FloatRect clippedSourceRect = targetRect;
     clippedSourceRect.intersect(m_filterBBox);
 
+    // scale filter size to filterRes
+    FloatRect tempSourceRect = clippedSourceRect;
+    if (m_filterRes) {
+        m_scaleX = m_filterResSize.width() / m_filterBBox.width();
+        m_scaleY = m_filterResSize.height() / m_filterBBox.height();
+    }
+
+    // scale to big sourceImage size to kMaxFilterSize
+    tempSourceRect.scale(m_scaleX, m_scaleY);
+    fitsInMaximumImageSize(tempSourceRect.size());
+
     // prepare Filters
     m_filter = SVGFilter::create(targetRect, m_filterBBox, m_effectBBoxMode);
+    m_filter->setFilterResolution(FloatSize(m_scaleX, m_scaleY));
 
     FilterEffect* lastEffect = m_filterBuilder->lastEffect();
-    if (lastEffect)
+    if (lastEffect) {
         lastEffect->calculateEffectRect(m_filter.get());
+        // at least one FilterEffect has a too big image size,
+        // recalculate the effect sizes with new scale factors
+        if (!fitsInMaximumImageSize(m_filter->maxImageSize())) {
+            m_filter->setFilterResolution(FloatSize(m_scaleX, m_scaleY));
+            lastEffect->calculateEffectRect(m_filter.get());
+        }
+    }
+
+    clippedSourceRect.scale(m_scaleX, m_scaleY);
 
     // Draw the content of the current element and it's childs to a imageBuffer to get the SourceGraphic.
     // The size of the SourceGraphic is clipped to the size of the filterRegion.
@@ -83,6 +135,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
         return;
 
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
+    sourceGraphicContext->scale(FloatSize(m_scaleX, m_scaleY));
     sourceGraphicContext->translate(-targetRect.x(), -targetRect.y());
     sourceGraphicContext->clearRect(FloatRect(FloatPoint(), targetRect.size()));
     m_sourceGraphicBuffer.set(sourceGraphic.release());
@@ -93,6 +146,9 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
 
 void SVGResourceFilter::applyFilter(GraphicsContext*& context, const RenderObject* object)
 {
+    if (shouldProcessFilter(this))
+        return;
+
     if (!m_savedContext)
         return;
 

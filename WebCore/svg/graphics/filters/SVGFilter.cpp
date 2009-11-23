@@ -32,9 +32,9 @@ SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool
 {
 }
 
-void SVGFilter::calculateEffectSubRegion(FilterEffect* effect) const
+void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
 {
-    FloatRect subRegionBBox = effect->subRegion();
+    FloatRect subRegionBBox = effect->effectBoundaries();
     FloatRect useBBox = effect->unionOfChildEffectSubregions();
     FloatRect newSubRegion = subRegionBBox;
 
@@ -70,6 +70,9 @@ void SVGFilter::calculateEffectSubRegion(FilterEffect* effect) const
     newSubRegion.intersect(m_filterRect);
 
     effect->setSubRegion(newSubRegion);
+    newSubRegion.scale(filterResolution().width(), filterResolution().height());
+    effect->setScaledSubRegion(newSubRegion);
+    m_maxImageSize = m_maxImageSize.expandedTo(newSubRegion.size()); 
 }
 
 PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode)

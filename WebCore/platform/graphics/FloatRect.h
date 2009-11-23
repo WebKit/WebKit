@@ -120,7 +120,8 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(float d) { inflateX(d); inflateY(d); }
-    void scale(float s);
+    void scale(float s) { scale(s, s); }
+    void scale(float sx, float sy);
 
 #if PLATFORM(CG)
     FloatRect(const CGRect&);

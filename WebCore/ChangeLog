@@ -1,3 +1,124 @@
+2009-11-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        This is the implementation of the filterRes attribute. It
+        helps the SVG developer to set the quality of a filter by
+        giving the width or height of filter.
+        This patch also sets the filter resolution to lower values
+        if a intermediate ImageBuffer size is bigger than the given
+        maximal size.
+        The maximal size is set to 5000x5000 by default. This is a
+        subjectiv decission. Everthing greater than this values gets
+        sensible slower. Values of 10000x10000 crashed on WebKitGtk.
+        For mobil devices a maximum size of 100x100 or 200x200 seems
+        to be reasonable.
+        The important fact on filter resolution is, that the output
+        size is still the size given by the <filter> element.
+
+        Tests: svg/filters/big-sized-filter-2.svg
+               svg/filters/big-sized-filter.svg
+               svg/filters/filterRes.svg
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::scale): Add the abbility to scale a rect by x and y.
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::scale): Add the abbility to scale a rect by x and y.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::createPlatformShadow): Use scaledSubRegion for
+        calculation.
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply): Use scaledSubRegion for effect intern calculations.
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply): Use scaledSubRegion for effect intern calculations.
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply): Use scaledSubRegion for effect intern
+        calculations.
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply): Use scaledSubRegion for effect intern calculations.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply): Use scaledSubRegion for effect intern calculations.
+        * platform/graphics/filters/Filter.h: Add the abbility to change the quality
+        of a filter output.
+        (WebCore::Filter::filterResolution):
+        (WebCore::Filter::setFilterResolution):
+        (WebCore::Filter::calculateEffectSubRegion): Calculates the correct subRegion
+        as well as the scaledSubRegion. It also searches for the biggest effect size.
+        We have to change the filter resolution, if one intermediate ImageBuffer size
+        doesn't fit in the maximal image size.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::calculateDrawingIntRect): Use scaledSubRegion to get
+        the right part of a previous effect result.
+        (WebCore::FilterEffect::calculateDrawingRect): Use scaledSubRegion to get
+        the right part of a previous effect result.
+        (WebCore::FilterEffect::getEffectContext): Use scaledSubRegion to create
+        a new intermediate ImageBuffer for the result of the current effect.
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::scaledSubRegion): The scaled subRegion of a the
+        filter effect.
+        (WebCore::FilterEffect::setScaledSubRegion):
+        (WebCore::FilterEffect::effectBoundaries): The original values of the
+        EffectElement for a second subRegion calculation.
+        (WebCore::FilterEffect::setEffectBoundaries):
+        * platform/graphics/filters/ImageBufferFilter.cpp:
+        (WebCore::ImageBufferFilter::ImageBufferFilter): Set the scale factor to one.
+        * platform/graphics/filters/ImageBufferFilter.h:
+        (WebCore::ImageBufferFilter::maxImageSize):
+        (WebCore::ImageBufferFilter::calculateEffectSubRegion):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::calculateEffectRect): Use scaledSubRegion for effect
+        intern calculations.
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::calculateEffectRect): Use scaledSubRegion for effect
+        intern calculations.
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::parseMappedAttribute): Parse filterRes attribute.
+        (WebCore::SVGFilterElement::buildFilter): Give SVGResourceFilter the current
+        filterResolution.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes): Save
+        values to effectBoundaries of the filter effect
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::shouldProcessFilter): Return signal if a neccessary value is zero.
+        (WebCore::SVGResourceFilter::fitsInMaximumImageSize): Checks if the given size
+        fits into the maximal image size, modifys scale factors if not and return a
+        bool: fits.
+        (WebCore::SVGResourceFilter::prepareFilter): Scale the SourceImage to
+        filterResolution (given by FilterElement or calculated on to big image sizes).
+        Set the scale level to SVGFilter.
+        (WebCore::SVGResourceFilter::applyFilter): Don't apply filters if shouldProcessFilter
+        is wrong.
+        * svg/graphics/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::setFilterResolution): FilterResolution of FilterElement.
+        (WebCore::SVGResourceFilter::setHasFilterResolution): Does FilterElement provides
+        a FilterResolution?
+        (WebCore::SVGResourceFilter::scaleX): Current scale factor for horizontal.
+        (WebCore::SVGResourceFilter::scaleY): Current scale factor for vertical.
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply): Use scaledSubRegion for effect intern calculations.
+        Kernel values are scaled to current filter resolution too.
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::apply): Use scaledSubRegion for effect intern calculations.
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply): Use scaledSubRegion for effect intern calculations.
+        Kernel values are scaled to current filter resolution too.
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply): Use scaledSubRegion for effect intern calculations.
+        Kernel values are scaled to current filter resolution too.
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply): Use scaledSubRegion for effect intern calculations.
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply): Use scaledSubRegion for effect intern calculations.
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::calculateEffectSubRegion): Calculate subRegion for LayoutTests,
+        scaledSubRegion according to the current filterResolution and get the maximal image size.
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::effectBoundingBoxMode): Original values of the FilterElement. 
+        (WebCore::SVGFilter::filterRegion): Use virtual for clarification.
+        (WebCore::SVGFilter::sourceImageRect): Use virtual for clarification.
+        (WebCore::SVGFilter::maxImageSize): Get the maximal image size.
+
 2009-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -58,21 +58,21 @@ FloatRect FilterEffect::calculateEffectRect(Filter* filter)
 
 IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect)
 {
-    IntPoint location = roundedIntPoint(FloatPoint(subRegion().x() - effectRect.x(),
-                                                   subRegion().y() - effectRect.y()));
+    IntPoint location = roundedIntPoint(FloatPoint(scaledSubRegion().x() - effectRect.x(),
+                                                   scaledSubRegion().y() - effectRect.y()));
     return IntRect(location, resultImage()->size());
 }
 
 FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect)
 {
-    FloatPoint startPoint = FloatPoint(srcRect.x() - subRegion().x(), srcRect.y() - subRegion().y());
+    FloatPoint startPoint = FloatPoint(srcRect.x() - scaledSubRegion().x(), srcRect.y() - scaledSubRegion().y());
     FloatRect drawingRect = FloatRect(startPoint, srcRect.size());
     return drawingRect;
 }
 
 GraphicsContext* FilterEffect::getEffectContext()
 {
-    IntRect bufferRect = enclosingIntRect(subRegion());
+    IntRect bufferRect = enclosingIntRect(scaledSubRegion());
     m_effectBuffer = ImageBuffer::create(bufferRect.size(), LinearRGB);
     return m_effectBuffer->context();
 }

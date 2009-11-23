@@ -102,12 +102,12 @@ void FloatRect::unite(const FloatRect& other)
     m_size.setHeight(b - t);
 }
 
-void FloatRect::scale(float s)
+void FloatRect::scale(float sx, float sy)
 {
-    m_location.setX(x() * s);
-    m_location.setY(y() * s);
-    m_size.setWidth(width() * s);
-    m_size.setHeight(height() * s);
+    m_location.setX(x() * sx);
+    m_location.setY(y() * sy);
+    m_size.setWidth(width() * sx);
+    m_size.setHeight(height() * sy);
 }
 
 IntRect enclosingIntRect(const FloatRect& rect)

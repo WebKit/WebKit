@@ -58,12 +58,15 @@ void FETile::apply(Filter* filter)
     if (!filterContext)
         return;
 
-    IntRect tileRect = enclosingIntRect(m_in->subRegion());
+    IntRect tileRect = enclosingIntRect(m_in->scaledSubRegion());
 
     // Source input needs more attention. It has the size of the filterRegion but gives the
     // size of the cutted sourceImage back. This is part of the specification and optimization.
-    if (m_in->isSourceInput())
-        tileRect = enclosingIntRect(filter->filterRegion());
+    if (m_in->isSourceInput()) {
+        FloatRect filterRegion = filter->filterRegion();
+        filterRegion.scale(filter->filterResolution().width(), filter->filterResolution().height());
+        tileRect = enclosingIntRect(filterRegion);
+    }
 
     OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size());
     GraphicsContext* tileImageContext = tileImage->context();
@@ -71,11 +74,11 @@ void FETile::apply(Filter* filter)
     RefPtr<Pattern> pattern = Pattern::create(tileImage->image(), true, true);
 
     TransformationMatrix matrix;
-    matrix.translate(m_in->subRegion().x() - subRegion().x(), m_in->subRegion().y() - subRegion().y());
+    matrix.translate(m_in->scaledSubRegion().x() - scaledSubRegion().x(), m_in->scaledSubRegion().y() - scaledSubRegion().y());
     pattern.get()->setPatternSpaceTransform(matrix);
 
     filterContext->setFillPattern(pattern);
-    filterContext->fillRect(FloatRect(FloatPoint(), subRegion().size()));
+    filterContext->fillRect(FloatRect(FloatPoint(), scaledSubRegion().size()));
 }
 
 void FETile::dump()

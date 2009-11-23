@@ -165,7 +165,7 @@ void FEComponentTransfer::apply(Filter* filter)
     for (unsigned channel = 0; channel < 4; channel++)
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
 
-    IntRect drawingRect = calculateDrawingIntRect(m_in->subRegion());
+    IntRect drawingRect = calculateDrawingIntRect(m_in->scaledSubRegion());
     RefPtr<ImageData> imageData(m_in->resultImage()->getUnmultipliedImageData(drawingRect));
     CanvasPixelArray* srcPixelArray(imageData->data());
 

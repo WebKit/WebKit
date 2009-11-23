@@ -97,7 +97,7 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilt
                                width().value(this),
                                height().value(this));
 
-    filterEffect->setSubRegion(effectBBox);
+    filterEffect->setEffectBoundaries(effectBBox);
 }
 
 }
