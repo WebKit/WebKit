@@ -59,6 +59,7 @@ public:
     JSValue booleanValue() const;
 
     QObject* getObject() const { return m_object; }
+    QObject* hashKey() const { return m_hashkey; }
 
     static PassRefPtr<QtInstance> getQtInstance(QObject*, PassRefPtr<RootObject>, QScriptEngine::ValueOwnership ownership);
 

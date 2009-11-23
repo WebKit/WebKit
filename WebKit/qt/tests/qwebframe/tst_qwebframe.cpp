@@ -604,6 +604,7 @@ private slots:
     void render();
     void scrollPosition();
     void evaluateWillCauseRepaint();
+    void qObjectWrapperWithSameIdentity();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2758,6 +2759,43 @@ void tst_QWebFrame::evaluateWillCauseRepaint()
     QTest::qWait(2000);
 }
 
+class TestFactory : public QObject
+{
+    Q_OBJECT
+public:
+    TestFactory()
+        : obj(0), counter(0)
+    {}
+
+    Q_INVOKABLE QObject* getNewObject()
+    {
+        delete obj;
+        obj = new QObject(this);
+        obj->setObjectName(QLatin1String("test") + QString::number(++counter));
+        return obj;
+
+    }
+
+    QObject* obj;
+    int counter;
+};
+
+void tst_QWebFrame::qObjectWrapperWithSameIdentity()
+{
+    m_view->setHtml("<script>function triggerBug() { document.getElementById('span1').innerText = test.getNewObject().objectName; }</script>"
+                    "<body><span id='span1'>test</span></body>");
+
+    QWebFrame* mainFrame = m_view->page()->mainFrame();
+    QCOMPARE(mainFrame->toPlainText(), QString("test"));
+
+    mainFrame->addToJavaScriptWindowObject("test", new TestFactory, QScriptEngine::ScriptOwnership);
+
+    mainFrame->evaluateJavaScript("triggerBug();");
+    QCOMPARE(mainFrame->toPlainText(), QString("test1"));
+
+    mainFrame->evaluateJavaScript("triggerBug();");
+    QCOMPARE(mainFrame->toPlainText(), QString("test2"));
+}
 
 QTEST_MAIN(tst_QWebFrame)
 #include "tst_qwebframe.moc"

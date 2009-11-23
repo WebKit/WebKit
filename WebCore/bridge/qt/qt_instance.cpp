@@ -119,10 +119,17 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    foreach(QtInstance* instance, cachedInstances.values(o)) {
-        if (instance->rootObject() == rootObject)
-            return instance;
-    }
+    foreach(QtInstance* instance, cachedInstances.values(o))
+        if (instance->rootObject() == rootObject) {
+            // The garbage collector removes instances, but it may happen that the wrapped
+            // QObject dies before the gc kicks in. To handle that case we have to do an additional
+            // check if to see if the instance's wrapped object is still alive. If it isn't, then
+            // we have to create a new wrapper.
+            if (!instance->getObject())
+                cachedInstances.remove(instance->hashKey());
+            else
+                return instance;
+        }
 
     RefPtr<QtInstance> ret = QtInstance::create(o, rootObject, ownership);
     cachedInstances.insert(o, ret.get());
