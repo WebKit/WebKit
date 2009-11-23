@@ -133,6 +133,7 @@ public:
 
     // ARIA specific
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned);
+    AccessibilityUIElement ariaFlowToElementAtIndex(unsigned);
 
     // Parameterized attributes
     int lineForIndex(int);

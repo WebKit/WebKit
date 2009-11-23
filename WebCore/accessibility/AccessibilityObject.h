@@ -327,7 +327,9 @@ public:
     static bool isARIAControl(AccessibilityRole);
     static bool isARIAInput(AccessibilityRole);
     virtual bool supportsARIAOwns() const { return false; }
-    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const { };
+    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const { }
+    virtual bool supportsARIAFlowTo() const { return false; }
+    virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
     
     virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const { return 0; }
     virtual AccessibilityObject* focusedUIElement() const { return 0; }

@@ -1,3 +1,23 @@
+2009-11-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        ARIA: support aria-flowto
+        https://bugs.webkit.org/show_bug.cgi?id=31762
+
+        Test: platform/mac/accessibility/aria-flowto.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::ariaOwnsElements):
+        (WebCore::AccessibilityObject::supportsARIAFlowTo):
+        (WebCore::AccessibilityObject::ariaFlowToElements):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::linkedUIElements):
+        (WebCore::AccessibilityRenderObject::supportsARIAFlowTo):
+        (WebCore::AccessibilityRenderObject::ariaFlowToElements):
+        * accessibility/AccessibilityRenderObject.h:
+        * html/HTMLAttributeNames.in:
+
 2009-11-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Build fix for WML enabled builds.

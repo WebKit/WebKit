@@ -1,3 +1,21 @@
+2009-11-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        ARIA: support aria-flowto
+        https://bugs.webkit.org/show_bug.cgi?id=31762
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (ariaFlowToElementAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+
 2009-11-22  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
