@@ -203,7 +203,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
-            image = CGImageCreateWithImageInRect(image.get(), subimageRect);
+            image.adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
             if (currHeight < srcRect.bottom()) {
                 ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
                 adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
