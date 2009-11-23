@@ -5229,5 +5229,40 @@ storage/domstorage/localstorage/window-open.html
 #crasher:
 storage/domstorage/sessionstorage/window-open.html
 
+# ================================================================== #
+
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html
+
+# new tests without expected files
+editing/execCommand/indent-paragraphs.html
+editing/inserting/insert-bg-font.html
+fast/canvas/arc360.html
+fast/css/color-correction-backgrounds-and-text.html
+fast/css/color-correction-on-background-image.html
+fast/css/color-correction-on-backgrounds.html
+fast/css/color-correction-on-box-shadow.html
+fast/css/color-correction-on-text-shadow.html
+fast/css/color-correction-on-text.html
+fast/css/color-correction-untagged-images.html
+fast/css/color-correction.html
+fast/overflow/line-clamp.html
+fast/reflections/opacity-reflection-transform.html
+http/tests/misc/acid2-pixel.html
+http/tests/misc/acid2.html
+http/tests/misc/error404.pl
+http/tests/misc/favicon-as-image.html
+http/tests/misc/frame-access-during-load.html
+http/tests/misc/generated-content-inside-table.html
+http/tests/misc/iframe404.html
+http/tests/misc/location-replace-crossdomain.html
+http/tests/misc/willCacheResponse-delegate-callback.html
+http/tests/multipart/invalid-image-data.html
+svg/css/group-with-shadow.svg
+svg/filters/big-sized-filter-2.svg
+svg/filters/big-sized-filter.svg
+svg/filters/feDisplacementMap.svg
+svg/filters/filterRes.svg
+transforms/2d/hindi-rotated.html
+transitions/move-after-transition.html
+transitions/transition-end-event-rendering.html

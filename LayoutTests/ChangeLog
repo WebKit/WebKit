@@ -1,3 +1,9 @@
+2009-11-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Skip new tests.
+
+        * platform/qt/Skipped:
+
 2009-11-23  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
