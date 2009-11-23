@@ -1,3 +1,16 @@
+2009-11-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Adds MainThreadAndroid.cpp with Android-specific WTF threading functions.
+        https://bugs.webkit.org/show_bug.cgi?id=31807
+
+        * wtf/android: Added.
+        * wtf/android/MainThreadAndroid.cpp: Added.
+        (WTF::timeoutFired):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2009-11-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
