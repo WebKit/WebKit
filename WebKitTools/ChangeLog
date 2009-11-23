@@ -1,3 +1,13 @@
+2009-11-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Oliver Hunt.
+
+        Implement new required function to pass test we used to pass. This
+        change is required since r51294.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+
 2009-11-23  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
