@@ -32,6 +32,7 @@
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "Pattern.h"
 #include "SimpleFontData.h"
 #include "TransformationMatrix.h"
@@ -85,6 +86,34 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         shadowFillColor.getRGBA(red, green, blue, alpha);
         cairo_set_source_rgba(cr, red, green, blue, alpha);
 
+#if ENABLE(FILTERS)
+        cairo_text_extents_t extents;
+        cairo_scaled_font_glyph_extents(font->platformData().scaledFont(), glyphs, numGlyphs, &extents);
+
+        FloatRect rect(FloatPoint(), FloatSize(extents.width, extents.height));
+        IntSize shadowBufferSize;
+        FloatRect shadowRect;
+        float kernelSize = 0.f;
+        GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, kernelSize, rect, shadowSize, shadowBlur);
+
+        // Draw shadow into a new ImageBuffer
+        OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
+        GraphicsContext* shadowContext = shadowBuffer->context();
+        cairo_t* shadowCr = shadowContext->platformContext();
+
+        cairo_translate(shadowCr, kernelSize, extents.height + kernelSize);
+
+        cairo_set_scaled_font(shadowCr, font->platformData().scaledFont());
+        cairo_show_glyphs(shadowCr, glyphs, numGlyphs);
+        if (font->syntheticBoldOffset()) {
+            cairo_save(shadowCr);
+            cairo_translate(shadowCr, font->syntheticBoldOffset(), 0);
+            cairo_show_glyphs(shadowCr, glyphs, numGlyphs);
+            cairo_restore(shadowCr);
+        }
+        cairo_translate(cr, 0.0, -extents.height);
+        context->createPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, kernelSize);
+#else
         cairo_translate(cr, shadowSize.width(), shadowSize.height());
         cairo_show_glyphs(cr, glyphs, numGlyphs);
         if (font->syntheticBoldOffset()) {
@@ -93,6 +122,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             cairo_show_glyphs(cr, glyphs, numGlyphs);
             cairo_restore(cr);
         }
+#endif
 
         cairo_restore(cr);
     }

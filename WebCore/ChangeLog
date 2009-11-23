@@ -1,3 +1,18 @@
+2009-11-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        [Cairo] support blurred test-shadow
+        [https://bugs.webkit.org/show_bug.cgi?id=31797]
+
+        Support for blurred text-shadows on Cairo. This patch
+        reuses the code of blurred box-shadows, introduced in
+        bug 26102. For a full textshadow support, a filters enabled
+        build is needed.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2009-11-23  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Geoffrey Garen.
