@@ -64,6 +64,8 @@
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
+static const NSTimeInterval ClearSubstituteImageDelay = 0.5;
+
 using namespace WebCore;
 
 class WebHaltablePlugin : public HaltablePlugin {
@@ -498,6 +500,19 @@ Node* WebHaltablePlugin::node() const
     _hasBeenHalted = YES;
 }
 
+- (void)_clearSubstituteImage
+{
+    Element* element = [self element];
+    if (!element)
+        return;
+    
+    RenderObject* renderer = element->renderer();
+    if (!renderer)
+        return;
+    
+    toRenderWidget(renderer)->showSubstituteImage(0);
+}
+
 - (void)resumeFromHalt
 {
     ASSERT(_isHalted);
@@ -508,7 +523,9 @@ Node* WebHaltablePlugin::node() const
         _isHalted = NO;
     
     ASSERT([self element]->renderer());
-    toRenderWidget([self element]->renderer())->showSubstituteImage(0);
+    // FIXME 7417484: This is a workaround for plug-ins not drawing immediately. We'd like to detect when the
+    // plug-in actually draws instead of just assuming it will do so within 0.5 seconds of being restarted.
+    [self performSelector:@selector(_clearSubstituteImage) withObject:nil afterDelay:ClearSubstituteImageDelay];
 }
 
 - (BOOL)isHalted

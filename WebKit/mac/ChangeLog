@@ -1,3 +1,15 @@
+2009-11-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        <rdar://problem/7401503>
+        
+        Added a workaround for plug-ins not drawing immediately.
+        
+        * Plugins/WebBaseNetscapePluginView.mm: Added new constant.
+        (-[WebBaseNetscapePluginView _clearSubstituteImage]): Added.
+        (-[WebBaseNetscapePluginView resumeFromHalt]): Call above new method.
+
 2009-11-20  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
