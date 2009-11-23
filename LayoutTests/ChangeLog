@@ -1,3 +1,31 @@
+2009-11-22  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests to the filterRes implementation for SVG Filters
+        [https://bugs.webkit.org/show_bug.cgi?id=6021]
+
+        big-sized-filter: tests if filter quality is scaled down on a too
+            big SourceImage (SourceGraphic, SourceAlpha)
+        big-sized-filter-2: tests if the filter quality is scaled down
+            on a too big filter effect size.
+        filterRes: Various tests of SVG Filters with different values for
+            filterRes attributes. Checks
+            * that kernel values (if present) are scaled with the filterRes
+            * subRegion calculation is correct for effects with deeper
+              dependencies.
+
+        * platform/mac/svg/filters/big-sized-filter-2-expected.txt: Added.
+        * platform/mac/svg/filters/big-sized-filter-expected.checksum: Added.
+        * platform/mac/svg/filters/big-sized-filter-expected.png: Added.
+        * platform/mac/svg/filters/big-sized-filter-expected.txt: Added.
+        * platform/mac/svg/filters/filterRes-expected.checksum: Added.
+        * platform/mac/svg/filters/filterRes-expected.png: Added.
+        * platform/mac/svg/filters/filterRes-expected.txt: Added.
+        * svg/filters/big-sized-filter-2.svg: Added.
+        * svg/filters/big-sized-filter.svg: Added.
+        * svg/filters/filterRes.svg: Added.
+
 2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.
