@@ -263,7 +263,7 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
         if (!set.contains(window))
             continue;
 
-        window->dispatchEvent(PageTransitionEvent::create(EventNames().pagehideEvent, false), window->document());
+        window->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window->document());
         window->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), window->document());
     }
 

@@ -512,7 +512,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                 m_unloadEventBeingDispatched = true;
                 if (m_frame->domWindow()) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
-                        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(EventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
+                        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache())
                         m_frame->domWindow()->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), m_frame->domWindow()->document());
                 }
@@ -3616,7 +3616,7 @@ void FrameLoader::pageHidden()
 {
     m_unloadEventBeingDispatched = true;
     if (m_frame->domWindow())
-        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(EventNames().pagehideEvent, true), m_frame->document());
+        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, true), m_frame->document());
     m_unloadEventBeingDispatched = false;
 
     // Send pagehide event for subframes as well

@@ -99,7 +99,7 @@ void CachedFrameBase::restore()
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
         m_childFrames[i]->open();
 
-    m_document->dispatchWindowEvent(PageTransitionEvent::create(EventNames().pageshowEvent, true), m_document);
+    m_document->dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, true), m_document);
 }
 
 CachedFrame::CachedFrame(Frame* frame)

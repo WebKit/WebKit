@@ -149,10 +149,11 @@ namespace WebCore {
 
     class EventNames : public Noncopyable {
         int dummy; // Needed to make initialization macro work.
+        // Private to prevent accidental call to EventNames() instead of eventNames()
+        EventNames();
+        friend class ThreadGlobalData;
 
     public:
-        EventNames();
-
         #define DOM_EVENT_NAMES_DECLARE(name) AtomicString name##Event;
         DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
         #undef DOM_EVENT_NAMES_DECLARE
