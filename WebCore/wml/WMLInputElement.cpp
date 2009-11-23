@@ -281,7 +281,7 @@ void WMLInputElement::defaultEventHandler(Event* evt)
         // Fire onChange for text fields.
         RenderObject* r = renderer();
         if (r && toRenderTextControl(r)->wasChangedSinceLastChangeEvent()) {
-            dispatchEvent(eventNames().changeEvent, true, false);
+            dispatchEvent(Event::create(eventNames().changeEvent, true, false));
             
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();

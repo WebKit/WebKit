@@ -140,8 +140,8 @@ void WMLAElement::defaultEventHandler(Event* event)
         }
  
         if (!event->defaultPrevented() && document()->frame()) {
-            KURL url = document()->completeURL(deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)));
-            document()->frame()->loader()->urlSelected(url, target(), event, false, false, true);
+            String url = document()->completeURL(deprecatedParseURL(getAttribute(HTMLNames::hrefAttr)));
+            document()->frame()->loader()->urlSelected(url, target(), event, false, false, true, SendReferrer);
         }
 
         event->setDefaultHandled();
