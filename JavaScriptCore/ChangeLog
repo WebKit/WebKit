@@ -1,3 +1,20 @@
+2009-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Symbian] Fix lastIndexOf() for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=31773
+
+        Symbian soft floating point library has problems with operators
+        comparing NaN to numbers. Without a workaround lastIndexOf() 
+        function does not work.
+
+        Patch developed by David Leong.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLastIndexOf):Add an extra test 
+        to check for NaN for Symbian.
+
 2009-11-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

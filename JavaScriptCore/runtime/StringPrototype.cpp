@@ -469,6 +469,11 @@ JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSV
         dpos = 0;
     else if (!(dpos <= len)) // true for NaN
         dpos = len;
+#if PLATFORM(SYMBIAN)
+    // Work around for broken NaN compare operator
+    else if (isnan(dpos))
+        dpos = len;
+#endif
     return jsNumber(exec, s.rfind(u2, static_cast<int>(dpos)));
 }
 
