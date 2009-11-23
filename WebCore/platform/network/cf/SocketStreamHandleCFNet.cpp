@@ -131,9 +131,8 @@ void SocketStreamHandle::pacExecutionCallback(void* client, CFArrayRef proxyList
 
 void SocketStreamHandle::pacExecutionCallbackMainThread(void* invocation)
 {
-    ASSERT(m_connectingSubstate == ExecutingPACFile);
-
     MainThreadPACCallbackInfo* info = static_cast<MainThreadPACCallbackInfo*>(invocation);
+    ASSERT(info->handle->m_connectingSubstate == ExecutingPACFile);
     // This time, the array won't have PAC as a first entry.
     info->handle->chooseProxyFromArray(info->proxyList);
     info->handle->createStreams();

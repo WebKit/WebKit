@@ -1,5 +1,13 @@
 2009-11-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::pacExecutionCallbackMainThread): pacExecutionCallbackMainThread
+        is static, so it can't use member variables directly.
+
+2009-11-23  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Brady Eidson.
 
         https://bugs.webkit.org/show_bug.cgi?id=31748
