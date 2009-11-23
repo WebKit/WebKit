@@ -509,10 +509,12 @@ static QString dumpHistoryItem(const QWebHistoryItem& item, int indent, bool cur
 
         result.append(fileTestString);
         result.append(res);
-
-        // FIXME: Wrong, need (private?) API for determining this.
-        result.append(QLatin1String("  **nav target**"));
+    } else {
+        result.append(url);
     }
+
+    // FIXME: Wrong, need (private?) API for determining this.
+    result.append(QLatin1String("  **nav target**"));
     result.append(QLatin1String("\n"));
 
     return result;

@@ -35,7 +35,6 @@ http/tests/globalhistory
 http/tests/history
 http/tests/incremental
 http/tests/media
-http/tests/navigation
 http/tests/plugins
 http/tests/webarchive
 http/tests/wml
@@ -67,6 +66,53 @@ http/tests/loading/text-content-type-with-binary-extension.html
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
+
+# Failing navigation tests
+http/tests/navigation/anchor-frames.html
+http/tests/navigation/anchor-subframeload.html
+http/tests/navigation/back-to-slow-frame.html
+http/tests/navigation/changing-frame-hierarchy-in-onload.html
+http/tests/navigation/error404-basic.html
+http/tests/navigation/error404-frames.html
+http/tests/navigation/error404-goback.html
+http/tests/navigation/error404-subframeload.html
+http/tests/navigation/javascriptlink-basic.html
+http/tests/navigation/javascriptlink-frames.html
+http/tests/navigation/javascriptlink-goback.html
+http/tests/navigation/javascriptlink-subframeload.html
+http/tests/navigation/lockedhistory-iframe.html
+http/tests/navigation/metaredirect-basic.html
+http/tests/navigation/metaredirect-frames.html
+http/tests/navigation/metaredirect-goback.html
+http/tests/navigation/metaredirect-subframeload.html
+http/tests/navigation/new-window-redirect-history.html
+http/tests/navigation/no-referrer-reset.html
+http/tests/navigation/no-referrer-target-blank.html
+http/tests/navigation/onload-navigation-iframe-2.html
+http/tests/navigation/onload-navigation-iframe-timeout.html
+http/tests/navigation/onload-navigation-iframe.html
+http/tests/navigation/post-basic.html
+http/tests/navigation/post-frames.html
+http/tests/navigation/post-goback1.html
+http/tests/navigation/post-goback2.html
+http/tests/navigation/postredirect-basic.html
+http/tests/navigation/postredirect-frames.html
+http/tests/navigation/postredirect-goback1.html
+http/tests/navigation/postredirect-goback2.html
+http/tests/navigation/redirect302-frames.html
+http/tests/navigation/redirect302-subframeload.html
+http/tests/navigation/relativeanchor-frames.html
+http/tests/navigation/reload-subframe-object.html
+http/tests/navigation/slowmetaredirect-basic.html
+http/tests/navigation/slowtimerredirect-basic.html
+http/tests/navigation/success200-frames-loadsame.html
+http/tests/navigation/success200-frames.html
+http/tests/navigation/success200-subframeload.html
+http/tests/navigation/target-frame-from-window.html
+http/tests/navigation/timerredirect-basic.html
+http/tests/navigation/timerredirect-frames.html
+http/tests/navigation/timerredirect-goback.html
+http/tests/navigation/timerredirect-subframeload.html
 
 # Failing security tests
 http/tests/security/frame-loading-via-document-write.html
