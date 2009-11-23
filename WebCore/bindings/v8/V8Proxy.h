@@ -387,7 +387,8 @@ namespace WebCore {
 
         void resetIsolatedWorlds();
 
-        void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
+        // Returns false when we're out of memory in V8.
+        bool setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
 
         static bool canAccessPrivate(DOMWindow*);
 

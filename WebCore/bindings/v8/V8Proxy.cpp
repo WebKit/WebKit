@@ -311,7 +311,11 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
             m_isolatedWorlds.set(worldID, world);
 
             // Setup context id for JS debugger.
-            setInjectedScriptContextDebugId(world->context());
+            if (!setInjectedScriptContextDebugId(world->context())) {
+                m_isolatedWorlds.take(worldID);
+                delete world;
+                return;
+            }
         }
     } else {
         world = new V8IsolatedWorld(this, extensionGroup);
@@ -350,7 +354,10 @@ void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int 
     v8::Context::Scope contextScope(context);
 
     // Setup context id for JS debugger.
-    setInjectedScriptContextDebugId(context);
+    if (!setInjectedScriptContextDebugId(context)) {
+        context.Dispose();
+        return;
+    }
 
     v8::Handle<v8::Object> global = context->Global();
 
@@ -376,19 +383,29 @@ void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int 
     context.Dispose();
 }
 
-void V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
+bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
 {
     // Setup context id for JS debugger.
     v8::Context::Scope contextScope(targetContext);
     v8::Handle<v8::Object> contextData = v8::Object::New();
+    if (contextData.IsEmpty())
+        return false;
 
+    if (m_context.IsEmpty())
+        return false;
     v8::Handle<v8::Value> windowContextData = m_context->GetData();
     if (windowContextData->IsObject()) {
         v8::Handle<v8::String> propertyName = v8::String::New(kContextDebugDataValue);
+        if (propertyName.IsEmpty())
+            return false;
         contextData->Set(propertyName, v8::Object::Cast(*windowContextData)->Get(propertyName));
     }
-    contextData->Set(v8::String::New(kContextDebugDataType), v8::String::New("injected"));
+    v8::Handle<v8::String> propertyName = v8::String::New(kContextDebugDataType);
+    if (propertyName.IsEmpty())
+        return false;
+    contextData->Set(propertyName, v8::String::New("injected"));
     targetContext->SetData(contextData);
+    return true;
 }
 
 v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* node)
