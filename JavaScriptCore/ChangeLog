@@ -1,3 +1,14 @@
+2009-11-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Android port lacks implementation of atomicIncrement and atomicDecrement.
+        https://bugs.webkit.org/show_bug.cgi?id=31715
+
+        * wtf/Threading.h: Modified.
+        (WTF::atomicIncrement): Added Android implementation.
+        (WTF::atomicDecrement): Added Android implementation.
+
 2009-11-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.

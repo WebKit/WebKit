@@ -73,6 +73,8 @@
 #include <windows.h>
 #elif PLATFORM(DARWIN)
 #include <libkern/OSAtomic.h>
+#elif PLATFORM(ANDROID)
+#include <cutils/atomic.h>
 #elif COMPILER(GCC)
 #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
 #include <ext/atomicity.h>
@@ -231,6 +233,11 @@ inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(r
 
 inline int atomicIncrement(int volatile* addend) { return OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
+
+#elif PLATFORM(ANDROID)
+
+inline int atomicIncrement(int volatile* addend) { return android_atomic_inc(addend); }
+inline int atomicDecrement(int volatile* addend) { return android_atomic_dec(addend); }
 
 #elif COMPILER(GCC) && !PLATFORM(SPARC64) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
