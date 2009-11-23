@@ -99,6 +99,14 @@ public:
     It is possible to replace the contents of child elements using
     setPlainText() and setInnerXml(). To replace the element itself and its
     contents, use setOuterXml().
+
+    \section1 Examples
+
+    The \l{DOM Traversal Example} shows one way to traverse documents in a running
+    example.
+
+    The \l{Simple Selector Example} can be used to experiment with the searching
+    features of this class and provides sample code you can start working with.
 */
 
 /*!
@@ -195,8 +203,7 @@ bool QWebElement::isNull() const
     \a selectorQuery. If there are no matching elements, an empty list is
     returned.
 
-    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector}
-    syntax is used for the query.
+    \l{Standard CSS2 selector} syntax is used for the query.
 
     \note This search is performed recursively.
 
@@ -211,8 +218,7 @@ QWebElementCollection QWebElement::findAll(const QString &selectorQuery) const
     Returns the first child element that matches the given CSS selector
     \a selectorQuery.
 
-    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector}
-    syntax is used for the query.
+    \l{Standard CSS2 selector} syntax is used for the query.
 
     \note This search is performed recursively.
 

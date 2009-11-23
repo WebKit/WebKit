@@ -1,3 +1,17 @@
+2009-11-23  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Updated the QWebElement documentation with links to examples and
+        external resources.
+        Fixed the project file for the webelement snippet and tidied up the
+        markers used for quoting the code.
+
+        * Api/qwebelement.cpp:
+        * docs/webkitsnippets/webelement/main.cpp:
+        (findAll):
+        * docs/webkitsnippets/webelement/webelement.pro:
+
 2009-11-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

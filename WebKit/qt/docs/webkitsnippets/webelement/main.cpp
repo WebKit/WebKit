@@ -22,7 +22,6 @@
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebelement.h>
-#include <qdebug.h>
 
 static QWebFrame *frame;
 
@@ -53,9 +52,10 @@ static void findAll()
        </p>
     */
 
+//! [FindAll intro]
     QList<QWebElement> allSpans = document.findAll("span");
     QList<QWebElement> introSpans = document.findAll("p.intro span");
-//! [FindAll]
+//! [FindAll intro] //! [FindAll]
 }
 
 int main(int argc, char *argv[])
