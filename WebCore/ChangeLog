@@ -1,3 +1,9 @@
+2009-11-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * WebCore.vcproj/QTMovieWin.vcproj: Add additional search path for QuickTime SDK.
+
 2009-11-24  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
