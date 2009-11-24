@@ -47,6 +47,9 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#else
+#include "WebCoreSystemInterface.h"
 #endif
 
 #ifdef BUILDING_ON_TIGER
