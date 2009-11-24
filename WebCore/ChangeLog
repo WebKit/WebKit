@@ -1,3 +1,57 @@
+2009-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 31848 - Remove uses of mainThreadCurrentWorld, and of currentWorld using a globalData.
+
+        These methods get the world from the global data rather than from an execstate.
+        If the current world is always read from an exec state then it can be read
+        from the global object, and world entry can become automagical, rather than
+        being explicitly set by an EnterDOMWrapperWorld.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::currentWorld):
+        (WebCore::DOMObjectWrapperMapFor):
+        (WebCore::hasCachedDOMObjectWrapper):
+        (WebCore::getCachedDOMObjectWrapper):
+        (WebCore::cacheDOMObjectWrapper):
+        (WebCore::hasCachedDOMNodeWrapper):
+        (WebCore::getCachedDOMNodeWrapper):
+        (WebCore::cacheDOMNodeWrapper):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::getDOMObjectWrapper):
+        (WebCore::createDOMNodeWrapper):
+        (WebCore::getDOMNodeWrapper):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::history):
+        (WebCore::JSDOMWindow::location):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren):
+        (WebCore::createWrapper):
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+
 2009-11-24  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

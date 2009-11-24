@@ -233,13 +233,15 @@ namespace WebCore {
         WebCoreJSClientData* m_clientData;
     };
 
-    DOMObject* getCachedDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle);
-    void cacheDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle, DOMObject* wrapper);
+    bool hasCachedDOMObjectWrapper(JSC::JSGlobalData*, void* objectHandle);
+    DOMObject* getCachedDOMObjectWrapper(JSC::ExecState*, void* objectHandle);
+    void cacheDOMObjectWrapper(JSC::ExecState*, void* objectHandle, DOMObject* wrapper);
     void forgetDOMNode(DOMObject* wrapper, Node* node, Document* document);
     void forgetDOMObject(DOMObject* wrapper, void* objectHandle);
 
-    JSNode* getCachedDOMNodeWrapper(Document*, Node*);
-    void cacheDOMNodeWrapper(Document*, Node*, JSNode* wrapper);
+    bool hasCachedDOMNodeWrapper(Document*, Node*);
+    JSNode* getCachedDOMNodeWrapper(JSC::ExecState*, Document*, Node*);
+    void cacheDOMNodeWrapper(JSC::ExecState*, Document*, Node*, JSNode* wrapper);
     void forgetAllDOMNodesForDocument(Document*);
     void forgetWorldOfDOMNodesForDocument(Document*, DOMWrapperWorld*);
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
@@ -290,17 +292,17 @@ namespace WebCore {
     template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object)
     {
         ASSERT(object);
-        ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
+        ASSERT(!getCachedDOMObjectWrapper(exec, object));
         // FIXME: new (exec) could use a different globalData than the globalData this wrapper is cached on.
         WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, object);
-        cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
+        cacheDOMObjectWrapper(exec, object, wrapper);
         return wrapper;
     }
     template<class WrapperClass, class DOMClass> inline JSC::JSValue getDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object)
     {
         if (!object)
             return JSC::jsNull();
-        if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), object))
+        if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, object))
             return wrapper;
         return createDOMObjectWrapper<WrapperClass>(exec, globalObject, object);
     }
@@ -310,16 +312,16 @@ namespace WebCore {
     template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object, SVGElement* context)
     {
         ASSERT(object);
-        ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
+        ASSERT(!getCachedDOMObjectWrapper(exec, object));
         WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, object, context);
-        cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
+        cacheDOMObjectWrapper(exec, object, wrapper);
         return wrapper;
     }
     template<class WrapperClass, class DOMClass> inline JSC::JSValue getDOMObjectWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* object, SVGElement* context)
     {
         if (!object)
             return JSC::jsNull();
-        if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), object))
+        if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, object))
             return wrapper;
         return createDOMObjectWrapper<WrapperClass>(exec, globalObject, object, context);
     }
@@ -329,18 +331,18 @@ namespace WebCore {
     template<class WrapperClass, class DOMClass> inline JSNode* createDOMNodeWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
     {
         ASSERT(node);
-        ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
+        ASSERT(!getCachedDOMNodeWrapper(exec, node->document(), node));
         WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, node);
         // FIXME: The entire function can be removed, once we fix caching.
         // This function is a one-off hack to make Nodes cache in the right global object.
-        cacheDOMNodeWrapper(node->document(), node, wrapper);
+        cacheDOMNodeWrapper(exec, node->document(), node, wrapper);
         return wrapper;
     }
     template<class WrapperClass, class DOMClass> inline JSC::JSValue getDOMNodeWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
     {
         if (!node)
             return JSC::jsNull();
-        if (JSNode* wrapper = getCachedDOMNodeWrapper(node->document(), node))
+        if (JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node))
             return wrapper;
         return createDOMNodeWrapper<WrapperClass>(exec, globalObject, node);
     }

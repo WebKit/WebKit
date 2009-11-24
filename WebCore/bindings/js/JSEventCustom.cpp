@@ -92,7 +92,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     if (!event)
         return jsNull();
 
-    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), event);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(exec, event);
     if (wrapper)
         return wrapper;
 

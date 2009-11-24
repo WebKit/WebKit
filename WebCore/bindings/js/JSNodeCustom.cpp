@@ -154,7 +154,7 @@ void JSNode::markChildren(MarkStack& markStack)
     Node* outermostNodeWithWrapper = node;
     for (Node* current = m_impl.get(); current; current = current->parentNode()) {
         root = current;
-        if (getCachedDOMNodeWrapper(current->document(), current))
+        if (hasCachedDOMNodeWrapper(current->document(), current))
             outermostNodeWithWrapper = current;
     }
 
@@ -175,7 +175,7 @@ void JSNode::markChildren(MarkStack& markStack)
 static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
+    ASSERT(!getCachedDOMNodeWrapper(exec, node->document(), node));
     
     JSNode* wrapper;    
     switch (node->nodeType()) {
@@ -242,7 +242,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
     if (!node)
         return jsNull();
 
-    JSNode* wrapper = getCachedDOMNodeWrapper(node->document(), node);
+    JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node);
     if (wrapper)
         return wrapper;
 

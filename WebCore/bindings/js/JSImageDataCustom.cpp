@@ -41,7 +41,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     if (!imageData)
         return jsNull();
     
-    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), imageData);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(exec, imageData);
     if (wrapper)
         return wrapper;
     

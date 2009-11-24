@@ -632,8 +632,9 @@ void XMLHttpRequest::dropProtection()
     // out. But it is protected from GC while loading, so this
     // can't be recouped until the load is done, so only
     // report the extra cost at that point.
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(*scriptExecutionContext()->globalData(), this))
-        JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
+    JSC::JSGlobalData* globalData = scriptExecutionContext()->globalData();
+    if (hasCachedDOMObjectWrapper(globalData, this))
+        globalData->heap.reportExtraMemoryCost(m_responseText.size() * 2);
 #endif
 
     unsetPendingActivity(this);
