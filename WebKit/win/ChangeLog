@@ -1,3 +1,13 @@
+2009-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Include "config.h" to meet Coding Style Guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=31792
+
+        * GEN_DOMObject.cpp:
+        * WebScriptObject.cpp:
+
 2009-11-21  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix. Unreviewed.

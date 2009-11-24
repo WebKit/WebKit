@@ -1,3 +1,18 @@
+2009-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Include "config.h" to meet Coding Style Guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=31792
+
+        No new tests as there is no new functionality.
+
+        * platform/graphics/win/IntPointWin.cpp:
+        * platform/graphics/win/IntRectWin.cpp:
+        * platform/graphics/win/IntSizeWin.cpp:
+        * platform/network/chromium/ResourceRequest.cpp:
+        * platform/win/PlatformMouseEventWin.cpp:
+
 2009-11-23  Jian Li  <jianli@chromium.org>
 
         Reviewed by NOBODY (Chromium build fix).

@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "WebKitDLL.h"
-
+#include "config.h"
 #include "WebScriptObject.h"
+
+#include "WebKitDLL.h"
 
 #include <wtf/Assertions.h>
 

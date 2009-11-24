@@ -26,7 +26,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <jsobjects.h>
+
+#include "config.h"
+#include "jsobjects.h"
+
 #include <qwebpage.h>
 
 GCController::GCController(QWebPage* parent)

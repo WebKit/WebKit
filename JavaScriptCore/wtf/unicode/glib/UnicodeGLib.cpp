@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "UnicodeGLib.h"
 
 namespace WTF {

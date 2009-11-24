@@ -28,6 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+#include "config.h"
 #include "JavaScriptThreading.h"
 
 #include <CoreFoundation/CoreFoundation.h>

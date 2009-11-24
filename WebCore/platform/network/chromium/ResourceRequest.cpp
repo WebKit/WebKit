@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#include "ResourceRequest.h"
+
 namespace WebCore {
 
 // This is used by the loader to control the number of issued parallel load requests. 
