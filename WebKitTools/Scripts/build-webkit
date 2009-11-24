@@ -361,7 +361,7 @@ for my $dir (@projects) {
         if (isAppleWinWebKit()) {
             print "\n\n===== BUILD FAILED ======\n\n";
             my $scriptDir = relativeScriptsDir();
-            print "Please ensure you have run $scriptDir/update-webkit to install depenedencies.\n\n";
+            print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
             my $baseProductDir = baseProductDir();
             print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
         }

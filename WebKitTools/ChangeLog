@@ -1,3 +1,11 @@
+2009-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        No Review.
+
+        Fix spelling error ("depenedencies").
+
+        * Scripts/build-webkit:
+
 2009-11-24  Mark Rowe  <mrowe@apple.com>
 
         Land the configuration that includes the two debug GTK Linux builders.
