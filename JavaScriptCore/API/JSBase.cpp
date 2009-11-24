@@ -46,7 +46,8 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    exec->globalData().clientData->willExecute(exec);
+    if (JSGlobalData::ClientData* clientData = exec->globalData().clientData)
+        clientData->willExecute(exec);
 
     JSObject* jsThisObject = toJS(thisObject);
 
@@ -64,7 +65,8 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     else // happens, for example, when the only statement is an empty (';') statement
         result = toRef(exec, jsUndefined());
 
-    exec->globalData().clientData->didExecute(exec);
+    if (JSGlobalData::ClientData* clientData = exec->globalData().clientData)
+        clientData->didExecute(exec);
     return result;
 }
 
