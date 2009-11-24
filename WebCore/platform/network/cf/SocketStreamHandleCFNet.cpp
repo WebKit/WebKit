@@ -38,7 +38,6 @@
 #include "ProtectionSpace.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
-#include "WebCoreSystemInterface.h"
 #include <wtf/MainThread.h>
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)

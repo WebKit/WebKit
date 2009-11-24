@@ -2,6 +2,12 @@
 
         Windows build fix.
 
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: Also, don't include the wrong one!
+
+2009-11-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Windows build fix.
+
         * platform/network/cf/SocketStreamHandleCFNet.cpp: Include the proper WKSI header.
 
 2009-11-24  Simon Fraser  <simon.fraser@apple.com>
