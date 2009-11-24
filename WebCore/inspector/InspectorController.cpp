@@ -1190,7 +1190,7 @@ void InspectorController::getCookies(long callId, const String& host)
             rawCookiesImplemented = getRawCookies(document, document->cookieURL(), docCookiesList);
             
             if (!rawCookiesImplemented)
-                // FIXME: We need duplication checking for the String representation of cookies.
+                // FIXME:We need duplication checking for the String representation of cookies.
                 stringCookiesList += document->cookie();
             else {
                 int cookiesSize = docCookiesList.size();
