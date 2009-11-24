@@ -271,13 +271,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
     // cache.  Even if we checked now, something else could come along and wipe
     // out the cache entry by the time we fetch it.
     //
-    // So, we always say yes here, which allows us to generate an ERR_CACHE_MISS
-    // if the request cannot be serviced from cache.  We force the 'DontLoad'
-    // cache policy at this point to ensure that we never hit the network for
-    // this request.
+    // So, we always say yes here, to prevent the FrameLoader from initiating a
+    // reload.  Then in FrameLoaderClientImpl::dispatchWillSendRequest, we
+    // fix-up the cache policy of the request to force a load from the cache.
     //
     ASSERT(request.httpMethod() == "POST");
-    request.setCachePolicy(ReturnCacheDataDontLoad);
     return true;
 }
 

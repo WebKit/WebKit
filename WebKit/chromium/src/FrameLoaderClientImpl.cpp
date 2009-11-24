@@ -260,6 +260,12 @@ void FrameLoaderClientImpl::dispatchWillSendRequest(
         // We want to distinguish between a request for a document to be loaded into
         // the main frame, a sub-frame, or the sub-objects in that document.
         request.setTargetType(determineTargetTypeFromLoader(loader));
+
+        // Avoid repeating a form submission when navigating back or forward.
+        if (loader == loader->frameLoader()->provisionalDocumentLoader()
+            && request.httpMethod() == "POST"
+            && isBackForwardLoadType(loader->frameLoader()->loadType()))
+            request.setCachePolicy(ReturnCacheDataDontLoad);
     }
 
     // FrameLoader::loadEmptyDocumentSynchronously() creates an empty document

@@ -1,0 +1,39 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+<unknown> - didFinishLoading
+main frame - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, main document URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http status code 200>
+main frame - didCommitLoadForFrame
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/echo-no-store.cgi, main document URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/echo-no-store.cgi, http status code 200>
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - didFinishLoading
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi - didFinishLoading
+main frame - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/cache/subresource-failover-to-network.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/subresource-failover-to-network.html, main document URL http://127.0.0.1:8000/cache/subresource-failover-to-network.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/cache/subresource-failover-to-network.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/subresource-failover-to-network.html, http status code 200>
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/cache/subresource-failover-to-network.html - didFinishLoading
+main frame - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, main document URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http status code 200>
+main frame - didCommitLoadForFrame
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/echo-no-store.cgi, main document URL http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/echo-no-store.cgi, http status code 200>
+http://127.0.0.1:8000/cache/resources/echo-no-store.cgi - didFinishLoading
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+PASS
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/cache/subresource-failover-to-network.html  **nav target**
+curr->  http://127.0.0.1:8000/cache/resources/subresource-failover-to-network.cgi  **nav target**
+===============================================

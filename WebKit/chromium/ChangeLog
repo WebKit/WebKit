@@ -1,3 +1,21 @@
+2009-11-24  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Renderer hang when using www.expedia.com
+        https://bugs.webkit.org/show_bug.cgi?id=31822
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendRequest):
+        Assign ReturnCacheDataDontLoad cache policy at the last moment
+        to match Safari.  This way the cache policy does not get stored
+        in DocumentLoader's originalRequest preventing it from being
+        inherited by subresource requests.
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::willLoadFromCache): Remove assignment
+        of ReturnCacheDataDontLoad cache policy so that it doesn't end
+        up applying to the DocumentLoader's originalRequest.
+
 2009-11-23  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

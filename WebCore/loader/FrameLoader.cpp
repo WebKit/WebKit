@@ -3259,10 +3259,16 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     ResourceRequest initialRequest = request;
     initialRequest.setTimeoutInterval(10);
     
+    // Use the original request's cache policy for two reasons:
+    // 1. For POST requests, we mutate the cache policy for the main resource,
+    //    but we do not want this to apply to subresources
+    // 2. Delegates that modify the cache policy using willSendRequest: should
+    //    not affect any other resources. Such changes need to be done
+    //    per request.
     if (initialRequest.isConditional())
         initialRequest.setCachePolicy(ReloadIgnoringCacheData);
     else
-        initialRequest.setCachePolicy(documentLoader()->request().cachePolicy());
+        initialRequest.setCachePolicy(originalRequest().cachePolicy());
     
     if (!referrer.isEmpty())
         initialRequest.setHTTPReferrer(referrer);
