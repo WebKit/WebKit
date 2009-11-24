@@ -18318,7 +18318,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"$SRCROOT/Info.plist\";\nfi;\n";
 		};
 		933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */ = {
 			isa = PBXShellScriptBuildPhase;

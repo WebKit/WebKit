@@ -1,3 +1,9 @@
+2009-11-24  Mark Rowe  <mrowe@apple.com>
+
+        Fix production builds where the source tree may be read-only.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-11-20  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt and Jon Honeycutt.
