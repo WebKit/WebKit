@@ -1,3 +1,21 @@
+2009-11-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        JSON.stringify performance on undefined is very poor
+        https://bugs.webkit.org/show_bug.cgi?id=31839
+
+        Switch from a UString to a Vector<UChar> when building
+        the JSON string, allowing us to safely remove the substr-copy
+        we otherwise did when unwinding an undefined property.
+
+        Also turns out to be a ~5% speedup on stringification.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::StringBuilder::append):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::Holder::appendNextProperty):
+
 2009-11-24  Mark Rowe  <mrowe@apple.com>
 
         Fix production builds where the source tree may be read-only.

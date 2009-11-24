@@ -70,7 +70,23 @@ public:
     void markAggregate(MarkStack&);
 
 private:
-    typedef UString StringBuilder;
+    class StringBuilder : public Vector<UChar> {
+    public:
+        using Vector<UChar>::append;
+
+        inline void append(const char* str)
+        {
+            size_t len = strlen(str);
+            reserveCapacity(size() + len);
+            for (size_t i = 0; i < len; i++)
+                Vector<UChar>::append(str[i]);
+        }
+
+        inline void append(const UString& str)
+        {
+            append(str.data(), str.size());
+        }
+    };
 
     class Holder {
     public:
@@ -269,7 +285,9 @@ JSValue Stringifier::stringify(JSValue value)
     if (m_exec->hadException())
         return jsNull();
 
-    return jsString(m_exec, result);
+    result.shrinkToFit();
+    size_t length = result.size();
+    return jsString(m_exec, UString(result.releaseBuffer(), length, false));
 }
 
 void Stringifier::appendQuotedString(StringBuilder& builder, const UString& value)
@@ -586,7 +604,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             // This only occurs when get an undefined value for an object property.
             // In this case we don't want the separator and property name that we
             // already appended, so roll back.
-            builder = builder.substr(0, rollBackPoint);
+            builder.resize(rollBackPoint);
             break;
     }
 
