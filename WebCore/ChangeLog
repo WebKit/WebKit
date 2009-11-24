@@ -1,3 +1,42 @@
+2009-11-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Part 2/3 of <rdar://problem/7377477> REGRESSION: Many web pages fail to render after interesting script runs in isolated world
+
+        Some clients of the JavaScriptCore API expect to be able to make callbacks over the JSC API,
+        and for this to automagically cause execution to take place in the world associated with the
+        global object associated with the ExecState (JSContextRef) passed.  However this is not how
+        things work - the world must be explicitly set within WebCore.
+
+        Making this work just for API calls to evaluate & call will be a far from perfect solution,
+        since direct (non-API) use of JSC still relies on WebCore setting the current world correctly.
+        A better solution would be to make this all work automagically all throughout WebCore, but this
+        will require more refactoring.
+
+        Add references from the JSDOMWindowShell and the JSDOMGlobalObject to the world that owns them,
+        so that we can get to the world from the lexical global object of an ExecState.  In the long-term
+        we should switch over to using this approach for all cases we want to get a world from an exec state.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::WebCoreJSClientData::beginningExecution):
+        (WebCore::WebCoreJSClientData::completedExecution):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::world):
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObjectData::JSDOMGlobalObjectData):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::world):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::JSWorkerContextBase):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScript):
+
 2009-11-23  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

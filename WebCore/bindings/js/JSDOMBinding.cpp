@@ -170,6 +170,18 @@ DOMWrapperWorld::~DOMWrapperWorld()
         forgetWorldOfDOMNodesForDocument(*iter, this);
 }
 
+void WebCoreJSClientData::willExecute(JSC::ExecState* exec)
+{
+    DOMWrapperWorld* world = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
+    m_worldStack.append(world);
+}
+
+void WebCoreJSClientData::didExecute(JSC::ExecState* exec)
+{
+    ASSERT_UNUSED(exec, m_worldStack.last() == static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world());
+    m_worldStack.removeLast();
+}
+
 EnterDOMWrapperWorld::EnterDOMWrapperWorld(JSC::JSGlobalData& globalData, DOMWrapperWorld* isolatedWorld)
 {
     JSGlobalData::ClientData* clientData = globalData.clientData;

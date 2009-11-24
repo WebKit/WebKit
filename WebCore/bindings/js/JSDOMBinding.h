@@ -213,6 +213,9 @@ namespace WebCore {
             m_worldSet.remove(world);
         }
 
+        virtual void willExecute(JSC::ExecState*);
+        virtual void didExecute(JSC::ExecState*);
+
         DOMObjectHashTableMap hashTableMap;
     private:
         Vector<DOMWrapperWorld*> m_worldStack;

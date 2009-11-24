@@ -42,6 +42,13 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, 0, 0 };
 
+JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
+    : JSDOMGlobalObjectData(shell->world(), destroyJSDOMWindowBaseData)
+    , impl(window)
+    , shell(shell)
+{
+}
+
 JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(structure, new JSDOMWindowBaseData(window, shell), shell)
 {

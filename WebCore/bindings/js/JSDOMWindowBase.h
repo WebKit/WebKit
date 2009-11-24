@@ -77,12 +77,7 @@ namespace WebCore {
 
     private:
         struct JSDOMWindowBaseData : public JSDOMGlobalObjectData {
-            JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-                : JSDOMGlobalObjectData(destroyJSDOMWindowBaseData)
-                , impl(window)
-                , shell(shell)
-            {
-            }
+            JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell);
 
             RefPtr<DOMWindow> impl;
             JSDOMWindowShell* shell;

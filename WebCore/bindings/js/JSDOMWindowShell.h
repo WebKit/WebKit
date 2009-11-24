@@ -40,7 +40,7 @@ namespace WebCore {
     class JSDOMWindowShell : public DOMObject {
         typedef DOMObject Base;
     public:
-        JSDOMWindowShell(PassRefPtr<DOMWindow>);
+        JSDOMWindowShell(PassRefPtr<DOMWindow>, DOMWrapperWorld* world);
         virtual ~JSDOMWindowShell();
 
         JSDOMWindow* window() const { return m_window; }
@@ -62,6 +62,8 @@ namespace WebCore {
         {
             return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags)); 
         }
+
+        DOMWrapperWorld* world() { return m_world.get(); }
 
     private:
         static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesMarkChildren | JSC::OverridesGetPropertyNames | DOMObject::StructureFlags;
@@ -85,6 +87,7 @@ namespace WebCore {
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
         JSDOMWindow* m_window;
+        RefPtr<DOMWrapperWorld> m_world;
     };
 
     JSC::JSValue toJS(JSC::ExecState*, Frame*);
