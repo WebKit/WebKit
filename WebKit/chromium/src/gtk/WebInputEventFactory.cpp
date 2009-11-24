@@ -38,9 +38,22 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <gtk/gtk.h>
 #include <gtk/gtkversion.h>
 
 #include <wtf/Assertions.h>
+
+namespace {
+
+gint getDoubleClickTime()
+{
+    static GtkSettings* settings = gtk_settings_get_default();
+    gint doubleClickTime = 250;
+    g_object_get(G_OBJECT(settings), "gtk-double-click-time", &doubleClickTime, 0);
+    return doubleClickTime;
+}
+
+}  // namespace
 
 namespace WebKit {
 
@@ -321,23 +334,33 @@ WebMouseEvent WebInputEventFactory::mouseEvent(const GdkEventButton* event)
     result.clickCount = 0;
 
     switch (event->type) {
-    case GDK_3BUTTON_PRESS:
-        ++result.clickCount;
-        // fallthrough
-    case GDK_2BUTTON_PRESS:
-        ++result.clickCount;
-        // fallthrough
     case GDK_BUTTON_PRESS:
         result.type = WebInputEvent::MouseDown;
-        ++result.clickCount;
         break;
     case GDK_BUTTON_RELEASE:
         result.type = WebInputEvent::MouseUp;
         break;
-
+    case GDK_3BUTTON_PRESS:
+    case GDK_2BUTTON_PRESS:
     default:
         ASSERT_NOT_REACHED();
     };
+
+    if (GDK_BUTTON_PRESS == event->type) {
+        static int numClicks = 0;
+        static GdkWindow* eventWindow = 0;
+        static gint lastLeftClickTime = 0;
+
+        gint time_diff = event->time - lastLeftClickTime;
+        if (eventWindow == event->window && time_diff < getDoubleClickTime())
+            numClicks++;
+        else
+            numClicks = 1;
+
+        result.clickCount = numClicks;
+        eventWindow = event->window;
+        lastLeftClickTime = event->time;
+    }
 
     result.button = WebMouseEvent::ButtonNone;
     if (event->button == 1)
