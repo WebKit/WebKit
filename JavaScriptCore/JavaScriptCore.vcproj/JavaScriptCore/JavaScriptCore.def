@@ -113,6 +113,7 @@ EXPORTS
     ?destroyJSGlobalObjectData@JSGlobalObject@JSC@@CAXPAX@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
+    ?didExecute@ClientData@JSGlobalData@JSC@@UAEXPAVExecState@3@@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
@@ -307,6 +308,7 @@ EXPORTS
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
+    ?willExecute@ClientData@JSGlobalData@JSC@@UAEXPAVExecState@3@@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     WTFLog
     WTFLogVerbose
