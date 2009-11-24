@@ -1,3 +1,13 @@
+2009-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        queries_unittest.py should test command output
+        https://bugs.webkit.org/show_bug.cgi?id=31845
+
+        * Scripts/modules/commands/queries_unittest.py:
+         - Capture stdout and stderr and compare with expected strings.
+
 2009-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         No Review.
