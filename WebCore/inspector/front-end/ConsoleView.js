@@ -92,6 +92,17 @@ WebInspector.ConsoleView = function(drawer)
     this.logElement = createFilterElement.call(this, "Logs");
 
     this.filter(this.allElement, false);
+
+    this._shortcuts = {};
+
+    var shortcut;
+    var handler = this.clearMessages.bind(this, true);
+
+    shortcut = WebInspector.KeyboardShortcut.makeKey("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
+    this._shortcuts[shortcut] = handler;
+    this._shortcuts[shortcut].isMacOnly = true;
+    shortcut = WebInspector.KeyboardShortcut.makeKey("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+    this._shortcuts[shortcut] = handler;
 }
 
 WebInspector.ConsoleView.prototype = {
@@ -392,9 +403,20 @@ WebInspector.ConsoleView.prototype = {
             this._enterKeyPressed(event);
             return;
         }
+
         if (isFnKey(event)) {
             if (WebInspector.currentPanel && WebInspector.currentPanel.handleKeyEvent) {
                 WebInspector.currentPanel.handleKeyEvent(event);
+                return;
+            }
+        }
+
+        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
+        var handler = this._shortcuts[shortcut];
+        if (handler) {
+            if (!this._shortcuts[shortcut].isMacOnly || WebInspector.isMac()) {
+                handler();
+                event.preventDefault();
                 return;
             }
         }

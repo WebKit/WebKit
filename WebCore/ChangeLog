@@ -1,3 +1,21 @@
+2009-11-24  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Keyboard Shortcut to Clear Console Messages
+        https://bugs.webkit.org/show_bug.cgi?id=31780
+
+        All Platforms:  Ctrl+L  = Clear Console Messages
+        Mac Only:       Cmd+K   = Clear Console Messages
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView): create shortcuts
+        (WebInspector.ConsoleView.prototype._promptKeyDown): handle shortcuts
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut.makeKey): convenience conversion of "a-z" character to keyCode
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): style fixes for keyboard shortcuts
+
 2009-11-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: touch inspector controller in order to
