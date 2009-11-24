@@ -310,10 +310,10 @@ NSImage* Frame::imageFromRect(NSRect rect) const
 
 NSImage* Frame::selectionImage(bool forceBlackText) const
 {
-    m_view->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
+    m_view->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     m_doc->updateLayout();
     NSImage* result = imageFromRect(selectionBounds());
-    m_view->setPaintRestriction(PaintRestrictionNone);
+    m_view->setPaintBehavior(PaintBehaviorNormal);
     return result;
 }
 

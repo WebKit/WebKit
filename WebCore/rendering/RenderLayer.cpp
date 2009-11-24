@@ -2058,10 +2058,10 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     return (didHorizontalScroll || didVerticalScroll);
 }
 
-void RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintRestriction paintRestriction, RenderObject *paintingRoot)
+void RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintBehavior paintBehavior, RenderObject *paintingRoot)
 {
     RenderObject::OverlapTestRequestMap overlapTestRequests;
-    paintLayer(this, p, damageRect, paintRestriction, paintingRoot, &overlapTestRequests);
+    paintLayer(this, p, damageRect, paintBehavior, paintingRoot, &overlapTestRequests);
     RenderObject::OverlapTestRequestMap::iterator end = overlapTestRequests.end();
     for (RenderObject::OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it)
         it->first->setOverlapTestResult(false);
@@ -2105,7 +2105,7 @@ static bool shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflect
 #endif
 
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
-                        const IntRect& paintDirtyRect, PaintRestriction paintRestriction,
+                        const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
@@ -2170,7 +2170,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         p->concatCTM(transform);
 
         // Now do a paint with the root layer shifted to be us.
-        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintRestriction, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
+        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
 
         p->restore();
         
@@ -2187,7 +2187,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (m_reflection && !m_paintingInsideReflection) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
         m_paintingInsideReflection = false;
     }
 
@@ -2202,8 +2202,8 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Ensure our lists are up-to-date.
     updateCompositingAndLayerListsIfNeeded();
 
-    bool selectionOnly = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
-    bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+    bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
+    bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
     
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
@@ -2238,7 +2238,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Now walk the sorted list of children with negative z-indices.
     if (m_negZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_negZOrderList->begin(); it != m_negZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
     
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
@@ -2277,12 +2277,12 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Paint any child layers that have overflow.
     if (m_normalFlowList)
         for (Vector<RenderLayer*>::iterator it = m_normalFlowList->begin(); it != m_normalFlowList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
 
     // Now walk the sorted list of children with positive z-indices.
     if (m_posZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, localPaintFlags);
     
     if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         setClip(p, paintDirtyRect, damageRect);

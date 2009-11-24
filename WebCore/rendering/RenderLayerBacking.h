@@ -163,7 +163,7 @@ private:
     bool hasNonCompositingContent() const;
     
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
-                    PaintRestriction paintRestriction, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
+                    PaintBehavior paintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
 
     static int graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(int);

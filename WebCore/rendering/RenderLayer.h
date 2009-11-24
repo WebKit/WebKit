@@ -355,7 +355,7 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(GraphicsContext*, const IntRect& damageRect, PaintRestriction = PaintRestrictionNone, RenderObject* paintingRoot = 0);
+    void paint(GraphicsContext*, const IntRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
 
     // This method figures out our layerBounds in coordinates relative to
@@ -468,7 +468,7 @@ private:
     typedef unsigned PaintLayerFlags;
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
-                    PaintRestriction, RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* = 0,
+                    PaintBehavior, RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* = 0,
                     PaintLayerFlags paintFlags = 0);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,

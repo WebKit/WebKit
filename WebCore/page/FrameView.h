@@ -170,7 +170,7 @@ public:
     void removeWidgetToUpdate(RenderPartObject*);
 
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect);
-    void setPaintRestriction(PaintRestriction);
+    void setPaintBehavior(PaintBehavior);
     bool isPainting() const;
     void setNodeToDraw(Node*);
 
@@ -312,7 +312,7 @@ private:
     bool m_setNeedsLayoutWasDeferred;
 
     RefPtr<Node> m_nodeToDraw;
-    PaintRestriction m_paintRestriction;
+    PaintBehavior m_paintBehavior;
     bool m_isPainting;
 
     bool m_isVisuallyNonEmpty;

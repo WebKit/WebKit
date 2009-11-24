@@ -198,7 +198,7 @@ void FrameView::reset()
     m_deferredRepaintDelay = initialDeferredRepaintDelayDuringLoading;
     m_deferredRepaintTimer.stop();
     m_lastPaintTime = 0;
-    m_paintRestriction = PaintRestrictionNone;
+    m_paintBehavior = PaintBehaviorNormal;
     m_isPainting = false;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
@@ -1656,7 +1656,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         fillWithRed = false; // Subframe, don't fill with red.
     else if (isTransparent())
         fillWithRed = false; // Transparent, don't fill with red.
-    else if (m_paintRestriction == PaintRestrictionSelectionOnly || m_paintRestriction == PaintRestrictionSelectionOnlyBlackText)
+    else if (m_paintBehavior & PaintBehaviorSelectionOnly)
         fillWithRed = false; // Selections are transparent, don't fill with red.
     else if (m_nodeToDraw)
         fillWithRed = false; // Element images are transparent, don't fill with red.
@@ -1694,9 +1694,9 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
-    if (m_paintRestriction == PaintRestrictionNone)
+    if (m_paintBehavior == PaintBehaviorNormal)
         document->invalidateRenderedRectsForMarkersInRect(rect);
-    contentRenderer->layer()->paint(p, rect, m_paintRestriction, eltRenderer);
+    contentRenderer->layer()->paint(p, rect, m_paintBehavior, eltRenderer);
     
     m_isPainting = false;
     m_lastPaintTime = currentTime();
@@ -1716,9 +1716,9 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 #endif
 }
 
-void FrameView::setPaintRestriction(PaintRestriction pr)
+void FrameView::setPaintBehavior(PaintBehavior behavior)
 {
-    m_paintRestriction = pr;
+    m_paintBehavior = behavior;
 }
     
 bool FrameView::isPainting() const

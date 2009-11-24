@@ -77,11 +77,12 @@ enum PaintPhase {
     PaintPhaseMask
 };
 
-enum PaintRestriction {
-    PaintRestrictionNone,
-    PaintRestrictionSelectionOnly,
-    PaintRestrictionSelectionOnlyBlackText
+enum PaintBehaviorFlags {
+    PaintBehaviorNormal = 0,
+    PaintBehaviorSelectionOnly = 1 << 0,
+    PaintBehaviorForceBlackText = 1 << 1
 };
+typedef unsigned PaintBehavior;
 
 enum HitTestFilter {
     HitTestAll,

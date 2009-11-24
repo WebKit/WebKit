@@ -851,7 +851,7 @@ static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const
 // Share this with RenderLayer::paintLayer, which would have to be educated about GraphicsLayerPaintingPhase?
 void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext* context,
                     const IntRect& paintDirtyRect,      // in the coords of rootLayer
-                    PaintRestriction paintRestriction, GraphicsLayerPaintingPhase paintingPhase,
+                    PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase,
                     RenderObject* paintingRoot)
 {
     if (paintingGoesToWindow()) {
@@ -865,7 +865,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     if (m_owningLayer->hasReflection()) {
         // Mark that we are now inside replica painting.
         m_owningLayer->setPaintingInsideReflection(true);
-        m_owningLayer->reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot, 0, RenderLayer::PaintLayerPaintingReflection);
+        m_owningLayer->reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, RenderLayer::PaintLayerPaintingReflection);
         m_owningLayer->setPaintingInsideReflection(false);
     }
 
@@ -932,8 +932,8 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         restoreClip(context, paintDirtyRect, damageRect);
     }
                 
-    bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
-    bool selectionOnly  = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+    bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
+    bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
 
     if (shouldPaint && (paintingPhase & GraphicsLayerPaintForeground)) {
         // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
@@ -941,7 +941,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList();
         if (negZOrderList) {
             for (Vector<RenderLayer*>::iterator it = negZOrderList->begin(); it != negZOrderList->end(); ++it)
-                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot);
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot);
         }
 
         // Set up the clip used when painting our children.
@@ -977,14 +977,14 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList();
         if (normalFlowList) {
             for (Vector<RenderLayer*>::iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it)
-                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot);
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot);
         }
 
         // Now walk the sorted list of children with positive z-indices.
         Vector<RenderLayer*>* posZOrderList = m_owningLayer->posZOrderList();
         if (posZOrderList) {
             for (Vector<RenderLayer*>::iterator it = posZOrderList->begin(); it != posZOrderList->end(); ++it)
-                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot);
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot);
         }
     }
     
@@ -1039,7 +1039,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& co
     IntRect dirtyRect = enclosingBBox;
     dirtyRect.intersect(clipRect);
 
-    paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintRestrictionNone, paintingPhase, renderer());
+    paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
 
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent(m_owningLayer->renderer()))
