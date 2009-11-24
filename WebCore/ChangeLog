@@ -1,3 +1,11 @@
+2009-11-23  Jian Li  <jianli@chromium.org>
+
+        Reviewed by NOBODY (Chromium build fix).
+
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * platform/graphics/GraphicsContext3D.h:
+
 2009-11-23  Aaron Golden  <agolden@apple.com>
 
         Reviewed by Alexey Proskuryakov.

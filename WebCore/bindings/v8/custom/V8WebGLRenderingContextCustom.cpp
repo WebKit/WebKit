@@ -123,10 +123,12 @@ CALLBACK_FUNC_DECL(WebGLRenderingContextBufferData)
     }
     if (args[1]->IsInt32()) {
         int size = toInt32(args[1]);
-        context->bufferData(target, size, usage);
+        ExceptionCode exceptionCode;
+        context->bufferData(target, size, usage, exceptionCode);
     } else if (V8WebGLArray::HasInstance(args[1])) {
         WebGLArray* array = V8DOMWrapper::convertToNativeObject<WebGLArray>(V8ClassIndex::WEBGLARRAY, args[1]->ToObject());
-        context->bufferData(target, array, usage);
+        ExceptionCode exceptionCode;
+        context->bufferData(target, array, usage, exceptionCode);
     } else {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
@@ -163,7 +165,8 @@ CALLBACK_FUNC_DECL(WebGLRenderingContextBufferSubData)
         return notHandledByInterceptor();
     }
     WebGLArray* array = V8DOMWrapper::convertToNativeObject<WebGLArray>(V8ClassIndex::WEBGLARRAY, args[2]->ToObject());
-    context->bufferSubData(target, offset, array);
+    ExceptionCode exceptionCode;
+    context->bufferSubData(target, offset, array, exceptionCode);
     return v8::Undefined();
 }
 
