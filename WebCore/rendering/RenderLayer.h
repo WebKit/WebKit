@@ -202,7 +202,7 @@ public:
 
     bool isTransparent() const;
     RenderLayer* transparentPaintingAncestor();
-    void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer);
+    void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, PaintBehavior);
 
     bool hasReflection() const { return renderer()->hasReflection(); }
     RenderReplica* reflection() const { return m_reflection; }
@@ -402,6 +402,7 @@ public:
     // resulting transform has transform-origin baked in. If the layer does not have a transform,
     // returns the identity matrix.
     TransformationMatrix currentTransform() const;
+    TransformationMatrix renderableTransform(PaintBehavior) const;
     
     // Get the perspective transform, which is applied to transformed sublayers.
     // Returns true if the layer has a -webkit-perspective.
@@ -429,14 +430,14 @@ public:
     bool hasCompositedMask() const { return false; }
 #endif
 
-    bool paintsWithTransparency() const
+    bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {
-        return isTransparent() && !isComposited();
+        return isTransparent() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
     }
 
-    bool paintsWithTransform() const
+    bool paintsWithTransform(PaintBehavior paintBehavior) const
     {
-        return transform() && !isComposited();
+        return transform() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
     }
 
 private:

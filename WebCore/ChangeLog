@@ -39,6 +39,38 @@
         Find highlight is drawn incorrectly on pages with compositing layers
         <rdar://problem/7413925>
         
+        Part 2: Add a new bit to the PaintBehavior flags, PaintBehaviorFlattenCompositingLayers,
+        and pass that down when painting into an image.
+        
+        When set, it forces painting of compositing layers to go down a software paint path
+        when all layers are painted, irrespective of compositing status, and where
+        3d transforms are flattened to 2d. When doing this, we also need to use temporary
+        clip rects for layers which are normally composited.
+        
+        * page/FrameView.h:
+        (WebCore::FrameView::paintBehavior):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::imageFromRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::renderableTransform):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::paintsWithTransparency):
+        (WebCore::RenderLayer::paintsWithTransform):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        * rendering/RenderObject.h:
+
+2009-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Find highlight is drawn incorrectly on pages with compositing layers
+        <rdar://problem/7413925>
+        
         Part 1: Rename PaintRestriction to PaintBehavior, and make it a bitmask, in
         preparation for adding a new flag related to painting into an image.
         
