@@ -5237,6 +5237,7 @@ fast/forms/validationMessage.html
 # new tests without expected files
 editing/execCommand/indent-paragraphs.html
 editing/inserting/insert-bg-font.html
+editing/selection/transformed-selection-rects.html
 fast/canvas/arc360.html
 fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-background-image.html

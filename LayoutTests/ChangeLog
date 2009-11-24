@@ -1,3 +1,9 @@
+2009-11-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Skip new test added in r51324.
+
+        * platform/qt/Skipped: Added editing/selection/trransformed-selection-rects.html
+
 2009-11-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
