@@ -1,3 +1,29 @@
+2009-11-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Fix DOM storage layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=31833
+
+        The issue is, essentially, that this code assumes that
+        SecurityOrigin::createString can re-create a SecurityOrigin given
+        the string produced from SecurityOrigin::toString.  This is a bogus
+        assumption in a number of corner cases (e.g., document.domain,
+        @sandbox).  A recent patch (http://trac.webkit.org/changeset/51294)
+        make this assumption further invalid in the case of of file:// URLs.
+
+        The correct fix is for this code to use WebSecurityOrigin objects
+        (and not strings) to represent SecurityOrigin objects.  However, the
+        expert on this code is on vacation, and I don't want to do major
+        surgery here without his involvement.  This patch is a temporary fix
+        to get these tests passing again.  We'll do the right fix once
+        jorlow gets back from vacation.
+
+        Tests: Covered by a number of existing DOM storage tests.
+
+        * src/WebStorageNamespaceImpl.cpp:
+        (WebKit::WebStorageNamespaceImpl::createStorageArea):
+
 2009-11-23  Jian Li  <jianli@chromium.org>
 
         Reviewed by NOBODY (Chromium build fix).
