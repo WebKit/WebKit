@@ -1,3 +1,17 @@
+2009-11-24  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] GStreamer-CRITICAL's (and other warnings) on <video>
+        https://bugs.webkit.org/show_bug.cgi?id=26354
+
+        Implemented MediaPlayerPrivate::isAvailable by checking the
+        presence of the playbin2 GStreamer element.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-11-24  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

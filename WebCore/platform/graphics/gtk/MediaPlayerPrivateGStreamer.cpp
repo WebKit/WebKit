@@ -158,6 +158,17 @@ static void do_gst_init()
     }
 }
 
+bool MediaPlayerPrivate::isAvailable()
+{
+    do_gst_init();
+    GstElementFactory* factory = gst_element_factory_find("playbin2");
+    if (factory) {
+        gst_object_unref(GST_OBJECT(factory));
+        return true;
+    }
+    return false;
+}
+
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_playBin(0)
