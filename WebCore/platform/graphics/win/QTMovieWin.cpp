@@ -877,6 +877,27 @@ bool QTMovieWin::hasAudio() const
     return (GetMovieIndTrackType(m_private->m_movie, 1, AudioMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
 }
 
+
+bool QTMovieWin::hasClosedCaptions() const 
+{
+    if (!m_private->m_movie)
+        return false;
+    return GetMovieIndTrackType(m_private->m_movie, 1, 'clcp', movieTrackMediaType);
+}
+
+void QTMovieWin::setClosedCaptionsVisible(bool visible)
+{
+    if (!m_private->m_movie)
+        return;
+
+    Track ccTrack = GetMovieIndTrackType(m_private->m_movie, 1, 'clcp', movieTrackMediaType);
+    if (!ccTrack)
+        return;
+
+    Boolean doDisplay = visible;
+    QTSetTrackProperty(ccTrack, 'clcp', 'disp', sizeof(doDisplay), &doDisplay);
+}
+
 pascal OSErr movieDrawingCompleteProc(Movie movie, long data)
 {
     UppParam param;
@@ -1030,6 +1051,7 @@ bool QTMovieWin::initializeQuickTime()
     }
     return initializationSucceeded;
 }
+
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
