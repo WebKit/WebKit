@@ -41,6 +41,7 @@ void InitWebCoreSystemInterface(void)
 
     INIT(AdvanceDefaultButtonPulseAnimation);
     INIT(CGContextGetShouldSmoothFonts);
+    INIT(CopyCONNECTProxyResponse);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
     INIT(DrawCapsLockIndicator);
@@ -65,6 +66,8 @@ void InitWebCoreSystemInterface(void)
     INIT(MediaControllerThemeAvailable);
     INIT(PopupMenu);
     INIT(SetCGFontRenderingMode);
+    INIT(SetCONNECTProxyAuthorizationForStream);
+    INIT(SetCONNECTProxyForStream);
     INIT(SetDragImage);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);

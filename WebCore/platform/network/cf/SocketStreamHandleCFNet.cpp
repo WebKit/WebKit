@@ -32,9 +32,13 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
+#include "Credential.h"
+#include "CredentialStorage.h"
 #include "Logging.h"
+#include "ProtectionSpace.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "WebCoreSystemInterface.h"
 #include <wtf/MainThread.h>
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
@@ -49,18 +53,13 @@
 #define CFN_EXPORT extern
 #endif
 
-extern "C" {
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyPort;
-}
-
 namespace WebCore {
 
 SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
+    , m_sentStoredCredentials(false)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
 
@@ -333,13 +332,9 @@ void SocketStreamHandle::createStreams()
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySOCKSProxy, connectDictionary.get());
         break;
         }
-    case CONNECTProxy: {
-        const void* proxyKeys[] = { kCFStreamPropertyCONNECTProxyHost, kCFStreamPropertyCONNECTProxyPort };
-        const void* proxyValues[] = { m_proxyHost.get(), m_proxyPort.get() };
-        RetainPtr<CFDictionaryRef> connectDictionary(AdoptCF, CFDictionaryCreate(0, proxyKeys, proxyValues, sizeof(proxyKeys) / sizeof(*proxyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertyCONNECTProxy, connectDictionary.get());
+    case CONNECTProxy:
+        wkSetCONNECTProxyForStream(m_readStream.get(), m_proxyHost.get(), m_proxyPort.get());
         break;
-        }
     }
 
     if (shouldUseSSL()) {
@@ -349,6 +344,84 @@ void SocketStreamHandle::createStreams()
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySSLSettings, settings.get());
         CFWriteStreamSetProperty(m_writeStream.get(), kCFStreamPropertySSLSettings, settings.get());
     }
+}
+
+static bool getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, String& login, String& password)
+{
+    // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
+    Credential storedCredential = CredentialStorage::getFromPersistentStorage(protectionSpace);
+    if (storedCredential.isEmpty())
+        storedCredential = CredentialStorage::get(protectionSpace);
+
+    if (storedCredential.isEmpty())
+        return false;
+
+    login = storedCredential.user();
+    password = storedCredential.password();
+
+    return true;
+}
+
+static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticationMethod(CFStringRef method)
+{
+    if (CFEqual(method, kCFHTTPAuthenticationSchemeBasic))
+        return ProtectionSpaceAuthenticationSchemeHTTPBasic;
+    if (CFEqual(method, kCFHTTPAuthenticationSchemeDigest))
+        return ProtectionSpaceAuthenticationSchemeHTTPDigest;
+#ifndef BUILDING_ON_TIGER
+    if (CFEqual(method, kCFHTTPAuthenticationSchemeNTLM))
+        return ProtectionSpaceAuthenticationSchemeNTLM;
+    if (CFEqual(method, kCFHTTPAuthenticationSchemeNegotiate))
+        return ProtectionSpaceAuthenticationSchemeNegotiate;
+#endif
+    ASSERT_NOT_REACHED();
+    return ProtectionSpaceAuthenticationSchemeDefault;
+}
+
+void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
+{
+    RetainPtr<CFHTTPAuthenticationRef> authentication(AdoptCF, CFHTTPAuthenticationCreateFromResponse(0, proxyResponse));
+
+    if (!CFHTTPAuthenticationRequiresUserNameAndPassword(authentication.get())) {
+        // That's all we can offer...
+        m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
+        return;
+    }
+
+    int port = 0;
+    CFNumberGetValue(m_proxyPort.get(), kCFNumberIntType, &port);
+    RetainPtr<CFStringRef> methodCF(AdoptCF, CFHTTPAuthenticationCopyMethod(authentication.get()));
+    RetainPtr<CFStringRef> realmCF(AdoptCF, CFHTTPAuthenticationCopyRealm(authentication.get()));
+    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpaceProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
+    String login;
+    String password;
+    if (!m_sentStoredCredentials && getStoredCONNECTProxyCredentials(protectionSpace, login, password)) {
+        // Try to apply stored credentials, if we haven't tried those already.
+        RetainPtr<CFStringRef> loginCF(AdoptCF, login.createCFString());
+        RetainPtr<CFStringRef> passwordCF(AdoptCF, password.createCFString());
+        // Creating a temporary request to make CFNetwork apply credentials to it. Unfortunately, this cannot work with NTLM authentication.
+        RetainPtr<CFHTTPMessageRef> dummyRequest(AdoptCF, CFHTTPMessageCreateRequest(0, CFSTR("GET"), m_httpsURL.get(), kCFHTTPVersion1_1));
+
+        Boolean appliedCredentials = CFHTTPMessageApplyCredentials(dummyRequest.get(), authentication.get(), loginCF.get(), passwordCF.get(), 0);
+        ASSERT_UNUSED(appliedCredentials, appliedCredentials);
+
+        RetainPtr<CFStringRef> proxyAuthorizationString(AdoptCF, CFHTTPMessageCopyHeaderFieldValue(dummyRequest.get(), CFSTR("Proxy-Authorization")));
+
+        if (!proxyAuthorizationString) {
+            // Fails e.g. for NTLM auth.
+            m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
+            return;
+        }
+
+        // Setting the authorization results in a new connection attempt.
+        wkSetCONNECTProxyAuthorizationForStream(m_readStream.get(), proxyAuthorizationString.get());
+        m_sentStoredCredentials = true;
+        return;
+    }
+
+    // FIXME: Ask the client if credentials could not be found.
+
+    m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
 }
 
 CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
@@ -412,7 +485,13 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         break;
     case kCFStreamEventHasBytesAvailable: {
         if (m_connectingSubstate == WaitingForConnect) {
-            // FIXME: Handle CONNECT proxy credentials here.
+            if (m_connectionType == CONNECTProxy) {
+                RetainPtr<CFHTTPMessageRef> proxyResponse(AdoptCF, wkCopyCONNECTProxyResponse(m_readStream.get(), m_httpsURL.get()));
+                if (proxyResponse && (407 == CFHTTPMessageGetResponseStatusCode(proxyResponse.get()))) {
+                    addCONNECTCredentials(proxyResponse.get());
+                    return;
+                }
+            }
         } else if (m_connectingSubstate == WaitingForCredentials)
             break;
 
