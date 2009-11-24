@@ -1,3 +1,16 @@
+2009-11-24  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/31840> bisect-builds broke after r50080
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/bisect-builds:
+        (mountAndRunNightly): Switched back to using backticks to run
+        the hdiutil command since exec() will terminate the existing
+        script, which is not what we want.  Store the output of
+        File::Spec->devnull() in a variable for use in the hdiutil
+        detach commands.
+
 2009-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
