@@ -539,8 +539,7 @@ bool WebGLRenderingContext::validateIndexArray(unsigned long count, unsigned lon
                 lastIndex = *p;
             ++p;
         }
-    }
-    else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
+    } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
         unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
         if (uoffset > n || count > n - uoffset)
             return false;
