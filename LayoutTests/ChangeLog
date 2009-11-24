@@ -1,3 +1,21 @@
+2009-11-24  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert fast/table/row-height-recalc2.html to be 'dumpAsText()'
+        https://bugs.webkit.org/show_bug.cgi?id=31816
+
+        * fast/table/row-height-recalc2-expected.txt: Added.
+        * fast/table/row-height-recalc2.html:
+        * platform/mac/fast/table/row-height-recalc2-expected.checksum: Removed.
+        * platform/mac/fast/table/row-height-recalc2-expected.png: Removed.
+        * platform/mac/fast/table/row-height-recalc2-expected.txt: Removed.
+        * platform/qt/fast/table/row-height-recalc2-expected.checksum: Removed.
+        * platform/qt/fast/table/row-height-recalc2-expected.png: Removed.
+        * platform/qt/fast/table/row-height-recalc2-expected.txt: Removed.
+        * platform/win/fast/table/row-height-recalc2-expected.checksum: Removed.
+        * platform/win/fast/table/row-height-recalc2-expected.png: Removed.
+
 2009-11-23  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

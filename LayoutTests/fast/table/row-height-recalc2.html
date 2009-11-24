@@ -6,8 +6,7 @@
 <body>
 <p>
     Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=24971">https://bugs.webkit.org/show_bug.cgi?id=24971</a>
-    Setting style.height = value in javascript doesn't work in tablerows(&lt;tr&gt;)</i>. This test PASSED if and only if you
-    see a solid green rectangle below.
+    Setting style.height = value in javascript doesn't work in tablerows(&lt;tr&gt;)</i>. This test PASSED if you see 2 'PASS' messages below.
 </p>
 <hr>
 <table cellspacing="0" cellpadding="0" style="height: 100px">
@@ -18,8 +17,22 @@
         <td></td>
     </tr>
 </table>
+<pre id="log"></pre>
 <script type="text/javascript">
-    document.getElementById("t").style.height='100px';
+function log(message)
+{
+    document.getElementById("log").innerText += message + "\n";
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var tableRow = document.getElementById("t");
+log((tableRow.offsetHeight == 50 ? "PASS" : "FAIL") + ": initial height of the row should be 50px.");
+    
+tableRow.style.height='100px';
+log((tableRow.offsetHeight == 100 ? "PASS" : "FAIL") + ": final height of the row should be 100px.");
+
 </script>
 </body>
 </html>
