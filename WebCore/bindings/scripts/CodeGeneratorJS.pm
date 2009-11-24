@@ -316,7 +316,14 @@ sub GenerateGetOwnPropertySlotBody
     if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
         push(@getOwnPropertySlotImpl, "    bool ok;\n");
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
-        push(@getOwnPropertySlotImpl, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
+
+        # If the item function returns a string then we let the ConvertNullStringTo handle the cases
+        # where the index is out of range.
+        if (IndexGetterReturnsStrings($implClassName)) {
+            push(@getOwnPropertySlotImpl, "    if (ok) {\n");
+        } else {
+            push(@getOwnPropertySlotImpl, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
+        }
         if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
             push(@getOwnPropertySlotImpl, "        slot.setValue(getByIndex(exec, index));\n");
         } else {

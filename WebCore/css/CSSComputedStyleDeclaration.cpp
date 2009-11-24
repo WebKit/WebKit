@@ -1478,7 +1478,7 @@ unsigned CSSComputedStyleDeclaration::length() const
 String CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (i >= length())
-        return String();
+        return "";
 
     return getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
 }

@@ -44,7 +44,7 @@ module css {
             raises(DOMException);
 
         readonly attribute unsigned long    length;
-        [ConvertNullStringTo=Null] DOMString          item(in unsigned long index);
+        DOMString          item(in unsigned long index);
         readonly attribute CSSRule          parentRule;
 
         // Extensions

@@ -636,7 +636,7 @@ unsigned CSSMutableStyleDeclaration::length() const
 String CSSMutableStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_properties.size())
-       return String();
+       return "";
     return getPropertyName(static_cast<CSSPropertyID>(m_properties[i].id()));
 }
 

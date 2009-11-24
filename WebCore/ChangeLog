@@ -1,3 +1,26 @@
+2009-11-23  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        JSC bindings for HasIndexGetter generates incorrect code (affects
+        MediaList and CSSStyleDeclaration).
+        This cleans up the edge cases for indexing out of range for style and
+        computed style objects to return an empty string according to the spec.
+        MediaList now returns null when indexed out of range.
+        https://bugs.webkit.org/show_bug.cgi?id=31683
+
+        Tests: fast/dom/CSSStyleDeclaration/css-computed-style-item.html
+               fast/dom/CSSStyleDeclaration/css-style-item.html
+               fast/dom/StyleSheet/css-medialist-item.html
+
+        * bindings/scripts/CodeGeneratorJS.pm: If IndexGetterReturnsString then
+                we do not check the length before calling the item function.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::item):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::item):
+        * css/CSSStyleDeclaration.idl:
+
 2009-11-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

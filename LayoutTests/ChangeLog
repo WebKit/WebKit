@@ -1,3 +1,25 @@
+2009-11-23  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        JSC bindings for HasIndexGetter generates incorrect code (affects
+        MediaList and CSSStyleDeclaration).
+        This cleans up the edge cases for indexing out of range for style and
+        computed style objects to return an empty string according to the spec.
+        MediaList now returns null when indexed out of range.
+        https://bugs.webkit.org/show_bug.cgi?id=31683
+
+        * fast/dom/CSSStyleDeclaration/css-computed-style-item-expected.txt: Added.
+        * fast/dom/CSSStyleDeclaration/css-computed-style-item.html: Added.
+        * fast/dom/CSSStyleDeclaration/css-style-item-expected.txt: Added.
+        * fast/dom/CSSStyleDeclaration/css-style-item.html: Added.
+        * fast/dom/CSSStyleDeclaration/script-tests/css-computed-style-item.js: Added.
+        * fast/dom/CSSStyleDeclaration/script-tests/css-style-item.js: Added.
+        * fast/dom/StyleSheet/css-medialist-item-expected.txt: Added.
+        * fast/dom/StyleSheet/css-medialist-item.html: Added.
+        * fast/dom/StyleSheet/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/backgrounds/repeat/script-tests/TEMPLATE.html.
+        * fast/dom/StyleSheet/script-tests/css-medialist-item.js: Added.
+
 2009-11-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Skip new test added in r51324.
