@@ -1,3 +1,20 @@
+2009-11-23  Aaron Golden  <agolden@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Prevent ResourceHandleMac's version of ResourceHandle::receivedCredential from stripping
+        identity and certificate information from a WebCore::Credential when receivedCredential
+        needs to modify the credential's persistence.
+
+        Adding a new constructor Credential(const Credential& original, CredentialPersistence)
+        that copies every field from original except for persistence.
+
+        * platform/network/Credential.cpp:
+        (WebCore::Credential::Credential):
+        * platform/network/Credential.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedCredential):
+
 2009-11-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

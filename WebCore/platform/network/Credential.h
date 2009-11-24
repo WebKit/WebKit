@@ -54,6 +54,7 @@ class Credential {
 public:
     Credential();
     Credential(const String& user, const String& password, CredentialPersistence);
+    Credential(const Credential& original, CredentialPersistence);
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
     Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence);
 #endif
