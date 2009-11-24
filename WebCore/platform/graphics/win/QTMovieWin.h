@@ -98,9 +98,6 @@ public:
     bool hasVideo() const;
     bool hasAudio() const;
 
-    bool hasClosedCaptions() const;
-    void setClosedCaptionsVisible(bool);
-
     static unsigned countSupportedTypes();
     static void getSupportedType(unsigned index, const UChar*& str, unsigned& len);
 

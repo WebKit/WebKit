@@ -1,3 +1,15 @@
+2009-11-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Not reviewed. Revert r51351 until a new WebKitSupportLibrary is available.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        * platform/graphics/win/QTMovieWin.h:
+        * rendering/RenderMediaControls.cpp:
+        * rendering/RenderThemeWin.cpp:
+        * rendering/RenderThemeWin.h:
+
 2009-11-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

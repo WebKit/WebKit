@@ -93,9 +93,6 @@ public:
     
     bool hasSingleSecurityOrigin() const;
 
-    bool hasClosedCaptions() const;
-    void setClosedCaptionsVisible(bool);
-
 private:
     MediaPlayerPrivate(MediaPlayer*);
 
