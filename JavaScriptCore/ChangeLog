@@ -1,3 +1,37 @@
+2009-11-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Streamlined some Math functions where we expect or know the result not
+        to be representable as an int.
+        
+        SunSpider says 0.6% faster.
+
+        * runtime/JSNumberCell.h:
+        (JSC::JSValue::JSValue):
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        (JSC::jsDoubleNumber):
+        (JSC::JSValue::JSValue): Added a function for making a numeric JSValue
+        and skipping the "can I encode this as an int?" check, avoiding the
+        overhead of int <-> double roundtripping and double <-> double comparison
+        and branching.
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncRandom):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan): For these functions, which we expect or know
+        to produce results not representable as ints, call jsDoubleNumber instead
+        of jsNumber.
+
 2009-11-23  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed. Unbreak the regression tests after r51329.

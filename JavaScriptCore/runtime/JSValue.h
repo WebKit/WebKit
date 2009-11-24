@@ -80,6 +80,7 @@ namespace JSC {
         enum JSUndefinedTag { JSUndefined };
         enum JSTrueTag { JSTrue };
         enum JSFalseTag { JSFalse };
+        enum EncodeAsDoubleTag { EncodeAsDouble };
 
         JSValue();
         JSValue(JSNullTag);
@@ -90,6 +91,7 @@ namespace JSC {
         JSValue(const JSCell* ptr);
 
         // Numbers
+        JSValue(EncodeAsDoubleTag, ExecState*, double);
         JSValue(ExecState*, double);
         JSValue(ExecState*, char);
         JSValue(ExecState*, unsigned char);
@@ -277,6 +279,11 @@ namespace JSC {
     inline JSValue jsBoolean(bool b)
     {
         return b ? JSValue(JSValue::JSTrue) : JSValue(JSValue::JSFalse);
+    }
+
+    ALWAYS_INLINE JSValue jsDoubleNumber(ExecState* exec, double d)
+    {
+        return JSValue(JSValue::EncodeAsDouble, exec, d);
     }
 
     ALWAYS_INLINE JSValue jsNumber(ExecState* exec, double d)
@@ -581,6 +588,11 @@ namespace JSC {
     {
         ASSERT(isCell());
         return reinterpret_cast<JSCell*>(u.asBits.payload);
+    }
+
+    ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, ExecState*, double d)
+    {
+        u.asDouble = d;
     }
 
     inline JSValue::JSValue(ExecState* exec, double d)
