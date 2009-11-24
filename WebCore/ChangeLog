@@ -1,3 +1,11 @@
+2009-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Windows build fix.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        (WebCore::imageFromSelection):
+
 2009-11-24  Eric Carlson  <eric.carlson@apple.com>
 
         Not reviewed. Revert r51351 until a new WebKitSupportLibrary is available.
