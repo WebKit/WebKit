@@ -112,21 +112,30 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._categoryGraphs[category].clearChunks();
         }
 
+        function forAllRecords(recordsArray, callback)
+        {
+            if (!recordsArray)
+                return;
+            for (var i = 0; i < recordsArray.length; ++i) {
+                callback(recordsArray[i]);
+                forAllRecords(recordsArray[i].children, callback);
+            }
+        }
+
         // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         this._overviewCalculator.reset();
+        forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
 
-        for (var i = 1; i < records.length; ++i)
-            this._overviewCalculator.updateBoundaries(records[i]);
-
-        for (var i = 0; i < records.length; ++i) {
-            var record = records[i];
+        function markTimeline(record)
+        {
             var percentages = this._overviewCalculator.computeBarGraphPercentages(record);
-            
+
             var end = Math.round(percentages.end);
             var categoryName = record.category.name;
             for (var j = Math.round(percentages.start); j <= end; ++j)
                 timelines[categoryName][j] = true;
         }
+        forAllRecords(records, markTimeline.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
         for (var category in this._categories) {
@@ -230,16 +239,16 @@ WebInspector.TimelineOverviewPane.prototype = {
     _setWindowPosition: function(start, end)
     {
         if (typeof start === "number") {
-            if (start > this._rightResizeElement.offsetLeft - 25)
-                start = this._rightResizeElement.offsetLeft - 25;
+            if (start > this._rightResizeElement.offsetLeft - 4)
+                start = this._rightResizeElement.offsetLeft - 4;
 
             this.windowLeft = start / this._overviewGrid.element.clientWidth;
             this._leftResizeElement.style.left = this.windowLeft * 100 + "%";
             this._overviewWindowElement.style.left = this.windowLeft * 100 + "%";
         }
         if (typeof end === "number") {
-            if (end < this._leftResizeElement.offsetLeft + 30)
-                end = this._leftResizeElement.offsetLeft + 30;
+            if (end < this._leftResizeElement.offsetLeft + 12)
+                end = this._leftResizeElement.offsetLeft + 12;
 
             this.windowRight = end / this._overviewGrid.element.clientWidth;
             this._rightResizeElement.style.left = this.windowRight * 100 + "%";

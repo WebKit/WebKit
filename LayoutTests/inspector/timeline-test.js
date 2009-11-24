@@ -118,9 +118,15 @@ function timelineAgentTypeToString(numericType)
 // Injected into Inspector window
 function frontend_getTimelineResults() {
     var result = [];
-    var records = WebInspector.panels.timeline._records;
-    for (var i = 0; i < records.length; ++i) {
-        result.push(records[i].record);
+    function addRecords(records)
+    {
+        if (!records)
+            return;
+        for (var i = 0; i < records.length; ++i) {
+            result.push(records[i].record);
+            addRecords(records[i].children);
+        }
     }
+    addRecords(WebInspector.panels.timeline._records);
     return result;
 }

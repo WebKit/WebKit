@@ -3288,6 +3288,11 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0;
 }
 
+.timeline .sidebar {
+    overflow-y: hidden;
+    z-index: 100;
+}
+
 #timeline-overview-separator {
     position: absolute;
     top: 80px;
@@ -3411,11 +3416,41 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 .timeline-tree-item {
     height: 18px;
     line-height: 15px;
+    padding-right: 5px;
     padding-left: 10px;
     padding-top: 2px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.timeline-expandable {
+    position: absolute;
+    border-left: 1px solid rgb(163, 163, 163);
+}
+
+.timeline-expandable-left {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    border-top: 1px solid rgb(163, 163, 163);
+    border-bottom: 1px solid rgb(163, 163, 163);
+}
+
+.timeline-expandable-collapsed {
+    background-image: url(Images/disclosureTriangleSmallRightBlack.png);
+    background-position-x: 1px;
+    background-position-y: 2px;
+    background-repeat: no-repeat;
+}
+
+.timeline-expandable-expanded {
+    background-image: url(Images/disclosureTriangleSmallDownBlack.png);
+    background-position-x: 1px;
+    background-position-y: 3px;
+    background-repeat: no-repeat;
 }
 
 .timeline-tree-item .type {
@@ -3484,8 +3519,8 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 8px;
-    left: 9px;
+    right: 0;
+    left: 3px;
     pointer-events: none;
 }
 

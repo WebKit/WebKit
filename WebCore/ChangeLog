@@ -1,3 +1,29 @@
+2009-11-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement expandable compartments on timeline panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31796
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype._setWindowPosition):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.prototype._addToRecordsWindow):
+        (WebInspector.TimelineRecordListRow):
+        (WebInspector.TimelineRecordListRow.prototype.update):
+        (WebInspector.TimelineRecordListRow.prototype.dispose):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        (WebInspector.TimelineRecordGraphRow.prototype._onClick):
+        (WebInspector.TimelineRecordGraphRow.prototype.dispose):
+        * inspector/front-end/inspector.css:
+
 2009-11-24  Mark Rowe  <mrowe@apple.com>
 
         Fix production builds where the source tree may be read-only.

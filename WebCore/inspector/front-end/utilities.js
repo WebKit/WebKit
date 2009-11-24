@@ -550,6 +550,9 @@ Number.secondsToString = function(seconds, formatterFunction, higherResolution)
     if (!formatterFunction)
         formatterFunction = String.sprintf;
 
+    if (seconds === 0)
+        return "0";
+
     var ms = seconds * 1000;
     if (higherResolution && ms < 1000)
         return formatterFunction("%.3fms", ms);

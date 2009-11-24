@@ -55,35 +55,65 @@ WebInspector.TimelineGrid.prototype = {
         return this._itemsGraphsElement;
     },
 
-    updateDividers: function(force, calculator)
+    updateDividers: function(force, calculator, paddingLeft)
     {
         var dividerCount = Math.round(this._dividersElement.offsetWidth / 64);
         var slice = calculator.boundarySpan / dividerCount;
         if (!force && this._currentDividerSlice === slice)
             return false;
 
+        if (!(typeof paddingLeft === "number"))
+            paddingLeft = 0;
         this._currentDividerSlice = slice;
 
-        this._dividersElement.removeChildren();
         this._eventDividersElement.removeChildren();
-        this._dividersLabelBarElement.removeChildren();
+        // Reuse divider elements and labels.
+        var divider = this._dividersElement.firstChild;
+        var dividerLabelBar = this._dividersLabelBarElement.firstChild;
 
-        for (var i = 1; i <= dividerCount; ++i) {
-            var divider = document.createElement("div");
-            divider.className = "resources-divider";
+        var clientWidth = this._dividersLabelBarElement.clientWidth - paddingLeft;
+        for (var i = paddingLeft ? 0 : 1; i <= dividerCount; ++i) {
+            if (!divider) {
+                divider = document.createElement("div");
+                divider.className = "resources-divider";
+                this._dividersElement.appendChild(divider);
+
+                dividerLabelBar = document.createElement("div");
+                dividerLabelBar.className = "resources-divider";
+                var label = document.createElement("div");
+                label.className = "resources-divider-label";
+                dividerLabelBar._labelElement = label;
+                dividerLabelBar.appendChild(label);
+                this._dividersLabelBarElement.appendChild(dividerLabelBar);
+            }
+
             if (i === dividerCount)
                 divider.addStyleClass("last");
-            divider.style.left = ((i / dividerCount) * 100) + "%";
+            else
+                divider.removeStyleClass("last");
 
-            this._dividersElement.appendChild(divider.cloneNode());
+            var left = paddingLeft + clientWidth * (i / dividerCount);
+            var percentLeft = 100 * left / this._dividersLabelBarElement.clientWidth + "%";
+            divider.style.left = percentLeft;
+            dividerLabelBar.style.left = percentLeft;
 
-            var label = document.createElement("div");
-            label.className = "resources-divider-label";
             if (!isNaN(slice))
-                label.textContent = calculator.formatValue(slice * i);
-            divider.appendChild(label);
+                dividerLabelBar._labelElement.textContent = calculator.formatValue(slice * i);
 
-            this._dividersLabelBarElement.appendChild(divider);
+            divider = divider.nextSibling;
+            dividerLabelBar = dividerLabelBar.nextSibling;
+        }
+
+        // Remove extras.
+        while (divider) {
+            var nextDivider = divider.nextSibling;
+            this._dividersElement.removeChild(divider);
+            divider = nextDivider;
+        }
+        while (dividerLabelBar) {
+            var nextDivider = dividerLabelBar.nextSibling;
+            this._dividersLabelBarElement.removeChild(dividerLabelBar);
+            dividerLabelBar = nextDivider;
         }
         return true;
     },
