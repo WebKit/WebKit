@@ -1,3 +1,16 @@
+2009-11-24  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        When building up the pango layout from text boxes, only append a
+        newline char after verifying there are no more boxes on this line.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getPangoLayoutForAtk):
+
 2009-11-24  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

@@ -890,7 +890,10 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     while (box) {
         gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
         g_string_append(str, text);
-        g_string_append(str, "\n");
+        // Newline chars in the source result in separate text boxes, so check
+        // before adding a newline in the layout. See bug 25415 comment #78.
+        if (!box->nextOnLineExists())
+            g_string_append(str, "\n");
         box = box->nextTextBox();
     }
 
