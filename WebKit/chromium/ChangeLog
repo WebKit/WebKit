@@ -1,3 +1,14 @@
+2009-11-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium: Expose method for reporting user stats
+        to the host. Also includes drive-by default implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31830
+
+        * public/WebKitClient.h:
+
 2009-11-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -32,7 +32,10 @@
 #define WebKitClient_h
 
 #include "WebCommon.h"
+#include "WebData.h"
 #include "WebLocalizedString.h"
+#include "WebString.h"
+#include "WebURL.h"
 #include "WebVector.h"
 
 #include <time.h>
@@ -46,7 +49,6 @@ namespace WebKit {
 class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebClipboard;
-class WebData;
 class WebMessagePortChannel;
 class WebMimeRegistry;
 class WebPluginListBuilder;
@@ -54,9 +56,7 @@ class WebSandboxSupport;
 class WebSharedWorkerRepository;
 class WebSocketStreamHandle;
 class WebStorageNamespace;
-class WebString;
 class WebThemeEngine;
-class WebURL;
 class WebURLLoader;
 struct WebCookie;
 struct WebPluginInfo;
@@ -65,53 +65,53 @@ template <typename T> class WebVector;
 class WebKitClient {
 public:
     // Must return non-null.
-    virtual WebClipboard* clipboard() = 0;
+    virtual WebClipboard* clipboard() { return 0; }
 
     // Must return non-null.
-    virtual WebMimeRegistry* mimeRegistry() = 0;
+    virtual WebMimeRegistry* mimeRegistry() { return 0; }
 
     // May return null if sandbox support is not necessary
-    virtual WebSandboxSupport* sandboxSupport() = 0;
+    virtual WebSandboxSupport* sandboxSupport() { return 0; }
 
     // May return null on some platforms.
-    virtual WebThemeEngine* themeEngine() = 0;
+    virtual WebThemeEngine* themeEngine() { return 0; }
 
 
     // Application Cache --------------------------------------------
 
     // May return null if the process type doesn't involve appcaching.
-    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) = 0;
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) { return 0; }
 
 
     // DOM Storage --------------------------------------------------
 
     // Return a LocalStorage namespace that corresponds to the following path.
-    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) = 0;
+    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
 
     // Return a new SessionStorage namespace.
-    virtual WebStorageNamespace* createSessionStorageNamespace() = 0;
+    virtual WebStorageNamespace* createSessionStorageNamespace() { return 0; }
 
     // Called when storage events fire.
     virtual void dispatchStorageEvent(const WebString& key, const WebString& oldValue,
                                       const WebString& newValue, const WebString& origin,
-                                      const WebURL& url, bool isLocalStorage) = 0;
+                                      const WebURL& url, bool isLocalStorage) { }
 
 
     // File ----------------------------------------------------------------
 
     // Various file/directory related functions.  These map 1:1 with
     // functions in WebCore's FileSystem.h.
-    virtual bool fileExists(const WebString& path) = 0;
-    virtual bool deleteFile(const WebString& path) = 0;
-    virtual bool deleteEmptyDirectory(const WebString& path) = 0;
-    virtual bool getFileSize(const WebString& path, long long& result) = 0;
-    virtual bool getFileModificationTime(const WebString& path, time_t& result) = 0;
-    virtual WebString directoryName(const WebString& path) = 0;
-    virtual WebString pathByAppendingComponent(const WebString& path, const WebString& component) = 0;
-    virtual bool makeAllDirectories(const WebString& path) = 0;
-    virtual WebString getAbsolutePath(const WebString& path) = 0;
-    virtual bool isDirectory(const WebString& path) = 0;
-    virtual WebURL filePathToURL(const WebString& path) = 0;
+    virtual bool fileExists(const WebString& path) { return false; }
+    virtual bool deleteFile(const WebString& path) { return false; }
+    virtual bool deleteEmptyDirectory(const WebString& path) { return false; }
+    virtual bool getFileSize(const WebString& path, long long& result) { return false; }
+    virtual bool getFileModificationTime(const WebString& path, time_t& result) { return false; }
+    virtual WebString directoryName(const WebString& path) { return WebString(); }
+    virtual WebString pathByAppendingComponent(const WebString& path, const WebString& component) { return WebString(); }
+    virtual bool makeAllDirectories(const WebString& path) { return false; }
+    virtual WebString getAbsolutePath(const WebString& path) { return WebString(); }
+    virtual bool isDirectory(const WebString& path) { return false; }
+    virtual WebURL filePathToURL(const WebString& path) { return WebURL(); }
 
 
     // History -------------------------------------------------------------
@@ -119,11 +119,11 @@ public:
     // Returns the hash for the given canonicalized URL for use in visited
     // link coloring.
     virtual unsigned long long visitedLinkHash(
-        const char* canonicalURL, size_t length) = 0;
+        const char* canonicalURL, size_t length) { return 0; }
 
     // Returns whether the given link hash is in the user's history.  The
     // hash must have been generated by calling VisitedLinkHash().
-    virtual bool isLinkVisited(unsigned long long linkHash) = 0;
+    virtual bool isLinkVisited(unsigned long long linkHash) { return false; }
 
 
     // Database ------------------------------------------------------------
@@ -137,16 +137,16 @@ public:
     // Opens a database file; dirHandle should be 0 if the caller does not need
     // a handle to the directory containing this file
     virtual FileHandle databaseOpenFile(
-        const WebString& vfsFileName, int desiredFlags, FileHandle* dirHandle) = 0;
+        const WebString& vfsFileName, int desiredFlags, FileHandle* dirHandle) { return FileHandle(); }
 
     // Deletes a database file and returns the error code
-    virtual int databaseDeleteFile(const WebString& vfsFileName, bool syncDir) = 0;
+    virtual int databaseDeleteFile(const WebString& vfsFileName, bool syncDir) { return 0; }
 
     // Returns the attributes of the given database file
-    virtual long databaseGetFileAttributes(const WebString& vfsFileName) = 0;
+    virtual long databaseGetFileAttributes(const WebString& vfsFileName) { return 0; }
 
     // Returns the size of the given database file
-    virtual long long databaseGetFileSize(const WebString& vfsFileName) = 0;
+    virtual long long databaseGetFileSize(const WebString& vfsFileName) { return 0; }
 
 
     // Keygen --------------------------------------------------------------
@@ -157,7 +157,7 @@ public:
     // specifies the strength of the key.
     virtual WebString signedPublicKeyAndChallengeString(unsigned keySizeIndex,
                                                         const WebKit::WebString& challenge,
-                                                        const WebKit::WebURL& url) = 0;
+                                                        const WebKit::WebURL& url) { return WebString(); }
 
 
 
@@ -165,64 +165,69 @@ public:
 
     // Returns the current space allocated for the pagefile, in MB.
     // That is committed size for Windows and virtual memory size for POSIX
-    virtual size_t memoryUsageMB() = 0;
+    virtual size_t memoryUsageMB() { return 0; }
 
 
     // Message Ports -------------------------------------------------------
 
     // Creates a Message Port Channel.  This can be called on any thread.
     // The returned object should only be used on the thread it was created on.
-    virtual WebMessagePortChannel* createMessagePortChannel() = 0;
+    virtual WebMessagePortChannel* createMessagePortChannel() { return 0; }
 
 
     // Network -------------------------------------------------------------
 
     virtual void setCookies(
-        const WebURL& url, const WebURL& policyURL, const WebString& cookies) = 0;
-    virtual WebString cookies(const WebURL& url, const WebURL& policyURL) = 0;
-    virtual bool rawCookies(const WebURL& url, const WebURL& policyURL, WebVector<WebCookie>*) = 0;
-    virtual void deleteCookie(const WebURL& url, const WebString& cookieName) = 0;
+        const WebURL& url, const WebURL& policyURL, const WebString& cookies) { }
+    virtual WebString cookies(const WebURL& url, const WebURL& policyURL) { return WebString(); }
+    virtual bool rawCookies(const WebURL& url, const WebURL& policyURL, WebVector<WebCookie>*) { return false; }
+    virtual void deleteCookie(const WebURL& url, const WebString& cookieName) { }
 
     // A suggestion to prefetch IP information for the given hostname.
-    virtual void prefetchHostName(const WebString&) = 0;
+    virtual void prefetchHostName(const WebString&) { }
 
     // Returns a new WebURLLoader instance.
-    virtual WebURLLoader* createURLLoader() = 0;
+    virtual WebURLLoader* createURLLoader() { return 0; }
 
     // Returns a new WebSocketStreamHandle instance.
-    virtual WebSocketStreamHandle* createSocketStreamHandle() = 0;
+    virtual WebSocketStreamHandle* createSocketStreamHandle() { return 0; }
 
     // Returns the User-Agent string that should be used for the given URL.
-    virtual WebString userAgent(const WebURL&) = 0;
+    virtual WebString userAgent(const WebURL&) { return WebString(); }
 
 
     // Plugins -------------------------------------------------------------
 
     // If refresh is true, then cached information should not be used to
     // satisfy this call.
-    virtual void getPluginList(bool refresh, WebPluginListBuilder*) = 0;
+    virtual void getPluginList(bool refresh, WebPluginListBuilder*) { };
 
 
     // Profiling -----------------------------------------------------------
 
-    virtual void decrementStatsCounter(const char* name) = 0;
-    virtual void incrementStatsCounter(const char* name) = 0;
+    virtual void decrementStatsCounter(const char* name) { };
+    virtual void incrementStatsCounter(const char* name) { };
 
     // An event is identified by the pair (name, id).  The extra parameter
     // specifies additional data to log with the event.
-    virtual void traceEventBegin(const char* name, void* id, const char* extra) = 0;
-    virtual void traceEventEnd(const char* name, void* id, const char* extra) = 0;
+    virtual void traceEventBegin(const char* name, void* id, const char* extra) { };
+    virtual void traceEventEnd(const char* name, void* id, const char* extra) { };
+
+    // Generic callback for reporting histogram data. Range is identified by the min, max pair.
+    // By default, histogram is exponential, so that min=1, max=1000000, bucketCount=50 would do. Setting
+    // linear to true would require bucket count to cover whole min-max range.
+    virtual void histogramCounts(const WebString& name, int sample, int min, int max, int bucketCount, bool linear) { };
 
 
     // Resources -----------------------------------------------------------
 
     // Returns a blob of data corresponding to the named resource.
-    virtual WebData loadResource(const char* name) = 0;
+    virtual WebData loadResource(const char* name) { return WebData(); }
 
     // Returns a localized string resource (with an optional numeric
     // parameter value).
-    virtual WebString queryLocalizedString(WebLocalizedString::Name) = 0;
-    virtual WebString queryLocalizedString(WebLocalizedString::Name, int numericValue) = 0;
+    virtual WebString queryLocalizedString(WebLocalizedString::Name) { return WebString(); }
+    virtual WebString queryLocalizedString(WebLocalizedString::Name, int numericValue) { return WebString(); }
 
 
     // Sandbox ------------------------------------------------------------
@@ -234,34 +239,34 @@ public:
     // In these cases (and these cases only) you can call this function.
     // It's OK for this value to be conservitive (i.e. true even if the
     // sandbox isn't active).
-    virtual bool sandboxEnabled() = 0;
+    virtual bool sandboxEnabled() { return false; }
 
 
     // Shared Workers ------------------------------------------------------
 
-    virtual WebSharedWorkerRepository* sharedWorkerRepository() = 0;
+    virtual WebSharedWorkerRepository* sharedWorkerRepository() { return 0; }
 
     // Sudden Termination --------------------------------------------------
 
     // Disable/Enable sudden termination.
-    virtual void suddenTerminationChanged(bool enabled) = 0;
+    virtual void suddenTerminationChanged(bool enabled) { }
 
 
     // System --------------------------------------------------------------
 
     // Returns a value such as "en-US".
-    virtual WebString defaultLocale() = 0;
+    virtual WebString defaultLocale() { return WebString(); }
 
     // Wall clock time in seconds since the epoch.
-    virtual double currentTime() = 0;
+    virtual double currentTime() { return 0; }
 
     // Delayed work is driven by a shared timer.
-    virtual void setSharedTimerFiredFunction(void (*func)()) = 0;
-    virtual void setSharedTimerFireTime(double fireTime) = 0;
-    virtual void stopSharedTimer() = 0;
+    virtual void setSharedTimerFiredFunction(void (*func)()) { }
+    virtual void setSharedTimerFireTime(double fireTime) { }
+    virtual void stopSharedTimer() { }
 
     // Callable from a background WebKit thread.
-    virtual void callOnMainThread(void (*func)()) = 0;
+    virtual void callOnMainThread(void (*func)()) { }
 
 protected:
     ~WebKitClient() { }
