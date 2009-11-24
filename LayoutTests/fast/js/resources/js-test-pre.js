@@ -159,6 +159,42 @@ function shouldEvaluateTo(actual, expected) {
   }
 }
 
+function shouldBeNonZero(_a)
+{
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  if (exception)
+    testFailed(_a + " should be non-zero. Threw exception " + exception);
+  else if (_av != 0)
+    testPassed(_a + " is non-zero.");
+  else
+    testFailed(_a + " should be non-zero. Was " + _av);
+}
+
+function shouldBeNonNull(_a)
+{
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  if (exception)
+    testFailed(_a + " should be non-null. Threw exception " + exception);
+  else if (_av != null)
+    testPassed(_a + " is non-null.");
+  else
+    testFailed(_a + " should be non-null. Was " + _av);
+}
+
 function shouldBeUndefined(_a)
 {
   var exception;

@@ -1,3 +1,47 @@
+2009-11-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Change get... calls to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=30091
+
+        Removed old versions of get calls on WebGLRenderingContext and
+        added new ones per spec returning "any". New code simplifies
+        GraphicsContext3D and fixes previously unimplemented routines.
+        Added custom JS and V8 bindings. Added exhaustive test case
+        exercising all new code paths. Updated preexisting test cases for
+        new APIs. Fixed preexisting bugs in WebKit's and Chrome's WebGL
+        implementations.
+
+        Ran WebGL layout tests in WebKit (clean) and Chrome (couple of
+        preexisting known failures) and manual WebGL tests in both
+        browsers.
+
+        Test: fast/canvas/webgl/gl-object-get-calls.html
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::createFramebuffer):
+        (WebCore::GraphicsContext3D::createRenderbuffer):
+        (WebCore::GraphicsContext3D::deleteFramebuffer):
+        (WebCore::GraphicsContext3D::deleteRenderbuffer):
+        (WebCore::GraphicsContext3D::checkFramebufferStatus):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+
 2009-11-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Darin Fisher.

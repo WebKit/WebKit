@@ -1199,6 +1199,8 @@
 		65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323609D1DE65000BE325 /* JSCanvasPattern.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
+		6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */; };
+		6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
@@ -6507,6 +6509,8 @@
 		65DF323609D1DE65000BE325 /* JSCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasPattern.h; sourceTree = "<group>"; };
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
+		6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLGetInfo.cpp; path = canvas/WebGLGetInfo.cpp; sourceTree = "<group>"; };
+		6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLGetInfo.h; path = canvas/WebGLGetInfo.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
@@ -10640,6 +10644,8 @@
 				49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */,
 				49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */,
 				49C7B9B01042D32E0009D447 /* WebGLFramebuffer.idl */,
+				6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */,
+				6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
@@ -18134,6 +18140,7 @@
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
+				6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20277,6 +20284,7 @@
 				1479FAEF109AE37500DED655 /* RenderRubyBase.cpp in Sources */,
 				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
 				1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */,
+				6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

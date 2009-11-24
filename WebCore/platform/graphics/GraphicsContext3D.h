@@ -458,26 +458,25 @@ namespace WebCore {
 
         int  getAttribLocation(WebGLProgram*, const String& name);
 
-        bool getBoolean(unsigned long pname);
-        PassRefPtr<WebGLUnsignedByteArray> getBooleanv(unsigned long pname);
-        int getBufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getBufferParameteriv(unsigned long target, unsigned long pname);
+        void getBooleanv(unsigned long pname, unsigned char* value);
+
+        void getBufferParameteriv(unsigned long target, unsigned long pname, int* value);
 
         unsigned long getError();
 
-        float getFloat(unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getFloatv(unsigned long pname);
-        int getFramebufferAttachmentParameteri(unsigned long target, unsigned long attachment, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
-        int getInteger(unsigned long pname);
-        PassRefPtr<WebGLIntArray> getIntegerv(unsigned long pname);
-        int getProgrami(WebGLProgram*, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getProgramiv(WebGLProgram*, unsigned long pname);
+        void getFloatv(unsigned long pname, float* value);
+
+        void getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname, int* value);
+
+        void getIntegerv(unsigned long pname, int* value);
+
+        void getProgramiv(WebGLProgram* program, unsigned long pname, int* value);
+
         String getProgramInfoLog(WebGLProgram*);
-        int getRenderbufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
-        int getShaderi(WebGLShader*, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getShaderiv(WebGLShader*, unsigned long pname);
+
+        void getRenderbufferParameteriv(unsigned long target, unsigned long pname, int* value);
+
+        void getShaderiv(WebGLShader*, unsigned long pname, int* value);
 
         String getShaderInfoLog(WebGLShader*);
 
@@ -486,24 +485,18 @@ namespace WebCore {
 
         String getShaderSource(WebGLShader*);
         String getString(unsigned long name);
-        
-        float getTexParameterf(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getTexParameterfv(unsigned long target, unsigned long pname);
-        int getTexParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
 
-        float getUniformf(WebGLProgram* program, long location);
-        PassRefPtr<WebGLFloatArray> getUniformfv(WebGLProgram* program, long location);
-        int getUniformi(WebGLProgram* program, long location);
-        PassRefPtr<WebGLIntArray> getUniformiv(WebGLProgram* program, long location);
+        void getTexParameterfv(unsigned long target, unsigned long pname, float* value);
+        void getTexParameteriv(unsigned long target, unsigned long pname, int* value);
+
+        void getUniformfv(WebGLProgram* program, long location, float* value);
+        void getUniformiv(WebGLProgram* program, long location, int* value);
 
         long getUniformLocation(WebGLProgram*, const String& name);
 
-        float getVertexAttribf(unsigned long index, unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
-        int getVertexAttribi(unsigned long index, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getVertexAttribiv(unsigned long index, unsigned long pname);
-        
+        void getVertexAttribfv(unsigned long index, unsigned long pname, float* value);
+        void getVertexAttribiv(unsigned long index, unsigned long pname, int* value);
+
         long getVertexAttribOffset(unsigned long index, unsigned long pname);
 
         void hint(unsigned long target, unsigned long mode);
@@ -643,4 +636,3 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // GraphicsContext3D_h
-

@@ -365,7 +365,15 @@ namespace WebCore {
 #if ENABLE(3D_CANVAS)
         DECLARE_CALLBACK(WebGLRenderingContextBufferData);
         DECLARE_CALLBACK(WebGLRenderingContextBufferSubData);
-        DECLARE_CALLBACK(WebGLRenderingContextSizeof);
+        DECLARE_CALLBACK(WebGLRenderingContextGetBufferParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetFramebufferAttachmentParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetProgramParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetRenderbufferParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetShaderParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetTexParameter);
+        DECLARE_CALLBACK(WebGLRenderingContextGetUniform);
+        DECLARE_CALLBACK(WebGLRenderingContextGetVertexAttrib);
         DECLARE_CALLBACK(WebGLRenderingContextTexImage2D);
         DECLARE_CALLBACK(WebGLRenderingContextTexSubImage2D);
         DECLARE_CALLBACK(WebGLRenderingContextUniform1fv);

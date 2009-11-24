@@ -13,60 +13,57 @@ Context contains getError
 PASS context contains getError
 
 Check default values
-PASS context.getInteger(context.ACTIVE_TEXTURE) is context.TEXTURE0
-PASS context.getInteger(context.ALIASED_LINE_WIDTH_RANGE) is 1
-PASS context.getInteger(context.ALIASED_POINT_SIZE_RANGE) is 1
-PASS context.getInteger(context.ARRAY_BUFFER_BINDING) is 0
-PASS context.getInteger(context.BLEND) is 0
-PASS context.getInteger(context.BLEND_COLOR) is 0
-PASS context.getInteger(context.BLEND_DST_ALPHA) is 0
-PASS context.getInteger(context.BLEND_DST_RGB) is 0
-PASS context.getInteger(context.BLEND_EQUATION_ALPHA) is context.FUNC_ADD
-PASS context.getInteger(context.BLEND_EQUATION_RGB) is context.FUNC_ADD
-PASS context.getInteger(context.BLEND_SRC_ALPHA) is 1
-PASS context.getInteger(context.BLEND_SRC_RGB) is 1
-PASS context.getInteger(context.COLOR_CLEAR_VALUE) is 0
-PASS context.getInteger(context.COLOR_WRITEMASK) is 1
-PASS context.getInteger(context.CULL_FACE) is 0
-PASS context.getInteger(context.CULL_FACE_MODE) is context.BACK
-PASS context.getInteger(context.CURRENT_PROGRAM) is 0
-PASS context.getInteger(context.DEPTH_FUNC) is context.LESS
-PASS context.getInteger(context.DEPTH_RANGE) is 0
-PASS context.getInteger(context.DEPTH_TEST) is 0
-PASS context.getInteger(context.DEPTH_WRITEMASK) is 1
-PASS context.getInteger(context.DITHER) is 1
-PASS context.getInteger(context.ELEMENT_ARRAY_BUFFER_BINDING) is 0
-PASS context.getInteger(context.FRONT_FACE) is context.CCW
-PASS context.getInteger(context.GENERATE_MIPMAP_HINT) is context.DONT_CARE
-PASS context.getInteger(context.LINE_WIDTH) is 1
-PASS context.getInteger(context.POLYGON_OFFSET_FACTOR) is 0
-PASS context.getInteger(context.POLYGON_OFFSET_FILL) is 0
-PASS context.getInteger(context.POLYGON_OFFSET_UNITS) is 0
-PASS context.getInteger(context.RENDERBUFFER_BINDING_EXT) is 0
-PASS context.getInteger(context.SAMPLE_COVERAGE_INVERT) is 0
-PASS context.getInteger(context.SAMPLE_COVERAGE_VALUE) is 1
-PASS context.getInteger(context.SCISSOR_BOX) is 0
-PASS context.getInteger(context.SCISSOR_TEST) is 0
-PASS context.getInteger(context.STENCIL_BACK_FAIL) is context.KEEP
-PASS context.getInteger(context.STENCIL_BACK_FUNC) is context.ALWAYS
-PASS context.getInteger(context.STENCIL_BACK_PASS_DEPTH_FAIL) is context.KEEP
-PASS context.getInteger(context.STENCIL_BACK_PASS_DEPTH_PASS) is context.KEEP
-PASS context.getInteger(context.STENCIL_BACK_REF) is 0
-PASS context.getInteger(context.STENCIL_BACK_VALUE_MASK) is -1
-PASS context.getInteger(context.STENCIL_BACK_WRITEMASK) is -1
-PASS context.getInteger(context.STENCIL_BITS) is 0
-PASS context.getInteger(context.STENCIL_CLEAR_VALUE) is 0
-PASS context.getInteger(context.STENCIL_FAIL) is context.KEEP
-PASS context.getInteger(context.STENCIL_FUNC) is context.ALWAYS
-PASS context.getInteger(context.STENCIL_PASS_DEPTH_FAIL) is context.KEEP
-PASS context.getInteger(context.STENCIL_PASS_DEPTH_PASS) is context.KEEP
-PASS context.getInteger(context.STENCIL_REF) is 0
-PASS context.getInteger(context.STENCIL_TEST) is 0
-PASS context.getInteger(context.STENCIL_VALUE_MASK) is -1
-PASS context.getInteger(context.STENCIL_WRITEMASK) is -1
-PASS context.getInteger(context.TEXTURE_BINDING_2D) is 0
-PASS context.getInteger(context.TEXTURE_BINDING_CUBE_MAP) is 0
-PASS context.getInteger(context.VIEWPORT) is 0
+PASS context.getParameter(context.ACTIVE_TEXTURE) is context.TEXTURE0
+PASS (context.getParameter(context.ALIASED_LINE_WIDTH_RANGE)[0] == 1) || (context.getParameter(context.ALIASED_LINE_WIDTH_RANGE)[1] == 1) is true
+PASS (context.getParameter(context.ALIASED_POINT_SIZE_RANGE)[0] == 1) || (context.getParameter(context.ALIASED_POINT_SIZE_RANGE)[1] == 1) is true
+PASS context.getParameter(context.ARRAY_BUFFER_BINDING) is null
+PASS context.getParameter(context.BLEND) is false
+PASS context.getParameter(context.BLEND_COLOR) is [0, 0, 0, 0]
+PASS context.getParameter(context.BLEND_DST_ALPHA) is 0
+PASS context.getParameter(context.BLEND_DST_RGB) is 0
+PASS context.getParameter(context.BLEND_EQUATION_ALPHA) is context.FUNC_ADD
+PASS context.getParameter(context.BLEND_EQUATION_RGB) is context.FUNC_ADD
+PASS context.getParameter(context.BLEND_SRC_ALPHA) is 1
+PASS context.getParameter(context.BLEND_SRC_RGB) is 1
+PASS context.getParameter(context.COLOR_CLEAR_VALUE) is [0, 0, 0, 0]
+PASS context.getParameter(context.COLOR_WRITEMASK) is [1, 1, 1, 1]
+PASS context.getParameter(context.CULL_FACE) is false
+PASS context.getParameter(context.CULL_FACE_MODE) is context.BACK
+PASS context.getParameter(context.CURRENT_PROGRAM) is null
+PASS context.getParameter(context.DEPTH_FUNC) is context.LESS
+PASS context.getParameter(context.DEPTH_RANGE) is [0, 1]
+PASS context.getParameter(context.DEPTH_TEST) is false
+PASS context.getParameter(context.DEPTH_WRITEMASK) is true
+PASS context.getParameter(context.DITHER) is true
+PASS context.getParameter(context.ELEMENT_ARRAY_BUFFER_BINDING) is null
+PASS context.getParameter(context.FRONT_FACE) is context.CCW
+PASS context.getParameter(context.GENERATE_MIPMAP_HINT) is context.DONT_CARE
+PASS context.getParameter(context.LINE_WIDTH) is 1
+PASS context.getParameter(context.POLYGON_OFFSET_FACTOR) is 0
+PASS context.getParameter(context.POLYGON_OFFSET_FILL) is false
+PASS context.getParameter(context.POLYGON_OFFSET_UNITS) is 0
+PASS context.getParameter(context.RENDERBUFFER_BINDING) is null
+PASS context.getParameter(context.SAMPLE_COVERAGE_INVERT) is false
+PASS context.getParameter(context.SAMPLE_COVERAGE_VALUE) is 1
+PASS context.getParameter(context.SCISSOR_BOX)[0] is 0
+PASS context.getParameter(context.SCISSOR_BOX)[1] is 0
+PASS context.getParameter(context.SCISSOR_TEST) is false
+PASS context.getParameter(context.STENCIL_BACK_FAIL) is context.KEEP
+PASS context.getParameter(context.STENCIL_BACK_FUNC) is context.ALWAYS
+PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_FAIL) is context.KEEP
+PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS) is context.KEEP
+PASS context.getParameter(context.STENCIL_BACK_REF) is 0
+PASS context.getParameter(context.STENCIL_BITS) is 0
+PASS context.getParameter(context.STENCIL_CLEAR_VALUE) is 0
+PASS context.getParameter(context.STENCIL_FAIL) is context.KEEP
+PASS context.getParameter(context.STENCIL_FUNC) is context.ALWAYS
+PASS context.getParameter(context.STENCIL_PASS_DEPTH_FAIL) is context.KEEP
+PASS context.getParameter(context.STENCIL_PASS_DEPTH_PASS) is context.KEEP
+PASS context.getParameter(context.STENCIL_REF) is 0
+PASS context.getParameter(context.STENCIL_TEST) is false
+PASS context.getParameter(context.TEXTURE_BINDING_2D) is null
+PASS context.getParameter(context.TEXTURE_BINDING_CUBE_MAP) is null
+PASS context.getParameter(context.VIEWPORT) is [0, 0, 2, 2]
 
 PASS successfullyParsed is true
 

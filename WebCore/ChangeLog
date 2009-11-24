@@ -1,3 +1,138 @@
+2009-11-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Change get... calls to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=30091
+
+        Removed old versions of get calls on WebGLRenderingContext and
+        added new ones per spec returning "any". New code simplifies
+        GraphicsContext3D and fixes previously unimplemented routines.
+        Added custom JS and V8 bindings. Added exhaustive test case
+        exercising all new code paths. Updated preexisting test cases for
+        new APIs. Fixed preexisting bugs in WebKit's and Chrome's WebGL
+        implementations.
+
+        Ran WebGL layout tests in WebKit (clean) and Chrome (couple of
+        preexisting known failures) and manual WebGL tests in both
+        browsers.
+
+        Test: fast/canvas/webgl/gl-object-get-calls.html
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::):
+        (WebCore::getObjectParameter):
+        (WebCore::getProgramParameterHelper):
+        (WebCore::JSWebGLRenderingContext::getBufferParameter):
+        (WebCore::JSWebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::JSWebGLRenderingContext::getParameter):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getTexParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::JSWebGLRenderingContext::getVertexAttrib):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8):
+        (WebCore::):
+        (WebCore::getObjectParameter):
+        (WebCore::getProgramParameter):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * html/canvas/CanvasObject.cpp:
+        (WebCore::CanvasObject::CanvasObject):
+        (WebCore::CanvasObject::setObject):
+        (WebCore::CanvasObject::deleteObject):
+        * html/canvas/CanvasObject.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::create):
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLGetInfo.cpp: Added.
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::~WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getType):
+        (WebCore::WebGLGetInfo::getBool):
+        (WebCore::WebGLGetInfo::getFloat):
+        (WebCore::WebGLGetInfo::getLong):
+        (WebCore::WebGLGetInfo::getString):
+        (WebCore::WebGLGetInfo::getUnsignedLong):
+        (WebCore::WebGLGetInfo::getWebGLBuffer):
+        (WebCore::WebGLGetInfo::getWebGLFloatArray):
+        (WebCore::WebGLGetInfo::getWebGLFramebuffer):
+        (WebCore::WebGLGetInfo::getWebGLIntArray):
+        (WebCore::WebGLGetInfo::getWebGLProgram):
+        (WebCore::WebGLGetInfo::getWebGLRenderbuffer):
+        (WebCore::WebGLGetInfo::getWebGLTexture):
+        (WebCore::WebGLGetInfo::getWebGLUnsignedByteArray):
+        * html/canvas/WebGLGetInfo.h: Added.
+        (WebCore::WebGLGetInfo::):
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::create):
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLStateRestorer::WebGLStateRestorer):
+        (WebCore::WebGLStateRestorer::~WebGLStateRestorer):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::activeTexture):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::bindRenderbuffer):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::getBufferParameter):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getString):
+        (WebCore::WebGLRenderingContext::getTexParameter):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::getBooleanParameter):
+        (WebCore::WebGLRenderingContext::getFloatParameter):
+        (WebCore::WebGLRenderingContext::getIntParameter):
+        (WebCore::WebGLRenderingContext::getLongParameter):
+        (WebCore::WebGLRenderingContext::getUnsignedLongParameter):
+        (WebCore::WebGLRenderingContext::getWebGLFloatArrayParameter):
+        (WebCore::WebGLRenderingContext::getWebGLIntArrayParameter):
+        (WebCore::WebGLRenderingContext::getWebGLUnsignedByteArrayParameter):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::create):
+        (WebCore::WebGLTexture::WebGLTexture):
+        * html/canvas/WebGLTexture.h:
+        * manual-tests/webgl/resources/utils3d.js:
+        (initWebGL):
+        (loadShader):
+        (Framerate.prototype.snapshot):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::bindRenderbuffer):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+
 2009-11-24  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

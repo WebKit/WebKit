@@ -29,6 +29,7 @@
 #include "CanvasRenderingContext.h"
 #include "ExceptionCode.h"
 #include "WebGLFloatArray.h"
+#include "WebGLGetInfo.h"
 #include "WebGLIntArray.h"
 #include "WebGLUnsignedByteArray.h"
 #include "GraphicsContext3D.h"
@@ -60,7 +61,7 @@ class WebKitCSSMatrix;
         // like GL_FLOAT, GL_INT, etc.
         int sizeInBytes(int type, ExceptionCode& ec);
 
-        void activeTexture(unsigned long texture);
+        void activeTexture(unsigned long texture, ExceptionCode& ec);
         void attachShader(WebGLProgram*, WebGLShader*, ExceptionCode& ec);
         void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name, ExceptionCode& ec);
         void bindBuffer(unsigned long target, WebGLBuffer*, ExceptionCode& ec);
@@ -130,26 +131,21 @@ class WebKitCSSMatrix;
 
         int  getAttribLocation(WebGLProgram*, const String& name);
 
-        bool getBoolean(unsigned long pname);
-        PassRefPtr<WebGLUnsignedByteArray> getBooleanv(unsigned long pname);
-        int getBufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getBufferParameteriv(unsigned long target, unsigned long pname);
+        WebGLGetInfo getBufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
 
         unsigned long getError();
 
-        float getFloat(unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getFloatv(unsigned long pname);
-        int getFramebufferAttachmentParameteri(unsigned long target, unsigned long attachment, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
-        int getInteger(unsigned long pname);
-        PassRefPtr<WebGLIntArray> getIntegerv(unsigned long pname);
-        int getProgrami(WebGLProgram*, unsigned long pname, ExceptionCode& ec);
-        PassRefPtr<WebGLIntArray> getProgramiv(WebGLProgram*, unsigned long pname, ExceptionCode& ec);
+        WebGLGetInfo getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname, ExceptionCode&);
+
+        WebGLGetInfo getParameter(unsigned long pname, ExceptionCode&);
+
+        WebGLGetInfo getProgramParameter(WebGLProgram*, unsigned long pname, ExceptionCode&);
+
         String getProgramInfoLog(WebGLProgram*, ExceptionCode& ec);
-        int getRenderbufferParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
-        int getShaderi(WebGLShader*, unsigned long pname, ExceptionCode& ec);
-        PassRefPtr<WebGLIntArray> getShaderiv(WebGLShader*, unsigned long pname, ExceptionCode& ec);
+
+        WebGLGetInfo getRenderbufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
+
+        WebGLGetInfo getShaderParameter(WebGLShader*, unsigned long pname, ExceptionCode& ec);
 
         String getShaderInfoLog(WebGLShader*, ExceptionCode& ec);
 
@@ -159,22 +155,13 @@ class WebKitCSSMatrix;
         String getShaderSource(WebGLShader*, ExceptionCode&);
         String getString(unsigned long name);
 
-        float getTexParameterf(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getTexParameterfv(unsigned long target, unsigned long pname);
-        int getTexParameteri(unsigned long target, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
+        WebGLGetInfo getTexParameter(unsigned long target, unsigned long pname, ExceptionCode&);
 
-        float getUniformf(WebGLProgram* program, long location, ExceptionCode&);
-        PassRefPtr<WebGLFloatArray> getUniformfv(WebGLProgram* program, long location, ExceptionCode&);
-        long getUniformi(WebGLProgram* program, long location, ExceptionCode& ec);
-        PassRefPtr<WebGLIntArray> getUniformiv(WebGLProgram* program, long location, ExceptionCode&);
+        WebGLGetInfo getUniform(WebGLProgram* program, long location, ExceptionCode& ec);
 
         long getUniformLocation(WebGLProgram*, const String& name, ExceptionCode&);
 
-        float getVertexAttribf(unsigned long index, unsigned long pname);
-        PassRefPtr<WebGLFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
-        long getVertexAttribi(unsigned long index, unsigned long pname);
-        PassRefPtr<WebGLIntArray> getVertexAttribiv(unsigned long index, unsigned long pname);
+        WebGLGetInfo getVertexAttrib(unsigned long index, unsigned long pname, ExceptionCode&);
 
         long getVertexAttribOffset(unsigned long index, unsigned long pname);
 
@@ -338,6 +325,29 @@ class WebKitCSSMatrix;
         
         Vector<VertexAttribState> m_vertexAttribState;
         unsigned m_maxVertexAttribs;
+
+        RefPtr<WebGLProgram> m_currentProgram;
+        RefPtr<WebGLFramebuffer> m_framebufferBinding;
+        RefPtr<WebGLRenderbuffer> m_renderbufferBinding;
+        class TextureUnitState {
+        public:
+            RefPtr<WebGLTexture> m_texture2DBinding;
+            RefPtr<WebGLTexture> m_textureCubeMapBinding;
+        };
+        TextureUnitState m_textureUnits[32];
+        unsigned long m_activeTextureUnit;
+
+        // Helpers for getParameter and others
+        WebGLGetInfo getBooleanParameter(unsigned long pname);
+        WebGLGetInfo getFloatParameter(unsigned long pname);
+        WebGLGetInfo getIntParameter(unsigned long pname);
+        WebGLGetInfo getLongParameter(unsigned long pname);
+        WebGLGetInfo getUnsignedLongParameter(unsigned long pname);
+        WebGLGetInfo getWebGLFloatArrayParameter(unsigned long pname);
+        WebGLGetInfo getWebGLIntArrayParameter(unsigned long pname);
+        WebGLGetInfo getWebGLUnsignedByteArrayParameter(unsigned long pname);
+
+        friend class WebGLStateRestorer;
     };
 
 } // namespace WebCore

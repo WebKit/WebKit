@@ -43,7 +43,7 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
     gl.linkProgram(gl.program);
 
     // Check the link status
-    var linked = gl.getProgrami(gl.program, gl.LINK_STATUS);
+    var linked = gl.getProgramParameter(gl.program, gl.LINK_STATUS);
     if (!linked) {
         // something went wrong with the link
         var error = gl.getProgramInfoLog (gl.program);
@@ -105,7 +105,7 @@ function loadShader(ctx, shaderId)
     ctx.compileShader(shader);
 
     // Check the compile status
-    var compiled = ctx.getShaderi(shader, ctx.COMPILE_STATUS);
+    var compiled = ctx.getShaderParameter(shader, ctx.COMPILE_STATUS);
     if (!compiled) {
         // Something went wrong during compilation; get the error
         var error = ctx.getShaderInfoLog(shader);
@@ -528,4 +528,3 @@ Framerate.prototype.snapshot = function()
         this.renderTime = newTime;
     }
 }
-

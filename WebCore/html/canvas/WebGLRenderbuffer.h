@@ -39,8 +39,13 @@ namespace WebCore {
         
         static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*);
         
+        // For querying previously created objects via e.g. getFramebufferAttachmentParameter
+        // FIXME: should consider canonicalizing these objects
+        static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*, Platform3DObject renderbuffer);
+
     protected:
         WebGLRenderbuffer(WebGLRenderingContext*);
+        WebGLRenderbuffer(WebGLRenderingContext*, Platform3DObject);
         
         virtual void _deleteObject(Platform3DObject);
     };

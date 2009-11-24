@@ -64,11 +64,11 @@
             var offset = (15*50+20) * 4;
             for (var i = 0; i < 10; ++i)
                 if (buf[offset+i*4] != 255 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
-                    fail(20, 15, buf, "(255,0,0,255)");
+                    fail(20 + i, 15, buf, "(255,0,0,255)");
                     return;
                 }
             // Last line should be all black
-            offset = (49*50) * 4
+            offset = (49*50) * 4;
             for (var i = 0; i < 50; ++i)
                 if (buf[offset+i*4] != 0 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
                     fail(i, 49, buf, "(0,0,0,255)");

@@ -17,17 +17,12 @@ PASS contextA.bindRenderbuffer(contextA.RENDERBUFFER, renderBufferB) threw excep
 PASS contextA.bindTexture(contextA.TEXTURE_2D, textureB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.framebufferRenderbuffer(contextA.FRAMEBUFFER, contextA.DEPTH_ATTACHMENT, contextA.RENDERBUFFER, renderBufferB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.framebufferTexture2D(contextA.FRAMEBUFFER, contextA.COLOR_ATTACHMENT0, contextA.TEXTURE_2D, textureB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getProgrami(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getProgramiv(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getProgramParameter(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getProgramInfoLog(programB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getShaderi(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getShaderiv(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getShaderParameter(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getShaderInfoLog(shaderB, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getShaderSource(shaderB) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getUniformf(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getUniformfv(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getUniformi(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS contextA.getUniformiv(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS contextA.getUniform(programB, locationA) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS contextA.getUniformLocation(programB, 'u_modelViewProjMatrix') threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS successfullyParsed is true
 

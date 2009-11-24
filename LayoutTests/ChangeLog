@@ -1,3 +1,58 @@
+2009-11-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Change get... calls to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=30091
+
+        Removed old versions of get calls on WebGLRenderingContext and
+        added new ones per spec returning "any". New code simplifies
+        GraphicsContext3D and fixes previously unimplemented routines.
+        Added custom JS and V8 bindings. Added exhaustive test case
+        exercising all new code paths. Updated preexisting test cases for
+        new APIs. Fixed preexisting bugs in WebKit's and Chrome's WebGL
+        implementations.
+
+        Ran WebGL layout tests in WebKit (clean) and Chrome (couple of
+        preexisting known failures) and manual WebGL tests in both
+        browsers.
+        
+        Two of the tests fail on various hardware and were modified. See
+        
+            https://bugs.webkit.org/show_bug.cgi?id=31842
+            https://bugs.webkit.org/show_bug.cgi?id=31843
+
+        Test: fast/canvas/webgl/gl-object-get-calls.html
+
+        * fast/canvas/webgl/gl-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-get-calls.html:
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt: Added.
+        * fast/canvas/webgl/gl-object-get-calls.html: Added.
+        * fast/canvas/webgl/incorrect-context-object-behaviour-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/resources/boolUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/floatUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/intUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/matUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/noopUniformShader.frag: Added.
+        * fast/canvas/webgl/resources/utils3d.js:
+        (initWebGL):
+        (loadShader):
+        (Framerate.prototype.snapshot):
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (loadProgram):
+        (loadStandardVertexShader):
+        (loadVertexShader):
+        (loadStandardFragmentShader):
+        (loadFragmentShader):
+        * fast/canvas/webgl/script-tests/gl-object-get-calls.js: Added.
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js:
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js:
+        * fast/canvas/webgl/triangle.html:
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeNonZero):
+        (shouldBeNonNull):
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

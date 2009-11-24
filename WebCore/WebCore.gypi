@@ -1283,6 +1283,8 @@
             'html/canvas/WebGLFloatArray.h',
             'html/canvas/WebGLFramebuffer.cpp',
             'html/canvas/WebGLFramebuffer.h',
+            'html/canvas/WebGLGetInfo.cpp',
+            'html/canvas/WebGLGetInfo.h',
             'html/canvas/CanvasGradient.cpp',
             'html/canvas/CanvasGradient.h',
             'html/canvas/WebGLIntArray.cpp',

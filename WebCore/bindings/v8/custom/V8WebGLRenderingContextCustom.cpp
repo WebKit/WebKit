@@ -45,6 +45,8 @@
 #include "V8WebGLByteArray.h"
 #include "V8WebGLFloatArray.h"
 #include "V8WebGLIntArray.h"
+#include "V8WebGLProgram.h"
+#include "V8WebGLShader.h"
 #include "V8WebGLShortArray.h"
 #include "V8WebGLUnsignedByteArray.h"
 #include "V8WebGLUnsignedIntArray.h"
@@ -168,6 +170,263 @@ CALLBACK_FUNC_DECL(WebGLRenderingContextBufferSubData)
     ExceptionCode exceptionCode;
     context->bufferSubData(target, offset, array, exceptionCode);
     return v8::Undefined();
+}
+
+static v8::Handle<v8::Value> toV8(const WebGLGetInfo& info)
+{
+    switch (info.getType()) {
+    case WebGLGetInfo::kTypeBool:
+        return v8::Boolean::New(info.getBool());
+    case WebGLGetInfo::kTypeFloat:
+        return v8::Number::New(info.getFloat());
+    case WebGLGetInfo::kTypeLong:
+        return v8::Integer::New(info.getLong());
+    case WebGLGetInfo::kTypeNull:
+        return v8::Null();
+    case WebGLGetInfo::kTypeString:
+        return v8::String::New(fromWebCoreString(info.getString()), info.getString().length());
+    case WebGLGetInfo::kTypeUnsignedLong:
+        return v8::Integer::NewFromUnsigned(info.getUnsignedLong());
+    case WebGLGetInfo::kTypeWebGLBuffer:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLBUFFER, info.getWebGLBuffer());
+    case WebGLGetInfo::kTypeWebGLFloatArray:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLFLOATARRAY, info.getWebGLFloatArray());
+    case WebGLGetInfo::kTypeWebGLFramebuffer:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLFRAMEBUFFER, info.getWebGLFramebuffer());
+    case WebGLGetInfo::kTypeWebGLIntArray:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLINTARRAY, info.getWebGLIntArray());
+    // FIXME: implement WebGLObjectArray
+    // case WebGLGetInfo::kTypeWebGLObjectArray:
+    case WebGLGetInfo::kTypeWebGLProgram:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLPROGRAM, info.getWebGLProgram());
+    case WebGLGetInfo::kTypeWebGLRenderbuffer:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLRENDERBUFFER, info.getWebGLRenderbuffer());
+    case WebGLGetInfo::kTypeWebGLTexture:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLTEXTURE, info.getWebGLTexture());
+    case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY, info.getWebGLUnsignedByteArray());
+    default:
+        notImplemented();
+        return v8::Undefined();
+    }
+}
+
+enum ObjectType {
+    kBuffer, kRenderbuffer, kTexture, kVertexAttrib
+};
+
+static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, ObjectType objectType)
+{
+    if (args.Length() != 2) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context =
+        V8DOMWrapper::convertDOMWrapperToNative<WebGLRenderingContext>(args.Holder());
+    bool ok;
+    unsigned target = toInt32(args[0], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    unsigned pname = toInt32(args[1], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    WebGLGetInfo info;
+    switch (objectType) {
+    case kBuffer:
+        info = context->getBufferParameter(target, pname, ec);
+        break;
+    case kRenderbuffer:
+        info = context->getRenderbufferParameter(target, pname, ec);
+        break;
+    case kTexture:
+        info = context->getTexParameter(target, pname, ec);
+        break;
+    case kVertexAttrib:
+        // target => index
+        info = context->getVertexAttrib(target, pname, ec);
+        break;
+    default:
+        notImplemented();
+        break;
+    }
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    return toV8(info);
+}
+
+enum WhichProgramCall {
+    kProgramParameter, kUniform
+};
+
+static v8::Handle<v8::Value> getProgramParameter(const v8::Arguments& args, WhichProgramCall programCall)
+{
+    if (args.Length() != 2) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context =
+        V8DOMWrapper::convertDOMWrapperToNative<WebGLRenderingContext>(args.Holder());
+    WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? v8DOMWrapperTo<WebGLProgram>(V8ClassIndex::WEBGLPROGRAM, v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    bool ok;
+    unsigned pname = toInt32(args[1], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    WebGLGetInfo info;
+    switch (programCall) {
+    case kProgramParameter:
+        info = context->getProgramParameter(program, pname, ec);
+        break;
+    case kUniform:
+        // pname -> location
+        info = context->getUniform(program, pname, ec);
+        break;
+    default:
+        notImplemented();
+        break;
+    }
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    return toV8(info);
+}
+
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetBufferParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getBufferParameter()");
+    return getObjectParameter(args, kBuffer);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetFramebufferAttachmentParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getFramebufferAttachmentParameter()");
+
+    if (args.Length() != 3) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context =
+        V8DOMWrapper::convertDOMWrapperToNative<WebGLRenderingContext>(args.Holder());
+    bool ok;
+    unsigned target = toInt32(args[0], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    unsigned attachment = toInt32(args[1], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    unsigned pname = toInt32(args[2], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    WebGLGetInfo info = context->getFramebufferAttachmentParameter(target, attachment, pname, ec);
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    return toV8(info);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getParameter()");
+
+    if (args.Length() != 1) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context =
+        V8DOMWrapper::convertDOMWrapperToNative<WebGLRenderingContext>(args.Holder());
+    bool ok;
+    unsigned pname = toInt32(args[0], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    WebGLGetInfo info = context->getParameter(pname, ec);
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    return toV8(info);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetProgramParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getProgramParameter()");
+    return getProgramParameter(args, kProgramParameter);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetRenderbufferParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getRenderbufferParameter()");
+    return getObjectParameter(args, kRenderbuffer);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetShaderParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getShaderParameter()");
+
+    if (args.Length() != 2) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    ExceptionCode ec = 0;
+    WebGLRenderingContext* context =
+        V8DOMWrapper::convertDOMWrapperToNative<WebGLRenderingContext>(args.Holder());
+    WebGLShader* shader = V8WebGLShader::HasInstance(args[0]) ? v8DOMWrapperTo<WebGLShader>(V8ClassIndex::WEBGLSHADER, v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    bool ok;
+    unsigned pname = toInt32(args[1], ok);
+    if (!ok) {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+    WebGLGetInfo info = context->getShaderParameter(shader, pname, ec);
+    if (ec) {
+        V8Proxy::setDOMException(ec);
+        return v8::Undefined();
+    }
+    return toV8(info);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetTexParameter)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getTexParameter()");
+    return getObjectParameter(args, kTexture);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetUniform)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getUniform()");
+    return getProgramParameter(args, kUniform);
+}
+
+CALLBACK_FUNC_DECL(WebGLRenderingContextGetVertexAttrib)
+{
+    INC_STATS("DOM.WebGLRenderingContext.getVertexAttrib()");
+    return getObjectParameter(args, kVertexAttrib);
 }
 
 CALLBACK_FUNC_DECL(WebGLRenderingContextTexImage2D)
