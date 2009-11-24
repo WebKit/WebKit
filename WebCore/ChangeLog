@@ -1,3 +1,75 @@
+2009-11-23  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add range checks to rendering calls in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=31239
+
+        I am now tracking the size of the data in each CanvasBuffer object
+        and keeping track of the buffer size of each active vertex attrib.
+        In drawArrays and drawElements I make sure no attempt is made to
+        access elements outside the valid buffer ranges. The test at:
+
+            http://cs.helsinki.fi/u/ilmarihe/c3d/functions/drawArraysOutOfBounds.html
+
+        no longer crashes.
+
+        I also added all the WebGL enumerations to GraphicsContext3D to use them in the validation checks
+
+        Tests: fast/canvas/webgl/drawArraysOutOfBounds.html
+               fast/canvas/webgl/drawElementssOutOfBounds.html
+
+        * bindings/js/JSWebGLArrayCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::bufferData):
+        (WebCore::JSWebGLRenderingContext::bufferSubData):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLArrayBuffer.cpp:
+        (WebCore::WebGLArrayBuffer::create):
+        (WebCore::WebGLArrayBuffer::data):
+        * html/canvas/WebGLArrayBuffer.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        (WebCore::WebGLBuffer::associateBufferData):
+        (WebCore::WebGLBuffer::associateBufferSubData):
+        (WebCore::WebGLBuffer::byteLength):
+        * html/canvas/WebGLBuffer.h:
+        (WebCore::WebGLBuffer::elementArrayBuffer):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::sizeInBytes):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::createShader):
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::validateIndexArray):
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::isFramebuffer):
+        (WebCore::WebGLRenderingContext::isProgram):
+        (WebCore::WebGLRenderingContext::isRenderbuffer):
+        (WebCore::WebGLRenderingContext::isShader):
+        (WebCore::WebGLRenderingContext::isTexture):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::validateProgram):
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+        (WebCore::WebGLRenderingContext::detachAndRemoveAllObjects):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::VertexAttribState::VertexAttribState):
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::create):
+        (WebCore::WebGLShader::WebGLShader):
+        * html/canvas/WebGLShader.h:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::createShader):
+
 2009-11-23  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

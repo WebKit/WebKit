@@ -29,11 +29,20 @@
 
 #include "WebGLArrayBuffer.h"
 
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
 PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(unsigned sizeInBytes)
 {
     return adoptRef(new WebGLArrayBuffer(sizeInBytes));
+}
+
+PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(WebGLArrayBuffer* other)
+{
+    RefPtr<WebGLArrayBuffer> buffer = adoptRef(new WebGLArrayBuffer(other->byteLength()));
+    memcpy(buffer->data(), other->data(), other->byteLength());
+    return buffer.release();
 }
 
 WebGLArrayBuffer::WebGLArrayBuffer(unsigned sizeInBytes) {
@@ -42,6 +51,10 @@ WebGLArrayBuffer::WebGLArrayBuffer(unsigned sizeInBytes) {
 }
 
 void* WebGLArrayBuffer::data() {
+    return m_data;
+}
+
+const void* WebGLArrayBuffer::data() const {
     return m_data;
 }
 

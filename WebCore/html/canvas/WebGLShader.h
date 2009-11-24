@@ -37,10 +37,10 @@ namespace WebCore {
     public:
         virtual ~WebGLShader() { deleteObject(); }
         
-        static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GraphicsContext3D::ShaderType);
+        static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
         
     private:
-        WebGLShader(WebGLRenderingContext*, GraphicsContext3D::ShaderType);
+        WebGLShader(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
 
         virtual void _deleteObject(Platform3DObject);
     };

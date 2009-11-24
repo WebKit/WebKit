@@ -27,6 +27,7 @@
 #define WebGLBuffer_h
 
 #include "CanvasObject.h"
+#include "WebGLArrayBuffer.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,10 +40,23 @@ namespace WebCore {
         
         static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
         
+        bool associateBufferData(unsigned long target, int size);
+        bool associateBufferData(unsigned long target, WebGLArray* array);
+        bool associateBufferSubData(unsigned long target, long offset, WebGLArray* array);
+        
+        unsigned byteLength(unsigned long target) const;
+        const WebGLArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
+                        
     protected:
         WebGLBuffer(WebGLRenderingContext*);
         
         virtual void _deleteObject(Platform3DObject o);
+    
+    private:
+        RefPtr<WebGLArrayBuffer> m_elementArrayBuffer;
+        unsigned m_elementArrayBufferByteLength;
+        unsigned m_arrayBufferByteLength;
+        bool m_elementArrayBufferCloned;
     };
     
 } // namespace WebCore

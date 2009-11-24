@@ -1,3 +1,15 @@
+2009-11-23  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for out of bounds conditions on drawElements and drawArrays
+        https://bugs.webkit.org/show_bug.cgi?id=31239
+
+        * fast/canvas/webgl/drawArraysOutOfBounds-expected.txt: Added.
+        * fast/canvas/webgl/drawArraysOutOfBounds.html: Added.
+        * fast/canvas/webgl/drawElementssOutOfBounds-expected.txt: Added.
+        * fast/canvas/webgl/drawElementssOutOfBounds.html: Added.
+
 2009-11-23  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

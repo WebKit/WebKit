@@ -39,6 +39,9 @@ PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     : CanvasObject(ctx)
+    , m_elementArrayBufferByteLength(0)
+    , m_arrayBufferByteLength(0)
+    , m_elementArrayBufferCloned(false)
 {
     setObject(context()->graphicsContext3D()->createBuffer());
 }
@@ -46,6 +49,76 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
 void WebGLBuffer::_deleteObject(Platform3DObject object)
 {
     context()->graphicsContext3D()->deleteBuffer(object);
+}
+
+bool WebGLBuffer::associateBufferData(unsigned long target, int size)
+{
+    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        m_elementArrayBufferByteLength = size;
+        return true;
+    }
+    
+    if (target == GraphicsContext3D::ARRAY_BUFFER) {
+        m_arrayBufferByteLength = size;
+        return true;
+    }
+
+    return false;
+}
+
+bool WebGLBuffer::associateBufferData(unsigned long target, WebGLArray* array)
+{
+    if (!array)
+        return false;
+        
+    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        m_elementArrayBufferByteLength = array->byteLength();
+        m_elementArrayBuffer = array->buffer();
+        m_elementArrayBufferCloned = false;
+        return true;
+    }
+    
+    if (target == GraphicsContext3D::ARRAY_BUFFER) {
+        m_arrayBufferByteLength = array->byteLength();
+        return true;
+    }
+    
+    return false;
+}
+
+bool WebGLBuffer::associateBufferSubData(unsigned long target, long offset, WebGLArray* array)
+{
+    if (!array)
+        return false;
+        
+    if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        // We need to protect against integer overflow with these tests
+        if (offset < 0)
+            return false;
+            
+        unsigned long uoffset = static_cast<unsigned long>(offset);
+        if (uoffset > m_elementArrayBufferByteLength || array->byteLength() > m_elementArrayBufferByteLength - uoffset)
+            return false;
+            
+        // If we already have a buffer, we need to clone it and add the new data
+        if (m_elementArrayBuffer && !m_elementArrayBufferCloned) {
+            m_elementArrayBuffer = WebGLArrayBuffer::create(m_elementArrayBuffer.get());
+            m_elementArrayBufferCloned = true;
+        }
+            
+        memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset, array->baseAddress(), array->byteLength());
+        return true;
+    }
+    
+    if (target == GraphicsContext3D::ARRAY_BUFFER)
+        return array->byteLength() + offset <= m_arrayBufferByteLength;
+
+    return false;
+}
+
+unsigned WebGLBuffer::byteLength(unsigned long target) const
+{
+    return (target == GraphicsContext3D::ARRAY_BUFFER) ? m_arrayBufferByteLength : m_elementArrayBufferByteLength;
 }
 
 }

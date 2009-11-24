@@ -1683,7 +1683,7 @@ unsigned GraphicsContext3D::createRenderbuffer()
     return o;
 }
 
-unsigned GraphicsContext3D::createShader(ShaderType type)
+unsigned GraphicsContext3D::createShader(unsigned long type)
 {
     ensureContext(m_contextObj);
     return glCreateShader((type == FRAGMENT_SHADER) ? GL_FRAGMENT_SHADER : GL_VERTEX_SHADER);

@@ -472,13 +472,14 @@ module html {
         void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
         void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
+
         // Supported forms:
         //   void bufferData (in GLenum target, in GLsizei size, in GLenum usage);
         //   void bufferData (in GLenum target, in WebGLArray data, in GLenum usage);
-        [Custom] void bufferData();
+        [Custom] void bufferData() raises(DOMException);
         // Supported forms:
         //   void bufferSubData (in GLenum target, in GLsizeiptr offset, in WebGLArray data);
-        [Custom] void bufferSubData();
+        [Custom] void bufferSubData() raises(DOMException);
 
         unsigned long checkFramebufferStatus(in unsigned long target);
         void         clear(in unsigned long mask);
@@ -516,12 +517,12 @@ module html {
         void         depthRange(in double zNear, in double zFar);
         void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
         void         disable(in unsigned long cap);
-        void         disableVertexAttribArray(in unsigned long index);
-        void         drawArrays(in unsigned long mode, in long first, in unsigned long count);
-        void         drawElements (in unsigned long mode, in long count, in unsigned long type, in unsigned long offset);
+        void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
+        void         drawArrays(in unsigned long mode, in long first, in unsigned long count) raises(DOMException);
+        void         drawElements (in unsigned long mode, in long count, in unsigned long type, in unsigned long offset) raises(DOMException);
 
         void         enable(in unsigned long cap);
-        void         enableVertexAttribArray(in unsigned long index);
+        void         enableVertexAttribArray(in unsigned long index) raises(DOMException);
         void         finish();
         void         flush();
         void         framebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in WebGLRenderbuffer renderbuffer) raises(DOMException);
@@ -669,8 +670,8 @@ module html {
         [Custom] void uniformMatrix3fv(in long location, in boolean transpose, in WebGLFloatArray array);
         [Custom] void uniformMatrix4fv(in long location, in boolean transpose, in WebGLFloatArray array);
 
-        void         useProgram(in WebGLProgram program);
-        void         validateProgram(in WebGLProgram program);
+        void         useProgram(in WebGLProgram program) raises(DOMException);
+        void         validateProgram(in WebGLProgram program) raises(DOMException);
 
         void         vertexAttrib1f(in unsigned long indx, in float x);
         [Custom] void         vertexAttrib1fv(in unsigned long indx, in WebGLFloatArray values);
@@ -681,7 +682,7 @@ module html {
         void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
         [Custom] void         vertexAttrib4fv(in unsigned long indx, in WebGLFloatArray values);
         void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
-                                         in long stride, in unsigned long offset);
+                                         in long stride, in unsigned long offset) raises(DOMException);
 
         void         viewport(in long x, in long y, in unsigned long width, in unsigned long height);
     };

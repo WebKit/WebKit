@@ -45,6 +45,9 @@ namespace WebCore {
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WebGLArray* object)
 {
+    if (!object)
+        return jsUndefined();
+        
     if (object) {
         if (object->isFloatArray())
             return getDOMObjectWrapper<JSWebGLFloatArray>(exec, globalObject, static_cast<WebGLFloatArray*>(object));

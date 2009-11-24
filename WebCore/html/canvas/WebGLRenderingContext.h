@@ -73,9 +73,9 @@ class WebKitCSSMatrix;
         void blendFunc(unsigned long sfactor, unsigned long dfactor);
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
 
-        void bufferData(unsigned long target, int size, unsigned long usage);
-        void bufferData(unsigned long target, WebGLArray* data, unsigned long usage);
-        void bufferSubData(unsigned long target, long offset, WebGLArray* data);
+        void bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode&);
+        void bufferData(unsigned long target, WebGLArray* data, unsigned long usage, ExceptionCode&);
+        void bufferSubData(unsigned long target, long offset, WebGLArray* data, ExceptionCode&);
 
         unsigned long checkFramebufferStatus(unsigned long target);
         void clear(unsigned long mask);
@@ -110,14 +110,14 @@ class WebKitCSSMatrix;
         void depthFunc(unsigned long);
         void depthMask(bool);
         void depthRange(double zNear, double zFar);
-        void detachShader(WebGLProgram*, WebGLShader*, ExceptionCode& ec);
+        void detachShader(WebGLProgram*, WebGLShader*, ExceptionCode&);
         void disable(unsigned long cap);
-        void disableVertexAttribArray(unsigned long index);
-        void drawArrays(unsigned long mode, long first, long count);
-        void drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset);
+        void disableVertexAttribArray(unsigned long index, ExceptionCode&);
+        void drawArrays(unsigned long mode, long first, long count, ExceptionCode&);
+        void drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset, ExceptionCode&);
 
         void enable(unsigned long cap);
-        void enableVertexAttribArray(unsigned long index);
+        void enableVertexAttribArray(unsigned long index, ExceptionCode&);
         void finish();
         void flush();
         void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer*, ExceptionCode& ec);
@@ -156,7 +156,7 @@ class WebKitCSSMatrix;
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        String getShaderSource(WebGLShader*, ExceptionCode& ec);
+        String getShaderSource(WebGLShader*, ExceptionCode&);
         String getString(unsigned long name);
 
         float getTexParameterf(unsigned long target, unsigned long pname);
@@ -164,12 +164,12 @@ class WebKitCSSMatrix;
         int getTexParameteri(unsigned long target, unsigned long pname);
         PassRefPtr<WebGLIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
 
-        float getUniformf(WebGLProgram* program, long location, ExceptionCode& ec);
-        PassRefPtr<WebGLFloatArray> getUniformfv(WebGLProgram* program, long location, ExceptionCode& ec);
+        float getUniformf(WebGLProgram* program, long location, ExceptionCode&);
+        PassRefPtr<WebGLFloatArray> getUniformfv(WebGLProgram* program, long location, ExceptionCode&);
         long getUniformi(WebGLProgram* program, long location, ExceptionCode& ec);
-        PassRefPtr<WebGLIntArray> getUniformiv(WebGLProgram* program, long location, ExceptionCode& ec);
+        PassRefPtr<WebGLIntArray> getUniformiv(WebGLProgram* program, long location, ExceptionCode&);
 
-        long getUniformLocation(WebGLProgram*, const String& name, ExceptionCode& ec);
+        long getUniformLocation(WebGLProgram*, const String& name, ExceptionCode&);
 
         float getVertexAttribf(unsigned long index, unsigned long pname);
         PassRefPtr<WebGLFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
@@ -187,7 +187,7 @@ class WebKitCSSMatrix;
         bool isShader(WebGLShader*);
         bool isTexture(WebGLTexture*);
         void lineWidth(double);
-        void linkProgram(WebGLProgram*, ExceptionCode& ec);
+        void linkProgram(WebGLProgram*, ExceptionCode&);
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
@@ -197,7 +197,7 @@ class WebKitCSSMatrix;
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
         void sampleCoverage(double value, bool invert);
         void scissor(long x, long y, unsigned long width, unsigned long height);
-        void shaderSource(WebGLShader*, const String&, ExceptionCode& ec);
+        void shaderSource(WebGLShader*, const String&, ExceptionCode&);
         void stencilFunc(unsigned long func, long ref, unsigned long mask);
         void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
         void stencilMask(unsigned long);
@@ -268,8 +268,8 @@ class WebKitCSSMatrix;
         void uniformMatrix4fv(long location, bool transpose, WebGLFloatArray* value);
         void uniformMatrix4fv(long location, bool transpose, float* value, int size);
 
-        void useProgram(WebGLProgram*);
-        void validateProgram(WebGLProgram*);
+        void useProgram(WebGLProgram*, ExceptionCode&);
+        void validateProgram(WebGLProgram*, ExceptionCode&);
 
         void vertexAttrib1f(unsigned long indx, float x);
         void vertexAttrib1fv(unsigned long indx, WebGLFloatArray* values);
@@ -284,7 +284,7 @@ class WebKitCSSMatrix;
         void vertexAttrib4fv(unsigned long indx, WebGLFloatArray* values);
         void vertexAttrib4fv(unsigned long indx, float* values, int size);
         void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized,
-                                 unsigned long stride, unsigned long offset);
+                                 unsigned long stride, unsigned long offset, ExceptionCode&);
 
         void viewport(long x, long y, unsigned long width, unsigned long height);
 
@@ -314,12 +314,30 @@ class WebKitCSSMatrix;
                 markContextChanged();
         }
         
+        bool validateIndexArray(unsigned long count, unsigned long type, long offset, long& numElements);
+        bool validateRenderingState(long numElements);
+
         OwnPtr<GraphicsContext3D> m_context;
         bool m_needsUpdate;
         bool m_markedCanvasDirty;
         // FIXME: I think this is broken -- it does not increment any
         // reference counts, so may refer to destroyed objects.
-        HashSet<CanvasObject*> m_canvasObjects;
+        HashSet<RefPtr<CanvasObject> > m_canvasObjects;
+        
+        // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
+        RefPtr<WebGLBuffer> m_boundArrayBuffer;
+        RefPtr<WebGLBuffer> m_boundElementArrayBuffer;
+    
+        // Cached values for vertex attrib range checks
+        class VertexAttribState {
+        public:
+            VertexAttribState() : enabled(false), numElements(0) { }
+            bool enabled;
+            long numElements;
+        };
+        
+        Vector<VertexAttribState> m_vertexAttribState;
+        unsigned m_maxVertexAttribs;
     };
 
 } // namespace WebCore
