@@ -88,6 +88,8 @@ namespace JSC {
     public:
         struct ClientData {
             virtual ~ClientData() = 0;
+            virtual void willExecute(ExecState*);
+            virtual void didExecute(ExecState*);
         };
 
         static bool sharedInstanceExists();

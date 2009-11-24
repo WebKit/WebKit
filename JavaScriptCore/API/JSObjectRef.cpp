@@ -392,6 +392,8 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
+    exec->globalData().clientData->willExecute(exec);
+
     JSObject* jsObject = toJS(object);
     JSObject* jsThisObject = toJS(thisObject);
 
@@ -402,18 +404,21 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));
 
+    JSValueRef result = 0;
+
     CallData callData;
     CallType callType = jsObject->getCallData(callData);
-    if (callType == CallTypeNone)
-        return 0;
-
-    JSValueRef result = toRef(exec, call(exec, jsObject, callType, callData, jsThisObject, argList));
-    if (exec->hadException()) {
-        if (exception)
-            *exception = toRef(exec, exec->exception());
-        exec->clearException();
-        result = 0;
+    if (callType != CallTypeNone) {
+        result = toRef(exec, call(exec, jsObject, callType, callData, jsThisObject, argList));
+        if (exec->hadException()) {
+            if (exception)
+                *exception = toRef(exec, exec->exception());
+            exec->clearException();
+            result = 0;
+        }
     }
+
+    exec->globalData().clientData->didExecute(exec);
     return result;
 }
 

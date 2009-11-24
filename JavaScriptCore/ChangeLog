@@ -1,3 +1,33 @@
+2009-11-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Part 1/3 of <rdar://problem/7377477> REGRESSION: Many web pages fail to render after interesting script runs in isolated world
+
+        Some clients of the JavaScriptCore API expect to be able to make callbacks over the JSC API,
+        and for this to automagically cause execution to take place in the world associated with the
+        global object associated with the ExecState (JSContextRef) passed.  However this is not how
+        things work - the world must be explicitly set within WebCore.
+
+        Making this work just for API calls to evaluate & call will be a far from perfect solution,
+        since direct (non-API) use of JSC still relies on WebCore setting the current world correctly.
+        A better solution would be to make this all work automagically all throughout WebCore, but this
+        will require more refactoring.
+
+        Since the API is in JSC but worlds only exist in WebCore, add callbacks on the JSGlobalData::ClientData
+        to allow it to update the current world on entry/exit via the JSC API.  This is temporary duck
+        tape, and should be removed once the current world no longer needs to be explicitly tracked.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::ClientData::beginningExecution):
+        (JSC::JSGlobalData::ClientData::completedExecution):
+        * runtime/JSGlobalData.h:
+
 2009-11-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Dmitry Titov.
