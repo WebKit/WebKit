@@ -704,6 +704,11 @@ fast/history/back-forward-reset-after-error-handling.html
 # https://bugs.webkit.org/show_bug.cgi?id=31479
 websocket
 
+# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
+animations/3d
+transforms/3d
+compositing
+
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html
 

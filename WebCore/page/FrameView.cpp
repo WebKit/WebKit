@@ -478,8 +478,9 @@ bool FrameView::syncCompositingStateRecursive()
         }
     }
     return allSubframesSynced;
-#endif // USE(ACCELERATED_COMPOSITING)
+#else // USE(ACCELERATED_COMPOSITING)
     return true;
+#endif
 }
 
 void FrameView::didMoveOnscreen()

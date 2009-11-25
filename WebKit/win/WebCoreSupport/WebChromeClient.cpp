@@ -754,6 +754,19 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
     notImplemented();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
+{
+    m_webView->setRootChildLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
+}
+
+void WebChromeClient::scheduleCompositingLayerSync()
+{
+    m_webView->setRootLayerNeedsDisplay();
+}
+
+#endif
+
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 {
     COMPtr<IWebUIDelegate> delegate;

@@ -647,7 +647,8 @@ sub checkWebCoreSVGSupport
 
 sub hasAcceleratedCompositingSupport
 {
-    return 0 if isCygwin() || isQt();
+    # On platforms other than Mac the Skipped files are used to skip compositing tests
+    return 1 if !isAppleMacWebKit();
 
     my $path = shift;
     return libraryContainsSymbol($path, "GraphicsLayer");
@@ -667,7 +668,8 @@ sub checkWebCoreAcceleratedCompositingSupport
 
 sub has3DRenderingSupport
 {
-    return 0 if isQt();
+    # On platforms other than Mac the Skipped files are used to skip 3D tests
+    return 1 if !isAppleMacWebKit();
 
     my $path = shift;
     return libraryContainsSymbol($path, "WebCoreHas3DRendering");

@@ -53,6 +53,12 @@ typedef CALayer* NativeLayer;
 typedef void* PlatformLayer;
 typedef void* NativeLayer;
 #endif
+#elif PLATFORM(WIN)
+namespace WebCore {
+class WKCACFLayer;
+typedef WKCACFLayer PlatformLayer;
+typedef void* NativeLayer;
+}
 #else
 typedef void* PlatformLayer;
 typedef void* NativeLayer;

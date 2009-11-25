@@ -1,3 +1,17 @@
+2009-11-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Changes the way 3D_RENDERING and ACCELERATED_COMPOSITING related tests are excluded
+        https://bugs.webkit.org/show_bug.cgi?id=27314
+        
+        Now the script allows the directories with these tests to be included on all
+        platforms but Mac, where they behave the same as always. For all other platforms
+        the tests need to be excluded using the Skipped files, which is currently done
+        for all platforms (including win since we're not turned on yet)
+
+        * Scripts/webkitdirs.pm:
+
 2009-11-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

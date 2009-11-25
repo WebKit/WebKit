@@ -323,6 +323,9 @@ WebView::WebView()
 , m_lastPanY(0)
 , m_xOverpan(0)
 , m_yOverpan(0)
+#if USE(ACCELERATED_COMPOSITING)
+, m_isAcceleratedCompositing(false)
+#endif
 {
     JSC::initializeThreading();
 
@@ -618,6 +621,10 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
     m_didClose = true;
 
+#if USE(ACCELERATED_COMPOSITING)
+    setAcceleratedCompositing(false);
+#endif
+
     WebNotificationCenter::defaultCenterInternal()->postNotificationName(_bstr_t(WebViewWillCloseNotification).GetBSTR(), static_cast<IWebView*>(this), 0);
 
     if (m_uiDelegatePrivate)
@@ -677,6 +684,11 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
 void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (isAcceleratedCompositing())
+        setRootLayerNeedsDisplay();
+#endif
+
     if (!repaintContentOnly) {
         RECT rect = windowRect;
         ::InvalidateRect(m_viewWindow, &rect, false);
@@ -795,7 +807,6 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     // Clean up.
     ::DeleteDC(bitmapDC);
     ::ReleaseDC(m_viewWindow, windowDC);
-
 }
 
 // This emulates the Mac smarts for painting rects intelligently.  This is very
@@ -928,18 +939,25 @@ void WebView::paint(HDC dc, LPARAM options)
     // Update our backing store if needed.
     updateBackingStore(frameView, bitmapDC, backingStoreCompletelyDirty, windowsToPaint);
 
-    // Now we blit the updated backing store
-    IntRect windowDirtyRect = rcPaint;
-    
-    // Apply the same heuristic for this update region too.
-    Vector<IntRect> blitRects;
-    if (region && regionType == COMPLEXREGION)
-        getUpdateRects(region.get(), windowDirtyRect, blitRects);
-    else
-        blitRects.append(windowDirtyRect);
+#if USE(ACCELERATED_COMPOSITING)
+    if (!isAcceleratedCompositing()) {
+#endif
+        // Now we blit the updated backing store
+        IntRect windowDirtyRect = rcPaint;
+        
+        // Apply the same heuristic for this update region too.
+        Vector<IntRect> blitRects;
+        if (region && regionType == COMPLEXREGION)
+            getUpdateRects(region.get(), windowDirtyRect, blitRects);
+        else
+            blitRects.append(windowDirtyRect);
 
-    for (unsigned i = 0; i < blitRects.size(); ++i)
-        paintIntoWindow(bitmapDC, hdc, blitRects[i]);
+        for (unsigned i = 0; i < blitRects.size(); ++i)
+            paintIntoWindow(bitmapDC, hdc, blitRects[i]);
+#if USE(ACCELERATED_COMPOSITING)
+    } else
+        updateRootLayerContents();
+#endif
 
     ::DeleteDC(bitmapDC);
 
@@ -1942,16 +1960,25 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
             if (lParam != 0) {
                 webView->deleteBackingStore();
+#if USE(ACCELERATED_COMPOSITING)
+                if (webView->isAcceleratedCompositing())
+                    webView->resizeLayerRenderer();
+#endif
                 if (Frame* coreFrame = core(mainFrameImpl))
                     coreFrame->view()->resize(LOWORD(lParam), HIWORD(lParam));
             }
             break;
         case WM_SHOWWINDOW:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
-            if (wParam == 0)
+            if (wParam == 0) {
                 // The window is being hidden (e.g., because we switched tabs).
                 // Null out our backing store.
                 webView->deleteBackingStore();
+            }
+#if USE(ACCELERATED_COMPOSITING)
+            else if (webView->isAcceleratedCompositing())
+                webView->layerRendererBecameVisible();
+#endif
             break;
         case WM_SETFOCUS: {
             COMPtr<IWebUIDelegate> uiDelegate;
@@ -2041,7 +2068,11 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);
                 ::InvalidateRect(hWnd, &windowRect, false);
-            }
+#if USE(ACCELERATED_COMPOSITING)
+                if (webView->isAcceleratedCompositing())
+                    webView->setRootLayerNeedsDisplay();
+#endif
+           }
             break;
         case WM_MOUSEACTIVATE:
             webView->setMouseActivated(true);
@@ -5698,6 +5729,65 @@ void WebView::downloadURL(const KURL& url)
     download->start();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void WebView::setRootChildLayer(WebCore::PlatformLayer* layer)
+{
+    setAcceleratedCompositing(layer ? true : false);
+    m_layerRenderer.setRootChildLayer(layer);
+}
+
+void WebView::setAcceleratedCompositing(bool accelerated)
+{
+    if (m_isAcceleratedCompositing == accelerated)
+        return;
+
+    m_isAcceleratedCompositing = accelerated;
+    if (m_isAcceleratedCompositing) {
+        // Create the root layer
+        ASSERT(m_viewWindow);
+        m_layerRenderer.setHostWindow(m_viewWindow);
+        updateRootLayerContents();
+    } else {
+        // Tear down the root layer
+        m_layerRenderer.destroyRenderer();
+    }
+}
+
+void WebView::updateRootLayerContents()
+{
+    if (!m_backingStoreBitmap)
+        return;
+
+    // Get the backing store into a CGImage
+    BITMAP bitmap;
+    GetObject(m_backingStoreBitmap.get(), sizeof(bitmap), &bitmap);
+    int bmSize = bitmap.bmWidthBytes * bitmap.bmHeight;
+    RetainPtr<CFDataRef> data(AdoptCF, 
+                                CFDataCreateWithBytesNoCopy(
+                                        0, static_cast<UInt8*>(bitmap.bmBits),
+                                        bmSize, kCFAllocatorNull));
+    RetainPtr<CGDataProviderRef> cgData(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+    RetainPtr<CGColorSpaceRef> space(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGImageRef> backingStoreImage(AdoptCF, CGImageCreate(bitmap.bmWidth, bitmap.bmHeight,
+                                     8, bitmap.bmBitsPixel, 
+                                     bitmap.bmWidthBytes, space.get(), 
+                                     kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst,
+                                     cgData.get(), 0, false, 
+                                     kCGRenderingIntentDefault));
+
+    // Hand the CGImage to CACF for compositing
+    m_layerRenderer.setRootContents(backingStoreImage.get());
+
+    // Set the frame and scroll position
+    Frame* coreFrame = core(m_mainFrame);
+    if (!coreFrame)
+        return;
+    FrameView* frameView = coreFrame->view();
+
+    m_layerRenderer.setScrollFrame(frameView->layoutWidth(), frameView->layoutHeight(), 
+                                 frameView->scrollX(), frameView->scrollY());
+}
+#endif
 
 HRESULT STDMETHODCALLTYPE WebView::setPluginHalterDelegate(IWebPluginHalterDelegate* d)
 {

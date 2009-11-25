@@ -1,3 +1,38 @@
+2009-11-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=27314
+        
+        This is the WebKit side of the implementation. It plumbs the root layer
+        from WebCore. It also makes changes to WebView which places the 
+        backing store of the page into the root compositing layer so it is 
+        properly composited with all the other layers. This deals with resizing, 
+        scrolling, and incremental repaint of the page.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::scheduleCompositingLayerSync):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::setNeedsOneShotDrawingSynchronization):
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::close):
+        (WebView::repaint):
+        (WebView::scrollBackingStore):
+        (WebView::paint):
+        (WebViewWndProc):
+        (WebView::setRootChildLayer):
+        (WebView::setAcceleratedCompositing):
+        (WebView::setRootLayerContents):
+        * WebView.h:
+        (WebView::isAcceleratedCompositing):
+        (WebView::resizeLayerWindow):
+        (WebView::layerWindowBecameVisible):
+        (WebView::setRootLayerNeedsDisplay):
+
 2009-11-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

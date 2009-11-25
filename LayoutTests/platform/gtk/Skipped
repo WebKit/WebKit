@@ -5682,3 +5682,7 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 
+# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
+animations/3d
+transforms/3d
+compositing

@@ -1,5 +1,34 @@
 2009-11-24  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Implement accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=27314
+        
+        This part of the checkin adds the Windows specific GraphicsLayer support files.
+        It provides the interface between GraphicsLayer and CACF. It also deals with
+        the compositing loop, and provides the plumbing to pass the root layer up to
+        WebView.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateRecursive):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/win/GraphicsLayerCACF.cpp: Added.
+        * platform/graphics/win/GraphicsLayerCACF.h: Added.
+        * platform/graphics/win/WKCACFContextFlusher.cpp: Added.
+        * platform/graphics/win/WKCACFContextFlusher.h: Added.
+        * platform/graphics/win/WKCACFContextFlusherWin.cpp: Added.
+        * platform/graphics/win/WKCACFLayer.cpp: Added.
+        * platform/graphics/win/WKCACFLayer.h: Added.
+        * platform/graphics/win/WKCACFLayerWindow.cpp: Added.
+        * platform/graphics/win/WKCACFLayerWindow.h: Added.
+
+2009-11-24  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Eric Seidel.
 
         Do error checking of parameter to createShader

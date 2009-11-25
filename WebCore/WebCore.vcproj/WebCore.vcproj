@@ -38,7 +38,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -94,7 +95,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -149,7 +151,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -204,7 +207,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -260,7 +264,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -315,7 +320,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
+				PreprocessorDefinitions="QUARTZCORE_DLL"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -22048,6 +22054,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\TextRenderingMode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\WCDataObject.cpp"
 					>
 					<FileConfiguration
@@ -22107,6 +22117,68 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\WCDataObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebCorePrefix.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"
+							DisableSpecificWarnings="4819"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\WebCorePrefix.h"
 					>
 				</File>
 				<File
@@ -22391,6 +22463,18 @@
 				</File>
 				<File
 					RelativePath="..\platform\graphics\GraphicsContextPrivate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GraphicsLayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GraphicsLayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GraphicsLayerClient.h"
 					>
 				</File>
 				<File
@@ -22893,6 +22977,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\GraphicsLayerCACF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\GraphicsLayerCACF.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\IconWin.cpp"
 						>
 					</File>
@@ -23086,6 +23178,30 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\UniscribeController.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFLayer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFLayer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFLayerRenderer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\WKCACFLayerRenderer.h"
 						>
 					</File>
 				</Filter>
@@ -27112,6 +27228,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderLayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderLayerBacking.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderLayerBacking.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderLayerCompositor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderLayerCompositor.h"
 				>
 			</File>
 			<File
@@ -42925,72 +43057,6 @@
 		</Filter>
 		<File
 			RelativePath="..\config.h"
-			>
-		</File>
-		<File
-			RelativePath="..\platform\graphics\TextRenderingMode.h"
-			>
-		</File>
-		<File
-			RelativePath="..\WebCorePrefix.cpp"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_Internal|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_Cairo|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release_Cairo|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_All|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-					DisableSpecificWarnings="4819"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\WebCorePrefix.h"
 			>
 		</File>
 	</Files>

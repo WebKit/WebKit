@@ -5229,6 +5229,11 @@ storage/domstorage/localstorage/window-open.html
 #crasher:
 storage/domstorage/sessionstorage/window-open.html
 
+# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
+animations/3d
+transforms/3d
+compositing
+
 # ================================================================== #
 
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
