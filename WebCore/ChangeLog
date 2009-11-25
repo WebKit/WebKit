@@ -1,3 +1,21 @@
+2009-11-25  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Android is missing implementation of SSL Key generator functions.
+        https://bugs.webkit.org/show_bug.cgi?id=31825
+
+        This change adds the PlatformBridge class to platform/android.
+        PlarformBridge is used to access the embedding layer for things
+        such as key generator, cookies, plugins, etc.
+
+        No new tests required, this is platform code.
+
+        * platform/android/PlatformBridge.h: Added.
+        * platform/android/SSLKeyGeneratorAndroid.cpp: Added.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+
 2009-11-25  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
