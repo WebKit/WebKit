@@ -1,3 +1,12 @@
+2009-11-24  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add ENABLE_SHARED_SCRIPT feature define and flag for build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=31444
+
+        * configure.ac:
+
 2009-11-24  Jason Smith  <dark.panda@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -2657,6 +2657,17 @@ webcoregtk_sources += \
 endif # END ENABLE_GEOLOCATION
 
 # ----
+# WebKitSharedScript
+# ----
+if ENABLE_SHARED_SCRIPT
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_SCRIPT=1
+
+webcore_cppflags += \
+	-DENABLE_SHARED_SCRIPT=1
+
+endif
+
+# ----
 # MathML support
 # ----
 if ENABLE_MATHML

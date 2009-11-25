@@ -411,6 +411,14 @@ AC_ARG_ENABLE(mathml,
               [],[enable_mathml="no"])
 AC_MSG_RESULT([$enable_mathml])
 
+# check whether to enable SharedScript support
+AC_MSG_CHECKING([whether to enable SharedScript support])
+AC_ARG_ENABLE(shared_script,
+              AC_HELP_STRING([--enable-shared-script],
+                             [enable support for SharedScript [default=no]]),
+              [],[enable_shared_script="no"])
+AC_MSG_RESULT([$enable_shared_script])
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -751,6 +759,7 @@ AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
+AM_CONDITIONAL([ENABLE_SHARED_SCRIPT],[test "$enable_shared_script" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
