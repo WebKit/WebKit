@@ -1,3 +1,15 @@
+2009-11-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix crash of QtWebKit on any page with Flash when compiled with MinGW.
+
+        Fix inline assembly, don't dereference the function pointer twice.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::hookedBeginPaint):
+        (WebCore::PluginView::hookedEndPaint):
+
 2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.
