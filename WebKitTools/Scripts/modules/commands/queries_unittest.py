@@ -27,33 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from StringIO import StringIO
 
 from modules.commands.queries import *
 from modules.mock_bugzillatool import *
+from modules.outputcapture import OutputCapture
 
 class QueryCommandsTest(unittest.TestCase):
-    def _capture_output_with_name(output_name):
-        self.saved_outputs[output_name] = getattr(sys, output_name)
-        setattr(sys, output_name, StringIO.StringIO())
-
-    def _release_output_with_name(output_name):
-        captured_output = getattr(sys, output_name).getvalue()
-        setattr(sys, output_name, self.saved_outputs[output_name])
-        del self.saved_outputs[output_name]
-        return captured_output
-
-    def _capture_output(self):
-        self._capture_output_with_name("stdout")
-        self._capture_output_with_name("stderr")
-
-    def _restore_output(self):
-        return (self._release_output_with_name("stdout"), self._release_output_with_name("stderr"))
-
     def _assert_execute_outputs(self, command, command_args, expected_stdout, expected_stderr = ""):
-        self._capture_output()
+        capture = OutputCapture()
+        capture.capture_output()
         command.execute(None, command_args, MockBugzillaTool())
-        (stdout_string, stderr_string) = self._restore_output()
+        (stdout_string, stderr_string) = capture.restore_output()
         self.assertEqual(stdout_string, expected_stdout)
         self.assertEqual(expected_stderr, expected_stderr)
 

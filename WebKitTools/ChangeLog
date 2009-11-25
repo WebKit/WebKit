@@ -1,3 +1,14 @@
+2009-11-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Abstract out capturing stdout/stderr into a new OutputCapture class for re-use among the various unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=31870
+
+        * Scripts/modules/commands/queries_unittest.py: Use the new class.
+        * Scripts/modules/multicommandtool_unittest.py: Ditto.
+        * Scripts/modules/outputcapture.py: Added.
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

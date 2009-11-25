@@ -29,7 +29,7 @@
 import sys
 import unittest
 from multicommandtool import MultiCommandTool, Command
-from StringIO import StringIO
+from modules.outputcapture import OutputCapture
 
 from optparse import make_option
 
@@ -66,16 +66,6 @@ class TrivialTool(MultiCommandTool):
 
 
 class MultiCommandToolTest(unittest.TestCase):
-    def _capture_stderr(self):
-        self.saved_stderr = sys.stderr
-        sys.stderr = StringIO()
-
-    def _release_stderr(self):
-        string = sys.stderr.getvalue()
-        sys.stderr = self.saved_stderr
-        self.saved_stderr = None
-        return string
-
     def _assert_split(self, args, expected_split):
         self.assertEqual(MultiCommandTool._split_args(args), expected_split)
 
@@ -103,12 +93,14 @@ class MultiCommandToolTest(unittest.TestCase):
         command_with_options = TrivialCommand(options=[make_option("--my_option")])
         tool = TrivialTool(commands=[command_with_options])
 
-        self._capture_stderr()
+        capture = OutputCapture()
+        capture.capture_output()
         exit_code = tool.main(["tool", "help", "trivial"])
-        help_text = self._release_stderr()
-        expected_subcommand_help = "  trivial [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
+        (stdout_string, stderr_string) = capture.restore_output()
+        expected_subcommand_help = "trivial [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
         self.assertEqual(exit_code, 0)
-        self.assertEqual(help_text, expected_subcommand_help)
+        self.assertEqual(stdout_string, "")
+        self.assertEqual(stderr_string, expected_subcommand_help)
 
 
 if __name__ == "__main__":
