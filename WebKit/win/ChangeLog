@@ -1,5 +1,14 @@
 2009-11-24  Chris Marrin  <cmarrin@apple.com>
 
+        Another Windows build fix
+        
+        Got rid of d3d.lib and d3dx9.lib dependency. Not needed until
+        we turn on ACCELERATED_COMPOSITING
+
+        * WebKit.vcproj/WebKit.vcproj:
+
+2009-11-24  Chris Marrin  <cmarrin@apple.com>
+
         Fixed Windows build
         
         Got rid of QuartzCore.lib dependency. Not needed until
