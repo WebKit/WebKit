@@ -353,13 +353,13 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 }
 
 GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
-: GraphicsLayer(client)
-, m_contentsLayerPurpose(NoContentsLayer)
-, m_contentsLayerHasBackgroundColor(false)
-, m_uncommittedChanges(NoChange)
+    : GraphicsLayer(client)
+    , m_contentsLayerPurpose(NoContentsLayer)
+    , m_contentsLayerHasBackgroundColor(false)
+    , m_uncommittedChanges(NoChange)
 #if ENABLE(3D_CANVAS)
-, m_platformGraphicsContext3D(NullPlatformGraphicsContext3D)
-, m_platformTexture(NullPlatform3DObject)
+    , m_platformGraphicsContext3D(NullPlatformGraphicsContext3D)
+    , m_platformTexture(NullPlatform3DObject)
 #endif
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

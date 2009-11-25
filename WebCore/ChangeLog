@@ -1,3 +1,12 @@
+2009-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Stylistic fix: indent the member var initialisation.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+
 2009-11-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
