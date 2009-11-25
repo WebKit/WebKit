@@ -227,9 +227,6 @@ class AbstractPatchProcessingCommand(Command):
         return bugs_to_patches
 
     def execute(self, options, args, tool):
-        if not args:
-            error("%s required" % self.argument_names)
-
         self._prepare_to_process(options, args, tool)
         patches = self._fetch_list_of_patches_to_process(options, args, tool)
 
@@ -378,8 +375,6 @@ class Rollout(Command):
             log("No bugs were updated or re-opened to reflect this rollout.")
 
     def execute(self, options, args, tool):
-        if not args:
-            error("REVISION is required, see --help.")
         revision = args[0]
         bug_id = self._parse_bug_id_from_revision_diff(tool, revision)
         if options.complete_rollout:

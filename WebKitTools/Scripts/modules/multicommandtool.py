@@ -35,6 +35,7 @@ import sys
 
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
+from modules.grammar import pluralize
 from modules.logging import log
 
 class Command(object):
@@ -42,9 +43,26 @@ class Command(object):
     def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
         self.help_text = help_text
         self.argument_names = argument_names
+        self.required_arguments = self._parse_required_arguments(argument_names)
         self.options = options
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
         self.requires_local_commits = requires_local_commits
+
+    @staticmethod
+    def _parse_required_arguments(argument_names):
+        required_args = []
+        if not argument_names:
+            return required_args
+        split_args = argument_names.split(" ")
+        for argument in split_args:
+            if argument[0] == '[':
+                # For now our parser is rather dumb.  Do some minimal validation that
+                # we haven't confused it.
+                if argument[-1] != ']':
+                    raise Exception("Failure to parse argument string %s.  Argument %s is missing ending ]" % (argument_names, argument))
+            else:
+                required_args.append(argument)
+        return required_args
 
     def name_with_arguments(self):
         usage_string = self.name
@@ -56,6 +74,20 @@ class Command(object):
 
     def parse_args(self, args):
         return self.option_parser.parse_args(args)
+
+    def check_arguments_and_execute(self, args_after_command_name, tool):
+        (command_options, command_args) = self.parse_args(args_after_command_name)
+
+        if len(command_args) < len(self.required_arguments):
+            log("%s required, %s provided.  Provided: %s  Required: %s\nSee '%s help %s' for usage." % (
+                pluralize("argument", len(self.required_arguments)),
+                pluralize("argument", len(command_args)),
+                "'%s'" % " ".join(command_args),
+                " ".join(self.required_arguments),
+                tool.name(),
+                self.name))
+            return 1
+        return self.execute(command_options, command_args, tool) or 0
 
     def execute(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
@@ -81,10 +113,10 @@ class HelpPrintingOptionParser(OptionParser):
 
 
 class MultiCommandTool(object):
-    def __init__(self, commands=None):
+    def __init__(self, name=None, commands=None):
         # Allow the unit tests to disable command auto-discovery.
         self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
-        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self._help_epilog, usage=self._usage_line())
+        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self._help_epilog, prog=name, usage=self._usage_line())
 
     @classmethod
     def _add_all_subclasses(cls, class_to_crawl, seen_classes):
@@ -109,6 +141,9 @@ class MultiCommandTool(object):
         help_text += command.option_parser.format_option_help(IndentedHelpFormatter())
         return help_text
 
+    def name(self):
+        return self.global_option_parser.get_prog_name()
+
     def _help_epilog(self):
         # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
         relevant_commands = filter(self.should_show_command_help, self.commands)
@@ -124,7 +159,7 @@ class MultiCommandTool(object):
         (options, args) = self.global_option_parser.parse_args(args)
         # We should never hit this because _split_args splits at the first arg without a leading "-".
         if args:
-            self.global_option_parser.error("Extra arguments before command: " + args)
+            self.global_option_parser.error("Extra arguments before command: %s" % args)
 
     @staticmethod
     def _split_args(args):
@@ -176,12 +211,11 @@ class MultiCommandTool(object):
 
         command = self.command_by_name(command_name)
         if not command:
-            self.global_option_parser.error(command_name + " is not a recognized command")
+            self.global_option_parser.error("%s is not a recognized command" % command_name)
 
         (should_execute, failure_reason) = self.should_execute_command(command)
         if not should_execute:
             log(failure_reason)
             return 0
 
-        (command_options, command_args) = command.parse_args(args_after_command_name)
-        return command.execute(command_options, command_args, self)
+        return command.check_arguments_and_execute(args_after_command_name, self)

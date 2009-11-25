@@ -142,9 +142,6 @@ class PostCommits(Command):
         return StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
 
     def execute(self, options, args, tool):
-        if not args:
-            error("%s argument is required" % self.argument_names)
-
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
             error("bugzilla-tool does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize("patch", len(commit_ids))))

@@ -50,10 +50,28 @@ class CommandTest(unittest.TestCase):
         command_with_args = TrivialCommand(options=[make_option("--my_option")])
         self.assertEqual(command_with_args.name_with_arguments(), "trivial [options]")
 
+    def test_parse_required_arguments(self):
+        self.assertEqual(Command._parse_required_arguments("ARG1 ARG2"), ["ARG1", "ARG2"])
+        self.assertEqual(Command._parse_required_arguments("[ARG1] [ARG2]"), [])
+        self.assertEqual(Command._parse_required_arguments("[ARG1] ARG2"), ["ARG2"])
+        # Note: We might make our arg parsing smarter in the future and allow this type of arguments string.
+        self.assertRaises(Exception, Command._parse_required_arguments, "[ARG1 ARG2]")
+
+    def test_required_arguments(self):
+        two_required_arguments = TrivialCommand(argument_names="ARG1 ARG2 [ARG3]")
+        capture = OutputCapture()
+        capture.capture_output()
+        exit_code = two_required_arguments.check_arguments_and_execute(["foo"], TrivialTool())
+        (stdout_string, stderr_string) = capture.restore_output()
+        expected_missing_args_error = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(stdout_string, "")
+        self.assertEqual(stderr_string, expected_missing_args_error)
+
 
 class TrivialTool(MultiCommandTool):
     def __init__(self, commands=None):
-        MultiCommandTool.__init__(self, commands)
+        MultiCommandTool.__init__(self, name="trivial-tool", commands=commands)
 
     def path():
         return __file__
