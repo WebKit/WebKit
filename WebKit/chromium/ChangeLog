@@ -1,3 +1,15 @@
+2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Plumb setNeedsSiteSpecificQuirks throught WebKit API.
+        https://bugs.webkit.org/show_bug.cgi?id=31878
+
+        * public/WebSettings.h: Added decl.
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setNeedsSiteSpecificQuirks): Added impl.
+        * src/WebSettingsImpl.h:
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

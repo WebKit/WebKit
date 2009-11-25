@@ -63,6 +63,7 @@ public:
     virtual void setPluginsEnabled(bool);
     virtual void setDOMPasteAllowed(bool);
     virtual void setDeveloperExtrasEnabled(bool);
+    virtual void setNeedsSiteSpecificQuirks(bool);
     virtual void setShrinksStandaloneImagesToFit(bool);
     virtual void setUsesEncodingDetector(bool);
     virtual void setTextAreasAreResizable(bool);
