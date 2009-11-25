@@ -85,6 +85,10 @@ JavaClass::JavaClass(jobject anInstance)
         methodList->append(aMethod);
         env->DeleteLocalRef(aJMethod);
     }    
+
+    env->DeleteLocalRef(fields);
+    env->DeleteLocalRef(methods);
+    env->DeleteLocalRef(aClass);
 }
 
 JavaClass::~JavaClass() {

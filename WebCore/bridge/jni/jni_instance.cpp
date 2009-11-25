@@ -37,6 +37,10 @@
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
 
+#if PLATFORM(ANDROID)
+#include <assert.h>
+#endif
+
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
 #else

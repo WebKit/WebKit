@@ -1,3 +1,23 @@
+2009-11-24  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Android] Upstream Android changes to WebCore/bridge/jni
+        https://bugs.webkit.org/show_bug.cgi?id=31824
+
+        No new tests required as no new functionality.
+
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass): Add calls to delete allocated references, to avoid potential leaks.
+        * bridge/jni/jni_instance.cpp: Add an Android include path.
+        * bridge/jni/jni_instance.h: Add getter/setter for JObjectWrapper::_instance and make the JavaInstance ctor and member variables protected. Both needed for the Android port, see bug for discussion.
+        (JSC::Bindings::JObjectWrapper::instance): Added.
+        (JSC::Bindings::JObjectWrapper::setInstance): Added.
+        * bridge/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod): Delete an allocated reference to avoid a potential leak.
+        * bridge/jni/jni_utility.h:
+        (JSC::Bindings::callJNIMethodV): Delete an allocated reference to avoid a potential leak.
+
 2009-11-24  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
