@@ -1,3 +1,26 @@
+2009-11-25  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        The select elements do not reflect the actual choice the user makes.
+        https://bugs.webkit.org/show_bug.cgi?id=31831
+
+        Handle the drawing of the listboxes in Android code.
+
+        No new features, just fixing an Android problem. Existing layout tests are sufficient.
+
+        * platform/android/RenderThemeAndroid.cpp:
+        (WebCore::theme):
+        (WebCore::RenderThemeAndroid::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeAndroid::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeAndroid::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeAndroid::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeAndroid::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeAndroid::adjustButtonStyle):
+        (WebCore::RenderThemeAndroid::paintTextArea):
+        (WebCore::RenderThemeAndroid::adjustListboxStyle):
+        * platform/android/RenderThemeAndroid.h:
+
 2009-11-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
