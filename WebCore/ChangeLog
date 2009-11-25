@@ -1,3 +1,39 @@
+2009-11-24  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for classes of the plugins and rendering directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31827
+
+        Inherits the following classes from Noncopyable because these are instantiated
+        by 'new' and no need to be copyable:
+
+        class/struct name               - instantiated at: WebCore/'location'
+
+        class PluginRequest             - plugins/PluginView.cpp:521
+        class PluginMainThreadScheduler - plugins/PluginMainThreadScheduler.cpp:34
+        class PluginDatabase            - plugins/PluginDatabase.cpp:50
+        struct MimeClassInfo            - plugins/PluginInfoStore.cpp:50
+        struct PluginInfo               - plugins/PluginInfoStore.cpp:40
+        class RenderArena               - dom/Document.cpp:1401
+        class RenderImageScaleData      - rendering/RenderImage.cpp:149
+        class TableLayout               - (its child class) rendering/RenderTable.cpp:82
+        struct ColumnInfo               - rendering/RenderBlock.cpp:3590
+        struct FloatingObject           - rendering/RenderBlock.cpp:2300
+        struct MaxMargin                - rendering/RenderBlock.cpp:4794
+        class RenderMarquee             - rendering/RenderLayer.cpp:3277
+
+        * plugins/PluginData.h:
+        * plugins/PluginDatabase.h:
+        * plugins/PluginMainThreadScheduler.h:
+        * plugins/PluginView.h:
+        * rendering/RenderArena.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderMarquee.h:
+        * rendering/TableLayout.h:
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

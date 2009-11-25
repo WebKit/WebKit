@@ -29,14 +29,14 @@ namespace WebCore {
     class Page;
     struct PluginInfo;
 
-    struct MimeClassInfo {
+    struct MimeClassInfo : Noncopyable {
         String type;
         String desc;
         String suffixes;
         PluginInfo* plugin;
     };
 
-    struct PluginInfo {
+    struct PluginInfo : Noncopyable {
         String name;
         String file;
         String desc;

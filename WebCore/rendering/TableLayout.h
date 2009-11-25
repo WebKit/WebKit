@@ -21,11 +21,13 @@
 #ifndef TableLayout_h
 #define TableLayout_h
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 class RenderTable;
 
-class TableLayout {
+class TableLayout : public Noncopyable {
 public:
     TableLayout(RenderTable* table)
         : m_table(table)

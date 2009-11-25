@@ -49,7 +49,7 @@ namespace WebCore {
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.050; // 50 ms
 
-class RenderImageScaleData {
+class RenderImageScaleData : public Noncopyable {
 public:
     RenderImageScaleData(RenderImage* image, const IntSize& size, double time, bool lowQualityScale)
         : m_size(size)

@@ -36,7 +36,7 @@ typedef NPP_t* NPP;
 
 namespace WebCore {
 
-class PluginMainThreadScheduler {
+class PluginMainThreadScheduler : public Noncopyable {
 public:
     typedef void MainThreadFunction(void*);
 
