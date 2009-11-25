@@ -216,10 +216,13 @@ http/tests/security/isolatedWorld
 
 # Missing layoutTestController.dumpFrameLoadCallbacks()
 http/tests/security/mixedContent
+http/tests/cache/subresource-failover-to-network.html
 
 # Missing layoutTestController.setUserStyleSheetLocation() and layoutTestController.setUserStyleSheetEnabled()
 http/tests/security/local-user-CSS-from-remote.html
 
+# Missing layoutTestController.setAllowUniversalAccessFromFileURLs()
+fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
@@ -5225,12 +5228,12 @@ storage/domstorage/localstorage/window-open.html
 #crasher:
 storage/domstorage/sessionstorage/window-open.html
 
+# ================================================================== #
+
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
 animations/3d
 transforms/3d
 compositing
-
-# ================================================================== #
 
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html

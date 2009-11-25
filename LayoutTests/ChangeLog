@@ -1,3 +1,13 @@
+2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put tests into skiplist because of missing layoutTestController feature.
+
+        * platform/qt/Skipped:
+        - http/tests/cache/subresource-failover-to-network.html added.
+        - fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html added.
+
+        - "3D_RENDERING and ACCELERATED_COMPOSITING" block moved to good place.
+
 2009-11-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
