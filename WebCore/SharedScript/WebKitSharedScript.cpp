@@ -87,7 +87,7 @@ public:
     {
         ASSERT_UNUSED(context, context->isDocument());
         m_sharedScript->setContext(m_innerContext);
-        m_sharedScript->dispatchEvent(Event::create(EventNames().loadEvent, false, false));
+        m_sharedScript->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
         m_sharedScript->unsetPendingActivity(m_sharedScript.get());
     }
