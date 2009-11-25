@@ -743,8 +743,20 @@ void WebFrameImpl::loadData(const WebData& data,
     SubstituteData substData(data, mimeType, textEncoding, unreachableURL);
     ASSERT(substData.isValid());
 
+    // If we are loading substitute data to replace an existing load, then
+    // inherit all of the properties of that original request.  This way,
+    // reload will re-attempt the original request.  It is essential that
+    // we only do this when there is an unreachableURL since a non-empty
+    // unreachableURL informs FrameLoader::reload to load unreachableURL
+    // instead of the currently loaded URL.
+    ResourceRequest request;
+    if (replace && !unreachableURL.isEmpty())
+        request = m_frame->loader()->originalRequest();
+    request.setURL(baseURL);
+
     stopLoading();  // Make sure existing activity stops.
-    m_frame->loader()->load(ResourceRequest(baseURL), substData, false);
+
+    m_frame->loader()->load(request, substData, false);
     if (replace) {
         // Do this to force WebKit to treat the load as replacing the currently
         // loaded page.

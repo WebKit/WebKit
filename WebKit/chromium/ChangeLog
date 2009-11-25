@@ -1,3 +1,13 @@
+2009-11-25  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Unable to repost form data by hitting reload
+        https://bugs.webkit.org/show_bug.cgi?id=31882
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadData):
+
 2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.
