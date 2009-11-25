@@ -1,3 +1,12 @@
+2009-11-24  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by David Levin.
+
+        Ignore Chromium's Xcode projects that are auto-generated from .gyp files.
+        https://bugs.webkit.org/show_bug.cgi?id=31847
+        
+        * .gitignore:  Add three .xcodeproj files.
+
 2009-11-09  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Oliver Hunt.
