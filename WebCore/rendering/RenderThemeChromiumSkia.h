@@ -76,6 +76,7 @@ namespace WebCore {
 
         virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+        virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
         virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

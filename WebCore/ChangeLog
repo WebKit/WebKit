@@ -1,3 +1,23 @@
+2009-11-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Ignore line-height CSS property specified to a search field on
+        Windows and Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=31820
+
+        LayoutTests/fast/forms/control-restrict-line-height.html checks that the
+        following controls should ignore line-height CSS property.
+         - <select>
+         - <input type=button>
+         - <input type=search>
+        This change addresses the <input type=search> issue with Chromium/Windows
+        and Chromium/Linux.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldStyle): Implement this to ignore line-height.
+        * rendering/RenderThemeChromiumSkia.h: Declare adjustSearchFieldStyle().
+
 2009-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
