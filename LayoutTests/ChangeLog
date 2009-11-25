@@ -1,3 +1,14 @@
+2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Remove the Referer header when redirecting to a non-secure site
+        https://bugs.webkit.org/show_bug.cgi?id=31785
+
+        This makes Qt pass two tests introduced in r50226.
+
+        * platform/qt/Skipped:
+
 2009-11-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
