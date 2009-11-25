@@ -1,3 +1,34 @@
+2009-11-25  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by David Levin.
+
+        MessagePorts always look remotely entangled even when closed.
+        https://bugs.webkit.org/show_bug.cgi?id=31698
+
+        Tests: Existing tests suffice, Chromium soak test passes now.
+
+        * bindings/v8/custom/V8CustomBinding.h:
+        Removed kMessagePortEntangledPortIndex which is no longer used.
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCPrologueVisitor::visitDOMWrapper):
+        Simplified GC code to reflect the Chromium MessagePort implementation
+        (locallyEntangledPort() always returns false).
+        (WebCore::GCEpilogueVisitor::visitDOMWrapper):
+        Cleaned up epilogue code to handle the case where the port gets closed
+        in mid-GC (due to the parent context being freed).
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::close):
+        Now sets the closed flag.
+        (WebCore::MessagePort::disentanglePorts):
+        Updated to use new isCloned() API instead of relying on isEntangled(), which was incorrect.
+        * dom/MessagePort.h:
+        Added a m_closed flag and updated isEntangled() to check it.
+        (WebCore::MessagePort::isEntangled):
+        Now returns false if the port has been closed.
+        (WebCore::MessagePort::isCloned):
+        Added new API to differentiate between cloned and closed ports (closed ports can still be passed to postMessage).
+
 2009-11-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
