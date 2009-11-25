@@ -24345,6 +24345,26 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\cf\CredentialStorageCFNet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\DNSCFNet.cpp"
 						>
 						<FileConfiguration

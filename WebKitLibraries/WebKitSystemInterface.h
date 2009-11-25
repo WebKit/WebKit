@@ -279,6 +279,10 @@ void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 
+void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
+void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
+CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
+
 BOOL WKIsLatchingWheelEvent(NSEvent *);
 
 #ifndef BUILDING_ON_TIGER

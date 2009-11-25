@@ -38,7 +38,6 @@
 #include "KURL.h"
 #include "JSEventListener.h"
 #include "WebSocket.h"
-#include "NotImplemented.h"
 #include <runtime/Error.h>
 
 using namespace JSC;

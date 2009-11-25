@@ -83,6 +83,9 @@ void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
+void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
+void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
+CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
 BOOL (*wkIsLatchingWheelEvent)(NSEvent *);
 
 #ifndef BUILDING_ON_TIGER

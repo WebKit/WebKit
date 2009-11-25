@@ -71,6 +71,8 @@ namespace WebCore {
 
         bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
 
+        void addCONNECTCredentials(CFHTTPMessageRef response);
+
         static CFStringRef copyCFStreamDescription(void* );
         static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void*);
         static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void*);
@@ -98,6 +100,7 @@ namespace WebCore {
         RetainPtr<CFNumberRef> m_proxyPort;
 
         RetainPtr<CFHTTPMessageRef> m_proxyResponseMessage;
+        bool m_sentStoredCredentials;
         RetainPtr<CFReadStreamRef> m_readStream;
         RetainPtr<CFWriteStreamRef> m_writeStream;
 

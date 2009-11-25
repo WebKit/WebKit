@@ -4653,6 +4653,7 @@
 		E1ADEDD50E76BD60004A1A5E /* DOMMessagePortInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */; };
 		E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */; };
 		E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */; };
+		E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
@@ -9835,6 +9836,7 @@
 		E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePortInternal.h; sourceTree = "<group>"; };
 		E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePort.h; sourceTree = "<group>"; };
 		E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePort.cpp; sourceTree = "<group>"; };
+		E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CredentialStorageMac.mm; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
 		E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerLocation.h; sourceTree = "<group>"; };
@@ -11093,6 +11095,7 @@
 				934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */,
 				514C76420CE9234E007EF3CD /* AuthenticationMac.h */,
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
+				E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */,
 				514C76440CE9234E007EF3CD /* FormDataStreamMac.h */,
 				514C76450CE9234E007EF3CD /* FormDataStreamMac.mm */,
 				1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */,
@@ -20324,6 +20327,7 @@
 				18C5FCA510A3991F0048438D /* WebKitSharedScript.cpp in Sources */,
 				18C5FCA810A3991F0048438D /* WebKitSharedScriptRepository.cpp in Sources */,
 				18C5FCB710A3C6F20048438D /* SharedScriptContext.cpp in Sources */,
+				E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */,
 				6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
