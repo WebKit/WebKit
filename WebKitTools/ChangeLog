@@ -1,3 +1,17 @@
+2009-11-25  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Change run_command to give back stderr by default
+        https://bugs.webkit.org/show_bug.cgi?id=31734
+
+        Change run_command to give back stderr by default.
+        Set run_commands's 'svn-create-patch' calling to put only the stdout into the patches.
+        Change the related unittest call.
+
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py:
+
 2009-11-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

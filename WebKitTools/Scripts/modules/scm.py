@@ -123,7 +123,7 @@ class SCM:
         self.dryrun = dryrun
 
     @staticmethod
-    def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False, return_stderr=False):
+    def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False, return_stderr=True):
         if hasattr(input, 'read'): # Check if the input is a file.
             stdin = input
             string_to_communicate = None
@@ -360,7 +360,7 @@ class SVN(SCM):
         return "svn"
 
     def create_patch(self):
-        return self.run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root)
+        return self.run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root, return_stderr=False)
 
     def diff_for_revision(self, revision):
         return self.run_command(['svn', 'diff', '-c', str(revision)])

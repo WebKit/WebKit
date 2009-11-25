@@ -154,7 +154,7 @@ svn: resource out of date; try updating
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
         self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero)
         # Check if returns error text:
-        self.assertTrue(SCM.run_command(command_returns_non_zero, error_handler=ignore_error, return_stderr=True))
+        self.assertTrue(SCM.run_command(command_returns_non_zero, error_handler=ignore_error))
 
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=git_failure_message))
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=svn_failure_message))
