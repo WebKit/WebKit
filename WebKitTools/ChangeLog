@@ -1,3 +1,12 @@
+2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        run-webkit-tests doesn't accept directories/files with --skipped=only parameter
+        https://bugs.webkit.org/show_bug.cgi?id=31799
+
+        * Scripts/run-webkit-tests: Fixed.
+
 2009-11-25  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

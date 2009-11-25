@@ -97,6 +97,7 @@ sub pathcmp($$);
 sub printFailureMessageForTest($$);
 sub processIgnoreTests($$);
 sub readFromDumpToolWithTimer(**);
+sub readSkippedFiles($);
 sub recordActualResultsAndDiff($$);
 sub sampleDumpTool();
 sub setFileHandleNonBlocking(*$);
@@ -297,8 +298,6 @@ if (!$getOptionsResult || $showHelp) {
 my $ignoreSkipped = $treatSkipped eq "ignore";
 my $skippedOnly = $treatSkipped eq "only";
 
-!$skippedOnly || @ARGV == 0 or die "--skipped=only cannot be used when tests are specified on the command line.";
-
 my $configuration = configuration();
 
 $verbose = 1 if $testsPerDumpTool == 1;
@@ -455,7 +454,17 @@ if (!checkWebCoreWCSSSupport(0)) {
 }
 
 processIgnoreTests($ignoreTests, "ignore-tests") if $ignoreTests;
-readSkippedFiles() unless $ignoreSkipped;
+if (!$ignoreSkipped) {
+    if (!$skippedOnly || @ARGV == 0) {
+        readSkippedFiles("");
+    } else {
+        # Since readSkippedFiles() appends to @ARGV, we must use a foreach
+        # loop so that we only iterate over the original argument list.
+        foreach my $argnum (0 .. $#ARGV) {
+            readSkippedFiles(shift @ARGV);
+        }
+    }
+}
 
 my @tests = findTestsToRun();
 
@@ -2089,8 +2098,10 @@ sub fileShouldBeIgnored
     return 0;
 }
 
-sub readSkippedFiles
+sub readSkippedFiles($)
 {
+    my ($constraintPath) = @_;
+
     foreach my $level (@platformTestHierarchy) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose) {
@@ -2105,8 +2116,19 @@ sub readSkippedFiles
                 $skipped =~ s/[ \n\r]+$//;
                 if ($skipped && $skipped !~ /^#/) {
                     if ($skippedOnly) {
-                        if (!&fileShouldBeIgnored($skipped)) {
-                            push(@ARGV, $skipped);
+                        if (!fileShouldBeIgnored($skipped)) {
+                            if (!$constraintPath) {
+                                # Always add $skipped since no constraint path was specified on the command line.
+                                push(@ARGV, $skipped);
+                            } elsif ($skipped =~ /^($constraintPath)/) {
+                                # Add $skipped only if it matches the current path constraint, e.g.,
+                                # "--skipped=only dir1" with "dir1/file1.html" on the skipped list.
+                                push(@ARGV, $skipped);
+                            } elsif ($constraintPath =~ /^($skipped)/) {
+                                # Add current path constraint if it is more specific than the skip list entry,
+                                # e.g., "--skipped=only dir1/dir2/dir3" with "dir1" on the skipped list.
+                                push(@ARGV, $constraintPath);
+                            }
                         } elsif ($verbose) {
                             print "    $skipped\n";
                         }
@@ -2176,6 +2198,9 @@ sub findTestsToRun
             find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $level);
         }
     }
+
+    # Remove duplicate tests
+    @testsToRun = keys %{{ map { $_ => 1 } @testsToRun }};
 
     @testsToRun = sort pathcmp @testsToRun;
 
