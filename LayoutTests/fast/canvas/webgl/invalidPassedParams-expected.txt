@@ -1,0 +1,14 @@
+Test for invalid passed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Test shaders
+PASS shader = context.createShader(context.FRAGMENT_SHADER) is shader
+PASS shader = context.createShader(context.VERTEX_SHADER) is shader
+PASS context.createShader(0) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS context.createShader(context.TRIANGLES) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

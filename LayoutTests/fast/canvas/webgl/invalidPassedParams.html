@@ -1,0 +1,29 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test for invalid passed parameters");
+
+var context = create3DContext();
+
+debug("Test shaders");
+var shader;
+shouldBe("shader = context.createShader(context.FRAGMENT_SHADER)", "shader");
+shouldBe("shader = context.createShader(context.VERTEX_SHADER)", "shader");
+shouldThrow("context.createShader(0)");
+shouldThrow("context.createShader(context.TRIANGLES)");
+
+debug("")
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

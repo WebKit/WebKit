@@ -448,9 +448,13 @@ PassRefPtr<WebGLRenderbuffer> WebGLRenderingContext::createRenderbuffer()
     return o;
 }
 
-PassRefPtr<WebGLShader> WebGLRenderingContext::createShader(unsigned long type)
+PassRefPtr<WebGLShader> WebGLRenderingContext::createShader(unsigned long type, ExceptionCode& ec)
 {
-    // FIXME: Need to do param checking and throw exception if an illegal value is passed in
+    if (type != GraphicsContext3D::VERTEX_SHADER && type != GraphicsContext3D::FRAGMENT_SHADER) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+    
     RefPtr<WebGLShader> o = WebGLShader::create(this, static_cast<GraphicsContext3D::WebGLEnumType>(type));
     addObject(o.get());
     return o;

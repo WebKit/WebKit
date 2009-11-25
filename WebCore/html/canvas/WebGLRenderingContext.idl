@@ -499,7 +499,7 @@ module html {
         WebGLFramebuffer createFramebuffer();
         WebGLProgram createProgram();
         WebGLRenderbuffer createRenderbuffer();
-        WebGLShader createShader(in unsigned long type);
+        WebGLShader createShader(in unsigned long type) raises(DOMException);
         WebGLTexture createTexture();
 
         void         cullFace(in unsigned long mode);
