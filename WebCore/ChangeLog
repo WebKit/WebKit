@@ -1,3 +1,16 @@
+2009-11-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Some tests are crashing from time to time
+        https://bugs.webkit.org/show_bug.cgi?id=31866
+
+        Make sure we do not notify the client of a finished load, if the
+        load has been cancelled, or the client is gone.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
 2009-11-24  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

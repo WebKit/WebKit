@@ -693,6 +693,13 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer)
 
     g_input_stream_close_finish(d->m_inputStream, res, 0);
     cleanupGioOperation(handle.get());
+
+    // The load may have been cancelled, the client may have been
+    // destroyed already. In such cases calling didFinishLoading is a
+    // bad idea.
+    if (d->m_cancelled || !client)
+        return;
+
     client->didFinishLoading(handle.get());
 }
 
