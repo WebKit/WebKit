@@ -66,6 +66,19 @@
 
 2009-11-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        SVGUseElement::toClipPath can crash
+        <rdar://problem/7385270>
+
+        Null-test m_shadowTreeRootElement again, because the call to buildPendingResource() may not
+        actually initialize it.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::toClipPath):
+
+2009-11-24  Simon Fraser  <simon.fraser@apple.com>
+
         Windows build fix.
 
         * page/win/FrameCGWin.cpp:

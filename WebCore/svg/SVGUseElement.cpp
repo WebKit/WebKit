@@ -444,6 +444,9 @@ Path SVGUseElement::toClipPath() const
     if (!m_shadowTreeRootElement)
         const_cast<SVGUseElement*>(this)->buildPendingResource();
 
+    if (!m_shadowTreeRootElement)
+        return Path();
+
     Node* n = m_shadowTreeRootElement->firstChild();
     if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
         if (!isDirectReference(n))
