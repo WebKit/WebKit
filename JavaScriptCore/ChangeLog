@@ -1,3 +1,14 @@
+2009-11-24  Jason Smith  <dark.panda@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        RegExp#exec's returned Array-like object behaves differently from
+        regular Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=31689
+
+        * JavaScriptCore/runtime/RegExpConstructor.cpp: ensure that undefined
+        values are added to the returned RegExpMatchesArray
+
 2009-11-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.

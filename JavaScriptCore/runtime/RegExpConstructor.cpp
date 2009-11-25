@@ -132,6 +132,8 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
         int start = d->lastOvector()[2 * i];
         if (start >= 0)
             JSArray::put(exec, i, jsSubstring(exec, d->lastInput, start, d->lastOvector()[2 * i + 1] - start));
+        else
+            JSArray::put(exec, i, jsUndefined());
     }
 
     PutPropertySlot slot;

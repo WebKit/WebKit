@@ -1,3 +1,15 @@
+2009-11-24  Jason Smith  <dark.panda@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        RegExp#exec's returned Array-like object behaves differently from
+        regular Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=31689
+
+        * LayoutTests/fast/js/regexp-in-and-foreach-handling.html: Added.
+        * LayoutTests/fast/js/script-tests/regexp-in-and-foreach-handling.js: Added.
+        * LayoutTests/fast/js/regexp-in-and-foreach-handling-expected.txt: Added.
+
 2009-11-24  Jens Alfke  <snej@chromium.org>
 
         Reviewed by David Levin.
