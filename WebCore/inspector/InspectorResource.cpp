@@ -105,6 +105,11 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
 {
     m_expectedContentLength = response.expectedContentLength();
     m_mimeType = response.mimeType();
+    if (m_mimeType.isEmpty() && response.httpStatusCode() == 304) {
+        CachedResource* cachedResource = cache()->resourceForURL(response.url().string());
+        if (cachedResource)
+            m_mimeType = cachedResource->response().mimeType();
+    }
     m_responseHeaderFields = response.httpHeaderFields();
     m_responseStatusCode = response.httpStatusCode();
     m_suggestedFilename = response.suggestedFilename();
@@ -186,7 +191,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         jsonObject.set("type", static_cast<int>(type()));
         jsonObject.set("didTypeChange", true);
     }
-    
+
     if (m_changes.hasChange(LengthChange)) {
         jsonObject.set("contentLength", m_length);
         jsonObject.set("didLengthChange", true);
@@ -281,9 +286,9 @@ InspectorResource::Type InspectorResource::type() const
 
     if (m_loader->frameLoader() && m_requestURL == m_loader->frameLoader()->iconURL())
         return Image;
-    
+
     return cachedResourceType();
-    
+
 }
 
 void InspectorResource::setXMLHttpResponseText(const ScriptString& data)

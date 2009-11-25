@@ -1,3 +1,18 @@
+2009-11-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Load InspectorResource mime type from CachedResource for 304 responses
+
+        For network libraries that do not merge cache data into 304 ResourceResponses,
+        the mime type for cached resources is unknown.
+        https://bugs.webkit.org/show_bug.cgi?id=31868
+
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateResponse):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::type):
+
 2009-11-25  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Eric Seidel.
