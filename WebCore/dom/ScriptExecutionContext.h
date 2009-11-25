@@ -57,6 +57,9 @@ namespace WebCore {
 
         virtual bool isDocument() const { return false; }
         virtual bool isWorkerContext() const { return false; }
+#if ENABLE(SHARED_SCRIPT)
+        virtual bool isSharedScriptContext() const { return false; }
+#endif
 
         const KURL& url() const { return virtualURL(); }
         KURL completeURL(const String& url) const { return virtualCompleteURL(url); }

@@ -1,5 +1,94 @@
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
+        Reviewed by David Levin.
+
+        Initial implementation of WebKitSharedScript and SharedScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=31569
+
+        No new tests since there are no bindings yet (soon to come).
+
+        * DerivedSources.make: Add WebKitSharedScript and SharedScriptContext to a list of idl files.
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::detach): Notify WebKitSharedScriptRepository that document is detaching.
+        * dom/EventTarget.cpp: Add new casting methods, since the new types are EventTargets.
+        (WebCore::EventTarget::toWebKitSharedScript):
+        (WebCore::EventTarget::toSharedScriptContext):
+        * dom/EventTarget.h: Ditto
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isSharedScriptContext): New virtual method, since there is a new type of context.
+
+        * SharedScript/SharedScriptContext.cpp: Added. Similar to WorkerContext, but w/o threading.
+        (WebCore::SharedScriptContext::SharedScriptContext):
+        (WebCore::SharedScriptContext::~SharedScriptContext):
+        (WebCore::SharedScriptContext::clearScript):
+        (WebCore::SharedScriptContext::virtualURL):
+        (WebCore::SharedScriptContext::virtualCompleteURL):
+        (WebCore::SharedScriptContext::reportException):
+        (WebCore::SharedScriptContext::addMessage):
+        (WebCore::SharedScriptContext::resourceRetrievedByXMLHttpRequest):
+        (WebCore::SharedScriptContext::scriptImported):
+        (WebCore::SharedScriptContext::matches):
+        (WebCore::SharedScriptContext::addToDocumentsList):
+        (WebCore::SharedScriptContext::destructionTimerFired):
+        (WebCore::SharedScriptContext::removeFromDocumentList):
+        (WebCore::SharedScriptContext::load):
+        (WebCore::SharedScriptContext::postTask):
+        (WebCore::SharedScriptContext::eventTargetData):
+        (WebCore::SharedScriptContext::ensureEventTargetData):
+        (WebCore::SharedScriptContext::scriptExecutionContext):
+        * SharedScript/SharedScriptContext.h: Added.
+        (WebCore::SharedScriptContext::create):
+        (WebCore::SharedScriptContext::isSharedScriptContext):
+        (WebCore::SharedScriptContext::userAgent):
+        (WebCore::SharedScriptContext::toSharedScriptContext):
+        (WebCore::SharedScriptContext::self):
+        (WebCore::SharedScriptContext::script):
+        (WebCore::SharedScriptContext::loaded):
+        (WebCore::SharedScriptContext::name):
+        (WebCore::SharedScriptContext::refEventTarget):
+        (WebCore::SharedScriptContext::derefEventTarget):
+        (WebCore::SharedScriptContext::refScriptExecutionContext):
+        (WebCore::SharedScriptContext::derefScriptExecutionContext):
+        * SharedScript/SharedScriptContext.idl: Added.
+
+        * SharedScript/SharedScriptController.h: 
+        Added. Empty implementation of a ScriptController, will come later as part of bindings. Needed to compile.
+
+        * SharedScript/WebKitSharedScript.cpp: Added. EventTarget-based DOM object.
+        (WebCore::WebKitSharedScript::WebKitSharedScript):
+        (WebCore::WebKitSharedScript::~WebKitSharedScript):
+        (WebCore::WebKitSharedScript::setContext):
+        (WebCore::LoadEventTask::create): Fires asynchronous 'load' event when underlying SharedScriptContext is initialized.
+        (WebCore::LoadEventTask::performTask):
+        (WebCore::LoadEventTask::LoadEventTask):
+        (WebCore::WebKitSharedScript::scheduleLoadEvent):
+        * SharedScript/WebKitSharedScript.h: Added.
+        (WebCore::WebKitSharedScript::create):
+        (WebCore::WebKitSharedScript::scriptExecutionContext):
+        (WebCore::WebKitSharedScript::toWebKitSharedScript):
+        (WebCore::WebKitSharedScript::context):
+        (WebCore::WebKitSharedScript::refEventTarget):
+        (WebCore::WebKitSharedScript::derefEventTarget):
+        (WebCore::WebKitSharedScript::eventTargetData):
+        (WebCore::WebKitSharedScript::ensureEventTargetData):
+        * SharedScript/WebKitSharedScript.idl: Added.
+
+        * SharedScript/WebKitSharedScriptRepository.cpp: Added. Implements a list of running SharedScriptContexts.
+        (WebCore::ScriptLoader::ScriptLoader): The helper class to load an initial script of SharedScriptContext.
+        (WebCore::ScriptLoader::load):
+        (WebCore::ScriptLoader::notifyFinished):
+        (WebCore::WebKitSharedScriptRepository::instance): Repository has a static global instance.
+        (WebCore::WebKitSharedScriptRepository::connect):
+        (WebCore::WebKitSharedScriptRepository::documentDetached): Called from Document::detach().
+        (WebCore::WebKitSharedScriptRepository::removeSharedScriptContext): Called from ~SharedScriptContext().
+        (WebCore::WebKitSharedScriptRepository::connectToSharedScript):
+        (WebCore::WebKitSharedScriptRepository::getSharedScriptContext):
+        * SharedScript/WebKitSharedScriptRepository.h: Added.
+        (WebCore::WebKitSharedScriptRepository::WebKitSharedScriptRepository):
+
+2009-11-24  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Add ENABLE_SHARED_SCRIPT feature define and flag for build-webkit

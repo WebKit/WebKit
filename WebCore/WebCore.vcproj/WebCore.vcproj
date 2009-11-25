@@ -41924,6 +41924,38 @@
 			</Filter>
 		</Filter>
 		<Filter
+			Name="SharedScript"
+			>
+			<File
+				RelativePath="..\SharedScript\SharedScriptContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\SharedScriptContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\SharedScriptController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\WebKitSharedScript.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\WebKitSharedScript.h"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\WebKitSharedScriptRepository.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\SharedScript\WebKitSharedScriptRepository.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="storage"
 			>
 			<File
