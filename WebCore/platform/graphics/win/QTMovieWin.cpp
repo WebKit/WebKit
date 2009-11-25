@@ -45,6 +45,12 @@ using namespace std;
 
 static const long minimumQuickTimeVersion = 0x07300000; // 7.3
 
+static const long closedCaptionTrackType = 'clcp';
+static const long subTitleTrackType = 'sbtl';
+static const long mpeg4ObjectDescriptionTrackType = 'odsm';
+static const long mpeg4SceneDescriptionTrackType = 'sdsm';
+static const long closedCaptionDisplayPropertyID = 'disp';
+
 // Resizing GWorlds is slow, give them a minimum size so size of small 
 // videos can be animated smoothly
 static const int cGWorldMinWidth = 640;
@@ -757,10 +763,10 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount, unsigned&
         allowedTrackTypes->add(SoundMediaType);
         allowedTrackTypes->add(TextMediaType);
         allowedTrackTypes->add(BaseMediaType);
-        allowedTrackTypes->add('clcp'); // Closed caption
-        allowedTrackTypes->add('sbtl'); // Subtitle
-        allowedTrackTypes->add('odsm'); // MPEG-4 object descriptor stream
-        allowedTrackTypes->add('sdsm'); // MPEG-4 scene description stream
+        allowedTrackTypes->add(closedCaptionTrackType);
+        allowedTrackTypes->add(subTitleTrackType);
+        allowedTrackTypes->add(mpeg4ObjectDescriptionTrackType);
+        allowedTrackTypes->add(mpeg4SceneDescriptionTrackType);
         allowedTrackTypes->add(TimeCodeMediaType);
         allowedTrackTypes->add(TimeCode64MediaType);
     }
@@ -875,6 +881,27 @@ bool QTMovieWin::hasAudio() const
     if (!m_private->m_movie)
         return false;
     return (GetMovieIndTrackType(m_private->m_movie, 1, AudioMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
+}
+
+
+bool QTMovieWin::hasClosedCaptions() const 
+{
+    if (!m_private->m_movie)
+        return false;
+    return GetMovieIndTrackType(m_private->m_movie, 1, closedCaptionTrackType, movieTrackMediaType);
+}
+
+void QTMovieWin::setClosedCaptionsVisible(bool visible)
+{
+    if (!m_private->m_movie)
+        return;
+
+    Track ccTrack = GetMovieIndTrackType(m_private->m_movie, 1, closedCaptionTrackType, movieTrackMediaType);
+    if (!ccTrack)
+        return;
+
+    Boolean doDisplay = visible;
+    QTSetTrackProperty(ccTrack, closedCaptionTrackType, closedCaptionDisplayPropertyID, sizeof(doDisplay), &doDisplay);
 }
 
 pascal OSErr movieDrawingCompleteProc(Movie movie, long data)

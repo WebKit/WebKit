@@ -1,3 +1,12 @@
+2009-11-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7409331> Windows: Support closed caption in <video> element
+
+        * platform/win/Skipped:
+            Enable the closed caption test.
+
 2009-11-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         We do not have a strategy in place to mimick the output for load

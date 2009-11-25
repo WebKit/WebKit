@@ -955,6 +955,23 @@ Color RenderThemeWin::systemColor(int cssValueId) const
 }
 
 #if ENABLE(VIDEO)
+
+bool RenderThemeWin::shouldRenderMediaControlPart(ControlPart part, Element* element)
+{
+    if (part == MediaToggleClosedCaptionsButtonPart) {
+        // We rely on QuickTime to render captions so only enable the button for a video element.
+#if SAFARI_THEME_VERSION >= 4
+        if (!element->hasTagName(videoTag))
+            return false;
+#else
+        return false;
+#endif
+    }
+
+    return RenderTheme::shouldRenderMediaControlPart(part, element);
+}
+
+
 bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     return RenderMediaControls::paintMediaControlsPart(MediaFullscreenButton, o, paintInfo, r);
@@ -989,6 +1006,12 @@ bool RenderThemeWin::paintMediaSliderThumb(RenderObject* o, const RenderObject::
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
 }
+
+bool RenderThemeWin::paintMediaToggleClosedCaptionsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    return RenderMediaControls::paintMediaControlsPart(MediaShowClosedCaptionsButton, o, paintInfo, r);
+}
+
 #endif
 
 }

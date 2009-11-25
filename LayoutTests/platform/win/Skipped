@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -54,9 +54,6 @@ media/video-volume-slider.html
 # These tests requires fullscreen <video> support
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
-
-# Requires media engine closed caption support
-media/media-captions.html
 
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common

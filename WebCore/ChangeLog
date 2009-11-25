@@ -1,3 +1,40 @@
+2009-11-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7409331> Windows: Support closed caption in <video> element
+
+        Enable closed captions in QuickTime/Windows media engine.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::hasClosedCaptions):
+        (WebCore::MediaPlayerPrivate::setClosedCaptionsVisible):
+            New, all through to m_qtMovie.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+            Make all but the destructor private since MediaPlayer call through the media
+            engine interface.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::disableUnsupportedTracks):
+            Use handy new constants for QuickTime track types.
+        (QTMovieWin::hasClosedCaptions):
+        (QTMovieWin::setClosedCaptionsVisible):
+            New, closed caption support.
+        * platform/graphics/win/QTMovieWin.h:
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+            Deal with closed caption buttons.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::shouldRenderMediaControlPart):
+            New, don't ask the media engine if it has closed captions unless the Safari theme will
+            be able to render the button.
+        (WebCore::RenderThemeWin::paintMediaToggleClosedCaptionsButton):
+            New.
+        * rendering/RenderThemeWin.h:
+
 2009-11-25  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by David Levin.

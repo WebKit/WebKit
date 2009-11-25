@@ -90,6 +90,15 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         case MediaFullscreenButton:
             paintThemePart(SafariTheme::MediaFullscreenButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
             break;
+        case MediaShowClosedCaptionsButton:
+        case MediaHideClosedCaptionsButton:
+#if SAFARI_THEME_VERSION >= 4
+            if (MediaControlToggleClosedCaptionsButtonElement* btn = static_cast<MediaControlToggleClosedCaptionsButtonElement*>(o->node())) {
+                bool captionsVisible = btn->displayType() == MediaHideClosedCaptionsButton;
+                paintThemePart(captionsVisible ? SafariTheme::MediaHideClosedCaptionsButtonPart : SafariTheme::MediaShowClosedCaptionsButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+            }
+#endif
+            break;
         case MediaMuteButton:
         case MediaUnMuteButton:
             if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(o->node())) {
