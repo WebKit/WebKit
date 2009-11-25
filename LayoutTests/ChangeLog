@@ -1,3 +1,10 @@
+2009-11-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        We do not have a strategy in place to mimick the output for load
+        delegates fully yet. See https://bugs.webkit.org/show_bug.cgi?id=27905
+
+        * platform/gtk/Skipped:
+
 2009-11-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.

@@ -5462,6 +5462,7 @@ transitions/transition-end-event-rendering.html
 
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
+http/tests/cache/subresource-failover-to-network.html
 http/tests/loading/redirect-methods.html
 http/tests/misc/favicon-loads-with-images-disabled.html
 
