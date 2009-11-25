@@ -42,11 +42,6 @@ typedef struct _CFURLResponse* CFURLResponseRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
 typedef const struct _CFURLRequest* CFURLRequestRef;
-typedef struct _CFURLCredential* CFURLCredentialRef;
-typedef struct __CFHTTPMessage* CFHTTPMessageRef;
-typedef const struct __CFNumber* CFNumberRef;
-typedef struct __CFReadStream* CFReadStreamRef;
-typedef const struct __CFURL* CFURLRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -81,10 +76,6 @@ CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 unsigned wkInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
-
-void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
-void wkSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
 CFStringRef wkCFNetworkErrorGetLocalizedDescription(CFIndex errorCode);
 

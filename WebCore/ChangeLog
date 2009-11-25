@@ -269,40 +269,6 @@
         * rendering/RenderThemeWin.cpp:
         * rendering/RenderThemeWin.h:
 
-2009-11-24  Alexey Proskuryakov  <ap@apple.com>
-
-        Reviewed by Brady Eidson.
-
-        https://bugs.webkit.org/show_bug.cgi?id=31844
-        SocketStreamHandleCFNet should support CONNECT proxy credentials
-
-        * WebCore.vcproj/WebCore.vcproj:
-        * WebCore.xcodeproj/project.pbxproj:
-        * platform/network/CredentialStorage.h:
-        * platform/network/mac/CredentialStorageMac.mm: Added.
-        (WebCore::CredentialStorage::getFromPersistentStorage):
-        * platform/network/cf/CredentialStorageCFNet.cpp: Added.
-        (WebCore::CredentialStorage::getFromPersistentStorage):
-        Add support for fetching credentials from persistent storage (CFNet version is currently
-        a stub).
-
-        * bindings/js/JSWebSocketCustom.cpp: Removed an unneeded include.
-
-        * platform/network/cf/SocketStreamHandle.h:
-        * platform/network/cf/SocketStreamHandleCFNet.cpp:
-        (WebCore::SocketStreamHandle::SocketStreamHandle):
-        (WebCore::SocketStreamHandle::createStreams):
-        (WebCore::getStoredCONNECTProxyCredentials):
-        (WebCore::authenticationSchemeFromAuthenticationMethod):
-        (WebCore::SocketStreamHandle::addCONNECTCredentials):
-        (WebCore::SocketStreamHandle::readStreamCallback):
-        Check if connection attempt was resulted in 407, and try stored credentials if it did.
-
-        * platform/mac/WebCoreSystemInterface.h:
-        * platform/mac/WebCoreSystemInterface.mm:
-        * WebCore.base.exp:
-        Updated WKSI.
-
 2009-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
