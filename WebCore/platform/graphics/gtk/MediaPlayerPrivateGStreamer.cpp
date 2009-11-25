@@ -146,21 +146,28 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 
 static bool gstInitialized = false;
 
-static void do_gst_init()
+static bool do_gst_init()
 {
     // FIXME: We should pass the arguments from the command line
     if (!gstInitialized) {
-        gst_init(0, 0);
-        gstInitialized = true;
-        gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY,
-                             WEBKIT_TYPE_DATA_SRC);
+        GOwnPtr<GError> error;
+        gstInitialized = gst_init_check(0, 0, &error.outPtr());
+        if (!gstInitialized)
+            LOG_VERBOSE(Media, "Could not initialize GStreamer: %s",
+                        error ? error->message : "unknown error occurred");
+        else
+            gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY,
+                                 WEBKIT_TYPE_DATA_SRC);
 
     }
+    return gstInitialized;
 }
 
 bool MediaPlayerPrivate::isAvailable()
 {
-    do_gst_init();
+    if (!do_gst_init())
+        return false;
+
     GstElementFactory* factory = gst_element_factory_find("playbin2");
     if (factory) {
         gst_object_unref(GST_OBJECT(factory));

@@ -1,3 +1,17 @@
+2009-11-25  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] use gst_init_check() instead of gst_init()
+        https://bugs.webkit.org/show_bug.cgi?id=31864
+
+        Use gst_init_check() instead of gst_init() to prevent eventual
+        unexpected exit of the application.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::do_gst_init):
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
 2009-11-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
