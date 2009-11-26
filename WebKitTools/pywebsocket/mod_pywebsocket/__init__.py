@@ -96,6 +96,9 @@ web_socket_transfer_data is called after the handshake completed
 successfully. A handler can receive/send messages from/to the client
 using request. mod_pywebsocket.msgutil module provides utilities
 for data transfer.
+
+A Web Socket handler must be thread-safe if the server (Apache or
+standalone.py) is configured to use threads.
 """
 
 

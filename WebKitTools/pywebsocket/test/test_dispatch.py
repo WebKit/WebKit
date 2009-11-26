@@ -156,6 +156,20 @@ class DispatcherTest(unittest.TestCase):
         self.assertEqual('sub/plain_wsh.py is called for /sub/plain, None',
                          request.connection.written_data())
 
+        request = mock.MockRequest(connection=mock.MockConn(''))
+        request.ws_resource = '/sub/plain?'
+        request.ws_protocol = None
+        dispatcher.transfer_data(request)
+        self.assertEqual('sub/plain_wsh.py is called for /sub/plain?, None',
+                         request.connection.written_data())
+
+        request = mock.MockRequest(connection=mock.MockConn(''))
+        request.ws_resource = '/sub/plain?q=v'
+        request.ws_protocol = None
+        dispatcher.transfer_data(request)
+        self.assertEqual('sub/plain_wsh.py is called for /sub/plain?q=v, None',
+                         request.connection.written_data())
+
     def test_transfer_data_no_handler(self):
         dispatcher = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
         for resource in ['/blank', '/sub/non_callable',

@@ -46,6 +46,8 @@ import socket
 import sys
 
 
+_TIMEOUT_SEC = 10
+
 _DEFAULT_PORT = 80
 _DEFAULT_SECURE_PORT = 443
 _UNDEFINED_PORT = -1
@@ -56,6 +58,8 @@ _EXPECTED_RESPONSE = (
         'HTTP/1.1 101 Web Socket Protocol Handshake\r\n' +
         _UPGRADE_HEADER +
         _CONNECTION_HEADER)
+
+_GOODBYE_MESSAGE = 'Goodbye'
 
 
 def _method_line(resource):
@@ -96,13 +100,14 @@ class EchoClient(object):
         Shake hands and then repeat sending message and receiving its echo.
         """
         self._socket = socket.socket()
+        self._socket.settimeout(self._options.socket_timeout)
         try:
             self._socket.connect((self._options.server_host,
                                   self._options.server_port))
             if self._options.use_tls:
                 self._socket = _TLSSocket(self._socket)
             self._handshake()
-            for line in self._options.message.split(','):
+            for line in self._options.message.split(',') + [_GOODBYE_MESSAGE]:
                 frame = '\x00' + line.encode('utf-8') + '\xff'
                 self._socket.send(frame)
                 if self._options.verbose:
@@ -111,7 +116,8 @@ class EchoClient(object):
                 if received != frame:
                     raise Exception('Incorrect echo: %r' % received)
                 if self._options.verbose:
-                    print 'Recv: %s' % received[1:-1].decode('utf-8')
+                    print 'Recv: %s' % received[1:-1].decode('utf-8',
+                                                             'replace')
         finally:
             self._socket.close()
 
@@ -166,11 +172,17 @@ def main():
     parser.add_option('-r', '--resource', dest='resource', type='string',
                       default='/echo', help='resource path')
     parser.add_option('-m', '--message', dest='message', type='string',
-                      help='comma-separated messages to send')
+                      help=('comma-separated messages to send excluding "%s" '
+                            'that is always sent at the end' %
+                            _GOODBYE_MESSAGE))
     parser.add_option('-q', '--quiet', dest='verbose', action='store_false',
                       default=True, help='suppress messages')
     parser.add_option('-t', '--tls', dest='use_tls', action='store_true',
                       default=False, help='use TLS (wss://)')
+    parser.add_option('-k', '--socket_timeout', dest='socket_timeout',
+                      type='int', default=_TIMEOUT_SEC,
+                      help='Timeout(sec) for sockets')
+
     (options, unused_args) = parser.parse_args()
 
     # Default port number depends on whether TLS is used.

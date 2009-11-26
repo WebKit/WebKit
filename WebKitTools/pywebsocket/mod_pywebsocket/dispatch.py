@@ -62,7 +62,7 @@ def _normalize_path(path):
     """
 
     path = path.replace('\\', os.path.sep)
-    path = os.path.abspath(path)
+    path = os.path.realpath(path)
     path = path.replace('\\', '/')
     return path
 
@@ -136,7 +136,8 @@ class Dispatcher(object):
         self._source_warnings = []
         if scan_dir is None:
             scan_dir = root_dir
-        if not os.path.realpath(scan_dir).startswith(os.path.realpath(root_dir)):
+        if not os.path.realpath(scan_dir).startswith(
+                os.path.realpath(root_dir)):
             raise DispatchError('scan_dir:%s must be a directory under '
                                 'root_dir:%s.' % (scan_dir, root_dir))
         self._source_files_in_dir(root_dir, scan_dir)
@@ -182,13 +183,14 @@ class Dispatcher(object):
 
     def _handler(self, request):
         try:
-            return self._handlers[request.ws_resource]
+            ws_resource_path = request.ws_resource.split('?', 1)[0]
+            return self._handlers[ws_resource_path]
         except KeyError:
             raise DispatchError('No handler for: %r' % request.ws_resource)
 
     def _source_files_in_dir(self, root_dir, scan_dir):
         """Source all the handler source files in the scan_dir directory.
-        
+
         The resource path is determined relative to root_dir.
         """
 

@@ -1,3 +1,22 @@
+2009-11-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Update pywebsocket to 0.4.2
+
+        Update pywebsocket to 0.4.2
+        https://bugs.webkit.org/show_bug.cgi?id=31861
+
+        * pywebsocket/example/echo_client.py:
+        * pywebsocket/example/echo_wsh.py:
+        * pywebsocket/mod_pywebsocket/__init__.py:
+        * pywebsocket/mod_pywebsocket/dispatch.py:
+        * pywebsocket/mod_pywebsocket/msgutil.py:
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+        * pywebsocket/test/test_dispatch.py:
+        * pywebsocket/test/test_msgutil.py:
+
 2009-11-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

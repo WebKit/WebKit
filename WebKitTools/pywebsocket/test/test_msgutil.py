@@ -71,6 +71,13 @@ class MessageTest(unittest.TestCase):
         # U+672c is encoded as e6,9c,ac in UTF-8
         self.assertEqual(u'\u672c', msgutil.receive_message(request))
 
+    def test_receive_message_erroneous_unicode(self):
+        # \x80 and \x81 are invalid as UTF-8.
+        request = _create_request('\x00\x80\x81\xff')
+        # Invalid characters should be replaced with
+        # U+fffd REPLACEMENT CHARACTER
+        self.assertEqual(u'\ufffd\ufffd', msgutil.receive_message(request))
+
     def test_receive_message_discard(self):
         request = _create_request('\x80\x06IGNORE\x00Hello\xff'
                                 '\x01DISREGARD\xff\x00World!\xff')
