@@ -54,12 +54,14 @@
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
+#include <stdio.h>
 #include <utility>
 #include <v8.h>
 #include <v8-debug.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -68,9 +70,6 @@ v8::Persistent<v8::Context> V8Proxy::m_utilityContext;
 
 // Static list of registered extensions
 V8Extensions V8Proxy::m_extensions;
-
-const char* V8Proxy::kContextDebugDataType = "type";
-const char* V8Proxy::kContextDebugDataValue = "value";
 
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
                               v8::Handle<v8::ObjectTemplate> proto, 
@@ -387,24 +386,16 @@ bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetCont
 {
     // Setup context id for JS debugger.
     v8::Context::Scope contextScope(targetContext);
-    v8::Handle<v8::Object> contextData = v8::Object::New();
-    if (contextData.IsEmpty())
-        return false;
-
     if (m_context.IsEmpty())
         return false;
-    v8::Handle<v8::Value> windowContextData = m_context->GetData();
-    if (windowContextData->IsObject()) {
-        v8::Handle<v8::String> propertyName = v8::String::New(kContextDebugDataValue);
-        if (propertyName.IsEmpty())
-            return false;
-        contextData->Set(propertyName, v8::Object::Cast(*windowContextData)->Get(propertyName));
-    }
-    v8::Handle<v8::String> propertyName = v8::String::New(kContextDebugDataType);
-    if (propertyName.IsEmpty())
+    int debugId = contextDebugId(m_context);
+    if (debugId == -1)
         return false;
-    contextData->Set(propertyName, v8::String::New("injected"));
-    targetContext->SetData(contextData);
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
+    targetContext->SetData(v8::String::New(buffer));
+
     return true;
 }
 
@@ -1366,20 +1357,22 @@ bool V8Proxy::setContextDebugId(int debugId)
         return false;
 
     v8::Context::Scope contextScope(m_context);
-    v8::Handle<v8::Object> contextData = v8::Object::New();
-    contextData->Set(v8::String::New(kContextDebugDataType), v8::String::New("page"));
-    contextData->Set(v8::String::New(kContextDebugDataValue), v8::Integer::New(debugId));
-    m_context->SetData(contextData);
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "page,%d", debugId);
+    m_context->SetData(v8::String::New(buffer));
+
     return true;
 }
 
 int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
 {
     v8::HandleScope scope;
-    if (!context->GetData()->IsObject())
+    if (!context->GetData()->IsString())
         return -1;
-    v8::Handle<v8::Value> data = context->GetData()->ToObject()->Get( v8::String::New(kContextDebugDataValue));
-    return data->IsInt32() ? data->Int32Value() : -1;
+    v8::String::AsciiValue ascii(context->GetData());
+    char* comma = strnstr(*ascii, ",", ascii.length());
+    return atoi(comma + 1);
 }
 
 v8::Handle<v8::Value> V8Proxy::getHiddenObjectPrototype(v8::Handle<v8::Context> context)

@@ -1,3 +1,18 @@
+2009-11-26  Søren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Avoid using JavaScript objects as context data
+        https://bugs.webkit.org/show_bug.cgi?id=31873
+
+        Change the context "data" from a JavaScript object holding the two properties type and value to
+        a string holding type and value separated by a comma.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId):
+        (WebCore::V8Proxy::setContextDebugId):
+        (WebCore::V8Proxy::contextDebugId):
+
 2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

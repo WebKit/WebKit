@@ -365,9 +365,6 @@ namespace WebCore {
         void updateDocumentWrapper(v8::Handle<v8::Value> wrapper);
 
     private:
-        static const char* kContextDebugDataType;
-        static const char* kContextDebugDataValue;
-
         void setSecurityToken();
         void clearDocumentWrapper();
 
