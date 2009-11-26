@@ -2406,7 +2406,7 @@ SOURCES += \
     platform/qt/LoggingQt.cpp \
     platform/text/qt/StringQt.cpp \
     platform/qt/TemporaryLinkStubs.cpp \
-    platform/text/qt/TextBoundaries.cpp \
+    platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \

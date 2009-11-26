@@ -1,3 +1,17 @@
+2009-11-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Corrects build break on Windows.
+
+        Rename platform/text/qt/TextBoundaries.cpp to TextBoundariesQt.cpp since
+        platform/text/TextBoundaries.cpp was compiled instead when compiling with nmake.
+
+        * WebCore.pro:
+        * platform/text/qt/TextBoundariesQt.cpp: Renamed from WebCore/platform/text/qt/TextBoundaries.cpp.
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+
 2009-11-26  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
