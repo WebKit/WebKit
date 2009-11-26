@@ -1,3 +1,14 @@
+2009-11-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove directory prefixes from linux commands
+
+        SCM unittests can cause errors on some systems if we use absolute reference to
+        the commands, so directory prefixes have been removed.
+
+        * Scripts/modules/scm_unittest.py:
+
 2009-11-21  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.

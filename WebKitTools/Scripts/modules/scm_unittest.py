@@ -125,20 +125,20 @@ class SCMClassTests(unittest.TestCase):
         self.dev_null.close()
 
     def test_run_command_with_pipe(self):
-        input_process = subprocess.Popen(['/bin/echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)
-        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input=input_process.stdout), "bar\n")
+        input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)
+        self.assertEqual(SCM.run_command(['grep', 'bar'], input=input_process.stdout), "bar\n")
 
         # Test the non-pipe case too:
-        self.assertEqual(SCM.run_command(['/usr/bin/grep', 'bar'], input="foo\nbar"), "bar\n")
+        self.assertEqual(SCM.run_command(['grep', 'bar'], input="foo\nbar"), "bar\n")
 
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
         # Test when the input pipe process fails.
         input_process = subprocess.Popen(command_returns_non_zero, stdout=subprocess.PIPE, stderr=self.dev_null)
         self.assertTrue(input_process.poll() != 0)
-        self.assertRaises(ScriptError, SCM.run_command, ['/usr/bin/grep', 'bar'], input=input_process.stdout)
+        self.assertRaises(ScriptError, SCM.run_command, ['grep', 'bar'], input=input_process.stdout)
 
         # Test when the run_command process fails.
-        input_process = subprocess.Popen(['/bin/echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null) # grep shows usage and calls exit(2) when called w/o arguments.
+        input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null) # grep shows usage and calls exit(2) when called w/o arguments.
         self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero, input=input_process.stdout)
 
     def test_error_handlers(self):
