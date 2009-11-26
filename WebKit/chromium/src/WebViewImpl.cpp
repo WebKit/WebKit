@@ -70,6 +70,7 @@
 #include "PluginInfoStore.h"
 #include "PopupMenuChromium.h"
 #include "PopupMenuClient.h"
+#include "ProgressTracker.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
@@ -1472,6 +1473,12 @@ int WebViewImpl::dragIdentity()
 {
     if (m_dragTargetDispatch)
         return m_dragIdentity;
+    return 0;
+}
+
+unsigned long WebViewImpl::createUniqueIdentifierForRequest() {
+    if (m_page)
+        return m_page->progress()->createUniqueIdentifier();
     return 0;
 }
 

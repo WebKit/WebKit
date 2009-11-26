@@ -1,3 +1,28 @@
+2009-11-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        This is a WebCore part of the fix that allows to view plugin
+        resources loaded by plugins.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31832
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/InspectorController.h: Remove unused DocumentLoader parameters from inspector methods.
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::addLength): Update loading end time when new data are received.
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didFailToLoad): Notify InspectorController about the failure.
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+
 2009-11-26  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Pavel Feldman.

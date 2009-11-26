@@ -143,6 +143,7 @@ public:
         const WebPoint& screenPoint);
     virtual int dragIdentity();
     virtual bool setDropEffect(bool accept);
+    virtual unsigned long createUniqueIdentifierForRequest();
     virtual void inspectElementAt(const WebPoint& point);
     virtual WebString inspectorSettings() const;
     virtual void setInspectorSettings(const WebString& settings);

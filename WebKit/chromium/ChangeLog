@@ -1,3 +1,22 @@
+2009-11-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebCore part of the fix that allows to view plugin
+        resources loaded by plugins. Methods that for resource
+        loading notifications are exposed through WebDevToolsAgent
+        interface to the glue code to allow Chromium's plugin
+        implementation to notify InspectorController about resource
+        loading in plugins.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31832
+
+        * public/WebDevToolsAgent.h:
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createUniqueIdentifierForRequest):
+        * src/WebViewImpl.h:
+
 2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.
