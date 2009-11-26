@@ -96,11 +96,6 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceE
 
     if (!error.isNull())
         m_frame->loader()->client()->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didFailLoading(loader->identifier(), error);
-#endif
 }
 
 void ResourceLoadNotifier::didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
@@ -131,7 +126,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->willSendRequest(identifier, request, redirectResponse);
+        page->inspectorController()->willSendRequest(loader, identifier, request, redirectResponse);
 #endif
 }
 
@@ -141,7 +136,7 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, un
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveResponse(identifier, r);
+        page->inspectorController()->didReceiveResponse(loader, identifier, r);
 #endif
 }
 
@@ -151,7 +146,7 @@ void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loade
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveContentLength(identifier, length);
+        page->inspectorController()->didReceiveContentLength(loader, identifier, length);
 #endif
 }
 
@@ -161,7 +156,7 @@ void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsi
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didFinishLoading(identifier);
+        page->inspectorController()->didFinishLoading(loader, identifier);
 #endif
 }
 

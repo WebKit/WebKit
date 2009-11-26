@@ -381,12 +381,6 @@ void InspectorResource::addLength(int lengthReceived)
 {
     m_length += lengthReceived;
     m_changes.set(LengthChange);
-
-    // Update load time, otherwise the resource will
-    // have start time == end time and  0 load duration
-    // until its loading is completed.
-    m_endTime = currentTime();
-    m_changes.set(TimingChange);
 }
 
 } // namespace WebCore

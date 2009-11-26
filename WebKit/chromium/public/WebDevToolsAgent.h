@@ -35,13 +35,9 @@
 
 namespace WebKit {
 class WebDevToolsAgentClient;
-class WebFrame;
 class WebString;
-class WebURLRequest;
-class WebURLResponse;
 class WebView;
 struct WebPoint;
-struct WebURLError;
 
 class WebDevToolsAgent {
 public:
@@ -74,13 +70,6 @@ public:
     // Installs dispatch handle that is going to be called periodically
     // while on a breakpoint.
     WEBKIT_API static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler);
-
-    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&) = 0;
-    virtual void willSendRequest(unsigned long resourceId, const WebURLRequest&) = 0;
-    virtual void didReceiveData(unsigned long resourceId, int length) = 0;
-    virtual void didReceiveResponse(unsigned long resourceId, const WebURLResponse&) = 0;
-    virtual void didFinishLoading(unsigned long resourceId) = 0;
-    virtual void didFailLoading(unsigned long resourceId, const WebURLError&) = 0;
 };
 
 } // namespace WebKit
