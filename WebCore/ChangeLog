@@ -1,3 +1,28 @@
+2009-11-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Call Widget::setSelfVisible from hide/show
+        https://bugs.webkit.org/show_bug.cgi?id=31203
+
+        Call Widget::setSelfVisible from Widget::show and
+        Widget::hide and use isParentVisible to decide
+        if the widget should be shown. This way client
+        code can rely on isVisible.
+
+        Change PluginViewQt::show, PluginViewQt::hide to
+        call the base class as it is doing the right thing
+        now. Add an assert verify that platfomWidget and
+        platformPluginWidget are the same.
+
+        * manual-tests/qt/qtplugin.html: Modify manual test
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+
 2009-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -138,26 +138,14 @@ void PluginView::setFocus()
 
 void PluginView::show()
 {
-    setSelfVisible(true);
-
-    if (isParentVisible() && platformPluginWidget())
-        platformPluginWidget()->setVisible(true);
-
-    // do not call parent impl. here as it will set the platformWidget
-    // (same as platformPluginWidget in the Qt port) to visible, even
-    // when parent isn't visible.
+    Q_ASSERT(platformPluginWidget() == platformWidget());
+    Widget::show();
 }
 
 void PluginView::hide()
 {
-    setSelfVisible(false);
-
-    if (isParentVisible() && platformPluginWidget())
-        platformPluginWidget()->setVisible(false);
-
-    // do not call parent impl. here as it will set the platformWidget
-    // (same as platformPluginWidget in the Qt port) to invisible, even
-    // when parent isn't visible.
+    Q_ASSERT(platformPluginWidget() == platformWidget());
+    Widget::hide();
 }
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
