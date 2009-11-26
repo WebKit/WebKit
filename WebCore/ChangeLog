@@ -1,3 +1,24 @@
+2009-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Use QNetworkReply::rawHeaderPairs
+        https://bugs.webkit.org/show_bug.cgi?id=31826
+
+        The QNetworkReply is internally storing the HTTP headers
+        as a list of pairs. Currently we have to ask the QNetworkReply
+        to put all header names into a QStringList. Afterwards we will
+        iterate over this QStringList and ask the QNetworkReply to
+        give us the value for this header name. The current Qt implementation
+        is doing a linear to find the header value.
+
+        Use a new API to directly access the list of pairs and push
+        this into WebCore. This avoids doing some allocations and doing
+        linear searches from within a loop.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
 2009-11-21  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.
