@@ -261,7 +261,7 @@ void BitmapImage::invalidatePlatformData()
 
 }
 
-void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect)
+void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& destRect)
 {
     notImplemented();
 }
