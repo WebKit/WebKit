@@ -170,6 +170,16 @@ class PostCommits(Command):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
+class MarkFixed(Command):
+    name = "mark-fixed"
+    show_in_main_help = False
+    def __init__(self):
+        Command.__init__(self, "Mark the specified bug as fixed", "BUG_ID REASON")
+
+    def execute(self, options, args, tool):
+        tool.bugs.close_bug_as_fixed(args[0], args[1])
+
+
 class CreateBug(Command):
     name = "create-bug"
     show_in_main_help = True
