@@ -40,6 +40,7 @@ from modules.logging import log
 
 class Command(object):
     name = None
+    # show_in_main_help = False # Subclasses must define show_in_main_help, we leave it out here to enforce that.
     def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
         self.help_text = help_text
         self.argument_names = argument_names
@@ -47,6 +48,14 @@ class Command(object):
         self.options = options
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
         self.requires_local_commits = requires_local_commits
+        self.tool = None
+
+    # The tool calls bind_to_tool on each Command after adding it to its list.
+    def bind_to_tool(self, tool):
+        # Command instances can only be bound to one tool at a time.
+        if self.tool and tool != self.tool:
+            raise Exception("Command already bound to tool!")
+        self.tool = tool
 
     @staticmethod
     def _parse_required_arguments(argument_names):
@@ -89,6 +98,11 @@ class Command(object):
             return 1
         return self.execute(command_options, command_args, tool) or 0
 
+    def standalone_help(self):
+        help_text = self.name_with_arguments().ljust(len(self.name_with_arguments()) + 3) + self.help_text + "\n"
+        help_text += self.option_parser.format_option_help(IndentedHelpFormatter())
+        return help_text
+
     def execute(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
 
@@ -101,7 +115,7 @@ class HelpPrintingOptionParser(OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
         error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
-        error_message += "\nType \"" + self.get_prog_name() + " --help\" to see usage.\n"
+        error_message += "\nType \"%s --help\" to see usage.\n" % self.get_prog_name()
         self.exit(1, error_message)
 
     # We override format_epilog to avoid the default formatting which would paragraph-wrap the epilog
@@ -112,11 +126,57 @@ class HelpPrintingOptionParser(OptionParser):
         return ""
 
 
+class HelpCommand(Command):
+    name = "help"
+    show_in_main_help = False
+
+    def __init__(self):
+        options = [
+            make_option("-a", "--all-commands", action="store_true", dest="show_all_commands", help="Print all available commands"),
+        ]
+        Command.__init__(self, "Display information about this program or its subcommands", "[COMMAND]", options=options)
+        self.show_all_commands = False # A hack used to pass --all-commands to _help_epilog even though it's called by the OptionParser.
+
+    def _help_epilog(self):
+        # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
+        if self.show_all_commands:
+            epilog = "All %prog commands:\n"
+            relevant_commands = self.tool.commands[:]
+        else:
+            epilog = "Common %prog commands:\n"
+            relevant_commands = filter(self.tool.should_show_in_main_help, self.tool.commands)
+        longest_name_length = max(map(lambda command: len(command.name), relevant_commands))
+        relevant_commands.sort(lambda a, b: cmp(a.name, b.name))
+        command_help_texts = map(lambda command: "   %s   %s\n" % (command.name.ljust(longest_name_length), command.help_text), relevant_commands)
+        epilog += "%s\n" % "".join(command_help_texts)
+        epilog += "See '%prog help --all-commands' to list all commands.\n"
+        epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
+        return self.tool.global_option_parser.expand_prog_name(epilog)
+
+    def execute(self, options, args, tool):
+        if args:
+            command = self.tool.command_by_name(args[0])
+            if command:
+                print command.standalone_help()
+                return 0
+
+        self.show_all_commands = options.show_all_commands
+        tool.global_option_parser.print_help()
+        return 0
+
+
 class MultiCommandTool(object):
     def __init__(self, name=None, commands=None):
         # Allow the unit tests to disable command auto-discovery.
         self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
-        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self._help_epilog, prog=name, usage=self._usage_line())
+        self.help_command = self.command_by_name(HelpCommand.name)
+        # Require a help command, even if the manual test list doesn't include one.
+        if not self.help_command:
+            self.help_command = HelpCommand()
+            self.commands.append(self.help_command)
+        for command in self.commands:
+            command.bind_to_tool(self)
+        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self.help_command._help_epilog, prog=name, usage=self._usage_line())
 
     @classmethod
     def _add_all_subclasses(cls, class_to_crawl, seen_classes):
@@ -135,25 +195,8 @@ class MultiCommandTool(object):
     def _usage_line():
         return "Usage: %prog [options] COMMAND [ARGS]"
 
-    @classmethod
-    def _standalone_help_for_command(cls, command):
-        help_text = command.name_with_arguments().ljust(len(command.name_with_arguments()) + 3) + command.help_text + "\n"
-        help_text += command.option_parser.format_option_help(IndentedHelpFormatter())
-        return help_text
-
     def name(self):
         return self.global_option_parser.get_prog_name()
-
-    def _help_epilog(self):
-        # Only show commands which are relevant to this checkout's SCM system.  Might this be confusing to some users?
-        relevant_commands = filter(self.should_show_command_help, self.commands)
-        longest_name_length = max(map(lambda command: len(command.name), relevant_commands))
-        relevant_commands.sort(lambda a, b: cmp(a.name, b.name))
-        command_help_texts = map(lambda command: "   %s   %s\n" % (command.name.ljust(longest_name_length), command.help_text), relevant_commands)
-        epilog = "%prog supports the following commands:\n"
-        epilog += "%s\n" % "".join(command_help_texts)
-        epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
-        return self.global_option_parser.expand_prog_name(epilog)
 
     def handle_global_args(self, args):
         (options, args) = self.global_option_parser.parse_args(args)
@@ -186,8 +229,8 @@ class MultiCommandTool(object):
     def path(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def should_show_command_help(self, command):
-        raise NotImplementedError, "subclasses must implement"
+    def should_show_in_main_help(self, command):
+        return command.show_in_main_help
 
     def should_execute_command(self, command):
         raise NotImplementedError, "subclasses must implement"
@@ -198,18 +241,7 @@ class MultiCommandTool(object):
         # Handle --help, etc:
         self.handle_global_args(global_args)
 
-        if not command_name:
-            self.global_option_parser.error("No command specified")
-
-        if command_name == "help":
-            if args_after_command_name:
-                command = self.command_by_name(args_after_command_name[0])
-                log(self._standalone_help_for_command(command))
-            else:
-                self.global_option_parser.print_help()
-            return 0
-
-        command = self.command_by_name(command_name)
+        command = self.command_by_name(command_name) or self.help_command
         if not command:
             self.global_option_parser.error("%s is not a recognized command" % command_name)
 

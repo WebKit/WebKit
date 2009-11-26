@@ -71,7 +71,9 @@ class BugzillaTool(MultiCommandTool):
     def path(self):
         return __file__
 
-    def should_show_command_help(self, command):
+    def should_show_in_main_help(self, command):
+        if not command.show_in_main_help:
+            return False
         if command.requires_local_commits:
             return self.scm().supports_local_commits()
         return True

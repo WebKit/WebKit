@@ -110,6 +110,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
 
 class CommitQueue(AbstractQueue):
     name = "commit-queue"
+    show_in_main_help = False
     def __init__(self):
         AbstractQueue.__init__(self)
 
@@ -166,6 +167,7 @@ class AbstractTryQueue(AbstractQueue):
 
 class StyleQueue(AbstractTryQueue):
     name = "style-queue"
+    show_in_main_help = False
     def __init__(self):
         AbstractTryQueue.__init__(self)
 
@@ -178,6 +180,7 @@ class StyleQueue(AbstractTryQueue):
 
 class BuildQueue(AbstractTryQueue):
     name = "build-queue"
+    show_in_main_help = False
     def __init__(self):
         options = WebKitPort.port_options()
         AbstractTryQueue.__init__(self, options)

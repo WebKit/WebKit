@@ -56,6 +56,7 @@ from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
+    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "Print a commit message suitable for the uncommitted changes")
 
@@ -66,6 +67,7 @@ class CommitMessageForCurrentDiff(Command):
 
 class ObsoleteAttachments(Command):
     name = "obsolete-attachments"
+    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "Mark all attachments on a bug as obsolete", "BUGID")
 
@@ -79,6 +81,7 @@ class ObsoleteAttachments(Command):
 
 class PostDiff(Command):
     name = "post-diff"
+    show_in_main_help = True
     def __init__(self):
         options = [
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
@@ -120,6 +123,7 @@ class PostDiff(Command):
 
 class PostCommits(Command):
     name = "post-commits"
+    show_in_main_help = True
     def __init__(self):
         options = [
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
@@ -168,6 +172,7 @@ class PostCommits(Command):
 
 class CreateBug(Command):
     name = "create-bug"
+    show_in_main_help = True
     def __init__(self):
         options = [
             make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy."),

@@ -67,6 +67,7 @@ class BuildSequence(ConditionalLandingSequence):
 
 class Build(Command):
     name = "build"
+    show_in_main_help = False
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
@@ -80,6 +81,7 @@ class Build(Command):
 
 class ApplyAttachment(Command):
     name = "apply-attachment"
+    show_in_main_help = True
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID", options=options)
@@ -93,6 +95,7 @@ class ApplyAttachment(Command):
 
 class ApplyPatches(Command):
     name = "apply-patches"
+    show_in_main_help = True
     def __init__(self):
         options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
         Command.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID", options=options)
@@ -159,6 +162,7 @@ class LandDiffSequence(ConditionalLandingSequence):
 
 class LandDiff(Command):
     name = "land-diff"
+    show_in_main_help = True
     def __init__(self):
         options = [
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
@@ -255,6 +259,7 @@ class CheckStyleSequence(LandingSequence):
 
 class CheckStyle(AbstractPatchProcessingCommand):
     name = "check-style"
+    show_in_main_help = False
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
@@ -284,6 +289,7 @@ class BuildAttachmentSequence(LandingSequence):
 
 class BuildAttachment(AbstractPatchProcessingCommand):
     name = "build-attachment"
+    show_in_main_help = False
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()
@@ -319,6 +325,7 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
 
 class LandAttachment(AbstractPatchLandingCommand):
     name = "land-attachment"
+    show_in_main_help = True
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Land patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
@@ -328,6 +335,7 @@ class LandAttachment(AbstractPatchLandingCommand):
 
 class LandPatches(AbstractPatchLandingCommand):
     name = "land-patches"
+    show_in_main_help = True
     def __init__(self):
         AbstractPatchLandingCommand.__init__(self, "Land all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
 
@@ -342,6 +350,7 @@ class LandPatches(AbstractPatchLandingCommand):
 
 class Rollout(Command):
     name = "rollout"
+    show_in_main_help = True
     def __init__(self):
         options = WebKitLandingScripts.cleaning_options()
         options += WebKitLandingScripts.build_options()

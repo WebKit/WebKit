@@ -35,12 +35,16 @@ from optparse import make_option
 
 class TrivialCommand(Command):
     name = "trivial"
+    show_in_main_help = True
     def __init__(self, **kwargs):
         Command.__init__(self, "help text", **kwargs)
 
     def execute(self, options, args, tool):
         pass
 
+class UncommonCommand(TrivialCommand):
+    name = "uncommon"
+    show_in_main_help = False
 
 class CommandTest(unittest.TestCase):
     def test_name_with_arguments(self):
@@ -76,11 +80,8 @@ class TrivialTool(MultiCommandTool):
     def path():
         return __file__
 
-    def should_show_command_help(self, command):
-        return True
-
     def should_execute_command(self, command):
-        return True
+        return (True, None)
 
 
 class MultiCommandToolTest(unittest.TestCase):
@@ -107,18 +108,50 @@ class MultiCommandToolTest(unittest.TestCase):
         self.assertEqual(tool.command_by_name("trivial").name, "trivial")
         self.assertEqual(tool.command_by_name("bar"), None)
 
+    def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr = "", exit_code=0):
+        capture = OutputCapture()
+        capture.capture_output()
+        exit_code = tool.main(main_args)
+        (stdout_string, stderr_string) = capture.restore_output()
+        self.assertEqual(stdout_string, expected_stdout)
+        self.assertEqual(expected_stderr, expected_stderr)
+
+    def test_global_help(self):
+        tool = TrivialTool(commands=[TrivialCommand(), UncommonCommand()])
+        expected_common_commands_help = """Usage: trivial-tool [options] COMMAND [ARGS]
+
+Options:
+  -h, --help  show this help message and exit
+
+Common trivial-tool commands:
+   trivial   help text
+
+See 'trivial-tool help --all-commands' to list all commands.
+See 'trivial-tool help COMMAND' for more information on a specific command.
+
+"""
+        self._assert_tool_main_outputs(tool, ["tool", "help"], expected_common_commands_help)
+        expected_all_commands_help = """Usage: trivial-tool [options] COMMAND [ARGS]
+
+Options:
+  -h, --help  show this help message and exit
+
+All trivial-tool commands:
+   help       Display information about this program or its subcommands
+   trivial    help text
+   uncommon   help text
+
+See 'trivial-tool help --all-commands' to list all commands.
+See 'trivial-tool help COMMAND' for more information on a specific command.
+
+"""
+        self._assert_tool_main_outputs(tool, ["tool", "help", "--all-commands"], expected_all_commands_help)
+
     def test_command_help(self):
         command_with_options = TrivialCommand(options=[make_option("--my_option")])
         tool = TrivialTool(commands=[command_with_options])
-
-        capture = OutputCapture()
-        capture.capture_output()
-        exit_code = tool.main(["tool", "help", "trivial"])
-        (stdout_string, stderr_string) = capture.restore_output()
         expected_subcommand_help = "trivial [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
-        self.assertEqual(exit_code, 0)
-        self.assertEqual(stdout_string, "")
-        self.assertEqual(stderr_string, expected_subcommand_help)
+        self._assert_tool_main_outputs(tool, ["tool", "help", "trivial"], expected_subcommand_help)
 
 
 if __name__ == "__main__":
