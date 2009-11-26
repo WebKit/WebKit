@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Add unit test for mark-fixed
+        https://bugs.webkit.org/show_bug.cgi?id=31896
+
+        * Scripts/modules/commands/commandtest.py: Added.
+        * Scripts/modules/commands/queries_unittest.py:
+        * Scripts/modules/commands/upload_unittest.py: Added.
+        * Scripts/modules/mock_bugzillatool.py:
+        * Scripts/run-webkit-unittests:
+
+2009-11-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         bugzilla-tool should have a mark-fixed command
         https://bugs.webkit.org/show_bug.cgi?id=31853
 

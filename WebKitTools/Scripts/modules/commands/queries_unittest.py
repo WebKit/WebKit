@@ -28,31 +28,22 @@
 
 import unittest
 
+from modules.commands.commandtest import CommandsTest
 from modules.commands.queries import *
-from modules.mock_bugzillatool import *
-from modules.outputcapture import OutputCapture
 
-class QueryCommandsTest(unittest.TestCase):
-    def _assert_execute_outputs(self, command, command_args, expected_stdout, expected_stderr = ""):
-        capture = OutputCapture()
-        capture.capture_output()
-        command.execute(None, command_args, MockBugzillaTool())
-        (stdout_string, stderr_string) = capture.restore_output()
-        self.assertEqual(stdout_string, expected_stdout)
-        self.assertEqual(expected_stderr, expected_stderr)
-
+class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
-        self._assert_execute_outputs(BugsToCommit(), None, "42\n75\n")
+        self.assert_execute_outputs(BugsToCommit(), None, "42\n75\n")
 
     def test_patches_to_commit(self):
         expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
         expected_stderr = "Patches in commit queue:\n"
-        self._assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
+        self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
 
     def test_reviewed_patches(self):
         expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
-        self._assert_execute_outputs(ReviewedPatches(), [42], expected_stdout)
+        self.assert_execute_outputs(ReviewedPatches(), [42], expected_stdout)
 
     def test_tree_status(self):
         expected_stdout = "ok   : Builder1\nok   : Builder2\n"
-        self._assert_execute_outputs(TreeStatus(), None, expected_stdout)
+        self.assert_execute_outputs(TreeStatus(), None, expected_stdout)

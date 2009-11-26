@@ -26,36 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class MockBugzilla():
-    patch1 = { "id": 197, "bug_id": 42, "url": "http://example.com/197" }
-    patch2 = { "id": 128, "bug_id": 42, "url": "http://example.com/128" }
+import unittest
 
-    def fetch_bug_ids_from_commit_queue(self):
-        return [42, 75]
+from modules.mock_bugzillatool import MockBugzillaTool
+from modules.outputcapture import OutputCapture
 
-    def fetch_patches_from_commit_queue(self):
-        return [self.patch1, self.patch2]
-
-    def fetch_reviewed_patches_from_bug(self, bug_id):
-        if bug_id == 42:
-            return [self.patch1, self.patch2]
-        return None
-
-    def close_bug_as_fixed(self, bug_id, comment_text=None):
-        pass
-
-
-class MockBuildBot():
-    def builder_statuses(self):
-        return [{
-            "name": "Builder1",
-            "is_green": True
-        }, {
-            "name": "Builder2",
-            "is_green": True
-        }]
-
-
-class MockBugzillaTool():
-    bugs = MockBugzilla()
-    buildbot = MockBuildBot()
+class CommandsTest(unittest.TestCase):
+    def assert_execute_outputs(self, command, command_args, expected_stdout, expected_stderr=""):
+        capture = OutputCapture()
+        capture.capture_output()
+        command.execute(None, command_args, MockBugzillaTool())
+        (stdout_string, stderr_string) = capture.restore_output()
+        self.assertEqual(stdout_string, expected_stdout)
+        self.assertEqual(expected_stderr, expected_stderr)
