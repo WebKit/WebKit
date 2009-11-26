@@ -1,3 +1,17 @@
+2009-11-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Off-by-one error in index validation for drawElements and drawArrays
+        https://bugs.webkit.org/show_bug.cgi?id=31891
+
+        Fixed computation of number of elements for bound array objects.
+
+        Test: fast/canvas/webgl/index-validation.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+
 2009-11-25  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

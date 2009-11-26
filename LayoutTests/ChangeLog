@@ -1,3 +1,18 @@
+2009-11-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Off-by-one error in index validation for drawElements and drawArrays
+        https://bugs.webkit.org/show_bug.cgi?id=31891
+
+        Fixed computation of number of elements for bound array objects.
+
+        Test: fast/canvas/webgl/index-validation.html
+
+        * fast/canvas/webgl/index-validation-expected.txt: Added.
+        * fast/canvas/webgl/index-validation.html: Added.
+        * fast/canvas/webgl/script-tests/index-validation.js: Added.
+
 2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Remove a bunch of now passing fast tests from skiplist.

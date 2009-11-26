@@ -2046,6 +2046,7 @@ void WebGLRenderingContext::vertexAttrib4fv(unsigned long indx, float* v, int si
 void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, unsigned long offset, ExceptionCode& ec)
 {
     if (!m_boundArrayBuffer || indx >= m_maxVertexAttribs) {
+        // FIXME: raise GL_INVALID_VALUE error
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -2058,17 +2059,25 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long indx, long size, u
     long bytesPerElement = size * sizeInBytes(type, ec);
     if (ec != 0)
         return;
-        
+    long validatedStride = bytesPerElement;
     if (stride != 0) {
         if ((long) stride < bytesPerElement) {
+            // FIXME: raise GL_INVALID_VALUE error
             ec = SYNTAX_ERR;
             return;
         }
         
-        bytesPerElement = stride;
+        validatedStride = stride;
     }
         
-    m_vertexAttribState[indx].numElements = (m_boundArrayBuffer->byteLength(GraphicsContext3D::ARRAY_BUFFER) - offset) / bytesPerElement;
+    // Avoid off-by-one errors in numElements computation.
+    // For the last element, we will only touch the data for the
+    // element and nothing beyond it.
+    long bytesRemaining = m_boundArrayBuffer->byteLength(GraphicsContext3D::ARRAY_BUFFER) - offset;
+    if (bytesRemaining < bytesPerElement)
+        m_vertexAttribState[indx].numElements = 0;
+    else
+        m_vertexAttribState[indx].numElements = 1 + (bytesRemaining - bytesPerElement) / validatedStride;
 
     m_context->vertexAttribPointer(indx, size, type, normalized, stride, offset);
     cleanupAfterGraphicsCall(false);
