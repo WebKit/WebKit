@@ -27,6 +27,8 @@
 #ifndef AccessibilityObjectWrapper_h
 #define AccessibilityObjectWrapper_h
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
     class AccessibilityObject;
@@ -41,8 +43,6 @@ namespace WebCore {
         AccessibilityObjectWrapper(AccessibilityObject* obj)
             : m_object(obj)
         {
-            // FIXME: Remove this once our immediate subclass no longer uses COM.
-            *addressOfCount() = 0;
         }
         AccessibilityObjectWrapper() : m_object(0) { }
 

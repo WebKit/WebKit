@@ -1,12 +1,14 @@
-2009-11-25  Darin Fisher  <darin@chromium.org>
+2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
-        Reviewed by Adam Barth.
+        Reviewed by David Levin.
 
-        [Chromium] Unable to repost form data by hitting reload
-        https://bugs.webkit.org/show_bug.cgi?id=31882
+        [Chromium] Implement canSetValueAttribute in the API.
+        https://bugs.webkit.org/show_bug.cgi?id=31894
 
-        * src/WebFrameImpl.cpp:
-        (WebKit::WebFrameImpl::loadData):
+        * public/WebAccessibilityObject.h: Added decl.
+        * src/WebAccessibilityCacheImpl.h: Cleaned up mis-include.
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::canSetValueAttribute): Added impl.
 
 2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
 

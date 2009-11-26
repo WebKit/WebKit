@@ -1,3 +1,13 @@
+2009-11-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Implement canSetValueAttribute in the API, the clean-up part.
+        https://bugs.webkit.org/show_bug.cgi?id=31894
+
+        * accessibility/chromium/AccessibilityObjectWrapper.h: Added RefCounted decl.
+        (WebCore::AccessibilityObjectWrapper::AccessibilityObjectWrapper): Removed mis-refcountingness.
+
 2009-11-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

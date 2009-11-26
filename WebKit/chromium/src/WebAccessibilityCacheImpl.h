@@ -31,10 +31,6 @@
 #ifndef WebAccessibilityCacheImpl_h
 #define WebAccessibilityCacheImpl_h
 
-// FIXME: Move wtf/RefCounted.h include to AccessibilityObjectWrapper.h
-// once this file is upstream.
-#include <wtf/RefCounted.h>
-
 #include "AccessibilityObjectWrapper.h"
 #include "WebAccessibilityCache.h"
 #include <wtf/HashMap.h>

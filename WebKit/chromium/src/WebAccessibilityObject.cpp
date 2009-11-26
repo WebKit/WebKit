@@ -86,6 +86,15 @@ bool WebAccessibilityObject::canSetFocusAttribute() const
     return m_private->canSetFocusAttribute();
 }
 
+bool WebAccessibilityObject::canSetValueAttribute() const
+{
+    if (!m_private)
+        return false;
+
+    m_private->updateBackingStore();
+    return m_private->canSetValueAttribute();
+}
+
 unsigned WebAccessibilityObject::childCount() const
 {
     if (!m_private)

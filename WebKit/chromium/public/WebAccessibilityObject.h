@@ -67,6 +67,7 @@ public:
     WebString accessibilityDescription() const;
     WebString actionVerb() const;
     bool canSetFocusAttribute() const;
+    bool canSetValueAttribute() const;
 
     unsigned childCount() const;
 
