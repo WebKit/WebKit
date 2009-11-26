@@ -64,7 +64,7 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
     // Run code in the new context.
     v8::Context::Scope context_scope(m_context->get());
 
-    m_context->get()->Global()->SetHiddenValue(V8HiddenPropertyName::isolatedWorld(), v8::External::Wrap(this));
+    getGlobalObject(m_context->get())->SetPointerInInternalField(V8Custom::kDOMWindowEnteredIsolatedWorldIndex, this);
 
     V8Proxy::installHiddenObjectPrototype(m_context->get());
     proxy->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
@@ -89,19 +89,6 @@ V8IsolatedWorld::~V8IsolatedWorld()
 {
     --isolatedWorldCount;
     m_context->disposeHandle();
-}
-
-V8IsolatedWorld* V8IsolatedWorld::getEnteredImpl()
-{
-    if (!v8::Context::InContext())
-        return 0;
-    v8::HandleScope scope;
-
-    v8::Local<v8::Value> world = v8::Context::GetEntered()->Global()->GetHiddenValue(V8HiddenPropertyName::isolatedWorld());
-    if (world.IsEmpty())
-        return 0;
-
-    return static_cast<V8IsolatedWorld*>(v8::External::Unwrap(world));
 }
 
 } // namespace WebCore

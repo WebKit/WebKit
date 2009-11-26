@@ -920,13 +920,6 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
     return instance;
 }
 
-void V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object> object, int type, void* cptr)
-{
-    ASSERT(object->InternalFieldCount() >= 2);
-    object->SetPointerInInternalField(V8Custom::kDOMWrapperObjectIndex, cptr);
-    object->SetInternalField(V8Custom::kDOMWrapperTypeIndex, v8::Integer::New(type));
-}
-
 #ifndef NDEBUG
 bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
 {

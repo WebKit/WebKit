@@ -109,7 +109,12 @@ namespace WebCore {
 #endif
 
         // Sets contents of a DOM wrapper.
-        static void setDOMWrapper(v8::Handle<v8::Object>, int type, void* ptr);
+        static void setDOMWrapper(v8::Handle<v8::Object> object, int type, void* cptr)
+        {
+            ASSERT(object->InternalFieldCount() >= 2);
+            object->SetPointerInInternalField(V8Custom::kDOMWrapperObjectIndex, cptr);
+            object->SetInternalField(V8Custom::kDOMWrapperTypeIndex, v8::Integer::New(type));
+        }
 
         static v8::Handle<v8::Object> lookupDOMWrapper(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)
         {

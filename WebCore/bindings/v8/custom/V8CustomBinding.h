@@ -168,7 +168,8 @@ namespace WebCore {
         static const int kDOMWindowLocationIndex = kDefaultWrapperInternalFieldCount + 11;
         static const int kDOMWindowDOMSelectionIndex = kDefaultWrapperInternalFieldCount + 12;
         static const int kDOMWindowEventListenerCacheIndex = kDefaultWrapperInternalFieldCount + 13;
-        static const int kDOMWindowInternalFieldCount = kDefaultWrapperInternalFieldCount + 14;
+        static const int kDOMWindowEnteredIsolatedWorldIndex = kDefaultWrapperInternalFieldCount + 14;
+        static const int kDOMWindowInternalFieldCount = kDefaultWrapperInternalFieldCount + 15;
 
         static const int kStyleSheetOwnerNodeIndex = kDefaultWrapperInternalFieldCount + 0;
         static const int kStyleSheetInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;

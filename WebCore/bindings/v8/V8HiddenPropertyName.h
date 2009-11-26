@@ -37,7 +37,6 @@ namespace WebCore {
 
 #define V8_HIDDEN_PROPERTIES(V) \
     V(objectPrototype) \
-    V(isolatedWorld) \
     V(listener) \
     V(attributeListener) \
     V(sleepFunction) \
