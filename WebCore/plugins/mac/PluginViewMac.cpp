@@ -175,7 +175,7 @@ bool PluginView::platformStart()
     }
 
 #if PLATFORM(QT)
-    // Set the platformPluginWidget only in the case of QWebView until we get mouse events working. 
+    // Set the platformPluginWidget only in the case of QWebView so that the context menu appears in the right place.
     // In all other cases, we use off-screen rendering
     if (QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient()) {
         if (QWidget* widget = qobject_cast<QWidget*>(client->pluginParent()))
@@ -185,8 +185,12 @@ bool PluginView::platformStart()
 
     // Create a fake window relative to which all events will be sent when using offscreen rendering
     if (!platformPluginWidget()) {
-        ::Rect windowBounds = { 0, 0, 100, 100 };
+        // Make the default size really big. It is unclear why this is required but with a smaller size, mouse move
+        // events don't get processed. Resizing the fake window to flash's size doesn't help.
+        ::Rect windowBounds = { 0, 0, 1000, 1000 };
         CreateNewWindow(kDocumentWindowClass, kWindowStandardDocumentAttributes, &windowBounds, &m_fakeWindow);
+        // Flash requires the window to be hilited to process mouse move events.
+        HiliteWindow(m_fakeWindow, true); 
     }
 
     show();
@@ -559,7 +563,15 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         return;
     }
 
-    record.where = globalMousePosForPlugin();
+    if (platformPluginWidget()) {
+        record.where = globalMousePosForPlugin();
+    } else {
+        IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
+        record.where.h = postZoomPos.x() + m_windowRect.x();
+        // The number 22 is the height of the title bar. As to why it figures in the calculation below 
+        // is left as an exercise to the reader :-)
+        record.where.v = postZoomPos.y() + m_windowRect.y() - 22;
+    }
     record.modifiers = modifiersForEvent(event);
 
     if (!event->buttonDown())

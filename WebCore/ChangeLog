@@ -1,3 +1,18 @@
+2009-11-26  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Mac Plugins : Pass mouse position relative to the fake window
+        
+        When using off-screen rendering, we need to pass mouse events relative
+        to the fake window instead of the global position.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31794
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::handleMouseEvent):
+
 2009-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Eric Seidel.
