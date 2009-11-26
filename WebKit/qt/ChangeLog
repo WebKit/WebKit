@@ -1,3 +1,13 @@
+2009-11-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Holger Freyther.
+
+        Removed unused ICO image plugin handler.
+
+        * Plugins/ICOHandler.cpp: Removed.
+        * Plugins/ICOHandler.h: Removed.
+        * Plugins/Plugins.pro: Removed.
+
 2009-11-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.
