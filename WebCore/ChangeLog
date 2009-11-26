@@ -1,3 +1,19 @@
+2009-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix compilation of REQUEST_DEBUG debug code
+        https://bugs.webkit.org/show_bug.cgi?id=31850
+
+        In r47907 the single parameter KURL constructor to parse
+        from a WebCore::String was replaced with a two parameter
+        constructor. I think in this debug case parsing the urls
+        again is no problem and I have changed the code to use the
+        two parameter version.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFinishLoading):
+
 2009-11-26  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Pavel Feldman.

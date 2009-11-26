@@ -375,7 +375,7 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     docLoader->checkForPendingPreloads();
 
 #if REQUEST_DEBUG
-    KURL u(resource->url());
+    KURL u(ParsedURLString, resource->url());
     printf("HOST %s COUNT %d RECEIVED %s\n", u.host().latin1().data(), m_requestsLoading.size(), resource->url().latin1().data());
 #endif
     servePendingRequests();
