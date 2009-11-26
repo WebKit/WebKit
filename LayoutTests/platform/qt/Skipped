@@ -173,9 +173,6 @@ inspector/timeline-recalculate-styles.html
 inspector/timeline-script-tag-1.html
 inspector/timeline-script-tag-2.html
 inspector/timeline-trivial.html
-fast/inspector-support/uncaught-dom1-exception.html
-fast/inspector-support/uncaught-dom3-exception.html
-fast/inspector-support/uncaught-dom8-exception.html
 
 # Missing textInputController.setMarkedText()
 fast/forms/input-maxlength-ime-preedit.html
@@ -447,7 +444,6 @@ fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/dblclick-addEventListener.html
 fast/events/drag-in-frames.html
-fast/events/fire-scroll-event.html
 fast/events/focusingUnloadedFrame.html
 fast/events/js-keyboard-event-creation.html
 fast/events/keydown-1.html
@@ -487,14 +483,11 @@ fast/forms/textarea-scroll-height.html
 fast/forms/textarea-scrollbar.html
 fast/forms/textarea-scrolled-type.html
 fast/frames/iframe-window-focus.html
-fast/history/go-back-to-changed-name.html
 fast/html/keygen.html
-fast/inline/dirtyLinesForInline.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
 fast/js/string-capitalization.html
 fast/lists/drag-into-marker.html
-fast/loader/iframe-crash-on-missing-image.xhtml
 fast/overflow/007.html
 fast/overflow/clip-rects-fixed-ancestor.html
 fast/overflow/hidden-scrollbar-resize.html
@@ -1108,7 +1101,6 @@ storage/change-version.html
 # Tests that currently fail but perhaps used to work at some point.
 fast/dom/open-and-close-by-DOM.html
 fast/dom/Window/new-window-opener.html
-fast/events/onerror-bubbling.html
 fast/forms/001.html
 fast/forms/focus2.html
 fast/forms/search-cancel-button-mouseup.html
@@ -1184,7 +1176,6 @@ editing/style/font-family-with-space.html
 fast/clip/outline-overflowClip.html
 fast/css-generated-content/012.html
 fast/css-generated-content/hover-style-change.html
-fast/css-generated-content/positioned-background-hit-test-crash.html
 fast/css-generated-content/wbr-with-before-content.html
 fast/css/css2-system-fonts.html
 fast/css/namespaces/003.xml
@@ -1197,7 +1188,6 @@ fast/dom/HTMLDocument/hasFocus.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/Range/range-expand.html
 fast/dynamic/move-node-with-selection.html
-fast/dynamic/paused-event-dispatch.html
 fast/dynamic/selection-highlight-adjust.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/encoding/char-decoding.html
@@ -1229,10 +1219,6 @@ fast/layers/layer-visibility.html
 fast/lists/003.html
 fast/lists/markers-in-selection.html
 fast/lists/w3-list-styles.html
-fast/loader/local-CSS-from-local.html
-fast/loader/local-JavaScript-from-local.html
-fast/loader/local-iFrame-source-from-local.html
-fast/loader/local-image-from-local.html
 fast/loader/text-document-wrapping.html
 fast/media/mq-js-stylesheet-media-03.html
 fast/media/mq-js-stylesheet-media-04.html
@@ -2232,7 +2218,6 @@ fast/backgrounds/background-clip-text.html
 fast/backgrounds/opacity-on-document-element.html
 fast/backgrounds/repeat/negative-offset-repeat-transformed.html
 fast/backgrounds/size/backgroundSize16.html
-fast/backgrounds/size/parsing-inherit.html
 fast/backgrounds/svg-as-mask.html
 fast/block/basic/001.html
 fast/block/basic/002.html
@@ -2586,7 +2571,6 @@ fast/css/compare-content-style.html
 fast/css/continuationCrash.html
 fast/css/counters/counter-text-security.html
 fast/css/counters/counter-text-transform.html
-fast/css/counters/invalidate-cached-counter-node.html
 fast/css/create_element_align.xhtml
 fast/css/css3-modsel-22.html
 fast/css/css3-nth-child.html
@@ -2637,14 +2621,11 @@ fast/css-generated-content/013.html
 fast/css-generated-content/014.html
 fast/css-generated-content/015.html
 fast/css-generated-content/016.html
-fast/css-generated-content/absolute-position-inside-inline.html
 fast/css-generated-content/after-order.html
 fast/css-generated-content/beforeAfter-interdocument.html
 fast/css-generated-content/before-with-first-letter.html
-fast/css-generated-content/hit-test-generated-content.html
 fast/css-generated-content/inline-display-types.html
 fast/css-generated-content/no-openclose-quote.html
-fast/css-generated-content/spellingToolTip-assert.html
 fast/css-generated-content/table-cell-before-content.html
 fast/css-generated-content/table-row-group-to-inline.html
 fast/css-generated-content/table-row-group-with-before.html
@@ -2824,7 +2805,6 @@ fast/dynamic/subtree-parent-static-y.html
 fast/dynamic/subtree-table-cell-height.html
 fast/dynamic/view-overflow.html
 fast/encoding/char-decoding-mac.html
-fast/encoding/css-cached-bom.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/hebrew/csISO88598I.html
 fast/encoding/preload-encoding.html
@@ -2836,7 +2816,6 @@ fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/context-no-deselect.html
 fast/events/event-listener-on-link.html
 fast/events/event-sender-mouse-moved.html
-fast/events/event-view-toString.html
 fast/events/label-focus.html
 fast/events/mouse-click-events.html
 fast/events/offsetX-offsetY.html
@@ -3096,7 +3075,6 @@ fast/invalid/nestedh3s.html
 fast/invalid/table-inside-stray-table-content.html
 fast/invalid/table-residual-style-crash.html
 fast/invalid/td-inside-object.html
-fast/js/global-constructors.html
 fast/layers/add-layer-with-nested-stacking.html
 fast/layers/inline-dirty-z-order-lists.html
 fast/layers/layer-content-visibility-change.html
@@ -4888,7 +4866,6 @@ fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-hard-linewrap-empty.html
 fast/forms/textarea-linewrap-dynamic.html
 fast/forms/textarea-metrics.html
-fast/forms/textarea-scrollbar-height.html
 fast/forms/textarea-setvalue-submit.html
 fast/history/back-forward-is-asynchronous.html
 fast/history/window-open.html
@@ -4932,7 +4909,6 @@ fast/dom/prototype-inheritance-2.html
 
 # Missing DRT ability to override 'standard' preferences.
 fast/dom/Window/timer-resume-on-navigation-back.html
-fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 
 # This port doesn't support Geolocation.
@@ -5156,6 +5132,10 @@ fast/events/open-window-from-another-frame.html
 #crashed: fast/events/programmatic-check-no-change-event.html
 #crasher:
 fast/events/popup-blocking-click-in-iframe.html
+
+#crashed: fast/history/back-forward-reset-after-error-handling.html
+#crasher:
+fast/harness/use-page-cache.html
 
 #crashed: http/tests/misc/submit-get-in-utf16be.html
 #crasher:

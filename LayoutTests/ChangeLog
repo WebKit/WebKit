@@ -1,5 +1,12 @@
 2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Remove a bunch of now passing fast tests from skiplist.
+        And add a crasher/crashed pair into skiplist.
+
+        * platform/qt/Skipped:
+
+2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Put tests into skiplist because of missing layoutTestController feature.
 
         * platform/qt/Skipped:
