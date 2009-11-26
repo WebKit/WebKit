@@ -4892,6 +4892,7 @@ editing/selection/extend-selection-after-double-click.html
 fast/dom/constructed-objects-prototypes.html
 fast/dom/constructors-cached-navigate.html
 fast/dom/constructors-cached.html
+fast/js/global-constructors.html
 
 # Intermittent failure of these two animation related tests
 # https://bugs.webkit.org/show_bug.cgi?id=27912

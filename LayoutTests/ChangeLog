@@ -1,3 +1,10 @@
+2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Audio related layout tests are failing on the buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=27910
+
+        * platform/qt/Skipped: fast/js/global-constructors.html added.
+
 2009-11-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
