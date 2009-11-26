@@ -1,3 +1,20 @@
+2009-11-21  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Link DumpRenderTree to the Qt Ui Tools
+        https://bugs.webkit.org/show_bug.cgi?id=31203
+
+        Implement QWebPage::createPlugin using the Qt Ui Tools
+        to be able to create classes like QProgressBar from within
+        the <object></object> tags This is required for the
+        new automatic test of Qt Plugins.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::createPlugin):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2009-11-25  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.

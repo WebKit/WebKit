@@ -154,6 +154,8 @@ public:
     virtual bool supportsExtension(QWebPage::Extension extension) const;
     virtual bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
 
+    QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&);
+
 public slots:
     bool shouldInterruptJavaScript() { return false; }
 

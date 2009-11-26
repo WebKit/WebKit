@@ -1,5 +1,6 @@
 TARGET = DumpRenderTree
 CONFIG  -= app_bundle
+CONFIG += uitools
 
 mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
     CONFIG -= debug

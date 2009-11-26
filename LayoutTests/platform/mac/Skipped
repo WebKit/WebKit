@@ -106,3 +106,5 @@ fast/history/back-forward-reset-after-error-handling.html
 plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
 
+# These test require Qt Widgets
+plugins/qt-qwidget-plugin.html

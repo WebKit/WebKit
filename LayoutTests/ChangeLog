@@ -1,3 +1,25 @@
+2009-11-21  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add automatic test for Qt Plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=31203
+
+        Add a test case for Qt plugins. In this case one
+        RenderPart should be visible on screen and the other
+        should be invisible. The internal QWidget should
+        have the same state as the WebCore::Widget.
+
+        Add Qt specific netscape-dom-access-expected.txt because
+        that was using a native widget inside a RenderPart as well.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/plugins/netscape-dom-access-expected.txt: Added
+        * platform/qt/plugins/qt-qwidget-plugin-expected.txt: Added
+        * platform/win/Skipped:
+        * plugins/qt-qwidget-plugin.html: Added.
+
 2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Audio related layout tests are failing on the buildbot

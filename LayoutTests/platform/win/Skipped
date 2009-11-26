@@ -712,3 +712,7 @@ fast/forms/validationMessage.html
 # Need to implement this in plugins code in WebKit
 plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
+
+# These tests require Qt Widgets
+plugins/qt-qwidget-plugin.html
+
