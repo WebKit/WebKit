@@ -1,3 +1,15 @@
+2009-11-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        Patch by Mark Rowe.
+
+        The buildbots are failing on Windows because when they were upgraded
+        to 4.0.4, Apple Application Support was not in their path. Add it to
+        the path to fix the buildots.
+
+        * Scripts/webkitdirs.pm:
+
 2009-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by David Kilzer.

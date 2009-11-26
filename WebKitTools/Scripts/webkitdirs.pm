@@ -1429,13 +1429,25 @@ sub buildChromium($@)
     return $result;
 }
 
+sub appleApplicationSupportPath
+{
+    open INSTALL_DIR, "</proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Apple\ Inc./Apple\ Application\ Support/InstallDir";
+    my $path = <INSTALL_DIR>;
+    $path =~ s/[\r\n\x00].*//;
+    close INSTALL_DIR;
+
+    my $unixPath = `cygpath -u '$path'`;
+    chomp $unixPath;
+    return $unixPath;
+}
+
 sub setPathForRunningWebKitApp
 {
     my ($env) = @_;
 
     return unless isAppleWinWebKit();
 
-    $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), $env->{PATH} || "");
+    $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
 }
 
 sub exitStatus($)
