@@ -1,3 +1,14 @@
+2009-11-26  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21554
+
+        Tests that the tooltip text for an image is its dimensions.
+
+        * inspector/elements-img-tooltip-expected.txt: Added.
+        * inspector/elements-img-tooltip.html: Added.
+
 2009-11-21  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.

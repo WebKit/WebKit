@@ -1,0 +1,66 @@
+<html>
+<head>
+
+<script src="inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+var EXPECTED_TOOLTIP_TEXT = "215\xd7174 pixels";
+function doit()
+{
+    function callback(tooltipText)
+    {
+        if (!tooltipText)
+            output("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was " + tooltipText + ".");
+        else if (tooltipText == EXPECTED_TOOLTIP_TEXT)
+            output("PASSED, tooltip text is \"" + EXPECTED_TOOLTIP_TEXT + "\".");
+        else
+            output("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was \"" + tooltipText + "\".");
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_dumpTooltip", callback);
+}
+
+// Frontend functions.
+
+function frontend_dumpTooltip(testController)
+{
+    testController.waitUntilDone();
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+
+    testController.runAfterPendingDispatches(function() {
+        frontend_dumpTooltipContinuation(testController);
+    });
+}
+
+function frontend_dumpTooltipContinuation(testController)
+{
+    if (!WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode) {
+        testController.notifyDone();
+        return;
+    }
+
+    function callback(tooltipText)
+    {
+        testController.notifyDone(tooltipText);
+    }
+
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+    for (var nodeId in innerMapping) {
+        if (innerMapping[nodeId].nodeName === "IMG") {
+            WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode(innerMapping[nodeId], callback);
+            return;
+        }
+    }
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that the tooltip text for the image (below) is &quot;<script>document.write(EXPECTED_TOOLTIP_TEXT)</script>&quot;.
+</p>
+
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAACuCAIAAAAqMg/rAAAAAXNSR0IArs4c6QAAAU9JREFUeNrt0jERAAAIxDDAv+dHAxNLIqHXTlLwaiTAheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSFEuBCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLoSDBZXqBFnkRyeqAAAAAElFTkSuQmCC"/>
+
+</body>
+</html>

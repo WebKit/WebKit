@@ -45,6 +45,24 @@ WebInspector.ObjectProxy.wrapPrimitiveValue = function(value)
     return proxy;
 }
 
+WebInspector.ObjectProxy.getPropertiesAsync = function(objectProxy, propertiesToQueryFor, callback)
+{
+    function createPropertiesMapThenCallback(propertiesPayload)
+    {
+        if (!propertiesPayload) {
+            callback();
+            return;
+        }
+
+        var result = [];
+        for (var i = 0; i < propertiesPayload.length; ++i)
+            if (propertiesToQueryFor.indexOf(propertiesPayload[i].name) !== -1)
+                result[propertiesPayload[i].name] = propertiesPayload[i].value.description;
+        callback(result);
+    };
+    InjectedScriptAccess.getProperties(objectProxy, true, createPropertiesMapThenCallback);
+}
+
 WebInspector.ObjectPropertyProxy = function(name, value)
 {
     this.name = name;

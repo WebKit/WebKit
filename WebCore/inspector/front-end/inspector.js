@@ -1498,7 +1498,7 @@ WebInspector.showProfileForURL = function(url)
     WebInspector.panels.profiles.showProfileForURL(url);
 }
 
-WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)
+WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, tooltipText)
 {
     if (!linkText)
         linkText = url;
@@ -1508,18 +1508,18 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)
     var a = document.createElement("a");
     a.href = url;
     a.className = classes;
-    a.title = url;
+    a.title = tooltipText || url;
     a.target = "_blank";
     a.textContent = linkText;
 
     return a;
 }
 
-WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
+WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipText)
 {
     // Use the DOM version of this function so as to avoid needing to escape attributes.
     // FIXME:  Get rid of linkifyURL entirely.
-    return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal).outerHTML;
+    return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
 }
 
 WebInspector.addMainEventListeners = function(doc)

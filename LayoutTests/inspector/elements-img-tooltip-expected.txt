@@ -1,0 +1,5 @@
+Tests that the tooltip text for the image (below) is "215×174 pixels".
+
+
+PASSED, tooltip text is "215×174 pixels".
+
