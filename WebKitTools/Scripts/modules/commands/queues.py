@@ -47,7 +47,7 @@ from modules.grammar import pluralize
 from modules.landingsequence import LandingSequence, ConditionalLandingSequence
 from modules.logging import error, log, tee
 from modules.multicommandtool import MultiCommandTool, Command
-from modules.patchcollection import PatchCollection
+from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.processutils import run_and_throw_if_fail
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.statusbot import StatusBot
@@ -139,20 +139,31 @@ class CommitQueue(AbstractQueue):
         self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
 
 
-class AbstractTryQueue(AbstractQueue):
+class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate):
     def __init__(self, options=[]):
         AbstractQueue.__init__(self, options)
+
+    # PersistentPatchCollectionDelegate methods
+
+    def collection_name(self):
+        return self.name
+
+    def fetch_potential_patches(self):
+        return self.tool.bugs.fetch_patches_from_review_queue(limit=3)
+
+    def status_server(self):
+        return self.tool.status()
+
+    # AbstractQueue methods
 
     def status_host(self):
         return None # FIXME: A hack until we come up with a more generic status page.
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
-        self._patches = PatchCollection(self.tool.bugs)
-        self._patches.add_patches(self.tool.bugs.fetch_patches_from_review_queue(limit=10))
+        self._patches = PersistentPatchCollection(self)
 
     def next_work_item(self):
-        self.log_progress(self._patches.patch_ids())
         return self._patches.next()
 
     def should_proceed_with_work_item(self, patch):
@@ -163,6 +174,7 @@ class AbstractTryQueue(AbstractQueue):
 
     def handle_unexpected_error(self, patch, message):
         log(message)
+        self._patches.done(patch)
 
 
 class StyleQueue(AbstractTryQueue):
@@ -176,6 +188,7 @@ class StyleQueue(AbstractTryQueue):
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["check-style", "--force-clean", patch["id"]])
+        self._patches.done(patch)
 
 
 class BuildQueue(AbstractTryQueue):
@@ -198,3 +211,4 @@ class BuildQueue(AbstractTryQueue):
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", "--quiet", "--no-update", patch["id"]])
+        self._patches.done(patch)

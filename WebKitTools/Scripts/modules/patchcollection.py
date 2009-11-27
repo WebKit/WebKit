@@ -57,3 +57,34 @@ class PatchCollection:
 
     def __len__(self):
         return len(self._patches)
+
+
+class PersistentPatchCollectionDelegate:
+    def collection_name(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def fetch_potential_patches(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def status_server(self):
+        raise NotImplementedError, "subclasses must implement"
+
+
+class PersistentPatchCollection:
+    _initial_status = "Attempted"
+    _terminal_status = "Done"
+    def __init__(self, delegate):
+        self._delegate = delegate
+        self._name = self._delegate.collection_name()
+        self._status = self._delegate.status_server()
+
+    def next(self):
+        patches = self._delegate.fetch_potential_patches()
+        for patch in patches:
+            last_status = self._status.patch_status(self._name, patch["id"])
+            if not last_status: # FIXME: Add support for "Try again"
+                self._status.update_status(self._name, self._initial_status, patch)
+                return patch
+
+    def done(self, patch):
+        self._status.update_status(self._name, self._terminal_status, patch)

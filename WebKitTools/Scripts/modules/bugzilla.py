@@ -324,10 +324,10 @@ class Bugzilla:
             patches_to_land += patches
         return patches_to_land
 
-    def fetch_patches_from_review_queue(self, limit):
+    def fetch_patches_from_review_queue(self, limit=None):
         patches_to_review = []
         for bug_id in self.fetch_bug_ids_from_review_queue():
-            if len(patches_to_review) >= limit:
+            if limit and len(patches_to_review) >= limit:
                 break
             patches = self.fetch_unreviewed_patches_from_bug(bug_id)
             patches_to_review += patches
