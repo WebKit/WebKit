@@ -1,3 +1,16 @@
+2009-11-27  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31940
+
+        Makes the error messages more descriptive when we refuse to load an object/embed or
+        refuse to load from the document base URL.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canLoadObject): Changed console message to be more descriptive.
+        (WebCore::XSSAuditor::canSetBaseElementURL): Ditto.
+
 2009-11-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
