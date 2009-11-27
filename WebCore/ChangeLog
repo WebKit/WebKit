@@ -1,3 +1,12 @@
+2009-11-26  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Eric Seidel.
+
+        Compile with QT_NO_WHEELEVENT defined.
+
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::applyDelta):
+
 2009-11-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Oliver Hunt.

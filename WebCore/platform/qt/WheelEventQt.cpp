@@ -45,8 +45,10 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
     // Use the same single scroll step as QTextEdit
     // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
+#ifndef QT_NO_WHEELEVENT
     m_deltaX *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
     m_deltaY *= QApplication::wheelScrollLines() * cDefaultQtScrollStep;
+#endif
 }
 
 PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
