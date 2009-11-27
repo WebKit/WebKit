@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Make commit-queue status not throw an exception where there is not
+        status
+        https://bugs.webkit.org/show_bug.cgi?id=31936
+
+        We need to actually fetch the results of the query to see what's in the
+        datastore.
+
+        * CommitQueueStatus/queue_status.py:
+
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] unit test ApplyPatches and ApplyAttachment
         https://bugs.webkit.org/show_bug.cgi?id=31935
 
