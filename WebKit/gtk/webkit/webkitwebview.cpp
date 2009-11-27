@@ -73,7 +73,7 @@
 #include "RenderView.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
-#include <wtf/GOwnPtr.h>
+#include <wtf/gtk/GOwnPtr.h>
 
 #include <gdk/gdkkeysyms.h>
 

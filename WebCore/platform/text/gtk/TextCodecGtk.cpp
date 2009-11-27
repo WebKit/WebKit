@@ -33,7 +33,7 @@
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/GOwnPtr.h>
+#include <wtf/gtk/GOwnPtr.h>
 #include "Logging.h"
 
 using std::min;

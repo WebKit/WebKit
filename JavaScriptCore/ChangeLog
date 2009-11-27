@@ -1,3 +1,22 @@
+2009-11-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Move GOwnPtr* from wtf to wtf/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=31793
+
+        * GNUmakefile.am: Change the path for GOwnPtr.*.
+        * JavaScriptCore.gyp/JavaScriptCore.gyp: Remove
+          GOwnPtr.cpp from the exclude list.
+        * JavaScriptCore.gypi: Change the path for GOwnPtr.*.
+        * wscript: Remove GOwnPtr.cpp from the exclude list.
+        * wtf/GOwnPtr.cpp: Removed.
+        * wtf/GOwnPtr.h: Removed.
+        * wtf/Threading.h: Change the path for GOwnPtr.h.
+        * wtf/gtk/GOwnPtr.cpp: Copied from JavaScriptCore/wtf/GOwnPtr.cpp.
+        * wtf/gtk/GOwnPtr.h: Copied from JavaScriptCore/wtf/GOwnPtr.h.
+        * wtf/unicode/glib/UnicodeGLib.h: Change the path for GOwnPtr.h.
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

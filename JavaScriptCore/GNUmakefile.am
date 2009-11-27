@@ -236,8 +236,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Deque.h \
 	JavaScriptCore/wtf/DisallowCType.h \
 	JavaScriptCore/wtf/Forward.h \
-	JavaScriptCore/wtf/GOwnPtr.cpp \
-	JavaScriptCore/wtf/GOwnPtr.h \
 	JavaScriptCore/wtf/GetPtr.h \
 	JavaScriptCore/wtf/HashCountedSet.h \
 	JavaScriptCore/wtf/HashFunctions.h \
@@ -288,6 +286,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/UnusedParam.h \
 	JavaScriptCore/wtf/Vector.h \
 	JavaScriptCore/wtf/VectorTraits.h \
+	JavaScriptCore/wtf/gtk/GOwnPtr.cpp \
+	JavaScriptCore/wtf/gtk/GOwnPtr.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/unicode/Collator.h \
