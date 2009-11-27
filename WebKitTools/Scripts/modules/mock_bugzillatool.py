@@ -26,11 +26,26 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+
+from modules.mock import Mock
 from modules.scm import CommitMessage
 
-class MockBugzilla():
-    patch1 = { "id": 197, "bug_id": 42, "url": "http://example.com/197", "is_obsolete": False }
-    patch2 = { "id": 128, "bug_id": 42, "url": "http://example.com/128", "is_obsolete": False }
+class MockBugzilla(Mock):
+    patch1 = {
+        "id": 197,
+        "bug_id": 42,
+        "url": "http://example.com/197",
+        "is_obsolete": False,
+        "reviewer": "Reviewer1"
+    }
+    patch2 = {
+        "id": 128,
+        "bug_id": 42,
+        "url": "http://example.com/128",
+        "is_obsolete": False,
+        "reviewer": "Reviewer2"
+    }
 
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
@@ -53,17 +68,15 @@ class MockBugzilla():
             return [self.patch1, self.patch2]
         return None
 
-    def close_bug_as_fixed(self, bug_id, comment_text=None):
-        pass
-
-    def obsolete_attachment(self, attachment_id, comment_text=None):
-        pass
-
-    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False):
-        pass
+    def fetch_attachment(self, attachment_id):
+        if attachment_id == 197:
+            return self.patch1
+        if attachment_id == 128:
+            return self.patch2
+        raise Exception("Bogus attachment_id in fetch_attachment.")
 
 
-class MockBuildBot():
+class MockBuildBot(Mock):
     def builder_statuses(self):
         return [{
             "name": "Builder1",
@@ -74,7 +87,11 @@ class MockBuildBot():
         }]
 
 
-class MockSCM():
+class MockSCM(Mock):
+    def __init__(self):
+        Mock.__init__(self)
+        self.checkout_root = os.getcwd()
+
     def create_patch(self):
         return "Patch1"
 
@@ -95,11 +112,18 @@ class MockSCM():
             return "Patch2"
         raise Exception("Bogus commit_id in commit_message_for_local_commit.")
 
+    def modified_changelogs(self):
+        # Ideally we'd return something more interesting here.
+        # The problem is that LandDiff will try to actually read the path from disk!
+        return []
+
 
 class MockBugzillaTool():
-    bugs = MockBugzilla()
-    buildbot = MockBuildBot()
+    def __init__(self):
+        self.bugs = MockBugzilla()
+        self.buildbot = MockBuildBot()
+        self.steps = Mock()
+        self._scm = MockSCM()
 
-    _scm = MockSCM()
     def scm(self):
         return self._scm
