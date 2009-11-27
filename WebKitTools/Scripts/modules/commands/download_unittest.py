@@ -49,6 +49,18 @@ class DownloadCommandsTest(CommandsTest):
     def test_build(self):
         self.assert_execute_outputs(Build(), [], options=self._default_options())
 
+    def test_apply_attachment(self):
+        options = self._default_options()
+        options.update = True
+        options.local_commit = True
+        self.assert_execute_outputs(ApplyAttachment(), [197], options=options)
+
+    def test_apply_patches(self):
+        options = self._default_options()
+        options.update = True
+        options.local_commit = True
+        self.assert_execute_outputs(ApplyPatches(), [42], options=options)
+
     def test_land_diff(self):
         self.assert_execute_outputs(LandDiff(), [42], options=self._default_options())
 

@@ -79,7 +79,6 @@ class Build(Command):
         sequence.run_and_handle_errors()
 
 
-# FIXME: Requires unit test. Blocking issue: WebKitApplyingScripts
 class ApplyAttachment(Command):
     name = "apply-attachment"
     show_in_main_help = True
@@ -95,7 +94,6 @@ class ApplyAttachment(Command):
         WebKitApplyingScripts.apply_patches_with_options(tool.scm(), [attachment], options)
 
 
-# FIXME: Requires unit test. Blocking issue: WebKitApplyingScripts
 class ApplyPatches(Command):
     name = "apply-patches"
     show_in_main_help = True
