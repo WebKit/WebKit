@@ -87,7 +87,7 @@ class ApplyAttachment(Command):
         Command.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID", options=options)
 
     def execute(self, options, args, tool):
-        WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
+        WebKitApplyingScripts.setup_for_patch_apply(tool, options)
         attachment_id = args[0]
         attachment = tool.bugs.fetch_attachment(attachment_id)
         WebKitApplyingScripts.apply_patches_with_options(tool.scm(), [attachment], options)
@@ -101,7 +101,7 @@ class ApplyPatches(Command):
         Command.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID", options=options)
 
     def execute(self, options, args, tool):
-        WebKitApplyingScripts.setup_for_patch_apply(tool.scm(), options)
+        WebKitApplyingScripts.setup_for_patch_apply(tool, options)
         bug_id = args[0]
         patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
         WebKitApplyingScripts.apply_patches_with_options(tool.scm(), patches, options)
@@ -116,10 +116,10 @@ class WebKitApplyingScripts:
         ]
 
     @staticmethod
-    def setup_for_patch_apply(scm, options):
-        WebKitLandingScripts.prepare_clean_working_directory(scm, options, allow_local_commits=True)
+    def setup_for_patch_apply(tool, options):
+        tool.steps.clean_working_directory(tool.scm(), options, allow_local_commits=True)
         if options.update:
-            scm.update_webkit()
+            tool.scm().update_webkit()
 
     @staticmethod
     def apply_patches_with_options(scm, patches, options):
@@ -392,7 +392,7 @@ class Rollout(Command):
             else:
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
-        WebKitLandingScripts.prepare_clean_working_directory(tool.scm(), options)
+        tool.steps.clean_working_directory(tool.scm(), options)
         tool.scm().update_webkit()
         tool.scm().apply_reverse_diff(revision)
         self._create_changelogs_for_revert(tool.scm(), revision)

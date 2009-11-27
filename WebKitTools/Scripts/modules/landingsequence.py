@@ -68,7 +68,7 @@ class LandingSequence:
             WorkQueue.exit_after_handled_error(e)
 
     def clean(self):
-        WebKitLandingScripts.prepare_clean_working_directory(self._tool.scm(), self._options)
+        self._tool.steps.clean_working_directory(self._tool.scm(), self._options)
 
     def update(self):
         self._tool.scm().update_webkit()
@@ -85,7 +85,7 @@ class LandingSequence:
 
     def test(self):
         # When running non-interactively we don't want to launch Safari and we want to exit after the first failure.
-        WebKitLandingScripts.run_webkit_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
+        self._tool.run_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
 
     def commit(self):
         commit_message = commit_message_for_this_commit(self._tool.scm())

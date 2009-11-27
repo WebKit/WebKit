@@ -32,6 +32,7 @@
 
 import os
 
+from modules.buildsteps import BuildSteps
 from modules.commands.download import *
 from modules.commands.queries import *
 from modules.commands.queues import *
@@ -46,6 +47,7 @@ class BugzillaTool(MultiCommandTool):
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.cached_scm = None
+        self.steps = BuildSteps()
 
     def dry_run_callback(self, option, opt, value, parser):
         self.scm().dryrun = True

@@ -1,3 +1,18 @@
+2009-11-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Kill WebKitLandingScripts
+        https://bugs.webkit.org/show_bug.cgi?id=31904
+
+        Step 1: Kill prepare_clean_working_directory and run_webkit_tests.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/buildsteps.py: Added.
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/landingsequence.py:
+        * Scripts/modules/webkitlandingscripts.py:
+
 2009-11-26  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Adam Barth.

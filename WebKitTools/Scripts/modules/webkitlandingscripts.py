@@ -129,21 +129,4 @@ class WebKitLandingScripts:
             return
         error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
 
-    @classmethod
-    def run_webkit_tests(cls, launch_safari, fail_fast=False, quiet=False, port=WebKitPort):
-        args = port.run_webkit_tests_command()
-        if not launch_safari:
-            args.append("--no-launch-safari")
-        if quiet:
-            args.append("--quiet")
-        if fail_fast:
-            args.append("--exit-after-n-failures=1")
-        cls.run_and_throw_if_fail(args)
 
-    @staticmethod
-    def prepare_clean_working_directory(scm, options, allow_local_commits=False):
-        os.chdir(scm.checkout_root)
-        if not allow_local_commits:
-            scm.ensure_no_local_commits(options.force_clean)
-        if options.clean:
-            scm.ensure_clean_working_directory(force_clean=options.force_clean)
