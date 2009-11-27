@@ -3406,7 +3406,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
     RootInlineBox* firstRootBoxWithChildren = 0;
     RootInlineBox* lastRootBoxWithChildren = 0;
     for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
-        if (!root->firstChild())
+        if (!root->firstLeafChild())
             continue;
         if (!firstRootBoxWithChildren)
             firstRootBoxWithChildren = root;

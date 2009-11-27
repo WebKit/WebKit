@@ -1,3 +1,22 @@
+2009-11-26  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Assertion failure in RenderBlock::positionForPointWithInlineChildren when running fast/inline/relative-positioned-overflow.html
+        https://bugs.webkit.org/show_bug.cgi?id=29966
+
+        When an empty inline element is clicked, the root inline box has
+        no leaf children. Use the renderer of a normal child instead.
+
+        This change resolves Windows port's assertion failure in a layout test.
+        Also, this fixes the behavior when a user drags the mouse from an
+        empty inline element to above texts.
+
+        Test: editing/selection/last-empty-inline.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+
 2009-11-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

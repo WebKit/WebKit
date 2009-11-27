@@ -1,3 +1,17 @@
+2009-11-26  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Assertion failure in RenderBlock::positionForPointWithInlineChildren when running fast/inline/relative-positioned-overflow.html
+        https://bugs.webkit.org/show_bug.cgi?id=29966
+
+        A test case where a user drags the mouse from an empty inline
+        element to above texts.
+
+        * editing/selection/last-empty-inline-expected.txt: Added.
+        * editing/selection/last-empty-inline.html: Added.
+        * platform/win/Skipped:
+
 2009-11-26  Kinuko Yasuda  <kinuko@chromium.com>
 
         Reviewed by Eric Seidel.

@@ -1,0 +1,30 @@
+<div>
+To test this manually, press mouse button below the comma between "Hello" and "world!" and drag the mouse to the comma. It's OK if "world!" is selected.
+</div>
+
+<div id="result" style="width: 200px;">
+<span>Hello,</span><span id="world">world!</span><span style="padding-left: 200px; padding-bottom: 200px; background-color: blue; height: 200px;"></span>
+</div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+    var world = document.getElementById("world");
+    var x = world.offsetLeft;
+    var y = world.offsetTop;
+
+    eventSender.mouseMoveTo(x, y + 50);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x, y + 50);
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+
+    var result = document.getElementById("result");
+    if (window.getSelection() == "world!") {
+        result.style.backgroundColor = "green";
+        result.innerHTML = "PASS";
+    } else
+        result.innerHTML = "FAILED: the selection was " + window.getSelection();
+}
+</script>

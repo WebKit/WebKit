@@ -1,0 +1,2 @@
+To test this manually, press mouse button below the comma between "Hello" and "world!" and drag the mouse to the comma. It's OK if "world!" is selected.
+PASS
