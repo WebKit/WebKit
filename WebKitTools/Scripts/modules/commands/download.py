@@ -41,6 +41,7 @@ from optparse import make_option
 
 from modules.bugzilla import Bugzilla, parse_bug_id
 from modules.buildbot import BuildBot
+from modules.buildsteps import BuildSteps
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
@@ -50,7 +51,6 @@ from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.statusbot import StatusBot
-from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_for_this_commit
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
@@ -69,9 +69,9 @@ class Build(Command):
     name = "build"
     show_in_main_help = False
     def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.build_options()
-        options += WebKitLandingScripts.land_options()
+        options = BuildSteps.cleaning_options()
+        options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         Command.__init__(self, "Update working copy and build", "", options)
 
     def execute(self, options, args, tool):
@@ -83,7 +83,8 @@ class ApplyAttachment(Command):
     name = "apply-attachment"
     show_in_main_help = True
     def __init__(self):
-        options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
+        options = WebKitApplyingScripts.apply_options()
+        options += BuildSteps.cleaning_options()
         Command.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID", options=options)
 
     def execute(self, options, args, tool):
@@ -97,7 +98,8 @@ class ApplyPatches(Command):
     name = "apply-patches"
     show_in_main_help = True
     def __init__(self):
-        options = WebKitApplyingScripts.apply_options() + WebKitLandingScripts.cleaning_options()
+        options = WebKitApplyingScripts.apply_options()
+        options += BuildSteps.cleaning_options()
         Command.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID", options=options)
 
     def execute(self, options, args, tool):
@@ -130,7 +132,7 @@ class WebKitApplyingScripts:
             log("Applying attachment %s from bug %s" % (patch["id"], patch["bug_id"]))
             scm.apply_patch(patch)
             if options.local_commit:
-                commit_message = commit_message_for_this_commit(scm)
+                commit_message = scm.commit_message_for_this_commit()
                 scm.commit_locally_with_message(commit_message.message() or patch["name"])
 
 
@@ -167,8 +169,8 @@ class LandDiff(Command):
         options = [
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
         ]
-        options += WebKitLandingScripts.build_options()
-        options += WebKitLandingScripts.land_options()
+        options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         Command.__init__(self, "Land the current working directory diff and updates the associated bug if any", "[BUGID]", options=options)
 
     def guess_reviewer_from_bug(self, bugs, bug_id):
@@ -261,8 +263,8 @@ class CheckStyle(AbstractPatchProcessingCommand):
     name = "check-style"
     show_in_main_help = False
     def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.build_options()
+        options = BuildSteps.cleaning_options()
+        options += BuildSteps.build_options()
         AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
@@ -291,8 +293,8 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     name = "build-attachment"
     show_in_main_help = False
     def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.build_options()
+        options = BuildSteps.cleaning_options()
+        options += BuildSteps.build_options()
         AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
@@ -309,9 +311,9 @@ class BuildAttachment(AbstractPatchProcessingCommand):
 
 class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
     def __init__(self, help_text, args_description):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.build_options()
-        options += WebKitLandingScripts.land_options()
+        options = BuildSteps.cleaning_options()
+        options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
 
     def _prepare_to_process(self, options, args, tool):
@@ -352,9 +354,9 @@ class Rollout(Command):
     name = "rollout"
     show_in_main_help = True
     def __init__(self):
-        options = WebKitLandingScripts.cleaning_options()
-        options += WebKitLandingScripts.build_options()
-        options += WebKitLandingScripts.land_options()
+        options = BuildSteps.cleaning_options()
+        options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Commit the revert and re-open the original bug."))
         Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=options)
 
@@ -402,5 +404,7 @@ class Rollout(Command):
         if not options.complete_rollout:
             log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
         else:
-            comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
+            # FIXME: This function does not exist!!
+            # comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
+            raise ScriptError("OOPS! This option is not implemented (yet).")
             self._reopen_bug_after_rollout(tool, bug_id, comment_text)

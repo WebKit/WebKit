@@ -28,12 +28,38 @@
 
 import os
 
+from optparse import make_option
+
 from modules.logging import log, error
 from modules.processutils import run_and_throw_if_fail
-from modules.webkitlandingscripts import WebKitLandingScripts
 from modules.webkitport import WebKitPort
 
 class BuildSteps:
+    # FIXME: The options should really live on each "Step" object.
+    @staticmethod
+    def cleaning_options():
+        return [
+            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
+            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+        ]
+
+    @staticmethod
+    def build_options():
+        return [
+            make_option("--ignore-builders", action="store_false", dest="check_builders", default=True, help="Don't check to see if the build.webkit.org builders are green before landing."),
+            make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
+            make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible."),
+        ] + WebKitPort.port_options()
+
+    @staticmethod
+    def land_options():
+        return [
+            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory."),
+            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+        ]
+
     def _run_script(cls, script_name, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
         run_and_throw_if_fail(port.script_path(script_name), quiet)

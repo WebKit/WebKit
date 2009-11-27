@@ -50,11 +50,10 @@ from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.statusbot import StatusBot
-from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_for_this_commit
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
-# FIXME: Requires unit test.  Blocking issue: commit_message_for_this_commit.
+# FIXME: Requires unit test.
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
     show_in_main_help = False
@@ -63,7 +62,7 @@ class CommitMessageForCurrentDiff(Command):
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
-        print "%s" % commit_message_for_this_commit(tool.scm()).message()
+        print "%s" % tool.scm().commit_message_for_this_commit().message()
 
 
 class ObsoleteAttachments(Command):
@@ -229,7 +228,7 @@ class CreateBug(Command):
         if options.prompt:
             (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
         else:
-            commit_message = commit_message_for_this_commit(tool.scm())
+            commit_message = tool.scm().commit_message_for_this_commit()
             bug_title = commit_message.description(lstrip=True, strip_url=True)
             comment_text = commit_message.body(lstrip=True)
 

@@ -31,7 +31,6 @@
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import log
 from modules.scm import ScriptError, CheckoutNeedsUpdate
-from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_for_this_commit
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue
 
@@ -88,7 +87,7 @@ class LandingSequence:
         self._tool.run_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
 
     def commit(self):
-        commit_message = commit_message_for_this_commit(self._tool.scm())
+        commit_message = self._tool.scm().commit_message_for_this_commit()
         return self._tool.scm().commit_with_message(commit_message.message())
 
     def close_patch(self, commit_log):
