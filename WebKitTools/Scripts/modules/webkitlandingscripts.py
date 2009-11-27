@@ -123,10 +123,5 @@ class WebKitLandingScripts:
         log("Building WebKit")
         cls.run_and_throw_if_fail(port.build_webkit_command(), quiet)
 
-    @staticmethod
-    def ensure_builders_are_green(buildbot, options):
-        if not options.check_builders or buildbot.core_builders_are_green():
-            return
-        error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
 
 

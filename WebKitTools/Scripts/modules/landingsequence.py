@@ -80,7 +80,7 @@ class LandingSequence:
     def build(self):
         # Make sure the tree is still green after updating, before building this patch.
         # The first patch ends up checking tree status twice, but that's OK.
-        WebKitLandingScripts.ensure_builders_are_green(self._tool.buildbot, self._options)
+        self._tool.steps.ensure_builders_are_green(self._tool.buildbot, self._options)
         WebKitLandingScripts.build_webkit(quiet=self._options.quiet, port=self._port)
 
     def test(self):

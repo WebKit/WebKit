@@ -198,7 +198,7 @@ class LandDiff(Command):
     def execute(self, options, args, tool):
         bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
 
-        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
+        tool.steps.ensure_builders_are_green(tool.buildbot, options)
 
         os.chdir(tool.scm().checkout_root)
         self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
@@ -300,7 +300,7 @@ class BuildAttachment(AbstractPatchProcessingCommand):
 
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
-        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
+        tool.steps.ensure_builders_are_green(tool.buildbot, options)
 
     def _process_patch(self, patch, options, args, tool):
         sequence = BuildAttachmentSequence(patch, options, tool)
@@ -316,7 +316,7 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
 
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
-        WebKitLandingScripts.ensure_builders_are_green(tool.buildbot, options)
+        tool.steps.ensure_builders_are_green(tool.buildbot, options)
 
     def _process_patch(self, patch, options, args, tool):
         sequence = ConditionalLandingSequence(patch, options, tool)

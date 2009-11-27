@@ -28,6 +28,7 @@
 
 import os
 
+from modules.logging import error
 from modules.webkitlandingscripts import WebKitLandingScripts
 from modules.webkitport import WebKitPort
 
@@ -48,3 +49,8 @@ class BuildSteps:
         if fail_fast:
             args.append("--exit-after-n-failures=1")
         WebKitLandingScripts.run_and_throw_if_fail(args)
+
+    def ensure_builders_are_green(self, buildbot, options):
+        if not options.check_builders or buildbot.core_builders_are_green():
+            return
+        error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
