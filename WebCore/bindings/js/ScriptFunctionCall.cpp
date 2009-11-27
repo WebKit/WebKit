@@ -80,6 +80,12 @@ void ScriptFunctionCall::appendArgument(JSC::JSValue argument)
     m_arguments.append(argument);
 }
 
+void ScriptFunctionCall::appendArgument(long argument)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    m_arguments.append(jsNumber(m_exec, argument));
+}
+
 void ScriptFunctionCall::appendArgument(long long argument)
 {
     JSLock lock(SilenceAssertionsOnly);
@@ -87,6 +93,12 @@ void ScriptFunctionCall::appendArgument(long long argument)
 }
 
 void ScriptFunctionCall::appendArgument(unsigned int argument)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    m_arguments.append(jsNumber(m_exec, argument));
+}
+
+void ScriptFunctionCall::appendArgument(unsigned long argument)
 {
     JSLock lock(SilenceAssertionsOnly);
     m_arguments.append(jsNumber(m_exec, argument));

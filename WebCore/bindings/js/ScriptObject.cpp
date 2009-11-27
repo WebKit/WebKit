@@ -90,6 +90,14 @@ bool ScriptObject::set(const char* name, double value)
     return handleException(m_scriptState);
 }
 
+bool ScriptObject::set(const char* name, long value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    PutPropertySlot slot;
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsNumber(m_scriptState, value), slot);
+    return handleException(m_scriptState);
+}
+
 bool ScriptObject::set(const char* name, long long value)
 {
     JSLock lock(SilenceAssertionsOnly);
@@ -107,6 +115,14 @@ bool ScriptObject::set(const char* name, int value)
 }
 
 bool ScriptObject::set(const char* name, unsigned value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    PutPropertySlot slot;
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsNumber(m_scriptState, value), slot);
+    return handleException(m_scriptState);
+}
+
+bool ScriptObject::set(const char* name, unsigned long value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;

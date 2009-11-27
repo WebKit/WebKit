@@ -105,7 +105,7 @@ void InspectorFrontend::clearConsoleMessages()
     callSimpleFunction("clearConsoleMessages");
 }
 
-bool InspectorFrontend::addResource(long long identifier, const ScriptObject& resourceObj)
+bool InspectorFrontend::addResource(unsigned long identifier, const ScriptObject& resourceObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addResource"));
     function->appendArgument(identifier);
@@ -115,7 +115,7 @@ bool InspectorFrontend::addResource(long long identifier, const ScriptObject& re
     return !hadException;
 }
 
-bool InspectorFrontend::updateResource(long long identifier, const ScriptObject& resourceObj)
+bool InspectorFrontend::updateResource(unsigned long identifier, const ScriptObject& resourceObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateResource"));
     function->appendArgument(identifier);
@@ -125,14 +125,14 @@ bool InspectorFrontend::updateResource(long long identifier, const ScriptObject&
     return !hadException;
 }
 
-void InspectorFrontend::removeResource(long long identifier)
+void InspectorFrontend::removeResource(unsigned long identifier)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("removeResource"));
     function->appendArgument(identifier);
     function->call();
 }
 
-void InspectorFrontend::updateFocusedNode(long long nodeId)
+void InspectorFrontend::updateFocusedNode(long nodeId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateFocusedNode"));
     function->appendArgument(nodeId);

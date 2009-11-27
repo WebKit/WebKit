@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-InspectorResource::InspectorResource(long long identifier, DocumentLoader* loader)
+InspectorResource::InspectorResource(unsigned long identifier, DocumentLoader* loader)
     : m_identifier(identifier)
     , m_loader(loader)
     , m_frame(loader->frame())
@@ -70,7 +70,7 @@ InspectorResource::~InspectorResource()
 {
 }
 
-PassRefPtr<InspectorResource> InspectorResource::createCached(long long identifier, DocumentLoader* loader, const CachedResource* cachedResource)
+PassRefPtr<InspectorResource> InspectorResource::createCached(unsigned long identifier, DocumentLoader* loader, const CachedResource* cachedResource)
 {
     PassRefPtr<InspectorResource> resource = create(identifier, loader);
 

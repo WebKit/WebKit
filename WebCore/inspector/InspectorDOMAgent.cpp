@@ -466,7 +466,7 @@ ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeTo
             break;
     }
 
-    value.set("id", static_cast<int>(id));
+    value.set("id", id);
     value.set("nodeType", node->nodeType());
     value.set("nodeName", nodeName);
     value.set("localName", localName);
@@ -533,7 +533,7 @@ ScriptObject InspectorDOMAgent::buildObjectForEventListener(const RegisteredEven
     value.set("type", eventType);
     value.set("useCapture", registeredEventListener.useCapture);
     value.set("isAttribute", eventListener->isAttribute());
-    value.set("nodeId", static_cast<long long>(pushNodePathToFrontend(node)));
+    value.set("nodeId", pushNodePathToFrontend(node));
     value.set("listener", getEventListenerHandlerBody(node->document(), m_frontend->scriptState(), eventListener.get()));
     return value;
 }

@@ -91,7 +91,7 @@ class InspectorController
 #endif
                                                     {
 public:
-    typedef HashMap<long long, RefPtr<InspectorResource> > ResourcesMap;
+    typedef HashMap<unsigned long, RefPtr<InspectorResource> > ResourcesMap;
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
@@ -343,7 +343,7 @@ private:
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
-    InspectorResource* getTrackedResource(long long identifier);
+    InspectorResource* getTrackedResource(unsigned long identifier);
 
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
@@ -380,7 +380,6 @@ private:
     ScriptState* m_scriptState;
     bool m_windowVisible;
     SpecialPanels m_showAfterVisible;
-    long long m_nextIdentifier;
     RefPtr<Node> m_highlightedNode;
     unsigned m_groupLevel;
     bool m_searchingForNode;

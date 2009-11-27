@@ -67,11 +67,11 @@ namespace WebCore {
         void updateConsoleMessageRepeatCount(const int count);
         void clearConsoleMessages();
 
-        bool addResource(long long identifier, const ScriptObject& resourceObj);
-        bool updateResource(long long identifier, const ScriptObject& resourceObj);
-        void removeResource(long long identifier);
+        bool addResource(unsigned long identifier, const ScriptObject& resourceObj);
+        bool updateResource(unsigned long identifier, const ScriptObject& resourceObj);
+        void removeResource(unsigned long identifier);
 
-        void updateFocusedNode(long long nodeId);
+        void updateFocusedNode(long nodeId);
         void setAttachedWindow(bool attached);
         void showPanel(int panel);
         void populateInterface();
