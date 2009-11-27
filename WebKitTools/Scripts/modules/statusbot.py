@@ -53,9 +53,12 @@ class StatusBot:
     default_host = "webkit-commit-queue.appspot.com"
 
     def __init__(self, host=default_host):
+        self.set_host(host)
+        self.browser = Browser()
+
+    def set_host(self, host):
         self.statusbot_host = host
         self.statusbot_server_url = "http://%s" % self.statusbot_host
-        self.browser = Browser()
 
     def update_status(self, queue_name, status, patch=None):
         # During unit testing, statusbot_host is None

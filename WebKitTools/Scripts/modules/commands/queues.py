@@ -156,11 +156,9 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate):
 
     # AbstractQueue methods
 
-    def status_host(self):
-        return None # FIXME: A hack until we come up with a more generic status page.
-
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
+        self.tool.status().set_host(self.options.status_host)
         self._patches = PersistentPatchCollection(self)
 
     def next_work_item(self):
