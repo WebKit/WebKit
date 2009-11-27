@@ -254,7 +254,7 @@ class CheckStyleSequence(LandingSequence):
 
     def build(self):
         # Instead of building, we check style.
-        WebKitLandingScripts.run_webkit_script("check-webkit-style")
+        self._tool.steps.check_style()
 
 
 class CheckStyle(AbstractPatchProcessingCommand):
@@ -359,14 +359,14 @@ class Rollout(Command):
         Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=options)
 
     @staticmethod
-    def _create_changelogs_for_revert(scm, revision):
+    def _create_changelogs_for_revert(tool, revision):
         # First, discard the ChangeLog changes from the rollout.
-        changelog_paths = scm.modified_changelogs()
-        scm.revert_files(changelog_paths)
+        changelog_paths = tool.scm().modified_changelogs()
+        tool.scm().revert_files(changelog_paths)
 
         # Second, make new ChangeLog entries for this rollout.
         # This could move to prepare-ChangeLog by adding a --revert= option.
-        WebKitLandingScripts.run_webkit_script("prepare-ChangeLog")
+        tool.steps.prepare_changelog()
         for changelog_path in changelog_paths:
             ChangeLog(changelog_path).update_for_revert(revision)
 
@@ -395,7 +395,7 @@ class Rollout(Command):
         tool.steps.clean_working_directory(tool.scm(), options)
         tool.scm().update_webkit()
         tool.scm().apply_reverse_diff(revision)
-        self._create_changelogs_for_revert(tool.scm(), revision)
+        self._create_changelogs_for_revert(tool, revision)
 
         # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
         # Once we trust rollout we will remove this option.

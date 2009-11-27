@@ -28,11 +28,18 @@
 
 import os
 
-from modules.logging import error
+from modules.logging import log, error
 from modules.webkitlandingscripts import WebKitLandingScripts
 from modules.webkitport import WebKitPort
 
 class BuildSteps:
+    def _run_script(cls, script_name, quiet=False, port=WebKitPort):
+        log("Running %s" % script_name)
+        WebKitLandingScripts.run_and_throw_if_fail(port.script_path(script_name), quiet)
+
+    def prepare_changelog(self):
+        self.run_script("prepare-ChangeLog")
+
     def clean_working_directory(self, scm, options, allow_local_commits=False):
         os.chdir(scm.checkout_root)
         if not allow_local_commits:
@@ -58,3 +65,7 @@ class BuildSteps:
     def build_webkit(self, quiet=False, port=WebKitPort):
         log("Building WebKit")
         WebKitLandingScripts.run_and_throw_if_fail(port.build_webkit_command(), quiet)
+
+    def check_style(self):
+        self._run_script("check-webkit-style")
+

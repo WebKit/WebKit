@@ -113,11 +113,5 @@ class WebKitLandingScripts:
         if exit_code:
             raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
 
-    @classmethod
-    def run_webkit_script(cls, script_name, quiet=False, port=WebKitPort):
-        log("Running %s" % script_name)
-        cls.run_and_throw_if_fail(port.script_path(script_name), quiet)
-
-
 
 
