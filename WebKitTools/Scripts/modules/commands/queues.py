@@ -48,9 +48,9 @@ from modules.landingsequence import LandingSequence, ConditionalLandingSequence
 from modules.logging import error, log, tee
 from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection
+from modules.processutils import run_and_throw_if_fail
 from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.statusbot import StatusBot
-from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_for_this_commit
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
@@ -96,7 +96,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
 
     def run_bugzilla_tool(self, args):
         bugzilla_tool_args = [self.tool.path()] + args
-        WebKitLandingScripts.run_and_throw_if_fail(bugzilla_tool_args)
+        run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):
         log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(patch_ids)))

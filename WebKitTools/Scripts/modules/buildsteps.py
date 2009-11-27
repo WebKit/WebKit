@@ -29,13 +29,14 @@
 import os
 
 from modules.logging import log, error
+from modules.processutils import run_and_throw_if_fail
 from modules.webkitlandingscripts import WebKitLandingScripts
 from modules.webkitport import WebKitPort
 
 class BuildSteps:
     def _run_script(cls, script_name, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
-        WebKitLandingScripts.run_and_throw_if_fail(port.script_path(script_name), quiet)
+        run_and_throw_if_fail(port.script_path(script_name), quiet)
 
     def prepare_changelog(self):
         self.run_script("prepare-ChangeLog")
@@ -55,7 +56,7 @@ class BuildSteps:
             args.append("--quiet")
         if fail_fast:
             args.append("--exit-after-n-failures=1")
-        WebKitLandingScripts.run_and_throw_if_fail(args)
+        run_and_throw_if_fail(args)
 
     def ensure_builders_are_green(self, buildbot, options):
         if not options.check_builders or buildbot.core_builders_are_green():
@@ -64,7 +65,7 @@ class BuildSteps:
 
     def build_webkit(self, quiet=False, port=WebKitPort):
         log("Building WebKit")
-        WebKitLandingScripts.run_and_throw_if_fail(port.build_webkit_command(), quiet)
+        run_and_throw_if_fail(port.build_webkit_command(), quiet)
 
     def check_style(self):
         self._run_script("check-webkit-style")

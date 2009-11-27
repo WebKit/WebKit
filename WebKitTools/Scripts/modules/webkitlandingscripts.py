@@ -84,34 +84,6 @@ class WebKitLandingScripts:
             make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
         ]
 
-    @staticmethod
-    def run_command_with_teed_output(args, teed_output):
-        child_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        # Use our own custom wait loop because Popen ignores a tee'd stderr/stdout.
-        # FIXME: This could be improved not to flatten output to stdout.
-        while True:
-            output_line = child_process.stdout.readline()
-            if output_line == "" and child_process.poll() != None:
-                return child_process.poll()
-            teed_output.write(output_line)
-
-    @staticmethod
-    def run_and_throw_if_fail(args, quiet=False):
-        # Cache the child's output locally so it can be used for error reports.
-        child_out_file = StringIO.StringIO()
-        if quiet:
-            dev_null = open(os.devnull, "w")
-        child_stdout = tee(child_out_file, dev_null if quiet else sys.stdout)
-        exit_code = WebKitLandingScripts.run_command_with_teed_output(args, child_stdout)
-        if quiet:
-            dev_null.close()
-
-        child_output = child_out_file.getvalue()
-        child_out_file.close()
-
-        if exit_code:
-            raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
 
 
 

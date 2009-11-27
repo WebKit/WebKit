@@ -5,6 +5,19 @@
         [bzt] Kill WebKitLandingScripts
         https://bugs.webkit.org/show_bug.cgi?id=31904
 
+        Step 5: Kill run_and_throw_if_fail.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/processutils.py: Added.
+        * Scripts/modules/webkitlandingscripts.py:
+
+2009-11-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Kill WebKitLandingScripts
+        https://bugs.webkit.org/show_bug.cgi?id=31904
+
         Step 4: Kill run_webkit_script.
 
         * Scripts/modules/buildsteps.py:
