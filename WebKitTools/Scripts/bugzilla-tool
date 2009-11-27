@@ -46,8 +46,8 @@ class BugzillaTool(MultiCommandTool):
 
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
-        self._cached_scm = None
-        self._cached_status = None
+        self._scm = None
+        self._status = None
         self.steps = BuildSteps()
 
     def dry_run_callback(self, option, opt, value, parser):
@@ -57,24 +57,24 @@ class BugzillaTool(MultiCommandTool):
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
         original_cwd = os.path.abspath(".")
-        if not self._cached_scm:
-            self._cached_scm = detect_scm_system(original_cwd)
+        if not self._scm:
+            self._scm = detect_scm_system(original_cwd)
 
-        if not self._cached_scm:
+        if not self._scm:
             script_directory = os.path.abspath(sys.path[0])
             webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
-            self._cached_scm = detect_scm_system(webkit_directory)
-            if self._cached_scm:
+            self._scm = detect_scm_system(webkit_directory)
+            if self._scm:
                 log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
             else:
                 error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
 
-        return self._cached_scm
+        return self._scm
 
     def status(self):
-        if not self._cached_status:
-            self._cached_status = StatusBot()
-        return self._cached_status
+        if not self._status:
+            self._status = StatusBot()
+        return self._status
 
     def path(self):
         return __file__
