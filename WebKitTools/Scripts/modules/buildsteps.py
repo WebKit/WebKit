@@ -54,3 +54,7 @@ class BuildSteps:
         if not options.check_builders or buildbot.core_builders_are_green():
             return
         error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
+
+    def build_webkit(self, quiet=False, port=WebKitPort):
+        log("Building WebKit")
+        WebKitLandingScripts.run_and_throw_if_fail(port.build_webkit_command(), quiet)

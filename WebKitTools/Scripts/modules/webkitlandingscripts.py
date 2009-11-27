@@ -118,10 +118,6 @@ class WebKitLandingScripts:
         log("Running %s" % script_name)
         cls.run_and_throw_if_fail(port.script_path(script_name), quiet)
 
-    @classmethod
-    def build_webkit(cls, quiet=False, port=WebKitPort):
-        log("Building WebKit")
-        cls.run_and_throw_if_fail(port.build_webkit_command(), quiet)
 
 
 
