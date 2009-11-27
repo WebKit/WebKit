@@ -1,3 +1,22 @@
+2009-11-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Ignore line-height CSS property specified to push buttons on
+        Windows and Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=31712
+
+        LayoutTests/fast/forms/control-restrict-line-height.html checks that the
+        following controls should ignore line-height CSS property.
+         - <select>
+         - <input type=button>
+         - <input type=search>
+        This change addresses the <input type=button> issue with Chromium/Windows
+        and Chromium/Linux.
+        
+        * rendering/RenderThemeChromiumSkia.cpp: Implement adjustButtonStyle() to ignore line-height.
+        * rendering/RenderThemeChromiumSkia.h: Declare adjustButtonStyle().
+
 2009-11-26  Kinuko Yasuda  <kinuko@chromium.com>
 
         Reviewed by Eric Seidel.
