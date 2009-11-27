@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        PatchStatus does not return status
+        https://bugs.webkit.org/show_bug.cgi?id=31938
+
+        We need to parse attachment_id as an int.  Otherwise, we can't find
+        anything in the datastore.
+
+        * CommitQueueStatus/queue_status.py:
+
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Make commit-queue status not throw an exception where there is not
         status
         https://bugs.webkit.org/show_bug.cgi?id=31936
