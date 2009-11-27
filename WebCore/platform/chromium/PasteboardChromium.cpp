@@ -83,7 +83,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 {
     String html = createMarkup(selectedRange, 0, AnnotateForInterchange);
 #if PLATFORM(DARWIN)
-    html = String("<meta charset='utf-8'>") + html;
+    html = String("<meta charset='utf-8' id='webkit-interchange-charset'>") + html;
 #endif
     ExceptionCode ec = 0;
     KURL url = selectedRange->startContainer(ec)->document()->url();
@@ -170,6 +170,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         String markup;
         KURL srcURL;
         ChromiumBridge::clipboardReadHTML(buffer, &markup, &srcURL);
+#if PLATFORM(DARWIN)
+        DEFINE_STATIC_LOCAL(const String, forceUtf8String, ("<meta charset='utf-8' id='webkit-interchange-charset'>"));
+        if (markup.startsWith(forceUtf8String))
+            markup = markup.substring(forceUtf8String.length());
+#endif
 
         RefPtr<DocumentFragment> fragment =
             createFragmentFromMarkup(frame->document(), markup, srcURL);

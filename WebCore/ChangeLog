@@ -1,3 +1,19 @@
+2009-11-26  Kinuko Yasuda  <kinuko@chromium.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove the special charset meta tag in the clipboard so that
+        copy-and-paste with interchange breaklines/spaces works correctly
+        within WebKit.
+
+        No new tests.  Layout tests that involve copy-and-paste with
+        interchange breaklines (like editing/pasteboard/paste-line-endings-00?)
+        should pass on Mac/Chromium with this fix.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2009-11-26  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Eric Seidel.
