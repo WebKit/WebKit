@@ -1,5 +1,24 @@
 2009-11-27  Adam Barth  <abarth@webkit.org>
 
+        Rubber stamped by Eric Seidel.
+
+        Rename CommitQueueStatus to QueueStatusServer to allow for more queues.
+
+        * CommitQueueStatus: Removed.
+        * CommitQueueStatus/app.yaml: Removed.
+        * CommitQueueStatus/filters: Removed.
+        * CommitQueueStatus/filters/__init__.py: Removed.
+        * CommitQueueStatus/filters/webkit_extras.py: Removed.
+        * CommitQueueStatus/index.html: Removed.
+        * CommitQueueStatus/index.yaml: Removed.
+        * CommitQueueStatus/queue_status.py: Removed.
+        * CommitQueueStatus/stylesheets: Removed.
+        * CommitQueueStatus/stylesheets/main.css: Removed.
+        * CommitQueueStatus/update_status.html: Removed.
+        * QueueStatusServer: Copied from WebKitTools/CommitQueueStatus.
+
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         style-queue should only process each patch once
