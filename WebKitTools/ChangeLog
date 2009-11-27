@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] style-queue fails to apply a bunch of patches for no reason
+        https://bugs.webkit.org/show_bug.cgi?id=31942
+
+        By passing --non-interactive to check-style, we convince check-style
+        to pass --force to svn-apply, which lets it apply more patches.
+
+        * Scripts/modules/commands/queues.py:
+
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] Support --status-host in style-queue
         https://bugs.webkit.org/show_bug.cgi?id=31941
 

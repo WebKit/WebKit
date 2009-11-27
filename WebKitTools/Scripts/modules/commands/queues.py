@@ -185,7 +185,7 @@ class StyleQueue(AbstractTryQueue):
         return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["check-style", "--force-clean", patch["id"]])
+        self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", patch["id"]])
         self._patches.done(patch)
 
 
