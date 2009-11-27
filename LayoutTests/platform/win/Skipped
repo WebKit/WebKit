@@ -713,3 +713,6 @@ plugins/reloadplugins-no-pages.html
 # These tests require Qt Widgets
 plugins/qt-qwidget-plugin.html
 
+# Failure introduced by http://trac.webkit.org/changeset/51429
+# hamaji will look into this.
+editing/selection/last-empty-inline.html

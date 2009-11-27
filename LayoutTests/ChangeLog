@@ -1,5 +1,14 @@
 2009-11-26  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed red bot fix.
+
+        Skip tests introduced by the previous change as it seems to be failing.
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2009-11-26  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Reviewed by Dan Bernstein.
 
         Assertion failure in RenderBlock::positionForPointWithInlineChildren when running fast/inline/relative-positioned-overflow.html

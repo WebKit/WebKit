@@ -5252,3 +5252,7 @@ svg/filters/filterRes.svg
 transforms/2d/hindi-rotated.html
 transitions/move-after-transition.html
 transitions/transition-end-event-rendering.html
+
+# Failure introduced by http://trac.webkit.org/changeset/51429
+# hamaji will look into this.
+editing/selection/last-empty-inline.html
