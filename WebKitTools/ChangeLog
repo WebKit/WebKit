@@ -1,5 +1,11 @@
 2009-11-27  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix found while writing unit tests.
+
+        * Scripts/modules/commands/download.py:
+
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Kill WebKitLandingScripts

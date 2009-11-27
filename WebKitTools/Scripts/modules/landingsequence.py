@@ -84,7 +84,7 @@ class LandingSequence:
 
     def test(self):
         # When running non-interactively we don't want to launch Safari and we want to exit after the first failure.
-        self._tool.run_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
+        self._tool.steps.run_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
 
     def commit(self):
         commit_message = self._tool.scm().commit_message_for_this_commit()
