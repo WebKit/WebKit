@@ -28,14 +28,15 @@
 
 import unittest
 
+from modules.mock import Mock
 from modules.mock_bugzillatool import MockBugzillaTool
 from modules.outputcapture import OutputCapture
 
 class CommandsTest(unittest.TestCase):
-    def assert_execute_outputs(self, command, command_args, expected_stdout, expected_stderr=""):
+    def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=Mock(), tool=MockBugzillaTool()):
         capture = OutputCapture()
         capture.capture_output()
-        command.execute(None, command_args, MockBugzillaTool())
+        command.execute(options, args, tool)
         (stdout_string, stderr_string) = capture.restore_output()
         self.assertEqual(stdout_string, expected_stdout)
         self.assertEqual(expected_stderr, expected_stderr)

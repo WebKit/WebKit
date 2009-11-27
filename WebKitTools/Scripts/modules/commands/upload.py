@@ -54,6 +54,7 @@ from modules.webkitlandingscripts import WebKitLandingScripts, commit_message_fo
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
+# FIXME: Requires unit test.  Blocking issue: commit_message_for_this_commit.
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
     show_in_main_help = False
@@ -180,6 +181,7 @@ class MarkFixed(Command):
         tool.bugs.close_bug_as_fixed(args[0], args[1])
 
 
+# FIXME: Requires unit test.  Blocking issue: too complex for now.
 class CreateBug(Command):
     name = "create-bug"
     show_in_main_help = True

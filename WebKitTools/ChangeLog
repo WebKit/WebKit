@@ -1,3 +1,21 @@
+2009-11-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Unit test upload commands
+        https://bugs.webkit.org/show_bug.cgi?id=31903
+
+        Adds unit tests for all but two of the upload commands.  The two
+        remaining ones are more difficult.  I'll return to them later.  The
+        goal of these tests is just to run the commands.  We can test more
+        detailed behavior later.
+
+        * Scripts/modules/commands/commandtest.py:
+        * Scripts/modules/commands/upload.py:
+        * Scripts/modules/commands/upload_unittest.py:
+        * Scripts/modules/mock.py: Added.
+        * Scripts/modules/mock_bugzillatool.py:
+
 2009-11-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

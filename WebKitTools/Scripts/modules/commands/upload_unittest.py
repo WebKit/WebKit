@@ -33,4 +33,10 @@ from modules.commands.upload import *
 
 class UploadCommandsTest(CommandsTest):
     def test_mark_fixed(self):
-        self.assert_execute_outputs(MarkFixed(), [43, "Test comment"], "", "")
+        self.assert_execute_outputs(MarkFixed(), [43, "Test comment"])
+
+    def test_obsolete_attachments(self):
+        self.assert_execute_outputs(ObsoleteAttachments(), [42])
+
+    def test_post_diff(self):
+        self.assert_execute_outputs(PostDiff(), [42])

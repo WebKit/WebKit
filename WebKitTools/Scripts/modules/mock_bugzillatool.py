@@ -26,9 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from modules.scm import CommitMessage
+
 class MockBugzilla():
-    patch1 = { "id": 197, "bug_id": 42, "url": "http://example.com/197" }
-    patch2 = { "id": 128, "bug_id": 42, "url": "http://example.com/128" }
+    patch1 = { "id": 197, "bug_id": 42, "url": "http://example.com/197", "is_obsolete": False }
+    patch2 = { "id": 128, "bug_id": 42, "url": "http://example.com/128", "is_obsolete": False }
 
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
@@ -41,7 +43,23 @@ class MockBugzilla():
             return [self.patch1, self.patch2]
         return None
 
+    def fetch_attachments_from_bug(self, bug_id):
+        if bug_id == 42:
+            return [self.patch1, self.patch2]
+        return None
+
+    def fetch_patches_from_bug(self, bug_id):
+        if bug_id == 42:
+            return [self.patch1, self.patch2]
+        return None
+
     def close_bug_as_fixed(self, bug_id, comment_text=None):
+        pass
+
+    def obsolete_attachment(self, attachment_id, comment_text=None):
+        pass
+
+    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False):
         pass
 
 
@@ -56,6 +74,32 @@ class MockBuildBot():
         }]
 
 
+class MockSCM():
+    def create_patch(self):
+        return "Patch1"
+
+    def commit_ids_from_commitish_arguments(self, args):
+        return ["Commitish1", "Commitish2"]
+
+    def commit_message_for_local_commit(self, commit_id):
+        if commit_id == "Commitish1":
+            return CommitMessage("CommitMessage1\nhttps://bugs.example.org/show_bug.cgi?id=42\n")
+        if commit_id == "Commitish2":
+            return CommitMessage("CommitMessage2\nhttps://bugs.example.org/show_bug.cgi?id=75\n")
+        raise Exception("Bogus commit_id in commit_message_for_local_commit.")
+
+    def create_patch_from_local_commit(self, commit_id):
+        if commit_id == "Commitish1":
+            return "Patch1"
+        if commit_id == "Commitish2":
+            return "Patch2"
+        raise Exception("Bogus commit_id in commit_message_for_local_commit.")
+
+
 class MockBugzillaTool():
     bugs = MockBugzilla()
     buildbot = MockBuildBot()
+
+    _scm = MockSCM()
+    def scm(self):
+        return self._scm
