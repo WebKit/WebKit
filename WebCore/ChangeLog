@@ -1,5 +1,15 @@
 2009-11-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed Chromium build fix introduced by r51428.
+
+        [Chromium] Ignore line-height CSS property for PushButton
+        https://bugs.webkit.org/show_bug.cgi?id=31712
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::adjustButtonStyle):
+
+2009-11-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed Chromium test fix by reverting r51413.
 
         [v8] Do not check the thread when accessing DOMDataStore
