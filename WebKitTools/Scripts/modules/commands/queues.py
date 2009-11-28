@@ -44,7 +44,7 @@ from modules.buildbot import BuildBot
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
-from modules.landingsequence import LandingSequence, ConditionalLandingSequence
+from modules.landingsequence import LandingSequence, ConditionalLandingSequence, LandingSequenceErrorHandler
 from modules.logging import error, log, tee
 from modules.multicommandtool import MultiCommandTool, Command
 from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
@@ -108,11 +108,13 @@ class AbstractQueue(Command, WorkQueueDelegate):
         work_queue.run()
 
 
-class CommitQueue(AbstractQueue):
+class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
     name = "commit-queue"
     show_in_main_help = False
     def __init__(self):
         AbstractQueue.__init__(self)
+
+    # AbstractQueue methods
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
@@ -133,13 +135,19 @@ class CommitQueue(AbstractQueue):
         return (True, "Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--quiet", patch["id"]])
+        self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--quiet", patch["id"]])
 
     def handle_unexpected_error(self, patch, message):
         self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
 
+    # LandingSequenceErrorHandler methods
 
-class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate):
+    @classmethod
+    def handle_script_error(cls, tool, patch, script_error):
+        tool.bugs.reject_patch_from_commit_queue(patch["id"], script_error.message_with_output())
+
+
+class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, LandingSequenceErrorHandler):
     def __init__(self, options=[]):
         AbstractQueue.__init__(self, options)
 
@@ -174,6 +182,12 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate):
         log(message)
         self._patches.done(patch)
 
+    # LandingSequenceErrorHandler methods
+
+    @classmethod
+    def handle_script_error(cls, tool, patch, script_error):
+        log(script_error.message_with_output())
+
 
 class StyleQueue(AbstractTryQueue):
     name = "style-queue"
@@ -185,7 +199,7 @@ class StyleQueue(AbstractTryQueue):
         return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", patch["id"]])
+        self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
         self._patches.done(patch)
 
 
@@ -208,5 +222,5 @@ class BuildQueue(AbstractTryQueue):
         return (True, "Building patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", "--quiet", "--no-update", patch["id"]])
+        self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", "--quiet", "--non-interactive", "--parent-command=build-queue", "--no-update", patch["id"]])
         self._patches.done(patch)

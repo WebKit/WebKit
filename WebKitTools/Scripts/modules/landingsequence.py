@@ -34,6 +34,12 @@ from modules.scm import ScriptError, CheckoutNeedsUpdate
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue
 
+class LandingSequenceErrorHandler():
+    @classmethod
+    def handle_script_error(cls, tool, patch, script_error):
+        raise NotImplementedError, "subclasses must implement"
+
+
 class LandingSequence:
     def __init__(self, patch, options, tool):
         self._patch = patch
@@ -61,9 +67,9 @@ class LandingSequence:
         except ScriptError, e:
             if not self._options.quiet:
                 log(e.message_with_output())
-            if self._options.non_interactive:
-                # Mark the patch as commit-queue- and comment in the bug.
-                self._tool.bugs.reject_patch_from_commit_queue(self._patch["id"], e.message_with_output())
+            if self._options.parent_command:
+                command = self._tool.command_by_name(self._options.parent_command)
+                command.handle_script_error(self._tool, self._patch, e)
             WorkQueue.exit_after_handled_error(e)
 
     def clean(self):

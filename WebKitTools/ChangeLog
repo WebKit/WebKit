@@ -1,3 +1,20 @@
+2009-11-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] style-queue shouldn't reject patches from the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=31944
+
+        Currently the style-queue subprocess gets confused and thinks its the
+        commit-queue.  If the patch has an error, it rejects it from the
+        commit-queue.  Instead, we should have style-queue specific logic.
+        This patch doesn't add that logic, but it gives us a callback we can
+        use to add that logic.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/landingsequence.py:
+
 2009-11-27  Adam Barth  <abarth@webkit.org>
 
         Rubber stamped by Eric Seidel.

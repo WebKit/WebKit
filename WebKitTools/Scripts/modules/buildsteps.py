@@ -49,6 +49,7 @@ class BuildSteps:
             make_option("--ignore-builders", action="store_false", dest="check_builders", default=True, help="Don't check to see if the build.webkit.org builders are green before landing."),
             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
             make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible."),
+            make_option("--parent-command", action="store", dest="parent_command", default=None, help="(Internal) The command that spawned this instance."),
         ] + WebKitPort.port_options()
 
     @staticmethod
