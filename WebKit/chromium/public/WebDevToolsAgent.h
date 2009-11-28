@@ -69,6 +69,9 @@ public:
     WEBKIT_API static void executeDebuggerCommand(
         const WebString& command, int callerIdentifier);
 
+    // Asynchronously request debugger to pause immediately.
+    WEBKIT_API static void debuggerPauseScript();
+
     typedef void (*MessageLoopDispatchHandler)();
 
     // Installs dispatch handle that is going to be called periodically

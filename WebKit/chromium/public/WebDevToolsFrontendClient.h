@@ -43,13 +43,14 @@ public:
                                     const WebString& methodName,
                                     const WebString& param1,
                                     const WebString& param2,
-                                    const WebString& param3) = 0;
-    virtual void sendDebuggerCommandToAgent(const WebString& command) = 0;
+                                    const WebString& param3) {};
+    virtual void sendDebuggerCommandToAgent(const WebString& command) {};
+    virtual void sendDebuggerPauseScript() {}
 
-    virtual void activateWindow() = 0;
-    virtual void closeWindow() = 0;
-    virtual void dockWindow() = 0;
-    virtual void undockWindow() = 0;
+    virtual void activateWindow() {};
+    virtual void closeWindow() {};
+    virtual void dockWindow() {};
+    virtual void undockWindow() {};
 
 protected:
     virtual ~WebDevToolsFrontendClient() {}

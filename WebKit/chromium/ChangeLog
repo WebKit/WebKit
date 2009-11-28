@@ -2,6 +2,25 @@
 
         Reviewed by Pavel Feldman.
 
+        Add separate method for pause command to WebDevToolsAgent
+        and WebDevToolsFrontendClient interfaces so that pause command
+        can be processed on the IO thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31934
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::sendDebuggerCommandToAgent):
+        (WebKit::WebDevToolsFrontendClient::sendDebuggerPauseScript):
+        (WebKit::WebDevToolsFrontendClient::activateWindow):
+        (WebKit::WebDevToolsFrontendClient::closeWindow):
+        (WebKit::WebDevToolsFrontendClient::dockWindow):
+        (WebKit::WebDevToolsFrontendClient::undockWindow):
+
+2009-11-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         WebCore part of the fix that allows to view plugin
         resources loaded by plugins. Methods that for resource
         loading notifications are exposed through WebDevToolsAgent
