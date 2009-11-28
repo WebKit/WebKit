@@ -90,26 +90,28 @@ struct VPtrSet {
 
 VPtrSet::VPtrSet()
 {
-    // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
-    void* storage = fastMalloc(sizeof(CollectorBlock));
+    CollectorCell cell;
+    void* storage = &cell;
 
+    ASSERT(sizeof(JSArray) <= sizeof(CollectorCell));
     JSCell* jsArray = new (storage) JSArray(JSArray::createStructure(jsNull()));
     jsArrayVPtr = jsArray->vptr();
     jsArray->~JSCell();
 
+    ASSERT(sizeof(JSByteArray) <= sizeof(CollectorCell));
     JSCell* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
     jsByteArrayVPtr = jsByteArray->vptr();
     jsByteArray->~JSCell();
 
+    ASSERT(sizeof(JSString) <= sizeof(CollectorCell));
     JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     jsStringVPtr = jsString->vptr();
     jsString->~JSCell();
 
+    ASSERT(sizeof(JSFunction) <= sizeof(CollectorCell));
     JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()));
     jsFunctionVPtr = jsFunction->vptr();
     jsFunction->~JSCell();
-
-    fastFree(storage);
 }
 
 JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
