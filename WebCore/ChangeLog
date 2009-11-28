@@ -1,3 +1,17 @@
+2009-11-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed Chromium test fix by reverting r51413.
+
+        [v8] Do not check the thread when accessing DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=31877
+
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMNodeMap):
+        (WebCore::getDOMObjectMap):
+        (WebCore::getActiveDOMObjectMap):
+        (WebCore::getDOMSVGElementInstanceMap):
+        (WebCore::getDOMSVGObjectWithContextMap):
+
 2009-11-27  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed, comment fix.

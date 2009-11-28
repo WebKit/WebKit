@@ -48,38 +48,32 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
 {
 }
 
-static inline DOMDataStore& getDOMDataStore()
-{
-    ASSERT(WTF::isMainThread());  // As of now, we must be always on the main thread.
-    return MainThreadDOMData::getCurrentMainThreadStore();
-}
-
 DOMWrapperMap<Node>& getDOMNodeMap()
 {
-    return getDOMDataStore().domNodeMap();
+    return MainThreadDOMData::getCurrentMainThreadStore().domNodeMap();
 }
 
 DOMWrapperMap<void>& getDOMObjectMap()
 {
-    return getDOMDataStore().domObjectMap();
+    return DOMData::getCurrent()->getStore().domObjectMap();
 }
 
 DOMWrapperMap<void>& getActiveDOMObjectMap()
 {
-    return getDOMDataStore().activeDomObjectMap();
+    return DOMData::getCurrent()->getStore().activeDomObjectMap();
 }
 
 #if ENABLE(SVG)
 
 DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap()
 {
-    return getDOMDataStore().domSvgElementInstanceMap();
+    return DOMData::getCurrent()->getStore().domSvgElementInstanceMap();
 }
 
 // Map of SVG objects with contexts to V8 objects
 DOMWrapperMap<void>& getDOMSVGObjectWithContextMap()
 {
-    return getDOMDataStore().domSvgObjectWithContextMap();
+    return DOMData::getCurrent()->getStore().domSvgObjectWithContextMap();
 }
 
 #endif // ENABLE(SVG)
