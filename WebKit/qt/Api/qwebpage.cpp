@@ -846,7 +846,12 @@ void QWebPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    Frame* frame = page->focusController()->focusedFrame();
+    if (!frame)
+        return;
+
     if (client && client->inputMethodEnabled()
+        && frame->document()->focusedNode()
         && button == Qt::LeftButton && qApp->autoSipEnabled()) {
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
             client->ownerWidget()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));

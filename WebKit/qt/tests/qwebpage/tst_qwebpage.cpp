@@ -1488,6 +1488,21 @@ void tst_QWebPage::inputMethods()
     QVERIFY(!(inputMethodHints(view) & Qt::ImhHiddenText));
 #endif
 
+    page->mainFrame()->setHtml("<html><body><p>nothing to input here");
+    viewEventSpy.clear();
+
+    QWebElement para = page->mainFrame()->findFirstElement("p");
+    {
+        QMouseEvent evpres(QEvent::MouseButtonPress, para.geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        page->event(&evpres);
+        QMouseEvent evrel(QEvent::MouseButtonRelease, para.geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        page->event(&evrel);
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+#endif
+
     delete container;
 }
 
