@@ -888,14 +888,20 @@ bool V8Proxy::canAccessPrivate(DOMWindow* targetWindow)
 
     String message;
 
-    DOMWindow* originWindow = retrieveWindow(currentContext());
-    if (originWindow == targetWindow)
+    v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
+    if (activeContext.IsEmpty()) {
+        // There is a single activation record on the stack, so that must
+        // be the activeContext.
+        activeContext = v8::Context::GetCurrent();
+    }
+    DOMWindow* activeWindow = retrieveWindow(activeContext);
+    if (activeWindow == targetWindow)
         return true;
 
-    if (!originWindow)
+    if (!activeWindow)
         return false;
 
-    const SecurityOrigin* activeSecurityOrigin = originWindow->securityOrigin();
+    const SecurityOrigin* activeSecurityOrigin = activeWindow->securityOrigin();
     const SecurityOrigin* targetSecurityOrigin = targetWindow->securityOrigin();
 
     // We have seen crashes were the security origin of the target has not been
@@ -908,7 +914,7 @@ bool V8Proxy::canAccessPrivate(DOMWindow* targetWindow)
 
     // Allow access to a "about:blank" page if the dynamic context is a
     // detached context of the same frame as the blank page.
-    if (targetSecurityOrigin->isEmpty() && originWindow->frame() == targetWindow->frame())
+    if (targetSecurityOrigin->isEmpty() && activeWindow->frame() == targetWindow->frame())
         return true;
 
     return false;
