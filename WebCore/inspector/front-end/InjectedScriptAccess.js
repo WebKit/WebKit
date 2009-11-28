@@ -51,7 +51,7 @@ InjectedScriptAccess._installHandler = function(methodName, async)
     };
 }
 
-// InjectedScriptAccess message forwarding puts some constraints on the way methods are imlpemented and called:
+// InjectedScriptAccess message forwarding puts some constraints on the way methods are implemented and called:
 // - Make sure corresponding methods in InjectedScript return non-null and non-undefined values,
 // - Make sure last parameter of all the InjectedSriptAccess.* calls is a callback function.
 // We keep these sorted.
