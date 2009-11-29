@@ -77,12 +77,22 @@ class PersistentPatchCollection:
         self._delegate = delegate
         self._name = self._delegate.collection_name()
         self._status = self._delegate.status_server()
+        self._status_cache = {}
+
+    def _cached_status(self, patch_id):
+        cached = self._status_cache.get(patch_id)
+        if cached:
+            return cached
+        status = self._status.patch_status(self._name, patch_id)
+        if status:
+            self._status_cache[patch_id] = status
+        return status
 
     def next(self):
         patch_ids = self._delegate.fetch_potential_patch_ids()
         for patch_id in patch_ids:
-            last_status = self._status.patch_status(self._name, patch_id)
-            if not last_status: # FIXME: Add support for "Try again"
+            status = self._cached_status(patch_id)
+            if not status:
                 return patch_id
 
     def done(self, patch):
