@@ -50,6 +50,9 @@ class MockBugzilla(Mock):
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
 
+    def fetch_attachment_ids_from_review_queue(self):
+        return [197, 128]
+
     def fetch_patches_from_commit_queue(self):
         return [self.patch1, self.patch2]
 

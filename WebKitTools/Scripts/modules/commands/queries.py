@@ -78,6 +78,19 @@ class PatchesToCommit(Command):
             print "%s" % patch["url"]
 
 
+class PatchesToReview(Command):
+    name = "patches-to-review"
+    show_in_main_help = False
+    def __init__(self):
+        Command.__init__(self, "List patches that are pending review")
+
+    def execute(self, options, args, tool):
+        patch_ids = tool.bugs.fetch_attachment_ids_from_review_queue()
+        log("Patches pending review:")
+        for patch_id in patch_ids:
+            print patch_id
+
+
 class ReviewedPatches(Command):
     name = "reviewed-patches"
     show_in_main_help = False

@@ -43,7 +43,7 @@ from modules.committers import CommitterList
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
-from .BeautifulSoup import BeautifulSoup
+from .BeautifulSoup import BeautifulSoup, SoupStrainer
 
 try:
     from mechanize import Browser
@@ -309,6 +309,15 @@ class Bugzilla:
 
         return bug_ids
 
+    def _parse_attachment_ids_request_query(self, page):
+        digits = re.compile("\d+")
+        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
+        attachment_links = SoupStrainer("a", href=attachment_href)
+        return [digits.search(tag["href"]).group(0) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
+
+    def _fetch_attachment_ids_request_query(self, query):
+        return self._parse_attachment_ids_request_query(urllib2.urlopen(query))
+
     def fetch_bug_ids_from_commit_queue(self):
         commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
@@ -316,6 +325,10 @@ class Bugzilla:
     def fetch_bug_ids_from_review_queue(self):
         review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
         return self._fetch_bug_ids_advanced_query(review_queue_url)
+
+    def fetch_attachment_ids_from_review_queue(self):
+        review_queue_url = self.bug_server_url + "request.cgi?action=queue&type=review&group=type"
+        return self._fetch_attachment_ids_request_query(review_queue_url)
 
     def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
         patches_to_land = []

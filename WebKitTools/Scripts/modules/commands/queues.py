@@ -164,8 +164,8 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, Landing
     def collection_name(self):
         return self.name
 
-    def fetch_potential_patches(self):
-        return self.tool.bugs.fetch_patches_from_review_queue(limit=3)
+    def fetch_potential_patch_ids(self):
+        return self.tool.bugs.fetch_attachment_ids_from_review_queue()
 
     def status_server(self):
         return self.tool.status()
@@ -178,7 +178,9 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, Landing
         self._patches = PersistentPatchCollection(self)
 
     def next_work_item(self):
-        return self._patches.next()
+        patch_id = self._patches.next()
+        if patch_id:
+            return self.tool.bugs.fetch_attachment(patch_id)
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"

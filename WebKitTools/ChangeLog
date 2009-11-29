@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        StyleQueue scans ~100 bug pages every 5 minutes
+        https://bugs.webkit.org/show_bug.cgi?id=31947
+
+        Instead of getting the pending-review attachment ids by scanning each
+        bug (which results in a network request), we should just get them all
+        from webkit.org/pending-review in one shot.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/bugzilla_unittest.py:
+        * Scripts/modules/commands/queries.py:
+        * Scripts/modules/commands/queries_unittest.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/mock_bugzillatool.py:
+        * Scripts/modules/patchcollection.py:
+
+2009-11-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] CC webkit-bot-watchers whenever the bots touch bugs
         https://bugs.webkit.org/show_bug.cgi?id=31952
 

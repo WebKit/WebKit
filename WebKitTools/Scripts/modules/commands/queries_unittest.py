@@ -40,6 +40,11 @@ class QueryCommandsTest(CommandsTest):
         expected_stderr = "Patches in commit queue:\n"
         self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
 
+    def test_patches_to_review(self):
+        expected_stdout = "197\n128\n"
+        expected_stderr = "Patches pending review:\n"
+        self.assert_execute_outputs(PatchesToReview(), None, expected_stdout, expected_stderr)
+
     def test_reviewed_patches(self):
         expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
         self.assert_execute_outputs(ReviewedPatches(), [42], expected_stdout)

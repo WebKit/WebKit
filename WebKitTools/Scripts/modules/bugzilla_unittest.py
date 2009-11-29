@@ -103,5 +103,56 @@ class BugzillaTest(unittest.TestCase):
         bugzilla = Bugzilla()
         self.assertEquals(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
 
+    _sample_request_page = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>Request Queue</title>
+  </head>
+<body>
+
+<h3>Flag: review</h3>
+  <table class="requests" cellspacing="0" cellpadding="4" border="1">
+    <tr>
+        <th>Requester</th>
+        <th>Requestee</th>
+        <th>Bug</th>
+        <th>Attachment</th>
+        <th>Created</th>
+    </tr>
+    <tr>
+        <td>Shinichiro Hamaji &lt;hamaji&#64;chromium.org&gt;</td>
+        <td></td>
+        <td><a href="show_bug.cgi?id=30015">30015: text-transform:capitalize is failing in CSS2.1 test suite</a></td>
+        <td><a href="attachment.cgi?id=40511&amp;action=review">
+40511: Patch v0</a></td>
+        <td>2009-10-02 04:58 PST</td>
+    </tr>
+    <tr>
+        <td>Zan Dobersek &lt;zandobersek&#64;gmail.com&gt;</td>
+        <td></td>
+        <td><a href="show_bug.cgi?id=26304">26304: [GTK] Add controls for playing html5 video.</a></td>
+        <td><a href="attachment.cgi?id=40722&amp;action=review">
+40722: Media controls, the simple approach</a></td>
+        <td>2009-10-06 09:13 PST</td>
+    </tr>
+    <tr>
+        <td>Zan Dobersek &lt;zandobersek&#64;gmail.com&gt;</td>
+        <td></td>
+        <td><a href="show_bug.cgi?id=26304">26304: [GTK] Add controls for playing html5 video.</a></td>
+        <td><a href="attachment.cgi?id=40723&amp;action=review">
+40723: Adjust the media slider thumb size</a></td>
+        <td>2009-10-06 09:15 PST</td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
+
+    def test_request_page_parsing(self):
+        bugzilla = Bugzilla()
+        self.assertEquals([40511, 40722, 40723], bugzilla._parse_attachment_ids_request_query(self._sample_request_page))
+
 if __name__ == '__main__':
     unittest.main()
