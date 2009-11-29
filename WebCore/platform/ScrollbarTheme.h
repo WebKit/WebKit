@@ -36,7 +36,7 @@ class PlatformMouseEvent;
 class Scrollbar;
 class ScrollView;
 
-class ScrollbarTheme {
+class ScrollbarTheme : public Noncopyable {
 public:
     virtual ~ScrollbarTheme() {};
 

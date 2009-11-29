@@ -42,7 +42,7 @@ namespace WebCore {
 
     class SQLTransaction;
 
-    class SQLTransactionCoordinator {
+    class SQLTransactionCoordinator : public Noncopyable {
     public:
         void acquireLock(SQLTransaction*);
         void releaseLock(SQLTransaction*);

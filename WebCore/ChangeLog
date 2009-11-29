@@ -1,3 +1,40 @@
+2009-11-29  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for classes of the rendering and storage directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=31906
+
+        Inherits the following classes from Noncopyable because these are instantiated
+        by 'new' and no need to be copyable:
+
+        class/struct name               - instantiated at: WebCore/'location'
+
+        class SQLTransactionClient      - storage/DatabaseThread.cpp:45
+        class SQLTransactionCoordinator - storage/DatabaseThread.cpp:46
+        class OriginUsageRecord         - storage/OriginQuotaManager.cpp:66
+        class DatabaseTracker           - storage/DatabaseTracker.cpp:62
+        class ScrollbarTheme            - (its child class) rendering/RenderScrollbarTheme.cpp:35
+        class RenderSelectionInfoBase   - (its child class) rendering/RenderView.cpp:310
+        class RenderOverflow            - rendering/RenderBox.cpp:2846
+
+        Inherits the following classes from FastAllocBase because these are instantiated by 'new':
+
+        struct FillLayer                - css/CSSStyleSelector.cpp:197
+        struct ShadowData               - rendering/style/ShadowData.cpp:35
+        class CounterContent            - css/CSSStyleSelector.cpp:4111
+
+        * platform/ScrollbarTheme.h:
+        * rendering/RenderOverflow.h:
+        * rendering/RenderSelectionInfo.h:
+        * rendering/style/CounterContent.h:
+        * rendering/style/FillLayer.h:
+        * rendering/style/ShadowData.h:
+        * storage/DatabaseTracker.h:
+        * storage/OriginUsageRecord.h:
+        * storage/SQLTransactionClient.h:
+        * storage/SQLTransactionCoordinator.h:
+
 2009-11-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

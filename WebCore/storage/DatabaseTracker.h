@@ -55,7 +55,7 @@ struct SecurityOriginHash;
 struct SecurityOriginTraits;
 #endif // !PLATFORM(CHROMIUM)
 
-class DatabaseTracker {
+class DatabaseTracker : public Noncopyable {
 public:
     static DatabaseTracker& tracker();
 

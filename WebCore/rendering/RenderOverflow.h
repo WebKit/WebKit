@@ -37,7 +37,7 @@ namespace WebCore
 // Examples of visual overflow are shadows, text stroke (and eventually outline and border-image).
 
 // This object is allocated only when some of these fields have non-default values in the owning box.
-class RenderOverflow {
+class RenderOverflow : public Noncopyable {
 public:
     RenderOverflow(const IntRect& defaultRect = IntRect()) 
         : m_topLayoutOverflow(defaultRect.y())

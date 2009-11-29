@@ -31,13 +31,15 @@
 #ifndef SQLTransactionClient_h
 #define SQLTransactionClient_h
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
     class SQLTransaction;
 
     // A client to the SQLTransaction class. Allows SQLTransaction to notify interested
     // parties that certain things have happened in a transaction.
-    class SQLTransactionClient {
+    class SQLTransactionClient : public Noncopyable {
     public:
         void didCommitTransaction(SQLTransaction*);
         void didExecuteStatement(SQLTransaction*);
