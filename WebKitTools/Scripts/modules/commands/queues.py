@@ -55,12 +55,19 @@ from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class AbstractQueue(Command, WorkQueueDelegate):
+    watchers = "webkit-bot-watchers@googlegroups.com"
     def __init__(self, options=[]):
         options += [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
         Command.__init__(self, "Run the %s" % self.name, options=options)
+
+    def _cc_watchers(self, bug_id):
+        try:
+            self.tool.bugs.add_cc_to_bug(bug_id, self.watchers)
+        except Exception, e:
+            log("Failed to CC watchers: %s." % e)
 
     def queue_log_path(self):
         return "%s.log" % self.name
@@ -135,6 +142,7 @@ class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
         return (True, "Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
+        self._cc_watchers(patch["bug_id"])
         self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--quiet", patch["id"]])
 
     def handle_unexpected_error(self, patch, message):
@@ -213,7 +221,7 @@ class StyleQueue(AbstractTryQueue):
             message = "Attachment %s did not pass %s:\n\n%s" % (patch["id"], cls.name, script_error.message_with_output(output_limit=None))
             # Local-only logging helpful for development:
             # log("** BEGIN BUG POST **\n%s** END BUG POST **" % message)
-            tool.bugs.post_comment_to_bug(patch["bug_id"], message)
+            tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
 
 
 class BuildQueue(AbstractTryQueue):

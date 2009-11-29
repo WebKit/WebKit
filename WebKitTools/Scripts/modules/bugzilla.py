@@ -507,8 +507,20 @@ class Bugzilla:
             # Bugzilla has two textareas named 'comment', one is somehow hidden.  We want the first.
             self.browser.set_value(comment_text, name='comment', nr=0)
         self.browser.submit()
-    
-    def post_comment_to_bug(self, bug_id, comment_text):
+
+    def add_cc_to_bug(self, bug_id, email_address):
+        self.authenticate()
+
+        log("Adding %s to the CC list for bug %s" % (email_address, bug_id))
+        if self.dryrun:
+            return
+
+        self.browser.open(self.bug_url_for_bug_id(bug_id))
+        self.browser.select_form(name="changeform")
+        self.browser["newcc"] = email_address
+        self.browser.submit()
+
+    def post_comment_to_bug(self, bug_id, comment_text, cc=None):
         self.authenticate()
 
         log("Adding comment to bug %s" % bug_id)
@@ -518,7 +530,9 @@ class Bugzilla:
 
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
-        self.browser['comment'] = comment_text
+        self.browser["comment"] = comment_text
+        if cc:
+            self.browser["newcc"] = cc
         self.browser.submit()
 
     def close_bug_as_fixed(self, bug_id, comment_text=None):
