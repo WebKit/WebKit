@@ -202,6 +202,19 @@ class StyleQueue(AbstractTryQueue):
         self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
         self._patches.done(patch)
 
+    @classmethod
+    def handle_script_error(cls, tool, patch, script_error):
+        command = script_error.script_args
+        if type(command) is list:
+            command = command[0]
+        # FIXME: We shouldn't need to use a regexp here.  ScriptError should
+        #        have a better API.
+        if re.search("check-webkit-style", command):
+            message = "Attachment %s did not pass %s:\n\n%s" % (patch["id"], cls.name, script_error.message_with_output(output_limit=None))
+            # Local-only logging helpful for development:
+            # log("** BEGIN BUG POST **\n%s** END BUG POST **" % message)
+            tool.bugs.post_comment_to_bug(patch["bug_id"], message)
+
 
 class BuildQueue(AbstractTryQueue):
     name = "build-queue"

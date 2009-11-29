@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] style-queue should report style errors to bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=31945
+
+        Currently, we're just logging the style errors locally.  With this
+        patch we'll actually log the errors to bugzilla.  Note: I plan to run
+        with the "local-only" logging during development.
+
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/scm.py:
+
+2009-11-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] style-queue shouldn't reject patches from the commit-queue
         https://bugs.webkit.org/show_bug.cgi?id=31944
 
