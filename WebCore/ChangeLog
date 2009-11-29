@@ -1,3 +1,17 @@
+2009-11-28  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31964
+
+        Removed #include StringImpl, StyleImage. Instead, forward declared them.
+        Also, we can substitute #include <wtf/PassRefPtr.h> for #include PlatformString.h,
+        since it seems we only really used it to include PassRefPtr.h.
+
+        No functionality was changed. So, no new tests.
+
+        * rendering/style/ContentData.h:
+
 2009-11-29  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
