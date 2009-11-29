@@ -1,3 +1,12 @@
+2009-11-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Mac build has JIT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=31828
+
+        * wtf/Platform.h: Enable JIT for Qt Mac builds
+
 2009-11-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
