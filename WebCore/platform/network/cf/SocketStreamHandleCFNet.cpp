@@ -614,6 +614,8 @@ void SocketStreamHandle::platformClose()
     
     m_readStream = 0;
     m_writeStream = 0;
+
+    m_client->didClose(this);
 }
 
 void SocketStreamHandle::receivedCredential(const AuthenticationChallenge&, const Credential&)
