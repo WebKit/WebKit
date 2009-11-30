@@ -1,3 +1,11 @@
+2009-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put tests into skiplist because of missing features.
+
+        * platform/qt/Skipped:
+        - fast/dom/Window/window-postmessage-clone.html added
+        - inspector/elements-img-tooltip.html added.
+
 2009-11-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
