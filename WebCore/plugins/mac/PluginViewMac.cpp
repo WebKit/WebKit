@@ -566,11 +566,16 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (platformPluginWidget()) {
         record.where = globalMousePosForPlugin();
     } else {
-        IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
-        record.where.h = postZoomPos.x() + m_windowRect.x();
-        // The number 22 is the height of the title bar. As to why it figures in the calculation below 
-        // is left as an exercise to the reader :-)
-        record.where.v = postZoomPos.y() + m_windowRect.y() - 22;
+        if (event->button() == 2) {
+            // always pass the global position for right-click since Flash uses it to position the context menu
+            record.where = globalMousePosForPlugin();
+        } else {
+            IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
+            record.where.h = postZoomPos.x() + m_windowRect.x();
+            // The number 22 is the height of the title bar. As to why it figures in the calculation below 
+            // is left as an exercise to the reader :-)
+            record.where.v = postZoomPos.y() + m_windowRect.y() - 22;
+        }
     }
     record.modifiers = modifiersForEvent(event);
 

@@ -1,3 +1,17 @@
+2009-11-30  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Mac Plugins : Get context menu to work in QGraphicsView
+        
+        Flash expects the value in record.where to be the global position for
+        displaying the context menu.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31979
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::handleMouseEvent):
+
 2009-11-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.
