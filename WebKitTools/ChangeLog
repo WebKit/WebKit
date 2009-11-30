@@ -1,3 +1,13 @@
+2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Simon Fraser.
+
+        Check for WEBKIT_TESTFONTS environment variable in
+        run-webkit-tests, for GTK+, to have a more prominent error
+        message.
+
+        * Scripts/run-webkit-tests:
+
 2009-11-30  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
