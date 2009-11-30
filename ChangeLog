@@ -1,3 +1,10 @@
+2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Build fix. Make sure JSCore-1.0.gir is added to the distributed
+        tarball.
+
+        * GNUmakefile.am:
+
 2009-11-30  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -78,6 +78,7 @@ global_cflags :=
 global_cxxflags :=
 corekit_cflags :=
 corekit_cppflags :=
+JSCORE_GIRSOURCES :=
 EXTRA_DIST :=
 BUILT_SOURCES :=
 CLEANFILES :=
@@ -420,7 +421,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
 
 if ENABLE_INTROSPECTION
-JSCORE_GIRSOURCES = $(srcdir)/WebKit/gtk/JSCore-1.0.gir # JSCore-1.0.gir is handwritten
+JSCORE_GIRSOURCES += $(srcdir)/WebKit/gtk/JSCore-1.0.gir # JSCore-1.0.gir is handwritten
 WEBKIT_GIRSOURCES = WebKit-1.0.gir
 
 $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
