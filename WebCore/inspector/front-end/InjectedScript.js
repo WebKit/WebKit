@@ -1216,8 +1216,6 @@ Object.describe = function(obj, abbreviated)
         else if (abbreviated)
             objectText = /.*/.exec(obj)[0].replace(/ +$/g, "");
         return objectText;
-    case "regexp":
-        return String(obj).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
     default:
         return String(obj);
     }

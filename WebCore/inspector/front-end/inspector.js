@@ -1464,7 +1464,7 @@ WebInspector.showResourceForURL = function(url, line, preferredPanel)
 WebInspector.linkifyStringAsFragment = function(string)
 {
     var container = document.createDocumentFragment();
-    var linkStringRegEx = new RegExp("(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}://|www\\.)[\\w$\\-_+*'=\\|/\\\\(){}[\\]%@&#~,:;.!?]{2,}[\\w$\\-_+*=\\|/\\\\({%@&#~]");
+    var linkStringRegEx = /(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}:\/\/|www\.)[\w$\-_+*'=\|\/\\(){}[\]%@&#~,:;.!?]{2,}[\w$\-_+*=\|\/\\({%@&#~]/;
 
     while (string) {
         var linkString = linkStringRegEx.exec(string);

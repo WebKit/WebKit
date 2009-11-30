@@ -4,6 +4,9 @@
 <script src="console-tests.js"></script>
 <script>
 
+// Global Values
+var globals = [];
+
 function doit()
 {
     console.log('Message format number %i, %d and %f', 1, 2, 3.5);
@@ -15,7 +18,60 @@ function doit()
     array[4] = "test4";
     console.log(array);
 
-    dumpConsoleMessages();
+    // Populate Globals
+    var regex1 = /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i;
+    var regex2 = new RegExp("foo\\\\bar\\sbaz", "i");
+    var str = "test";
+    var error = new Error;
+    var node = document.body;
+    var func = function() { return 1; };
+    var multilinefunc = function() {
+        return 2;
+    };
+    var num = 1.2e-1;
+    var linkify = "http://webkit.org/";
+
+    globals = [regex1, regex2, str, error, node, func, multilinefunc, num, linkify, null, undefined];
+    loopOverGlobals(0);
+}
+
+function loopOverGlobals(current)
+{
+    function advance()
+    {
+        var next = current + 1;
+        if (next == globals.length)
+            dumpConsoleMessages();
+        else
+            loopOverGlobals(next);
+    }
+
+    console.log(globals[current]);
+    console.log([globals[current]]);
+    evaluateInWebInspector("frontend_evaluateGlobal", advance);
+}
+
+// Frontend functions.
+
+function frontend_evaluateGlobal()
+{
+    window.__next = window.__next || 0;
+    var current = window.__next++;
+    var expression = "globals[" + current + "]";
+    frontend_evalExpression(expression);
+}
+
+function frontend_evalExpression(expression, isDate)
+{
+    var self = WebInspector.console;
+    function printResult(result, exception)
+    {
+        if (typeof result.description === "string")
+            result = result.description.replace(/\n/g, "<br>");
+        self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, expression));
+    }
+
+    self.evalInInspectedWindow(expression, "console", printResult);
 }
 
 </script>

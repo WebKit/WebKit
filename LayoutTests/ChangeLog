@@ -1,3 +1,13 @@
+2009-11-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Wrong console output for Regexp escape sequence
+        https://bugs.webkit.org/show_bug.cgi?id=31538
+
+        * inspector/console-format-expected.txt:
+        * inspector/console-format.html:
+
 2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping test that fails because of broken DND, and some tests

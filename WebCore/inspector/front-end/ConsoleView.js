@@ -59,34 +59,29 @@ WebInspector.ConsoleView = function(drawer)
 
     // Will hold the list of filter elements
     this.filterBarElement = document.getElementById("console-filter");
-    
+
     function createDividerElement() {
         var dividerElement = document.createElement("div");
-        
         dividerElement.addStyleClass("divider");
-        
         this.filterBarElement.appendChild(dividerElement);
     }
-    
+
+    var updateFilterHandler = this._updateFilter.bind(this);
     function createFilterElement(category) {
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
-     
-        categoryElement.addStyleClass(categoryElement.category);
-            
+        categoryElement.addStyleClass(categoryElement.category);            
+        categoryElement.addEventListener("click", updateFilterHandler, false);
+
         var label = category.toString();
         categoryElement.appendChild(document.createTextNode(label));
-     
-        categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
-     
+
         this.filterBarElement.appendChild(categoryElement);
         return categoryElement;
     }
     
     this.allElement = createFilterElement.call(this, "All");
-    
     createDividerElement.call(this);
-    
     this.errorElement = createFilterElement.call(this, "Errors");
     this.warningElement = createFilterElement.call(this, "Warnings");
     this.logElement = createFilterElement.call(this, "Logs");
@@ -103,6 +98,12 @@ WebInspector.ConsoleView = function(drawer)
     this._shortcuts[shortcut].isMacOnly = true;
     shortcut = WebInspector.KeyboardShortcut.makeKey("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
     this._shortcuts[shortcut] = handler;
+
+    this._customFormatters = {
+        "object": this._formatobject,
+        "array":  this._formatarray,
+        "node":   this._formatnode
+    };
 }
 
 WebInspector.ConsoleView.prototype = {
@@ -250,7 +251,8 @@ WebInspector.ConsoleView.prototype = {
         this.promptElement.scrollIntoView(false);
     },
 
-    updateMessageRepeatCount: function(count) {
+    updateMessageRepeatCount: function(count)
+    {
         var msg = this.previousMessage;
         var prevRepeatCount = msg.totalRepeatCount;
         
@@ -268,7 +270,8 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    _incrementErrorWarningCount: function(msg) {
+    _incrementErrorWarningCount: function(msg)
+    {
         switch (msg.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 WebInspector.warnings += msg.repeatDelta;
@@ -478,44 +481,18 @@ WebInspector.ConsoleView.prototype = {
     _format: function(output, forceObjectFormat)
     {
         var isProxy = (output != null && typeof output === "object");
+        var type = (forceObjectFormat ? "object" : Object.proxyType(output));
 
-        if (forceObjectFormat)
-            var type = "object";
-        else
-            var type = Object.proxyType(output);
-
-        if (isProxy && type !== "object" && type !== "function" && type !== "array" && type !== "node") {
-            // Unwrap primitive value, skip decoration.
-            output = output.description;
-            type = "undecorated"
-        }
-
-        // We don't perform any special formatting on these types, so we just
-        // pass them through the simple _formatvalue function.
-        var undecoratedTypes = {
-            "undefined": 1,
-            "null": 1,
-            "boolean": 1,
-            "number": 1,
-            "undecorated": 1
-        };
-
-        var formatter;
-        if (forceObjectFormat)
-            formatter = "_formatobject";
-        else if (type in undecoratedTypes)
-            formatter = "_formatvalue";
-        else {
-            formatter = "_format" + type;
-            if (!(formatter in this)) {
-                formatter = "_formatobject";
-                type = "object";
-            }
+        var formatter = this._customFormatters[type];
+        if (!formatter || !isProxy) {
+            formatter = this._formatvalue;
+            output = output.description || output;
+            type = "undecorated";
         }
 
         var span = document.createElement("span");
         span.addStyleClass("console-formatted-" + type);
-        this[formatter](output, span);
+        formatter.call(this, output, span);
         return span;
     },
 
@@ -524,25 +501,27 @@ WebInspector.ConsoleView.prototype = {
         elem.appendChild(document.createTextNode(val));
     },
 
-    _formatfunction: function(func, elem)
+    _formatobject: function(obj, elem)
     {
-        elem.appendChild(document.createTextNode(func.description));
+        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description, null, true).element);
     },
 
-    _formatdate: function(date, elem)
+    _formatnode: function(object, elem)
     {
-        elem.appendChild(document.createTextNode(date));
-    },
+        function printNode(nodeId)
+        {
+            if (!nodeId)
+                return;
+            var treeOutline = new WebInspector.ElementsTreeOutline();
+            treeOutline.showInElementsPanelEnabled = true;
+            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+            treeOutline.element.addStyleClass("outline-disclosure");
+            if (!treeOutline.children[0].hasChildren)
+                treeOutline.element.addStyleClass("single-node");
+            elem.appendChild(treeOutline.element);
+        }
 
-    _formatstring: function(str, elem)
-    {
-        elem.appendChild(document.createTextNode("\"" + str + "\""));
-    },
-
-    _formatregexp: function(re, elem)
-    {
-        var formatted = String(re.description).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
-        elem.appendChild(document.createTextNode(formatted));
+        InjectedScriptAccess.pushNodeToFrontend(object, printNode);
     },
 
     _formatarray: function(arr, elem)
@@ -554,6 +533,7 @@ WebInspector.ConsoleView.prototype = {
     {
         if (!properties)
             return;
+
         var elements = [];
         for (var i = 0; i < properties.length; ++i) {
             var name = properties[i].name;
@@ -572,53 +552,6 @@ WebInspector.ConsoleView.prototype = {
                 elem.appendChild(document.createTextNode(", "));
         }
         elem.appendChild(document.createTextNode("]"));
-    },
-
-    _formatnode: function(object, elem)
-    {
-        function printNode(nodeId)
-        {
-            if (!nodeId)
-                return;
-            var treeOutline = new WebInspector.ElementsTreeOutline();
-            treeOutline.showInElementsPanelEnabled = true;
-            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
-            treeOutline.element.addStyleClass("outline-disclosure");
-            if (!treeOutline.children[0].hasChildren)
-                treeOutline.element.addStyleClass("single-node");
-            elem.appendChild(treeOutline.element);
-        }
-        InjectedScriptAccess.pushNodeToFrontend(object, printNode);
-    },
-
-    _formatobject: function(obj, elem)
-    {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description, null, true).element);
-    },
-
-    _formaterror: function(obj, elem)
-    {
-        var messageElement = document.createElement("span");
-        messageElement.className = "error-message";
-        messageElement.textContent = obj.name + ": " + obj.message;
-        elem.appendChild(messageElement);
-
-        if (obj.sourceURL) {
-            var urlElement = document.createElement("a");
-            urlElement.className = "webkit-html-resource-link";
-            urlElement.href = obj.sourceURL;
-            urlElement.lineNumber = obj.line;
-            urlElement.preferredPanel = "scripts";
-
-            if (obj.line > 0)
-                urlElement.textContent = WebInspector.displayNameForURL(obj.sourceURL) + ":" + obj.line;
-            else
-                urlElement.textContent = WebInspector.displayNameForURL(obj.sourceURL);
-
-            elem.appendChild(document.createTextNode(" ("));
-            elem.appendChild(urlElement);
-            elem.appendChild(document.createTextNode(")"));
-        }
     }
 }
 
@@ -673,67 +606,78 @@ WebInspector.ConsoleMessage.prototype = {
 
     _format: function(parameters)
     {
+        // This node is used like a Builder. Values are contintually appended onto it.
         var formattedResult = document.createElement("span");
-
         if (!parameters.length)
             return formattedResult;
 
         // Formatting code below assumes that parameters are all wrappers whereas frontend console
-        // API allows passing arbitrary values as messages (strings, numberts, etc.). Wrap them here.
-        for (var i = 0; i < parameters.length; ++i) {
+        // API allows passing arbitrary values as messages (strings, numbers, etc.). Wrap them here.
+        for (var i = 0; i < parameters.length; ++i)
             if (typeof parameters[i] !== "object" && typeof parameters[i] !== "function")
                 parameters[i] = WebInspector.ObjectProxy.wrapPrimitiveValue(parameters[i]);
-        }
 
-        function formatForConsole(obj)
-        {
-            return WebInspector.console._format(obj);
-        }
-
-        function formatAsObjectForConsole(obj)
-        {
-            return WebInspector.console._format(obj, true);
-        }
-
-        if (Object.proxyType(parameters[0]) === "string") {
-            var formatters = {}
-            for (var i in String.standardFormatters)
-                formatters[i] = String.standardFormatters[i];
-
-            // Firebug uses %o for formatting objects.
-            formatters.o = formatForConsole;
-            // Firebug allows both %i and %d for formatting integers.
-            formatters.i = formatters.d;
-            // Support %O to force object formating, instead of the type-based %o formatting.
-            formatters.O = formatAsObjectForConsole;
-
-            function append(a, b)
-            {
-                if (!(b instanceof Node))
-                    a.appendChild(WebInspector.linkifyStringAsFragment(b.toString()));
-                else
-                    a.appendChild(b);
-                return a;
-            }
-
-            var result = String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
-            formattedResult = result.formattedResult;
+        // Multiple parameters with the first being a format string. Save unused substitutions.
+        if (parameters.length > 1 && Object.proxyType(parameters[0]) === "string") {
+            var result = this._formatWithSubstitutionString(parameters, formattedResult)
             parameters = result.unusedSubstitutions;
             if (parameters.length)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
 
+        // Single parameter, or unused substitutions from above.
         for (var i = 0; i < parameters.length; ++i) {
-            if (Object.proxyType(parameters[i]) === "string")
-                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(parameters[i].description));
-            else
-                formattedResult.appendChild(formatForConsole(parameters[i]));
-
+            this._formatIndividualValue(parameters[i], formattedResult);
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
 
         return formattedResult;
+    },
+
+    _formatWithSubstitutionString: function(parameters, formattedResult)
+    {
+        var formatters = {}
+        for (var i in String.standardFormatters)
+            formatters[i] = String.standardFormatters[i];
+
+        function consoleFormatWrapper(force)
+        {
+            return function(obj) {
+                return WebInspector.console._format(obj, force);
+            };
+        }
+
+        // Firebug uses %o for formatting objects.
+        formatters.o = consoleFormatWrapper();
+        // Firebug allows both %i and %d for formatting integers.
+        formatters.i = formatters.d;
+        // Support %O to force object formating, instead of the type-based %o formatting.
+        formatters.O = consoleFormatWrapper(true);
+
+        function append(a, b)
+        {
+            if (!(b instanceof Node))
+                a.appendChild(WebInspector.linkifyStringAsFragment(b.toString()));
+            else
+                a.appendChild(b);
+            return a;
+        }
+
+        // String.format does treat formattedResult like a Builder, result is an object.
+        return String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
+    },
+
+    _formatIndividualValue: function(param, formattedResult)
+    {
+        if (Object.proxyType(param) === "string") {
+            if (this.originatingCommand && this.level === WebInspector.ConsoleMessage.MessageLevel.Log) {
+                var quotedString = "\"" + param.description.replace(/"/g, "\\\"") + "\"";
+                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(quotedString));
+            } else
+                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(param.description));
+        } else
+            formattedResult.appendChild(WebInspector.console._format(param));
     },
 
     toMessageElement: function()
@@ -983,9 +927,9 @@ WebInspector.ConsoleCommandResult = function(result, exception, originatingComma
     var line = (exception ? result.line : -1);
     var url = (exception ? result.sourceURL : null);
 
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, line, url, null, 1, message);
-
     this.originatingCommand = originatingCommand;
+
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, line, url, null, 1, message);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {

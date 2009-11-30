@@ -1,11 +1,70 @@
-CONSOLE MESSAGE: line 9: Message format number %i, %d and %f
-CONSOLE MESSAGE: line 10: Message %s for %s
-CONSOLE MESSAGE: line 11: Object %o
-CONSOLE MESSAGE: line 16: test,test2,,,test4
+CONSOLE MESSAGE: line 12: Message format number %i, %d and %f
+CONSOLE MESSAGE: line 13: Message %s for %s
+CONSOLE MESSAGE: line 14: Object %o
+CONSOLE MESSAGE: line 19: test,test2,,,test4
+CONSOLE MESSAGE: line 49: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 50: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+CONSOLE MESSAGE: line 49: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 50: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 49: test
+CONSOLE MESSAGE: line 50: test
+CONSOLE MESSAGE: line 49: Error: Unknown error
+CONSOLE MESSAGE: line 50: Error: Unknown error
+CONSOLE MESSAGE: line 49: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 50: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 49: function () { return 1; }
+CONSOLE MESSAGE: line 50: function () { return 1; }
+CONSOLE MESSAGE: line 49: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 50: function () {
+        return 2;
+    }
+CONSOLE MESSAGE: line 49: 0.12
+CONSOLE MESSAGE: line 50: 0.12
+CONSOLE MESSAGE: line 49: http://webkit.org/
+CONSOLE MESSAGE: line 50: http://webkit.org/
+CONSOLE MESSAGE: line 49: null
+CONSOLE MESSAGE: line 50: 
+CONSOLE MESSAGE: line 49: undefined
+CONSOLE MESSAGE: line 50: 
 Tests that console logging dumps proper messages.
 
-console-format.html:9Message format number 1, 2 and 3.5
-console-format.html:10Message format for string
-console-format.html:11Object Object
-console-format.html:16["test", "test2", undefined, undefined, "test4"]
+console-format.html:12Message format number 1, 2 and 3.5
+console-format.html:13Message format for string
+console-format.html:14Object Object
+console-format.html:19["test", "test2", undefined, undefined, "test4"]
+console-format.html:49/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:50[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
+"/^url\(\s*(?:(?:\"(?:[^\\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*\"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i"
+console-format.html:49/foo\\bar\sbaz/i
+console-format.html:50[/foo\\bar\sbaz/i]
+"/foo\\bar\sbaz/i"
+console-format.html:49test
+console-format.html:50["test"]
+"test"
+console-format.html:49Error: Unknown error
+console-format.html:50[Error: Unknown error]
+Error: Unknown error
+console-format.html:49<body onload="onload()">
+console-format.html:50[<body onload="onload()">]
+"HTMLBodyElement"
+console-format.html:49function () { return 1; }
+console-format.html:50[function () { return 1; }]
+"function () { return 1; }"
+console-format.html:49function () { return 2; }
+console-format.html:50[function () {]
+"function () {<br> return 2;<br> }"
+console-format.html:490.12
+console-format.html:50[0.12]
+"0.12"
+console-format.html:49http://webkit.org/
+console-format.html:50["http://webkit.org/"]
+"http://webkit.org/"
+console-format.html:49null
+console-format.html:50[null]
+"null"
+console-format.html:49undefined
+console-format.html:50[undefined]
+"undefined"
 

@@ -1,3 +1,33 @@
+2009-11-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Wrong console output for Regexp escape sequence
+        https://bugs.webkit.org/show_bug.cgi?id=31538
+
+        Updated inspector/console-format.html
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createDividerElement): style issues.
+        (WebInspector.ConsoleView.createFilterElement): style issues.
+        (WebInspector.ConsoleView): added _customFormatters table.
+        (WebInspector.ConsoleView.prototype.updateMessageRepeatCount): style isses.
+        (WebInspector.ConsoleView.prototype._incrementErrorWarningCount): style issues.
+        (WebInspector.ConsoleView.prototype._format): simplified delegation to formatter logic.
+        (WebInspector.ConsoleView.prototype._formatobject):
+        (WebInspector.ConsoleView.prototype._formatnode):
+        (WebInspector.ConsoleView.prototype._printArray):
+        (WebInspector.ConsoleMessage.prototype._format): commented and broke down the algorithm into parts.
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString.append): handle substitution string formatting.
+        (WebInspector.ConsoleMessage.prototype._formatIndividualValue): handling individual value formatting.
+        (WebInspector.ConsoleCommandResult):
+        * inspector/front-end/InjectedScript.js: simplified regex formatting.
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyStringAsFragment): converted new RegExp to literal for performance benefits.
+        * inspector/front-end/utilities.js: 
+        (Element.prototype.hasStyleClass): update inaccurate comment.
+        (String.prototype.trimURL): converted new RegExp to literal for performance benefits.
+
 2009-11-30  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adam Barth.

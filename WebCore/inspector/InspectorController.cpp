@@ -1868,5 +1868,5 @@ void InspectorController::deleteCookie(const String& cookieName, const String& d
 }
 
 } // namespace WebCore
-
+    
 #endif // ENABLE(INSPECTOR)
