@@ -23,7 +23,6 @@
 
 #include "CSSImageValue.h"
 #include "CSSParser.h"
-#include "CSSProperty.h"
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"

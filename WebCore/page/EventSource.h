@@ -36,7 +36,6 @@
 
 #include "ActiveDOMObject.h"
 #include "AtomicStringHash.h"
-#include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "KURL.h"

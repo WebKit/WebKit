@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=31969
+
+        Removes unnecessary #include files.
+
+        No functionality was changed. So, no new tests.
+
+        * css/CSSComputedStyleDeclaration.cpp: Removed include CachedImage.h, and
+        Pair.h
+        * css/CSSCursorImageValue.cpp: Removed include RenderStyle.h
+        * css/CSSFontFaceSrcValue.cpp: Removed include Node.h
+        * css/CSSFontSelector.cpp: Removed include NodeList.h
+        * css/CSSGradientValue.cpp: Removed include GraphicsContext.h, ImageBuffer.h
+        * css/CSSImageValue.cpp: Removed include RenderStyle.h
+        * css/CSSImportRule.cpp: Removed include MediaList.h
+        * css/CSSMutableStyleDeclaration.cpp: Removed include CSSProperty.h
+        * css/CSSRule.cpp: Removed include CSSStyleSheet.h
+        * css/CSSStyleSelector.cpp: Removed include CSSFontFace.h,
+        CSSFontFaceSource.h, and CSSProperty.h
+        * page/EventSource.h: Removed include EventListener.h
+
+2009-11-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=31965
 
         Removed #include KeyframeList.h from CSSStyleSelector.h. Instead,

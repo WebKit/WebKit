@@ -22,7 +22,6 @@
 #include "config.h"
 #include "CSSRule.h"
 
-#include "CSSStyleSheet.h"
 #include "NotImplemented.h"
 
 namespace WebCore {

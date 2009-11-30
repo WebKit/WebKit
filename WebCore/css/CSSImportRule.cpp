@@ -25,7 +25,6 @@
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "MediaList.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
 
