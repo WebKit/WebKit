@@ -129,7 +129,9 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
                     return node;
             }
         }
-        return 0;
+        if (!node)
+            return 0;
+        // In the case of multiple nodes with the same name, just fall through.
     }
 
     unsigned length = this->length();

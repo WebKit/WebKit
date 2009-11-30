@@ -1,3 +1,16 @@
+2009-11-29  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Continue to search for matching node in the case where multiple nodes
+        have the same id.
+        https://bugs.webkit.org/show_bug.cgi?id=31428
+
+        Test: fast/dom/Element/id-in-node-list-index01.html
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::itemWithName):
+
 2009-11-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

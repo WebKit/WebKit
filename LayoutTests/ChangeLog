@@ -1,3 +1,13 @@
+2009-11-29  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Test using Id as index of node list.
+        https://bugs.webkit.org/show_bug.cgi?id=31428
+
+        * fast/dom/Element/id-in-node-list-index01-expected.txt: Added.
+        * fast/dom/Element/id-in-node-list-index01.html: Added.
+
 2009-11-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,0 +1,26 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<div name='name1' id='id1'/>
+<p   name='name3' id='id2'/>
+<div name='name2' id='id2'/>
+
+<script>
+description("Test using id as index of node list");
+
+var elems = document.getElementsByTagName('div');
+
+shouldBe('elems["id1"].getAttribute("name")', '"name1"');
+shouldBe('elems["id2"].getAttribute("name")', '"name2"');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
