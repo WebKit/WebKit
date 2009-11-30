@@ -1,3 +1,10 @@
+2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping test that fails because of broken DND, and some tests
+        requiring new results.
+
+        * platform/gtk/Skipped:
+
 2009-11-30  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
