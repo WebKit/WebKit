@@ -1,3 +1,17 @@
+2009-11-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Adds SHARED_WORKERS guards to V8 WorkerContextExecutionProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=31926
+
+        Build fix only, no new tests.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        (WebCore::WorkerContextExecutionProxy::convertToV8Object):
+        (WebCore::WorkerContextExecutionProxy::convertEventTargetToV8Object):
+
 2009-11-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
