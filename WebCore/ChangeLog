@@ -1,4 +1,12 @@
-2009-11-28  Daniel Bates  <dbates@webkit.org>
+2009-11-29  Daniel Bates  <dbates@webkit.org>
+
+        Unreviewed, fix change log entry date.
+
+        For some reason, bugzilla-tool did not update the date in the change
+        log entry for my last commit (r51468). So, this commit fixes the date
+        of that entry.
+
+2009-11-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Dan Bernstein.
 
