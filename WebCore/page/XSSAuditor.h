@@ -42,14 +42,14 @@ namespace WebCore {
     // a script is to be allowed or denied based on the content of any
     // user-submitted data, including:
     //
-    // * the query string of the URL.
+    // * the URL.
     // * the HTTP-POST data.
     //
     // If the source code of a script resembles any user-submitted data then it
     // is denied execution.
     //
-    // When you instantiate the XSSAuditor you must specify the {@link Frame}
-    // of the page that you wish to audit.
+    // When you instantiate the XSSAuditor you must specify the Frame of the
+    // page that you wish to audit.
     //
     // Bindings
     //
@@ -59,9 +59,12 @@ namespace WebCore {
     // JavaScript script is safe to execute before executing it. The following
     // methods call into XSSAuditor:
     //
-    // * ScriptController::evaluate - used to evaluate JavaScript scripts.
-    // * ScriptController::createInlineEventListener - used to create JavaScript event handlers.
-    // * HTMLTokenizer::scriptHandler - used to load external JavaScript scripts.
+    // * ScriptController::evaluateInWorld - used to evaluate JavaScript scripts.
+    // * ScriptController::executeIfJavaScriptURL - used to evaluate JavaScript URLs.
+    // * ScriptEventListener::createAttributeEventListener - used to create JavaScript event handlers.
+    // * HTMLBaseElement::process - used to set the document base URL.
+    // * HTMLTokenizer::parseTag - used to load external JavaScript scripts.
+    // * FrameLoader::requestObject - used to load <object>/<embed> elements.
     //
     class XSSAuditor : public Noncopyable {
     public:

@@ -1,5 +1,17 @@
 2009-11-29  Daniel Bates  <dbates@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31971
+
+        Updated comment to reflect latest XSSAuditor bindings.
+
+        No functionality was changed. So, no new tests.
+
+        * page/XSSAuditor.h:
+
+2009-11-29  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=31969
