@@ -1,3 +1,19 @@
+2009-11-30  Jan-Arve Sæther  <jan-arve.saether@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation with win32-icc
+
+        The Intel compiler does not support the __has_trivial_constructor type
+        trait.  The Intel Compiler can report itself as _MSC_VER >= 1400. The
+        reason for that is that the Intel Compiler depends on the Microsoft
+        Platform SDK, and in order to try to be "fully" MS compatible it will
+        "pretend" to be the same MS compiler as was shipped with the MS PSDK.
+        (Thus, compiling with win32-icc with VC8 SDK will make the source code
+        "think" the compiler at hand supports this type trait).
+
+        * wtf/TypeTraits.h:
+
 2009-11-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
