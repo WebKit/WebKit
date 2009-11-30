@@ -1299,12 +1299,14 @@ void DOMWindow::dispatchLoadEvent()
 #endif
 }
 
+#if ENABLE(INSPECTOR)
 InspectorTimelineAgent* DOMWindow::inspectorTimelineAgent() 
 {
     if (frame() && frame()->page())
         return frame()->page()->inspectorTimelineAgent();
     return 0;
 }
+#endif
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
 {
