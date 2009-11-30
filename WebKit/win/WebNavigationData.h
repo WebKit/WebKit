@@ -33,9 +33,9 @@
 
 class WebNavigationData : public IWebNavigationData {
 public:
-    static WebNavigationData* createInstance(BSTR, BSTR, IWebURLRequest*, IWebURLResponse*, bool, BSTR);
+    static WebNavigationData* createInstance(const WebCore::String& url, const WebCore::String& title, IWebURLRequest*, IWebURLResponse*, bool hasSubstituteData, const WebCore::String& clientRedirectSource);
 private:
-    WebNavigationData(BSTR url, BSTR title, IWebURLRequest*, IWebURLResponse*, bool hasSubstituteData, BSTR clientRedirectSource);
+    WebNavigationData(const WebCore::String& url, const WebCore::String& title, IWebURLRequest*, IWebURLResponse*, bool hasSubstituteData, const WebCore::String& clientRedirectSource);
     ~WebNavigationData();
 
 public:

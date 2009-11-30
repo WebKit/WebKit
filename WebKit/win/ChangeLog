@@ -1,3 +1,36 @@
+2009-11-30  Adam Roben  <aroben@apple.com>
+
+        Fix double-free of BSTRs passed to WebNavigationData::createInstance
+
+        WebFrameLoaderClient::updateGlobalHistory was converting
+        WebCore::Strings to WebCore::BStrings, then passing them to
+        WebNavigationData::createInstance. But the latter function takes BSTR
+        parameters and adopts them into WebCore::BStrings. So the end result
+        was that two WebCore::BStrings would end up freeing each underlying
+        BSTR.
+
+        The fix is to only convert to WebCore::BString inside
+        WebNavigationData.
+
+        Fixes <http://webkit.org/b/31998> <rdar://problem/7383452> REGRESSION
+        (r49564): Crash in updateGlobalHistory when running Javascript iBench
+        test
+
+        I couldn't find a way to reproduce this in DumpRenderTree.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Pass WebCore::Strings to
+        WebNavigationData::createInstance.
+
+        * WebNavigationData.cpp:
+        (WebNavigationData::WebNavigationData):
+        (WebNavigationData::createInstance):
+        * WebNavigationData.h:
+        Changed to take const WebCore::String&s instead of BSTRs and to
+        convert the Strings to BStrings at this level.
+
 2009-11-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
