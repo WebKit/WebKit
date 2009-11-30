@@ -1,6 +1,6 @@
 2009-11-30  Yuzo Fujishima  <yuzo@google.com>
 
-        Reviewed by Eric Seidel.
+        Reviewed by Alexey Proskuryakov.
 
         In testing handshake-error case, web_socket_do_extra_handshake calls a non-existent method
         https://bugs.webkit.org/show_bug.cgi?id=31465
