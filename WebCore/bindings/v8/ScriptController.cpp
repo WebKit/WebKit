@@ -48,12 +48,12 @@
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
-#include "Widget.h"
-#include "XSSAuditor.h"
-
 #include "V8Binding.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
+#include "Widget.h"
+#include "XSSAuditor.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

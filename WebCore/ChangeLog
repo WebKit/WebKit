@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Adds include of wtf/StdLibExtras.h for DEFINE_STATIC_LOCAL in V8 ScriptController.
+        https://bugs.webkit.org/show_bug.cgi?id=31932
+
+        Build fix only, no new tests.
+
+        * bindings/v8/ScriptController.cpp: Modified. Adds include of wtf/StdLibExtras.h.
+
+2009-11-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
         Adds PassOwnPtr include to ScriptExecutionContext.h.
         https://bugs.webkit.org/show_bug.cgi?id=31929
 
