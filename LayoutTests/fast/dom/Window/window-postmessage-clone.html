@@ -3,6 +3,7 @@
 <body>
 <div id="description"></div>
 <div id="console"></div>
+<input type="file" id="fileInput"></input>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -122,6 +123,16 @@ for (var i = 0; i < 100000; i++)
     reallyDeepArray=[reallyDeepArray];
 tryPostMessage('reallyDeepArray', true);
 tryPostMessage('window', true);
+
+var fileInput = document.getElementById("fileInput");
+var fileRect = fileInput.getClientRects()[0];
+var targetX = fileRect.left + fileRect.width / 2;
+var targetY = fileRect.top + fileRect.height / 2;
+eventSender.beginDragWithFiles(['get-file-upload.html']);
+eventSender.mouseMoveTo(targetX, targetY);
+eventSender.mouseUp();
+
+tryPostMessage('fileInput.files[0]', false, fileInput.files[0]);
 
 tryPostMessage('"done"');
 </script>

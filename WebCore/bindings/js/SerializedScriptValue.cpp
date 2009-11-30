@@ -27,6 +27,10 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
+#include "File.h"
+#include "JSDOMGlobalObject.h"
+#include "JSFile.h"
+#include "JSFileList.h"
 #include <JavaScriptCore/APICast.h>
 #include <runtime/DateInstance.h>
 #include <runtime/ExceptionHelpers.h>
@@ -146,6 +150,12 @@ SerializedScriptValueData::SerializedScriptValueData(RefPtr<SerializedObject> da
 SerializedScriptValueData::SerializedScriptValueData(RefPtr<SerializedArray> data)
     : m_type(ArrayType)
     , m_sharedData(data)
+{
+}
+
+SerializedScriptValueData::SerializedScriptValueData(const File* file)
+    : m_type(FileType)
+    , m_string(file->path().crossThreadString())
 {
 }
 
@@ -482,10 +492,15 @@ struct SerializingTreeWalker : public BaseWalker {
         if (isArray(value))
             return SerializedScriptValueData();
 
-        CallData unusedData;
-        if (value.isObject() && value.getCallData(unusedData) == CallTypeNone)
-            return SerializedScriptValueData();
-
+        if (value.isObject()) {
+            JSObject* obj = asObject(value);
+            if (obj->inherits(&JSFile::s_info))
+                return SerializedScriptValueData(toFile(obj));
+                
+            CallData unusedData;
+            if (value.getCallData(unusedData) == CallTypeNone)
+                return SerializedScriptValueData();
+        }
         // Any other types are expected to serialize as null.
         return SerializedScriptValueData(jsNull());
     }
@@ -641,6 +656,8 @@ struct DeserializingTreeWalker : public BaseWalker {
                 return jsNumber(m_exec, value.asDouble());
             case SerializedScriptValueData::DateType:
                 return new (m_exec) DateInstance(m_exec, value.asDouble());
+            case SerializedScriptValueData::FileType:
+                return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), File::create(value.asString().crossThreadString()));
             default:
                 ASSERT_NOT_REACHED();
                 return JSValue();

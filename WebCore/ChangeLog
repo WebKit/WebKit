@@ -1,3 +1,21 @@
+2009-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        postMessage should serialize File objects
+        https://bugs.webkit.org/show_bug.cgi?id=31955
+
+        Update SerializedScriptValue to include support for
+        File objects in the serialized object graph.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::):
+        (WebCore::SerializedScriptValueData::asString):
+
 2009-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

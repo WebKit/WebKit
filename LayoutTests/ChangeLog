@@ -1,3 +1,15 @@
+2009-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        postMessage should serialize File objects
+        https://bugs.webkit.org/show_bug.cgi?id=31955
+
+        Add test for postMessage serialization of File objects.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2009-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Eric Seidel.
