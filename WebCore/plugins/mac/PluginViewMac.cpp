@@ -402,7 +402,7 @@ void PluginView::setNPWindowIfNeeded()
     m_npWindow.clipRect.bottom = m_windowRect.y() + m_windowRect.height();
 
     LOG(Plugins, "PluginView::setNPWindowIfNeeded(): window=%p, context=%p,"
-            " window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
+            " window.x:%ld window.y:%ld window.width:%d window.height:%d window.clipRect size:%dx%d",
             newWindowRef, newContextRef, m_npWindow.x, m_npWindow.y, m_npWindow.width, m_npWindow.height,
             m_npWindow.clipRect.right - m_npWindow.clipRect.left, m_npWindow.clipRect.bottom - m_npWindow.clipRect.top);
 
