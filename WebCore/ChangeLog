@@ -1,3 +1,42 @@
+2009-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Optimize the hierarchy rebuilding of compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=31879
+        
+        When updating the compositing layer hierarchy, instead of removing all
+        child layers and then re-adding them one by one, build a vector of child
+        layers, and set them in one go.
+        
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setChildren): New method that takes a Vector of child
+        GraphicsLayers.
+        
+        * platform/graphics/mac/GraphicsLayerCA.h: Override setChildren().
+        * platform/graphics/win/GraphicsLayerCACF.h: Ditto.
+        * platform/graphics/mac/GraphicsLayerCA.mm: 
+        (WebCore::GraphicsLayerCA::setChildren): Implement setChildren() to 
+        set the bit that notes that sublayers changed.
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::setChildren): Implement setChildren() to 
+        udpate sublayers, with a note that this is not efficient.
+        
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        When updating compositing layers, use the faster updateLayerTreeGeometry() if
+        we know that no layer hierarchy changes are needed, and, at the root, use
+        the vector returned from rebuildCompositingLayerTree() to attach the root
+        layer.
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Changed to
+        collect child layers into Vectors of GraphicsLayers, which can be set as
+        layer children in one go.
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry): Split out from
+        rebuildCompositingLayerTree() for simplicity, and called when we just need to
+        update layer geometry, without doing any reparenting.
+
 2009-11-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

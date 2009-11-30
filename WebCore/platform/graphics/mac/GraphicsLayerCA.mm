@@ -410,6 +410,15 @@ NativeLayer GraphicsLayerCA::nativeLayer() const
     return m_layer.get();
 }
 
+bool GraphicsLayerCA::setChildren(const Vector<GraphicsLayer*>& children)
+{
+    bool childrenChanged = GraphicsLayer::setChildren(children);
+    if (childrenChanged)
+        noteLayerPropertyChanged(ChildrenChanged);
+    
+    return childrenChanged;
+}
+
 void GraphicsLayerCA::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);

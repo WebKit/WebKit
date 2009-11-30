@@ -151,6 +151,17 @@ NativeLayer GraphicsLayerCACF::nativeLayer() const
     return m_layer.get();
 }
 
+bool GraphicsLayerCACF::setChildren(const Vector<GraphicsLayer*>& children)
+{
+    bool childrenChanged = GraphicsLayer::setChildren(children);
+    // FIXME: GraphicsLayer::setChildren calls addChild() for each sublayer, which
+    // will end up calling updateSublayerList() N times.
+    if (childrenChanged)
+        updateSublayerList();
+    
+    return childrenChanged;
+}
+
 void GraphicsLayerCACF::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);

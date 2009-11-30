@@ -10192,7 +10192,7 @@
 				18C5FCA310A3991F0048438D /* WebKitSharedScriptRepository.cpp */,
 				18C5FCA410A3991F0048438D /* WebKitSharedScriptRepository.h */,
 			);
-			path = "SharedScript";
+			path = SharedScript;
 			sourceTree = "<group>";
 		};
 		1A2E6E560CC551E0004A2062 /* sql */ = {

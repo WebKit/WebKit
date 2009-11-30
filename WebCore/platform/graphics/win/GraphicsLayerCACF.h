@@ -47,6 +47,7 @@ public:
     // for hosting this GraphicsLayer in a native layer hierarchy
     virtual NativeLayer nativeLayer() const;
 
+    virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer *layer);
     virtual void addChildAtIndex(GraphicsLayer *layer, int index);
     virtual void addChildAbove(GraphicsLayer *layer, GraphicsLayer *sibling);

@@ -150,8 +150,13 @@ private:
 
     // Returns true if any layer's compositing changed
     void computeCompositingRequirements(RenderLayer*, OverlapMap*, struct CompositingState&, bool& layersChanged);
-    void rebuildCompositingLayerTree(RenderLayer* layer, struct CompositingState&, bool updateHierarchy);
+    
+    // Recurses down the tree, parenting descendant compositing layers and collecting an array of child layers for the current compositing layer.
+    void rebuildCompositingLayerTree(RenderLayer* layer, const struct CompositingState&, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer);
 
+    // Recurses down the tree, updating layer geometry only.
+    void updateLayerTreeGeometry(RenderLayer*);
+    
     // Hook compositing layers together
     void setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer);
     void removeCompositedChildren(RenderLayer*);

@@ -182,6 +182,8 @@ public:
     bool hasAncestor(GraphicsLayer*) const;
     
     const Vector<GraphicsLayer*>& children() const { return m_children; }
+    // Returns true if the child list changed.
+    virtual bool setChildren(const Vector<GraphicsLayer*>&);
 
     // Add child layers. If the child is already parented, it will be removed from its old parent.
     virtual void addChild(GraphicsLayer*);

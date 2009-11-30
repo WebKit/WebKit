@@ -92,6 +92,21 @@ bool GraphicsLayer::hasAncestor(GraphicsLayer* ancestor) const
     return false;
 }
 
+bool GraphicsLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
+{
+    // If the contents of the arrays are the same, nothing to do.
+    if (newChildren == m_children)
+        return false;
+
+    removeAllChildren();
+    
+    size_t listSize = newChildren.size();
+    for (size_t i = 0; i < listSize; ++i)
+        addChild(newChildren[i]);
+    
+    return true;
+}
+
 void GraphicsLayer::addChild(GraphicsLayer* childLayer)
 {
     ASSERT(childLayer != this);
