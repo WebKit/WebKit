@@ -1,3 +1,21 @@
+2009-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+        
+        Fix up some compositing layout tests.
+
+        * compositing/layers-inside-overflow-scroll.html:
+        * compositing/self-painting-layers.html:
+        Use the 'loadeddata' event, instead of 'load', to know when the video loads.
+        
+        * platform/mac/compositing/repaint/content-into-overflow-expected.checksum:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.png:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.checksum:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.png:
+        * platform/mac/compositing/self-painting-layers-expected.checksum:
+        * platform/mac/compositing/self-painting-layers-expected.png:
+        Update with correct pixel results.
+
 2009-11-29  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.
