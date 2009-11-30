@@ -1,3 +1,9 @@
+2009-11-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows Build fix.  Reviewed by NOBODY.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2009-11-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
