@@ -32,9 +32,10 @@
 #include "AnimationBase.h"
 #include "Document.h"
 #include "KeyframeList.h"
-#include "RenderStyle.h"
 
 namespace WebCore {
+
+class RenderStyle;
 
 // A KeyframeAnimation tracks the state of an explicit animation
 // for a single RenderObject.

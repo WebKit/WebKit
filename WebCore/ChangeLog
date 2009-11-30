@@ -1,5 +1,19 @@
 2009-11-29  Daniel Bates  <dbates@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31966
+
+        Removed #include RenderStyle.h from file KeyframeAnimation.h. Instead,
+        forward declared it.
+
+        No functionality was changed. So, no new tests.
+
+        * page/animation/KeyframeAnimation.cpp:
+        * page/animation/KeyframeAnimation.h:
+
+2009-11-29  Daniel Bates  <dbates@webkit.org>
+
         Unreviewed, fix change log entry date.
 
         For some reason, bugzilla-tool did not update the date in the change

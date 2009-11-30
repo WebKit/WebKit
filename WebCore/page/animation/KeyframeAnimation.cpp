@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderStyle.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
