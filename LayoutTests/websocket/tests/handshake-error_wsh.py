@@ -31,7 +31,7 @@ from mod_pywebsocket import msgutil
 
 
 def web_socket_do_extra_handshake(request):
-    request.write('ThisWillCauseHandshakeError')
+    request.connection.write('ThisWillCauseHandshakeError')
 
 
 def web_socket_transfer_data(request):

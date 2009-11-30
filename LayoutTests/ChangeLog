@@ -1,3 +1,15 @@
+2009-11-30  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        In testing handshake-error case, web_socket_do_extra_handshake calls a non-existent method
+        https://bugs.webkit.org/show_bug.cgi?id=31465
+
+        * platform/mac/Skipped: websocket/tests/handshake-error.html now fails on Mac, added to
+        Skipped list, and filed bug 31659 to investigate.
+
+        * websocket/tests/handshake-error_wsh.py: Call write() on a correct object.
+
 2009-11-30  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
