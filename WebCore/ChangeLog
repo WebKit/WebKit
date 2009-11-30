@@ -1,3 +1,20 @@
+2009-11-30  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up V8 bindings for CSSStyleDeclaration and CSSVariableDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=31895
+
+        No new tests. This is already covered by:
+                fast/dom/CSSStyleDeclaration/css-computed-style-item.html
+                fast/dom/CSSStyleDeclaration/css-style-item.html
+
+        * bindings/v8/V8Collection.h:
+        (WebCore::collectionStringIndexedPropertyGetter):
+        (WebCore::setCollectionStringIndexedGetter):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+
 2009-11-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

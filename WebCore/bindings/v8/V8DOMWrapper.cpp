@@ -275,7 +275,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // setter. Therefore, the interceptor has to be on the object
         // itself and not on the prototype object.
         descriptor->InstanceTemplate()->SetNamedPropertyHandler( USE_NAMED_PROPERTY_GETTER(CSSStyleDeclaration), USE_NAMED_PROPERTY_SETTER(CSSStyleDeclaration));
-        setCollectionStringOrNullIndexedGetter<CSSStyleDeclaration>(descriptor);
+        setCollectionStringIndexedGetter<CSSStyleDeclaration>(descriptor);
         break;
     case V8ClassIndex::CSSRULELIST:
         setCollectionIndexedGetter<CSSRuleList, CSSRule>(descriptor,  V8ClassIndex::CSSRULE);
@@ -284,7 +284,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         setCollectionIndexedGetter<CSSValueList, CSSValue>(descriptor, V8ClassIndex::CSSVALUE);
         break;
     case V8ClassIndex::CSSVARIABLESDECLARATION:
-        setCollectionStringOrNullIndexedGetter<CSSVariablesDeclaration>(descriptor);
+        setCollectionStringIndexedGetter<CSSVariablesDeclaration>(descriptor);
         break;
     case V8ClassIndex::WEBKITCSSTRANSFORMVALUE:
         setCollectionIndexedGetter<WebKitCSSTransformValue, CSSValue>(descriptor, V8ClassIndex::CSSVALUE);
