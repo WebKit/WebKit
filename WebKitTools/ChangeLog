@@ -1,3 +1,30 @@
+2009-11-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Need a way to validate that committers.py includes all committers/reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=30970
+
+        Add a script which knows how to compare our public committer/reviewer
+        lists and show discrepancies between them.
+
+        Validates mailing lists vs. committers.py:
+        - committers.py committers missing from webkit-committers@lists
+        - webkit-committers@lists members missing from committers.py
+        - committers.py reviewers missing from webkit-reviewers@lists
+        - webkit-reviewers@lists members missing from committers.py
+        - webkit-reviewers@lists members missing from committers.py reviewer list
+
+        Validates committers.py vs. trunk/ SVN history:
+        - committers who have not committed in over a year
+        - SVN committers missing from committers.py
+        - committers.py members who have no record in SVN.
+
+        All of these lists still show "false positives" until a few more committers.py updates are made, like:
+        https://bugs.webkit.org/show_bug.cgi?id=31366
+
+        * Scripts/validate-committer-lists: Added.
+
 2009-11-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
