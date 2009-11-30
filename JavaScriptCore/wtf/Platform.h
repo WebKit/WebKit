@@ -141,19 +141,15 @@
 
 /* PLATFORM(CHROMIUM) */
 /* PLATFORM(QT) */
+/* PLATFORM(WX) */
 /* PLATFORM(GTK) */
+/* PLATFORM(HAIKU) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_CHROMIUM__)
 #define WTF_PLATFORM_CHROMIUM 1
 #elif defined(BUILDING_QT__)
 #define WTF_PLATFORM_QT 1
-
-/* PLATFORM(KDE) */
-#if defined(BUILDING_KDE__)
-#define WTF_PLATFORM_KDE 1
-#endif
-
 #elif defined(BUILDING_WX__)
 #define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
@@ -476,8 +472,7 @@
 
 #endif  /* PLATFORM(WINCE) && !PLATFORM(QT) */
 
-/* for Unicode, KDE uses Qt */
-#if PLATFORM(KDE) || PLATFORM(QT)
+#if PLATFORM(QT)
 #define WTF_USE_QT4_UNICODE 1
 #elif PLATFORM(WINCE)
 #define WTF_USE_WINCE_UNICODE 1

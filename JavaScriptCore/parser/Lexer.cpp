@@ -39,10 +39,7 @@ using namespace Unicode;
 // We can't specify the namespace in yacc's C output, so do it here instead.
 using namespace JSC;
 
-#ifndef KDE_USE_FINAL
 #include "Grammar.h"
-#endif
-
 #include "Lookup.h"
 #include "Lexer.lut.h"
 
