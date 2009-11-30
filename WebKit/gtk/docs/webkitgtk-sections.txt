@@ -282,6 +282,9 @@ WebKitSoupAuthDialogClass
 WebKitWebInspector
 webkit_web_inspector_get_inspected_uri
 webkit_web_inspector_get_web_view
+webkit_web_inspector_inspect_coordinates
+webkit_web_inspector_show
+webkit_web_inspector_close
 <SUBSECTION Standard>
 WEBKIT_WEB_INSPECTOR
 WEBKIT_IS_WEB_INSPECTOR

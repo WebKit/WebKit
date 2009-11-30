@@ -1,3 +1,11 @@
+2009-11-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Bump versions for 1.1.17 release.
+
+        * configure.ac:
+
 2009-11-30  Jan-Arve Sæther  <jan-arve.saether@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -1,3 +1,11 @@
+2009-11-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add new headers to sources list.
+
+        * GNUmakefile.am:
+
 2009-11-30  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Holger Freyther.

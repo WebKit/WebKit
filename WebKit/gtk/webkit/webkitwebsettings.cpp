@@ -667,7 +667,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
     /**
-    * WebKitWebView:tab-key-cycles-through-elements:
+    * WebKitWebSettings:tab-key-cycles-through-elements:
     *
     * Whether the tab key cycles through elements on the page.
     *
@@ -676,7 +676,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     * key presses as normal key presses. If the selected element is editable, the
     * tab key will cause the insertion of a tab character.
     *
-    * Since: 1.1.16
+    * Since: 1.1.17
     */
     g_object_class_install_property(gobject_class,
                                     PROP_TAB_KEY_CYCLES_THROUGH_ELEMENTS,

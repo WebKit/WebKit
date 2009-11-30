@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 1.1.17
+=================
+
+What's new in WebKitGTK+ 1.1.17?
+
+  - New APIs to show and close the web inspector and to inspect an
+    element at the given coordinates.
+  - New property, WebKitWebSettings::tab-key-cycles-through-elements,
+    controls whether TAB is simply interpreted as another keystroke or
+    is used to cycle through the elements in a page.
+  - Many a11y improvements.
+  - The usual amount of random bugfixes.
+
+=================
 WebKitGTK+ 1.1.16
 =================
 

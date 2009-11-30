@@ -373,7 +373,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSExceptionBase.h \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
- 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
+	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
 	WebCore/bindings/js/JSHTMLCanvasElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
@@ -1858,6 +1858,7 @@ webcore_sources += \
 	WebCore/rendering/style/FillLayer.h \
 	WebCore/rendering/style/KeyframeList.cpp \
 	WebCore/rendering/style/KeyframeList.h \
+	WebCore/rendering/style/LineClampValue.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
 	WebCore/rendering/style/NinePieceImage.h \
 	WebCore/rendering/style/OutlineValue.h \

@@ -1,3 +1,15 @@
+2009-11-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Prepare for 1.1.17 release.
+
+        * NEWS:
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
 2009-11-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Oliver Hunt.
