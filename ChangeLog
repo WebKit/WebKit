@@ -1,5 +1,13 @@
 2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Rubber-stamped by Xan Lopez.
+
+        Make sure we distribute and install GObject Introspection files.
+
+        * GNUmakefile.am:
+
+2009-11-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Build fix. Make sure JSCore-1.0.gir is added to the distributed
         tarball.
 
