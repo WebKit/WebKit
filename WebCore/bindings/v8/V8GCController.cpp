@@ -396,7 +396,11 @@ namespace {
 
 int getMemoryUsageInMB()
 {
+#if PLATFORM(CHROMIUM)
     return ChromiumBridge::memoryUsageMB();
+#else
+    return 0;
+#endif
 }
 
 }  // anonymous namespace
@@ -427,6 +431,8 @@ void V8GCController::gcEpilogue()
 
 void V8GCController::checkMemoryUsage()
 {
+#if PLATFORM(CHROMIUM)
+    // These values are appropriate for Chromium only.
     const int lowUsageMB = 256;  // If memory usage is below this threshold, do not bother forcing GC.
     const int highUsageMB = 1024;  // If memory usage is above this threshold, force GC more aggresively.
     const int highUsageDeltaMB = 128;  // Delta of memory usage growth (vs. last workingSetEstimateMB) to force GC when memory usage is high.
@@ -434,6 +440,7 @@ void V8GCController::checkMemoryUsage()
     int memoryUsageMB = getMemoryUsageInMB();
     if ((memoryUsageMB > lowUsageMB && memoryUsageMB > 2 * workingSetEstimateMB) || (memoryUsageMB > highUsageMB && memoryUsageMB > workingSetEstimateMB + highUsageDeltaMB))
         v8::V8::LowMemoryNotification();
+#endif
 }
 
 
