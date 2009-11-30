@@ -1,3 +1,9 @@
+2009-11-30  Mark Rowe  <mrowe@apple.com>
+
+        Use the correct path to Info.plist to avoid creating an empty file at the top of the WebKit directory.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.
