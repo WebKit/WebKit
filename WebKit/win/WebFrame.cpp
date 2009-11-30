@@ -1731,10 +1731,8 @@ void WebFrame::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
         return;
 
     COMPtr<IWebFrameLoadDelegatePrivate2> delegatePrivate(Query, frameLoadDelegate);
-    if (delegatePrivate) {
-        delegatePrivate->didClearWindowObjectForFrameInScriptWorld(d->webView, this, WebScriptWorld::findOrCreateWorld(world).get());
+    if (delegatePrivate && delegatePrivate->didClearWindowObjectForFrameInScriptWorld(d->webView, this, WebScriptWorld::findOrCreateWorld(world).get()) != E_NOTIMPL)
         return;
-    }
 
     if (world != mainThreadNormalWorld())
         return;

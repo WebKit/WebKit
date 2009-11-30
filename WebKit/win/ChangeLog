@@ -1,3 +1,13 @@
+2009-11-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit clients that don't implement didClearWindowObjectForFrameInScriptWorld should fall back to didClearWindowObject
+        https://bugs.webkit.org/show_bug.cgi?id=31986
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDidClearWindowObjectInWorld): Fall back if E_NOTIMPL returned.
+
 2009-11-24  Chris Marrin  <cmarrin@apple.com>
 
         Another Windows build fix
