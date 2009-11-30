@@ -1,3 +1,13 @@
+2009-11-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix.
+
+        Correct draw signature used in ImageCairoWin.cpp.
+
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+
 2009-11-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
