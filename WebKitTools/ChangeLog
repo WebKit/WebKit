@@ -1,5 +1,17 @@
 2009-11-29  Eric Seidel  <eric@webkit.org>
 
+        No review, just adding missing svn property.
+
+        Set svn:executable property on new scripts.
+        These were added by commit-queue commits, but the executable
+        property was lost due to a bug in svn-apply:
+        https://bugs.webkit.org/show_bug.cgi?id=27204
+
+        * Scripts/update-webkit-chromium: Added property svn:executable.
+        * Scripts/validate-committer-lists: Added property svn:executable.
+
+2009-11-29  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Need a way to validate that committers.py includes all committers/reviewers
