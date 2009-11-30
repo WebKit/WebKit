@@ -1,3 +1,13 @@
+2009-11-30  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        update-webkit --chromium forces gclient sync
+
+        https://bugs.webkit.org/show_bug.cgi?id=31967
+
+        * Scripts/update-webkit-chromium:
+
 2009-11-29  Eric Seidel  <eric@webkit.org>
 
         Add Erik Arvidsson to committers.py since by r51326 he clear has commit rights.

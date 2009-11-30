@@ -48,4 +48,4 @@ if (! -e ".gclient") {
 
 # Execute gclient sync.
 print "Updating chromium port dependencies using gclient...\n";
-system("gclient", "sync") == 0 or die $!;
+system("gclient", "sync", "--force") == 0 or die $!;
