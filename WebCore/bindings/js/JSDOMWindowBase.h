@@ -47,7 +47,7 @@ namespace WebCore {
         JSDOMWindowBase(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
 
     public:
-        void updateDocument(DOMWrapperWorld*);
+        void updateDocument();
 
         DOMWindow* impl() const { return d()->impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;

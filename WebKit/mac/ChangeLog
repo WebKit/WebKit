@@ -1,3 +1,19 @@
+2009-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 31859 - Make world selection for JSC IsolatedWorlds automagical.
+
+        WebCore presently has to explicitly specify the world before entering into JSC,
+        which is a little fragile (particularly since property access via a
+        getter/setter might invoke execution). Instead derive the current world from
+        the lexical global object.
+
+        Since WebCore no longer needs to explicitly specify the world on entry to JSC DebuggerCallFrame::evaluate can be called directly.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+
 2009-11-24  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

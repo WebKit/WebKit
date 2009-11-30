@@ -101,7 +101,7 @@ bool getQuarantinedScriptObject(Storage* storage, ScriptObject& quarantinedObjec
 
 bool getQuarantinedScriptObject(Node* node, ScriptObject& quarantinedObject)
 {
-    ExecState* exec = scriptStateFromNode(node);
+    ExecState* exec = scriptStateFromNode(debuggerWorld(), node);
     if (!exec)
         return false;
 

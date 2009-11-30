@@ -45,8 +45,8 @@ namespace WebCore {
     // For now, the separation is purely by convention.
     typedef JSC::ExecState ScriptState;
 
-    ScriptState* scriptStateFromNode(Node*);
-    ScriptState* scriptStateFromPage(Page*);
+    ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
+    ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
 
 } // namespace WebCore
 

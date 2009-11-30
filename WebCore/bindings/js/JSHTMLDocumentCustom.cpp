@@ -113,7 +113,7 @@ JSValue JSHTMLDocument::open(ExecState* exec, const ArgList& args)
                 CallType callType = function.getCallData(callData);
                 if (callType == CallTypeNone)
                     return throwError(exec, TypeError);
-                return callInWorld(exec, function, callType, callData, wrapper, args, currentWorld(exec));
+                return JSC::call(exec, function, callType, callData, wrapper, args);
             }
         }
         return jsUndefined();

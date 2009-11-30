@@ -182,19 +182,16 @@ namespace WebCore {
     };
 
     class WebCoreJSClientData : public JSC::JSGlobalData::ClientData {
-        friend class EnterDOMWrapperWorld;
         friend class JSGlobalDataWorldIterator;
 
     public:
         WebCoreJSClientData(JSC::JSGlobalData* globalData)
             : m_normalWorld(globalData)
         {
-            m_worldStack.append(&m_normalWorld);
             m_worldSet.add(&m_normalWorld);
         }
         // FIXME: add a destructor to assert m_worldSet only contains m_normalWorld?
 
-        DOMWrapperWorld* currentWorld() { return m_worldStack.last(); }
         DOMWrapperWorld* normalWorld() { return &m_normalWorld; }
 
         void getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
@@ -213,24 +210,10 @@ namespace WebCore {
             m_worldSet.remove(world);
         }
 
-        virtual void willExecute(JSC::ExecState*);
-        virtual void didExecute(JSC::ExecState*);
-
         DOMObjectHashTableMap hashTableMap;
     private:
-        Vector<DOMWrapperWorld*> m_worldStack;
         HashSet<DOMWrapperWorld*> m_worldSet;
         DOMWrapperWorld m_normalWorld;
-    };
-
-    class EnterDOMWrapperWorld {
-    public:
-        EnterDOMWrapperWorld(JSC::JSGlobalData&, DOMWrapperWorld*);
-        EnterDOMWrapperWorld(JSC::ExecState*, DOMWrapperWorld*);
-        ~EnterDOMWrapperWorld();
-
-    private:
-        WebCoreJSClientData* m_clientData;
     };
 
     bool hasCachedDOMObjectWrapper(JSC::JSGlobalData*, void* objectHandle);
@@ -257,7 +240,6 @@ namespace WebCore {
 
     DOMWrapperWorld* currentWorld(JSC::ExecState*);
     DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);
-    DOMWrapperWorld* mainThreadCurrentWorld();
     DOMWrapperWorld* mainThreadNormalWorld();
     inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
     inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
@@ -412,11 +394,6 @@ namespace WebCore {
     Frame* toDynamicFrame(JSC::ExecState*);
     bool processingUserGesture(JSC::ExecState*);
     KURL completeURL(JSC::ExecState*, const String& relativeURL);
-
-    JSC::JSValue DebuggerCallFrame_evaluateInWorld(const JSC::DebuggerCallFrame& debuggerCallFrame, const JSC::UString& script, JSC::JSValue& exception);
-    JSC::JSValue callInWorld(JSC::ExecState*, JSC::JSValue function, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList&, DOMWrapperWorld*);
-    JSC::JSObject* constructInWorld(JSC::ExecState* exec, JSC::JSValue object, JSC::ConstructType constructType, const JSC::ConstructData& constructData, const JSC::ArgList& args, DOMWrapperWorld*);
-    JSC::Completion evaluateInWorld(JSC::ExecState*, JSC::ScopeChain&, const JSC::SourceCode&, JSC::JSValue thisValue, DOMWrapperWorld*);
 
 } // namespace WebCore
 

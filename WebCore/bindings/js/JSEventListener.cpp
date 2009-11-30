@@ -86,13 +86,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 
     ExecState* exec = globalObject->globalExec();
+    JSValue handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
 
-    JSValue handleEventFunction;
-    {
-        // Switch worlds, just in case handleEvent is a getter and causes JS execution!
-        EnterDOMWrapperWorld worldEntry(exec, m_isolatedWorld.get());
-        handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
-    }
     CallData callData;
     CallType callType = handleEventFunction.getCallData(callData);
     if (callType == CallTypeNone) {
@@ -114,8 +109,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         globalData->timeoutChecker.start();
         JSValue retval = handleEventFunction
-            ? callInWorld(exec, handleEventFunction, callType, callData, jsFunction, args, m_isolatedWorld.get())
-            : callInWorld(exec, jsFunction, callType, callData, toJS(exec, globalObject, event->currentTarget()), args, m_isolatedWorld.get());
+            ? JSC::call(exec, handleEventFunction, callType, callData, jsFunction, args)
+            : JSC::call(exec, jsFunction, callType, callData, toJS(exec, globalObject, event->currentTarget()), args);
         globalData->timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
@@ -166,7 +161,7 @@ bool JSEventListener::reportError(ScriptExecutionContext* context, const String&
     JSValue thisValue = globalObject->toThisObject(exec);
 
     globalData->timeoutChecker.start();
-    JSValue returnValue = callInWorld(exec, jsFunction, callType, callData, thisValue, args, m_isolatedWorld.get());
+    JSValue returnValue = JSC::call(exec, jsFunction, callType, callData, thisValue, args);
     globalData->timeoutChecker.stop();
 
     // If an error occurs while handling the script error, it should be bubbled up.

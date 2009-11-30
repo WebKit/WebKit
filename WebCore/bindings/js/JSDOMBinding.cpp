@@ -170,39 +170,6 @@ DOMWrapperWorld::~DOMWrapperWorld()
         forgetWorldOfDOMNodesForDocument(*iter, this);
 }
 
-void WebCoreJSClientData::willExecute(JSC::ExecState* exec)
-{
-    DOMWrapperWorld* world = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
-    m_worldStack.append(world);
-}
-
-void WebCoreJSClientData::didExecute(JSC::ExecState* exec)
-{
-    ASSERT_UNUSED(exec, m_worldStack.last() == static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world());
-    m_worldStack.removeLast();
-}
-
-EnterDOMWrapperWorld::EnterDOMWrapperWorld(JSC::JSGlobalData& globalData, DOMWrapperWorld* isolatedWorld)
-{
-    JSGlobalData::ClientData* clientData = globalData.clientData;
-    ASSERT(clientData);
-    m_clientData = static_cast<WebCoreJSClientData*>(clientData);
-    m_clientData->m_worldStack.append(isolatedWorld);
-}
-
-EnterDOMWrapperWorld::EnterDOMWrapperWorld(JSC::ExecState* exec, DOMWrapperWorld* isolatedWorld)
-{
-    JSGlobalData::ClientData* clientData = exec->globalData().clientData;
-    ASSERT(clientData);
-    m_clientData = static_cast<WebCoreJSClientData*>(clientData);
-    m_clientData->m_worldStack.append(isolatedWorld);
-}
-
-EnterDOMWrapperWorld::~EnterDOMWrapperWorld()
-{
-    m_clientData->m_worldStack.removeLast();
-}
-
 class JSGlobalDataWorldIterator {
 public:
     JSGlobalDataWorldIterator(JSGlobalData* globalData)
@@ -241,9 +208,7 @@ private:
 
 DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
 {
-    JSGlobalData::ClientData* clientData = exec->globalData().clientData;
-    ASSERT(clientData);
-    return static_cast<WebCoreJSClientData*>(clientData)->currentWorld();
+    return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
 }
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
@@ -256,16 +221,8 @@ DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
 DOMWrapperWorld* mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    return normalWorld(*JSDOMWindow::commonJSGlobalData());
-}
-
-DOMWrapperWorld* mainThreadCurrentWorld()
-{
-    ASSERT(isMainThread());
-
-    JSGlobalData::ClientData* clientData = JSDOMWindowBase::commonJSGlobalData()->clientData;
-    ASSERT(clientData);
-    return static_cast<WebCoreJSClientData*>(clientData)->currentWorld();
+    static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonJSGlobalData());
+    return cachedNormalWorld;
 }
 
 DOMObjectHashTableMap& DOMObjectHashTableMap::mapFor(JSGlobalData& globalData)
@@ -852,30 +809,6 @@ bool DOMObject::defineOwnProperty(ExecState* exec, const Identifier&, PropertyDe
 {
     throwError(exec, TypeError, "defineProperty is not supported on DOM Objects");
     return false;
-}
-
-JSValue DebuggerCallFrame_evaluateInWorld(const JSC::DebuggerCallFrame& debuggerCallFrame, const UString& script, JSValue& exception)
-{
-    EnterDOMWrapperWorld worldEntry(debuggerCallFrame.dynamicGlobalObject()->globalExec(), debuggerWorld());
-    return debuggerCallFrame.evaluate(script, exception);
-}
-
-JSValue callInWorld(ExecState* exec, JSValue function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, DOMWrapperWorld* isolatedWorld)
-{
-    EnterDOMWrapperWorld worldEntry(exec, isolatedWorld);
-    return JSC::call(exec, function, callType, callData, thisValue, args);
-}
-
-JSObject* constructInWorld(ExecState* exec, JSValue object, ConstructType constructType, const ConstructData& constructData, const ArgList& args, DOMWrapperWorld* isolatedWorld)
-{
-    EnterDOMWrapperWorld worldEntry(exec, isolatedWorld);
-    return JSC::construct(exec, object, constructType, constructData, args);
-}
-
-Completion evaluateInWorld(ExecState* exec, ScopeChain& scopeChain, const SourceCode& sourceCode, JSValue thisValue, DOMWrapperWorld* isolatedWorld)
-{
-    EnterDOMWrapperWorld worldEntry(exec, isolatedWorld);
-    return JSC::evaluate(exec, scopeChain, sourceCode, thisValue);
 }
 
 } // namespace WebCore

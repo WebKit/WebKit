@@ -123,7 +123,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
 
     ExecState* exec = m_workerContextWrapper->globalExec();
     m_workerContextWrapper->globalData()->timeoutChecker.start();
-    Completion comp = evaluateInWorld(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper, currentWorld(exec));
+    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper);
     m_workerContextWrapper->globalData()->timeoutChecker.stop();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue)

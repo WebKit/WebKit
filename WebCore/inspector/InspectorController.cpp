@@ -521,7 +521,7 @@ void InspectorController::windowScriptObjectAvailable()
 
     // Grant the inspector the ability to script the inspected page.
     m_page->mainFrame()->document()->securityOrigin()->grantUniversalAccess();
-    m_scriptState = scriptStateFromPage(m_page);
+    m_scriptState = scriptStateFromPage(debuggerWorld(), m_page);
     ScriptGlobalObject::set(m_scriptState, "InspectorController", m_inspectorBackend.get());
 }
 
@@ -1606,7 +1606,7 @@ void InspectorController::evaluateForTestInFrontend(long callId, const String& s
 
 void InspectorController::didEvaluateForTestInFrontend(long callId, const String& jsonResult)
 {
-    ScriptState* scriptState = scriptStateFromPage(m_inspectedPage);
+    ScriptState* scriptState = scriptStateFromPage(debuggerWorld(), m_inspectedPage);
     ScriptObject window;
     ScriptGlobalObject::get(scriptState, "window", window);
     ScriptFunctionCall function(scriptState, window, "didEvaluateForTestInFrontend");

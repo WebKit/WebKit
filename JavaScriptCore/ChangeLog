@@ -1,3 +1,24 @@
+2009-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 31859 - Make world selection for JSC IsolatedWorlds automagical.
+
+        WebCore presently has to explicitly specify the world before entering into JSC,
+        which is a little fragile (particularly since property access via a
+        getter/setter might invoke execution). Instead derive the current world from
+        the lexical global object.
+        
+        Remove the temporary duct tape of willExecute/didExecute virtual hooks on the JSGlobalData::ClientData - these are no longer necessary.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalData.h:
+
 2009-11-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

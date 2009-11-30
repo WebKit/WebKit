@@ -60,11 +60,10 @@ JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRef
     addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
 }
 
-void JSDOMWindowBase::updateDocument(DOMWrapperWorld* world)
+void JSDOMWindowBase::updateDocument()
 {
     ASSERT(d()->impl->document());
     ExecState* exec = globalExec();
-    EnterDOMWrapperWorld worldEntry(exec, world);
     symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, this, d()->impl->document()), DontDelete | ReadOnly);
 }
 

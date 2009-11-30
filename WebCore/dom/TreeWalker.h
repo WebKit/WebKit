@@ -52,14 +52,15 @@ namespace WebCore {
         Node* previousNode(ScriptState*);
         Node* nextNode(ScriptState*);
 
-        // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        Node* parentNode() { return parentNode(scriptStateFromNode(m_current.get())); }
-        Node* firstChild() { return firstChild(scriptStateFromNode(m_current.get())); }
-        Node* lastChild() { return lastChild(scriptStateFromNode(m_current.get())); }
-        Node* previousSibling() { return previousSibling(scriptStateFromNode(m_current.get())); }
-        Node* nextSibling() { return nextSibling(scriptStateFromNode(m_current.get())); }
-        Node* previousNode() { return previousNode(scriptStateFromNode(m_current.get())); }
-        Node* nextNode() { return nextNode(scriptStateFromNode(m_current.get())); }
+        // Do not call these functions. They are just scaffolding to support the Objective-C bindings.
+        // They operate in the main thread normal world, and they swallow JS exceptions.
+        Node* parentNode() { return parentNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* firstChild() { return firstChild(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* lastChild() { return lastChild(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* previousSibling() { return previousSibling(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* nextSibling() { return nextSibling(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* previousNode() { return previousNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* nextNode() { return nextNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
 
     private:
         TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);

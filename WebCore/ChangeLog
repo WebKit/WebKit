@@ -1,3 +1,91 @@
+2009-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 31859 - Make world selection for JSC IsolatedWorlds automagical.
+
+        WebCore presently has to explicitly specify the world before entering into JSC,
+        which is a little fragile (particularly since property access via a
+        getter/setter might invoke execution). Instead derive the current world from
+        the lexical global object.
+
+        Remove the last uses of mainThreadCurrentWorld(), so the world is always obtained via
+        currentWorld().  Switch this to obtain the world from the ExecsState's lexical global
+        object instead.  Remove the call/construct/evaluate 'InWorld' methods, since these
+        are no longer necessary.
+
+        * WebCore.base.exp:
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::JSCallbackData):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::currentWorld):
+        (WebCore::mainThreadNormalWorld):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::reportError):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromNode):
+        (WebCore::scriptStateFromPage):
+        * bindings/js/ScriptState.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_Construct):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::acceptNode):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::previousSibling):
+        (WebCore::TreeWalker::nextSibling):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::didEvaluateForTestInFrontend):
+        * inspector/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+
 2009-11-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
