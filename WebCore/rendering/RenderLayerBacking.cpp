@@ -38,6 +38,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InspectorTimelineAgent.h"
+#include "KeyframeList.h"
 #include "RenderBox.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"

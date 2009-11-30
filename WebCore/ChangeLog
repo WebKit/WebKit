@@ -1,3 +1,21 @@
+2009-11-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31965
+
+        Removed #include KeyframeList.h from CSSStyleSelector.h. Instead,
+        forward declared it.
+
+        As a side effect, we need to #include KeyframeList.h in
+        RenderLayerBacking.cpp.
+
+        No functionality was changed. So, no new tests.
+
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h: Removed #include KeyframeList.h
+        * rendering/RenderLayerBacking.cpp: Added #include KeyframeList.h
+
 2009-11-29  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.

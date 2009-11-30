@@ -61,6 +61,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
+#include "KeyframeList.h"
 #include "LinkHash.h"
 #include "MappedAttribute.h"
 #include "MatrixTransformOperation.h"
