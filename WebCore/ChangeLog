@@ -1,3 +1,26 @@
+2009-11-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        REGRESSION (r49757): masking-mask-01-b.svg rendered incorrectly
+        [https://bugs.webkit.org/show_bug.cgi?id=31980]
+
+        It turns out, that we did not handle maskUnits="userSpaceOnUse"
+        correctly. We just need to move the context of the maskImage
+        if maskContentUnits="objectBoundingBox". The context gets scaled
+        on this unit combination, so we have to substract the position of
+        the targetRect. On userSpaceOnUse the position just depends on the
+        position of the mask element.
+        I added a test with some senseless and reasonable values for size
+        and postion of the mask and it's contents. I also used every
+        combination of maskUnits and maskContentUnits to be sure, that it
+        is fixed this time.
+
+        Test: svg/custom/mask-with-all-units.svg
+
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+
 2009-11-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

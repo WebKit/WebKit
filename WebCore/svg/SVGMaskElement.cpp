@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2005 Alexander Kellett <lypanov@kde.org>
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -156,11 +157,14 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
         return 0;
 
     FloatPoint maskContextLocation = maskDestRect.location();
-    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskDestRect.move(targetRect.x(), targetRect.y());
-
-    if (maskContentUnits() != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        maskContextLocation.move(targetRect.x(), targetRect.y());
+        if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+            maskContextLocation.move(targetRect.x(), targetRect.y());
+    } else {
+        if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+            maskContextLocation.move(-targetRect.x(), -targetRect.y());
+    }
 
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);

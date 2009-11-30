@@ -1,3 +1,15 @@
+2009-11-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Complex test of mask with every combination of maskUnits and maskContentUnits
+        as well as different values for size and position of the mask and it's content.
+
+        * platform/mac/svg/custom/mask-with-all-units-expected.checksum: Added.
+        * platform/mac/svg/custom/mask-with-all-units-expected.png: Added.
+        * platform/mac/svg/custom/mask-with-all-units-expected.txt: Added.
+        * svg/custom/mask-with-all-units.svg: Added.
+
 2009-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Put tests into skiplist because of missing features.
