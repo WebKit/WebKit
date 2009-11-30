@@ -1,3 +1,15 @@
+2009-11-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Chrome::contentsSizeChanged() is called when the content size has not changed
+        https://bugs.webkit.org/show_bug.cgi?id=31978
+
+        Do not trigger contentsSizeChaned() is the new size is the same as the old one.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+
 2009-11-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
