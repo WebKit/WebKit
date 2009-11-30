@@ -1,5 +1,11 @@
 2009-11-29  Eric Seidel  <eric@webkit.org>
 
+        Add Erik Arvidsson to committers.py since by r51326 he clear has commit rights.
+
+        * Scripts/modules/committers.py:
+
+2009-11-29  Eric Seidel  <eric@webkit.org>
+
         No review, just adding missing svn property.
 
         Set svn:executable property on new scripts.
