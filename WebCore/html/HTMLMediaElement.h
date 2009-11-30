@@ -218,7 +218,6 @@ private:
     void addPlayedRange(float start, float end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
-    void scheduleProgressEvent(const AtomicString& eventName);
     void scheduleEvent(const AtomicString& eventName);
     void enqueueEvent(RefPtr<Event> event);
     

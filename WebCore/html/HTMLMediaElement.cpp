@@ -297,24 +297,6 @@ void HTMLMediaElement::scheduleNextSourceChild()
     m_loadTimer.startOneShot(0);
 }
 
-void HTMLMediaElement::scheduleProgressEvent(const AtomicString& eventName)
-{
-    if (!m_sendProgressEvents)
-        return;
-
-    // FIXME: don't schedule timeupdate or progress events unless there are registered listeners
-
-    bool totalKnown = m_player && m_player->totalBytesKnown();
-    unsigned loaded = m_player ? m_player->bytesLoaded() : 0;
-    unsigned total = m_player ? m_player->totalBytes() : 0;
-
-    RefPtr<ProgressEvent> evt = ProgressEvent::create(eventName, totalKnown, loaded, total);
-    enqueueEvent(evt);
-
-    if (renderer())
-        renderer()->updateFromElement();
-}
-
 void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 {
     enqueueEvent(Event::create(eventName, false, true));
@@ -529,7 +511,7 @@ void HTMLMediaElement::selectMediaResource()
     m_networkState = NETWORK_LOADING;
 
     // 5
-    scheduleProgressEvent(eventNames().loadstartEvent);
+    scheduleEvent(eventNames().loadstartEvent);
 
     // 6 - If the media element has a src attribute, then run these substeps
     ContentType contentType("");
@@ -652,7 +634,7 @@ void HTMLMediaElement::noneSupported()
     // 7 - Queue a task to fire a progress event called error at the media element, in
     // the context of the fetching process that was used to try to obtain the media
     // resource in the resource fetch algorithm.
-    scheduleProgressEvent(eventNames().errorEvent);
+    scheduleEvent(eventNames().errorEvent);
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     m_delayingTheLoadEvent = false;
@@ -677,7 +659,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 
     // 3 - Queue a task to fire a progress event called error at the media element, in
     // the context of the fetching process started by this instance of this algorithm.
-    scheduleProgressEvent(eventNames().errorEvent);
+    scheduleEvent(eventNames().errorEvent);
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
     // task to fire a simple event called emptied at the element.
@@ -744,7 +726,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     if (state == MediaPlayer::Idle) {
         if (m_networkState > NETWORK_IDLE) {
             stopPeriodicTimers();
-            scheduleProgressEvent(eventNames().suspendEvent);
+            scheduleEvent(eventNames().suspendEvent);
         }
         m_networkState = NETWORK_IDLE;
     }
@@ -764,7 +746,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 
             // Schedule one last progress event so we guarantee that at least one is fired
             // for files that load very quickly.
-            scheduleProgressEvent(eventNames().progressEvent);
+            scheduleEvent(eventNames().progressEvent);
 
             // Check to see if readyState changes need to be dealt with before sending the 
             // 'load' event so we report 'canplaythrough' first. This is necessary because a
@@ -773,7 +755,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
             if (static_cast<ReadyState>(currentState) != m_readyState)
                 setReadyState(currentState);
 
-            scheduleProgressEvent(eventNames().loadEvent);
+            scheduleEvent(eventNames().loadEvent);
         }
     }
 }
@@ -890,14 +872,16 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 
     if (progress == m_previousProgress) {
         if (timedelta > 3.0 && !m_sentStalledEvent) {
-            scheduleProgressEvent(eventNames().stalledEvent);
+            scheduleEvent(eventNames().stalledEvent);
             m_sentStalledEvent = true;
         }
     } else {
-        scheduleProgressEvent(eventNames().progressEvent);
+        scheduleEvent(eventNames().progressEvent);
         m_previousProgress = progress;
         m_previousProgressTime = time;
         m_sentStalledEvent = false;
+        if (renderer())
+            renderer()->updateFromElement();
     }
 }
 
@@ -1657,7 +1641,7 @@ void HTMLMediaElement::userCancelledLoad()
 
     // 3 - Queue a task to fire a progress event called abort at the media element, in the context
     // of the fetching process started by this instance of this algorithm.
-    scheduleProgressEvent(eventNames().abortEvent);
+    scheduleEvent(eventNames().abortEvent);
 
     // 5 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the
     // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a

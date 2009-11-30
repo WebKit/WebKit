@@ -1,3 +1,19 @@
+2009-11-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        All HTML5 media element events should be regular events
+        https://bugs.webkit.org/show_bug.cgi?id=30513
+        
+        Remove progress event tests.
+
+        * media/progress-event-at-least-one-expected.txt: Removed.
+        * media/progress-event-at-least-one.html: Removed.
+        * media/progress-event-expected.txt: Removed.
+        * media/progress-event-total-expected.txt: Removed.
+        * media/progress-event-total.html: Removed.
+        * media/progress-event.html: Removed.
+
 2009-11-30  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.
