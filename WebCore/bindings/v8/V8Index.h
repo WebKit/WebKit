@@ -494,6 +494,12 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define DOM_OBJECT_INSPECTOR_TYPES(V)
 #endif
 
+#define DOM_OBJECT_GEOLOCATION_TYPES(V)                                 \
+    V(COORDINATES, Coordinates)                                         \
+    V(GEOLOCATION, Geolocation)                                         \
+    V(GEOPOSITION, Geoposition)                                         \
+    V(POSITIONERROR, PositionError)
+
 #define DOM_OBJECT_TYPES(V)                                             \
     DOM_OBJECT_TYPES_1(V)                                               \
     DOM_OBJECT_TYPES_2(V)                                               \
@@ -503,7 +509,8 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     DOM_OBJECT_3D_CANVAS_TYPES(V)                                       \
     DOM_OBJECT_XPATH_TYPES(V)                                           \
     DOM_OBJECT_XSLT_TYPES(V)                                            \
-    DOM_OBJECT_INSPECTOR_TYPES(V)
+    DOM_OBJECT_INSPECTOR_TYPES(V)                                       \
+    DOM_OBJECT_GEOLOCATION_TYPES(V)
 
 #if ENABLE(SVG)
 // SVG_OBJECT_TYPES are svg non-node, non-pod types.

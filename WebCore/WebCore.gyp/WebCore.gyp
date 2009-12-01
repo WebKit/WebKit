@@ -228,13 +228,6 @@
         # JSC-only.
         '../inspector/JavaScriptCallFrame.idl',
 
-        # ENABLE_GEOLOCATION only.
-        '../page/Geolocation.idl',
-        '../page/Geoposition.idl',
-        '../page/PositionCallback.idl',
-        '../page/PositionError.idl',
-        '../page/PositionErrorCallback.idl',
-
         # Bindings with custom Objective-C implementations.
         '../page/AbstractView.idl',
 

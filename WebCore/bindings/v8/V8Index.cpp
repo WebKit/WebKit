@@ -438,6 +438,12 @@
 #include "V8InspectorFrontendHost.h"
 #endif
 
+// Geolocation
+#include "V8Coordinates.h"
+#include "V8Geolocation.h"
+#include "V8Geoposition.h"
+#include "V8PositionError.h"
+
 namespace WebCore {
 
 FunctionTemplateFactory V8ClassIndex::GetFactory(V8WrapperType type)

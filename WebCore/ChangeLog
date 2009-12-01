@@ -1,3 +1,38 @@
+2009-12-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds V8 bindings for Geolocation.
+        https://bugs.webkit.org/show_bug.cgi?id=30206
+
+        Also adds Geolocation files to Chrome build files.
+
+        * WebCore.gyp/WebCore.gyp: Modified. Corrects list of Geolocation IDL files.
+        * WebCore.gypi: Modified. Adds Geolocation files.
+        * bindings/v8/DOMObjectsInclude.h: Modified. Adds Geolocation includes.
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Modified. Adds Geolocation files.
+        * bindings/v8/V8Index.cpp: Modified. Includes Geolocation generated headers.
+        * bindings/v8/V8Index.h: Modified. Adds Geolocation types to DOM_OBJECT_TYPES.
+        * bindings/v8/custom/V8CoordinatesCustom.cpp: Added. Handles optional properties.
+        * bindings/v8/custom/V8CustomBinding.h: Modified. Declares callbacks and getters.
+        * bindings/v8/custom/V8CustomPositionCallback.cpp: Added.
+        (WebCore::V8CustomPositionCallback::V8CustomPositionCallback): Added. Constructor.
+        (WebCore::V8CustomPositionCallback::~V8CustomPositionCallback): Added. Destructor.
+        (WebCore::V8CustomPositionCallback::handleEvent): Added. Invokes callback.
+        * bindings/v8/custom/V8CustomPositionCallback.h: Added.
+        (WebCore::V8CustomPositionCallback::create): Added. Factory method.
+        * bindings/v8/custom/V8CustomPositionErrorCallback.cpp: Added.
+        (WebCore::V8CustomPositionErrorCallback::V8CustomPositionErrorCallback): Added. Constructor.
+        (WebCore::V8CustomPositionErrorCallback::~V8CustomPositionErrorCallback): Added. Destructor.
+        (WebCore::V8CustomPositionErrorCallback::handleEvent): Added. Invokes callback.
+        * bindings/v8/custom/V8CustomPositionErrorCallback.h: Added.
+        (WebCore::V8CustomPositionErrorCallback::create): Added. Factory method.
+        * bindings/v8/custom/V8GeolocationCustom.cpp: Added.
+        (WebCore::throwTypeMismatchException): Added. Throws a type mismatch error.
+        (WebCore::createPositionCallback): Added. Handles type checking for successCallback argument.
+        (WebCore::createPositionErrorCallback): Added. Handles type checking for errorCallback argument.
+        (WebCore::createPositionOptions): Added. Handles type checking for positionOptions argument.
+
 2009-12-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.
