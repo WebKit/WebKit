@@ -539,7 +539,16 @@ void FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage()
     // Anchor fragment navigations are not normal loads, so we need to synthesize
     // some events for our delegate.
     WebViewImpl* webView = m_webFrame->viewImpl();
-    if (webView->client())
+
+    // Flag of whether frame loader is completed. Generate didStartLoading and
+    // didStopLoading only when loader is completed so that we don't fire
+    // them for fragment redirection that happens in window.onload handler.
+    // See https://bugs.webkit.org/show_bug.cgi?id=31838
+    bool loaderCompleted =
+        !m_webFrame->frame()->page()->mainFrame()->loader()->isLoading();
+
+    // Generate didStartLoading if loader is completed.
+    if (webView->client() && loaderCompleted)
         webView->client()->didStartLoading();
 
     WebDataSourceImpl* ds = m_webFrame->dataSourceImpl();
@@ -585,7 +594,8 @@ void FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage()
     if (m_webFrame->client())
         m_webFrame->client()->didChangeLocationWithinPage(m_webFrame, isNewNavigation);
 
-    if (webView->client())
+    // Generate didStopLoading if loader is completed.
+    if (webView->client() && loaderCompleted)
         webView->client()->didStopLoading();
 }
 
