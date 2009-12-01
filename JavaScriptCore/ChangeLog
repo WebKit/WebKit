@@ -1,3 +1,13 @@
+2009-12-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        PLATFORM(CAIRO) should be defined by WIN_CAIRO define
+        https://bugs.webkit.org/show_bug.cgi?id=22250
+
+        * wtf/Platform.h: Remove WTF_PLATFORM_CAIRO as it is 
+        already define in config.h
+
 2009-11-30  Gavin Barraclough  <barraclough@apple.com>
 
         Windows Build fix.  Reviewed by NOBODY.
