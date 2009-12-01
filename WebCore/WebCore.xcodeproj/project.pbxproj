@@ -244,12 +244,10 @@
 		188604B40F2E654A000B6443 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 188604B20F2E654A000B6443 /* DOMTimer.h */; };
 		18C5FCA510A3991F0048438D /* WebKitSharedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C5FCA010A3991F0048438D /* WebKitSharedScript.cpp */; };
 		18C5FCA610A3991F0048438D /* WebKitSharedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 18C5FCA110A3991F0048438D /* WebKitSharedScript.h */; };
-		18C5FCA710A3991F0048438D /* WebKitSharedScript.idl in Resources */ = {isa = PBXBuildFile; fileRef = 18C5FCA210A3991F0048438D /* WebKitSharedScript.idl */; };
 		18C5FCA810A3991F0048438D /* WebKitSharedScriptRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C5FCA310A3991F0048438D /* WebKitSharedScriptRepository.cpp */; };
 		18C5FCA910A3991F0048438D /* WebKitSharedScriptRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 18C5FCA410A3991F0048438D /* WebKitSharedScriptRepository.h */; };
 		18C5FCB710A3C6F20048438D /* SharedScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C5FCB410A3C6F20048438D /* SharedScriptContext.cpp */; };
 		18C5FCB810A3C6F20048438D /* SharedScriptContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 18C5FCB510A3C6F20048438D /* SharedScriptContext.h */; };
-		18C5FCB910A3C6F20048438D /* SharedScriptContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = 18C5FCB610A3C6F20048438D /* SharedScriptContext.idl */; };
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
 		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
@@ -1234,10 +1232,8 @@
 		7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E76D910BF059800A0276E /* JSInjectedScriptHost.h */; };
 		7A0E76F910BF08ED00A0276E /* InjectedScriptHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0E76F610BF08ED00A0276E /* InjectedScriptHost.cpp */; };
 		7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E76F710BF08ED00A0276E /* InjectedScriptHost.h */; };
-		7A0E76FB10BF08ED00A0276E /* InjectedScriptHost.idl in Resources */ = {isa = PBXBuildFile; fileRef = 7A0E76F810BF08ED00A0276E /* InjectedScriptHost.idl */; };
 		7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0E770B10C00A8800A0276E /* InspectorFrontendHost.cpp */; };
 		7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E770C10C00A8800A0276E /* InspectorFrontendHost.h */; };
-		7A0E771010C00A8800A0276E /* InspectorFrontendHost.idl in Resources */ = {isa = PBXBuildFile; fileRef = 7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */; };
 		7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */; };
 		7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */; };
 		7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */; };
@@ -4346,7 +4342,6 @@
 		BC904B770D10998F00680D32 /* ClassNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC904B730D10998F00680D32 /* ClassNodeList.h */; };
 		BC926F800C0552470082776B /* JSHTMLFrameSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */; };
 		BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */; };
-		BC9462CC107A7A3900857193 /* BeforeLoadEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC9462CB107A7A3900857193 /* BeforeLoadEvent.idl */; };
 		BC9462D8107A7B4C00857193 /* BeforeLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */; };
 		BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */; };
 		BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC946347107A936600857193 /* JSBeforeLoadEvent.h */; };
@@ -18284,7 +18279,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
-				BC9462CC107A7A3900857193 /* BeforeLoadEvent.idl in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
@@ -18317,10 +18311,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				18C5FCA710A3991F0048438D /* WebKitSharedScript.idl in Resources */,
-				18C5FCB910A3C6F20048438D /* SharedScriptContext.idl in Resources */,
-				7A0E76FB10BF08ED00A0276E /* InjectedScriptHost.idl in Resources */,
-				7A0E771010C00A8800A0276E /* InspectorFrontendHost.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
