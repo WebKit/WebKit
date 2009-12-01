@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 7: ReferenceError: Can't find variable: textInputController
+This test checks users can input pre-edit text longer than maxlength.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

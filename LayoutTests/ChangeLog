@@ -1,3 +1,22 @@
+2009-12-01  Adam Roben  <aroben@apple.com>
+
+        Add expected Windows failure results for tests that use
+        textInputController
+
+        <http://webkit.org/b/32021> covers fixing these tests.
+
+        Rubber-stamped by Sam Weinig.
+
+        * platform/win/Skipped: Removed tests that use textInputController.
+
+        * platform/win/editing/selection/5825350-1-expected.txt: Added.
+        * platform/win/editing/selection/5825350-2-expected.txt: Added.
+        * platform/win/editing/selection/mixed-editability-10-expected.txt: Added.
+        * platform/win/fast/events/ime-composition-events-001-expected.txt: Added.
+        * platform/win/fast/forms/input-maxlength-ime-completed-expected.txt: Added.
+        * platform/win/fast/forms/input-maxlength-ime-preedit-expected.txt: Added.
+        * platform/win/fast/text/international/thai-cursor-position-expected.txt: Added.
+
 2009-12-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Put test into skiplist because of missing layoutTestController.evaluateInWebInspector().
