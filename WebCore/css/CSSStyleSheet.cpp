@@ -138,7 +138,7 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
 
 void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri)
 {
-    if (uri.isEmpty())
+    if (uri.isNull())
         return;
 
     m_namespaces = new CSSNamespace(prefix, uri, m_namespaces);
@@ -151,11 +151,11 @@ void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const
 
 const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix)
 {
-    if (prefix.isEmpty())
+    if (prefix.isNull())
         return nullAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
-    else if (prefix == starAtom)
+    if (prefix == starAtom)
         return starAtom; // We'll match any namespace.
-    else if (m_namespaces) {
+    if (m_namespaces) {
         CSSNamespace* ns = m_namespaces->namespaceForPrefix(prefix);
         if (ns)
             return ns->uri();

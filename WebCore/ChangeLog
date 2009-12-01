@@ -1,3 +1,15 @@
+2009-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for bug 32032, empty namespaces should be allowed in @namespace directives in CSS.
+
+        Added fast/css/namespaces/namespaces-empty.xml
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addNamespace):
+        (WebCore::CSSStyleSheet::determineNamespace):
+
 2009-12-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
