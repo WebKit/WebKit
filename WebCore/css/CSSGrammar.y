@@ -580,7 +580,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 
 maybe_ns_prefix:
 /* empty */ { $$.characters = 0; }
-| IDENT WHITESPACE { $$ = $1; }
+| IDENT maybe_space { $$ = $1; }
 ;
 
 string_or_uri:

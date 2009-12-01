@@ -1,3 +1,14 @@
+2009-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by David Kilzer.
+
+        @namespace directives need to use "maybe_space" in the "maybe_ns_prefix" portion of the grammar to match
+        the spec.  Not doing so prevent comments from being used immmediately after the namespace prefix.
+
+        Added fast/css/namespaces-comments.xml
+
+        * css/CSSGrammar.y:
+
 2009-12-01  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Timothy Hatcher.
