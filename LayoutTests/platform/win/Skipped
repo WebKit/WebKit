@@ -707,3 +707,6 @@ plugins/qt-qwidget-plugin.html
 # Failure introduced by http://trac.webkit.org/changeset/51429
 # hamaji will look into this.
 editing/selection/last-empty-inline.html
+
+# Some versions of CFNetwork override dump-post.pl's MIME type <rdar://problem/7434354>
+http/tests/plugins/post-url-file.html

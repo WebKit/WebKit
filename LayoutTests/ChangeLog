@@ -1,3 +1,11 @@
+2009-12-01  Adam Roben  <aroben@apple.com>
+
+        Skip a test that fails with some versions of CFNetwork on Windows
+
+        Rubber-stamped by Brady Eidson.
+
+        * platform/win/Skipped: Skip http/tests/plugins/post-url-file.html.
+
 2009-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Enabling WebSocket tests on Windows again - let's see what errors get logged.
