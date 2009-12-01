@@ -205,6 +205,12 @@
 #endif
 #endif
 
+/* Makes PLATFORM(WIN) default to PLATFORM(CAIRO) */
+/* FIXME: This should be changed from a blacklist to a whitelist */
+#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !PLATFORM(WINCE) && !PLATFORM(HAIKU) && !PLATFORM(ANDROID)
+#define WTF_PLATFORM_CAIRO 1
+#endif
+
 /* CPU */
 
 /* PLATFORM(PPC) */
