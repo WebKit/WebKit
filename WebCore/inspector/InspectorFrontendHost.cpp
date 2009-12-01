@@ -40,6 +40,7 @@
 #include "InspectorResource.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 

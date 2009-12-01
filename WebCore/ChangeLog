@@ -1,3 +1,9 @@
+2009-12-01  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Not reviewed: chromium build fix, added missing import.
+
+        * inspector/InspectorFrontendHost.cpp:
+
 2009-12-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fix windows build via unexcluding generated files from
