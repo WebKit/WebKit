@@ -432,11 +432,4 @@ void ScriptController::updateDocument()
     m_proxy->updateDocument();
 }
 
-// FIXME: Stub method so we compile.  Currently called from FrameLoader.cpp.
-DOMWrapperWorld* mainThreadNormalWorld()
-{
-    DEFINE_STATIC_LOCAL(DOMWrapperWorld, oneWorld, ());
-    return &oneWorld;
-}
-
 } // namespace WebCore

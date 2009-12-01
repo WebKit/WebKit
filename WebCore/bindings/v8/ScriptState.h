@@ -33,8 +33,10 @@
 
 #include <v8.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
+    class DOMWrapperWorld;
     class Node;
     class Page;
     class Frame;
@@ -65,8 +67,17 @@ namespace WebCore {
         v8::Persistent<v8::Context> m_context;
     };
 
-    ScriptState* scriptStateFromNode(Node*);
-    ScriptState* scriptStateFromPage(Page*);
+    ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
+    ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
+
+    DOMWrapperWorld* mainThreadNormalWorld();
+    inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
+    inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
+
+    // Dummy class to avoid a bunch of ifdef's in WebCore.
+    class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+    };
+
 }
 
 #endif // ScriptState_h

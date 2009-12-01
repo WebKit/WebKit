@@ -1,3 +1,22 @@
+2009-11-30  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed Chromium build fix introduced by r51212
+
+        Fix scriptStateFromNode and ScriptStateFromPage to take DOMWrapperWorld
+        as the first argument.
+        Move mainThreadNormalWorld() to ScriptState.{h,cpp}.
+        Add debuggerWorld() and pluginWorld() in ScriptState.h.
+
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::scriptStateFromNode):
+        (WebCore::scriptStateFromPage):
+        (WebCore::mainThreadNormalWorld):
+        * bindings/v8/ScriptState.h:
+        (WebCore::debuggerWorld):
+        (WebCore::pluginWorld):
+
 2009-11-30  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

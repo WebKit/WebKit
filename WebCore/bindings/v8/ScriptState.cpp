@@ -58,7 +58,7 @@ ScriptState::~ScriptState()
     m_context.Clear();
 }
 
-ScriptState* scriptStateFromNode(Node* node)
+ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)
 {
     // This should be never reached with V8 bindings (WebKit only uses it
     // for non-JS bindings)
@@ -66,11 +66,18 @@ ScriptState* scriptStateFromNode(Node* node)
     return 0;
 }
 
-ScriptState* scriptStateFromPage(Page* page)
+ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
 {
     // This should be never reached with V8 bindings.
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+// FIXME: Stub method so we compile.  Currently called from FrameLoader.cpp.
+DOMWrapperWorld* mainThreadNormalWorld()
+{
+    DEFINE_STATIC_LOCAL(DOMWrapperWorld, oneWorld, ());
+    return &oneWorld;
 }
 
 }
