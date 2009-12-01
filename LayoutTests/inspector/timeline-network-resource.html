@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+var scriptUrl = "timeline-network-resource.js";
+
+function runAfterScriptIsEvaluated(continuation)
+{
+    function step()
+    {
+        if (!window.scriptEvaluated)
+            setTimeout(step, 100);
+        else
+            continuation();
+    }
+    setTimeout(step, 100);
+}
+
+function printRecord(record)
+{
+    output("");
+    printTimelineRecordProperties(record);
+}
+
+function printSend(record)
+{
+    printRecord(record);
+    window.resourceId = record.data.identifier;
+    if (record.data.url === undefined) 
+        output("* No 'url' property in record");
+    else if (record.data.url.indexOf(scriptUrl) === -1)
+        output("* Didn't find URL: " + scriptUrl);
+}
+
+function printReceive(record)
+{
+    printRecord(record);
+    if (window.resourceId !== record.data.identifier)
+        output("Didn't find matching resourceId: " + window.resourceId);
+    if (record.data.statusCode !== 0)
+        output("Response received status: " + record.data.statusCode);
+}
+
+function printFinish(record)
+{
+    printRecord(record);
+    if (window.resourceId !== record.data.identifier)
+        output("Didn't find matching resourceId: " + window.resourceId);
+    if (record.data.didFail)
+        output("Request failed.");
+}
+
+function doit() 
+{
+    if (window.layoutTestController)
+        layoutTestController.setTimelineProfilingEnabled(true);
+
+    var script = document.createElement("script");
+    script.src = scriptUrl;
+    document.body.appendChild(script);
+    runAfterScriptIsEvaluated(function() {
+        printTimelineRecords(null, null, function(record) {
+            if (record.type === timelineAgentRecordType["ResourceSendRequest"])
+                printSend(record);
+     
+            else if (record.type === timelineAgentRecordType["ResourceReceiveResponse"])
+                printReceive(record);
+            else if (record.type === timelineAgentRecordType["ResourceFinish"])
+                printFinish(record);
+        });
+    });
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests the Timeline API instrumentation of a network resource load
+</p>
+</body>
+</html>

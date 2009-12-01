@@ -5,6 +5,7 @@ var timelineNonDeterministicProps = {
     children : 1,
     endTime : 1, 
     height : 1,
+    identifier : 1,
     startTime : 1,
     width : 1,
     url : 1
@@ -27,10 +28,11 @@ function printTimelineRecords(performActions, typeName, formatter)
             output("Error fetching Timeline results: " + timelineRecords);
         else {
             for (var i = 0; i < timelineRecords.length; ++i) {
-                if (typeName && timelineRecords[i].type === timelineAgentRecordType[typeName])
-                    printTimelineRecordProperties(timelineRecords[i]);
+                var record = timelineRecords[i];
+                if (typeName && record.type === timelineAgentRecordType[typeName])
+                    printTimelineRecordProperties(record);
                 if (formatter)
-                    formatter(timelineRecords[i]);
+                    formatter(record);
             }
         }
         if (window.layoutTestController)
