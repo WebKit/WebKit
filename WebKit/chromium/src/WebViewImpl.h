@@ -116,9 +116,11 @@ public:
     virtual void setFocusedFrame(WebFrame* frame);
     virtual void setInitialFocus(bool reverse);
     virtual void clearFocusedNode();
-    virtual void zoomIn(bool textOnly);
-    virtual void zoomOut(bool textOnly);
-    virtual void zoomDefault();
+    virtual void zoomIn(bool textOnly);   // DEPRECATED
+    virtual void zoomOut(bool textOnly);  // DEPRECATED
+    virtual void zoomDefault();           // DEPRECATED
+    virtual int zoomLevel();
+    virtual int setZoomLevel(bool textOnly, int zoomLevel);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
         const WebPoint& location);
@@ -337,8 +339,8 @@ private:
     // dragged by the time a drag is initiated.
     WebPoint m_lastMouseDownPoint;
 
-    // Keeps track of the current text zoom level.  0 means no zoom, positive
-    // values mean larger text, negative numbers mean smaller.
+    // Keeps track of the current zoom level.  0 means no zoom, positive numbers
+    // mean zoom in, negative numbers mean zoom out.
     int m_zoomLevel;
 
     bool m_contextMenuAllowed;

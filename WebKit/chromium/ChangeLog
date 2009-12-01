@@ -1,3 +1,17 @@
+2009-12-01  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Simplify zoom-related APIs and add a zoom level getter,
+        part one: Add new APIs.  (Old APIs will be removed in a second pass.)
+        https://bugs.webkit.org/show_bug.cgi?id=31893
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::zoomLevel):
+        (WebKit::WebViewImpl::setZoomLevel):
+        * src/WebViewImpl.h:
+
 2009-12-01  Xiyuan Xia  <xiyuan@chromium.org>
 
         Reviewed by Darin Fisher.
