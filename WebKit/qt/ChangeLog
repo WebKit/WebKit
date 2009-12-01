@@ -1,3 +1,16 @@
+2009-12-01  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31898
+
+        Makes QtLauncher default to the http scheme for URLs.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::changeLocation):
+        (main):
+
 2009-11-30  Abhinav Mithal  <abhinav.mithal@nokia.com>
 
         Reviewed by Simon Hausmann.
