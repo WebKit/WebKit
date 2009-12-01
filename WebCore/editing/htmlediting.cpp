@@ -289,7 +289,7 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
     while (p.node() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionInParentAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
     
-    if (p.node() && !p.node()->isDescendantOf(highestRoot))
+    if (p.node() && p.node() != highestRoot && !p.node()->isDescendantOf(highestRoot))
         return VisiblePosition();
     
     return VisiblePosition(p);
@@ -310,7 +310,7 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
     while (p.node() && !isEditablePosition(p) && p.node()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.node()) ? positionInParentBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
     
-    if (p.node() && !p.node()->isDescendantOf(highestRoot))
+    if (p.node() && p.node() != highestRoot && !p.node()->isDescendantOf(highestRoot))
         return VisiblePosition();
     
     return VisiblePosition(p);

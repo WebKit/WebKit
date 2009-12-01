@@ -2366,9 +2366,20 @@ RenderBoxModelObject* RenderObject::offsetParent() const
 
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
 {
-    // If this is a non-anonymous renderer, then it's simple.
-    if (Node* node = this->node())
+    // If this is a non-anonymous renderer in an editable area, then it's simple.
+    if (Node* node = this->node()) {
+        if (!node->isContentEditable()) {
+            // If it can be found, we prefer a visually equivalent position that is editable. 
+            Position position(node, offset);
+            Position candidate = position.downstream(Position::CanCrossEditingBoundary);
+            if (candidate.node()->isContentEditable())
+                return VisiblePosition(candidate, affinity);
+            candidate = position.upstream(Position::CanCrossEditingBoundary);
+            if (candidate.node()->isContentEditable())
+                return VisiblePosition(candidate, affinity);
+        }
         return VisiblePosition(node, offset, affinity);
+    }
 
     // We don't want to cross the boundary between editable and non-editable
     // regions of the document, but that is either impossible or at least

@@ -1,3 +1,20 @@
+2009-11-30  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Can focus but not type into content editable block that contains only non-editable content.
+        <rdar://problem/5982901>
+        https://bugs.webkit.org/show_bug.cgi?id=31750
+
+        * editing/selection/5825350-1-expected.txt:
+        * editing/selection/5825350-1.html: Modified to use caret rectangle.
+        * editing/selection/5825350-2-expected.txt:
+        * editing/selection/5825350-2.html: Modified to use caret rectangle.
+        * editing/selection/mixed-editability-10-expected.txt: Added.
+        * editing/selection/mixed-editability-10.html: Added.
+        * platform/mac/editing/deleting/5390681-2-expected.txt: Re-baselined
+        to account for the new possible caret position.
+
 2009-11-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver Hunt.

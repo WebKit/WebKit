@@ -1,3 +1,49 @@
+2009-11-30  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Can focus but not type into content editable block that contains only non-editable content.
+        <rdar://problem/5982901>
+        https://bugs.webkit.org/show_bug.cgi?id=31750
+        
+        The goal is to change the way we choose a visible position
+        after hit detection, by preferring a visually equivalent editable
+        position if available. By doing this, it is possible to add content
+        to an editable block that initially contains only non editable elements.
+
+        Test: editing/selection/mixed-editability-10.html
+
+        * WebCore.base.exp: Changed to match the new signature of downstream
+        and upstream in the Position class.
+        * dom/Position.cpp:
+        (WebCore::Position::atEditingBoundary): Added.
+        (WebCore::Position::upstream): Modified to allow to cross the boundary
+        between editable and non editable content if required.
+        (WebCore::Position::downstream): Modified to allow to cross the boundary
+        between editable and non editable content if required.
+        (WebCore::Position::isCandidate): Modified to qualify as candidates positions
+        that are at the editability boundary.
+        (WebCore::Position::getInlineBoxAndOffset): Modified to retrieve the inline box
+        to be used in calculating the caret rectangle.
+        * dom/Position.h:
+        (WebCore::Position::):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::atEditingBoundary): Added.
+        (WebCore::PositionIterator::isCandidate): Modified to qualify as candidates positions
+        that are at the editability boundary.
+        * dom/PositionIterator.h:
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot): Modified to accept not only
+        descendants of the editable container, but the container itself.
+        (WebCore::lastEditablePositionBeforePositionInRoot): Modified to accept not only
+        descendants of the editable container, but the container itself.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition): Added logic to prefer an editable position,
+        if available.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::isAllCollapsibleWhitespace): Added.
+        * rendering/RenderText.h:
+
 2009-11-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, add header needed for wx build.
