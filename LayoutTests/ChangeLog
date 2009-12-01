@@ -1,3 +1,12 @@
+2009-12-01  Adam Roben  <aroben@apple.com>
+
+        Skip more tests that fail with specific versions of CFNetwork on
+        Windows
+
+        Rubber-stamped in advance by Brady Eidson.
+
+        * platform/win/Skipped:
+
 2009-12-01  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Pavel Feldman.

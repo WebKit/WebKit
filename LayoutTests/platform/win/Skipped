@@ -708,5 +708,13 @@ plugins/qt-qwidget-plugin.html
 # hamaji will look into this.
 editing/selection/last-empty-inline.html
 
-# Some versions of CFNetwork override dump-post.pl's MIME type <rdar://problem/7434354>
+# Some versions of CFNetwork override CGI scripts' Content-Type headers <rdar://problem/7434354>
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
+http/tests/loading/redirect-with-no-location-crash.html
+http/tests/misc/text-refresh.html
+http/tests/navigation/back-to-slow-frame.html
+http/tests/navigation/multiple-back-forward-entries.html
+http/tests/navigation/reload-subframe-frame.html
+http/tests/navigation/reload-subframe-iframe.html
 http/tests/plugins/post-url-file.html
+inspector/timeline-network-resource.html
