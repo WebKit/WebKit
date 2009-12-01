@@ -1,3 +1,16 @@
+2009-12-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Changed mallocs to fastMallocs and frees to fastFrees in GraphicsContext3D. Also added error returns
+        https://bugs.webkit.org/show_bug.cgi?id=30778
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::imageToTexture):
+
 2009-12-01  Mads Ager  <ager@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -1,12 +1,31 @@
 description("Test of get calls against GL objects like getBufferParameter, etc.");
 
 var gl = create3DContext();
+
+var errorVert = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(errorVert, "I am a bad vertex shader");
+gl.compileShader(errorVert);
+
+var errorFrag = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(errorFrag, "I am a bad fragment shader");
+gl.compileShader(errorFrag);
+
 var standardVert = loadStandardVertexShader(gl);
 var standardFrag = loadStandardFragmentShader(gl);
 var standardProgram = gl.createProgram();
 gl.attachShader(standardProgram, standardVert);
 gl.attachShader(standardProgram, standardFrag);
 gl.linkProgram(standardProgram);
+
+// Test program and shader gets
+var parseError = "ERROR: 0:1: 'I' : syntax error syntax error\nERROR: Parser found no code to compile in source strings.\n";
+var errorVertString = "I am a bad vertex shader\n";
+var errorFragString = "I am a bad fragment shader\n";
+shouldBe('gl.getProgramInfoLog(standardProgram)', '""');
+shouldBe('gl.getShaderInfoLog(errorVert)', 'parseError');
+shouldBe('gl.getShaderInfoLog(errorFrag)', 'parseError');
+shouldBe('gl.getShaderSource(errorVert)', 'errorVertString');
+shouldBe('gl.getShaderSource(errorFrag)', 'errorFragString');
 
 // Test getBufferParameter
 var buffer = gl.createBuffer();

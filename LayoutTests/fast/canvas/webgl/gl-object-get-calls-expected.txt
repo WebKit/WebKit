@@ -2,6 +2,11 @@ Test of get calls against GL objects like getBufferParameter, etc.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+PASS gl.getProgramInfoLog(standardProgram) is ""
+PASS gl.getShaderInfoLog(errorVert) is parseError
+PASS gl.getShaderInfoLog(errorFrag) is parseError
+PASS gl.getShaderSource(errorVert) is errorVertString
+PASS gl.getShaderSource(errorFrag) is errorFragString
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) is 16
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE) is gl.DYNAMIC_DRAW
 PASS gl.getError() is 0
