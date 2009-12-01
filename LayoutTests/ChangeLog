@@ -1,3 +1,9 @@
+2009-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Enabling WebSocket tests on Windows again - let's see what errors get logged.
+
+        * platform/win/Skipped:
+
 2009-12-01  Adam Roben  <aroben@apple.com>
 
         Add a timing-out test to the Skipped file on Windows
