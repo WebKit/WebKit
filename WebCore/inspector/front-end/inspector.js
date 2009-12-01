@@ -77,7 +77,7 @@ var WebInspector = {
     get platform()
     {
         if (!("_platform" in this))
-            this._platform = InspectorController.platform();
+            this._platform = InspectorFrontendHost.platform();
 
         return this._platform;
     },
@@ -85,7 +85,7 @@ var WebInspector = {
     get port()
     {
         if (!("_port" in this))
-            this._port = InspectorController.port();
+            this._port = InspectorFrontendHost.port();
 
         return this._port;
     },
@@ -165,13 +165,13 @@ var WebInspector = {
 
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] == x)
-                InspectorController.storeLastActivePanel(panelName);
+                InspectorBackend.storeLastActivePanel(panelName);
         }
     },
 
     _createPanels: function()
     {
-        var hiddenPanels = (InspectorController.hiddenPanels() || "").split(',');
+        var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
         if (hiddenPanels.indexOf("elements") === -1)
             this.panels.elements = new WebInspector.ElementsPanel();
         if (hiddenPanels.indexOf("resources") === -1)
@@ -193,15 +193,15 @@ var WebInspector = {
 
     _loadPreferences: function()
     {
-        var colorFormat = InspectorController.setting("color-format");
+        var colorFormat = InspectorFrontendHost.setting("color-format");
         if (colorFormat)
             Preferences.colorFormat = colorFormat;
 
-        var eventListenersFilter = InspectorController.setting("event-listeners-filter");
+        var eventListenersFilter = InspectorFrontendHost.setting("event-listeners-filter");
         if (eventListenersFilter)
             Preferences.eventListenersFilter = eventListenersFilter;
 
-        var resourcesLargeRows = InspectorController.setting("resources-large-rows");
+        var resourcesLargeRows = InspectorFrontendHost.setting("resources-large-rows");
         if (typeof resourcesLargeRows !== "undefined")
             Preferences.resourcesLargeRows = resourcesLargeRows;
     },
@@ -224,12 +224,12 @@ var WebInspector = {
         var body = document.body;
 
         if (x) {
-            InspectorController.attach();
+            InspectorFrontendHost.attach();
             body.removeStyleClass("detached");
             body.addStyleClass("attached");
             dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
         } else {
-            InspectorController.detach();
+            InspectorFrontendHost.detach();
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
@@ -398,10 +398,10 @@ var WebInspector = {
         }
 
         if (this._hoveredDOMNode) {
-            InspectorController.highlightDOMNode(this._hoveredDOMNode.id);
+            InspectorBackend.highlightDOMNode(this._hoveredDOMNode.id);
             this.showingDOMNodeHighlight = true;
         } else {
-            InspectorController.hideDOMNodeHighlight();
+            InspectorBackend.hideDOMNodeHighlight();
             this.showingDOMNodeHighlight = false;
         }
     }
@@ -508,12 +508,12 @@ WebInspector.loaded = function()
     document.getElementById("close-button-left").addEventListener("click", this.close, true);
     document.getElementById("close-button-right").addEventListener("click", this.close, true);
 
-    InspectorController.loaded();
+    InspectorFrontendHost.loaded();
 }
 
 var windowLoaded = function()
 {
-    var localizedStringsURL = InspectorController.localizedStringsURL();
+    var localizedStringsURL = InspectorFrontendHost.localizedStringsURL();
     if (localizedStringsURL) {
         var localizedStringsScriptElement = document.createElement("script");
         localizedStringsScriptElement.addEventListener("load", WebInspector.loaded.bind(WebInspector), false);
@@ -546,7 +546,7 @@ WebInspector.dispatch = function() {
 
 WebInspector.windowUnload = function(event)
 {
-    InspectorController.windowUnloading();
+    InspectorFrontendHost.windowUnloading();
 }
 
 WebInspector.windowResize = function(event)
@@ -586,7 +586,7 @@ WebInspector.setAttachedWindow = function(attached)
 
 WebInspector.close = function(event)
 {
-    InspectorController.closeWindow();
+    InspectorFrontendHost.closeWindow();
 }
 
 WebInspector.documentClick = function(event)
@@ -909,14 +909,14 @@ WebInspector.toolbarDrag = function(event)
     if (WebInspector.attached) {
         var height = window.innerHeight - (event.screenY - toolbar.lastScreenY);
 
-        InspectorController.setAttachedWindowHeight(height);
+        InspectorFrontendHost.setAttachedWindowHeight(height);
     } else {
         var x = event.screenX - toolbar.lastScreenX;
         var y = event.screenY - toolbar.lastScreenY;
 
         // We cannot call window.moveBy here because it restricts the movement
         // of the window at the edges.
-        InspectorController.moveByUnrestricted(x, y);
+        InspectorFrontendHost.moveWindowBy(x, y);
     }
 
     toolbar.lastScreenX = event.screenX;
@@ -1640,7 +1640,7 @@ WebInspector.UIString = function(string)
         string = window.localizedStrings[string];
     else {
         if (!(string in this.missingLocalizedStrings)) {
-            if (!WebInspector.InspectorControllerStub)
+            if (!WebInspector.InspectorBackendStub)
                 console.error("Localized string \"" + string + "\" not found.");
             this.missingLocalizedStrings[string] = true;
         }

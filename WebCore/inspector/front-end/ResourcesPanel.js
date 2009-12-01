@@ -349,7 +349,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         this.summaryBar.reset();
 
-        if (InspectorController.resourceTrackingEnabled()) {
+        if (InspectorBackend.resourceTrackingEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Resource tracking enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             this.largerResourcesButton.visible = true;
@@ -616,7 +616,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         this.itemsTreeElement.smallChildren = !this.itemsTreeElement.smallChildren;
         Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
-        InspectorController.setSetting("resources-large-rows", Preferences.resourcesLargeRows);
+        InspectorFrontendHost.setSetting("resources-large-rows", Preferences.resourcesLargeRows);
 
         if (this.itemsTreeElement.smallChildren) {
             this.itemsGraphsElement.addStyleClass("small");
@@ -675,21 +675,21 @@ WebInspector.ResourcesPanel.prototype = {
 
     _enableResourceTracking: function()
     {
-        if (InspectorController.resourceTrackingEnabled())
+        if (InspectorBackend.resourceTrackingEnabled())
             return;
         this._toggleResourceTracking(this.panelEnablerView.alwaysEnabled);
     },
 
     _toggleResourceTracking: function(optionalAlways)
     {
-        if (InspectorController.resourceTrackingEnabled()) {
+        if (InspectorBackend.resourceTrackingEnabled()) {
             this.largerResourcesButton.visible = false;
             this.sortingSelectElement.visible = false;
-            InspectorController.disableResourceTracking(true);
+            InspectorBackend.disableResourceTracking(true);
         } else {
             this.largerResourcesButton.visible = true;
             this.sortingSelectElement.visible = true;
-            InspectorController.enableResourceTracking(!!optionalAlways);
+            InspectorBackend.enableResourceTracking(!!optionalAlways);
         }
     },
 

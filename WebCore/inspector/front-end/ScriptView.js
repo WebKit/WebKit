@@ -59,7 +59,7 @@ WebInspector.ScriptView.prototype = {
 
         this.attach();
 
-        if (!InspectorController.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element))
+        if (!InspectorFrontendHost.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element))
             return;
 
         delete this._frameNeedsSetup;

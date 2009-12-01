@@ -285,7 +285,7 @@ WebInspector.ConsoleView.prototype = {
     clearMessages: function(clearInspectorController)
     {
         if (clearInspectorController)
-            InspectorController.clearMessages(false);
+            InspectorBackend.clearMessages(false);
         if (WebInspector.panels.resources)
             WebInspector.panels.resources.clearMessages();
 

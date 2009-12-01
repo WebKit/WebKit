@@ -246,7 +246,9 @@ IDL_BINDINGS += \
 	WebCore/html/ValidityState.idl \
 	WebCore/html/VoidCallback.idl \
 	WebCore/inspector/JavaScriptCallFrame.idl \
+	WebCore/inspector/InjectedScriptHost.idl \
 	WebCore/inspector/InspectorBackend.idl \
+	WebCore/inspector/InspectorFrontendHost.idl \
 	WebCore/notifications/Notification.idl \
 	WebCore/notifications/NotificationCenter.idl \
 	WebCore/page/BarInfo.idl \
@@ -398,7 +400,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSImageConstructor.h \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
-	WebCore/bindings/js/JSInspectorBackendCustom.cpp \
+	WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
+	WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.h \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
@@ -1169,6 +1172,8 @@ webcore_sources += \
 	WebCore/icu/unicode/uversion.h \
 	WebCore/inspector/ConsoleMessage.cpp \
 	WebCore/inspector/ConsoleMessage.h \
+	WebCore/inspector/InjectedScriptHost.cpp \
+	WebCore/inspector/InjectedScriptHost.h \
 	WebCore/inspector/InspectorBackend.cpp \
 	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
@@ -1182,6 +1187,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorController.h \
 	WebCore/inspector/InspectorFrontend.cpp \
 	WebCore/inspector/InspectorFrontend.h \
+	WebCore/inspector/InspectorFrontendHost.cpp \
+	WebCore/inspector/InspectorFrontendHost.h \
 	WebCore/inspector/InspectorResource.cpp \
 	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \

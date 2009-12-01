@@ -267,7 +267,7 @@ WebInspector.CookieItemsView.prototype = {
     _deleteCookieCallback: function(node)
     {
         var cookie = node.cookie;
-        InspectorController.deleteCookie(cookie.name, this._cookieDomain);
+        InspectorBackend.deleteCookie(cookie.name, this._cookieDomain);
         this.update();
     },
 

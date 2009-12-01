@@ -28,51 +28,84 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TestController = function(callId)
+if (!window.InspectorFrontendHost) {
+
+WebInspector.InspectorFrontendHostStub = function()
 {
-    this._callId = callId;
-    this._waitUntilDone = false;
+    this._attachedWindowHeight = 0;
+    this._settings = {};
 }
 
-WebInspector.TestController.prototype = {
-    waitUntilDone: function()
+WebInspector.InspectorFrontendHostStub.prototype = {
+    platform: function()
     {
-        this._waitUntilDone = true;
+        return "mac-leopard";
     },
 
-    notifyDone: function(result)
+    port: function()
     {
-        var message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
-        InspectorBackend.didEvaluateForTestInFrontend(this._callId, message);
+        return "unknown";
     },
 
-    runAfterPendingDispatches: function(callback)
+    closeWindow: function()
     {
-        if (WebInspector.pendingDispatches === 0) {
-            callback();
-            return;
-        }
-        setTimeout(this.runAfterPendingDispatches.bind(this), 0, callback);
+        this._windowVisible = false;
+    },
+
+    attach: function()
+    {
+    },
+
+    detach: function()
+    {
+    },
+
+    search: function(sourceRow, query)
+    {
+    },
+
+    setAttachedWindowHeight: function(height)
+    {
+    },
+
+    moveWindowBy: function(x, y)
+    {
+    },
+
+    addResourceSourceToFrame: function(identifier, element)
+    {
+    },
+
+    addSourceToFrame: function(mimeType, source, element)
+    {
+        return false;
+    },
+
+    loaded: function()
+    {
+    },
+
+    localizedStringsURL: function()
+    {
+        return undefined;
+    },
+
+    hiddenPanels: function()
+    {
+        return "";
+    },
+
+    setSetting: function(setting, value)
+    {
+        this._settings[setting] = value;
+    },
+
+    setting: function(setting)
+    {
+        return this._settings[setting];
     }
 }
 
-WebInspector.evaluateForTestInFrontend = function(callId, script)
-{
-    var controller = new WebInspector.TestController(callId);
-    function invokeMethod()
-    {
-        try {
-            var result;
-            if (window[script] && typeof window[script] === "function")
-                result = window[script].call(WebInspector, controller);
-            else
-                result = window.eval(script);
+InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
 
-            if (!controller._waitUntilDone)
-                controller.notifyDone(result);
-        } catch (e) {
-            controller.notifyDone(e.toString());
-        }
-    }
-    controller.runAfterPendingDispatches(invokeMethod);
 }

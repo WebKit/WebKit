@@ -477,29 +477,23 @@ namespace WebCore {
         DECLARE_CALLBACK(TreeWalkerNextSibling);
         DECLARE_CALLBACK(TreeWalkerPreviousSibling);
 
-        DECLARE_CALLBACK(InspectorBackendHighlightDOMNode);
-        DECLARE_CALLBACK(InspectorBackendAddResourceSourceToFrame);
-        DECLARE_CALLBACK(InspectorBackendAddSourceToFrame);
-        DECLARE_CALLBACK(InspectorBackendSearch);
-        DECLARE_CALLBACK(InspectorBackendSetting);
-        DECLARE_CALLBACK(InspectorBackendDatabaseForId);
-        DECLARE_CALLBACK(InspectorBackendInspectedWindow);
-        DECLARE_CALLBACK(InspectorBackendSetSetting);
-        DECLARE_CALLBACK(InspectorBackendCurrentCallFrame);
-        DECLARE_CALLBACK(InspectorBackendDebuggerEnabled);
-        DECLARE_CALLBACK(InspectorBackendPauseOnExceptions);
-        DECLARE_CALLBACK(InspectorBackendProfilerEnabled);
-        DECLARE_CALLBACK(InspectorBackendNodeForId);
-        DECLARE_CALLBACK(InspectorBackendWrapObject);
-        DECLARE_CALLBACK(InspectorBackendUnwrapObject);
-        DECLARE_CALLBACK(InspectorBackendPushNodePathToFrontend);
+        DECLARE_CALLBACK(InjectedScriptHostInspectedWindow);
+        DECLARE_CALLBACK(InjectedScriptHostNodeForId);
+        DECLARE_CALLBACK(InjectedScriptHostWrapObject);
+        DECLARE_CALLBACK(InjectedScriptHostUnwrapObject);
+        DECLARE_CALLBACK(InjectedScriptHostPushNodePathToFrontend);
+        DECLARE_CALLBACK(InjectedScriptHostWrapCallback);
 #if ENABLE(DATABASE)
-        DECLARE_CALLBACK(InspectorBackendSelectDatabase);
+        DECLARE_CALLBACK(InjectedScriptHostSelectDatabase);
+        DECLARE_CALLBACK(InjectedScriptHostDatabaseForId);
 #endif
 #if ENABLE(DOM_STORAGE)
-        DECLARE_CALLBACK(InspectorBackendSelectDOMStorage);
+        DECLARE_CALLBACK(InjectedScriptHostSelectDOMStorage);
 #endif
-        DECLARE_CALLBACK(InspectorBackendWrapCallback);
+
+        DECLARE_CALLBACK(InspectorFrontendHostSearch);
+        DECLARE_CALLBACK(InspectorFrontendHostSetting);
+        DECLARE_CALLBACK(InspectorFrontendHostSetSetting);
 
         DECLARE_CALLBACK(ConsoleProfile);
         DECLARE_CALLBACK(ConsoleProfileEnd);

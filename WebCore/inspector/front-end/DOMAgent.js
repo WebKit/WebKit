@@ -327,25 +327,25 @@ WebInspector.DOMAgent.prototype = {
             callback(parent.children);
         }
         var callId = WebInspector.Callback.wrap(mycallback);
-        InspectorController.getChildNodes(callId, parent.id);
+        InspectorBackend.getChildNodes(callId, parent.id);
     },
 
     setAttributeAsync: function(node, name, value, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.setAttribute(WebInspector.Callback.wrap(mycallback), node.id, name, value);
+        InspectorBackend.setAttribute(WebInspector.Callback.wrap(mycallback), node.id, name, value);
     },
 
     removeAttributeAsync: function(node, name, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.removeAttribute(WebInspector.Callback.wrap(mycallback), node.id, name);
+        InspectorBackend.removeAttribute(WebInspector.Callback.wrap(mycallback), node.id, name);
     },
 
     setTextNodeValueAsync: function(node, text, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.setTextNodeValue(WebInspector.Callback.wrap(mycallback), node.id, text);
+        InspectorBackend.setTextNodeValue(WebInspector.Callback.wrap(mycallback), node.id, text);
     },
 
     _didApplyDomChange: function(node, callback, success)
@@ -447,7 +447,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback, cookieDomain)
             callback(cookies, true);
     }
     var callId = WebInspector.Callback.wrap(mycallback);
-    InspectorController.getCookies(callId, cookieDomain);
+    InspectorBackend.getCookies(callId, cookieDomain);
 }
 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
@@ -477,7 +477,7 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
         return;
 
     var callId = WebInspector.Callback.wrap(callback);
-    InspectorController.getEventListenersForNode(callId, node.id);
+    InspectorBackend.getEventListenersForNode(callId, node.id);
 }
 
 WebInspector.CSSStyleDeclaration = function(payload)

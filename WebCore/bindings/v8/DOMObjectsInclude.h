@@ -257,7 +257,9 @@
 #endif // XSLT
 
 #if ENABLE(INSPECTOR)
+#include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
+#include "InspectorFrontendHost.h"
 #endif // INSPECTOR
 
 namespace WebCore {

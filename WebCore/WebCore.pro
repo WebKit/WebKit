@@ -466,7 +466,9 @@ IDL_BINDINGS += \
     html/TimeRanges.idl \
     html/ValidityState.idl \
     html/VoidCallback.idl \
+    inspector/InjectedScriptHost.idl \
     inspector/InspectorBackend.idl \
+    inspector/InspectorFrontendHost.idl \
     inspector/JavaScriptCallFrame.idl \
     loader/appcache/DOMApplicationCache.idl \
     page/BarInfo.idl \
@@ -719,8 +721,9 @@ SOURCES += \
     bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSImageConstructor.cpp \
     bindings/js/JSImageDataCustom.cpp \
+    bindings/js/JSInjectedScriptHostCustom.cpp \
     bindings/js/JSInspectedObjectWrapper.cpp \
-    bindings/js/JSInspectorBackendCustom.cpp \
+    bindings/js/JSInspectorFrontendHostCustom.cpp \
     bindings/js/JSInspectorCallbackWrapper.cpp \
     bindings/js/JSLocationCustom.cpp \
     bindings/js/JSNamedNodeMapCustom.cpp \
@@ -1075,12 +1078,14 @@ SOURCES += \
     html/PreloadScanner.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
+    inspector/InjectedScriptHost.cpp \
     inspector/InspectorBackend.cpp \
     inspector/InspectorController.cpp \
     inspector/InspectorDatabaseResource.cpp \
     inspector/InspectorDOMAgent.cpp \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorFrontend.cpp \
+    inspector/InspectorFrontendHost.cpp \
     inspector/InspectorResource.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/TimelineRecordFactory.cpp \
@@ -1757,11 +1762,13 @@ HEADERS += \
     html/TimeRanges.h \
     html/ValidityState.h \
     inspector/ConsoleMessage.h \
+    inspector/InjectedScriptHost.h \
     inspector/InspectorBackend.h \
     inspector/InspectorController.h \
     inspector/InspectorDatabaseResource.h \
     inspector/InspectorDOMStorageResource.h \
     inspector/InspectorFrontend.h \
+    inspector/InspectorFrontendHost.h \
     inspector/InspectorResource.h \
     inspector/InspectorTimelineAgent.h \
     inspector/JavaScriptCallFrame.h \

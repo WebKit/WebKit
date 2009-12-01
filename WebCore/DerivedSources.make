@@ -200,7 +200,9 @@ DOM_CLASSES = \
     HTMLVideoElement \
     History \
     ImageData \
+    InjectedScriptHost \
     InspectorBackend \
+    InspectorFrontendHost \
     KeyboardEvent \
     Location \
     Media \

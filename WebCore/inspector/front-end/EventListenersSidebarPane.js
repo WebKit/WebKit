@@ -108,7 +108,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
         Preferences.eventListenersFilter = selectedOption.value;
 
-        InspectorController.setSetting("event-listeners-filter", Preferences.eventListenersFilter);
+        InspectorFrontendHost.setSetting("event-listeners-filter", Preferences.eventListenersFilter);
 
         for (var i = 0; i < this.sections.length; ++i)
             this.sections[i].update();

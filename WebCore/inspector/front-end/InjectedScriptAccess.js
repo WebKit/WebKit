@@ -47,7 +47,7 @@ InjectedScriptAccess._installHandler = function(methodName, async)
                 WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage("Error dispatching: " + methodName));
         }
         var callId = WebInspector.Callback.wrap(myCallback);
-        InspectorController.dispatchOnInjectedScript(callId, methodName, argsString, !!async);
+        InspectorBackend.dispatchOnInjectedScript(callId, methodName, argsString, !!async);
     };
 }
 

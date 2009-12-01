@@ -36,7 +36,9 @@
 #include <runtime/JSLock.h>
 
 #if ENABLE(INSPECTOR)
+#include "JSInjectedScriptHost.h"
 #include "JSInspectorBackend.h"
+#include "JSInspectorFrontendHost.h"
 #endif
 
 using namespace JSC;
@@ -153,6 +155,22 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 
 #if ENABLE(INSPECTOR)
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorBackend* value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
+    return handleException(scriptState);
+}
+
+bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
+    return handleException(scriptState);
+}
+
+bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());

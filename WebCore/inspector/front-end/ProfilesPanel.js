@@ -400,7 +400,7 @@ WebInspector.ProfilesPanel.prototype = {
     _updateInterface: function()
     {
         // FIXME: Replace ProfileType-specific button visibility changes by a single ProfileType-agnostic "combo-button" visibility change.
-        if (InspectorController.profilerEnabled()) {
+        if (InspectorBackend.profilerEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Profiling enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             for (var typeId in this._profileTypeButtonsByIdMap)
@@ -419,17 +419,17 @@ WebInspector.ProfilesPanel.prototype = {
 
     _enableProfiling: function()
     {
-        if (InspectorController.profilerEnabled())
+        if (InspectorBackend.profilerEnabled())
             return;
         this._toggleProfiling(this.panelEnablerView.alwaysEnabled);
     },
 
     _toggleProfiling: function(optionalAlways)
     {
-        if (InspectorController.profilerEnabled())
-            InspectorController.disableProfiler(true);
+        if (InspectorBackend.profilerEnabled())
+            InspectorBackend.disableProfiler(true);
         else
-            InspectorController.enableProfiler(!!optionalAlways);
+            InspectorBackend.enableProfiler(!!optionalAlways);
     },
 
     _populateProfiles: function()
@@ -449,7 +449,7 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         var callId = WebInspector.Callback.wrap(populateCallback);
-        InspectorController.getProfileHeaders(callId);
+        InspectorBackend.getProfileHeaders(callId);
 
         delete this._shouldPopulateProfiles;
     },

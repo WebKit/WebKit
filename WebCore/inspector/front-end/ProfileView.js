@@ -95,7 +95,7 @@ WebInspector.CPUProfileView = function(profile)
     }
 
     var callId = WebInspector.Callback.wrap(profileCallback);
-    InspectorController.getProfile(callId, this.profile.uid);
+    InspectorBackend.getProfile(callId, this.profile.uid);
 }
 
 WebInspector.CPUProfileView.prototype = {
@@ -594,9 +594,9 @@ WebInspector.CPUProfileType.prototype = {
         this._recording = !this._recording;
 
         if (this._recording)
-            InspectorController.startProfiling();
+            InspectorBackend.startProfiling();
         else
-            InspectorController.stopProfiling();
+            InspectorBackend.stopProfiling();
     },
 
     setRecordingProfile: function(isProfiling)

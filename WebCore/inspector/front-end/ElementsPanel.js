@@ -58,8 +58,8 @@ WebInspector.ElementsPanel = function()
         this.panel.updateProperties();
         this.panel.updateEventListeners();
 
-        if (InspectorController.searchingForNode()) {
-            InspectorController.toggleNodeSearch();
+        if (InspectorBackend.searchingForNode()) {
+            InspectorBackend.toggleNodeSearch();
             this.panel.nodeSearchButton.toggled = false;
         }
         if (this._focusedDOMNode)
@@ -150,8 +150,8 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.hoveredDOMNode = null;
 
-        if (InspectorController.searchingForNode()) {
-            InspectorController.toggleNodeSearch();
+        if (InspectorBackend.searchingForNode()) {
+            InspectorBackend.toggleNodeSearch();
             this.nodeSearchButton.toggled = false;
         }
     },
@@ -169,8 +169,8 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.hoveredDOMNode = null;
 
-        if (InspectorController.searchingForNode()) {
-            InspectorController.toggleNodeSearch();
+        if (InspectorBackend.searchingForNode()) {
+            InspectorBackend.toggleNodeSearch();
             this.nodeSearchButton.toggled = false;
         }
 
@@ -181,11 +181,6 @@ WebInspector.ElementsPanel.prototype = {
 
         var domWindow = WebInspector.domAgent.domWindow;
         if (!domWindow || !domWindow.document || !domWindow.document.firstChild)
-            return;
-
-        // If the window isn't visible, return early so the DOM tree isn't built
-        // and mutation event listeners are not added.
-        if (!InspectorController.isWindowVisible())
             return;
 
         var inspectedRootDocument = domWindow.document;
@@ -1023,7 +1018,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         event.clipboardData.clearData();
         event.preventDefault();
-        InspectorController.copyNode(this.focusedDOMNode.id);
+        InspectorBackend.copyNode(this.focusedDOMNode.id);
     },
 
     rightSidebarResizerDragStart: function(event)
@@ -1052,9 +1047,9 @@ WebInspector.ElementsPanel.prototype = {
 
     _nodeSearchButtonClicked: function(event)
     {
-        InspectorController.toggleNodeSearch();
+        InspectorBackend.toggleNodeSearch();
 
-        this.nodeSearchButton.toggled = InspectorController.searchingForNode();
+        this.nodeSearchButton.toggled = InspectorBackend.searchingForNode();
     }
 }
 

@@ -235,7 +235,7 @@ WebInspector.ScriptsPanel.prototype = {
             view.visible = false;
         }
         if (this._attachDebuggerWhenShown) {
-            InspectorController.enableDebugger(false);
+            InspectorBackend.enableDebugger(false);
             delete this._attachDebuggerWhenShown;
         }
     },
@@ -293,7 +293,7 @@ WebInspector.ScriptsPanel.prototype = {
                     this.addBreakpoint(breakpoint);
                     
                     if (breakpoint.enabled)
-                        InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
+                        InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
                 }
             }
         }
@@ -421,7 +421,7 @@ WebInspector.ScriptsPanel.prototype = {
     attachDebuggerWhenShown: function()
     {
         if (this.element.parentElement) {
-            InspectorController.enableDebugger(false);
+            InspectorBackend.enableDebugger(false);
         } else {
             this._attachDebuggerWhenShown = true;
         }
@@ -444,7 +444,7 @@ WebInspector.ScriptsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        if (!InspectorController.debuggerEnabled()) {
+        if (!InspectorBackend.debuggerEnabled()) {
             this._paused = false;
             this._waitingToPause = false;
             this._stepping = false;
@@ -495,7 +495,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     canShowResource: function(resource)
     {
-        return resource && resource.scripts.length && InspectorController.debuggerEnabled();
+        return resource && resource.scripts.length && InspectorBackend.debuggerEnabled();
     },
 
     showScript: function(script, line)
@@ -606,7 +606,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var url = scriptOrResource.url || scriptOrResource.sourceURL;
         if (url && !options.initialLoad)
-            InspectorController.setSetting("LastViewedScriptFile", url);
+            InspectorFrontendHost.setSetting("LastViewedScriptFile", url);
 
         if (!options.fromBackForwardAction) {
             var oldIndex = this._currentBackForwardIndex;
@@ -709,7 +709,7 @@ WebInspector.ScriptsPanel.prototype = {
         else {
             // if not first item, check to see if this was the last viewed
             var url = option.representedObject.url || option.representedObject.sourceURL;
-            var lastURL = InspectorController.setting("LastViewedScriptFile");
+            var lastURL = InspectorFrontendHost.setting("LastViewedScriptFile");
             if (url && url === lastURL)
                 this._showScriptOrResource(option.representedObject, {initialLoad: true});
         }
@@ -781,7 +781,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _updatePauseOnExceptionsButton: function()
     {
-        if (InspectorController.pauseOnExceptions()) {
+        if (InspectorBackend.pauseOnExceptions()) {
             this.pauseOnExceptionButton.title = WebInspector.UIString("Don't pause on exceptions.");
             this.pauseOnExceptionButton.toggled = true;
         } else {
@@ -792,7 +792,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _updateDebuggerButtons: function()
     {
-        if (InspectorController.debuggerEnabled()) {
+        if (InspectorBackend.debuggerEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Debugging enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             this.pauseOnExceptionButton.visible = true;
@@ -871,7 +871,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _enableDebugging: function()
     {
-        if (InspectorController.debuggerEnabled())
+        if (InspectorBackend.debuggerEnabled())
             return;
         this._toggleDebugging(this.panelEnablerView.alwaysEnabled);
     },
@@ -882,15 +882,15 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        if (InspectorController.debuggerEnabled())
-            InspectorController.disableDebugger(true);
+        if (InspectorBackend.debuggerEnabled())
+            InspectorBackend.disableDebugger(true);
         else
-            InspectorController.enableDebugger(!!optionalAlways);
+            InspectorBackend.enableDebugger(!!optionalAlways);
     },
 
     _togglePauseOnExceptions: function()
     {
-        InspectorController.setPauseOnExceptions(!InspectorController.pauseOnExceptions());
+        InspectorBackend.setPauseOnExceptions(!InspectorBackend.pauseOnExceptions());
         this._updatePauseOnExceptionsButton();
     },
 
@@ -899,11 +899,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._paused) {
             this._paused = false;
             this._waitingToPause = false;
-            InspectorController.resumeDebugger();
+            InspectorBackend.resumeDebugger();
         } else {
             this._stepping = false;
             this._waitingToPause = true;
-            InspectorController.pauseInDebugger();
+            InspectorBackend.pauseInDebugger();
         }
 
         this._clearInterface();
@@ -916,7 +916,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorController.stepOverStatementInDebugger();
+        InspectorBackend.stepOverStatementInDebugger();
     },
 
     _stepIntoClicked: function()
@@ -926,7 +926,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorController.stepIntoStatementInDebugger();
+        InspectorBackend.stepIntoStatementInDebugger();
     },
 
     _stepOutClicked: function()
@@ -936,7 +936,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorController.stepOutOfFunctionInDebugger();
+        InspectorBackend.stepOutOfFunctionInDebugger();
     }
 }
 

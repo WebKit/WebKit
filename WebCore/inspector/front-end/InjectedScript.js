@@ -561,7 +561,7 @@ InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, obj
 {
     var result = {};
     try {
-        result.value = InspectorController.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression), objectGroup);
+        result.value = InjectedScriptHost.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression), objectGroup);
         // Handle error that might have happened while describing result.
         if (result.value.errorText) {
             result.value = result.value.errorText;
@@ -646,10 +646,10 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery)
 
             node[searchResultsProperty] = true;
             InjectedScript._searchResults.push(node);
-            var nodeId = InspectorController.pushNodePathToFrontend(node, false);
+            var nodeId = InjectedScriptHost.pushNodePathToFrontend(node, false);
             nodeIds.push(nodeId);
         }
-        InspectorController.addNodesToSearchResult(nodeIds.join(","));
+        InjectedScriptHost.addNodesToSearchResult(nodeIds.join(","));
     }
 
     function matchExactItems(doc)
@@ -848,7 +848,7 @@ InjectedScript.openInInspectedWindow = function(url)
 
 InjectedScript.getCallFrames = function()
 {
-    var callFrame = InspectorController.currentCallFrame();
+    var callFrame = InjectedScriptHost.currentCallFrame();
     if (!callFrame)
         return false;
 
@@ -871,7 +871,7 @@ InjectedScript.evaluateInCallFrame = function(callFrameId, code, objectGroup)
 
 InjectedScript._callFrameForId = function(id)
 {
-    var callFrame = InspectorController.currentCallFrame();
+    var callFrame = InjectedScriptHost.currentCallFrame();
     while (--id >= 0 && callFrame)
         callFrame = callFrame.caller;
     return callFrame;
@@ -879,7 +879,7 @@ InjectedScript._callFrameForId = function(id)
 
 InjectedScript._clearConsoleMessages = function()
 {
-    InspectorController.clearMessages(true);
+    InjectedScriptHost.clearMessages(true);
 }
 
 InjectedScript._inspectObject = function(o)
@@ -890,14 +890,14 @@ InjectedScript._inspectObject = function(o)
     var inspectedWindow = InjectedScript._window();
     inspectedWindow.console.log(o);
     if (Object.type(o) === "node") {
-        InspectorController.pushNodePathToFrontend(o, true);
+        InjectedScriptHost.pushNodePathToFrontend(o, true);
     } else {
         switch (Object.describe(o)) {
             case "Database":
-                InspectorController.selectDatabase(o);
+                InjectedScriptHost.selectDatabase(o);
                 break;
             case "Storage":
-                InspectorController.selectDOMStorage(o);
+                InjectedScriptHost.selectDOMStorage(o);
                 break;
         }
     }
@@ -906,10 +906,10 @@ InjectedScript._inspectObject = function(o)
 InjectedScript._copy = function(o)
 {
     if (Object.type(o) === "node") {
-        var nodeId = InspectorController.pushNodePathToFrontend(o, false);
-        InspectorController.copyNode(nodeId);
+        var nodeId = InjectedScriptHost.pushNodePathToFrontend(o, false);
+        InjectedScriptHost.copyNode(nodeId);
     } else {
-        InspectorController.copyText(o);
+        InjectedScriptHost.copyText(o);
     }
 }
 
@@ -986,9 +986,9 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
         get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] }, \n\
     };");
 
-    inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InjectedScript._clearConsoleMessages);
-    inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(InjectedScript._inspectObject);
-    inspectorCommandLineAPI.copy = InspectorController.wrapCallback(InjectedScript._copy);
+    inspectorCommandLineAPI.clear = InjectedScriptHost.wrapCallback(InjectedScript._clearConsoleMessages);
+    inspectorCommandLineAPI.inspect = InjectedScriptHost.wrapCallback(InjectedScript._inspectObject);
+    inspectorCommandLineAPI.copy = InjectedScriptHost.wrapCallback(InjectedScript._copy);
 }
 
 InjectedScript._resolveObject = function(objectProxy)
@@ -1012,14 +1012,14 @@ InjectedScript._window = function()
 {
     // TODO: replace with 'return window;' once this script is injected into
     // the page's context.
-    return InspectorController.inspectedWindow();
+    return InjectedScriptHost.inspectedWindow();
 }
 
 InjectedScript._nodeForId = function(nodeId)
 {
     if (!nodeId)
         return null;
-    return InspectorController.nodeForId(nodeId);
+    return InjectedScriptHost.nodeForId(nodeId);
 }
 
 InjectedScript._objectForId = function(objectId)
@@ -1031,7 +1031,7 @@ InjectedScript._objectForId = function(objectId)
     if (typeof objectId === "number") {
         return InjectedScript._nodeForId(objectId);
     } else if (typeof objectId === "string") {
-        return InspectorController.unwrapObject(objectId);
+        return InjectedScriptHost.unwrapObject(objectId);
     } else if (typeof objectId === "object") {
         var callFrame = InjectedScript._callFrameForId(objectId.callFrame);
         if (objectId.thisObject)
@@ -1047,7 +1047,7 @@ InjectedScript.pushNodeToFrontend = function(objectProxy)
     var object = InjectedScript._resolveObject(objectProxy);
     if (!object || Object.type(object) !== "node")
         return false;
-    return InspectorController.pushNodePathToFrontend(object, false);
+    return InjectedScriptHost.pushNodePathToFrontend(object, false);
 }
 
 // Called from within InspectorController on the 'inspected page' side.
@@ -1130,23 +1130,23 @@ InjectedScript.executeSql = function(callId, databaseId, query)
                 data[columnIdentifier] = String(text);
             }
         }
-        InspectorController.reportDidDispatchOnInjectedScript(callId, JSON.stringify(result), false);
+        InjectedScriptHost.reportDidDispatchOnInjectedScript(callId, JSON.stringify(result), false);
     }
 
     function errorCallback(tx, error)
     {
-        InspectorController.reportDidDispatchOnInjectedScript(callId, JSON.stringify(error), false);
+        InjectedScriptHost.reportDidDispatchOnInjectedScript(callId, JSON.stringify(error), false);
     }
 
     function queryTransaction(tx)
     {
-        tx.executeSql(query, null, InspectorController.wrapCallback(successCallback), InspectorController.wrapCallback(errorCallback));
+        tx.executeSql(query, null, InjectedScriptHost.wrapCallback(successCallback), InjectedScriptHost.wrapCallback(errorCallback));
     }
 
-    var database = InspectorController.databaseForId(databaseId);
+    var database = InjectedScriptHost.databaseForId(databaseId);
     if (!database)
         errorCallback(null, { code : 2 });  // Return as unexpected version.
-    database.transaction(InspectorController.wrapCallback(queryTransaction), InspectorController.wrapCallback(errorCallback));
+    database.transaction(InjectedScriptHost.wrapCallback(queryTransaction), InjectedScriptHost.wrapCallback(errorCallback));
     return true;
 }
 

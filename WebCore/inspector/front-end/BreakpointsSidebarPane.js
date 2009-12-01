@@ -58,11 +58,11 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.appendChild(this.listElement);
         }
 
-        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
+        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
         if (breakpoint.enabled)
-            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
+            InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
     },
 
     _appendBreakpointElement: function(breakpoint)
@@ -135,10 +135,10 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.appendChild(this.emptyElement);
         }
 
-        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
+        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
-        InspectorController.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
+        InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
     _breakpointEnableChanged: function(event)
@@ -148,13 +148,13 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         var checkbox = breakpoint._breakpointListElement.firstChild;
         checkbox.checked = breakpoint.enabled;
 
-        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
+        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
         if (breakpoint.enabled)
-            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
+            InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
         else
-            InspectorController.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
+            InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
     _breakpointTextChanged: function(event)

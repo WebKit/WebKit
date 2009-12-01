@@ -89,7 +89,7 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners("condition-changed");
 
         if (this.enabled)
-            InspectorController.updateBreakpoint(this.sourceID, this.line, c);
+            InspectorBackend.updateBreakpoint(this.sourceID, this.line, c);
     }
 }
 

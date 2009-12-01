@@ -1,3 +1,314 @@
+2009-11-27  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Split InspectorBackend into three parts: backend,
+        injected script host and frontend host.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31888
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSInspectorBackendCustom.cpp: Removed.
+        * bindings/js/JSInspectorFrontendHostCustom.cpp: Added.
+        (WebCore::JSInspectorFrontendHost::search):
+        (WebCore::JSInspectorFrontendHost::setting):
+        (WebCore::JSInspectorFrontendHost::setSetting):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/js/ScriptObject.h:
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/v8/ScriptObject.h:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp: Removed.
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * inspector/InjectedScriptHost.cpp: Added.
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::~InjectedScriptHost):
+        (WebCore::InjectedScriptHost::copyText):
+        (WebCore::InjectedScriptHost::nodeForId):
+        (WebCore::InjectedScriptHost::wrapObject):
+        (WebCore::InjectedScriptHost::unwrapObject):
+        (WebCore::InjectedScriptHost::pushNodePathToFrontend):
+        (WebCore::InjectedScriptHost::addNodesToSearchResult):
+        (WebCore::InjectedScriptHost::currentCallFrame):
+        (WebCore::InjectedScriptHost::databaseForId):
+        (WebCore::InjectedScriptHost::selectDatabase):
+        (WebCore::InjectedScriptHost::selectDOMStorage):
+        (WebCore::InjectedScriptHost::reportDidDispatchOnInjectedScript):
+        (WebCore::InjectedScriptHost::inspectorDOMAgent):
+        (WebCore::InjectedScriptHost::inspectorFrontend):
+        * inspector/InjectedScriptHost.h: Added.
+        (WebCore::InjectedScriptHost::create):
+        (WebCore::InjectedScriptHost::inspectorController):
+        (WebCore::InjectedScriptHost::disconnectController):
+        * inspector/InjectedScriptHost.idl: Added.
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::InspectorBackend):
+        (WebCore::InspectorBackend::storeLastActivePanel):
+        (WebCore::InspectorBackend::toggleNodeSearch):
+        (WebCore::InspectorBackend::resourceTrackingEnabled):
+        (WebCore::InspectorBackend::debuggerEnabled):
+        (WebCore::InspectorBackend::enableDebugger):
+        (WebCore::InspectorBackend::disableDebugger):
+        (WebCore::InspectorBackend::addBreakpoint):
+        (WebCore::InspectorBackend::updateBreakpoint):
+        (WebCore::InspectorBackend::removeBreakpoint):
+        (WebCore::InspectorBackend::pauseInDebugger):
+        (WebCore::InspectorBackend::resumeDebugger):
+        (WebCore::InspectorBackend::stepOverStatementInDebugger):
+        (WebCore::InspectorBackend::stepIntoStatementInDebugger):
+        (WebCore::InspectorBackend::stepOutOfFunctionInDebugger):
+        (WebCore::InspectorBackend::pauseOnExceptions):
+        (WebCore::InspectorBackend::setPauseOnExceptions):
+        (WebCore::InspectorBackend::profilerEnabled):
+        (WebCore::InspectorBackend::enableProfiler):
+        (WebCore::InspectorBackend::disableProfiler):
+        (WebCore::InspectorBackend::startProfiling):
+        (WebCore::InspectorBackend::stopProfiling):
+        (WebCore::InspectorBackend::getProfileHeaders):
+        (WebCore::InspectorBackend::getProfile):
+        (WebCore::InspectorBackend::currentCallFrame):
+        (WebCore::InspectorBackend::highlightDOMNode):
+        (WebCore::InspectorBackend::hideDOMNodeHighlight):
+        (WebCore::InspectorBackend::getCookies):
+        (WebCore::InspectorBackend::deleteCookie):
+        (WebCore::InspectorBackend::didEvaluateForTestInFrontend):
+        (WebCore::InspectorBackend::nodeForId):
+        * inspector/InspectorBackend.h:
+        (WebCore::InspectorBackend::create):
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorFrontendHost):
+        (WebCore::InspectorController::injectedScriptHost):
+        * inspector/InspectorFrontendHost.cpp: Added.
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::~InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::loaded):
+        (WebCore::InspectorFrontendHost::attach):
+        (WebCore::InspectorFrontendHost::detach):
+        (WebCore::InspectorFrontendHost::closeWindow):
+        (WebCore::InspectorFrontendHost::windowUnloading):
+        (WebCore::InspectorFrontendHost::setAttachedWindowHeight):
+        (WebCore::InspectorFrontendHost::moveWindowBy):
+        (WebCore::InspectorFrontendHost::localizedStringsURL):
+        (WebCore::InspectorFrontendHost::hiddenPanels):
+        (WebCore::InspectorFrontendHost::platform):
+        (WebCore::InspectorFrontendHost::port):
+        (WebCore::InspectorFrontendHost::addResourceSourceToFrame):
+        (WebCore::InspectorFrontendHost::addSourceToFrame):
+        * inspector/InspectorFrontendHost.h: Added.
+        (WebCore::InspectorFrontendHost::create):
+        (WebCore::InspectorFrontendHost::inspectorController):
+        (WebCore::InspectorFrontendHost::disconnectController):
+        * inspector/InspectorFrontendHost.idl: Added.
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.set condition):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype.removeBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._deleteCookieCallback):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        (WebInspector.DOMAgent.prototype.setAttributeAsync):
+        (WebInspector.DOMAgent.prototype.removeAttributeAsync):
+        (WebInspector.DOMAgent.prototype.setTextNodeValueAsync):
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.EventListeners.getEventListenersForNodeAsync):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.prototype.getEntries):
+        (WebInspector.DOMStorage.prototype.setItem):
+        (WebInspector.DOMStorage.prototype.removeItem):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.getTableNames):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.handleCopyEvent):
+        (WebInspector.ElementsPanel.prototype._nodeSearchButtonClicked):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode.restoreHighlightToHoveredNode):
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode):
+        ():
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._evaluateAndWrap):
+        (InjectedScript.performSearch.addNodesToResults):
+        (InjectedScript.getCallFrames):
+        (InjectedScript._callFrameForId):
+        (InjectedScript._clearConsoleMessages):
+        (InjectedScript._inspectObject):
+        (InjectedScript._copy):
+        (InjectedScript._ensureCommandLineAPIInstalled):
+        (InjectedScript._window):
+        (InjectedScript._nodeForId):
+        (InjectedScript._objectForId):
+        (InjectedScript.pushNodeToFrontend):
+        (InjectedScript.executeSql):
+        (InjectedScript.executeSql.errorCallback):
+        (InjectedScript.executeSql.queryTransaction):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/InspectorBackendStub.js: Added.
+        (.WebInspector.InspectorBackendStub):
+        (.WebInspector.InspectorBackendStub.prototype.wrapCallback):
+        (.WebInspector.InspectorBackendStub.prototype.platform):
+        (.WebInspector.InspectorBackendStub.prototype.port):
+        (.WebInspector.InspectorBackendStub.prototype.closeWindow):
+        (.WebInspector.InspectorBackendStub.prototype.attach):
+        (.WebInspector.InspectorBackendStub.prototype.detach):
+        (.WebInspector.InspectorBackendStub.prototype.storeLastActivePanel):
+        (.WebInspector.InspectorBackendStub.prototype.clearMessages):
+        (.WebInspector.InspectorBackendStub.prototype.searchingForNode):
+        (.WebInspector.InspectorBackendStub.prototype.search):
+        (.WebInspector.InspectorBackendStub.prototype.toggleNodeSearch):
+        (.WebInspector.InspectorBackendStub.prototype.setAttachedWindowHeight):
+        (.WebInspector.InspectorBackendStub.prototype.moveByUnrestricted):
+        (.WebInspector.InspectorBackendStub.prototype.addResourceSourceToFrame):
+        (.WebInspector.InspectorBackendStub.prototype.addSourceToFrame):
+        (.WebInspector.InspectorBackendStub.prototype.getResourceDocumentNode):
+        (.WebInspector.InspectorBackendStub.prototype.highlightDOMNode):
+        (.WebInspector.InspectorBackendStub.prototype.hideDOMNodeHighlight):
+        (.WebInspector.InspectorBackendStub.prototype.inspectedWindow):
+        (.WebInspector.InspectorBackendStub.prototype.loaded):
+        (.WebInspector.InspectorBackendStub.prototype.localizedStringsURL):
+        (.WebInspector.InspectorBackendStub.prototype.windowUnloading):
+        (.WebInspector.InspectorBackendStub.prototype.hiddenPanels):
+        (.WebInspector.InspectorBackendStub.prototype.debuggerEnabled):
+        (.WebInspector.InspectorBackendStub.prototype.enableResourceTracking):
+        (.WebInspector.InspectorBackendStub.prototype.disableResourceTracking):
+        (.WebInspector.InspectorBackendStub.prototype.resourceTrackingEnabled):
+        (.WebInspector.InspectorBackendStub.prototype.enableDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.disableDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.addBreakpoint):
+        (.WebInspector.InspectorBackendStub.prototype.removeBreakpoint):
+        (.WebInspector.InspectorBackendStub.prototype.updateBreakpoint):
+        (.WebInspector.InspectorBackendStub.prototype.pauseInDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.pauseOnExceptions):
+        (.WebInspector.InspectorBackendStub.prototype.setPauseOnExceptions):
+        (.WebInspector.InspectorBackendStub.prototype.resumeDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.profilerEnabled):
+        (.WebInspector.InspectorBackendStub.prototype.enableProfiler):
+        (.WebInspector.InspectorBackendStub.prototype.disableProfiler):
+        (.WebInspector.InspectorBackendStub.prototype.startProfiling):
+        (.WebInspector.InspectorBackendStub.prototype.stopProfiling):
+        (.WebInspector.InspectorBackendStub.prototype.getProfileHeaders):
+        (.WebInspector.InspectorBackendStub.prototype.getProfile):
+        (.WebInspector.InspectorBackendStub.prototype.takeHeapSnapshot):
+        (.WebInspector.InspectorBackendStub.prototype.databaseTableNames):
+        (.WebInspector.InspectorBackendStub.prototype.stepIntoStatementInDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.stepOutOfFunctionInDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.stepOverStatementInDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.setSetting):
+        (.WebInspector.InspectorBackendStub.prototype.dispatchOnInjectedScript):
+        (.WebInspector.InspectorBackendStub.prototype.releaseWrapperObjectGroup):
+        (.WebInspector.InspectorBackendStub.prototype.setting):
+        * inspector/front-end/InspectorControllerStub.js:
+        * inspector/front-end/InspectorFrontendHostStub.js: Added.
+        (.WebInspector.InspectorFrontendHostStub):
+        (.WebInspector.InspectorFrontendHostStub.prototype.platform):
+        (.WebInspector.InspectorFrontendHostStub.prototype.port):
+        (.WebInspector.InspectorFrontendHostStub.prototype.closeWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.attach):
+        (.WebInspector.InspectorFrontendHostStub.prototype.detach):
+        (.WebInspector.InspectorFrontendHostStub.prototype.search):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setAttachedWindowHeight):
+        (.WebInspector.InspectorFrontendHostStub.prototype.moveWindowBy):
+        (.WebInspector.InspectorFrontendHostStub.prototype.addResourceSourceToFrame):
+        (.WebInspector.InspectorFrontendHostStub.prototype.addSourceToFrame):
+        (.WebInspector.InspectorFrontendHostStub.prototype.loaded):
+        (.WebInspector.InspectorFrontendHostStub.prototype.localizedStringsURL):
+        (.WebInspector.InspectorFrontendHostStub.prototype.hiddenPanels):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setSetting):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setting):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype._enableProfiling):
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources):
+        (WebInspector.ResourcesPanel.prototype._enableResourceTracking):
+        (WebInspector.ResourcesPanel.prototype._toggleResourceTracking):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype.addScript):
+        (WebInspector.ScriptsPanel.prototype.attachDebuggerWhenShown):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype.canShowResource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        (WebInspector.ScriptsPanel.prototype._updatePauseOnExceptionsButton):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        (WebInspector.ScriptsPanel.prototype._enableDebugging):
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        (WebInspector.ScriptsPanel.prototype._togglePauseOnExceptions):
+        (WebInspector.ScriptsPanel.prototype._togglePause):
+        (WebInspector.ScriptsPanel.prototype._stepOverClicked):
+        (WebInspector.ScriptsPanel.prototype._stepIntoClicked):
+        (WebInspector.ScriptsPanel.prototype._stepOutClicked):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded):
+        (WebInspector.SourceView.prototype.performSearch.findSearchMatches):
+        (WebInspector.SourceView.prototype.performSearch):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._changeColorFormat):
+        * inspector/front-end/TestController.js:
+        (WebInspector.TestController.prototype.notifyDone):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        (WebInspector.WatchExpressionsSection.prototype.loadSavedExpressions):
+        (WebInspector.WatchExpressionsSection.prototype.saveExpressions):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.pendingDispatches.0.get platform):
+        (WebInspector.get port):
+        (WebInspector.set currentPanel):
+        (WebInspector._createPanels):
+        (WebInspector._loadPreferences):
+        (WebInspector.set attached):
+        (WebInspector._updateHoverHighlight):
+        (WebInspector.loaded):
+        (windowLoaded):
+        (WebInspector.windowUnload):
+        (WebInspector.close):
+        (WebInspector.toolbarDrag):
+        (WebInspector.UIString):
+
 2009-11-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.

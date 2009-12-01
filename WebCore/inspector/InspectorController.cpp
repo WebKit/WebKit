@@ -53,8 +53,10 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "InspectorBackend.h"
+#include "InjectedScriptHost.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
+#include "InspectorFrontendHost.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
@@ -134,7 +136,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_previousMessage(0)
     , m_resourceTrackingEnabled(false)
     , m_resourceTrackingSettingsLoaded(false)
-    , m_inspectorBackend(InspectorBackend::create(this, client))
+    , m_inspectorBackend(InspectorBackend::create(this))
+    , m_inspectorFrontendHost(InspectorFrontendHost::create(this, client))
+    , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_lastBoundObjectId(1)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
@@ -174,15 +178,19 @@ InspectorController::~InspectorController()
     releaseDOMAgent();
 
     m_inspectorBackend->disconnectController();
+    m_inspectorFrontendHost->disconnectController();
+    m_injectedScriptHost->disconnectController();
 }
 
 void InspectorController::inspectedPageDestroyed()
 {
     close();
 
-    if (m_scriptState)
-        ScriptGlobalObject::remove(m_scriptState, "InspectorController");
-
+    if (m_scriptState) {
+        ScriptGlobalObject::remove(m_scriptState, "InspectorBackend");
+        ScriptGlobalObject::remove(m_scriptState, "InspectorFrontendHost");
+        ScriptGlobalObject::remove(m_scriptState, "InjectedScriptHost");
+    }
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
 
@@ -522,7 +530,9 @@ void InspectorController::windowScriptObjectAvailable()
     // Grant the inspector the ability to script the inspected page.
     m_page->mainFrame()->document()->securityOrigin()->grantUniversalAccess();
     m_scriptState = scriptStateFromPage(debuggerWorld(), m_page);
-    ScriptGlobalObject::set(m_scriptState, "InspectorController", m_inspectorBackend.get());
+    ScriptGlobalObject::set(m_scriptState, "InspectorBackend", m_inspectorBackend.get());
+    ScriptGlobalObject::set(m_scriptState, "InspectorFrontendHost", m_inspectorFrontendHost.get());
+    ScriptGlobalObject::set(m_scriptState, "InjectedScriptHost", m_injectedScriptHost.get());
 }
 
 void InspectorController::scriptObjectReady()

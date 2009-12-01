@@ -34,43 +34,18 @@ module core {
     interface [
         GenerateConstructor
     ] InspectorBackend {
-        void hideDOMNodeHighlight();
-        [Custom] void highlightDOMNode(in long nodeId);
-        void loaded();
-        void windowUnloading();
-        void attach();
-        void detach();
-
-        void closeWindow();
         void clearMessages(in boolean clearUI);
-        void toggleNodeSearch();
+        void storeLastActivePanel(in DOMString panelName);
 
-        boolean isWindowVisible();
+        void toggleNodeSearch();
         boolean searchingForNode();
 
-        void addResourceSourceToFrame(in long identifier, in Node frame);
-        boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
-        [Custom] void search(in Node node, in DOMString query);
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        void getDatabaseTableNames(in long callId, in long databaseId);
-#endif
-
-        [Custom] DOMObject setting(in DOMString key);
-        [Custom] void setSetting(in DOMString key, in DOMObject  value);
-        [Custom] DOMWindow inspectedWindow();
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
-        void startTimelineProfiler();
-        void stopTimelineProfiler();
-        [ImplementationFunction=moveWindowBy] void moveByUnrestricted(in float x, in float y);
-        void setAttachedWindowHeight(in unsigned long height);
-        [Custom] DOMObject wrapCallback(in DOMObject callback);
         boolean resourceTrackingEnabled();
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
-        void storeLastActivePanel(in DOMString panelName);
+
+        void startTimelineProfiler();
+        void stopTimelineProfiler();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         boolean debuggerEnabled();
@@ -87,8 +62,6 @@ module core {
         void stepOverStatementInDebugger();
         void stepIntoStatementInDebugger();
         void stepOutOfFunctionInDebugger();
-
-        [Custom] DOMObject currentCallFrame();
 
         boolean pauseOnExceptions();
         void setPauseOnExceptions(in boolean pauseOnExceptions);
@@ -111,30 +84,23 @@ module core {
         void getEventListenersForNode(in long callId, in long nodeId);
         void copyNode(in long nodeId);
         void removeNode(in long callId, in long nodeId);
+        void highlightDOMNode(in long nodeId);
+        void hideDOMNodeHighlight();
 
         void getCookies(in long callId, in DOMString domain);
         void deleteCookie(in DOMString cookieName, in DOMString domain);
 
-        // Called from InjectedScript.
-        // TODO: extract into a separate IDL.
-        void copyText(in DOMString text);
-        [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
-        [Custom] DOMObject unwrapObject(in long objectId);
         void releaseWrapperObjectGroup(in DOMString objectGroup);
-        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);
-        void addNodesToSearchResult(in DOMString nodeIds);
+        void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
+
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [Custom] void selectDatabase(in DOMObject database);
-        [Custom] DOMObject databaseForId(in long databaseId);
+        void getDatabaseTableNames(in long callId, in long databaseId);
 #endif
+
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [Custom] void selectDOMStorage(in DOMObject storage);
         void getDOMStorageEntries(in long callId, in long storageId);
         void setDOMStorageItem(in long callId, in long storageId, in DOMString key, in DOMString value);
         void removeDOMStorageItem(in long callId, in long storageId, in DOMString key);
 #endif
-        void reportDidDispatchOnInjectedScript(in long callId, in DOMString result, in boolean isException);
-        void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
     };
 }

@@ -334,7 +334,7 @@ WebInspector.StylesSidebarPane.prototype = {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
         Preferences.colorFormat = selectedOption.value;
 
-        InspectorController.setSetting("color-format", Preferences.colorFormat);
+        InspectorFrontendHost.setSetting("color-format", Preferences.colorFormat);
 
         for (var i = 0; i < this.sections.length; ++i)
             this.sections[i].update(true);

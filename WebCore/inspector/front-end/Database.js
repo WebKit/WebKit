@@ -82,7 +82,7 @@ WebInspector.Database.prototype = {
             callback(names.sort());
         }
         var callId = WebInspector.Callback.wrap(sortingCallback);
-        InspectorController.getDatabaseTableNames(callId, this._id);
+        InspectorBackend.getDatabaseTableNames(callId, this._id);
     },
     
     executeSql: function(query, onSuccess, onError)

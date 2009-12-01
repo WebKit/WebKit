@@ -433,7 +433,9 @@
 #endif
 
 #if ENABLE(INSPECTOR)
+#include "V8InjectedScriptHost.h"
 #include "V8InspectorBackend.h"
+#include "V8InspectorFrontendHost.h"
 #endif
 
 namespace WebCore {

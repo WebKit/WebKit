@@ -97,7 +97,7 @@ WebInspector.SourceView.prototype = {
 
         delete this._frameNeedsSetup;
         this.sourceFrame.addEventListener("content loaded", this._contentLoaded, this);
-        InspectorController.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
+        InspectorFrontendHost.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
     },
     
     _contentLoaded: function()
@@ -180,13 +180,13 @@ WebInspector.SourceView.prototype = {
         {
             if (isNaN(lineToSearch)) {
                 // Search the whole document since there was no line to search.
-                this._searchResults = (InspectorController.search(this.sourceFrame.element.contentDocument, query) || []);
+                this._searchResults = (InspectorFrontendHost.search(this.sourceFrame.element.contentDocument, query) || []);
             } else {
                 var sourceRow = this.sourceFrame.sourceRow(lineToSearch);
                 if (sourceRow) {
                     if (filterlessQuery) {
                         // There is still a query string, so search for that string in the line.
-                        this._searchResults = (InspectorController.search(sourceRow, filterlessQuery) || []);
+                        this._searchResults = (InspectorFrontendHost.search(sourceRow, filterlessQuery) || []);
                     } else {
                         // Match the whole line, since there was no remaining query string to match.
                         var rowRange = this.sourceFrame.element.contentDocument.createRange();
@@ -196,7 +196,7 @@ WebInspector.SourceView.prototype = {
                 }
 
                 // Attempt to search for the whole query, just incase it matches a color like "#333".
-                var wholeQueryMatches = InspectorController.search(this.sourceFrame.element.contentDocument, query);
+                var wholeQueryMatches = InspectorFrontendHost.search(this.sourceFrame.element.contentDocument, query);
                 if (wholeQueryMatches)
                     this._searchResults = this._searchResults.concat(wholeQueryMatches);
             }

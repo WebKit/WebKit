@@ -387,5 +387,7 @@
 #endif
 
 #if ENABLE(INSPECTOR)
+#include "bindings/V8InjectedScriptHost.cpp"
 #include "bindings/V8InspectorBackend.cpp"
+#include "bindings/V8InspectorFrontendHost.cpp"
 #endif

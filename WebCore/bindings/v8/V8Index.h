@@ -487,7 +487,9 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 
 #if ENABLE(INSPECTOR)
 #define DOM_OBJECT_INSPECTOR_TYPES(V)                                   \
-    V(INSPECTORBACKEND, InspectorBackend)
+    V(INSPECTORBACKEND, InspectorBackend)                               \
+    V(INSPECTORFRONTENDHOST, InspectorFrontendHost)                     \
+    V(INJECTEDSCRIPTHOST, InjectedScriptHost)
 #else
 #define DOM_OBJECT_INSPECTOR_TYPES(V)
 #endif
