@@ -42433,6 +42433,7 @@
 			<File
 				RelativePath="..\inspector\InjectedScriptHost.h"
 				>
+			</File>
 			<File
 				RelativePath="..\inspector\InspectorBackend.cpp"
 				>
