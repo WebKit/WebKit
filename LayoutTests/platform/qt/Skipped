@@ -228,6 +228,7 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
 # Missing layoutTestController.evaluateInWebInspector()
 inspector/elements-img-tooltip.html
+inspector/timeline-network-resource.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

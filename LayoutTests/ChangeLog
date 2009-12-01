@@ -1,3 +1,9 @@
+2009-12-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put test into skiplist because of missing layoutTestController.evaluateInWebInspector().
+
+        * platform/qt/Skipped: inspector/timeline-network-resource.html added.
+
 2009-12-01  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
