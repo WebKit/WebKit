@@ -1,3 +1,22 @@
+2009-12-01  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] Don't crash in DOMWindow event getter in OOM situations
+        https://bugs.webkit.org/show_bug.cgi?id=32017
+
+        Add missing null handle checks in DOMWindow event property
+        accessors.  V8Proxy::context(frame) can return a null handle in
+        OOM situations either if failing to initialize a context or if an
+        OOM is handled gracefully and javascript is disabled.
+
+        No new tests because we don't have a good way to test
+        out-of-memory bugs.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+
 2009-12-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
