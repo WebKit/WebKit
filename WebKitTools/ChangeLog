@@ -1,3 +1,13 @@
+2009-12-01  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make pywebsocket log errors to a file
+        https://bugs.webkit.org/show_bug.cgi?id=31604
+
+        * Scripts/run-webkit-tests: Log output to a pywebsocket_log.txt file in results directory
+        (by passing the path to the server via a recently added -l option).
+
 2009-12-01  Adam Roben  <aroben@apple.com>
 
         Fix tests that use the TestNetscapePlugin in Debug_Internal builds

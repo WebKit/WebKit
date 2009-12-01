@@ -87,6 +87,7 @@ sub fileNameWithNumber($$);
 sub htmlForResultsSection(\@$&);
 sub isTextOnlyTest($);
 sub launchWithCurrentEnv(@);
+sub resolveAndMakeTestResultsDirectory();
 sub numericcmp($$);
 sub openDiffTool();
 sub openDumpTool();
@@ -1223,6 +1224,13 @@ sub launchWithCurrentEnv(@)
     return @args;
 }
 
+sub resolveAndMakeTestResultsDirectory()
+{
+    my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
+    mkpath $absTestResultsDirectory;
+    return $absTestResultsDirectory;
+}
+
 sub openDiffTool()
 {
     return if $isDiffToolOpen;
@@ -1383,10 +1391,8 @@ sub openHTTPDIfNeeded()
     my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
-    my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
+    my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
     my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
-
-    mkpath $absTestResultsDirectory;
 
     my @args = (
         "-f", "$httpdConfig",
@@ -1440,11 +1446,15 @@ sub openWebSocketServerIfNeeded()
     my $webSocketHandlerDir = "$testDirectory";
     my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
     my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
+    my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
+    my $logFile = "$absTestResultsDirectory/pywebsocket_log.txt";
+
     my @args = (
         "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
         "-p", "$webSocketPort",
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
+        "-l", "$logFile",
     );
     # wss is disabled until all platforms support pyOpenSSL.
     # my @argsSecure = (
