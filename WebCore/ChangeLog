@@ -1,3 +1,15 @@
+2009-12-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Escape key in the Search Field should be more User Friendly
+        https://bugs.webkit.org/show_bug.cgi?id=32005
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded): add mousedown listener on the search field
+        (WebInspector.searchFieldManualFocus): user clicked to focus on the search field
+        (WebInspector.searchKeyDown): handle escape
+
 2009-12-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by David Kilzer.

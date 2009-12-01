@@ -503,6 +503,7 @@ WebInspector.loaded = function()
 
     var searchField = document.getElementById("search");
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
+    searchField.addEventListener("mousedown", this.searchFieldManualFocus.bind(this), false); // when the search field is manually selected
 
     toolbarElement.addEventListener("mousedown", this.toolbarDragStart, true);
     document.getElementById("close-button-left").addEventListener("click", this.close, true);
@@ -1529,8 +1530,28 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
+WebInspector.searchFieldManualFocus = function(event)
+{
+    this.currentFocusElement = event.target;
+    this._previousFocusElement = event.target;
+}
+
 WebInspector.searchKeyDown = function(event)
 {
+    // Escape Key will clear the field and clear the search results
+    if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
+        event.preventDefault();
+        event.handled = true;
+        event.target.value = "";
+
+        this.performSearch(event);
+        this.currentFocusElement = this.previousFocusElement;
+        if (this.currentFocusElement === event.target)
+            this.currentFocusElement.select();
+
+        return false;
+    }
+
     if (!isEnterKey(event))
         return false;
 
