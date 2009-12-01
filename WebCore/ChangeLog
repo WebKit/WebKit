@@ -1,5 +1,12 @@
 2009-12-01  Alexey Proskuryakov  <ap@apple.com>
 
+        More Windows build fix.
+
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+
+2009-12-01  Alexey Proskuryakov  <ap@apple.com>
+
         Windows build fix.
 
         * platform/network/cf/CredentialStorageCFNet.cpp: Include RetainPtr.h.
