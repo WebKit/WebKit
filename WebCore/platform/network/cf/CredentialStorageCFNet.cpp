@@ -30,6 +30,7 @@
 #include "Credential.h"
 #include "ProtectionSpace.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
