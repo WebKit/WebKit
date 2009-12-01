@@ -3197,7 +3197,14 @@ static bool needsWebViewInitThreadWorkaround()
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)url
 {
-    return [self _userAgentForURL:KURL([url absoluteURL])];
+    if (_private->useSiteSpecificSpoofing) {
+        // No current site-specific spoofs.
+    }
+
+    if (_private->userAgent.isNull())
+        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent];
+
+    return _private->userAgent;
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow
@@ -5298,19 +5305,6 @@ static WebFrameView *containingFrameView(NSView *view)
     [self _didChangeValueForKey:_WebMainFrameIconKey];
 }
 #endif // ENABLE(ICONDATABASE)
-
-// Get the appropriate user-agent string for a particular URL.
-- (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
-{
-    if (_private->useSiteSpecificSpoofing) {
-        // No current site-specific spoofs.
-    }
-
-    if (_private->userAgent.isNull())
-        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent];
-
-    return _private->userAgent;
-}
 
 - (void)_addObject:(id)object forIdentifier:(unsigned long)identifier
 {

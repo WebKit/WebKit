@@ -1,3 +1,15 @@
+2009-12-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Simplify [WebView userAgentForURL:].  No need to call into helper function.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::userAgent):
+        * WebView/WebView.mm:
+        (-[WebView userAgentForURL:]):
+        * WebView/WebViewInternal.h:
+
 2009-11-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

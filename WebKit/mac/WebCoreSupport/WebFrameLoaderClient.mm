@@ -1224,7 +1224,7 @@ String WebFrameLoaderClient::userAgent(const KURL& url)
     if (!webView)
         return String("");
 
-    return [webView _userAgentForURL:url];
+    return [webView userAgentForURL:url];
 }
 
 static const MouseEvent* findMouseEvent(const Event* event)
