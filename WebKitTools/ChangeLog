@@ -1,5 +1,18 @@
 2009-12-01  Adam Roben  <aroben@apple.com>
 
+        Fix tests that use the TestNetscapePlugin in Debug_Internal builds
+
+        Reviewed by Ada Chan.
+
+        Fixes <http://webkit.org/b/32027> REGRESSION (r49705): Tests that use
+        TestNetscapePlugin fail in Debug_Internal builds
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: Use the "_Debug" plugin
+        directory in Debug and Debug_All builds, but not in Debug_Internal
+        builds.
+
+2009-12-01  Adam Roben  <aroben@apple.com>
+
         Re-enable DRT's watchdog timer on Windows
 
         It was accidentally disabled in r50907.
