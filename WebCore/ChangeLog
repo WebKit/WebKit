@@ -1,3 +1,20 @@
+2009-12-01  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32001
+
+        Added missing localized strings (that I left out of the patch for bug #21554):
+        %d × %d pixels
+        %d × %d pixels (Natural: %d × %d pixels)
+
+        Also, changed formatting of these stings to conform with existing ones (added
+        a space on both sides of the multiply sign).
+
+        * English.lproj/localizedStrings.js: Added stings.
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode):
+
 2009-12-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

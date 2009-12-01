@@ -1,3 +1,15 @@
+2009-12-01  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32001
+
+        Updated layout test to reflect change to localized string and
+        rebased the result.
+
+        * inspector/elements-img-tooltip-expected.txt:
+        * inspector/elements-img-tooltip.html:
+
 2009-12-01  Adam Roben  <aroben@apple.com>
 
         Skip a test that fails with some versions of CFNetwork on Windows

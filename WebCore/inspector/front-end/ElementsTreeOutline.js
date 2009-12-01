@@ -336,9 +336,9 @@ WebInspector.ElementsTreeElement.prototype = {
 
             var tooltipText = null;
             if (properties.offsetHeight === properties.naturalHeight && properties.offsetWidth === properties.naturalWidth)
-                tooltipText = WebInspector.UIString("%d\u00d7%d pixels", properties.offsetWidth, properties.offsetHeight);
+                tooltipText = WebInspector.UIString("%d × %d pixels", properties.offsetWidth, properties.offsetHeight);
             else
-                tooltipText = WebInspector.UIString("%d\u00d7%d pixels (Natural: %d\u00d7%d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
+                tooltipText = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
             callback(tooltipText);
         }
         var objectProxy = new WebInspector.ObjectProxy(node.id);
