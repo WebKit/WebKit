@@ -1,3 +1,13 @@
+2009-12-01  Adam Roben  <aroben@apple.com>
+
+        Re-enable DRT's watchdog timer on Windows
+
+        It was accidentally disabled in r50907.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setWaitToDump): Remove a "false &&" that snuck
+        into an if condition.
+
 2009-12-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

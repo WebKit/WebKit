@@ -693,7 +693,7 @@ static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
-    if (false && m_waitToDump && !waitToDumpWatchdog)
+    if (m_waitToDump && !waitToDumpWatchdog)
         waitToDumpWatchdog = SetTimer(0, 0, waitToDumpWatchdogInterval * 1000, waitUntilDoneWatchdogFired);
 }
 
