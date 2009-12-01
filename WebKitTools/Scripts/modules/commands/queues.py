@@ -190,7 +190,6 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, Landing
 
     def handle_unexpected_error(self, patch, message):
         log(message)
-        self._patches.done(patch)
 
     # LandingSequenceErrorHandler methods
 
@@ -209,8 +208,14 @@ class StyleQueue(AbstractTryQueue):
         return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
 
     def process_work_item(self, patch):
-        self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
-        self._patches.done(patch)
+        try:
+            self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
+            message = "%s ran check-webkit-style on attachment %s without any errors." % (self.name, patch["id"])
+            self.tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=self.watchers)
+            self._patches.did_pass(patch)
+        except ScriptError, e:
+            self._patches.did_fail(patch)
+            raise e
 
     @classmethod
     def handle_script_error(cls, tool, patch, script_error):
@@ -220,9 +225,7 @@ class StyleQueue(AbstractTryQueue):
         # FIXME: We shouldn't need to use a regexp here.  ScriptError should
         #        have a better API.
         if re.search("check-webkit-style", command):
-            message = "Attachment %s did not pass %s:\n\n%s" % (patch["id"], cls.name, script_error.message_with_output(output_limit=None))
-            # Local-only logging helpful for development:
-            # log("** BEGIN BUG POST **\n%s** END BUG POST **" % message)
+            message = "Attachment %s did not pass %s:\n\n%s" % (patch["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
             tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
 
 
@@ -246,4 +249,4 @@ class BuildQueue(AbstractTryQueue):
 
     def process_work_item(self, patch):
         self.run_bugzilla_tool(["build-attachment", self.port.flag(), "--force-clean", "--quiet", "--non-interactive", "--parent-command=build-queue", "--no-update", patch["id"]])
-        self._patches.done(patch)
+        self._patches.did_pass(patch)

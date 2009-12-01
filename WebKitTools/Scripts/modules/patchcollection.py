@@ -71,8 +71,9 @@ class PersistentPatchCollectionDelegate:
 
 
 class PersistentPatchCollection:
-    _initial_status = "Attempted"
-    _terminal_status = "Done"
+    _initial_status = "Pending"
+    _pass_status = "Pass"
+    _fail_status = "Fail"
     def __init__(self, delegate):
         self._delegate = delegate
         self._name = self._delegate.collection_name()
@@ -95,5 +96,8 @@ class PersistentPatchCollection:
             if not status:
                 return patch_id
 
-    def done(self, patch):
-        self._status.update_status(self._name, self._terminal_status, patch)
+    def did_pass(self, patch):
+        self._status.update_status(self._name, self._pass_status, patch)
+
+    def did_fail(self, patch):
+        self._status.update_status(self._name, self._fail_status, patch)
