@@ -1,3 +1,15 @@
+2009-12-01  Adam Roben  <aroben@apple.com>
+
+        Remove user content before running each test on Windows
+
+        Fixes <http://webkit.org/b/31479> Make websocket tests work on Windows
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting): Remove all user content
+        before each test, which matches Mac.
+
 2009-12-01  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.

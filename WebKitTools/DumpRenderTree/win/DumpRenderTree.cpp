@@ -798,6 +798,12 @@ static void resetWebViewToConsistentStateBeforeTesting()
     webViewPrivate->clearMainFrameName();
     webViewPrivate->resetOriginAccessWhiteLists();
 
+    BSTR groupName;
+    if (SUCCEEDED(webView->groupName(&groupName))) {
+        webViewPrivate->removeAllUserContentFromGroup(groupName);
+        SysFreeString(groupName);
+    }
+
     sharedUIDelegate->resetUndoManager();
 
     sharedFrameLoadDelegate->resetToConsistentState();
