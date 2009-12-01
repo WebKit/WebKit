@@ -22,7 +22,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,86) size 125x36 [bgcolor=#FFFF00]
         RenderListItem {LI} at (0,0) size 125x36
           RenderListMarker at (-1,0) size 7x18: bullet
-          RenderText {#text} at (14,0) size 102x36
-            text run at (14,0) width 4: " "
-            text run at (18,0) width 84: "Lorem ipsum"
+          RenderText {#text} at (14,0) size 98x36
+            text run at (14,0) width 84: "Lorem ipsum"
             text run at (0,18) width 85: "dolor sit amet"

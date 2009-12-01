@@ -10,23 +10,20 @@ layer at (0,0) size 785x638
         RenderBlock {UL} at (0,27) size 735x147
           RenderListItem {LI} at (0,0) size 735x18
             RenderListMarker at (-1,0) size 7x18: bullet
-            RenderText {#text} at (14,0) size 415x18
-              text run at (14,0) width 4: " "
-              text run at (18,0) width 411: "Blue div has 400px width, dynamic height, and position: relative."
+            RenderText {#text} at (14,0) size 411x18
+              text run at (14,0) width 411: "Blue div has 400px width, dynamic height, and position: relative."
           RenderListItem {LI} at (0,25) size 735x36
             RenderListMarker at (-1,0) size 7x18: bullet
-            RenderText {#text} at (14,0) size 545x18
-              text run at (14,0) width 4: " "
-              text run at (18,0) width 541: "Inside blue div there are 3 other div with height: 40px (and has some bottom margin..)"
-            RenderBR {BR} at (559,0) size 0x18
+            RenderText {#text} at (14,0) size 541x18
+              text run at (14,0) width 541: "Inside blue div there are 3 other div with height: 40px (and has some bottom margin..)"
+            RenderBR {BR} at (555,0) size 0x18
             RenderText {#text} at (0,18) size 386x18
               text run at (0,18) width 386: "the height of the blue div expands with the green divs inside.."
           RenderListItem {LI} at (0,68) size 735x54
             RenderListMarker at (-1,0) size 7x18: bullet
-            RenderText {#text} at (14,0) size 542x18
-              text run at (14,0) width 4: " "
-              text run at (18,0) width 538: "Yellow div has position absolute (and positioned in the top left corner of the blue div)"
-            RenderBR {BR} at (556,0) size 0x18
+            RenderText {#text} at (14,0) size 538x18
+              text run at (14,0) width 538: "Yellow div has position absolute (and positioned in the top left corner of the blue div)"
+            RenderBR {BR} at (552,0) size 0x18
             RenderText {#text} at (0,18) size 138x18
               text run at (0,18) width 138: "it's height set to 100%"
             RenderBR {BR} at (138,18) size 0x18
@@ -34,9 +31,8 @@ layer at (0,0) size 785x638
               text run at (0,36) width 442: "the height of the yellow div now equals with the height of the blue div"
           RenderListItem {LI} at (0,129) size 735x18
             RenderListMarker at (-1,0) size 7x18: bullet
-            RenderText {#text} at (14,0) size 416x18
-              text run at (14,0) width 4: " "
-              text run at (18,0) width 412: "Red div is inserted into the yellow div, and it's height set to 100%"
+            RenderText {#text} at (14,0) size 412x18
+              text run at (14,0) width 412: "Red div is inserted into the yellow div, and it's height set to 100%"
         RenderBlock {H3} at (0,194) size 735x22
           RenderText {#text} at (0,0) size 76x22
             text run at (0,0) width 76: "Problem:"

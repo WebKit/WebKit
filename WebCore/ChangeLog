@@ -1,3 +1,23 @@
+2009-11-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        css2.1/t1205-c566-list-stl-00-e-ag.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=23264
+        css2.1/t1205-c565-list-pos-00-b.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=23263
+
+        Ignore whitespaces after list markers.
+        Rendering of this was already done for the case where inside=false.
+        This fixes the rendering of inside=true case and calcInlinePrefWidths.
+
+        Test: fast/lists/calc-width-with-space.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2009-11-30  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed Chromium build fix introduced by r51212

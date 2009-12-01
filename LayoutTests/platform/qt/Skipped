@@ -5260,3 +5260,11 @@ transitions/transition-end-event-rendering.html
 # Failure introduced by http://trac.webkit.org/changeset/51429
 # hamaji will look into this.
 editing/selection/last-empty-inline.html
+
+# Need to update the expectations.
+# See: https://bugs.webkit.org/show_bug.cgi?id=23264
+css2.1/t1205-c561-list-displ-00-b.html
+css2.1/t1205-c565-list-pos-00-b.html
+css2.1/t1205-c566-list-stl-00-e-ag.html
+fast/block/positioning/complex-percentage-height.html
+fast/lists/item-not-in-list-line-wrapping.html

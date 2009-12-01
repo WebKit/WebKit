@@ -17,6 +17,6 @@ layer at (0,0) size 800x95
       RenderBlock {OL} at (80,53) size 160x18 [color=#000080] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
           RenderListMarker at (0,0) size 16x18: "1"
-          RenderInline {SPAN} at (0,0) size 31x18 [color=#FFFFFF]
-            RenderText {#text} at (16,0) size 31x18
-              text run at (16,0) width 31: " Test"
+          RenderInline {SPAN} at (0,0) size 27x18 [color=#FFFFFF]
+            RenderText {#text} at (16,0) size 27x18
+              text run at (16,0) width 27: "Test"

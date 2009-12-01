@@ -10,6 +10,6 @@ layer at (0,0) size 800x116
         RenderListItem {LI} at (3,3) size 90x45
           RenderListMarker at (0,0) size 45x15: "A"
           RenderText {#text} at (45,0) size 90x45
-            text run at (45,0) width 30: " x"
-            text run at (0,15) width 60: "x xx"
-            text run at (0,30) width 90: "xx x x"
+            text run at (45,0) width 45: "x x"
+            text run at (0,15) width 75: "xx xx"
+            text run at (0,30) width 45: "x x"
