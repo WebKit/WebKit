@@ -1,5 +1,15 @@
 2009-12-01  Adam Roben  <aroben@apple.com>
 
+        Add a timing-out test to the Skipped file on Windows
+
+        Rubber-stamped by Ada Chan.
+
+        * platform/win/Skipped: Added
+        fast/dom/Window/window-postmessage-clone.html, which was timing out
+        due to eventSender.beginDragFiles being unimplemented.
+
+2009-12-01  Adam Roben  <aroben@apple.com>
+
         Add expected Windows failure results for tests that use
         textInputController
 
