@@ -1,3 +1,12 @@
+2009-12-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put tests into skiplist because of missing textInputController.selectedRange().
+
+        * platform/qt/Skipped:
+        - editing/selection/mixed-editability-10.html added.
+        - editing/selection/5825350-1.html added.
+        - editing/selection/5825350-2.html added.
+
 2009-11-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.
