@@ -1,3 +1,21 @@
+2009-11-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=31286
+        fast/js/date-proto-generic-invocation breaks another test
+
+        Don't cache JSClassRefs, a change to the prototype chain will
+        last between tests.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/GCController.cpp:
+        (GCController::getJSClass):
+        * DumpRenderTree/GCController.h:
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::getJSClass):
+
 2009-11-30  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.

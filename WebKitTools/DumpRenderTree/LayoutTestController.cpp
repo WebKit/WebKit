@@ -1179,20 +1179,14 @@ void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef wi
 
 JSClassRef LayoutTestController::getJSClass()
 {
-    static JSClassRef layoutTestControllerClass;
+    static JSStaticValue* staticValues = LayoutTestController::staticValues();
+    static JSStaticFunction* staticFunctions = LayoutTestController::staticFunctions();
+    static JSClassDefinition classDefinition = {
+        0, kJSClassAttributeNone, "LayoutTestController", 0, staticValues, staticFunctions,
+        0, layoutTestControllerObjectFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-    if (!layoutTestControllerClass) {
-        JSStaticValue* staticValues = LayoutTestController::staticValues();
-        JSStaticFunction* staticFunctions = LayoutTestController::staticFunctions();
-        JSClassDefinition classDefinition = {
-            0, kJSClassAttributeNone, "LayoutTestController", 0, staticValues, staticFunctions,
-            0, layoutTestControllerObjectFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
-
-        layoutTestControllerClass = JSClassCreate(&classDefinition);
-    }
-
-    return layoutTestControllerClass;
+    return JSClassCreate(&classDefinition);
 }
 
 JSStaticValue* LayoutTestController::staticValues()
