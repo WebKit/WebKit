@@ -1,3 +1,15 @@
+2009-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32036
+        Implement CredentialStorage::getFromPersistentStorage for CFNetwork
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+        Update WebKitSystemInterface.
+
 2009-11-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

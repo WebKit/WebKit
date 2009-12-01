@@ -26,17 +26,17 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#include "AuthenticationCF.h"
 #include "Credential.h"
-#include "NotImplemented.h"
 #include "ProtectionSpace.h"
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore {
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
-    UNUSED_PARAM(protectionSpace);
-    notImplemented();
-    return Credential();
+    RetainPtr<CFURLCredentialRef> credentialCF(AdoptCF, wkCopyCredentialFromCFPersistentStorage(protectionSpace.get()));
+    return core(credentialCF.get());
 }
 
 } // namespace WebCore
