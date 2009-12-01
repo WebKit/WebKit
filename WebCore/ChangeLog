@@ -1,3 +1,15 @@
+2009-12-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Reloading WebInspector from context menu is closing it instead of reloading.
+        https://bugs.webkit.org/show_bug.cgi?id=32004
+
+        When reloading WebInspector, don't delete its m_page.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::close):
+
 2009-12-01  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -630,9 +630,12 @@ void InspectorController::close()
     releaseDOMAgent();
     m_timelineAgent = 0;
     m_scriptState = 0;
-    if (m_page)
-        m_page->setParentInspectorController(0);
-    m_page = 0;
+    if (m_page) {
+        if (!m_page->mainFrame() || !m_page->mainFrame()->loader() || !m_page->mainFrame()->loader()->isLoading()) {
+            m_page->setParentInspectorController(0);
+            m_page = 0;
+        }
+    }
 }
 
 void InspectorController::showWindow()
