@@ -1271,6 +1271,8 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('a = 1 << 20', '')
         self.assert_multi_line_lint('#include "config.h"\n#include <sys/io.h>\n',
                                     '')
+        self.assert_multi_line_lint('#include "config.h"\n#import <foo/bar.h>\n',
+                                    '')
 
     def test_spacing_before_last_semicolon(self):
         self.assert_lint('call_function() ;',

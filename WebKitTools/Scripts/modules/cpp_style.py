@@ -1533,9 +1533,9 @@ def check_spacing(filename, clean_lines, line_number, error):
 
     # Don't try to do spacing checks for operator methods
     line = re.sub(r'operator(==|!=|<|<<|<=|>=|>>|>)\(', 'operator\(', line)
-    # Don't try to do spacing checks for #include statements at minimum it
-    # messes up checks for spacing around /
-    if match(r'\s*#\s*include', line):
+    # Don't try to do spacing checks for #include or #import statements at
+    # minimum because it messes up checks for spacing around /
+    if match(r'\s*#\s*(?:include|import)', line):
         return
     if search(r'[\w.]=[\w.]', line):
         error(filename, line_number, 'whitespace/operators', 4,
