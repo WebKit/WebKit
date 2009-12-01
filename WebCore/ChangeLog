@@ -1,3 +1,12 @@
+2009-12-01  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Tiger build by making the Xcode project compatible with Xcode 2.4.
+
+        This was probably broken by hand-editing the project file as Xcode itself
+        knows how to keep project files to a backwards-compatible subset of its format.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-12-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: windows build fix (bad vcproj in r51528).
