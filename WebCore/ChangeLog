@@ -1,3 +1,10 @@
+2009-12-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fix windows build via unexcluding generated files from
+        project.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-12-01  Mark Rowe  <mrowe@apple.com>
 
         Stop copying IDL files in to the WebCore framework wrapper.
