@@ -47,6 +47,7 @@
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
+#include "ScriptState.h"
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8NPObject.h"
@@ -352,6 +353,13 @@ void ScriptController::cleanupScriptObjectsForPlugin(Widget* nativeHandle)
 void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
 {
     worlds.append(mainThreadNormalWorld());
+}
+
+ScriptState* ScriptController::mainWorldScriptState()
+{
+    if (!m_mainWorldScriptState)
+        m_mainWorldScriptState.set(new ScriptState(m_frame, V8Proxy::mainWorldContext(m_frame)));
+    return m_mainWorldScriptState.get();
 }
 
 static NPObject* createNoScriptObject()

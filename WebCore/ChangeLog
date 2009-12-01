@@ -1,3 +1,17 @@
+2009-12-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Provide a way to get ScriptState for the inspected page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32020
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::mainWorldScriptState):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::scriptStateFromPage):
+
 2009-12-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.

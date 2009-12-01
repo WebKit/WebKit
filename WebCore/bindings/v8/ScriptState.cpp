@@ -68,9 +68,8 @@ ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)
 
 ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
 {
-    // This should be never reached with V8 bindings.
-    ASSERT_NOT_REACHED();
-    return 0;
+    // This should be only reached with V8 bindings from single process layout tests.
+    return page->mainFrame()->script()->mainWorldScriptState();
 }
 
 // FIXME: Stub method so we compile.  Currently called from FrameLoader.cpp.
