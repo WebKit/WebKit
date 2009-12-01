@@ -1,3 +1,16 @@
+2009-11-30  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Moved the functions that are closing the result log of the
+        tests to the last line of the runTest function, this avoids
+        reporting crashes in the wrong test if there is a problem when
+        reseting the state after the test.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+
 2009-11-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
