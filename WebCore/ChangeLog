@@ -1,3 +1,9 @@
+2009-11-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, add header needed for wx build.
+
+        * css/CSSFontFaceSrcValue.cpp:
+
 2009-11-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.

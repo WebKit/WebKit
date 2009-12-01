@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSStyleSheet.h"
+#include "Node.h"
 
 namespace WebCore {
 
