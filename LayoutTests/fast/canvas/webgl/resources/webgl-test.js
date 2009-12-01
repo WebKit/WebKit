@@ -11,7 +11,7 @@ function getShaderSource(file) {
 function create3DContext() {
     var canvas = document.createElement("canvas");
     try {
-        return canvas.getContext("webkit-3d");
+        return canvas.getContext("experimental-webgl");
     } catch(e) {}
     return canvas.getContext("moz-webgl");
 }

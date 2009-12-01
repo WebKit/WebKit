@@ -18,7 +18,7 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
     var canvas = document.getElementById(canvasName);
     var gl;
     
-    try {gl = canvas.getContext("webkit-3d") } catch(e) { }
+    try {gl = canvas.getContext("experimental-webgl") } catch(e) { }
     if (!gl)
         try {gl = canvas.getContext("moz-webgl") } catch(e) { }
     if (!gl) {

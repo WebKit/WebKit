@@ -1,3 +1,13 @@
+2009-12-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Updated HTMLCanvasElement to accept "experimental-webgl" as the context name.
+        https://bugs.webkit.org/show_bug.cgi?id=31672
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+
 2009-12-01  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Not reviewed: chromium build fix, added missing import.

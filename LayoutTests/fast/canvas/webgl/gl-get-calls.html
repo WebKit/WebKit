@@ -16,7 +16,7 @@ description("This test ensures basic functionality of the underlying graphics li
 debug("");
 debug("Canvas.getContext");
 
-var context = document.getElementById("canvas").getContext("webkit-3d");
+var context = document.getElementById("canvas").getContext("experimental-webgl");
 if (!context)
     testFailed("context does not exist");
 else {
