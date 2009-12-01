@@ -1,3 +1,14 @@
+2009-11-30  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update pywebsocket to 0.4.2.1.
+        This is to fix a bug that some messages are logged to stderr even when the log file is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=31976
+
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+
 2009-11-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

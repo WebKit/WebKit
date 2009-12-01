@@ -75,6 +75,7 @@ except ImportError:
 
 import dispatch
 import handshake
+import util
 
 
 _LOG_LEVELS = {
@@ -171,6 +172,15 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
             ctx.use_certificate_file(WebSocketServer.options.certificate)
             socket_ = OpenSSL.SSL.Connection(ctx, socket_)
         return socket_
+
+    def handle_error(self, rquest, client_address):
+        """Override SocketServer.handle_error."""
+
+        logging.error(
+            ('Exception in processing request from: %r' % (client_address,)) +
+            '\n' + util.get_stack_trace())
+        # Note: client_address is a tuple. To match it against %r, we need the
+        # trailing comma.
 
 
 class WebSocketRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
