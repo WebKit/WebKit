@@ -1,3 +1,10 @@
+2009-12-01  Yaar Schnitman  <yaar@chromium.org>
+
+        build-webkit: Remove flex,bison,gperf check for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=32043
+
+        * Scripts/webkitdirs.pm:
+
 2009-12-01  Chris Fleizach  <cfleizach@apple.com>
 
         Build fixage for Windows/GTK for DumpRenderTree.
