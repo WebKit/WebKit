@@ -145,7 +145,6 @@
 #include "ScriptControllerWin.cpp"
 #include "ScriptEventListener.cpp"
 #include "ScriptFunctionCall.cpp"
-#include "ScriptObjectQuarantine.cpp"
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"
 #include "WorkerScriptController.cpp"

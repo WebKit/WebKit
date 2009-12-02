@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "InspectorFrontend.h"
 #include "ScriptObject.h"
-#include "ScriptObjectQuarantine.h"
 
 namespace WebCore {
 
@@ -59,9 +58,6 @@ void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
         return;
 
     ScriptObject jsonObject = frontend->newScriptObject();
-    ScriptObject database;
-    if (!getQuarantinedScriptObject(m_database.get(), database))
-        return;
     jsonObject.set("id", m_id);
     jsonObject.set("domain", m_domain);
     jsonObject.set("name", m_name);

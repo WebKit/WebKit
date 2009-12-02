@@ -44,6 +44,11 @@ namespace WebCore {
 
 class ScriptValue {
 public:
+    static ScriptValue quarantineValue(ScriptState* scriptState, const ScriptValue& value)
+    {
+        return value;
+    }
+
     ScriptValue() {}
 
     ScriptValue(v8::Handle<v8::Value> value) 

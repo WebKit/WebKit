@@ -38,7 +38,6 @@
 #include "Node.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
-#include "ScriptObjectQuarantine.h"
 #include "ScriptState.h"
 #include "ScriptString.h"
 #include <wtf/OwnPtr.h>

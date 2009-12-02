@@ -764,7 +764,6 @@ SOURCES += \
     bindings/js/ScriptEventListener.cpp \
     bindings/js/ScriptFunctionCall.cpp \
     bindings/js/ScriptObject.cpp \
-    bindings/js/ScriptObjectQuarantine.cpp \
     bindings/js/ScriptState.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
@@ -1444,7 +1443,6 @@ HEADERS += \
     bindings/js/ScriptEventListener.h \
     bindings/js/ScriptFunctionCall.h \
     bindings/js/ScriptObject.h \
-    bindings/js/ScriptObjectQuarantine.h \
     bindings/js/ScriptSourceCode.h \
     bindings/js/ScriptSourceProvider.h \
     bindings/js/ScriptState.h \

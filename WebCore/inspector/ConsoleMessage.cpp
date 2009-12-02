@@ -34,7 +34,6 @@
 #include "InspectorFrontend.h"
 #include "ScriptCallStack.h"
 #include "ScriptObject.h"
-#include "ScriptObjectQuarantine.h"
 
 namespace WebCore {
 
@@ -75,7 +74,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, S
 
 #if ENABLE(INSPECTOR)
     for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
-        m_wrappedArguments[i] = quarantineValue(callStack->state(), lastCaller.argumentAt(i));
+        m_wrappedArguments[i] = ScriptObject::quarantineValue(callStack->state(), lastCaller.argumentAt(i));
 #endif
 }
 
