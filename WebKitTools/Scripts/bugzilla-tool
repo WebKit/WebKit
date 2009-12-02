@@ -32,12 +32,16 @@
 
 import os
 
+from modules.bugzilla import Bugzilla
+from modules.buildbot import BuildBot
 from modules.buildsteps import BuildSteps
 from modules.commands.download import *
 from modules.commands.queries import *
 from modules.commands.queues import *
 from modules.commands.upload import *
 from modules.logging import log
+from modules.multicommandtool import MultiCommandTool
+from modules.scm import detect_scm_system
 
 class BugzillaTool(MultiCommandTool):
     def __init__(self):

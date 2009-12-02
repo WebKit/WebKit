@@ -403,7 +403,7 @@ class SVNTest(SCMTest):
         scripts_path = os.path.join(self.svn_checkout_path, 'WebKitTools', 'Scripts')
         os.makedirs(scripts_path)
         create_patch_path = os.path.join(scripts_path, 'svn-create-patch')
-        write_into_file_at_path(create_patch_path, '#!/bin/sh\necho $PWD')
+        write_into_file_at_path(create_patch_path, '#!/bin/sh\necho $PWD') # We could pass -n to prevent the \n, but not all echo accept -n.
         os.chmod(create_patch_path, stat.S_IXUSR | stat.S_IRUSR)
 
         # Change into our test directory and run the create_patch command.
@@ -412,7 +412,7 @@ class SVNTest(SCMTest):
         self.assertEqual(scm.checkout_root, self.svn_checkout_path) # Sanity check that detection worked right.
         patch_contents = scm.create_patch()
         # Our fake 'svn-create-patch' returns $PWD instead of a patch, check that it was executed from the root of the repo.
-        self.assertEqual(os.path.realpath(scm.checkout_root), patch_contents)
+        self.assertEqual("%s\n" % os.path.realpath(scm.checkout_root), patch_contents) # Add a \n because echo adds a \n.
 
     def test_detection(self):
         scm = detect_scm_system(self.svn_checkout_path)

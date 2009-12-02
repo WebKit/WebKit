@@ -313,7 +313,7 @@ class Bugzilla:
         digits = re.compile("\d+")
         attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
         attachment_links = SoupStrainer("a", href=attachment_href)
-        return [digits.search(tag["href"]).group(0) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
+        return [int(digits.search(tag["href"]).group(0)) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
 
     def _fetch_attachment_ids_request_query(self, query):
         return self._parse_attachment_ids_request_query(urllib2.urlopen(query))

@@ -28,28 +28,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# FIXME: Trim down this import list once we have unit tests.
-import os
 import re
-import StringIO
-import subprocess
-import sys
-import time
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from optparse import make_option
 
-from modules.bugzilla import Bugzilla, parse_bug_id
-from modules.buildbot import BuildBot
-from modules.changelogs import ChangeLog
-from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
 from modules.landingsequence import LandingSequence, ConditionalLandingSequence, LandingSequenceErrorHandler
-from modules.logging import error, log, tee
-from modules.multicommandtool import MultiCommandTool, Command
+from modules.logging import error, log
+from modules.multicommandtool import Command
 from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.processutils import run_and_throw_if_fail
-from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
+from modules.scm import ScriptError
 from modules.statusbot import StatusBot
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue, WorkQueueDelegate
