@@ -1,3 +1,18 @@
+2009-12-01  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Added variants of find/contains/add that allow a foreign key type to be used.
+        This will allow AtomicString-keyed maps to be queried by C string without
+        having to create a temporary AtomicString (see HTTPHeaderMap.)
+        The code for this is adapted from the equivalent in HashSet.h.
+
+        * wtf/HashMap.h:
+        (WTF::HashMap::find):
+        (WTF::HashMap::contains):
+        (WTF::HashMap::add):
+        * wtf/HashSet.h: Changed "method" to "function member" in a comment.
+
 2009-12-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Revert 51551 because it broke GTK+.

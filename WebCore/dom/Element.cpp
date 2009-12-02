@@ -136,6 +136,12 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
     ExceptionCode ec;
     setAttribute(name, value, ec);
 }
+    
+void Element::setCStringAttribute(const QualifiedName& name, const char* cStringValue)
+{
+    ExceptionCode ec;
+    setAttribute(name, AtomicString(cStringValue), ec);
+}
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 {

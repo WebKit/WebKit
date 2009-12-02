@@ -79,7 +79,9 @@ namespace WebCore {
         
         const HTTPHeaderMap& httpHeaderFields() const;
         String httpHeaderField(const AtomicString& name) const;
+        String httpHeaderField(const char* name) const;
         void setHTTPHeaderField(const AtomicString& name, const String& value);
+        void setHTTPHeaderField(const char* name, const String& value);
         void addHTTPHeaderField(const AtomicString& name, const String& value);
         void addHTTPHeaderFields(const HTTPHeaderMap& headerFields);
         

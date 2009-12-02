@@ -239,6 +239,13 @@ String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
     return m_httpHeaderFields.get(name); 
 }
 
+String ResourceResponseBase::httpHeaderField(const char* name) const
+{
+    lazyInit();
+
+    return m_httpHeaderFields.get(name); 
+}
+
 void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const String& value)
 {
     lazyInit();

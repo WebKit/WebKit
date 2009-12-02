@@ -1,3 +1,35 @@
+2009-12-01  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add convenience methods to Element and QualifiedName that take
+        char* instead of AtomicString, in preparation for removing the
+        implicit conversion between the two types (30187).
+        https://bugs.webkit.org/show_bug.cgi?id=31749
+
+        * dom/Element.cpp:
+        (WebCore::Element::setCStringAttribute):  Equivalent to setAttribute.
+        * dom/Element.h:
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init):  Shared impl of both constructors
+        (WebCore::QualifiedName::QualifiedName):  New c'tor taking char*.
+        * dom/QualifiedName.h:
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::CaseFoldingCStringTranslator):  Enables lookup by C string
+        (WebCore::HTTPHeaderMap::get):  New variant that takes C string
+        (WebCore::HTTPHeaderMap::contains):  New variant that takes C string
+        (WebCore::HTTPHeaderMap::add):  New variant that takes C string
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::get):
+        (WebCore::HTTPHeaderMap::add):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpHeaderField):  New variant that takes C string
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):  Use symbolic names for headers
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::httpHeaderField):  New variant that takes C string
+        * platform/network/ResourceResponseBase.h:
+
 2009-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         More Windows build fix.

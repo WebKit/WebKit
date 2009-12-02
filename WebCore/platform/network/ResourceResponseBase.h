@@ -71,6 +71,7 @@ public:
     void setHTTPStatusText(const String&);
     
     String httpHeaderField(const AtomicString& name) const;
+    String httpHeaderField(const char* name) const;
     void setHTTPHeaderField(const AtomicString& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
 

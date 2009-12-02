@@ -57,6 +57,7 @@ public:
     };
 
     QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
+    QualifiedName(const AtomicString& prefix, const char* localName, const AtomicString& namespaceURI);
     ~QualifiedName() { deref(); }
 #ifdef QNAME_DEFAULT_CONSTRUCTOR
     QualifiedName() : m_impl(0) { }
@@ -88,6 +89,7 @@ public:
     static void init();
     
 private:
+    void init(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     void ref() const { m_impl->ref(); }
     void deref();
     

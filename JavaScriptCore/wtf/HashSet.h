@@ -81,7 +81,7 @@ namespace WTF {
 
         // An alternate version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
-        // in the table. HashTranslator must have the following methods:
+        // in the table. HashTranslator must have the following function members:
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);

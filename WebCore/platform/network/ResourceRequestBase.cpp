@@ -208,6 +208,13 @@ String ResourceRequestBase::httpHeaderField(const AtomicString& name) const
     return m_httpHeaderFields.get(name);
 }
 
+String ResourceRequestBase::httpHeaderField(const char* name) const
+{
+    updateResourceRequest(); 
+    
+    return m_httpHeaderFields.get(name);
+}
+
 void ResourceRequestBase::setHTTPHeaderField(const AtomicString& name, const String& value)
 {
     updateResourceRequest(); 
@@ -216,6 +223,11 @@ void ResourceRequestBase::setHTTPHeaderField(const AtomicString& name, const Str
     
     if (url().protocolInHTTPFamily())
         m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::setHTTPHeaderField(const char* name, const String& value)
+{
+    setHTTPHeaderField(AtomicString(name), value);
 }
 
 void ResourceRequestBase::clearHTTPReferrer()
