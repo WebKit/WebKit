@@ -1,5 +1,11 @@
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Qt build almost fixed, DumpRenderTree should compile now as well.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.h: Update old function signature.
+
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Simon Fraser.
 
         Add SVG animation test framework with 'snapshot' functionality
