@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+.status {
+    display: block;
+    float: left;
+    margin: 1px;
+    padding: 1px 2px;
+    border-radius: 5px;
+    border: 1px solid #AAA;
+    font-size: 11px;
+}
+.pass {
+    background-color: #8FDF5F;
+    border: 1px solid #4F8530;
+}
+.fail {
+    background-color: #E98080;
+    border: 1px solid #A77272;
+}
+.pending {
+    background-color: #FFFC6C;
+    border: 1px solid #C5C56D;
+}
+</style>
+</head>
+<body>{% for key, value in queue_status.items %}
+<div class="status {{value}}" title="{{key}}: {{value}}">{{key}}</div>{% endfor %}
+</body>
+</html>

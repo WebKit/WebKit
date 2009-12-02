@@ -1,3 +1,18 @@
+2009-12-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Implement status bubble view
+        https://bugs.webkit.org/show_bug.cgi?id=32057
+
+        The status bubble is a compact representation of the queue status for a
+        given patch.  This will eventually help us reduce the comment spam from
+        the queues.
+
+        * QueueStatusServer/index.html: Added HTML5 doctype for sanity.
+        * QueueStatusServer/queue_status.py:
+        * QueueStatusServer/status_bubble.html: Added.
+
 2009-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

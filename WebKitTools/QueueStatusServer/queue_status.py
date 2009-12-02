@@ -73,6 +73,52 @@ class PatchStatus(webapp.RequestHandler):
         self.response.out.write(statuses[0].message)
 
 
+class StatusSummary(object):
+    def _status_to_code(self, status):
+        code_names = {
+            "Pass": "pass",
+            "Pending": "pending",
+            "Fail": "fail",
+            "Error": "error",
+        }
+        return code_names.get(status, "none")
+
+    def _queue_name_to_code(self, queue_name):
+        code_names = {
+            "style-queue": "style",
+        }
+        return code_names[queue_name]
+
+    queues = [
+        "style-queue",
+    ]
+
+    def __init__(self):
+        self._summary = {}
+
+    def summarize(self, attachment_id):
+        if self._summary.get(attachment_id):
+            return self._summary.get(attachment_id)
+
+        for queue in self.queues:
+            statuses = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', attachment_id).order('-date').fetch(1)
+            status_code = self._status_to_code(statuses[0].message if statuses else None)
+            queue_code = self._queue_name_to_code(queue)
+            attachment_summary[queue_code] = status_code
+
+        self._summary[attachment_id] = attachment_summary
+        return attachment_summary
+
+
+class StatusBubble(webapp.RequestHandler):
+    def get(self, attachment_id):
+        status_summary = StatusSummary()
+        template_values = {
+            "queue_status" : status_summary.summarize(int(attachment_id)),
+        }
+        self.response.out.write(template.render('status_bubble.html', template_values))
+
+
 class UpdateStatus(webapp.RequestHandler):
     def get(self):
         self.response.out.write(template.render('update_status.html', None))
@@ -105,6 +151,7 @@ routes = [
     ('/', MainPage),
     ('/update-status', UpdateStatus),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
+    (r'/status-bubble/(.*)', StatusBubble),
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)
