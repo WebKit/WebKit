@@ -139,6 +139,8 @@ namespace WebCore {
     DOMWrapperMap<void>& getDOMSVGObjectWithContextMap();
     void visitDOMSVGObjectsInCurrentThread(DOMWrapperMap<void>::Visitor*);
 #endif
+
+    void enableFasterDOMStoreAccess();
 } // namespace WebCore
 
 #endif // V8DOMMap_h

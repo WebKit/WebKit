@@ -32,6 +32,7 @@
 #include "WebScriptController.h"
 
 #include "V8Binding.h"
+#include "V8DOMMap.h"
 #include "V8Proxy.h"
 
 #include "WebString.h"
@@ -60,6 +61,7 @@ void WebScriptController::registerExtension(v8::Extension* extension,
 void WebScriptController::enableV8SingleThreadMode()
 {
     enableStringImplCache();
+    enableFasterDOMStoreAccess();
 }
 
 void WebScriptController::flushConsoleMessages()
