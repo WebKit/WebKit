@@ -451,8 +451,10 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
 
 bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
 {    
-    gchar* animationElement = JSStringCopyUTF8CString(animationId);
-    bool returnValue = webkit_web_frame_pause_svg_animation(mainFrame, elementId, time, animationElement);
+    gchar* name = JSStringCopyUTF8CString(animationId);
+    gchar* element = JSStringCopyUTF8CString(elementId);
+    bool returnValue = webkit_web_frame_pause_svg_animation(mainFrame, name, time, element);
+    g_free(name);
     g_free(element);
     return returnValue;
 }

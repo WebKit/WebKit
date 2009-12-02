@@ -1,5 +1,12 @@
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. GTK DRT try 2.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Try to fix gtk DRT build.
 
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
