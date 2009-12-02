@@ -5263,6 +5263,15 @@ transforms/2d/hindi-rotated.html
 transitions/move-after-transition.html
 transitions/transition-end-event-rendering.html
 
+# new test without expected file introduced by http://trac.webkit.org/changeset/51496
+svg/custom/mask-with-all-units.svg
+
+# new test without expected file introduced by http://trac.webkit.org/changeset/51549
+fast/css/namespaces/namespaces-comments.xml
+
+# new test without expected file introduced by http://trac.webkit.org/changeset/51556
+fast/css/namespaces/namespaces-empty.xml
+
 # Failure introduced by http://trac.webkit.org/changeset/51429
 # hamaji will look into this.
 editing/selection/last-empty-inline.html

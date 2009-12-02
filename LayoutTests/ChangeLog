@@ -1,3 +1,12 @@
+2009-12-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Skip new tests.
+
+        * platform/qt/Skipped:
+        - svg/custom/mask-with-all-units.svg added.
+        - fast/css/namespaces/namespaces-comments.xml added.
+        - fast/css/namespaces/namespaces-empty.xml added.
+
 2009-12-02  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
