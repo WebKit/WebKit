@@ -266,7 +266,7 @@ class CheckStyle(AbstractPatchProcessingCommand):
         sequence.run_and_handle_errors()
 
 
-class BuildAttachmentSequence(LandingSequence):
+class BuildAttachmentSequence(ConditionalLandingSequence):
     def __init__(self, patch, options, tool):
         LandingSequence.__init__(self, patch, options, tool)
 
@@ -283,6 +283,7 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     def __init__(self):
         options = BuildSteps.cleaning_options()
         options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):

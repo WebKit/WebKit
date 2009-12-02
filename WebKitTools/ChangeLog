@@ -1,3 +1,13 @@
+2009-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        build-queue is throwing exceptions and complaining about
+        lack of --no-update on build-attachment.  Make it stop.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/download.py:
+
 2009-12-02  Adam Barth  <abarth@webkit.org>
 
         Unreviewed "build" fix.  Forgot to declare my variables.  :(

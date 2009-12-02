@@ -43,6 +43,7 @@ class BuildSteps:
             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
         ]
 
+    # FIXME: These distinctions are bogus.  We need a better model for handling options.
     @staticmethod
     def build_options():
         return [
