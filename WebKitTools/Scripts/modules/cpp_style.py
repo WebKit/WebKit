@@ -2309,7 +2309,7 @@ def _classify_include(filename, include, is_system, include_state):
     include_base = FileInfo(include).base_name()
 
     # If we haven't encountered a primary header, then be lenient in checking.
-    if not include_state.visited_primary_section() and target_base.startswith(include_base):
+    if not include_state.visited_primary_section() and target_base.find(include_base) != -1:
         return _PRIMARY_HEADER
     # If we already encountered a primary header, perform a strict comparison.
     # In case the two filename bases are the same then the above lenient check

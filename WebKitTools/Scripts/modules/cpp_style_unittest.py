@@ -2307,6 +2307,10 @@ class OrderOfIncludesTest(CppStyleTestBase):
                          classify_include('fooCustom.cpp',
                                           'foo.h',
                                           False, include_state))
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
+                         classify_include('PrefixFooCustom.cpp',
+                                          'Foo.h',
+                                          False, include_state))
         # Tricky example where both includes might be classified as primary.
         self.assert_language_rules_check('ScrollbarThemeWince.cpp',
                                          '#include "config.h"\n'

@@ -1,3 +1,14 @@
+2009-12-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style does not understand (Prefix)Foo(Custom|Gtk|CG|Mac).cpp including Foo.h
+        https://bugs.webkit.org/show_bug.cgi?id=32033
+
+        * Scripts/modules/cpp_style.py: Changed check for a possible primary header to use find
+                                        instead of startswith.
+        * Scripts/modules/cpp_style_unittest.py: Added a unit test for the new behavior.
+
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Qt build almost fixed, DumpRenderTree should compile now as well.
