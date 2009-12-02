@@ -4618,11 +4618,13 @@ static inline int yyerror(const char*) { return 1; }
 int CSSParser::lex(void* yylvalWithoutType)
 {
     YYSTYPE* yylval = static_cast<YYSTYPE*>(yylvalWithoutType);
-    int token = lex();
     int length;
+    
+    lex();
+
     UChar* t = text(&length);
 
-    switch (token) {
+    switch (token()) {
     case WHITESPACE:
     case SGML_CD:
     case INCLUDES:
@@ -4688,12 +4690,34 @@ int CSSParser::lex(void* yylvalWithoutType)
         break;
     }
 
-    return token;
+    return token();
 }
 
 static inline bool isCSSWhitespace(UChar c)
 {
     return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';
+}
+
+void CSSParser::recheckAtKeyword(const UChar* str, int len)
+{
+    String ruleName(str, len);
+    if (equalIgnoringCase(ruleName, "@import"))
+        yyTok = IMPORT_SYM;
+    else if (equalIgnoringCase(ruleName, "@page"))
+        yyTok = PAGE_SYM;
+    else if (equalIgnoringCase(ruleName, "@media"))
+        yyTok = MEDIA_SYM;
+    else if (equalIgnoringCase(ruleName, "@font-face"))
+        yyTok = FONT_FACE_SYM;
+    else if (equalIgnoringCase(ruleName, "@charset"))
+        yyTok = CHARSET_SYM;
+    else if (equalIgnoringCase(ruleName, "@namespace"))
+        yyTok = NAMESPACE_SYM;
+    else if (equalIgnoringCase(ruleName, "@-webkit-keyframes"))
+        yyTok = WEBKIT_KEYFRAMES_SYM;
+    else if (equalIgnoringCase(ruleName, "@-webkit-mediaquery"))
+        yyTok = WEBKIT_MEDIAQUERY_SYM;
+    // FIXME: Add CSS Variables if we ever decide to turn it back on.
 }
 
 UChar* CSSParser::text(int *length)
@@ -4749,6 +4773,8 @@ UChar* CSSParser::text(int *length)
     UChar* out = start;
     UChar* escape = 0;
 
+    bool sawEscape = false;
+
     for (int i = 0; i < l; i++) {
         UChar* current = start + i;
         if (escape == current - 1) {
@@ -4793,6 +4819,7 @@ UChar* CSSParser::text(int *length)
         }
         if (!escape && *current == '\\') {
             escape = current;
+            sawEscape = true;
             continue;
         }
         *out++ = *current;
@@ -4813,6 +4840,12 @@ UChar* CSSParser::text(int *length)
     }
     
     *length = out - start;
+    
+    // If we have an unrecognized @-keyword, and if we handled any escapes at all, then
+    // we should attempt to adjust yyTok to the correct type.
+    if (yyTok == ATKEYWORD && sawEscape)
+        recheckAtKeyword(start, *length);
+
     return start;
 }
 

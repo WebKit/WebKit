@@ -1,3 +1,22 @@
+2009-12-01  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32045, make sure escape sequences work with
+        all the @-rules we support.  When escape sequences are present, the lexical scanner
+        just returns a generic token name: ATKEYWORD.  We have to process the escape sequences
+        and then recheck against the rules we support with the final processed name.  If we
+        find a match, we mutate the token value to the appropriate rule name token, e.g.,
+        NAMESPACE_SYM.
+
+        Added fast/css/namespaces/namespaces-escapes.xml
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::recheckAtKeyword):
+        (WebCore::CSSParser::text):
+        * css/CSSParser.h:
+
 2009-12-02  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.:w
