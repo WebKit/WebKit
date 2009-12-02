@@ -2023,6 +2023,9 @@ public:
     // IFormPromptAdditions
     virtual HRESULT STDMETHODCALLTYPE isUserEdited( 
         /* [retval][out] */ BOOL *result);
+
+    virtual HRESULT STDMETHODCALLTYPE setValueForUser(
+        /* [in] */ BSTR value);
 };
 
 class DOMHTMLTextAreaElement : public DOMHTMLElement, public IDOMHTMLTextAreaElement, public IFormPromptAdditions
