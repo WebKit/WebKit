@@ -1,3 +1,17 @@
+2009-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32089
+        Test that WebSocket.readyState is set correctly
+
+        * websocket/tests/script-tests/simple.js:
+        (ws.onopen):
+        (ws.onmessage):
+        (ws.onclose):
+        * websocket/tests/simple-expected.txt:
+        Added readyState logging.
+
 2009-11-30  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Darin Adler.

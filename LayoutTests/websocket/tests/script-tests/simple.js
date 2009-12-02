@@ -14,20 +14,21 @@ function endTest()
 }
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/simple");
+debug("Created a socket to '" + ws.URL + "'; readyState = " + ws.readyState + ".");
 
 ws.onopen = function()
 {
-    debug("Connected.");
+    debug("Connected; readyState = " + ws.readyState + ".");
 };
 
 ws.onmessage = function(messageEvent)
 {
-    debug("Received: '" + messageEvent.data + "'");
+    debug("Received: '" + messageEvent.data + "'; readyState = " + ws.readyState + ".");
 };
 
 ws.onclose = function()
 {
-    debug("Closed.");
+    debug("Closed; readyState = " + ws.readyState + ".");
     endTest();
 };
 
