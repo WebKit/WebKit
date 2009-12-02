@@ -1,3 +1,11 @@
+2009-12-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put tests into skiplist because of missing layoutTestController.evaluateInWebInspector().
+
+        * platform/qt/Skipped:
+        - inspector/elements-panel-selection-on-refresh.html added.
+        - inspector/timeline-event-dispatch.html added.
+
 2009-12-02  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
