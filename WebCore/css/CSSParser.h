@@ -187,13 +187,15 @@ namespace WebCore {
         MediaQuery* createFloatingMediaQuery(Vector<MediaQueryExp*>*);
         MediaQuery* sinkFloatingMediaQuery(MediaQuery*);
 
+        void addNamespace(const AtomicString& prefix, const AtomicString& uri);
+
         bool addVariable(const CSSParserString&, CSSParserValueList*);
         bool addVariableDeclarationBlock(const CSSParserString&);
         bool checkForVariables(CSSParserValueList*);
         void addUnresolvedProperty(int propId, bool important);
         
         Vector<CSSSelector*>* reusableSelectorVector() { return &m_reusableSelectorVector; }
-        
+
         bool m_strict;
         bool m_important;
         int m_id;
@@ -248,6 +250,10 @@ namespace WebCore {
         int yyleng;
         int yyTok;
         int yy_start;
+
+        bool m_allowImportRules;
+        bool m_allowVariablesRules;
+        bool m_allowNamespaceDeclarations;
 
         Vector<RefPtr<StyleBase> > m_parsedStyleObjects;
         Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;

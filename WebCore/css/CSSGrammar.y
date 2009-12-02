@@ -97,7 +97,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 51
+%expect 48
 
 %nonassoc LOWEST_PREC
 
@@ -184,18 +184,15 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %type <rule> charset
 %type <rule> ruleset
-%type <rule> valid_rule_or_import
 %type <rule> media
 %type <rule> import
+%type <rule> namespace
 %type <rule> page
 %type <rule> font_face
 %type <rule> keyframes
 %type <rule> invalid_rule
 %type <rule> save_block
 %type <rule> invalid_at
-%type <rule> invalid_at_list
-%type <rule> invalid_import
-%type <rule> invalid_media
 %type <rule> rule
 %type <rule> valid_rule
 %type <ruleList> block_rule_list 
@@ -268,7 +265,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %%
 
 stylesheet:
-    maybe_space maybe_charset maybe_sgml import_list variables_list namespace_list rule_list
+    maybe_space maybe_charset maybe_sgml rule_list
   | webkit_rule maybe_space
   | webkit_decls maybe_space
   | webkit_value maybe_space
@@ -278,13 +275,8 @@ stylesheet:
   | webkit_keyframe_rule maybe_space
   ;
 
-valid_rule_or_import:
-    valid_rule
-  | import
-  ;
-
 webkit_rule:
-    WEBKIT_RULE_SYM '{' maybe_space valid_rule_or_import maybe_space '}' {
+    WEBKIT_RULE_SYM '{' maybe_space valid_rule maybe_space '}' {
         static_cast<CSSParser*>(parser)->m_rule = $4;
     }
 ;
@@ -373,31 +365,6 @@ charset:
   }
 ;
 
-import_list:
- /* empty */
- | import_list import maybe_sgml {
-     CSSParser* p = static_cast<CSSParser*>(parser);
-     if ($2 && p->m_styleSheet)
-         p->m_styleSheet->append($2);
- }
- | invalid_at_list {
- }
- ;
-
-variables_list:
-/* empty */
-| variables_list variables_rule maybe_sgml {
-    CSSParser* p = static_cast<CSSParser*>(parser);
-     if ($2 && p->m_styleSheet)
-         p->m_styleSheet->append($2);
-}
-;
-
-namespace_list:
-/* empty */
-| namespace_list namespace maybe_sgml
-;
-
 rule_list:
    /* empty */
  | rule_list rule maybe_sgml {
@@ -413,13 +380,15 @@ valid_rule:
   | page
   | font_face
   | keyframes
+  | namespace
+  | import
+  | variables_rule
   ;
 
 rule:
     valid_rule
   | invalid_rule
   | invalid_at
-  | invalid_import
   ;
 
 block_rule_list: 
@@ -445,8 +414,10 @@ block_rule:
     block_valid_rule
   | invalid_rule
   | invalid_at
-  | invalid_import
-  | invalid_media
+  | namespace
+  | import
+  | variables_rule
+  | media
   ;
 
 
@@ -570,12 +541,18 @@ variable_name:
 
 namespace:
 NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
-    CSSParser* p = static_cast<CSSParser*>(parser);
-    if (p->m_styleSheet)
-        p->m_styleSheet->addNamespace(p, $3, $4);
+    static_cast<CSSParser*>(parser)->addNamespace($3, $4);
+    $$ = 0;
 }
-| NAMESPACE_SYM error invalid_block
-| NAMESPACE_SYM error ';'
+| NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space invalid_block {
+    $$ = 0;
+}
+| NAMESPACE_SYM error invalid_block {
+    $$ = 0;
+}
+| NAMESPACE_SYM error ';' {
+    $$ = 0;
+}
 ;
 
 maybe_ns_prefix:
@@ -1477,23 +1454,6 @@ invalid_at:
         $$ = 0;
     }
   | ATKEYWORD error ';' {
-        $$ = 0;
-    }
-    ;
-
-invalid_at_list:
-    invalid_at maybe_sgml
-  | invalid_at_list invalid_at maybe_sgml
-  ;
-
-invalid_import:
-    import {
-        $$ = 0;
-    }
-    ;
-
-invalid_media:
-    media {
         $$ = 0;
     }
     ;

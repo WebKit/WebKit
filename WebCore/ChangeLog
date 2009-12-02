@@ -1,3 +1,28 @@
+2009-12-02  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32072, clean up invalid @-rule error handling so that we
+        pass more CSS test suite stuff.  Make the grammar stop enforcing the ordering of @namespace vs.
+        @variables vs. @import.  Just let the parser handle that instead.  This simplifies the grammar and
+        makes error handling deal with more cases correctly.
+
+        Added fast/css/namespaces/namespaces-invalid-at-rules.xml
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::addNamespace):
+        (WebCore::CSSParser::createVariablesRule):
+        * css/CSSParser.h:
+
 2009-12-02  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Dan Bernstein.
