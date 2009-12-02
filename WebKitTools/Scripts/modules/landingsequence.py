@@ -51,6 +51,7 @@ class LandingSequence:
         self.clean()
         self.update()
         self.apply_patch()
+        self.check_builders()
         self.build()
         self.test()
         commit_log = self.commit()
@@ -82,10 +83,10 @@ class LandingSequence:
         log("Processing patch %s from bug %s." % (self._patch["id"], self._patch["bug_id"]))
         self._tool.scm().apply_patch(self._patch, force=self._options.non_interactive)
 
-    def build(self):
-        # Make sure the tree is still green after updating, before building this patch.
-        # The first patch ends up checking tree status twice, but that's OK.
+    def check_builders(self):
         self._tool.steps.ensure_builders_are_green(self._tool.buildbot, self._options)
+
+    def build(self):
         self._tool.steps.build_webkit(quiet=self._options.quiet, port=self._port)
 
     def test(self):
@@ -119,6 +120,10 @@ class ConditionalLandingSequence(LandingSequence):
     def update(self):
         if self._options.update:
             LandingSequence.update(self)
+
+    def check_builders(self):
+        if self._options.build:
+            LandingSequence.check_builders(self)
 
     def build(self):
         if self._options.build:

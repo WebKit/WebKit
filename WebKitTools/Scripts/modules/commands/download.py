@@ -129,6 +129,7 @@ class LandDiffSequence(ConditionalLandingSequence):
         ConditionalLandingSequence.__init__(self, patch, options, tool)
 
     def run(self):
+        self.check_builders()
         self.build()
         self.test()
         commit_log = self.commit()
