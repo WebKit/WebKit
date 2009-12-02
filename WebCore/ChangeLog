@@ -1,3 +1,13 @@
+2009-12-02  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Safari/Chromium for Windows fails to load CJK WebFonts
+        https://bugs.webkit.org/show_bug.cgi?id=31804
+        
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        (WebCore::renameAndActivateFont): Load a remote font even if the font has 2 or more faces.
+
 2009-12-02  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Fisher.
