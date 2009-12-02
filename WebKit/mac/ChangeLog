@@ -1,3 +1,15 @@
+2009-12-02  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash when scrolling a frame that goes away mid-scroll.
+
+        <rdar://problem/7400263>
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView scrollWheel:]): Retain self incase the last
+        reference is released when calling super.
+
 2009-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Migrate DOMHTMLInputElementPrivate.h as a private header.

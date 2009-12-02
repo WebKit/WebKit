@@ -354,6 +354,10 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         }
     }
 
+    // Calling super can release the last reference. <rdar://problem/7400263>
+    // Hold a reference so the code following the super call will not crash.
+    [self retain];
+
     [super scrollWheel:event];
 
     if (!isLatchingEvent) {
@@ -363,6 +367,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         verticallyPinnedByPreviousWheelEvent = (verticalPosition == 0.0 || verticalPosition == 1.0);
         horizontallyPinnedByPreviousWheelEvent = (horizontalPosition == 0.0 || horizontalPosition == 1.0);
     }
+
+    [self release];
 }
 
 - (BOOL)accessibilityIsIgnored 
