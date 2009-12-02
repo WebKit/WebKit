@@ -552,7 +552,10 @@ String KURL::query() const
     // Bug: https://bugs.webkit.org/show_bug.cgi?id=21015 this function returns
     // an empty string when the query is empty rather than a null (not sure
     // which is right).
-    return String("", 0);
+    // Returns a null if the query is not specified, instead of empty.
+    if (m_url.m_parsed.query.is_valid())
+        return String("", 0);
+    return String();
 }
 
 String KURL::path() const

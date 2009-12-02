@@ -74,6 +74,13 @@ static String extractResponseCode(const char* header, int len)
     return String(space1 + 1, space2 - space1 - 1);
 }
 
+static String resourceName(const KURL& url)
+{
+    if (url.query().isNull())
+        return url.path();
+    return url.path() + "?" + url.query();
+}
+
 WebSocketHandshake::WebSocketHandshake(const KURL& url, const String& protocol, ScriptExecutionContext* context)
     : m_url(url)
     , m_clientProtocol(protocol)
@@ -139,7 +146,7 @@ String WebSocketHandshake::clientLocation() const
             builder.append(String::number(m_url.port()));
         }
     }
-    builder.append(m_url.path());
+    builder.append(resourceName(m_url));
     return builder.toString();
 }
 
@@ -148,11 +155,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     StringBuilder builder;
 
     builder.append("GET ");
-    builder.append(m_url.path());
-    if (!m_url.query().isEmpty()) {
-        builder.append("?");
-        builder.append(m_url.query());
-    }
+    builder.append(resourceName(m_url));
     builder.append(" HTTP/1.1\r\n");
     builder.append("Upgrade: WebSocket\r\n");
     builder.append("Connection: Upgrade\r\n");

@@ -1,0 +1,12 @@
+Make sure handshake with URL with query components fails against server that doesn't support query component.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+url=ws://127.0.0.1:8880/websocket/tests/no-query-support?
+WebSocket is closed
+PASS handshake_success is false
+PASS ws_location is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

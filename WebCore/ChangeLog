@@ -1,3 +1,23 @@
+2009-12-02  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket handshake check query component of URL
+        https://bugs.webkit.org/show_bug.cgi?id=31617
+
+        Tests: websocket/tests/url-with-credential.html
+               websocket/tests/url-with-empty-query.html
+               websocket/tests/url-with-fragment.html
+               websocket/tests/url-with-query-for-no-query.html
+               websocket/tests/url-with-query.html
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::query): returns a null if query is not specified and returns an empty if query is specified but empty.
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::resourceName): added. add query component to path if specified.
+        (WebCore::WebSocketHandshake::clientLocation):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+
 2009-12-01  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

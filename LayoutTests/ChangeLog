@@ -1,3 +1,28 @@
+2009-12-02  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket handshake check query component of URL
+        https://bugs.webkit.org/show_bug.cgi?id=31617
+
+        * websocket/tests/echo-location_wsh.py: Added.
+        * websocket/tests/no-query_wsh.py: Added.
+        * websocket/tests/script-tests/url-with-credential.js: Added.
+        * websocket/tests/script-tests/url-with-empty-query.js: Added.
+        * websocket/tests/script-tests/url-with-fragment.js: Added.
+        * websocket/tests/script-tests/url-with-query-for-no-query.js: Added.
+        * websocket/tests/script-tests/url-with-query.js: Added.
+        * websocket/tests/url-with-credential-expected.txt: Added.
+        * websocket/tests/url-with-credential.html: Added.
+        * websocket/tests/url-with-empty-query-expected.txt: Added.
+        * websocket/tests/url-with-empty-query.html: Added.
+        * websocket/tests/url-with-fragment-expected.txt: Added.
+        * websocket/tests/url-with-fragment.html: Added.
+        * websocket/tests/url-with-query-expected.txt: Added.
+        * websocket/tests/url-with-query-for-no-query-expected.txt: Added.
+        * websocket/tests/url-with-query-for-no-query.html: Added.
+        * websocket/tests/url-with-query.html: Added.
+
 2009-12-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
