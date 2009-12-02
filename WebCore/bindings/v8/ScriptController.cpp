@@ -294,7 +294,7 @@ bool ScriptController::haveInterpreter() const
 bool ScriptController::isEnabled() const
 {
     Settings* settings = m_proxy->frame()->settings();
-    return m_proxy->frame()->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled());
+    return m_proxy->frame()->loader()->client()->allowJavaScript(settings && settings->settings->isJavaScriptEnabled() && !m_frame->loader()->isSandboxed(SandboxScripts));
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)

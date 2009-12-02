@@ -1,3 +1,14 @@
+2009-12-01  Adam Barth  <abarth@webkit.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21288
+
+        Unreviewed port of @sandbox to V8.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::isEnabled):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::createWindow):
+
 2009-12-01  Patrik Persson  <patrik.j.persson@ericsson.com>
 
         Reviewed by Darin Adler.

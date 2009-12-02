@@ -550,6 +550,10 @@ static Frame* createWindow(Frame* callingFrame,
     ASSERT(callingFrame);
     ASSERT(enteredFrame);
 
+    // Sandboxed iframes cannot open new auxiliary browsing contexts.
+    if (callingFrame && callingFrame->loader()->isSandboxed(SandboxNavigation))
+        return 0;
+
     ResourceRequest request;
 
     // For whatever reason, Firefox uses the entered frame to determine
