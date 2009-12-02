@@ -1,3 +1,19 @@
+2009-11-30  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make change-values-during-transition less flaky.  Transition is 1 sec duration,
+        translating 100px, starting at 0, so it should be at 50px at 500ms, not 600ms.
+                
+        https://bugs.webkit.org/show_bug.cgi?id=31997
+
+        * transitions/change-values-during-transition.html:
+        isEqual: Remove unnecessary code - tolerance always passed in and always default value.
+        getXPosition: Extract into a function, since it is duplicated twice.
+        check2: Still run second check if the first fails, just give more debugging output.
+        start: Remove final setTimeout - nothing changes between the end of check2 and here,
+            so this is just making the test take 100ms longer.
+
 2009-12-02  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.

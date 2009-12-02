@@ -21,15 +21,13 @@
       layoutTestController.waitUntilDone();
     }
     
-    result = "PASS";
+    var result = "PASS";
     const defaultTolerance = 10;
     
-    function isEqual(actual, desired, tolerance)
+    function isCloseEnough(actual, desired)
     {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
         var diff = Math.abs(actual - desired);
-        return diff < tolerance;
+        return diff < defaultTolerance;
     }
     
     function changeValues()
@@ -38,25 +36,30 @@
         box.style.webkitTransitionDuration = "0.1s";
     }
     
-    function check1()
+    function getXPosition()
     {
         var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
-        var t = t.split("(");
-        var t = t[1].split(",");
-        if (!isEqual(t[4], 50, defaultTolerance))
-            result = "FAIL(was:"+t[4]+", s/b:50)";
+        t = t.split("(");
+        t = t[1].split(",");
+        return t[4];
+    }
+    
+    function check1()
+    {
+        var xPos = getXPosition();
+        if (!isCloseEnough(xPos, 50))
+            result = "FAIL(was:"+xPos+", s/b:50)";
     }
 
     function check2()
     {
-        if (result != "PASS")
-            return;
+        var xPos = getXPosition();
+        if (!isCloseEnough(xPos, 0))
+            result += "FAIL(was:"+xPos+", s/b:0)";
             
-        var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
-        var t = t.split("(");
-        var t = t[1].split(",");
-        if (!isEqual(t[4], 0, defaultTolerance))
-            result = "FAIL(was:"+t[4]+", s/b:0)";
+        document.getElementById('result').innerText = result;
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
     
     function goBack()
@@ -69,15 +72,9 @@
     {
         var box = document.getElementById('box');
         setTimeout("changeValues()", 100);
-        setTimeout("check1()", 600);
+        setTimeout("check1()", 500);
         setTimeout("check2()", 1300);
         box.style.webkitTransform = 'translateX(100px)';
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 1400);
     }
     
     window.addEventListener('load', start, false);
