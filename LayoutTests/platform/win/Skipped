@@ -719,3 +719,6 @@ http/tests/navigation/reload-subframe-frame.html
 http/tests/navigation/reload-subframe-iframe.html
 http/tests/plugins/post-url-file.html
 inspector/timeline-network-resource.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=32038 - Flaky on Windows
+http/tests/cache/subresource-failover-to-network.html

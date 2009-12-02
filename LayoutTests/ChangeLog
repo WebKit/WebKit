@@ -1,3 +1,13 @@
+2009-12-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Skip http/tests/cache/subresource-failover-to-network.html because it
+        is flaky on Windows, fixing it is being tracked by 
+        https://bugs.webkit.org/show_bug.cgi?id=32038.
+
+        * platform/win/Skipped:
+
 2009-12-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Put tests into skiplist because of missing layoutTestController.evaluateInWebInspector().
