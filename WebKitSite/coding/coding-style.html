@@ -1,8 +1,7 @@
 <?php 
     $title="WebKit Coding Style Guidelines";
-    include("../header.inc"); 
-?>
-
+    
+    $extra_head_content = <<<END
 <style type="text/css">
 pre .code {
    background-color: #F2F2F2;
@@ -17,6 +16,11 @@ pre .code {
 }
 </style>
 
+
+END;
+
+    include("../header.inc"); 
+?>
 
 <h2>WebKit Coding Style Guidelines</h2>
 <h3>Indentation</h3>
@@ -701,11 +705,76 @@ Don't bother to organize them in a logical order.
 </pre>
 </ol>
 
-<h3>"using namespace" Statements</h3>
+<h3>"using" Statements</h3>
 
 <ol>
 
-<li>Do not use "using namespace" statements in header files.
+<li>In header files, do not use "using" statements in global or 
+"namespace" scope.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// wtf/Vector.h
+
+namespace WTF {
+
+class VectorBuffer {
+    using std::min;
+    ...
+};
+
+} // namespace WTF
+</pre>
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// wtf/Vector.h
+
+namespace WTF {
+
+using std::min;
+    
+class VectorBuffer {
+    ...
+};
+
+} // namespace WTF
+</pre>
+</li>
+
+<li>It is acceptable, however, to use "using" declarations at the end of 
+header files in the WTF sub-libary to include one or more names in 
+the WTF namespace into the global scope.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// wtf/Vector.h
+
+namespace WTF {
+
+} // namespace WTF
+
+using WTF::Vector;
+</pre>
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// wtf/Vector.h
+
+namespace WTF {
+
+} // namespace WTF
+
+using namespace WTF;
+</pre>
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// runtime/UString.h
+
+namespace WTF {
+
+} // namespace WTF
+
+using WTF::PlacementNewAdopt;
+</pre>
 </li>
 
 <li>Any "using namespace" statements for a nested namespace whose parent namespace 

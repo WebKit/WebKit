@@ -20,9 +20,11 @@ Once you have the code <a href="/building/checkout.html">checked out</a>, <a hre
 
 
 <h3>Code Style Guidelines</h3>
-<p>In order for your patch to be landed, it's necessary that it comply to the <a href="/coding/coding-style.html">code style guidelines</a>.
-There are some older parts of the codebase that do not always follow these guidelines. If you come across code like this,
-it's generally best to clean it up to comply with the new guidelines.</p>
+<p>Patches must comply with the <a href="/coding/coding-style.html">code style guidelines</a>.
+Some older parts of the codebase do not follow these guidelines.
+If you are modifying such code, it is generally best to clean it up
+to comply with the current guidelines. An exception is legacy components,
+which should not be cleaned up.</p>
 
 <h3>Regression tests</h3>
 <p>Once you have made your changes, you need to run the regression tests, which is done via the <tt>run-webkit-tests</tt> script.
