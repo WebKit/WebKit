@@ -1,5 +1,14 @@
 2009-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Move setValueForUser to the end of the DOMHTMLInputElement interface
+        so it is fine for binary compatibility.
+
+        Directed by Steve Falkenburg.
+
+        * Interfaces/DOMHTML.idl:
+
+2009-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Expose setValueForUser for the COM DOMHTMLInputElement.
 
         <rdar://problem/6760590> Would like a way to detect a login form AutoFill from JavaScript
