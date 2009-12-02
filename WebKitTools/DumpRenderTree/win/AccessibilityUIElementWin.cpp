@@ -262,6 +262,16 @@ int AccessibilityUIElement::hierarchicalLevel() const
     return 0;
 }
 
+bool AccessibilityUIElement::ariaIsGrabbed() const
+{
+    return false;
+}
+ 
+JSStringRef AccessibilityUIElement::ariaDropEffects() const
+{
+    return 0;
+}
+
 bool AccessibilityUIElement::isExpanded() const
 {
     return false;
