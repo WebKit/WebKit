@@ -1879,6 +1879,8 @@
             'platform/chromium/ScrollbarThemeChromium.cpp',
             'platform/chromium/ScrollbarThemeChromium.h',
             'platform/chromium/ScrollbarThemeChromiumLinux.cpp',
+            'platform/chromium/ScrollbarThemeChromiumMac.h',
+            'platform/chromium/ScrollbarThemeChromiumMac.mm',
             'platform/chromium/ScrollbarThemeChromiumWin.cpp',
             'platform/chromium/SearchPopupMenuChromium.cpp',
             'platform/chromium/SharedTimerChromium.cpp',

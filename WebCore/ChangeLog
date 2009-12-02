@@ -1,3 +1,15 @@
+2009-12-02  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium: Need tickmarks in scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=32069
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/ScrollbarThemeChromiumMac.h: Added.
+        * platform/chromium/ScrollbarThemeChromiumMac.mm: Added.
+
 2009-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Expose a function to set the value of an input element on behalf of the user.

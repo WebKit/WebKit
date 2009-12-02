@@ -909,7 +909,6 @@
             ['include', 'platform/mac/BlockExceptions\\.mm$'],
             ['include', 'platform/mac/LocalCurrentGraphicsContext\\.mm$'],
             ['include', 'platform/mac/PurgeableBufferMac\\.cpp$'],
-            ['include', 'platform/mac/ScrollbarThemeMac\\.mm$'],
             ['include', 'platform/mac/WebCoreSystemInterface\\.mm$'],
             ['include', 'platform/mac/WebCoreTextRenderer\\.mm$'],
             ['include', 'platform/text/mac/ShapeArabic\\.c$'],
@@ -924,8 +923,8 @@
             # platform/graphics/mac, included by regex above, instead.
             '../platform/graphics/chromium/FontCustomPlatformData.cpp',
 
-            # The Mac currently uses ScrollbarThemeMac.mm, included by regex
-            # above, instead of ScrollbarThemeChromium.cpp.
+            # The Mac currently uses ScrollbarThemeChromiumMac.mm, which is not
+            # related to ScrollbarThemeChromium.cpp.
             '../platform/chromium/ScrollbarThemeChromium.cpp',
 
             # The Mac uses ImageSourceCG.cpp from platform/graphics/cg, included
