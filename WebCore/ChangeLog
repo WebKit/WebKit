@@ -1,3 +1,21 @@
+2009-12-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        ARIA: support a way to create a static text object
+        https://bugs.webkit.org/show_bug.cgi?id=32030
+
+        Test: accessibility/aria-text-role.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::isDescendantOfBarrenParent):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::text):
+        * accessibility/AccessibilityRenderObject.h:
+
 2009-12-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

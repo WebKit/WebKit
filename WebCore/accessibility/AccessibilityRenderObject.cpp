@@ -860,6 +860,9 @@ String AccessibilityRenderObject::stringValue() const
     if (!m_renderer || isPasswordField())
         return String();
     
+    if (ariaRoleAttribute() == StaticTextRole)
+        return text();
+        
     if (m_renderer->isText())
         return textUnderElement();
     
@@ -1357,6 +1360,16 @@ bool AccessibilityRenderObject::ariaIsHidden() const
     return false;
 }
 
+bool AccessibilityRenderObject::isDescendantOfBarrenParent() const
+{
+    for (AccessibilityObject* object = parentObject(); object; object = object->parentObject()) {
+        if (!object->canHaveChildren())
+            return true;
+    }
+    
+    return false;
+}
+    
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
     // Is the platform interested in this object?
@@ -1377,6 +1390,10 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (isPresentationalChildOfAriaRole())
         return true;
         
+    // If this element is within a parent that cannot have children, it should not be exposed.
+    if (isDescendantOfBarrenParent())
+        return true;    
+    
     if (roleValue() == IgnoredRole)
         return true;
     
@@ -1489,6 +1506,10 @@ int AccessibilityRenderObject::layoutCount() const
 
 String AccessibilityRenderObject::text() const
 {
+    // If this is a user defined static text, use the accessible name computation.
+    if (ariaRoleAttribute() == StaticTextRole)
+        return accessibilityDescription();
+    
     if (!isTextControl() || isPasswordField())
         return String();
     
