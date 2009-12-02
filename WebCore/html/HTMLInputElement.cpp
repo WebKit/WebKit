@@ -1247,7 +1247,13 @@ String HTMLInputElement::valueWithDefault() const
     return v;
 }
 
-void HTMLInputElement::setValue(const String& value)
+void HTMLInputElement::setValueForUser(const String& value)
+{
+    // Call setValue and make it send a change event.
+    setValue(value, true);
+}
+
+void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 {
     // For security reasons, we don't allow setting the filename, but we do allow clearing it.
     // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't applicable to the file upload control
@@ -1272,7 +1278,7 @@ void HTMLInputElement::setValue(const String& value)
         setNeedsStyleRecalc();
     } else
         setAttribute(valueAttr, sanitizeValue(value));
-    
+
     if (isTextField()) {
         unsigned max = m_data.value().length();
         if (document()->focusedNode() == this)
@@ -1280,6 +1286,12 @@ void HTMLInputElement::setValue(const String& value)
         else
             cacheSelection(max, max);
     }
+
+    // Don't dispatch the change event when focused, it will be dispatched
+    // when the control loses focus.
+    if (sendChangeEvent && document()->focusedNode() != this)
+        dispatchFormControlChangeEvent();
+
     InputElement::notifyFormStateChanged(this);
     updateValidity();
 }

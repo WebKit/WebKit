@@ -133,7 +133,8 @@ public:
     void setType(const String&);
 
     virtual String value() const;
-    virtual void setValue(const String&);
+    virtual void setValue(const String&, bool sendChangeEvent = false);
+    virtual void setValueForUser(const String&);
 
     virtual String placeholder() const;
     virtual void setPlaceholder(const String&);

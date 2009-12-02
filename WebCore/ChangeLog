@@ -1,3 +1,27 @@
+2009-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Expose a function to set the value of an input element on behalf of the user.
+        This function will dispatch the change event so the page is notified when autofill
+        happens. Also dispatch a change event when a select element is changed by autofill.
+
+        <rdar://problem/6760590> Would like a way to detect a login form AutoFill from JavaScript
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Added the DOMHTMLInputElementPrivate.h header.
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLSelectElement _activateItemAtIndex:]): Call setSelectedIndexByUser instead so
+        a change event is fired. This method is called by Safari autofill.
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode): Use dispatchFormControlChangeEvent instead
+        of dispatching the change event directly to be consistent.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLInputElement::setValueForUser): Added. Calls setValue with the sendChangeEvent
+        (WebCore::HTMLInputElement::setValue): Added the optional sendChangeEvent argument. Mimics setChecked.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Added setValueForUser for non-JS languages.
+        * html/InputElement.h: Added setValueForUser.
+
 2009-12-02  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.

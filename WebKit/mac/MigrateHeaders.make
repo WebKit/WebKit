@@ -106,6 +106,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLIFrameElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLImageElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLInputElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLIsIndexElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLIElement.h \

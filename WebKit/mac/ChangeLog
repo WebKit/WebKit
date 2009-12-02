@@ -1,3 +1,11 @@
+2009-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Migrate DOMHTMLInputElementPrivate.h as a private header.
+
+        Reviewed by Darin Adler.
+
+        * MigrateHeaders.make:
+
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Simon Fraser.

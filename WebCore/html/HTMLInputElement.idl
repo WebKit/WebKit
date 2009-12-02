@@ -77,7 +77,11 @@ module html {
         void               setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
         void               select();
         void               click();
-        
+
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+        void               setValueForUser(in [ConvertNullToNullString] DOMString value);
+#endif
+
         // WinIE extension:
                  attribute boolean         indeterminate;
 

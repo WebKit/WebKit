@@ -2662,11 +2662,11 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
             oldFocusedNode->setActive(false);
 
         oldFocusedNode->setFocus(false);
-                
+
         // Dispatch a change event for text fields or textareas that have been edited
         RenderObject* r = oldFocusedNode->renderer();
         if (r && r->isTextControl() && toRenderTextControl(r)->wasChangedSinceLastChangeEvent()) {
-            oldFocusedNode->dispatchEvent(Event::create(eventNames().changeEvent, true, false));
+            static_cast<Element*>(oldFocusedNode.get())->dispatchFormControlChangeEvent();
             r = oldFocusedNode->renderer();
             if (r && r->isTextControl())
                 toRenderTextControl(r)->setChangedSinceLastChangeEvent(false);

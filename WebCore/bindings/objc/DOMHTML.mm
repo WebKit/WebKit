@@ -156,8 +156,9 @@
 
 - (void)_activateItemAtIndex:(int)index
 {
+    // Use the setSelectedIndexByUser function so a change event will be fired. <rdar://problem/6760590>
     if (WebCore::HTMLSelectElement* select = core(self))
-        select->setSelectedIndex(index);
+        select->setSelectedIndexByUser(index, true, true);
 }
 
 @end
