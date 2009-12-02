@@ -1,5 +1,12 @@
 2009-12-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] r51577 made fast/frames/sandboxed-iframe-plugins.html crash.
+
+        * platform/qt/Skipped: 
+        - fast/frames/sandboxed-iframe-navigation-windowopen.html added. (crasher)
+
+2009-12-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed. Skip new tests.
 
         * platform/qt/Skipped:

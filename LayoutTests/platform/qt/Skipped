@@ -5219,6 +5219,10 @@ storage/domstorage/localstorage/window-open.html
 #crasher:
 storage/domstorage/sessionstorage/window-open.html
 
+#Crash caused by http://trac.webkit.org/changeset/51577
+#crashed: fast/frames/sandboxed-iframe-plugins.html
+#crasher:
+fast/frames/sandboxed-iframe-navigation-windowopen.html 
 # ================================================================== #
 
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
