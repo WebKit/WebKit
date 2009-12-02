@@ -29,7 +29,7 @@
 import unittest
 
 from modules.committers import CommitterList, Reviewer, Committer
-from modules.bugzilla import Bugzilla
+from modules.bugzilla import Bugzilla, parse_bug_id
 
 from modules.BeautifulSoup import BeautifulSoup
 
@@ -61,10 +61,10 @@ class BugzillaTest(unittest.TestCase):
         </attachment>
 '''
     _expected_example_attachment_parsing = {
-        'bug_id' : "100",
+        'bug_id' : 100,
         'is_obsolete' : True,
         'is_patch' : True,
-        'id' : "33721",
+        'id' : 33721,
         'url' : "https://bugs.webkit.org/attachment.cgi?id=33721",
         'name' : "Fixed whitespace issue",
         'type' : "text/plain",
@@ -73,6 +73,20 @@ class BugzillaTest(unittest.TestCase):
         'commit-queue' : '+',
         'committer_email' : 'two@test.com',
     }
+
+    def test_parse_bug_id(self):
+        # FIXME: These would be all better as doctests
+        bugs = Bugzilla()
+        self.assertEquals(12345, parse_bug_id("http://webkit.org/b/12345"))
+        self.assertEquals(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345"))
+        self.assertEquals(12345, parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
+        self.assertEquals(12345, parse_bug_id(bugs.bug_url_for_bug_id(12345)))
+        self.assertEquals(12345, parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
+
+        # Our bug parser is super-fragile, but at least we're testing it.
+        self.assertEquals(None, parse_bug_id("http://www.webkit.org/b/12345"))
+        self.assertEquals(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
+
 
     def test_attachment_parsing(self):
         bugzilla = Bugzilla()

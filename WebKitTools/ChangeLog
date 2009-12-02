@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        REGRESSION(51590): style-queue and build-queue think their empty when they are not
+        https://bugs.webkit.org/show_bug.cgi?id=32061
+
+        * Scripts/modules/bugzilla.py: make all id lookups return ints instead of strings.
+        * Scripts/modules/bugzilla_unittest.py: Add and update unit tests to use ints.
+
+2009-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         build-queue is throwing exceptions and complaining about
         lack of --no-update on build-attachment.  Make it stop.
 

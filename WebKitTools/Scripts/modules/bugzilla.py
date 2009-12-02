@@ -95,10 +95,10 @@ def is_mac_os_x():
 def parse_bug_id(message):
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
     if match:
-        return match.group('bug_id')
+        return int(match.group('bug_id'))
     match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", message)
     if match:
-        return match.group('bug_id')
+        return int(match.group('bug_id'))
     return None
 
 # FIXME: This should not depend on git for config storage
@@ -173,7 +173,7 @@ class Bugzilla:
         attachment['bug_id'] = bug_id
         attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
         attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
-        attachment['id'] = str(element.find('attachid').string)
+        attachment['id'] = int(element.find('attachid').string)
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
         attachment['name'] = unicode(element.find('desc').string)
         attachment['type'] = str(element.find('type').string)
@@ -217,7 +217,9 @@ class Bugzilla:
             return None
         attachments = self.fetch_attachments_from_bug(bug_id)
         for attachment in attachments:
-            if attachment['id'] == attachment_id:
+            # FIXME: Once we have a real Attachment class we shouldn't paper over this possible comparison failure
+            # and we should remove the int() == int() hacks and leave it just ==.
+            if int(attachment['id']) == int(attachment_id):
                 self._validate_committer_and_reviewer(attachment)
                 return attachment
         return None # This should never be hit.
