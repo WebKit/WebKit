@@ -1,0 +1,64 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        if (result === "reload")
+            window.location.reload();
+        else {
+            output("Selected element should be 'P', was: '" + result + "'");
+            notifyDone();
+        }
+    }
+    evaluateInWebInspector("frontend_selectElement", callback);
+}
+
+// Frontend functions.
+
+function frontend_selectElement(testController)
+{
+    if (window.refreshCalled) {
+        // We should have "test-topic" element selected after refresh.
+        var selectedElement = WebInspector.panels.elements.treeOutline.selectedTreeElement;
+        return selectedElement ? selectedElement.representedObject.nodeName : "null";
+    } else {
+        // Select the "test-topic" element.
+        testController.waitUntilDone();
+        frontend_expandDOMSubtree(WebInspector.domAgent.document);
+
+        testController.runAfterPendingDispatches(function() {
+            frontend_selectElementContinuation(testController);
+        });
+    }
+}
+
+function frontend_selectElementContinuation(testController)
+{
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+    for (var nodeId in innerMapping) {
+        var node = innerMapping[nodeId];
+        if (node.nodeName === "P" && node.getAttribute("id") === "test-topic") {
+            WebInspector.panels.elements.treeOutline.revealAndSelectNode(node);
+            window.refreshCalled = true;
+            testController.notifyDone("reload");
+            return;
+        }
+    }
+    testController.notifyDone("FAIL");
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p id="test-topic">
+Tests that elements panel preserves selected node on page refresh.
+</p>
+
+</body>
+</html>

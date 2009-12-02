@@ -1,3 +1,42 @@
+2009-12-02  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: DOM tree selection disappears upon page refresh.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31142
+
+        Test: inspector/elements-panel-selection-on-refresh.html
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::pushNodeByPathToFrontend):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::releaseDOMAgent):
+        (WebCore::InspectorController::resetScriptObjects):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::~InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::pushDocumentToFrontend):
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._renumber):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.setDocument.selectDefaultNode):
+        (WebInspector.ElementsPanel.prototype.setDocument.selectLastSelectedNode):
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.pushNodeByPathToFrontend):
+        * inspector/front-end/InjectedScriptAccess.js:
+
 2009-12-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

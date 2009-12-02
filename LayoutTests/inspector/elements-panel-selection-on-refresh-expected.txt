@@ -1,0 +1,4 @@
+Tests that elements panel preserves selected node on page refresh.
+
+Selected element should be 'P', was: 'P'
+

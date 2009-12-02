@@ -63,7 +63,10 @@ public:
     ScriptValue wrapObject(const ScriptValue& object, const String& objectGroup);
     ScriptValue unwrapObject(const String& objectId);
     long pushNodePathToFrontend(Node* node, bool selectInUI);
+
     void addNodesToSearchResult(const String& nodeIds);
+    long pushNodeByPathToFrontend(const String& path);
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     JavaScriptCallFrame* currentCallFrame() const;
 #endif

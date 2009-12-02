@@ -41,7 +41,9 @@ module core {
         [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
         [Custom] DOMObject unwrapObject(in long objectId);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);
+
         void addNodesToSearchResult(in DOMString nodeIds);
+        long pushNodeByPathToFrontend(in DOMString path);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [Custom] DOMObject currentCallFrame();

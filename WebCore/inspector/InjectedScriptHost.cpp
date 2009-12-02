@@ -123,6 +123,19 @@ void InjectedScriptHost::addNodesToSearchResult(const String& nodeIds)
         frontend->addNodesToSearchResult(nodeIds);
 }
 
+long InjectedScriptHost::pushNodeByPathToFrontend(const String& path)
+{
+    InspectorDOMAgent* domAgent = inspectorDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    Node* node = domAgent->nodeForPath(path);
+    if (!node)
+        return 0;
+
+    return domAgent->pushNodePathToFrontend(node);
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 JavaScriptCallFrame* InjectedScriptHost::currentCallFrame() const
 {

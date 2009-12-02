@@ -70,6 +70,7 @@ InjectedScriptAccess._installHandler("getStyles");
 InjectedScriptAccess._installHandler("openInInspectedWindow");
 InjectedScriptAccess._installHandler("performSearch");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");
+InjectedScriptAccess._installHandler("nodeByPath");
 InjectedScriptAccess._installHandler("searchCanceled");
 InjectedScriptAccess._installHandler("setPropertyValue");
 InjectedScriptAccess._installHandler("setStyleProperty");

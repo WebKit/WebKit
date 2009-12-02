@@ -164,6 +164,17 @@ WebInspector.ElementsPanel.prototype = {
 
     reset: function()
     {
+        if (this.focusedDOMNode) {
+            this._selectedPathOnReset = [];
+            var node = this.focusedDOMNode;
+            while ("index" in node) {
+                this._selectedPathOnReset.push(node.nodeName);
+                this._selectedPathOnReset.push(node.index);
+                node = node.parentNode;
+            }
+            this._selectedPathOnReset.reverse();
+        }
+
         this.rootDOMNode = null;
         this.focusedDOMNode = null;
 
@@ -178,26 +189,52 @@ WebInspector.ElementsPanel.prototype = {
 
         delete this.currentQuery;
         this.searchCanceled();
+    },
 
-        var domWindow = WebInspector.domAgent.domWindow;
-        if (!domWindow || !domWindow.document || !domWindow.document.firstChild)
+    setDocument: function(inspectedRootDocument)
+    {
+        this.reset();
+
+        if (!inspectedRootDocument)
             return;
 
-        var inspectedRootDocument = domWindow.document;
         inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
 
         this.treeOutline.suppressSelectHighlight = true;
         this.rootDOMNode = inspectedRootDocument;
-
-        var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
-        if (canidateFocusNode) {
-            this.focusedDOMNode = canidateFocusNode;
-
-            if (this.treeOutline.selectedTreeElement)
-                this.treeOutline.selectedTreeElement.expand();
-        }
         this.treeOutline.suppressSelectHighlight = false;
+
+        function selectDefaultNode()
+        {
+            this.treeOutline.suppressSelectHighlight = true;
+            var candidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
+            if (candidateFocusNode) {
+                this.focusedDOMNode = candidateFocusNode;
+
+                if (this.treeOutline.selectedTreeElement)
+                    this.treeOutline.selectedTreeElement.expand();
+            }
+        }
+
+        function selectLastSelectedNode(nodeId)
+        {
+            var node = nodeId ? WebInspector.domAgent.nodeForId(nodeId) : 0;
+            if (!node) {
+                selectDefaultNode.call(this);
+                return;
+            }
+
+            this.treeOutline.suppressSelectHighlight = true;
+            this.focusedDOMNode = node;
+            this.treeOutline.suppressSelectHighlight = false;
+        }
+
+        if (this._selectedPathOnReset)
+            InjectedScriptAccess.nodeByPath(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
+        else
+            selectDefaultNode.call(this);
+        delete this._selectedPathOnReset;
     },
 
     searchCanceled: function()

@@ -179,6 +179,7 @@ WebInspector.DOMNode.prototype = {
         this.lastChild = this.children[this._childNodeCount - 1];
         for (var i = 0; i < this._childNodeCount; ++i) {
             var child = this.children[i];
+            child.index = i;
             child.nextSibling = i + 1 < this._childNodeCount ? this.children[i + 1] : null;
             child.prevSibling = i - 1 >= 0 ? this.children[i - 1] : null;
             child.parentNode = this;
@@ -373,13 +374,13 @@ WebInspector.DOMAgent.prototype = {
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
-        if (payload) {
+        if (payload && "id" in payload) {
             this.document = new WebInspector.DOMDocument(this, this._window, payload);
             this._idToDOMNode[payload.id] = this.document;
             this._bindNodes(this.document.children);
         } else
             this.document = null;
-        WebInspector.panels.elements.reset();
+        WebInspector.panels.elements.setDocument(this.document);
     },
 
     _setDetachedRoot: function(payload)
