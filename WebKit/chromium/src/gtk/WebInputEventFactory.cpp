@@ -482,11 +482,11 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(const GdkEventScroll* e
         break;
     case GDK_SCROLL_LEFT:
         result.deltaX = scrollbarPixelsPerTick;
-        result.wheelTicksX = -1;  // Match Windows positive/negative orientation
+        result.wheelTicksX = 1;
         break;
     case GDK_SCROLL_RIGHT:
         result.deltaX = -scrollbarPixelsPerTick;
-        result.wheelTicksX = 1;
+        result.wheelTicksX = -1;
         break;
     }
 
