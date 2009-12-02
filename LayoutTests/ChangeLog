@@ -1,3 +1,14 @@
+2009-12-02  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Adds a timeline test for EventDispatch records.
+ 
+        https://bugs.webkit.org/show_bug.cgi?id=31376
+
+        * inspector/timeline-event-dispatch-expected.txt: Added.
+        * inspector/timeline-event-dispatch.html: Added.
+
 2009-12-02  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.
