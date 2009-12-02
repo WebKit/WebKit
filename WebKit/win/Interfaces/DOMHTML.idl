@@ -772,6 +772,11 @@ interface IDOMHTMLInputElement : IDOMElement
     HRESULT setValue([in] BSTR value);
 
     /*
+        - (void)setValueForUser:(NSString *)value;
+    */
+    HRESULT setValueForUser([in] BSTR value);
+
+    /*
         - (void)blur;
     */
     HRESULT blur();

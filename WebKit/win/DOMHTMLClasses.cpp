@@ -1225,7 +1225,17 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setValue(
     inputElement->setValue(String((UChar*) value, SysStringLen(value)));
     return S_OK;
 }
-    
+
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setValueForUser(
+        /* [in] */ BSTR value)
+{
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
+    inputElement->setValueForUser(String(static_cast<UChar*>(value), SysStringLen(value)));
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::select( void)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));

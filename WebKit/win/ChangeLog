@@ -1,3 +1,15 @@
+2009-12-02  Timothy Hatcher  <timothy@apple.com>
+
+        Expose setValueForUser for the COM DOMHTMLInputElement.
+
+        <rdar://problem/6760590> Would like a way to detect a login form AutoFill from JavaScript
+
+        Reviewed by Dan Bernstein.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::setValueForUser):
+        * Interfaces/DOMHTML.idl:
+
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Try to fix windows build.
