@@ -100,6 +100,7 @@ class StatusSummary(object):
         if self._summary.get(attachment_id):
             return self._summary.get(attachment_id)
 
+        attachment_summary = {}
         for queue in self.queues:
             statuses = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', attachment_id).order('-date').fetch(1)
             status_code = self._status_to_code(statuses[0].message if statuses else None)

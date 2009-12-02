@@ -1,5 +1,11 @@
 2009-12-02  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.  Forgot to declare my variables.  :(
+
+        * QueueStatusServer/queue_status.py:
+
+2009-12-02  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Implement status bubble view
