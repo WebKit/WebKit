@@ -1,3 +1,19 @@
+2009-12-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Incorrect code in WebGLRenderingContext.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=32046
+
+        Fix incorrect code that happened to work. != has higher precendence than &.
+        The simplest fix is to remove the "!= 0" which violates WebKit style
+        guidelines anyway.
+
+        Also added periods to few comments in the same function.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArray):
+
 2009-12-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
