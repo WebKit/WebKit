@@ -1,3 +1,88 @@
+2009-12-01  Patrik Persson  <patrik.j.persson@ericsson.com>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML5 sandbox attribute for iframes.
+        http://www.w3.org/TR/html5/text-level-semantics.html#attr-iframe-sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=21288
+
+        Tests: fast/frames/sandboxed-iframe-attribute-parsing.html
+               fast/frames/sandboxed-iframe-forms.html
+               fast/frames/sandboxed-iframe-navigation-allowed.html
+               fast/frames/sandboxed-iframe-navigation-parent.html
+               fast/frames/sandboxed-iframe-navigation-targetlink.html
+               fast/frames/sandboxed-iframe-navigation-windowopen.html
+               fast/frames/sandboxed-iframe-plugins.html
+               fast/frames/sandboxed-iframe-scripting.html
+               fast/frames/sandboxed-iframe-storage.html
+               http/tests/security/sandboxed-iframe-document-cookie.html
+               http/tests/security/sandboxed-iframe-modify-self.html
+               http/tests/security/xss-DENIED-sandboxed-iframe.html
+               http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow.html
+               http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard.html
+               http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied.html
+
+        * bindings/js/JSDOMWindowCustom.cpp: sandboxing navigation
+        (WebCore::createWindow):
+        * bindings/js/ScriptController.cpp: sandboxing scripts
+        (WebCore::ScriptController::isEnabled):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::cookie): raise exception when accessed from sandbox
+        (WebCore::Document::setCookie): raise exception when accessed from sandbox
+        (WebCore::Document::initSecurityContext): updae sandbox status
+        (WebCore::Document::updateSandboxFlags):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLAppletElement.cpp: sandboxing applets
+        (WebCore::HTMLAppletElement::createRenderer):
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        (WebCore::HTMLAppletElement::canEmbedJava):
+        * html/HTMLAppletElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLFrameOwnerElement.cpp: management of sandbox flags as stated in attribute
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement):
+        (WebCore::HTMLFrameOwnerElement::setSandboxFlags):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::sandboxFlags):
+        * html/HTMLIFrameElement.cpp: sandbox attribute parsing
+        (WebCore::parseSandboxAttribute):
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * html/HTMLIFrameElement.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getCookies):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::submitForm): sandboxing forms
+        (WebCore::FrameLoader::requestObject): sandboxing plugins
+        (WebCore::FrameLoader::shouldAllowNavigation): sandboxing navigation
+        (WebCore::FrameLoader::updateSandboxFlags): propagation of sandbox flags
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::ownerElementSandboxFlagsChanged):
+        (WebCore::FrameLoader::isSandboxed):
+        (WebCore::FrameLoader::sandboxFlags):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::):
+        * page/DOMWindow.cpp: disable storage and databases in sandboxed frames
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        (WebCore::DOMWindow::openDatabase):
+        * page/SecurityOrigin.cpp: added sandboxing status
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::canAccess):
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::toString):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::setSandboxFlags):
+        (WebCore::SecurityOrigin::isSandboxed):
+        (WebCore::SecurityOrigin::canAccessDatabase):
+        (WebCore::SecurityOrigin::canAccessStorage):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData):
+
 2009-12-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

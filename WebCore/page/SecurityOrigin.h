@@ -34,6 +34,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
+#include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include "StringHash.h"
 
@@ -110,6 +111,13 @@ namespace WebCore {
         // WARNING: This is an extremely powerful ability.  Use with caution!
         void grantUniversalAccess();
 
+        // Sandboxing status as determined by the frame.
+        void setSandboxFlags(SandboxFlags flags) { m_sandboxFlags = flags; }
+        bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
+
+        bool canAccessDatabase() const { return !isSandboxed(SandboxOrigin); }
+        bool canAccessStorage() const { return !isSandboxed(SandboxOrigin); }
+
         bool isSecureTransitionTo(const KURL&) const;
 
         // The local SecurityOrigin is the most privileged SecurityOrigin.
@@ -181,6 +189,7 @@ namespace WebCore {
         String m_host;
         String m_domain;
         unsigned short m_port;
+        SandboxFlags m_sandboxFlags;
         bool m_noAccess;
         bool m_universalAccess;
         bool m_domainWasSetInDOM;

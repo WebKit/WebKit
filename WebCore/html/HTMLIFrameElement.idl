@@ -33,6 +33,7 @@ module html {
                  attribute [ConvertNullToNullString, Reflect=marginheight] DOMString       marginHeight;
                  attribute [ConvertNullToNullString, Reflect=marginwidth] DOMString       marginWidth;
                  attribute [ConvertNullToNullString, Reflect] DOMString       name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       sandbox;
                  attribute [ConvertNullToNullString, Reflect] DOMString       scrolling;
                  attribute [ConvertNullToNullString, CustomSetter, Reflect] DOMString       src;
                  attribute [ConvertNullToNullString, Reflect] DOMString       width;

@@ -100,6 +100,10 @@ bool passesAccessControlCheck(const ResourceResponse& response, bool includeCred
     if (accessControlOriginString == "*" && !includeCredentials)
         return true;
 
+    // A sandboxed frame has a unique origin (for same-origin purposes).
+    if (securityOrigin->isSandboxed(SandboxOrigin))
+        return false;
+
     RefPtr<SecurityOrigin> accessControlOrigin = SecurityOrigin::createFromString(accessControlOriginString);
     if (!accessControlOrigin->isSameSchemeHostPort(securityOrigin))
         return false;

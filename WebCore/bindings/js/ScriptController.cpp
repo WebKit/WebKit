@@ -289,7 +289,7 @@ bool ScriptController::anyPageIsProcessingUserGesture() const
 bool ScriptController::isEnabled()
 {
     Settings* settings = m_frame->settings();
-    return m_frame->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled());
+    return m_frame->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled() && !m_frame->loader()->isSandboxed(SandboxScripts));
 }
 
 void ScriptController::attachDebugger(JSC::Debugger* debugger)

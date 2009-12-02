@@ -1203,10 +1203,14 @@ void InspectorController::getCookies(long callId, const String& host)
             Vector<Cookie> docCookiesList;
             rawCookiesImplemented = getRawCookies(document, document->cookieURL(), docCookiesList);
             
-            if (!rawCookiesImplemented)
-                // FIXME:We need duplication checking for the String representation of cookies.
-                stringCookiesList += document->cookie();
-            else {
+            if (!rawCookiesImplemented) {
+                // FIXME: We need duplication checking for the String representation of cookies.
+                ExceptionCode ec = 0;
+                stringCookiesList += document->cookie(ec);
+                // Exceptions are thrown by cookie() in sandboxed frames. That won't happen here
+                // because "document" is the document of the main frame of the page.
+                ASSERT(!ec);
+            } else {
                 int cookiesSize = docCookiesList.size();
                 for (int i = 0; i < cookiesSize; i++) {
                     if (!rawCookiesList.contains(docCookiesList[i]))

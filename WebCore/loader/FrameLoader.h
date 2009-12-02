@@ -251,6 +251,11 @@ public:
     void dispatchDidClearWindowObjectsInAllWorlds();
     void dispatchDocumentElementAvailable();
 
+    void ownerElementSandboxFlagsChanged() { updateSandboxFlags(); }
+    
+    bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
+    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
+
     // Mixed content related functions.
     static bool isMixedContent(SecurityOrigin* context, const KURL&);
     void checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL&);
@@ -435,6 +440,8 @@ private:
 
     bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
+    void updateSandboxFlags();
+    
     Frame* m_frame;
     FrameLoaderClient* m_client;
 
@@ -506,6 +513,8 @@ private:
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
     
+    SandboxFlags m_sandboxFlags;
+
 #ifndef NDEBUG
     bool m_didDispatchDidCommitLoad;
 #endif

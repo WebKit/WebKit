@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+
+    frame = window.top.document.getElementById('frame');
+
+    // setting the sandbox flag at runtime should not terminate already
+    // running scripts (e.g., this one)
+
+    frame.sandbox = 'allow-same-origin';   // NO allow-scripts
+
+    ++window.top.allowedExecuted;
+
+    // however, new scripts (such as the onload one below) should
+    // not run
+
+    function onload_hook()
+    {
+        ++window.top.disallowedExecuted;
+    };
+
+</script>
+</head>
+
+<body onload='onload_hook();'></body>
+</html>

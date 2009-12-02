@@ -162,10 +162,9 @@ module core {
 #endif
         readonly attribute DOMString URL;
 
-        // FIXME: the DOM spec states that this attribute can 
-        // raise an exception on setting.
                  attribute [ConvertNullToNullString] DOMString cookie
-                     /*setter raises (DOMException)*/;
+                     setter raises (DOMException),
+                     getter raises (DOMException);
 
         // FIXME: the DOM spec does NOT have this attribute
         // raising an exception.

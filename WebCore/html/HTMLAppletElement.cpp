@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
 #include "RenderApplet.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -108,9 +109,7 @@ bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
 
 RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style)
 {
-    Settings* settings = document()->settings();
-
-    if (settings && settings->isJavaEnabled()) {
+    if (canEmbedJava()) {
         HashMap<String, String> args;
 
         args.set("code", getAttribute(codeAttr));
@@ -142,8 +141,7 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
 {
-    Settings* settings = document()->settings();
-    if (!settings || !settings->isJavaEnabled())
+    if (!canEmbedJava())
         return 0;
 
     RenderApplet* applet = toRenderApplet(renderer());
@@ -151,6 +149,15 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
         applet->createWidgetIfNecessary();
 
     return applet;
+}
+
+bool HTMLAppletElement::canEmbedJava() const
+{
+    if (document()->securityOrigin()->isSandboxed(SandboxPlugins))
+        return false;
+
+    Settings* settings = document()->settings();
+    return settings && settings->isJavaEnabled();
 }
 
 void HTMLAppletElement::finishParsingChildren()

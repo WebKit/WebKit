@@ -1,3 +1,69 @@
+2009-12-01  Patrik Persson  <patrik.j.persson@ericsson.com>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML5 sandbox attribute for iframes.
+        http://www.w3.org/TR/html5/text-level-semantics.html#attr-iframe-sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=21288
+
+        * fast/frames/resources/non-sandboxed-iframe-navigation.html: Added.
+        * fast/frames/resources/sandboxed-iframe-attribute-parsing-allowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-attribute-parsing-disallowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-form-allowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-form-disallowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigated.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-child.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-navigated.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-parent.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-source.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-targetlink.html: Added.
+        * fast/frames/resources/sandboxed-iframe-navigation-windowopen.html: Added.
+        * fast/frames/resources/sandboxed-iframe-plugins-frame-applet.html: Added.
+        * fast/frames/resources/sandboxed-iframe-plugins-frame-embed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-plugins-frame-object.html: Added.
+        * fast/frames/resources/sandboxed-iframe-script-dynamic.html: Added.
+        * fast/frames/resources/sandboxed-iframe-storage-allowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing.html: Added.
+        * fast/frames/sandboxed-iframe-forms-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-forms.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-allowed-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-allowed.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-parent-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-parent.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-targetlink-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-targetlink.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-windowopen-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-windowopen.html: Added.
+        * fast/frames/sandboxed-iframe-plugins-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-plugins.html: Added.
+        * fast/frames/sandboxed-iframe-scripting-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-scripting.html: Added.
+        * fast/frames/sandboxed-iframe-storage-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-storage.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-document-cookie-read-denied.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-modify-self.html: Added.
+        * http/tests/security/resources/xss-DENIED-sandboxed-iframe-attacker.html: Added.
+        * http/tests/security/sandboxed-iframe-document-cookie-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-document-cookie.html: Added.
+        * http/tests/security/sandboxed-iframe-modify-self-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-modify-self.html: Added.
+        * http/tests/security/xss-DENIED-sandboxed-iframe-expected.txt: Added.
+        * http/tests/security/xss-DENIED-sandboxed-iframe.html: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow.html: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard.html: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-allow-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-allow.cgi: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-denied-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-denied-without-wildcard-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-denied-without-wildcard.cgi: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-denied.cgi: Added.
+
 2009-12-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

@@ -159,8 +159,10 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             if (!m_handshake.serverSetCookie().isEmpty()) {
                 if (m_context->isDocument()) {
                     Document* document = static_cast<Document*>(m_context);
-                    if (cookiesEnabled(document))
-                        document->setCookie(m_handshake.serverSetCookie());
+                    if (cookiesEnabled(document)) {
+                        ExceptionCode ec; // Exception (for sandboxed documents) ignored.
+                        document->setCookie(m_handshake.serverSetCookie(), ec);
+                    }
                 }
             }
             // FIXME: handle set-cookie2.

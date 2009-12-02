@@ -2181,8 +2181,10 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         }
     } else if (equalIgnoringCase(equiv, "set-cookie")) {
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
-        if (isHTMLDocument())
-            static_cast<HTMLDocument*>(this)->setCookie(content);
+        if (isHTMLDocument()) {
+            ExceptionCode ec; // Exception (for sandboxed documents) ignored.
+            static_cast<HTMLDocument*>(this)->setCookie(content, ec);
+        }
     } else if (equalIgnoringCase(equiv, "content-language"))
         setContentLanguage(content);
     else if (equalIgnoringCase(equiv, "x-dns-prefetch-control"))
@@ -3000,10 +3002,19 @@ Element* Document::ownerElement() const
     return frame()->ownerElement();
 }
 
-String Document::cookie() const
+String Document::cookie(ExceptionCode& ec) const
 {
     if (page() && !page()->cookieEnabled())
         return String();
+
+    // FIXME: The HTML5 DOM spec states that this attribute can raise an
+    // INVALID_STATE_ERR exception on getting if the Document has no
+    // browsing context.
+
+    if (securityOrigin()->isSandboxed(SandboxOrigin)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
 
     KURL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
@@ -3012,10 +3023,19 @@ String Document::cookie() const
     return cookies(this, cookieURL);
 }
 
-void Document::setCookie(const String& value)
+void Document::setCookie(const String& value, ExceptionCode& ec)
 {
     if (page() && !page()->cookieEnabled())
         return;
+
+    // FIXME: The HTML5 DOM spec states that this attribute can raise an
+    // INVALID_STATE_ERR exception on setting if the Document has no
+    // browsing context.
+
+    if (securityOrigin()->isSandboxed(SandboxOrigin)) {
+        ec = SECURITY_ERR;
+        return;
+    }
 
     KURL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
@@ -4265,6 +4285,8 @@ void Document::initSecurityContext()
     m_cookieURL = url;
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url));
 
+    updateSandboxFlags();
+ 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
@@ -4313,6 +4335,12 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
     // FIXME: Find a better place to enable DNS prefetch, which is a loader concept,
     // not applicable to arbitrary documents.
     initDNSPrefetch();
+}
+
+void Document::updateSandboxFlags()
+{
+    if (m_frame && securityOrigin())
+        securityOrigin()->setSandboxFlags(m_frame->loader()->sandboxFlags());
 }
 
 void Document::updateFocusAppearanceSoon()

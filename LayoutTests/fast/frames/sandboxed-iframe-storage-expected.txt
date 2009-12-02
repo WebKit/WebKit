@@ -1,0 +1,28 @@
+This test verifies that a sandboxed iframe does not have access to any session storage, local storage or database.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Most of the PASS messages appear in frames, presented by DumpRenderTree after the main window.
+
+  
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS window.openDatabase() == null is true
+PASS window.localStorage == null is true
+PASS window.sessionStorage == null is true
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS window.openDatabase() != null is true
+PASS window.localStorage != null is true
+PASS window.sessionStorage != null is true
+

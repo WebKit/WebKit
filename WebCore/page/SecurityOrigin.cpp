@@ -95,6 +95,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
+    , m_sandboxFlags(SandboxNone)
     , m_noAccess(false)
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
@@ -127,6 +128,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_host(other->m_host.threadsafeCopy())
     , m_domain(other->m_domain.threadsafeCopy())
     , m_port(other->m_port)
+    , m_sandboxFlags(other->m_sandboxFlags)
     , m_noAccess(other->m_noAccess)
     , m_universalAccess(other->m_universalAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
@@ -167,7 +169,7 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     if (m_universalAccess)
         return true;
 
-    if (m_noAccess || other->m_noAccess)
+    if (m_noAccess || other->m_noAccess || isSandboxed(SandboxOrigin) || other->isSandboxed(SandboxOrigin))
         return false;
 
     // Here are two cases where we should permit access:
@@ -208,7 +210,7 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (m_universalAccess)
         return true;
 
-    if (m_noAccess)
+    if (m_noAccess || isSandboxed(SandboxOrigin))
         return false;
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
@@ -296,7 +298,7 @@ String SecurityOrigin::toString() const
     if (isEmpty())
         return "null";
 
-    if (m_noAccess)
+    if (m_noAccess || isSandboxed(SandboxOrigin))
         return "null";
 
     if (m_protocol == "file")
