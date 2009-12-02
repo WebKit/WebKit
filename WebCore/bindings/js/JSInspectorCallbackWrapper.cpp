@@ -75,7 +75,8 @@ JSValue JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue unwra
         static Structure* structure = leakInspectorCallbackWrapperStructure();
         return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, structure);
     }
-    return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, createStructure(wrap(unwrappedExec, prototype)));
+    ProtectedJSValue wrappedProto = wrap(unwrappedExec, prototype);
+    return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, createStructure(wrappedProto.get()));
 }
 
 JSInspectorCallbackWrapper::JSInspectorCallbackWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, NonNullPassRefPtr<Structure> structure)

@@ -1,3 +1,20 @@
+2009-12-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Inspector crashes when collecting on every allocation
+        https://bugs.webkit.org/show_bug.cgi?id=32044
+
+        The crash is caused by the prototype wrapper object getting collected
+        when allocating the object that is going to use it as a prototype.
+        Because the only reference to the prototype wrapper is through the
+        new object's Structure it does not get marked automatically.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap):
+
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Simon Fraser.
