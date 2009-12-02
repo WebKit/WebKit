@@ -24,8 +24,54 @@ input.max = '';
 shouldBe('input.getAttribute("min")', '""');
 shouldBe('input.getAttribute("max")', '""');
 
+// Null.
+debug('Setting null to min:');
+input.min = null;
+shouldBe('input.min', '""');
+shouldBe('input.getAttribute("min")', 'null');
+input.setAttribute('min', null);
+shouldBe('input.min', '"null"');
+
+debug('Setting null to max:');
+input.max = null;
+shouldBe('input.max', '""');
+shouldBe('input.getAttribute("max")', 'null');
+input.setAttribute('max', null);
+shouldBe('input.max', '"null"');
+
+// Undefined.
+debug('Setting undefined to min:');
+input.min = undefined;
+shouldBe('input.min', '"undefined"');
+shouldBe('input.getAttribute("min")', '"undefined"');
+input.setAttribute('min', undefined);
+shouldBe('input.min', '"undefined"');
+
+debug('Setting undefined to max:');
+input.max = undefined;
+shouldBe('input.max', '"undefined"');
+shouldBe('input.getAttribute("max")', '"undefined"');
+input.setAttribute('max', undefined);
+shouldBe('input.max', '"undefined"');
+
+// Non-string.
+debug('Setting non-string to min:');
+input.min = 256;
+shouldBe('input.min', '"256"');
+shouldBe('input.getAttribute("min")', '"256"');
+input.setAttribute('min', 256);
+shouldBe('input.min', '"256"');
+
+debug('Setting non-string to max:');
+input.max = 256;
+shouldBe('input.max', '"256"');
+shouldBe('input.getAttribute("max")', '"256"');
+input.setAttribute('max', 256);
+shouldBe('input.max', '"256"');
+
 // The range type has the default minimum and the default maximum.
 // But they aren't exposed by .min .max IDL attributes.
+debug('Check implicit min/max of type=range:');
 input.type = 'range';
 input.setAttribute('min', '');
 input.setAttribute('max', '');

@@ -14,8 +14,8 @@ shouldBe('input.step', '"bar"');
 
 // Null.
 input.step = null;
-shouldBe('input.step', '"null"');
-shouldBe('input.getAttribute("step")', '"null"');
+shouldBe('input.step', '""');
+shouldBe('input.getAttribute("step")', 'null');
 input.setAttribute('step', null);
 shouldBe('input.step', '"null"');
 

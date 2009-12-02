@@ -43,16 +43,16 @@ module html {
         readonly attribute HTMLElement     list;
 #endif
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-                 attribute [Reflect] DOMString max;
+                 attribute [ConvertNullToNullString, Reflect] DOMString max;
 #endif
                  attribute long            maxLength
                      setter raises(DOMException);
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-                 attribute [Reflect] DOMString min;
+                 attribute [ConvertNullToNullString, Reflect] DOMString min;
 #endif
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
-                 attribute [Reflect] DOMString       pattern;
+                 attribute [ConvertNullToNullString, Reflect] DOMString pattern;
                  attribute DOMString       placeholder;
                  attribute boolean         readOnly;
                  attribute boolean         required;
@@ -63,7 +63,7 @@ module html {
                  attribute unsigned long   size; // Changed string -> long as part of DOM level 2
 #endif
                  attribute [ConvertNullToNullString] DOMString src;
-                 attribute [Reflect] DOMString step;
+                 attribute [ConvertNullToNullString, Reflect] DOMString step;
                  attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;

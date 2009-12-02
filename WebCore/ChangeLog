@@ -1,3 +1,13 @@
+2009-12-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change [Reflect] to [ConvertNullToNullString, Reflect] for min, max,
+        pattern and step attributes of HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=31708
+
+        * html/HTMLInputElement.idl:
+
 2009-12-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
