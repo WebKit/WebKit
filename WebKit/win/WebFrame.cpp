@@ -92,7 +92,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/Settings.h>
-#include <WebCore/SVGSMILElement.h>
+#include <WebCore/svg/animation/SVGSMILElement.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/ScriptController.h>

@@ -1,5 +1,12 @@
 2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Try to fix Qt build.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_pauseSVGAnimation):
+
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Simon Fraser.
 
         Add SVG animation test framework with 'snapshot' functionality
