@@ -39,7 +39,9 @@ extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
 extern bool qt_drt_pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
+extern bool qt_drt_pauseSVGAnimation(QWebFrame*, const QString& animationId, double time, const QString& elementId);
 extern int qt_drt_numberOfActiveAnimations(QWebFrame*);
+
 extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 extern QString qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id);
 
@@ -278,6 +280,15 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const QString& p
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
     return qt_drt_pauseTransitionOfProperty(frame, propertyName, time, elementId);
+}
+
+bool LayoutTestController::sampleSVGAnimationForElementAtTime(const QString& animationId,
+                                                              double time,
+                                                              const QString& elementId)
+{
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
+    Q_ASSERT(frame);
+    return qt_drt_pauseSVGAnimation(frame, animationId, time, elementId);
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const

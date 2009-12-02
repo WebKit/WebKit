@@ -202,6 +202,7 @@ public:
     
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
     bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
+    bool sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId);
     unsigned numberOfActiveAnimations() const;
 
     void whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);

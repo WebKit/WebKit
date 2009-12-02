@@ -41,6 +41,7 @@ class Node;
 class String;
 class SVGElementInstance;
 class SVGStyledElement;
+class SVGSMILElement;
 class SVGSVGElement;
 
 class SVGDocumentExtensions {
@@ -54,6 +55,7 @@ public:
     void startAnimations();
     void pauseAnimations();
     void unpauseAnimations();
+    bool sampleAnimationAtTime(const String& elementId, SVGSMILElement*, double time);
 
     void reportWarning(const String&);
     void reportError(const String&);

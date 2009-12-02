@@ -1,3 +1,34 @@
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        Add SVG animation test framework with 'snapshot' functionality
+        https://bugs.webkit.org/show_bug.cgi?id=31897
+
+        Add LayoutTests/svg/animations directory, containing a new
+        framework for SVG animation test with sampling at certain times.
+
+        Added one example test, which will be extended soon to cover animVal
+        support, once basic support has been implemented.
+
+        * svg/animations: Added.
+        * svg/animations/animVal-basics-expected.txt: Added.
+        * svg/animations/animVal-basics.html: Added.
+        * svg/animations/resources: Added.
+        * svg/animations/resources/SVGAnimationTestCase.js: Added.
+        (isCloseEnough):
+        (moveAnimationTimelineAndSample):
+        (startTest):
+        (sampleAnimation):
+        (runAnimationTest):
+        * svg/animations/script-tests: Added.
+        * svg/animations/script-tests/TEMPLATE.html: Added.
+        * svg/animations/script-tests/animVal-basics.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+
 2009-12-01  Adam Roben  <aroben@apple.com>
 
         Skip more tests that fail with specific versions of CFNetwork on

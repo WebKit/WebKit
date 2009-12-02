@@ -46,6 +46,7 @@ SMILTimeContainer::SMILTimeContainer(SVGSVGElement* owner)
     : m_beginTime(0)
     , m_pauseTime(0)
     , m_accumulatedPauseTime(0)
+    , m_nextManualSampleTime(0)
     , m_documentOrderIndexesDirty(false)
     , m_timer(this, &SMILTimeContainer::timerFired)
     , m_ownerSVGElement(owner)
@@ -207,14 +208,45 @@ String SMILTimeContainer::baseValueFor(ElementAttributePair key)
     m_savedBaseValues.add(key, baseValue);
     return baseValue;
 }
-      
+
+void SMILTimeContainer::sampleAnimationAtTime(const String& elementId, double newTime)
+{
+    ASSERT(m_beginTime);
+    ASSERT(!isPaused());
+
+    // Fast-forward to the time DRT wants to sample
+    m_timer.stop();
+    m_nextSamplingTarget = elementId;
+    m_nextManualSampleTime = newTime;
+
+    updateAnimations(elapsed());
+}
+
 void SMILTimeContainer::updateAnimations(SMILTime elapsed)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
 
     Vector<SVGSMILElement*> toAnimate;
     copyToVector(m_scheduledAnimations, toAnimate);
-    
+
+    if (m_nextManualSampleTime) {
+        SMILTime samplingDiff;
+        for (unsigned n = 0; n < toAnimate.size(); ++n) {
+            SVGSMILElement* animation = toAnimate[n];
+            ASSERT(animation->timeContainer() == this);
+
+            SVGElement* targetElement = animation->targetElement();
+            if (!targetElement || targetElement->getIDAttribute() != m_nextSamplingTarget)
+                continue;
+
+            samplingDiff = animation->intervalBegin();
+            break;
+        }
+
+        elapsed = SMILTime(m_nextManualSampleTime) + samplingDiff;
+        m_nextManualSampleTime = 0;
+    }
+
     // Sort according to priority. Elements with later begin time have higher priority.
     // In case of a tie, document order decides. 
     // FIXME: This should also consider timing relationships between the elements. Dependents

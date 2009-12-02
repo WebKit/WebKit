@@ -54,6 +54,7 @@
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "SubstituteData.h"
+#include "SVGSMILElement.h"
 
 #include <atk/atk.h>
 #include <JavaScriptCore/APICast.h>
@@ -957,6 +958,22 @@ bool webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name,
     if (!coreElement || !coreElement->renderer())
         return false;
     return core(frame)->animation()->pauseTransitionAtTime(coreElement->renderer(), AtomicString(name), time);
+}
+
+bool webkit_web_frame_pause_svg_animation(WebKitWebFrame* frame, const gchar* animationId, double time, const gchar* elementId)
+{
+    ASSERT(core(frame));
+    Document* document = core(frame)->document();
+    if (!document || !document->svgExtensions())
+        return false;
+    Element* coreElement = document->getElementById(AtomicString(animationId));
+    if (!coreElement || !SVGSMILElement::isSMILElement(coreElement))
+        return false;
+#if ENABLE(SVG)
+    return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreElement), time);
+#else
+    return false;
+#endif
 }
 
 unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)

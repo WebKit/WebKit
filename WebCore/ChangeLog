@@ -1,3 +1,41 @@
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        Add SVG animation test framework with 'snapshot' functionality
+        https://bugs.webkit.org/show_bug.cgi?id=31897
+
+        Add 'sampleSVGAnimationForElementAtTime' method to the LayoutTestController,
+        for the use within the new SVG animation test framework (LayoutTests/svg/animations/)
+
+        layoutTestController.sampleAnimationAtTime(<svg animation id>, <absolute time>, <svg element id>);
+        to sample a svg animateMotion/animateColor/animate/set element at certain times.
+
+        After the desired SVG animation starts and calling the method above, it's immediately forwarded to
+        the desired sampling time. After JS returns from the 'sampleSVGAnimationForElementAtTime' method
+        a callback is fired used to sample the animation value at the target time. It's modelled similar
+        to the CSS animation/transition testing framework, inspired by
+        LayoutTests/animations/animation-test-helpers.js.
+
+        Though it has been extended to integrate within the fast/js/js-test-* framework, that's used for
+        the SVG dynamic-updates tests, to simplify test creation, by utilizing script-tests/* only.
+
+        Adding a simple testcase testing the DRT methods, it will soon be extended to test animVal/baseVal
+        interaction, while animating.
+
+        Test: svg/animations/animVal-basics.html
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::sampleAnimationAtTime):
+        * svg/SVGDocumentExtensions.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::sampleAnimationAtTime):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+
 2009-12-01  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.

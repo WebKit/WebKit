@@ -79,6 +79,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SmartReplace.h>
+#import <WebCore/SVGSMILElement.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TypingCommand.h>
@@ -1114,6 +1115,29 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return false;
 
     return controller->pauseTransitionAtTime(coreNode->renderer(), name, time);
+}
+
+// Pause a given SVG animation on the target node at a specific time.
+// This method is only intended to be used for testing the SVG animation system.
+- (BOOL)_pauseSVGAnimation:(NSString*)elementId onSMILNode:(DOMNode *)node atTime:(NSTimeInterval)time
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return false;
+ 
+    Document* document = frame->document();
+    if (!document || !document->svgExtensions())
+        return false;
+
+    Node* coreNode = core(node);
+    if (!coreNode || !SVGSMILElement::isSMILElement(coreNode))
+        return false;
+
+#if ENABLE(SVG)
+    return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreNode), time);
+#else
+    return false;
+#endif
 }
 
 - (unsigned) _numberOfActiveAnimations

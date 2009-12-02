@@ -56,6 +56,7 @@
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "SubstituteData.h"
+#include "SVGSMILElement.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "qt_instance.h"
@@ -146,6 +147,31 @@ bool QWEBKIT_EXPORT qt_drt_pauseTransitionOfProperty(QWebFrame *qframe, const QS
         return false;
 
     return controller->pauseTransitionAtTime(coreNode->renderer(), propertyName, time);
+}
+
+// Pause a given SVG animation on the target node at a specific time.
+// This method is only intended to be used for testing the SVG animation system.
+bool QWEBKIT_EXPORT qt_drt_pauseSVGAnimation(QWebFrame *qframe, const QString &animationId, double time, const QString &elementId)
+{
+    Frame* frame = QWebFramePrivate::core(qframe);
+    if (!frame)
+        return false;
+
+    Document* doc = frame->document();
+    Q_ASSERT(doc);
+
+    if (!doc->svgExtensions())
+        return false;
+
+    Node* coreNode = doc->getElementById(animationId);
+    if (!coreNode || !SVGSMILElement::isSMILElement(coreNode))
+        return false;
+
+#if ENABLE(SVG)
+    return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreNode), time);
+#else
+    return false;
+#endif
 }
 
 // Returns the total number of currently running animations (includes both CSS transitions and CSS animations).

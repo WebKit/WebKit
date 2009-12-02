@@ -1,3 +1,20 @@
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        Add SVG animation test framework with 'snapshot' functionality
+        https://bugs.webkit.org/show_bug.cgi?id=31897
+
+        Add API used by the new 'sampleSVGAnimationForElementAtTime' DRT method,
+        forwarding the call to SVGDocumentExtensions, if SVG is enabled.
+
+        Implemented just like the existing pauseAnimation* methods for CSS animations.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::pauseSVGAnimation):
+        * WebFrame.h:
+
 2009-11-30  Adam Roben  <aroben@apple.com>
 
         Fix double-free of BSTRs passed to WebNavigationData::createInstance

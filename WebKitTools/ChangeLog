@@ -1,3 +1,30 @@
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        Add SVG animation test framework with 'snapshot' functionality
+        https://bugs.webkit.org/show_bug.cgi?id=31897
+
+        Add new 'sampleSVGAnimationForElementAtTime' DRT method,
+        used by the new SVG animation testing framework, implemented
+        for qt/gtk/win/mac.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (sampleSVGAnimationForElementAtTimeCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+
 2009-12-01  Adam Roben  <aroben@apple.com>
 
         Remove user content before running each test on Windows
