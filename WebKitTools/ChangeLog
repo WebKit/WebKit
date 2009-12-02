@@ -1,3 +1,9 @@
+2009-12-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Try to fix gtk DRT build.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+
 2009-12-01  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
