@@ -135,6 +135,11 @@ public:
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned);
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned);
 
+    // ARIA Drag and Drop
+    bool ariaIsGrabbed() const;
+    // A space concatentated string of all the drop effects.
+    JSStringRef ariaDropEffects() const;
+    
     // Parameterized attributes
     int lineForIndex(int);
     JSStringRef boundsForRange(unsigned location, unsigned length);

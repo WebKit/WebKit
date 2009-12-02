@@ -44,6 +44,14 @@
 #define NSAccessibilityOwnsAttribute @"AXOwns"
 #endif
 
+#ifndef NSAccessibilityGrabbedAttribute
+#define NSAccessibilityGrabbedAttribute @"AXGrabbed"
+#endif
+
+#ifndef NSAccessibilityDropEffectsAttribute
+#define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
+#endif
+
 @interface NSObject (WebKitAccessibilityArrayCategory)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 @end
@@ -510,6 +518,31 @@ int AccessibilityUIElement::hierarchicalLevel() const
     if ([value isKindOfClass:[NSNumber class]])
         return [value intValue];
     return 0;
+}
+
+bool AccessibilityUIElement::ariaIsGrabbed() const
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityGrabbedAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
+JSStringRef AccessibilityUIElement::ariaDropEffects() const
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityDropEffectsAttribute];
+    if (![value isKindOfClass:[NSArray class]])
+        return 0;
+
+    NSMutableString* dropEffects = [NSMutableString string];
+    NSInteger length = [value count];
+    for (NSInteger k = 0; k < length; ++k) {
+        [dropEffects appendString:[value objectAtIndex:k]];
+        if (k < length - 1)
+            [dropEffects appendString:@","];
+    }
+    
+    return [dropEffects createJSStringRef];
 }
 
 // parameterized attributes

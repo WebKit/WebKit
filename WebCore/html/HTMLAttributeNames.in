@@ -17,8 +17,10 @@ aria-checked
 aria-controls
 aria-describedby
 aria-disabled
+aria-dropeffect
 aria-expanded
 aria-flowto
+aria-grabbed
 aria-hidden
 aria-label
 aria-labeledby

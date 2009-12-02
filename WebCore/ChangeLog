@@ -1,3 +1,32 @@
+2009-12-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA: implement support for ARIA drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=32007
+
+        Test: platform/mac/accessibility/aria-drag-drop.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::supportsARIADropping):
+        (WebCore::AccessibilityObject::supportsARIADragging):
+        (WebCore::AccessibilityObject::isARIAGrabbed):
+        (WebCore::AccessibilityObject::setARIAGrabbed):
+        (WebCore::AccessibilityObject::determineARIADropEffects):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsARIADropping):
+        (WebCore::AccessibilityRenderObject::supportsARIADragging):
+        (WebCore::AccessibilityRenderObject::isARIAGrabbed):
+        (WebCore::AccessibilityRenderObject::setARIAGrabbed):
+        (WebCore::AccessibilityRenderObject::determineARIADropEffects):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        * html/HTMLAttributeNames.in:
+
 2009-12-01  Adam Barth  <abarth@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=21288

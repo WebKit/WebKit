@@ -123,6 +123,14 @@ using namespace std;
 #define NSAccessibilityOwnsAttribute @"AXOwns"
 #endif
 
+#ifndef NSAccessibilityGrabbedAttribute
+#define NSAccessibilityGrabbedAttribute @"AXGrabbed"
+#endif
+
+#ifndef NSAccessibilityDropEffectsAttribute
+#define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -581,6 +589,12 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     NSMutableArray *additional = [NSMutableArray array];
     if (m_object->supportsARIAOwns())
         [additional addObject:NSAccessibilityOwnsAttribute];
+
+    if (m_object->supportsARIADragging())
+        [additional addObject:NSAccessibilityGrabbedAttribute];
+
+    if (m_object->supportsARIADropping())
+        [additional addObject:NSAccessibilityDropEffectsAttribute];
 
     return additional;
 }
@@ -1739,6 +1753,20 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return convertToNSArray(ariaOwns);
     }
     
+    if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
+        return [NSNumber numberWithBool:m_object->isARIAGrabbed()];
+    
+    if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute]) {
+        Vector<String> dropEffects;
+        m_object->determineARIADropEffects(dropEffects);
+        size_t length = dropEffects.size();
+
+        NSMutableArray* dropEffectsArray = [NSMutableArray arrayWithCapacity:length];
+        for (size_t i = 0; i < length; ++i)
+            [dropEffectsArray addObject:dropEffects[i]];
+        return dropEffectsArray;
+    }
+    
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])
         return [NSValue valueWithPoint:m_object->clickPoint()];
@@ -1812,6 +1840,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         [attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute] ||
         [attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
         return m_object->canSetTextRangeAttributes();
+    
+    if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
+        return YES;
     
     return NO;
 }
@@ -2101,7 +2132,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         convertToVector(array, selectedRows);
         if (m_object->isTree())
             m_object->setSelectedRows(selectedRows);
-    }
+    } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
+        m_object->setARIAGrabbed([number boolValue]);
 }
 
 static RenderObject* rendererForView(NSView* view)
