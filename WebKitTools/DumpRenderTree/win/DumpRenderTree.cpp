@@ -227,7 +227,7 @@ static void addQTDirToPATH()
     // Read the current PATH.
     DWORD pathSize = GetEnvironmentVariableW(pathEnvironmentVariable, 0, 0);
     Vector<WCHAR> oldPath(pathSize);
-    if (!GetEnvironmentVariable(pathEnvironmentVariable, oldPath.data(), oldPath.size()))
+    if (!GetEnvironmentVariableW(pathEnvironmentVariable, oldPath.data(), oldPath.size()))
         return;
 
     // And add the QuickTime dll.
