@@ -5157,3 +5157,19 @@ fast/css/namespaces/namespaces-empty.xml
 # Failure introduced by http://trac.webkit.org/changeset/51429
 # hamaji will look into this.
 editing/selection/last-empty-inline.html
+
+# Failing tests due to
+# layoutTestController.notifyDone() bug
+# https://bugs.webkit.org/show_bug.cgi?id=31626
+
+fast/dom/javascript-url-crash-function.html
+fast/dom/location-new-window-no-crash.html
+fast/dom/Document/early-document-access.html
+fast/dom/Window/window-early-properties.html
+fast/events/open-window-from-another-frame.html
+fast/events/popup-blocking-click-in-iframe.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
