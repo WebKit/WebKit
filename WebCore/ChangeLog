@@ -1,3 +1,67 @@
+2009-12-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Web Inspector frontend heap allocates ScriptFunctionCall which is unsafe
+        https://bugs.webkit.org/show_bug.cgi?id=32098
+
+        Fix is simply to make the ScriptFunctionCall stack allocated as nature intended.
+        Doing this required adding an appendArgument(char*) to ScriptFunctionCall so
+        that an explicit String cast would not be necessary.
+
+        To prevent something like this happening again in future i've added private
+        operator new implementations to ScriptFunctionCall making this type of mistake
+        produce errors when compiling.
+
+        Test case: Inspector tests now pass with GC on every alloc enabled.
+
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument):
+        * bindings/js/ScriptFunctionCall.h:
+        (WebCore::ScriptFunctionCall::operator new):
+        (WebCore::ScriptFunctionCall::operator new[]):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        (WebCore::InspectorFrontend::updateConsoleMessageRepeatCount):
+        (WebCore::InspectorFrontend::addResource):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::removeResource):
+        (WebCore::InspectorFrontend::updateFocusedNode):
+        (WebCore::InspectorFrontend::setAttachedWindow):
+        (WebCore::InspectorFrontend::addRecordToTimeline):
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        (WebCore::InspectorFrontend::failedToParseScriptSource):
+        (WebCore::InspectorFrontend::addProfileHeader):
+        (WebCore::InspectorFrontend::setRecordingProfile):
+        (WebCore::InspectorFrontend::didGetProfileHeaders):
+        (WebCore::InspectorFrontend::didGetProfile):
+        (WebCore::InspectorFrontend::pausedScript):
+        (WebCore::InspectorFrontend::setDocument):
+        (WebCore::InspectorFrontend::setDetachedRoot):
+        (WebCore::InspectorFrontend::setChildNodes):
+        (WebCore::InspectorFrontend::childNodeCountUpdated):
+        (WebCore::InspectorFrontend::childNodeInserted):
+        (WebCore::InspectorFrontend::childNodeRemoved):
+        (WebCore::InspectorFrontend::attributesUpdated):
+        (WebCore::InspectorFrontend::didRemoveNode):
+        (WebCore::InspectorFrontend::didGetChildNodes):
+        (WebCore::InspectorFrontend::didApplyDomChange):
+        (WebCore::InspectorFrontend::didGetEventListenersForNode):
+        (WebCore::InspectorFrontend::didGetCookies):
+        (WebCore::InspectorFrontend::didDispatchOnInjectedScript):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::selectDatabase):
+        (WebCore::InspectorFrontend::didGetDatabaseTableNames):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        (WebCore::InspectorFrontend::selectDOMStorage):
+        (WebCore::InspectorFrontend::didGetDOMStorageEntries):
+        (WebCore::InspectorFrontend::didSetDOMStorageItem):
+        (WebCore::InspectorFrontend::didRemoveDOMStorageItem):
+        (WebCore::InspectorFrontend::updateDOMStorage):
+        (WebCore::InspectorFrontend::addNodesToSearchResult):
+        (WebCore::InspectorFrontend::evaluateForTestInFrontend):
+        * inspector/InspectorFrontend.h:
+
 2009-12-02  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
