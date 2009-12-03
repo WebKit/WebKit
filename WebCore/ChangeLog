@@ -1,3 +1,10 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        No review - release build fix.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+
 2009-12-03  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

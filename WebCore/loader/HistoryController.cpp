@@ -628,8 +628,6 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 {
     Page* page = m_frame->page();
     ASSERT(page);
-    Frame* mainFrame = page->mainFrame();
-    ASSERT(mainFrame);
 
     // Get a HistoryItem tree for the current frame tree.
     RefPtr<HistoryItem> item = createItemTree(m_frame, false);
