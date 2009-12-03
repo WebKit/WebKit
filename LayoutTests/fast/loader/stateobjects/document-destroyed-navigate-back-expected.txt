@@ -5,10 +5,10 @@ ALERT: State popped - SecondEntry (type string)
 ALERT: Navigating back...
 main frame - has 1 onunload handler(s)
 ALERT: History length is 2
-ALERT: window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?SecondEntryShouldNeverBeReactivated
+ALERT: Last path component of location is document-destroyed-navigate-back.html?SecondEntryShouldNeverBeReactivated
 main frame - has 1 onunload handler(s)
 ALERT: History length is 1
-ALERT: window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
+ALERT: Last path component of location is document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
 ALERT: Test completed
 This test:
 -Builds up a list of state object entries.
@@ -17,6 +17,6 @@ This test:
 -Navigates back to the state object entries and verifies the popstate event is not fired.
 
 History length is 1
-window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
+Last path component of location is document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
 Test completed
 

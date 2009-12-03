@@ -24,10 +24,15 @@ function endTest(msg)
         layoutTestController.notifyDone();
 }
 
+function lastPathComponent()
+{
+    return window.location.href.split('/').pop();
+}
+
 function runSecondStageOfTest()
 {
     log("History length is " + history.length);
-    log("window.location is " + window.location);
+    log("Last path component of location is " + lastPathComponent());
     sessionStorage.stage = 3;
     history.back();
 }
@@ -35,7 +40,7 @@ function runSecondStageOfTest()
 function runThirdStageOfTest()
 {
     log("History length is " + history.length);
-    log("window.location is " + window.location);
+    log("Last path component of location is " + lastPathComponent());
     endTest("Test completed");
 }
 
@@ -76,7 +81,8 @@ function statePopped()
 
 function hashChanged()
 {
-    log("hashChanged - location is " + window.location);
+    log("hashChanged - Last path component of location is " + lastPathComponent());
+
     if (window.location.hash == "#FirstEntryShouldNeverBeReactivated")
         endTest("Test completed");
 }

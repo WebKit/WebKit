@@ -1,3 +1,17 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Fix my absolute URL snafu by outputting only the last path component for these URLs, 
+        which is all that is relevant.
+
+        * fast/loader/stateobjects/document-destroyed-navigate-back-expected.txt:
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll-expected.txt:
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange-expected.txt:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html:
+
 2009-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.

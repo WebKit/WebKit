@@ -39,9 +39,14 @@ function runTest()
     history.back();
 }
 
+function lastPathComponent()
+{
+    return window.location.href.split('/').pop();
+}
+
 function statePopped()
 {
-    log("State popped with event " + event.state + " (type " + typeof event.state + ") and location " + window.location);
+    log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent());
     if (event.state != "OriginalEntry")
         history.back();
     else if (window.layoutTestController)
