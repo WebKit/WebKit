@@ -41,7 +41,12 @@ history.pushState([FileList], "FileList entry");
 
 function statePopped()
 {
-    log("State popped - " + event.state + " (type " + typeof event.state + ")");
+    if (event.state instanceof Date)
+        log("State popped - " + event.state * 1 + " (type " + typeof event.state + ")");
+    else
+        log("State popped - " + event.state + " (type " + typeof event.state + ")");
+
+    
     if (event.state != "FirstEntry")
         history.back();
     else if (window.layoutTestController)

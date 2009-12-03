@@ -1,3 +1,12 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Oliver Hunt.
+
+        Fix layout tests by removing the full outputting of the Date object and just outputting the milliseconds since the epoch.
+
+        * fast/loader/stateobjects/pushstate-object-types-expected.txt:
+        * fast/loader/stateobjects/pushstate-object-types.html:
+
 2009-12-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Eric Seidel.
