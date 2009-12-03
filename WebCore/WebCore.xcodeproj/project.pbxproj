@@ -4748,6 +4748,8 @@
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
+		F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */; };
+		F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */; };
 		F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */; };
 		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; };
 		F5C041E30FFCA96D00839D4A /* DOMHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */; };
@@ -9952,6 +9954,8 @@
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorMac.mm; path = mac/EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
 		EDEC98020AED7E170059137F /* WebCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
+		F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenTypeSanitizer.cpp; path = opentype/OpenTypeSanitizer.cpp; sourceTree = "<group>"; };
+		F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenTypeSanitizer.h; path = opentype/OpenTypeSanitizer.h; sourceTree = "<group>"; };
 		F523D23B02DE4396018635CA /* HTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23C02DE4396018635CA /* HTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23E02DE4396018635CA /* HTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -14151,6 +14155,7 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				F4EAF4AB10C74268009100D3 /* opentype */,
 				B27535290B053814002CE64F /* cg */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				B27535490B053814002CE64F /* mac */,
@@ -15131,6 +15136,15 @@
 				4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */,
 			);
 			name = mac;
+			sourceTree = "<group>";
+		};
+		F4EAF4AB10C74268009100D3 /* opentype */ = {
+			isa = PBXGroup;
+			children = (
+				F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */,
+				F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */,
+			);
+			name = opentype;
 			sourceTree = "<group>";
 		};
 		F523D18402DE42E8018635CA /* css */ = {
@@ -18208,6 +18222,7 @@
 				7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
+				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20359,6 +20374,7 @@
 				7A0E76F910BF08ED00A0276E /* InjectedScriptHost.cpp in Sources */,
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
+				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -42,6 +42,7 @@
 
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
+#include "OpenTypeSanitizer.h"
 #include "SharedBuffer.h"
 
 #if PLATFORM(WIN_OS)
@@ -170,6 +171,14 @@ private:
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
+
+#if ENABLE(OPENTYPE_SANITIZER)
+    OpenTypeSanitizer sanitizer(buffer);
+    RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
+    if (!transcodeBuffer)
+        return 0; // validation failed.
+    buffer = transcodeBuffer.get();
+#endif
 
 #if PLATFORM(WIN_OS)
     // Introduce the font to GDI. AddFontMemResourceEx should be used with care, because it will pollute the process's

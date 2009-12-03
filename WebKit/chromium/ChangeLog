@@ -1,3 +1,13 @@
+2009-12-02  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Sanitize web fonts using the OTS library 
+        https://bugs.webkit.org/show_bug.cgi?id=31106
+
+        * DEPS: Added dependency to the OpenType sanitizer library.
+        * features.gypi: Added ENABLE_OPENTYPE_SANITIZER=1.
+
 2009-12-02  Evan Stade  <estade@chromium.org>
 
         Reviewed by Darin Fisher.

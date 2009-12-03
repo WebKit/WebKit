@@ -41,6 +41,7 @@ vars = {
   'gyp_rev': '751',
   'icu_rev': '31724',
   'openvcdiff_rev': '28',
+  'ots_rev': '19',
   'skia_rev': '424',
   'v8_rev': '3276',
 
@@ -117,6 +118,9 @@ deps = {
 
   'third_party/npapi':
     Var('chromium_svn')+'/third_party/npapi@'+Var('chromium_rev'),
+
+  'third_party/ots':
+    'http://ots.googlecode.com/svn/trunk@'+Var('ots_rev'),
 
   'third_party/sqlite':
     Var('chromium_svn')+'/third_party/sqlite@'+Var('chromium_rev'),

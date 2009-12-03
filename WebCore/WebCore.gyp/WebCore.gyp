@@ -624,6 +624,7 @@
         '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
         '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+        '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
       ],
       'defines': [
@@ -650,6 +651,7 @@
         # filenames.
         ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(SVGAllInOne|Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+        ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
 
         # JSC-only.
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],

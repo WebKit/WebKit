@@ -2026,6 +2026,8 @@
             'platform/graphics/mac/WebTiledLayer.h',
             'platform/graphics/mac/WebTiledLayer.mm',
             'platform/graphics/MediaPlayer.cpp',
+            'platform/graphics/opentype/OpenTypeSanitizer.cpp',
+            'platform/graphics/opentype/OpenTypeSanitizer.h',
             'platform/graphics/opentype/OpenTypeUtilities.cpp',
             'platform/graphics/opentype/OpenTypeUtilities.h',
             'platform/graphics/qt/ColorQt.cpp',

@@ -24,6 +24,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include "SharedBuffer.h"
 #include "FontPlatformData.h"
+#include "OpenTypeSanitizer.h"
 
 namespace WebCore {
 
@@ -42,6 +43,14 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
+
+#if ENABLE(OPENTYPE_SANITIZER)
+    OpenTypeSanitizer sanitizer(buffer);
+    RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
+    if (!transcodeBuffer)
+        return 0; // validation failed.
+    buffer = transcodeBuffer.get();
+#endif
 
     ATSFontContainerRef containerRef = 0;
     ATSFontRef fontRef = 0;
