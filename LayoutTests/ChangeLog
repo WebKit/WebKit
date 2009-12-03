@@ -1,3 +1,9 @@
+2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping new tests, and tests that require new DRT functionality.
+
+        * platform/gtk/Skipped:
+
 2009-12-03  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

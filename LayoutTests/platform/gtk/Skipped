@@ -2114,6 +2114,10 @@ fast/css/namespaces/004.xml
 fast/css/namespaces/005.xml
 fast/css/namespaces/006.xml
 fast/css/namespaces/007.xml
+fast/css/namespaces/namespaces-comments.xml
+fast/css/namespaces/namespaces-empty.xml
+fast/css/namespaces/namespaces-escapes.xml
+fast/css/namespaces/namespaces-invalid-at.xml
 fast/css/variables/block-cycle-test.html
 fast/css/variables/colors-test.html
 fast/css/variables/declaration-block-test.html
@@ -5698,3 +5702,9 @@ fast/history/back-forward-reset-after-error-handling.html
 animations/3d
 transforms/3d
 compositing
+
+# Missing textInputController.selectedRange()
+editing/selection/mixed-editability-10.html
+editing/selection/5825350-1.html
+editing/selection/5825350-2.html
+
