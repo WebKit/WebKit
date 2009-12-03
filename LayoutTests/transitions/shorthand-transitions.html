@@ -33,12 +33,14 @@
     
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
+      // The transition takes 1 second, so we compute tolerance to allow
+      // 10% or 100ms variance, (endValue - startValue) / 10.
       [0.5, 'box', 'padding-top', 5, 1],
-      [0.5, 'box', 'margin-top', 25, 2],
-      [0.5, 'box', 'outline-color', [128, 0, 128], 10],
-      [0.5, 'box', 'background-color', [128, 128, 255], 10],
+      [0.5, 'box', 'margin-top', 25, 3],
+      [0.5, 'box', 'outline-color', [128, 0, 128], 26],
+      [0.5, 'box', 'background-color', [128, 128, 255], 26],
       [0.5, 'box', '-webkit-border-top-right-radius', 10, 2],
-      [0.5, 'box', '-webkit-transform-origin', [50, 50], 5],
+      [0.5, 'box', '-webkit-transform-origin', [50, 50], 10],
     ];
     
     function setupTest()

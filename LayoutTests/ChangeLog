@@ -1,3 +1,18 @@
+2009-12-03  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make shorthand-transitions.html less flaky.
+        The test currently allows for timing related differences by using a tolerance, but the tolerance
+        is inconsistent in the test, even for values read at the same time (some values are allowed a 100ms 
+        difference, others are only allowed 50ms).  This change makes all values have a 100ms tolerance.
+        (open question: is 100ms enough?  I've looked through a bunch of logs of failures and it seems to be,
+        so this should definitely help reduce but this may not entirely eliminate flakiness).
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32134
+
+        * transitions/shorthand-transitions.html:
+
 2009-12-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.
