@@ -1,3 +1,11 @@
+2009-12-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Skip failing WebSocket test on Windows.
+
+        * platform/win/Skipped:
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Oliver Hunt.
