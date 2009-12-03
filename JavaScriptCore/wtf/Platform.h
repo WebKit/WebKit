@@ -923,4 +923,6 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 /* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
+#define ENABLE_JSC_ZOMBIES 0
+
 #endif /* WTF_Platform_h */

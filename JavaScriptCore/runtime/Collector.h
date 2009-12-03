@@ -60,6 +60,9 @@ namespace JSC {
         size_t numLiveObjects;
         size_t numLiveObjectsAtLastCollect;
         size_t extraCost;
+#if ENABLE(JSC_ZOMBIES)
+        size_t numZombies;
+#endif
 
         OperationInProgress operationInProgress;
     };

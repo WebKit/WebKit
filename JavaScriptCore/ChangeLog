@@ -1,3 +1,36 @@
+2009-12-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add zombies to JSC
+        https://bugs.webkit.org/show_bug.cgi?id=32103
+
+        Add a compile time flag to make the JSC collector replace "unreachable"
+        objects with zombie objects.  The zombie object is a JSCell subclass that
+        ASSERTs on any attempt to use the JSCell methods.  In addition there are
+        a number of additional assertions in bottleneck code to catch zombie usage
+        as quickly as possible.
+
+        Grrr. Argh. Brains.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Register.h:
+        (JSC::Register::Register):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::ArgList::ArgList):
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::sweep):
+        * runtime/Collector.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::isZombie):
+        (JSC::JSValue::isZombie):
+        * runtime/JSValue.h:
+        (JSC::JSValue::decode):
+        (JSC::JSValue::JSValue):
+        * wtf/Platform.h:
+
 2009-12-01  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.
