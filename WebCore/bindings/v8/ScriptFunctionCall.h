@@ -50,6 +50,7 @@ namespace WebCore {
         void appendArgument(const ScriptString&);
         void appendArgument(const ScriptValue&);
         void appendArgument(const String&);
+        void appendArgument(const char*);
         void appendArgument(long);
         void appendArgument(long long);
         void appendArgument(unsigned int);
