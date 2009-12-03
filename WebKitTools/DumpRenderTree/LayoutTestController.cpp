@@ -1189,7 +1189,11 @@ void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef wi
 {
     JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
     ref();
-    JSValueRef layoutTestContollerObject = JSObjectMake(context, getJSClass(), this);
+
+    JSClassRef classRef = getJSClass();
+    JSValueRef layoutTestContollerObject = JSObjectMake(context, classRef, this);
+    JSClassRelease(classRef);
+
     JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 

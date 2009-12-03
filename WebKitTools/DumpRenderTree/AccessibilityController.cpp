@@ -48,7 +48,11 @@ static JSValueRef getRootElementCallback(JSContextRef context, JSObjectRef thisO
 void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> accessibilityControllerStr(Adopt, JSStringCreateWithUTF8CString("accessibilityController"));
-    JSValueRef accessibilityControllerObject = JSObjectMake(context, getJSClass(), this);
+    
+    JSClassRef classRef = getJSClass();
+    JSValueRef accessibilityControllerObject = JSObjectMake(context, classRef, this);
+    JSClassRelease(classRef);
+
     JSObjectSetProperty(context, windowObject, accessibilityControllerStr.get(), accessibilityControllerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
