@@ -1,5 +1,13 @@
 2009-12-03  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
+        Unreviewed build fix.
+
+        [Qt] ARM-Linux build fix after r51634 removed unused QBoxLayout include which included limits.h on ARM.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+
+2009-12-03  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Refactor DRT to not crash on tests which open child windows from javascript.

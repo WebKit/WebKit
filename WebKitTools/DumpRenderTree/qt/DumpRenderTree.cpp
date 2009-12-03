@@ -29,6 +29,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "DumpRenderTree.h"
 #include "EventSenderQt.h"
 #include "LayoutTestControllerQt.h"
@@ -60,6 +62,10 @@
 
 #ifdef Q_WS_X11
 #include <fontconfig/fontconfig.h>
+#endif
+
+#if PLATFORM(ARM) && PLATFORM(LINUX)
+#include <limits.h>
 #endif
 
 #include <unistd.h>
