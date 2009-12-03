@@ -85,7 +85,7 @@ void LayoutTestController::processWork()
 // Called on loadFinished on mainFrame.
 void LayoutTestController::maybeDump(bool success)
 {
-    Q_ASSERT(sender() == m_topLoadingFrame);
+    Q_ASSERT(sender() == m_topLoadingFrame->page());
 
     // as the function is called on loadFinished, the test might
     // already have dumped and thus no longer be active, thus
