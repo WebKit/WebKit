@@ -67,6 +67,8 @@ WebInspector.WatchExpressionsSidebarPane.prototype.__proto__ = WebInspector.Side
 
 WebInspector.WatchExpressionsSection = function()
 {
+    this._watchObjectGroupId = "watch-group";
+
     WebInspector.ObjectPropertiesSection.call(this);
 
     this.watchExpressions = this.loadSavedExpressions();
@@ -75,8 +77,6 @@ WebInspector.WatchExpressionsSection = function()
     this.editable = true;
     this.expanded = true;
     this.propertiesElement.addStyleClass("watch-expressions");
-
-    this._watchObjectGroupId = "watch-group";
 }
 
 WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";

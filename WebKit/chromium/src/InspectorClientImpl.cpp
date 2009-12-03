@@ -181,20 +181,19 @@ void InspectorClientImpl::loadSettings()
     for (Vector<String>::iterator it = entries.begin(); it != entries.end(); ++it) {
         Vector<String> tokens;
         it->split(":", tokens);
-        if (tokens.size() != 3)
+        if (tokens.size() < 3)
             continue;
 
         String name = decodeURLEscapeSequences(tokens[0]);
         String type = tokens[1];
-        String setting;
-        if (type == "string")
-            setting = decodeURLEscapeSequences(tokens[2]);
-        else if (type == "boolean")
-            setting = tokens[2];
-        else
-            continue;
+        String value = tokens[2];
+        for (size_t i = 3; i < tokens.size(); ++i)
+            value += ":" + tokens[i];
 
-        m_settings->set(name, setting);
+        if (type == "string")
+            value = decodeURLEscapeSequences(value);
+
+        m_settings->set(name, value);
     }
 }
 
