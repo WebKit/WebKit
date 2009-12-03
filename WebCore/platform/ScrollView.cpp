@@ -49,6 +49,7 @@ ScrollView::ScrollView()
     , m_updateScrollbarsPass(0)
     , m_drawPanScrollIcon(false)
     , m_useFixedLayout(false)
+    , m_paintsEntireContents(false)
 {
     platformInit();
 }
@@ -166,6 +167,11 @@ bool ScrollView::canBlitOnScroll() const
         return platformCanBlitOnScroll();
 
     return m_canBlitOnScroll;
+}
+
+void ScrollView::setPaintsEntireContents(bool paintsEntireContents)
+{
+    m_paintsEntireContents = paintsEntireContents;
 }
 
 #if !PLATFORM(GTK)
@@ -707,18 +713,19 @@ void ScrollView::frameRectsChanged()
 
 void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 {
-    IntRect visibleContent = visibleContentRect();
-    visibleContent.intersect(rect);
-    if (visibleContent.isEmpty())
+    IntRect paintRect = rect;
+    if (!paintsEntireContents())
+        paintRect.intersect(visibleContentRect());
+    if (paintRect.isEmpty())
         return;
 
     if (platformWidget()) {
-        platformRepaintContentRectangle(visibleContent, now);
+        platformRepaintContentRectangle(paintRect, now);
         return;
     }
 
     if (hostWindow())
-        hostWindow()->repaint(contentsToWindow(visibleContent), true, now);
+        hostWindow()->repaint(contentsToWindow(paintRect), true, now);
 }
 
 IntRect ScrollView::scrollCornerRect() const

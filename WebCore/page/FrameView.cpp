@@ -949,9 +949,10 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 
     double delay = adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
-        IntRect visibleContent = visibleContentRect();
-        visibleContent.intersect(r);
-        if (visibleContent.isEmpty())
+        IntRect paintRect = r;
+        if (!paintsEntireContents())
+            paintRect.intersect(visibleContentRect());
+        if (paintRect.isEmpty())
             return;
         if (m_repaintCount == cRepaintRectUnionThreshold) {
             IntRect unionedRect;
@@ -961,9 +962,9 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
             m_repaintRects.append(unionedRect);
         }
         if (m_repaintCount < cRepaintRectUnionThreshold)
-            m_repaintRects.append(visibleContent);
+            m_repaintRects.append(paintRect);
         else
-            m_repaintRects[0].unite(visibleContent);
+            m_repaintRects[0].unite(paintRect);
         m_repaintCount++;
     
         if (!m_deferringRepaints && !m_deferredRepaintTimer.isActive())

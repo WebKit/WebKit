@@ -1,3 +1,31 @@
+2009-12-03  Rafael Antognolli  <antognolli@profusion.mobi>, Kenneth Christiansen <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        repaint events from outside the viewport aren't received
+        https://bugs.webkit.org/show_bug.cgi?id=32081
+
+        When using a tiled backing store for painting, you need to receive
+        event from outside the viewport. Setting the viewport to the size
+        of the contents is not an option if you want to make use of WebCore's
+        infrastructure for drawing scrollbars etc.
+
+        A new property, paintsEntireContents, has been introduced for the
+        above use-case. It is settable, as tiling will be optional for Qt,
+        and for the not yet upstreamed EFL port, there will be two different
+        views, where only one of them are tiled.
+
+        No change in behavior, so no new tests added.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setPaintsEntireContents):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::paintsEntireContents):
+
 2009-11-23  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
