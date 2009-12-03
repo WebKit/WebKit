@@ -273,6 +273,9 @@ namespace WebCore {
         void setWebGLEnabled(bool);
         bool webGLEnabled() const { return m_webGLEnabled; }
 
+        void setGeolocationEnabled(bool);
+        bool geolocationEnabled() const { return m_geolocationEnabled; }
+
     private:
         Page* m_page;
         
@@ -342,6 +345,7 @@ namespace WebCore {
         bool m_showRepaintCounter : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
+        bool m_geolocationEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

@@ -1,3 +1,18 @@
+2009-12-03  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 32066 - Add enable geolocation flag to WebCore::Settings for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=32066
+
+        Add the plumbing to map WebSettings through to WebCore::Settings
+
+        * features.gypi:
+        * public/WebSettings.h: Add setGeolocationEnabled API to interface
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setGeolocationEnabled): Calls through to WebCore::Settings::setGeolocationEnabled
+        * src/WebSettingsImpl.h: Add setGeolocationEnabled interface function
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

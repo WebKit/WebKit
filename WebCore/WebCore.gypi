@@ -1859,6 +1859,7 @@
             'platform/chromium/FramelessScrollView.cpp',
             'platform/chromium/FramelessScrollView.h',
             'platform/chromium/FramelessScrollViewClient.h',
+            'platform/chromium/GeolocationServiceChromium.cpp',
             'platform/chromium/KeyCodeConversion.h',
             'platform/chromium/KeyCodeConversionGtk.cpp',
             'platform/chromium/KeyboardCodesPosix.h',

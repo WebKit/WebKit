@@ -1,3 +1,27 @@
+2009-12-03  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 32066 - Add enable geolocation flag to WebCore::Settings for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=32066
+
+        Adds geolocationEnabled in Settings for runtime control of geolocaiton features. This defaults to ON
+        as it is intended as a development and testing aid, not a user control. To completely remove geolocation
+        from a given port, the compile time ENABLE_GEOLOCATION should still be used.
+        Adding placeholder GeolocationServiceChromium implementation, as this is required to allows
+        ENABLE_GEOLOCATION to be defined (in turn required for testing), even though this patch does not
+        make that the default just yet.
+
+        * WebCore.gypi:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Add new m_geolocationEnabled flag default value
+        (WebCore::Settings::setGeolocationEnabled): Setter for  m_geolocationEnabled flag
+        * page/Settings.h:
+        (WebCore::Settings::geolocationEnabled):  Add m_geolocationEnabled flag
+        * platform/chromium/GeolocationServiceChromium.cpp: Added.
+        (WebCore::GeolocationServiceChromium::GeolocationServiceChromium): Place holder GeolocationServiceChromium)
+        (WebCore::createGeolocationService): factory function, only required when ENABLED(GEOLOCATION) is true
+
 2009-12-03  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by John Sullivan.
