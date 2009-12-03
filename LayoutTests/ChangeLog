@@ -1,3 +1,15 @@
+2009-12-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32135
+
+        [Qt] Add expected files for new tests we pass.
+        Compared to the Mac expected png files.
+
+        * platform/qt/fast/css/namespaces/namespaces-escapes-expected.txt: Added.
+        * platform/qt/fast/css/namespaces/namespaces-invalid-at-expected.txt: Added.
+
 2009-12-03  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Alexey Proskuryakov.
