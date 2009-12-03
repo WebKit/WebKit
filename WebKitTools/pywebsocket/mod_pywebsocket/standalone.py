@@ -113,6 +113,14 @@ class _StandaloneConnection(object):
                 self._request_handler.server.server_port)
     local_addr = property(get_local_addr)
 
+    def get_remote_addr(self):
+        """Getter to mimic mp_conn.remote_addr.
+
+        Setting the property in __init__ won't work because the request
+        handler is not initialized yet there."""
+        return self._request_handler.client_address
+    remote_addr = property(get_remote_addr)
+
     def write(self, data):
         """Mimic mp_conn.write()."""
         return self._request_handler.wfile.write(data)
@@ -226,6 +234,10 @@ class WebSocketRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 return True
             except dispatch.DispatchError, e:
                 logging.warning('mod_pywebsocket: %s' % e)
+                return False
+            except Exception, e:
+                logging.warning('mod_pywebsocket: %s' % e)
+                logging.info('mod_pywebsocket: %s' % util.get_stack_trace())
                 return False
         return result
 

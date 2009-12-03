@@ -160,9 +160,13 @@ class Dispatcher(object):
         do_extra_handshake_, unused_transfer_data = self._handler(request)
         try:
             do_extra_handshake_(request)
-        except Exception:
-            raise DispatchError('%s raised exception: %s' %
-                    (_DO_EXTRA_HANDSHAKE_HANDLER_NAME, util.get_stack_trace()))
+        except Exception, e:
+            util.prepend_message_to_exception(
+                    '%s raised exception for %s: ' % (
+                            _DO_EXTRA_HANDSHAKE_HANDLER_NAME,
+                            request.ws_resource),
+                    e)
+            raise
 
     def transfer_data(self, request):
         """Let a handler transfer_data with a Web Socket client.
@@ -177,9 +181,12 @@ class Dispatcher(object):
         unused_do_extra_handshake, transfer_data_ = self._handler(request)
         try:
             transfer_data_(request)
-        except Exception:
-            raise DispatchError('%s raised exception: %s' %
-                    (_TRANSFER_DATA_HANDLER_NAME, util.get_stack_trace()))
+        except Exception, e:
+            util.prepend_message_to_exception(
+                    '%s raised exception for %s: ' % (
+                            _TRANSFER_DATA_HANDLER_NAME, request.ws_resource),
+                    e)
+            raise
 
     def _handler(self, request):
         try:

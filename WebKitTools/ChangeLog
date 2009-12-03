@@ -1,3 +1,20 @@
+2009-12-03  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Update pywebsocket to 0.4.3
+        This version logs friendlier and higher-level messages in WARN level, which is used for LayoutTests.
+        Stack trace is logged now in INFO level.
+        https://bugs.webkit.org/show_bug.cgi?id=32097
+
+        * pywebsocket/mod_pywebsocket/dispatch.py:
+        * pywebsocket/mod_pywebsocket/msgutil.py:
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/mod_pywebsocket/util.py:
+        * pywebsocket/setup.py:
+        * pywebsocket/test/test_dispatch.py:
+        * pywebsocket/test/test_util.py:
+
 2009-12-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

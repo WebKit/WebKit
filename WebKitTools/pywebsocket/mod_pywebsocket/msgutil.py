@@ -39,6 +39,31 @@ not suitable because they don't allow direct raw bytes writing/reading.
 
 import Queue
 import threading
+import util
+
+
+class MsgUtilException(Exception):
+    pass
+
+
+def _read(request, length):
+    bytes = request.connection.read(length)
+    if not bytes:
+        raise MsgUtilException(
+                'Failed to receive message from %r' %
+                        (request.connection.remote_addr,))
+    return bytes
+
+
+def _write(request, bytes):
+    try:
+        request.connection.write(bytes)
+    except Exception, e:
+        util.prepend_message_to_exception(
+                'Failed to send message to %r: ' %
+                        (request.connection.remote_addr,),
+                e)
+        raise
 
 
 def send_message(request, message):
@@ -49,7 +74,7 @@ def send_message(request, message):
         message: unicode string to send.
     """
 
-    request.connection.write('\x00' + message.encode('utf-8') + '\xff')
+    _write(request, '\x00' + message.encode('utf-8') + '\xff')
 
 
 def receive_message(request):
@@ -63,7 +88,7 @@ def receive_message(request):
         # Read 1 byte.
         # mp_conn.read will block if no bytes are available.
         # Timeout is controlled by TimeOut directive of Apache.
-        frame_type_str = request.connection.read(1)
+        frame_type_str = _read(request, 1)
         frame_type = ord(frame_type_str[0])
         if (frame_type & 0x80) == 0x80:
             # The payload length is specified in the frame.
@@ -84,7 +109,7 @@ def receive_message(request):
 def _payload_length(request):
     length = 0
     while True:
-        b_str = request.connection.read(1)
+        b_str = _read(request, 1)
         b = ord(b_str[0])
         length = length * 128 + (b & 0x7f)
         if (b & 0x80) == 0:
@@ -95,7 +120,7 @@ def _payload_length(request):
 def _receive_bytes(request, length):
     bytes = []
     while length > 0:
-        new_bytes = request.connection.read(length)
+        new_bytes = _read(request, length)
         bytes.append(new_bytes)
         length -= len(new_bytes)
     return ''.join(bytes)
@@ -104,7 +129,7 @@ def _receive_bytes(request, length):
 def _read_until(request, delim_char):
     bytes = []
     while True:
-        ch = request.connection.read(1)
+        ch = _read(request, 1)
         if ch == delim_char:
             break
         bytes.append(ch)

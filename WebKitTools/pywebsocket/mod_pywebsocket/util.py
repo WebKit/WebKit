@@ -49,4 +49,11 @@ def get_stack_trace():
     return out.getvalue()
 
 
+def prepend_message_to_exception(message, exc):
+    """Prepend message to the exception."""
+
+    exc.args = (message + str(exc),)
+    return
+
+
 # vi:sts=4 sw=4 et
