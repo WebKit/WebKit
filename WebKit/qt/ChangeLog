@@ -1,3 +1,12 @@
+2009-12-03  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix compilation when SVG is disabled.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_pauseSVGAnimation):
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
