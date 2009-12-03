@@ -48,4 +48,8 @@ interface IWebFrameLoadDelegatePrivate2 : IWebFrameLoadDelegatePrivate
     HRESULT didRunInsecureContent([in] IWebView* sender, [in] IWebSecurityOrigin* origin);
 
     HRESULT didClearWindowObjectForFrameInScriptWorld([in] IWebView* webView, [in] IWebFrame* frame, [in] IWebScriptWorld*);
+
+    HRESULT didPushStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
+    HRESULT didReplaceStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
+    HRESULT didPopStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
 }

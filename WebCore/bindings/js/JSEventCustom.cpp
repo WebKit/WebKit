@@ -42,6 +42,7 @@
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
 #include "JSPageTransitionEvent.h"
+#include "JSPopStateEvent.h"
 #include "JSProgressEvent.h"
 #include "JSTextEvent.h"
 #include "JSUIEvent.h"
@@ -57,6 +58,7 @@
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
 #include "PageTransitionEvent.h"
+#include "PopStateEvent.h"
 #include "ProgressEvent.h"
 #include "TextEvent.h"
 #include "UIEvent.h"
@@ -140,6 +142,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     else if (event->isErrorEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ErrorEvent, event);
 #endif
+    else if (event->isPopStateEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, PopStateEvent, event);
     else
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, Event, event);
 

@@ -40,6 +40,7 @@ module html {
         attribute [DontEnum] EventListener onmessage;
         attribute [DontEnum] EventListener onoffline;
         attribute [DontEnum] EventListener ononline;
+        attribute [DontEnum] EventListener onpopstate;
         attribute [DontEnum] EventListener onresize;
         attribute [DontEnum] EventListener onstorage;
         attribute [DontEnum] EventListener onunload;

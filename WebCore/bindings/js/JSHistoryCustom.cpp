@@ -163,4 +163,52 @@ void JSHistory::getOwnPropertyNames(ExecState* exec, PropertyNameArray& property
     Base::getOwnPropertyNames(exec, propertyNames);
 }
 
+JSValue JSHistory::pushState(ExecState* exec, const ArgList& args)
+{
+    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, args.at(0));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String title = valueToStringWithUndefinedOrNullCheck(exec, args.at(1));
+    if (exec->hadException())
+        return jsUndefined();
+        
+    String url;
+    if (args.size() > 2) {
+        url = valueToStringWithUndefinedOrNullCheck(exec, args.at(2));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
+    ExceptionCode ec = 0;
+    impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectPush, ec);
+    setDOMException(exec, ec);
+
+    return jsUndefined();
+}
+
+JSValue JSHistory::replaceState(ExecState* exec, const ArgList& args)
+{
+    RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, args.at(0));
+    if (exec->hadException())
+        return jsUndefined();
+
+    String title = valueToStringWithUndefinedOrNullCheck(exec, args.at(1));
+    if (exec->hadException())
+        return jsUndefined();
+        
+    String url;
+    if (args.size() > 2) {
+        url = valueToStringWithUndefinedOrNullCheck(exec, args.at(2));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
+    ExceptionCode ec = 0;
+    impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
+    setDOMException(exec, ec);
+
+    return jsUndefined();
+}
+
 } // namespace WebCore

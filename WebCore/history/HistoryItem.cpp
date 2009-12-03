@@ -48,6 +48,7 @@ HistoryItem::HistoryItem()
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
+    , m_document(0)
 {
 }
 
@@ -60,6 +61,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
+    , m_document(0)
 {    
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -74,6 +76,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
+    , m_document(0)
 {
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -89,6 +92,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
+    , m_document(0)
 {    
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -97,6 +101,7 @@ HistoryItem::~HistoryItem()
 {
     ASSERT(!m_cachedPage);
     iconDatabase()->releaseIconForPageURL(m_urlString);
+    setDocument(0);
 }
 
 inline HistoryItem::HistoryItem(const HistoryItem& item)
@@ -385,6 +390,32 @@ void HistoryItem::setIsTargetItem(bool flag)
 #if PLATFORM(ANDROID)
     notifyHistoryItemChanged(this);
 #endif
+}
+
+void HistoryItem::setStateObject(PassRefPtr<SerializedScriptValue> object)
+{
+    ASSERT(m_document);
+    m_stateObject = object;
+}
+
+void HistoryItem::setDocument(Document* document)
+{
+    if (m_document == document)
+        return;
+    
+    if (m_document)
+        m_document->unregisterHistoryItem(this);
+    if (document)
+        document->registerHistoryItem(this);
+        
+    m_document = document;
+}
+
+void HistoryItem::documentDetached(Document* document)
+{
+    ASSERT(m_document == document);
+    m_document = 0;
+    m_stateObject = 0;
 }
 
 void HistoryItem::addChildItem(PassRefPtr<HistoryItem> child)

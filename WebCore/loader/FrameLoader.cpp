@@ -1703,52 +1703,70 @@ void FrameLoader::setFirstPartyForCookies(const KURL& url)
         child->loader()->setFirstPartyForCookies(url);
 }
 
-class HashChangeEventTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<HashChangeEventTask> create(PassRefPtr<Document> document)
-    {
-        return new HashChangeEventTask(document);
-    }
-    
-    virtual void performTask(ScriptExecutionContext* context)
-    {
-        ASSERT_UNUSED(context, context->isDocument());
-        m_document->dispatchWindowEvent(Event::create(eventNames().hashchangeEvent, false, false));
-    }
-    
-private:
-    HashChangeEventTask(PassRefPtr<Document> document)
-        : m_document(document)
-    {
-        ASSERT(m_document);
-    }
-    
-    RefPtr<Document> m_document;
-};
-
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
-void FrameLoader::scrollToAnchor(const KURL& url)
+void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* stateObject, bool isNewNavigation)
 {
-    ASSERT(equalIgnoringFragmentIdentifier(url, m_URL));
-    if (equalIgnoringFragmentIdentifier(url, m_URL) && !equalIgnoringNullity(url.fragmentIdentifier(), m_URL.fragmentIdentifier())) {
-        Document* currentDocument = frame()->document();
-        currentDocument->postTask(HashChangeEventTask::create(currentDocument));
+    // If we have a state object, we cannot also be a new navigation.
+    ASSERT(!stateObject || (stateObject && !isNewNavigation));
+
+    // Update the data source's request with the new URL to fake the URL change
+    m_frame->document()->setURL(url);
+    documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
+    if (isNewNavigation && !shouldTreatURLAsSameAsCurrent(url) && !stateObject) {
+        // NB: must happen after replaceRequestURLForSameDocumentNavigation(), since we add 
+        // based on the current request. Must also happen before we openURL and displace the 
+        // scroll position, since adding the BF item will save away scroll state.
+        
+        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
+        // it was done, currItem is now set the that slow doc, and prevItem is whatever was
+        // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
+        // though its load is not yet done.  I think this all works out OK, for one because
+        // we have already saved away the scroll and doc state for the long slow load,
+        // but it's not an obvious case.
+
+        history()->updateBackForwardListForFragmentScroll();
     }
     
+    bool hashChange = equalIgnoringFragmentIdentifier(url, m_URL) && url.fragmentIdentifier() != m_URL.fragmentIdentifier();
     m_URL = url;
-    history()->updateForAnchorScroll();
+    history()->updateForSameDocumentNavigation();
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
-    m_frame->eventHandler()->stopAutoscrollTimer();
-    started();
-    if (FrameView* view = m_frame->view())
-        view->scrollToFragment(m_URL);
-
+    if (hashChange)
+        m_frame->eventHandler()->stopAutoscrollTimer();
+    
     // It's important to model this as a load that starts and immediately finishes.
     // Otherwise, the parent frame may think we never finished loading.
+    started();
+    
+    if (hashChange) {
+        if (FrameView* view = m_frame->view())
+            view->scrollToFragment(m_URL);
+    }
+    
     m_isComplete = false;
     checkCompleted();
+
+    if (isNewNavigation) {
+        // This will clear previousItem from the rest of the frame tree that didn't
+        // doing any loading. We need to make a pass on this now, since for anchor nav
+        // we'll not go through a real load and reach Completed state.
+        checkLoadComplete();
+    }
+
+    if (stateObject) {
+        m_frame->document()->statePopped(stateObject);
+        m_client->dispatchDidPopStateWithinPage();
+    }
+    
+    if (hashChange) {
+        m_frame->document()->dispatchWindowEvent(Event::create(eventNames().hashchangeEvent, false, false));
+        m_client->dispatchDidChangeLocationWithinPage();
+    }
+    
+    // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
+    m_client->didFinishLoad();
 }
 
 bool FrameLoader::isComplete() const
@@ -3362,40 +3380,13 @@ void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    bool isRedirect = m_quickRedirectComing || policyChecker()->loadType() == FrameLoadTypeRedirectWithLockedBackForwardList;
     m_quickRedirectComing = false;
 
     if (!shouldContinue)
         return;
 
-    KURL url = request.url();
-    
-    m_documentLoader->replaceRequestURLForAnchorScroll(url);
-    if (!isRedirect && !shouldTreatURLAsSameAsCurrent(url)) {
-        // NB: must happen after _setURL, since we add based on the current request.
-        // Must also happen before we openURL and displace the scroll position, since
-        // adding the BF item will save away scroll state.
-        
-        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
-        // it was done, currItem is now set the that slow doc, and prevItem is whatever was
-        // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
-        // though its load is not yet done.  I think this all works out OK, for one because
-        // we have already saved away the scroll and doc state for the long slow load,
-        // but it's not an obvious case.
-
-        history()->updateBackForwardListForFragmentScroll();
-    }
-    
-    scrollToAnchor(url);
-    
-    if (!isRedirect)
-        // This will clear previousItem from the rest of the frame tree that didn't
-        // doing any loading. We need to make a pass on this now, since for anchor nav
-        // we'll not go through a real load and reach Completed state.
-        checkLoadComplete();
- 
-    m_client->dispatchDidChangeLocationWithinPage();
-    m_client->didFinishLoad();
+    bool isRedirect = m_quickRedirectComing || policyChecker()->loadType() == FrameLoadTypeRedirectWithLockedBackForwardList;    
+    loadInSameDocument(request.url(), 0, !isRedirect);
 }
 
 bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType loadType, const KURL& url)
@@ -3670,14 +3661,51 @@ Frame* FrameLoader::findFrameForNavigation(const AtomicString& name)
     return frame;
 }
 
-// Loads content into this frame, as specified by history item
+void FrameLoader::navigateWithinDocument(HistoryItem* item)
+{
+    ASSERT(!item->document() || item->document() == m_frame->document());
+
+    // Save user view state to the current history item here since we don't do a normal load.
+    // FIXME: Does form state need to be saved here too?
+    history()->saveScrollPositionAndViewStateToItem(history()->currentItem());
+    if (FrameView* view = m_frame->view())
+        view->setWasScrolledByUser(false);
+
+    history()->setCurrentItem(item);
+        
+    // loadInSameDocument() actually changes the URL and notifies load delegates of a "fake" load
+    loadInSameDocument(item->url(), item->stateObject(), false);
+
+    // Restore user view state from the current history item here since we don't do a normal load.
+    // Even though we just manually set the current history item, this ASSERT verifies nothing 
+    // inside of loadInSameDocument() caused it to change.
+    ASSERT(history()->currentItem() == item);
+    history()->restoreScrollPositionAndViewState();
+}
+
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
-void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
+void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType loadType)
 {
-    if (!m_frame->page())
-        return;
+    // Remember this item so we can traverse any child items as child frames load
+    history()->setProvisionalItem(item);
+    
+    // Check if we'll be using the page cache.  We only use the page cache
+    // if one exists and it is less than _backForwardCacheExpirationInterval
+    // seconds old.  If the cache is expired it gets flushed here.
+    if (RefPtr<CachedPage> cachedPage = pageCache()->get(item)) {
+        // FIXME: 1800 should not be hardcoded, it should come from
+        // WebKitBackForwardCacheExpirationIntervalKey in WebKit.
+        // Or we should remove WebKitBackForwardCacheExpirationIntervalKey.
+        if (currentTime() - cachedPage->timeStamp() <= 1800) {
+            loadWithDocumentLoader(cachedPage->documentLoader(), loadType, 0);   
+            return;
+        }
+        
+        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", history()->provisionalItem()->url().string().ascii().data());
+        pageCache()->remove(item);
+    }
 
     KURL itemURL = item->url();
     KURL itemOriginalURL = item->originalURL();
@@ -3686,138 +3714,96 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         currentURL = documentLoader()->url();
     RefPtr<FormData> formData = item->formData();
 
-    // Are we navigating to an anchor within the page?
-    // Note if we have child frames we do a real reload, since the child frames might not
-    // match our current frame structure, or they might not have the right content.  We could
-    // check for all that as an additional optimization.
-    // We also do not do anchor-style navigation if we're posting a form or navigating from
-    // a page that was resulted from a form post.
-    bool shouldScroll = !formData && !(history()->currentItem() && history()->currentItem()->formData()) && history()->urlsMatchItem(item);
+    bool addedExtraFields = false;
+    ResourceRequest request(itemURL);
+
+    if (!item->referrer().isNull())
+        request.setHTTPReferrer(item->referrer());
+    
+    // If this was a repost that failed the page cache, we might try to repost the form.
+    NavigationAction action;
+    if (formData) {
+        formData->generateFiles(m_frame->page()->chrome()->client());
+
+        request.setHTTPMethod("POST");
+        request.setHTTPBody(formData);
+        request.setHTTPContentType(item->formContentType());
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->referrer());
+        addHTTPOriginIfNeeded(request, securityOrigin->toString());
+
+        // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
+        // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
+        addExtraFieldsToRequest(request, m_loadType, true, formData);
+        addedExtraFields = true;
+        
+        // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
+        // We want to know this before talking to the policy delegate, since it affects whether 
+        // we show the DoYouReallyWantToRepost nag.
+        //
+        // This trick has a small bug (3123893) where we might find a cache hit, but then
+        // have the item vanish when we try to use it in the ensuing nav.  This should be
+        // extremely rare, but in that case the user will get an error on the navigation.
+        
+        if (ResourceHandle::willLoadFromCache(request, m_frame))
+            action = NavigationAction(itemURL, loadType, false);
+        else {
+            request.setCachePolicy(ReloadIgnoringCacheData);
+            action = NavigationAction(itemURL, NavigationTypeFormResubmitted);
+        }
+    } else {
+        switch (loadType) {
+            case FrameLoadTypeReload:
+            case FrameLoadTypeReloadFromOrigin:
+                request.setCachePolicy(ReloadIgnoringCacheData);
+                break;
+            case FrameLoadTypeBack:
+            case FrameLoadTypeBackWMLDeckNotAccessible:
+            case FrameLoadTypeForward:
+            case FrameLoadTypeIndexedBackForward:
+                if (itemURL.protocolIs("https"))
+                    request.setCachePolicy(ReturnCacheDataElseLoad);
+                break;
+            case FrameLoadTypeStandard:
+            case FrameLoadTypeRedirectWithLockedBackForwardList:
+                break;
+            case FrameLoadTypeSame:
+            default:
+                ASSERT_NOT_REACHED();
+        }
+
+        action = NavigationAction(itemOriginalURL, loadType, false);
+    }
+    
+    if (!addedExtraFields)
+        addExtraFieldsToRequest(request, m_loadType, true, formData);
+
+    loadWithNavigationAction(request, action, false, loadType, 0);
+}
+
+// Loads content into this frame, as specified by history item
+void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
+{
+    // We do same-document navigation in the following cases:
+    // - The HistoryItem has a history state object
+    // - Navigating to an anchor within the page, with no form data stored on the target item or the current history entry,
+    //   and the URLs in the frame tree match the history item for fragment scrolling.
+    bool sameDocumentNavigation = (!item->formData() && !(history()->currentItem() && history()->currentItem()->formData()) && history()->urlsMatchItem(item)) || item->document() == m_frame->document();
 
 #if ENABLE(WML)
     // All WML decks should go through the real load mechanism, not the scroll-to-anchor code
+    // FIXME: Why do WML decks have this different behavior?
+    // Are WML decks incompatible with HTML5 pushState/replaceState which require inter-document history navigations?
+    // Should this new API be disabled for WML pages, or does WML need to update their mechanism to act like normal loads?
+    // If scroll-to-anchor navigations were broken for WML and required them to have different loading behavior, then  
+    // state object loads are certainly also broken for them.
     if (frameContainsWMLContent(m_frame))
-        shouldScroll = false;
+        sameDocumentNavigation = false;
 #endif
 
-    if (shouldScroll) {
-        // Must do this maintenance here, since we don't go through a real page reload
-        history()->saveScrollPositionAndViewStateToItem(history()->currentItem());
-
-        if (FrameView* view = m_frame->view())
-            view->setWasScrolledByUser(false);
-
-        history()->setCurrentItem(item);
-
-        // FIXME: Form state might need to be saved here too.
-
-        // We always call scrollToAnchor here, even if the URL doesn't have an
-        // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
-        scrollToAnchor(item->url());
-    
-        // must do this maintenance here, since we don't go through a real page reload
-        history()->restoreScrollPositionAndViewState();
-        
-        // Fake the URL change by updating the data source's request.  This will no longer
-        // be necessary if we do the better fix described above.
-        documentLoader()->replaceRequestURLForAnchorScroll(itemURL);
-
-        m_client->dispatchDidChangeLocationWithinPage();
-        
-        // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
-        m_client->didFinishLoad();
-    } else {
-        // Remember this item so we can traverse any child items as child frames load
-        history()->setProvisionalItem(item);
-
-        bool inPageCache = false;
-        
-        // Check if we'll be using the page cache.  We only use the page cache
-        // if one exists and it is less than _backForwardCacheExpirationInterval
-        // seconds old.  If the cache is expired it gets flushed here.
-        if (RefPtr<CachedPage> cachedPage = pageCache()->get(item)) {
-            double interval = currentTime() - cachedPage->timeStamp();
-            
-            // FIXME: 1800 should not be hardcoded, it should come from
-            // WebKitBackForwardCacheExpirationIntervalKey in WebKit.
-            // Or we should remove WebKitBackForwardCacheExpirationIntervalKey.
-            if (interval <= 1800) {
-                loadWithDocumentLoader(cachedPage->documentLoader(), loadType, 0);   
-                inPageCache = true;
-            } else {
-                LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", history()->provisionalItem()->url().string().ascii().data());
-                pageCache()->remove(item);
-            }
-        }
-        
-        if (!inPageCache) {
-            bool addedExtraFields = false;
-            ResourceRequest request(itemURL);
-
-            if (!item->referrer().isNull())
-                request.setHTTPReferrer(item->referrer());
-            
-            // If this was a repost that failed the page cache, we might try to repost the form.
-            NavigationAction action;
-            if (formData) {
-                
-                formData->generateFiles(m_frame->page()->chrome()->client());
-
-                request.setHTTPMethod("POST");
-                request.setHTTPBody(formData);
-                request.setHTTPContentType(item->formContentType());
-                RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->referrer());
-                addHTTPOriginIfNeeded(request, securityOrigin->toString());
-        
-                // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
-                // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
-                addExtraFieldsToRequest(request, m_loadType, true, formData);
-                addedExtraFields = true;
-                
-                // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
-                // We want to know this before talking to the policy delegate, since it affects whether 
-                // we show the DoYouReallyWantToRepost nag.
-                //
-                // This trick has a small bug (3123893) where we might find a cache hit, but then
-                // have the item vanish when we try to use it in the ensuing nav.  This should be
-                // extremely rare, but in that case the user will get an error on the navigation.
-                
-                if (ResourceHandle::willLoadFromCache(request, m_frame))
-                    action = NavigationAction(itemURL, loadType, false);
-                else {
-                    request.setCachePolicy(ReloadIgnoringCacheData);
-                    action = NavigationAction(itemURL, NavigationTypeFormResubmitted);
-                }
-            } else {
-                switch (loadType) {
-                    case FrameLoadTypeReload:
-                    case FrameLoadTypeReloadFromOrigin:
-                        request.setCachePolicy(ReloadIgnoringCacheData);
-                        break;
-                    case FrameLoadTypeBack:
-                    case FrameLoadTypeBackWMLDeckNotAccessible:
-                    case FrameLoadTypeForward:
-                    case FrameLoadTypeIndexedBackForward:
-                        if (itemURL.protocol() != "https")
-                            request.setCachePolicy(ReturnCacheDataElseLoad);
-                        break;
-                    case FrameLoadTypeStandard:
-                    case FrameLoadTypeRedirectWithLockedBackForwardList:
-                        break;
-                    case FrameLoadTypeSame:
-                    default:
-                        ASSERT_NOT_REACHED();
-                }
-
-                action = NavigationAction(itemOriginalURL, loadType, false);
-            }
-            
-            if (!addedExtraFields)
-                addExtraFieldsToRequest(request, m_loadType, true, formData);
-
-            loadWithNavigationAction(request, action, false, loadType, 0);
-        }
-    }
+    if (sameDocumentNavigation)
+        navigateWithinDocument(item);
+    else
+        navigateToDifferentDocument(item, loadType);
 }
 
 void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)

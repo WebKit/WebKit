@@ -252,6 +252,7 @@ module window {
         attribute EventListener onpause;
         attribute EventListener onplay;
         attribute EventListener onplaying;
+        attribute EventListener onpopstate;
         attribute EventListener onprogress;
         attribute EventListener onratechange;
         attribute EventListener onresize;

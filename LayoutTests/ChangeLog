@@ -1,3 +1,41 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7214236> and http://webkit.org/b/32052 - Implement HTML5 state object history API
+
+        Update expected results of old tests:
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+
+        New tests:
+        * fast/loader/stateobjects: Added.
+        * fast/loader/stateobjects/document-destroyed-navigate-back-expected.txt: Added.
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll-expected.txt: Added.
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html: Added.
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-addeventlistener-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-addeventlistener.html: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-body-attribute-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-body-attribute.html: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-body-inline-attribute-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-body-inline-attribute.html: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-window-attribute-expected.txt: Added.
+        * fast/loader/stateobjects/popstate-after-load-complete-window-attribute.html: Added.
+        * fast/loader/stateobjects/pushstate-object-types-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-object-types.html: Added.
+        * fast/loader/stateobjects/pushstate-then-replacestate-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-then-replacestate.html: Added.
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html: Added.
+        * fast/loader/stateobjects/replacestate-then-pushstate-expected.txt: Added.
+        * fast/loader/stateobjects/replacestate-then-pushstate.html: Added.
+        * fast/loader/stateobjects/resources: Added.
+        * fast/loader/stateobjects/resources/navigate-back.html: Added.
+        * http/tests/loading/state-object-security-exception-expected.txt: Added.
+        * http/tests/loading/state-object-security-exception.html: Added.
+
 2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

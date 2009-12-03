@@ -361,6 +361,7 @@ IDL_BINDINGS += \
     dom/Notation.idl \
     dom/OverflowEvent.idl \
     dom/PageTransitionEvent.idl \
+    dom/PopStateEvent.idl \
     dom/ProcessingInstruction.idl \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
@@ -756,6 +757,7 @@ SOURCES += \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSLazyEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
+    bindings/js/JSPopStateEventCustom.cpp \
     bindings/js/ScriptArray.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \
@@ -897,6 +899,7 @@ SOURCES += \
     dom/OptionElement.cpp \
     dom/OverflowEvent.cpp \
     dom/PageTransitionEvent.cpp \
+    dom/PopStateEvent.cpp \
     dom/Position.cpp \
     dom/PositionIterator.cpp \
     dom/ProcessingInstruction.cpp \

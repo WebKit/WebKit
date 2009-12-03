@@ -1027,6 +1027,12 @@
 		51741D100B07259A00ED442C /* BackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0C0B07259A00ED442C /* BackForwardList.cpp */; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
+		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
+		5174E20C10A1F49A00F95E6F /* PopStateEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */; };
+		5189F01810B3781300F3C739 /* JSPopStateEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F01710B3781300F3C739 /* JSPopStateEventCustom.cpp */; };
+		5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */; };
+		5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */; };
+		5189F0DE10B46B0E00F3C739 /* PopStateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */; };
 		518A34C11026C831001B6896 /* WebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518A34BE1026C831001B6896 /* WebSocket.cpp */; };
 		518A34C21026C831001B6896 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 518A34BF1026C831001B6896 /* WebSocket.h */; };
 		518A34C71026C8C9001B6896 /* JSWebSocketConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */; };
@@ -6333,6 +6339,12 @@
 		51741D0C0B07259A00ED442C /* BackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardList.cpp; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
+		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
+		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
+		5189F01710B3781300F3C739 /* JSPopStateEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPopStateEventCustom.cpp; sourceTree = "<group>"; };
+		5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPopStateEvent.cpp; sourceTree = "<group>"; };
+		5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPopStateEvent.h; sourceTree = "<group>"; };
+		5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PopStateEvent.cpp; sourceTree = "<group>"; };
 		518A34BE1026C831001B6896 /* WebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocket.cpp; sourceTree = "<group>"; };
 		518A34BF1026C831001B6896 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		518A34C01026C831001B6896 /* WebSocket.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSocket.idl; sourceTree = "<group>"; };
@@ -13503,6 +13515,8 @@
 				1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */,
 				E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */,
 				E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */,
+				5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */,
+				5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */,
 				933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */,
 				933A14B70B7D1D5200A53FFD /* JSTextEvent.h */,
 				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
@@ -14577,6 +14591,7 @@
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				A9C6E64A0D7465E7006442E9 /* JSPluginArrayCustom.cpp */,
 				A9C6E64B0D7465E7006442E9 /* JSPluginCustom.cpp */,
+				5189F01710B3781300F3C739 /* JSPopStateEventCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
@@ -15710,6 +15725,9 @@
 				E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */,
 				41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */,
 				41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */,
+				5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */,
+				5174E20810A1F44F00F95E6F /* PopStateEvent.h */,
+				5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
 				BE91FC8B06133666005E3790 /* Position.h */,
 				37919C210B7D188600A56998 /* PositionIterator.cpp */,
@@ -18211,12 +18229,14 @@
 				1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */,
 				1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */,
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
+				5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */,
 				18C5FCA610A3991F0048438D /* WebKitSharedScript.h in Headers */,
 				18C5FCA910A3991F0048438D /* WebKitSharedScriptRepository.h in Headers */,
 				18C5FCB810A3C6F20048438D /* SharedScriptContext.h in Headers */,
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
+				5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */,
 				6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */,
 				7A0E76DB10BF059800A0276E /* JSInjectedScriptHost.h in Headers */,
 				7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */,
@@ -18323,6 +18343,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				5174E20C10A1F49A00F95E6F /* PopStateEvent.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20364,6 +20385,9 @@
 				1479FAEF109AE37500DED655 /* RenderRubyBase.cpp in Sources */,
 				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
 				1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */,
+				5189F01810B3781300F3C739 /* JSPopStateEventCustom.cpp in Sources */,
+				5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */,
+				5189F0DE10B46B0E00F3C739 /* PopStateEvent.cpp in Sources */,
 				18C5FCA510A3991F0048438D /* WebKitSharedScript.cpp in Sources */,
 				18C5FCA810A3991F0048438D /* WebKitSharedScriptRepository.cpp in Sources */,
 				18C5FCB710A3C6F20048438D /* SharedScriptContext.cpp in Sources */,

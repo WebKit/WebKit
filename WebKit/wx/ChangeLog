@@ -1,3 +1,15 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7214236> and http://webkit.org/b/32052 - Implement HTML5 state object history API
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidPushStateWithinPage):
+        (WebCore::FrameLoaderClientWx::dispatchDidReplaceStateWithinPage):
+        (WebCore::FrameLoaderClientWx::dispatchDidPopStateWithinPage):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.

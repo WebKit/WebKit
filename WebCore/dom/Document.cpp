@@ -98,6 +98,7 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
@@ -1470,6 +1471,12 @@ void Document::detach()
     if (render)
         render->destroy();
     
+    HashSet<RefPtr<HistoryItem> > associatedHistoryItems;
+    associatedHistoryItems.swap(m_associatedHistoryItems);
+    HashSet<RefPtr<HistoryItem> >::iterator end = associatedHistoryItems.end();
+    for (HashSet<RefPtr<HistoryItem> >::iterator i = associatedHistoryItems.begin(); i != end; ++i)
+        (*i)->documentDetached(this);
+    
     // This is required, as our Frame might delete itself as soon as it detaches
     // us. However, this violates Node::detach() symantics, as it's never
     // possible to re-attach. Eventually Document::detach() should be renamed,
@@ -1741,6 +1748,9 @@ void Document::implicitClose()
     ImageLoader::dispatchPendingEvents();
     dispatchWindowLoadEvent();
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, false), this);
+    if (m_pendingStateObject)
+        dispatchWindowEvent(PopStateEvent::create(m_pendingStateObject.release()));
+    
     if (f)
         f->loader()->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -4335,6 +4345,40 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
     // FIXME: Find a better place to enable DNS prefetch, which is a loader concept,
     // not applicable to arbitrary documents.
     initDNSPrefetch();
+}
+
+void Document::updateURLForPushOrReplaceState(const KURL& url)
+{
+    Frame* f = frame();
+    if (!f)
+        return;
+
+    setURL(url);
+    f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
+}
+
+void Document::statePopped(SerializedScriptValue* stateObject)
+{
+    Frame* f = frame();
+    if (!f)
+        return;
+    
+    if (f->loader()->isComplete())
+        dispatchWindowEvent(PopStateEvent::create(stateObject));
+    else
+        m_pendingStateObject = stateObject;
+}
+
+void Document::registerHistoryItem(HistoryItem* item)
+{
+    ASSERT(!m_associatedHistoryItems.contains(item));
+    m_associatedHistoryItems.add(item);
+}
+
+void Document::unregisterHistoryItem(HistoryItem* item)
+{
+    ASSERT(m_associatedHistoryItems.contains(item) || m_associatedHistoryItems.isEmpty());
+    m_associatedHistoryItems.remove(item);
 }
 
 void Document::updateSandboxFlags()

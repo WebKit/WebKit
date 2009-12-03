@@ -136,6 +136,11 @@ bool Event::isPageTransitionEvent() const
     return false;
 }
 
+bool Event::isPopStateEvent() const
+{
+    return false;
+}
+
 bool Event::isProgressEvent() const
 {
     return false;

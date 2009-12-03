@@ -402,7 +402,7 @@ void HistoryController::updateForCommit()
     }
 }
 
-void HistoryController::updateForAnchorScroll()
+void HistoryController::updateForSameDocumentNavigation()
 {
     if (m_frame->loader()->url().isEmpty())
         return;
@@ -622,6 +622,43 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     RefPtr<HistoryItem> item = frameLoader->history()->createItemTree(m_frame, doClip);
     LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), m_frame->loader()->documentLoader()->url().string().ascii().data());
     page->backForwardList()->addItem(item);
+}
+
+void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
+{
+    Page* page = m_frame->page();
+    ASSERT(page);
+    Frame* mainFrame = page->mainFrame();
+    ASSERT(mainFrame);
+
+    // Get a HistoryItem tree for the current frame tree.
+    RefPtr<HistoryItem> item = createItemTree(m_frame, false);
+    
+    // Override data in the target item to reflect the pushState() arguments.
+    HistoryItem* targetItem = item->targetItem();
+    ASSERT(targetItem->isTargetItem());
+    targetItem->setDocument(m_frame->document());
+    targetItem->setTitle(title);
+    targetItem->setStateObject(stateObject);
+    targetItem->setURLString(urlString);
+    
+    page->backForwardList()->pushStateItem(item.release());
+}
+
+void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
+{
+    Page* page = m_frame->page();
+    ASSERT(page);
+    HistoryItem* current = page->backForwardList()->currentItem();
+    ASSERT(current);
+    
+    ASSERT(!current->document() || current->document() == m_frame->document());
+    current->setDocument(m_frame->document());
+    
+    if (!urlString.isEmpty())
+        current->setURLString(urlString);
+    current->setTitle(title);
+    current->setStateObject(stateObject);
 }
 
 } // namespace WebCore

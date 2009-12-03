@@ -26,8 +26,11 @@
 #include "config.h"
 #include "History.h"
 
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
+#include "HistoryItem.h"
 #include "Page.h"
 
 namespace WebCore {
@@ -75,6 +78,48 @@ void History::go(int distance)
     if (!m_frame)
         return;
     m_frame->redirectScheduler()->scheduleHistoryNavigation(distance);
+}
+
+KURL History::urlForState(const String& urlString)
+{
+    KURL baseURL = m_frame->loader()->baseURL();
+    if (urlString.isEmpty())
+        return baseURL;
+        
+    KURL absoluteURL(baseURL, urlString);
+    if (!absoluteURL.isValid())
+        return KURL();
+    
+    if (absoluteURL.string().left(absoluteURL.pathStart()) != baseURL.string().left(baseURL.pathStart()))
+        return KURL();
+    
+    return absoluteURL;
+}
+
+void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCode& ec)
+{
+    if (!m_frame)
+        return;
+    ASSERT(m_frame->page());
+    
+    KURL fullURL = urlForState(urlString);
+    if (!fullURL.isValid()) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (stateObjectType == StateObjectPush)
+        m_frame->loader()->history()->pushState(data, title, fullURL.string());
+    else if (stateObjectType == StateObjectReplace)
+        m_frame->loader()->history()->replaceState(data, title, fullURL.string());
+            
+    if (!urlString.isEmpty()) {
+        m_frame->document()->updateURLForPushOrReplaceState(fullURL);
+        if (stateObjectType == StateObjectPush)
+            m_frame->loader()->client()->dispatchDidPushStateWithinPage();
+        else if (stateObjectType == StateObjectReplace)
+            m_frame->loader()->client()->dispatchDidReplaceStateWithinPage();
+    }
 }
 
 } // namespace WebCore

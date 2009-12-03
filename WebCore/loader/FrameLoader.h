@@ -73,6 +73,7 @@ class ScriptSourceCode;
 class ScriptString;
 class ScriptValue;
 class SecurityOrigin;
+class SerializedScriptValue;
 class SharedBuffer;
 class SubstituteData;
 class TextResourceDecoder;
@@ -350,6 +351,9 @@ private:
     bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
     
+    void navigateWithinDocument(HistoryItem*);
+    void navigateToDifferentDocument(HistoryItem*, FrameLoadType);
+    
     bool loadProvisionalItemFromCachedPage();
     void cachePageForHistoryItem(HistoryItem*);
     void pageHidden();
@@ -424,7 +428,7 @@ private:
 
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
-    void scrollToAnchor(const KURL&);
+    void loadInSameDocument(const KURL&, SerializedScriptValue* stateObject, bool isNewNavigation);
 
     void provisionalLoadStarted();
 

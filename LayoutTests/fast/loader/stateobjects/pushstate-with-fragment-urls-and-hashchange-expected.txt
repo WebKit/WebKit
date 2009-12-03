@@ -1,0 +1,34 @@
+This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.
+
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withsomeotherquery
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withsomeotherquery#
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withsomeotherquery
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withsomeotherquery#somehash
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withsomeotherquery#someotherhash
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery#someotherhash
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery#
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery#somehash
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery#
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html?withquery
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/some-other.html
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#otherhash
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#hash
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#
+Hash change fired
+State popped with event null (type object) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event OriginalEntry (type string) and location file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html
+

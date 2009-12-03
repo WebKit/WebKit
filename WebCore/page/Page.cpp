@@ -21,6 +21,7 @@
 #include "config.h"
 #include "Page.h"
 
+#include "BackForwardList.h"
 #include "Base64.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
@@ -277,20 +278,30 @@ void Page::goBackOrForward(int distance)
 
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
-    // Abort any current load if we're going to a history item
+#if !ASSERT_DISABLED
+    // If we're navigating to an item with history state for a Document other than the
+    // current Document, the new Document had better be in the page cache.
+    if (item->stateObject() && item->document() != m_mainFrame->document())
+        ASSERT(item->document()->inPageCache());
+#endif
 
-    // Define what to do with any open database connections. By default we stop them and terminate the database thread.
-    DatabasePolicy databasePolicy = DatabasePolicyStop;
+    // Abort any current load unless we're navigating the current document to a new state object
+    if (!item->stateObject() || item->document() != m_mainFrame->document()) {
+        // Define what to do with any open database connections. By default we stop them and terminate the database thread.
+        DatabasePolicy databasePolicy = DatabasePolicyStop;
 
 #if ENABLE(DATABASE)
-    // If we're navigating the history via a fragment on the same document, then we do not want to stop databases.
-    const KURL& currentURL = m_mainFrame->loader()->url();
-    const KURL& newURL = item->url();
-
-    if (newURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(currentURL, newURL))
-        databasePolicy = DatabasePolicyContinue;
+        // If we're navigating the history via a fragment on the same document, then we do not want to stop databases.
+        const KURL& currentURL = m_mainFrame->loader()->url();
+        const KURL& newURL = item->url();
+    
+        if (newURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(currentURL, newURL))
+            databasePolicy = DatabasePolicyContinue;
 #endif
-    m_mainFrame->loader()->stopAllLoaders(databasePolicy);
+
+        m_mainFrame->loader()->stopAllLoaders(databasePolicy);
+    }
+        
     m_mainFrame->loader()->history()->goToItem(item, type);
 }
 

@@ -1,0 +1,22 @@
+main frame - has 1 onunload handler(s)
+ALERT: History length is 2
+ALERT: State popped - FirstEntry (type string)
+ALERT: State popped - SecondEntry (type string)
+ALERT: Navigating back...
+main frame - has 1 onunload handler(s)
+ALERT: History length is 2
+ALERT: window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?SecondEntryShouldNeverBeReactivated
+main frame - has 1 onunload handler(s)
+ALERT: History length is 1
+ALERT: window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
+ALERT: Test completed
+This test:
+-Builds up a list of state object entries.
+-Navigates through them to verify that the popstate event is fired.
+-Navigates away to a new document, with the old document being destroyed.
+-Navigates back to the state object entries and verifies the popstate event is not fired.
+
+History length is 1
+window.location is file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/stateobjects/document-destroyed-navigate-back.html?FirstEntryShouldNeverBeReactivated
+Test completed
+

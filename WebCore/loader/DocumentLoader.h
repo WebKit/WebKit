@@ -88,7 +88,7 @@ namespace WebCore {
         const KURL& responseURL() const;
         const String& responseMIMEType() const;
         
-        void replaceRequestURLForAnchorScroll(const KURL&);
+        void replaceRequestURLForSameDocumentNavigation(const KURL&);
         bool isStopping() const { return m_isStopping; }
         void stopLoading(DatabasePolicy = DatabasePolicyStop);
         void setCommitted(bool committed) { m_committed = committed; }

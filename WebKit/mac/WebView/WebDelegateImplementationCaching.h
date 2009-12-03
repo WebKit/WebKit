@@ -57,6 +57,9 @@ struct WebFrameLoadDelegateImplementationCache {
     IMP didCancelClientRedirectForFrameFunc;
     IMP willPerformClientRedirectToURLDelayFireDateForFrameFunc;
     IMP didChangeLocationWithinPageForFrameFunc;
+    IMP didPushStateWithinPageForFrameFunc;
+    IMP didReplaceStateWithinPageForFrameFunc;
+    IMP didPopStateWithinPageForFrameFunc;
     IMP willCloseFrameFunc;
     IMP didStartProvisionalLoadForFrameFunc;
     IMP didReceiveTitleForFrameFunc;

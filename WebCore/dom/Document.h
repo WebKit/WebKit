@@ -67,7 +67,6 @@ namespace WebCore {
     class EventListener;
     class Frame;
     class FrameView;
-    class HitTestRequest;
     class HTMLCanvasElement;
     class HTMLCollection;
     class HTMLAllCollection;
@@ -77,6 +76,8 @@ namespace WebCore {
     class HTMLHeadElement;
     class HTMLInputElement;
     class HTMLMapElement;
+    class HistoryItem;
+    class HitTestRequest;
     class InspectorTimelineAgent;
     class IntPoint;
     class DOMWrapperWorld;
@@ -93,6 +94,7 @@ namespace WebCore {
     class RenderView;
     class ScriptElementData;
     class SecurityOrigin;
+    class SerializedScriptValue;
     class SegmentedString;
     class Settings;
     class StyleSheet;
@@ -887,6 +889,11 @@ public:
     //       that already contains content.
     void setSecurityOrigin(SecurityOrigin*);
 
+    void updateURLForPushOrReplaceState(const KURL&);
+    void statePopped(SerializedScriptValue*);
+    void registerHistoryItem(HistoryItem* item);
+    void unregisterHistoryItem(HistoryItem* item);
+
     void updateSandboxFlags(); // Set sandbox flags as determined by the frame.
 
     bool processingLoadEvent() const { return m_processingLoadEvent; }
@@ -1067,6 +1074,8 @@ private:
     Element* m_cssTarget;
     
     bool m_processingLoadEvent;
+    RefPtr<SerializedScriptValue> m_pendingStateObject;
+    HashSet<RefPtr<HistoryItem> > m_associatedHistoryItems;
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
 

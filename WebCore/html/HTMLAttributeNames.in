@@ -182,6 +182,7 @@ onpaste
 onpause
 onplay
 onplaying
+onpopstate
 onprogress
 onratechange
 onreset

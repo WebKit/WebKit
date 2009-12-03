@@ -262,6 +262,20 @@ void FrameLoaderClientWx::dispatchDidChangeLocationWithinPage()
     notImplemented();
 }
 
+void FrameLoaderClientWx::dispatchDidPushStateWithinPage()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientWx::dispatchDidReplaceStateWithinPage()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientWx::dispatchDidPopStateWithinPage()
+{
+    notImplemented();
+}
 
 void FrameLoaderClientWx::dispatchWillClose()
 {

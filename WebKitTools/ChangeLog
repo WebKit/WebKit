@@ -1,3 +1,16 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7214236> and http://webkit.org/b/32052 - Implement HTML5 state object history API
+
+        Keep DRT-win building...
+
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        (FrameLoadDelegate::didPushStateWithinPageForFrame):
+        (FrameLoadDelegate::didReplaceStateWithinPageForFrame):
+        (FrameLoadDelegate::didPopStateWithinPageForFrame):
+
 2009-12-03  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Unreviewed build fix.

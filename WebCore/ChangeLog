@@ -1,3 +1,127 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7214236> and http://webkit.org/b/32052 - Implement HTML5 state object history API
+
+        Tests: fast/loader/stateobjects/document-destroyed-navigate-back.html
+               fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
+               fast/loader/stateobjects/popstate-after-load-complete-addeventlistener.html
+               fast/loader/stateobjects/popstate-after-load-complete-body-attribute.html
+               fast/loader/stateobjects/popstate-after-load-complete-window-attribute.html
+               fast/loader/stateobjects/pushstate-object-types.html
+               fast/loader/stateobjects/pushstate-then-replacestate.html
+               fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html
+               fast/loader/stateobjects/replacestate-then-pushstate.html
+               http/tests/loading/state-object-security-exception.html
+
+        Derived sources and project file changes:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am
+        * WebCore.pro
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add the new PopStateEvent:
+        * dom/PopStateEvent.cpp: Added.
+        (WebCore::PopStateEvent::PopStateEvent):
+        (WebCore::PopStateEvent::initPopStateEvent):
+        * dom/PopStateEvent.h: Added.
+        (WebCore::PopStateEvent::create):
+        (WebCore::PopStateEvent::isPopStateEvent):
+        (WebCore::PopStateEvent::state):
+        * dom/PopStateEvent.idl: Added.
+        * bindings/js/JSPopStateEventCustom.cpp: Added.
+        (WebCore::JSPopStateEvent::initPopStateEvent):
+        (WebCore::JSPopStateEvent::state):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * dom/Event.cpp:
+        (WebCore::Event::isPopStateEvent):
+        * dom/Event.h:
+        * dom/EventNames.h:
+
+        Add the "onpopstate" attribute:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLBodyElement.idl:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLFrameSetElement.idl:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+        Add pushState and replaceState management to the loader and history machinery:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForSameDocumentNavigation): Augmented from "scrollToAnchor()", combining
+          both the same-document fragment scroll case with the new same-document state object activation case.
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/HistoryController.h:
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem): Use insertItemAfterCurrent.
+        (WebCore::BackForwardList::insertItemAfterCurrent): Optionally insert the item without clearing the forward
+          list, as pushStateItem might've selectively cleared only certain items, with the bulk of the forward list
+          meant to remain.
+        (WebCore::BackForwardList::pushStateItem): Clear the forward list *only* for the state item's document, then 
+          insert the new item.
+        (WebCore::BackForwardList::removeItem):
+        * history/BackForwardList.h:
+        * page/History.cpp:
+        (WebCore::History::urlForState):
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+        * page/History.idl:
+
+        Let HistoryItems and Documents associate with each other, as well as letting HistoryItems contain state objects:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::~HistoryItem):
+        (WebCore::HistoryItem::setStateObject):
+        (WebCore::HistoryItem::setDocument):
+        (WebCore::HistoryItem::documentDetached):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::stateObject):
+        (WebCore::HistoryItem::document):
+        * dom/Document.cpp:
+        (WebCore::Document::detach): Notify all back/forward history items owned by this Document that it
+          is going away.
+        (WebCore::Document::registerHistoryItem): Manage the list of back/forward history items this document owns.
+        (WebCore::Document::unregisterHistoryItem): Ditto.
+        * dom/Document.h:
+
+        Add the ability for Documents, DocumentLoaders, and FrameLoaderClients to be notified when a Documents
+        URL changes as the result of pushState(), replaceState(), or a popstate navigation:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): If there's a pending state object, dispatch the popstate event.
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        (WebCore::Document::statePopped): If loading is complete, dispatch the popstate event. Otherwise, set 
+          the pending state object.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::replaceRequestURLForSameDocumentNavigation):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidChangeStateObjectForPageForFrame):
+
+        Change handling of "loading a HistoryItem" to distinguish between new-Document navigations and same-Document
+        navigations, combining the old concept of anchor scrolls with the new concept of state object navigations:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::navigateWithinDocument):
+        (WebCore::FrameLoader::navigateToDifferentDocument):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * page/Page.cpp:
+        (WebCore::Page::goToItem): Changed to allow state object activations to pass through without the load stopping.
+
 2009-12-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium build fix.

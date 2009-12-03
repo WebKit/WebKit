@@ -228,6 +228,7 @@ DOM_CLASSES = \
     PageTransitionEvent \
     Plugin \
     PluginArray \
+    PopStateEvent \
     PositionError \
     ProcessingInstruction \
     ProgressEvent \

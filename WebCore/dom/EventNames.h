@@ -84,6 +84,7 @@ namespace WebCore {
     macro(pagehide) \
     macro(pageshow) \
     macro(paste) \
+    macro(popstate) \
     macro(readystatechange) \
     macro(reset) \
     macro(resize) \

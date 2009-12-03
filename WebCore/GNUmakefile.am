@@ -141,6 +141,7 @@ IDL_BINDINGS += \
 	WebCore/dom/Notation.idl \
 	WebCore/dom/OverflowEvent.idl \
 	WebCore/dom/PageTransitionEvent.idl \
+	WebCore/dom/PopStateEvent.idl \
 	WebCore/dom/ProcessingInstruction.idl \
 	WebCore/dom/ProgressEvent.idl \
 	WebCore/dom/Range.idl \
@@ -432,6 +433,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginCustom.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
+	WebCore/bindings/js/JSPopStateEventCustom.cpp \
+	WebCore/bindings/js/JSPopStateEventCustom.h \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.cpp \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.h \
 	WebCore/bindings/js/JSStorageCustom.h \
@@ -772,6 +775,8 @@ webcore_sources += \
 	WebCore/dom/PageTransitionEvent.h \
 	WebCore/dom/Position.cpp \
 	WebCore/dom/Position.h \
+	WebCore/dom/PopStateEvent.cpp \
+	WebCore/dom/PopStateEvent.h \
 	WebCore/dom/PositionIterator.cpp \
 	WebCore/dom/PositionIterator.h \
 	WebCore/dom/ProcessingInstruction.cpp \
