@@ -2,6 +2,30 @@
 
         Reviewed by Brady Eidson.
 
+        [Android] notifyHistoryItemChanged() should pass a pointer to the HistoryItem that changed.
+        https://bugs.webkit.org/show_bug.cgi?id=31915
+
+        No change in functionality so no new tests required.
+
+        * history/HistoryItem.cpp:
+        (WebCore::defaultNotifyHistoryItemChanged): Update this function to pass the HistoryItem that is being changed.
+        (WebCore::HistoryItem::setAlternateTitle): Update call to notifyHistoryItemChanged to include the new parameter.
+        (WebCore::HistoryItem::setURLString): ditto.
+        (WebCore::HistoryItem::setOriginalURLString): ditto.
+        (WebCore::HistoryItem::setReferrer): ditto.
+        (WebCore::HistoryItem::setTitle): ditto.
+        (WebCore::HistoryItem::setTarget): ditto.
+        (WebCore::HistoryItem::setDocumentState): On Android, add a call to notifyHistoryItemChanged. See bug for a discussion of why this is needed.
+        (WebCore::HistoryItem::clearDocumentState): ditto.
+        (WebCore::HistoryItem::setIsTargetItem): ditto.
+        (WebCore::HistoryItem::addChildItem): ditto.
+        (WebCore::HistoryItem::setFormInfoFromRequest): ditto.
+        * history/HistoryItem.h: Update signature of notifyHistoryItemChanged.
+
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
         [Android] The FrameLoaderClient is unaware of BackForwardList changes.
         https://bugs.webkit.org/show_bug.cgi?id=31914
 

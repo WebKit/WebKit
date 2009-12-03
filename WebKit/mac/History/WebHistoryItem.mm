@@ -84,7 +84,7 @@ static HistoryItemMap& historyItemWrappers()
     return historyItemWrappers;
 }
 
-void WKNotifyHistoryItemChanged()
+void WKNotifyHistoryItemChanged(HistoryItem*)
 {
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebHistoryItemChangedNotification object:nil userInfo:nil];

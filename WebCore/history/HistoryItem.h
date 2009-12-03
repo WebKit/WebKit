@@ -58,7 +58,7 @@ class ResourceRequest;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 
-extern void (*notifyHistoryItemChanged)();
+extern void (*notifyHistoryItemChanged)(HistoryItem*);
 
 enum VisitCountBehavior {
     IncreaseVisitCount,
