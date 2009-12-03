@@ -316,6 +316,7 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 
 if (isWx()) {
     downloadWafIfNeeded();
+    push @projects, 'WebKitTools/DumpRenderTree';
     push @projects, 'WebKitTools/wx/browser';
     push @projects, 'WebKit/wx/bindings/python';
 }

@@ -1,3 +1,20 @@
+2009-12-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+
+        [wx] Get DumpRenderTree building after waf switch.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32041
+
+        * DumpRenderTree/wscript: Added.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setTimelineProfilingEnabled):
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        (LayoutTestController::disableImageLoading):
+        (LayoutTestController::whiteListAccessFromOrigin):
+        (LayoutTestController::counterValueForElementById):
+        * Scripts/build-webkit:
+
 2009-12-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
