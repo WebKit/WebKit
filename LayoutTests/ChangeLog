@@ -1,3 +1,17 @@
+2009-12-03  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Multiple Undos removes the last posted comment and/or the ones before it.
+        <rdar://problem/6557066>
+        https://bugs.webkit.org/show_bug.cgi?id=32079
+
+        Added test to verify that undo has no effect when an element is
+        no longer editable.
+        
+        * editing/undo/undo-indent-noneditable-expected.txt: Added.
+        * editing/undo/undo-indent-noneditable.html: Added.
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

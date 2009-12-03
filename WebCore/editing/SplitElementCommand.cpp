@@ -53,7 +53,7 @@ void SplitElementCommand::executeApply()
     ExceptionCode ec = 0;
     
     Node* parent = m_element2->parentNode();
-    if (!parent)
+    if (!parent || !parent->isContentEditable())
         return;
     parent->insertBefore(m_element1.get(), m_element2.get(), ec);
     if (ec)
@@ -73,7 +73,7 @@ void SplitElementCommand::doApply()
 
 void SplitElementCommand::doUnapply()
 {
-    if (!m_element1)
+    if (!m_element1 || !m_element1->isContentEditable() || !m_element2->isContentEditable())
         return;
 
     Vector<RefPtr<Node> > children;

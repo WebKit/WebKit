@@ -64,7 +64,7 @@ void WrapContentsInDummySpanCommand::doUnapply()
 {
     ASSERT(m_element);
 
-    if (!m_dummySpan)
+    if (!m_dummySpan || !m_element->isContentEditable())
         return;
 
     Vector<RefPtr<Node> > children;
@@ -84,7 +84,7 @@ void WrapContentsInDummySpanCommand::doReapply()
 {
     ASSERT(m_element);
     
-    if (!m_dummySpan)
+    if (!m_dummySpan || !m_element->isContentEditable())
         return;
 
     executeApply();

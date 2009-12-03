@@ -42,7 +42,7 @@ MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(PassRefPtr<Element>
 
 void MergeIdenticalElementsCommand::doApply()
 {
-    if (m_element1->nextSibling() != m_element2)
+    if (m_element1->nextSibling() != m_element2 || !m_element1->isContentEditable() || !m_element2->isContentEditable())
         return;
 
     m_atChild = m_element2->firstChild();
@@ -68,7 +68,7 @@ void MergeIdenticalElementsCommand::doUnapply()
     RefPtr<Node> atChild = m_atChild.release();
 
     Node* parent = m_element2->parent();
-    if (!parent)
+    if (!parent || !parent->isContentEditable())
         return;
 
     ExceptionCode ec = 0;

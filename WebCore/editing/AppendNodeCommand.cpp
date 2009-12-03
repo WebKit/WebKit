@@ -44,12 +44,18 @@ AppendNodeCommand::AppendNodeCommand(PassRefPtr<Element> parent, PassRefPtr<Node
 
 void AppendNodeCommand::doApply()
 {
+    if (!m_parent->isContentEditable() && m_parent->attached())
+        return;
+        
     ExceptionCode ec;
     m_parent->appendChild(m_node.get(), ec);
 }
 
 void AppendNodeCommand::doUnapply()
 {
+    if (!m_parent->isContentEditable())
+        return;
+        
     ExceptionCode ec;
     m_node->remove(ec);
 }

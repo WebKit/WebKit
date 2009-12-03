@@ -49,6 +49,10 @@ SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
 
 void SplitTextNodeCommand::doApply()
 {
+    Node* parent = m_text2->parentNode();
+    if (!parent || !parent->isContentEditable())
+        return;
+
     ExceptionCode ec = 0;
 
     String prefixText = m_text2->substringData(0, m_offset, ec);
@@ -59,9 +63,6 @@ void SplitTextNodeCommand::doApply()
     ASSERT(prefixTextNode);
     document()->copyMarkers(m_text2.get(), 0, m_offset, prefixTextNode.get(), 0);
 
-    Node* parent = m_text2->parentNode();
-    if (!parent)
-        return;
     parent->insertBefore(prefixTextNode.get(), m_text2.get(), ec);
     if (ec)
         return;
@@ -72,7 +73,7 @@ void SplitTextNodeCommand::doApply()
 
 void SplitTextNodeCommand::doUnapply()
 {
-    if (!m_text1)
+    if (!m_text1 || !m_text1->isContentEditable())
         return;
 
     ASSERT(m_text1->document() == document());
