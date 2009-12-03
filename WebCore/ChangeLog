@@ -1,3 +1,11 @@
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        No wonder editing WebCore.exp repeatedly while I worked on this patch never seemed to stick.
+
+        Long live our auto-generated overlords that I didn't know about...  
+
+        * WebCore.base.exp:
+
 2009-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.
