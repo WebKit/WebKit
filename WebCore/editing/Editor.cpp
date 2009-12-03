@@ -1813,8 +1813,9 @@ static String findFirstMisspellingOrBadGrammarInRange(EditorClient* client, Rang
         }
         if (lastIteration || totalLengthProcessed + currentLength >= totalRangeLength)
             break;
-        setStart(paragraphRange.get(), startOfNextParagraph(paragraphRange->endPosition()));
-        setEnd(paragraphRange.get(), endOfParagraph(paragraphRange->startPosition()));
+        VisiblePosition newParagraphStart = startOfNextParagraph(paragraphRange->endPosition());
+        setStart(paragraphRange.get(), newParagraphStart);
+        setEnd(paragraphRange.get(), endOfParagraph(newParagraphStart));
         firstIteration = false;
         totalLengthProcessed += currentLength;
     }
