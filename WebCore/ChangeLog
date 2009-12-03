@@ -1,3 +1,21 @@
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
+        [Android] Upstream WebCore/history/android: Require some platform specific state attached to HistoryItem.
+        https://bugs.webkit.org/show_bug.cgi?id=31913
+
+        Android stores information such as the zoom scale factor and bridge back to the Java counterpart with HistoryItem.
+
+        No new tests required as this is Android specific code.
+
+        * history/HistoryItem.h: Add Android specific member data to HistoryItem.
+        * history/android: Added.
+        * history/android/AndroidWebHistoryBridge.h: Added.
+        * history/android/HistoryItemAndroid.cpp: Added, provides implementation for Android specific member functions in HistoryItem.
+        (WebCore::HistoryItem::bridge): Added.
+        (WebCore::HistoryItem::setBridge): Added.
+
 2009-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

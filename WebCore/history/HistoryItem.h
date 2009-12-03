@@ -42,6 +42,10 @@ typedef struct objc_object* id;
 #include <QDataStream>
 #endif
 
+#if PLATFORM(ANDROID)
+#include "AndroidWebHistoryBridge.h"
+#endif
+
 namespace WebCore {
 
 class CachedPage;
@@ -175,6 +179,11 @@ public:
     QDataStream& saveState(QDataStream& out, int version) const;
 #endif
 
+#if PLATFORM(ANDROID)
+    void setBridge(AndroidWebHistoryBridge* bridge);
+    AndroidWebHistoryBridge* bridge() const;
+#endif
+
 #ifndef NDEBUG
     int showTree() const;
     int showTreeWithIndent(unsigned indentLevel) const;
@@ -243,6 +252,11 @@ private:
 #if PLATFORM(QT)
     QVariant m_userData;
 #endif
+
+#if PLATFORM(ANDROID)
+    RefPtr<AndroidWebHistoryBridge> m_bridge;
+#endif
+
 }; //class HistoryItem
 
 } //namespace WebCore
