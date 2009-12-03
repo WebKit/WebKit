@@ -413,7 +413,7 @@ void HistoryItem::setDocument(Document* document)
 
 void HistoryItem::documentDetached(Document* document)
 {
-    ASSERT(m_document == document);
+    ASSERT_UNUSED(document, m_document == document);
     m_document = 0;
     m_stateObject = 0;
 }

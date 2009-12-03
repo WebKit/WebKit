@@ -2,6 +2,13 @@
 
         No review - release build fix.
 
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::documentDetached):
+
+2009-12-03  Brady Eidson  <beidson@apple.com>
+
+        No review - release build fix.
+
         * loader/HistoryController.cpp:
         (WebCore::HistoryController::pushState):
 
