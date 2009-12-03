@@ -1,5 +1,13 @@
 2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Re-baseline required after r51522.
+
+        * platform/gtk/editing/deleting/5390681-2-expected.txt:
+
+2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Skipping new tests, and tests that require new DRT functionality.
 
         * platform/gtk/Skipped:
