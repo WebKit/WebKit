@@ -41,9 +41,6 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
-#include <QTimer>
-#include <QBoxLayout>
-#include <QScrollArea>
 #include <QApplication>
 #include <QUrl>
 #include <QFileInfo>
@@ -54,9 +51,6 @@
 #include <QNetworkRequest>
 #include <QUndoStack>
 
-#include <qwebpage.h>
-#include <qwebframe.h>
-#include <qwebview.h>
 #include <qwebsettings.h>
 #include <qwebsecurityorigin.h>
 
@@ -114,7 +108,7 @@ void NetworkAccessManager::sslErrorsEncountered(QNetworkReply* reply, const QLis
 }
 #endif
 
-WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
+WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     : QWebPage(parent)
     , m_drt(drt)
 {
@@ -298,10 +292,10 @@ DumpRenderTree::DumpRenderTree()
     QWebSettings::enablePersistentStorage();
 
     // create our primary testing page/view.
-    QWebView *view = new QWebView(0);
-    view->resize(QSize(maxViewWidth, maxViewHeight));
-    m_page = new WebPage(view, this);
-    view->setPage(m_page);
+    m_mainView = new QWebView(0);
+    m_mainView->resize(QSize(maxViewWidth, maxViewHeight));
+    m_page = new WebPage(m_mainView, this);
+    m_mainView->setPage(m_page);
 
     // create out controllers. This has to be done before connectFrame,
     // as it exports there to the JavaScript DOM window.
@@ -329,13 +323,12 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     qt_drt_run(true);
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
-    QApplication::sendEvent(view, &event);
+    QApplication::sendEvent(m_mainView, &event);
 }
 
 DumpRenderTree::~DumpRenderTree()
 {
-    delete m_page;
-
+    delete m_mainView;
     delete m_stdin;
     delete m_notifier;
 }
@@ -382,7 +375,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     closeRemainingWindows();
 
-    static_cast<WebPage*>(m_page)->resetSettings();
+    m_page->resetSettings();
     m_page->undoStack()->clear();
     m_page->mainFrame()->setZoomFactor(1.0);
     clearHistory(m_page);
@@ -418,7 +411,7 @@ void DumpRenderTree::open(const QUrl& aurl)
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
     int width = isW3CTest ? 480 : maxViewWidth;
     int height = isW3CTest ? 360 : maxViewHeight;
-    m_page->view()->resize(QSize(width, height));
+    m_mainView->resize(QSize(width, height));
     m_page->setPreferredContentsSize(QSize());
     m_page->setViewportSize(QSize(width, height));
 
@@ -462,7 +455,7 @@ void DumpRenderTree::setDumpPixels(bool dump)
 
 void DumpRenderTree::closeRemainingWindows()
 {
-    foreach(QWidget *widget, windows)
+    foreach (QObject* widget, windows)
         delete widget;
     windows.clear();
 }
@@ -713,25 +706,28 @@ QWebPage *DumpRenderTree::createWindow()
 {
     if (!m_controller->canOpenWindows())
         return 0;
-    QWidget *container = new QWidget(0);
-    container->resize(0, 0);
-    container->move(-1, -1);
-    container->hide();
-    WebPage *page = new WebPage(container, this);
-    connectFrame(page->mainFrame());
-    connect(page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
+
+    // Create a dummy container object to track the page in DRT.
+    // QObject is used instead of QWidget to prevent DRT from
+    // showing the main view when deleting the container.
+
+    QObject* container = new QObject(m_mainView);
+    // create a QWebPage we want to return
+    QWebPage* page = static_cast<QWebPage*>(new WebPage(container, this));
+    // gets cleaned up in closeRemainingWindows()
     windows.append(container);
+
+    // connect the needed signals to the page
+    connect(page, SIGNAL(frameCreated(QWebFrame*)), this, SLOT(connectFrame(QWebFrame*)));
+    connectFrame(page->mainFrame());
+    connect(page, SIGNAL(loadFinished(bool)), m_controller, SLOT(maybeDump(bool)));
     return page;
 }
 
 int DumpRenderTree::windowCount() const
 {
-    int count = 0;
-    foreach(QWidget *w, windows) {
-        if (w->children().count())
-            ++count;
-    }
-    return count + 1;
+// include the main view in the count
+    return windows.count() + 1;
 }
 
 #if defined(Q_WS_X11)
