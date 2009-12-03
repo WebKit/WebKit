@@ -1,3 +1,15 @@
+2009-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r51627): 3 SVG tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=32117
+
+        Improve testing of svglist.
+
+        * svg/dom/svglist-exception-on-out-bounds-error-expected.txt:
+        * svg/dom/svglist-exception-on-out-bounds-error.html:
+
 2009-12-03  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

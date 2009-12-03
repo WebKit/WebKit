@@ -39,6 +39,10 @@ namespace WebCore {
         {
             return SVGListTraits<UsesDefaultInitializer<Item>::value, Item>::nullItem();
         }
+        static bool isNull(const Item& it)
+        {
+            return SVGListTraits<UsesDefaultInitializer<Item>::value, Item>::isNull(it);
+        }
     };
 
     template<typename Item>
@@ -56,7 +60,7 @@ namespace WebCore {
 
         Item initialize(Item newItem, ExceptionCode& ec)
         {
-            if (!newItem) {
+            if (TypeOperations::isNull(newItem)) {
                 ec = TYPE_MISMATCH_ERR;
                 return TypeOperations::nullItem();
             }
@@ -98,7 +102,7 @@ namespace WebCore {
 
         Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode& ec)
         {
-            if (!newItem) {
+            if (TypeOperations::isNull(newItem)) {
                 ec = TYPE_MISMATCH_ERR;
                 return TypeOperations::nullItem();
             }
@@ -118,7 +122,7 @@ namespace WebCore {
                 return TypeOperations::nullItem();
             }
     
-            if (!newItem) {
+            if (TypeOperations::isNull(newItem)) {
                 ec = TYPE_MISMATCH_ERR;
                 return TypeOperations::nullItem();
             }
@@ -141,7 +145,7 @@ namespace WebCore {
 
         Item appendItem(Item newItem, ExceptionCode& ec)
         {
-            if (!newItem) {
+            if (TypeOperations::isNull(newItem)) {
                 ec = TYPE_MISMATCH_ERR;
                 return TypeOperations::nullItem();
             }
