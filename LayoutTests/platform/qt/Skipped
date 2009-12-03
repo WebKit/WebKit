@@ -229,6 +229,7 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 # Missing layoutTestController.evaluateInWebInspector()
 inspector/elements-img-tooltip.html
 inspector/elements-panel-selection-on-refresh.html
+inspector/settings-set-get.html
 inspector/timeline-event-dispatch.html
 inspector/timeline-network-resource.html
 # ============================================================================= #

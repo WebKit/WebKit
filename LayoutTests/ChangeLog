@@ -1,3 +1,10 @@
+2009-12-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put test into skiplist because of missing layoutTestController.evaluateInWebInspector().
+
+        * platform/qt/Skipped:
+        - inspector/settings-set-get.html added.
+
 2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.
