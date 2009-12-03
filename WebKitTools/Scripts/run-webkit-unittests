@@ -35,6 +35,7 @@ from modules.changelogs_unittest import *
 from modules.commands.download_unittest import *
 from modules.commands.upload_unittest import *
 from modules.commands.queries_unittest import *
+from modules.commands.queues_unittest import *
 from modules.committers_unittest import *
 from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *

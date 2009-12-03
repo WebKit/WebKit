@@ -30,6 +30,7 @@
 
 import os
 import time
+import traceback
 
 from datetime import datetime, timedelta
 
@@ -104,7 +105,11 @@ class WorkQueue:
                     self._update_status_and_sleep(waiting_message)
                     continue
                 self.status_bot.update_status(self._name, waiting_message, patch)
+            except KeyboardInterrupt, e:
+                log("\nUser terminated queue.")
+                return 1
             except Exception, e:
+                traceback.print_exc()
                 # Don't try tell the status bot, in case telling it causes an exception.
                 self._sleep("Exception while preparing queue: %s." % e)
                 continue

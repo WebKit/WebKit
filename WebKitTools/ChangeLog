@@ -1,3 +1,28 @@
+2009-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(51595): commit-queue is throwing exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=32083
+
+        * Scripts/modules/commands/queues.py:
+         - Don't use default value of [] as it ends up getting shared.
+         - Make log_progress accept arrays of ints as well as strings.
+         - Return an exit code from execute()
+        * Scripts/modules/commands/queues_unittest.py: Added.
+         - Test to make sure log_progress will accept ints.
+         - Test to make sure run_bugzilla_tool will accept ints.
+        * Scripts/modules/workqueue.py:
+         - Print the stack trace on unexpected exceptions for easier debugging.
+        * Scripts/run-webkit-unittests:
+         - Add queues_unittest.
+
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/commands/queues_unittest.py: Copied from WebKitTools/Scripts/modules/commands/commandtest.py.
+        * Scripts/modules/mock_bugzillatool.py:
+        * Scripts/modules/workqueue.py:
+        * Scripts/run-webkit-unittests:
+
 2009-12-02  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

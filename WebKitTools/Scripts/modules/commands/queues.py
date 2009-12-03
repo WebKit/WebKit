@@ -46,12 +46,12 @@ from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class AbstractQueue(Command, WorkQueueDelegate):
     watchers = "webkit-bot-watchers@googlegroups.com"
-    def __init__(self, options=[]):
-        options += [
+    def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
+        options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
             make_option("--status-host", action="store", type="string", dest="status_host", default=StatusBot.default_host, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         ]
-        Command.__init__(self, "Run the %s" % self.name, options=options)
+        Command.__init__(self, "Run the %s" % self.name, options=options_list)
 
     def _cc_watchers(self, bug_id):
         try:
@@ -92,17 +92,17 @@ class AbstractQueue(Command, WorkQueueDelegate):
         raise NotImplementedError, "subclasses must implement"
 
     def run_bugzilla_tool(self, args):
-        bugzilla_tool_args = [self.tool.path()] + args
+        bugzilla_tool_args = [self.tool.path()] + map(str, args)
         run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):
-        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(patch_ids)))
+        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
 
     def execute(self, options, args, tool):
         self.options = options
         self.tool = tool
         work_queue = WorkQueue(self.name, self)
-        work_queue.run()
+        return work_queue.run()
 
 
 class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
@@ -146,7 +146,7 @@ class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
 
 
 class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, LandingSequenceErrorHandler):
-    def __init__(self, options=[]):
+    def __init__(self, options=None):
         AbstractQueue.__init__(self, options)
 
     # PersistentPatchCollectionDelegate methods

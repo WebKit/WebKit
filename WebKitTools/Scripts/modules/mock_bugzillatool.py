@@ -130,3 +130,6 @@ class MockBugzillaTool():
 
     def scm(self):
         return self._scm
+
+    def path(self):
+        return "echo"
