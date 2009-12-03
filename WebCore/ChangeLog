@@ -1,3 +1,22 @@
+2009-12-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Attributes and NamedNodeMaps aren't tracked correctly and may be prematurely garbage-collected.
+        https://bugs.webkit.org/show_bug.cgi?id=32094
+
+        Covered by existing test: LayoutTests/fast/dom/Attr/access-after-element-destruction.html
+
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        (WebCore::V8DOMWrapper::convertNamedNodeMapToV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ObjectGrouperVisitor::visitDOMWrapper):
+        * bindings/v8/custom/V8CustomBinding.h:
+
 2009-12-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

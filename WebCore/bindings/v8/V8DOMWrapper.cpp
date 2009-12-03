@@ -366,10 +366,15 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::MIMETYPEARRAY:
         setCollectionIndexedAndNamedGetters<MimeTypeArray, MimeType>(descriptor, V8ClassIndex::MIMETYPE);
         break;
-    case V8ClassIndex::NAMEDNODEMAP:
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(NamedNodeMap));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(NamedNodeMap), 0, 0, 0, collectionIndexedPropertyEnumerator<NamedNodeMap>, v8::Integer::New(V8ClassIndex::NODE));
+    case V8ClassIndex::NAMEDNODEMAP: {
+        // We add an extra internal field to hold a reference to the owner node.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        instanceTemplate->SetInternalFieldCount(V8Custom::kNamedNodeMapInternalFieldCount);
+        instanceTemplate->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(NamedNodeMap));
+        instanceTemplate->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(NamedNodeMap), 0, 0, 0, collectionIndexedPropertyEnumerator<NamedNodeMap>, v8::Integer::New(V8ClassIndex::NODE));
         break;
+    }
 #if ENABLE(DOM_STORAGE)
     case V8ClassIndex::STORAGE:
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(Storage), USE_NAMED_PROPERTY_SETTER(Storage), 0, USE_NAMED_PROPERTY_DELETER(Storage), V8Custom::v8StorageNamedPropertyEnumerator);
@@ -698,6 +703,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
         return convertStyleSheetToV8Object(static_cast<StyleSheet*>(impl));
     case V8ClassIndex::DOMWINDOW:
         return convertWindowToV8Object(static_cast<DOMWindow*>(impl));
+    case V8ClassIndex::NAMEDNODEMAP:
+        return convertNamedNodeMapToV8Object(static_cast<NamedNodeMap*>(impl));
 #if ENABLE(SVG)
         SVG_NONNODE_TYPES(MAKE_CASE)
         if (type == V8ClassIndex::SVGELEMENTINSTANCE)
@@ -1734,6 +1741,32 @@ v8::Handle<v8::Value> V8DOMWrapper::convertWindowToV8Object(DOMWindow* window)
     v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());
     return global;
+}
+
+v8::Handle<v8::Value> V8DOMWrapper::convertNamedNodeMapToV8Object(NamedNodeMap* map)
+{
+    if (!map)
+        return v8::Null();
+
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(map);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+
+    v8::Handle<v8::Object> result = instantiateV8Object(V8ClassIndex::NAMEDNODEMAP, V8ClassIndex::NAMEDNODEMAP, map);
+    if (result.IsEmpty())
+        return result;
+
+    // Only update the DOM object map if the result is non-empty.
+    map->ref();
+    setJSWrapperForDOMObject(map, v8::Persistent<v8::Object>::New(result));
+
+    // Add a hidden reference from named node map to its owner node.
+    if (Element* element = map->element()) {
+        v8::Handle<v8::Object> owner = v8::Handle<v8::Object>::Cast(convertNodeToV8Object(element));
+        result->SetInternalField(V8Custom::kNamedNodeMapOwnerNodeIndex, owner);
+    }
+
+    return result;
 }
 
 }  // namespace WebCore

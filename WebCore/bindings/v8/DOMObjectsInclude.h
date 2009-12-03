@@ -31,6 +31,7 @@
 #ifndef DOMObjectsInclude_h
 #define DOMObjectsInclude_h
 
+#include "Attr.h"
 #include "BarInfo.h"
 #include "BeforeLoadEvent.h"
 #include "WebGLActiveInfo.h"

@@ -262,14 +262,21 @@ public:
             groupId = reinterpret_cast<uintptr_t>(node->document());
         else {
             Node* root = node;
-            while (root->parent())
-                root = root->parent();
+            if (node->isAttributeNode()) {
+                root = static_cast<Attr*>(node)->ownerElement();
+                // If the attribute has no element, no need to put it in the group,
+                // because it'll always be a group of 1.
+                if (!root)
+                    return;
+            } else {
+                while (root->parent())
+                    root = root->parent();
 
-            // If the node is alone in its DOM tree (doesn't have a parent or any
-            // children) then the group will be filtered out later anyway.
-            if (root == node && !node->hasChildNodes())
-                return;
-
+                // If the node is alone in its DOM tree (doesn't have a parent or any
+                // children) then the group will be filtered out later anyway.
+                if (root == node && !node->hasChildNodes() && !node->hasAttributes())
+                    return;
+            }
             groupId = reinterpret_cast<uintptr_t>(root);
         }
         m_grouper.append(GrouperItem(groupId, node, wrapper));
