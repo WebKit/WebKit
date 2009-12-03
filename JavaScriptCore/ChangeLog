@@ -2,6 +2,40 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add files missed in prior patch.
+
+        * runtime/JSZombie.cpp:
+        (JSC::):
+        (JSC::JSZombie::leakedZombieStructure):
+        * runtime/JSZombie.h: Added.
+        (JSC::JSZombie::JSZombie):
+        (JSC::JSZombie::isZombie):
+        (JSC::JSZombie::classInfo):
+        (JSC::JSZombie::isGetterSetter):
+        (JSC::JSZombie::isAPIValueWrapper):
+        (JSC::JSZombie::isPropertyNameIterator):
+        (JSC::JSZombie::getCallData):
+        (JSC::JSZombie::getConstructData):
+        (JSC::JSZombie::getUInt32):
+        (JSC::JSZombie::toPrimitive):
+        (JSC::JSZombie::getPrimitiveNumber):
+        (JSC::JSZombie::toBoolean):
+        (JSC::JSZombie::toNumber):
+        (JSC::JSZombie::toString):
+        (JSC::JSZombie::toObject):
+        (JSC::JSZombie::markChildren):
+        (JSC::JSZombie::put):
+        (JSC::JSZombie::deleteProperty):
+        (JSC::JSZombie::toThisObject):
+        (JSC::JSZombie::toThisString):
+        (JSC::JSZombie::toThisJSString):
+        (JSC::JSZombie::getJSNumber):
+        (JSC::JSZombie::getOwnPropertySlot):
+
+2009-12-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Add zombies to JSC
         https://bugs.webkit.org/show_bug.cgi?id=32103
 
