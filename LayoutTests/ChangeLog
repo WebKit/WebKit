@@ -1,5 +1,15 @@
 2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Xan Lopez.
+
+        Platform-specific result for test. GIO identifies the file as
+        application/javascript, as opposed to other platforms identifying
+        it as application/x-javascript.
+
+        * platform/gtk/inspector/timeline-network-resource-expected.txt: Added.
+
+2009-12-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rubber-stamped by Oliver Hunt.
 
         Re-baseline required after r51522.
