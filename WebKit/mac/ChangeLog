@@ -1,5 +1,16 @@
 2009-12-02  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Fix a mistake in the previous change
+
+        * WebView/WebView.mm:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:allowingPlugins:]):
+        Make sure to include the image types’ view and representation classes
+        even when plug-ins are not allowed.
+
+2009-12-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Fixed <rdar://problem/7254127> WebKit can load plug-ins even when

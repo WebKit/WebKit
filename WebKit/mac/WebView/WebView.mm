@@ -827,12 +827,15 @@ static bool runningTigerMail()
     MIMEType = [MIMEType lowercaseString];
     Class viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
     Class repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
-    
-    if (allowPlugins && (!viewClass || !repClass || [[WebPDFView supportedMIMETypes] containsObject:MIMEType])) {
+
+    if (!viewClass || !repClass || [[WebPDFView supportedMIMETypes] containsObject:MIMEType]) {
         // Our optimization to avoid loading the plug-in DB and image types for the HTML case failed.
-        // Load the plug-in DB allowing plug-ins to install types.
-        [WebPluginDatabase sharedDatabase];
-            
+
+        if (allowPlugins) {
+            // Load the plug-in DB allowing plug-ins to install types.
+            [WebPluginDatabase sharedDatabase];
+        }
+
         // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
         viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
         repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
