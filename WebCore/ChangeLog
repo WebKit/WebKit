@@ -1,3 +1,16 @@
+2009-11-23  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch Chrome/Mac to use Core Text APIs rather than ATSUI APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=31802
+
+        No test since this is already covered by existing pixel tests.
+
+        * platform/graphics/SimpleFontData.h: Change #ifdef to define getNSFont() on Chrome/Mac .
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp: Provide forward declarations
+        of Core Text functions that are public on 10.6 but SPI on 10.5.
+
 2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.

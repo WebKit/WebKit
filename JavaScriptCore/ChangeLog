@@ -1,3 +1,14 @@
+2009-11-23  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch Chrome/Mac to use Core Text APIs rather than ATSUI APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=31802
+
+        No test since this is already covered by existing pixel tests.
+
+        * wtf/Platform.h: #define USE_CORE_TEXT for Chrome/Mac.
+
 2009-12-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
