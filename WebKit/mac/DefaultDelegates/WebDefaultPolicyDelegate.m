@@ -66,11 +66,11 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
         BOOL isDirectory = NO;
         BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
 
-        if (exists && !isDirectory && [WebView canShowMIMEType:type])
+        if (exists && !isDirectory && [wv _canShowMIMEType:type])
             [listener use];
         else
             [listener ignore];
-    } else if ([WebView canShowMIMEType:type])
+    } else if ([wv _canShowMIMEType:type])
         [listener use];
     else
         [listener ignore];

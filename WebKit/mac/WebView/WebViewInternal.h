@@ -115,8 +115,10 @@ namespace WebCore {
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
-+ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
++ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins;
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
++ (BOOL)_canShowMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins;
+- (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 - (WebDownload *)_downloadURL:(NSURL *)URL;
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;

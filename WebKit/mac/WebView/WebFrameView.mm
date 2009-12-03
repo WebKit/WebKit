@@ -156,7 +156,7 @@ enum {
     NSString* MIMEType = [dataSource _responseMIMEType];
     if (!MIMEType)
         MIMEType = @"text/html";
-    Class viewClass = [[self class] _viewClassForMIMEType:MIMEType];
+    Class viewClass = [self _viewClassForMIMEType:MIMEType];
     NSView <WebDocumentView> *documentView;
     if (viewClass) {
         // If the dataSource's representation has already been created, and it is also the
@@ -244,10 +244,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [[[self _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType] isSubclassOfClass:[WebHTMLView class]];
 }
 
-+ (Class)_viewClassForMIMEType:(NSString *)MIMEType
++ (Class)_viewClassForMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins
 {
     Class viewClass;
-    return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType] ? viewClass : nil;
+    return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType allowingPlugins:allowPlugins] ? viewClass : nil;
+}
+
+- (Class)_viewClassForMIMEType:(NSString *)MIMEType
+{
+    return [[self class] _viewClassForMIMEType:MIMEType allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
 }
 
 - (void)_install

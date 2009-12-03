@@ -1,3 +1,61 @@
+2009-12-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed <rdar://problem/7254127> WebKit can load plug-ins even when
+        plug-ins are disabled
+
+        Ensure that the shared WebPluginDatabase is not instantiated if no
+        WebViews are used that have plug-ins enabled.
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+        Call -[WebView _canShowMIMEType:] on the WebView instead of calling the
+        class method.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canShowMIMEType): Ditto.
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Call
+        -[WebFrameView _viewClassForMIMEType:] on the WebView instead of calling
+        the class method.
+        (WebFrameLoaderClient::objectContentType): Ditto.
+
+        * WebView/WebDataSource.mm:
+        (+[WebDataSource _representationClassForMIMEType:allowingPlugins:]):
+        Added the allowPlugins parameter, which is passed through to
+        +[WebView _viewClass:andRepresentationClass:forMIMEType:allowingPlugins:].
+        (-[WebDataSource _makeRepresentation]): Pass an allowPlugins value
+        based on the WebView’s preferences.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]): Call
+        -[WebFrameView _viewClassForMIMEType:] instead of calling the class
+        method.
+        (+[WebFrameView _viewClassForMIMEType:allowingPlugins:]): Added the
+        allowPlugins parameter, which is passed through to
+        +[WebView _viewClass:andRepresentationClass:forMIMEType:allowingPlugins:].
+        (-[WebFrameView _viewClassForMIMEType:]): Added. Passes an allowPlugins
+        value based on the WebView’s preferences.
+
+        * WebView/WebFrameViewInternal.h:
+        * WebView/WebView.mm:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:allowingPlugins:]):
+        Added the allowPlugins parameter. If false, skip the instantiation of
+        the shared WebPluginDatabase.
+        (-[WebView _viewClass:andRepresentationClass:forMIMEType:]): Pass an
+        allowPlugins value based on the WebView’s preferences.
+        (+[WebView _canShowMIMEType:allowingPlugins:]): Passes allowPlugins to
+        +_viewClass:andRepresentationClass:forMIMEType:allowingPlugins:.
+        (+[WebView canShowMIMEType:]): Changed to pass YES to
+        +_canShowMIMEType:allowingPlugins:.
+        (-[WebView _canShowMIMEType:]): Added. Passes an allowPlugins value
+        based on the WebView’s preferences.
+        (-[WebView _pluginForMIMEType:]): Return nil if plug-ins are disabled.
+        (-[WebView _pluginForExtension:]): Ditto.
+        (-[WebView _isMIMETypeRegisteredAsPlugin:]): Return NO if plug-ins are
+        disabled.
+        * WebView/WebViewInternal.h:
+
 2009-12-02  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash when scrolling a frame that goes away mid-scroll.
