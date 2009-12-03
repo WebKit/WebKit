@@ -2,6 +2,29 @@
 
         Reviewed by Brady Eidson.
 
+        [Android] The FrameLoaderClient is unaware of BackForwardList changes.
+        https://bugs.webkit.org/show_bug.cgi?id=31914
+
+        This change adds three new methods on the FrameLoaderClient interface to receive notifications when the BackForwardList changes.
+
+        No new tests required. Functionality on all platforms upstream remains the same. Android is the first platform to make use of these callbacks.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem): Execute the callback.
+        (WebCore::BackForwardList::goBack): ditto.
+        (WebCore::BackForwardList::goForward): ditto.
+        (WebCore::BackForwardList::goToItem): ditto.
+        (WebCore::BackForwardList::setCapacity): dito.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidAddBackForwardItem): Add an empty implementation for the callback that does nothing.
+        (WebCore::EmptyFrameLoaderClient::dispatchDidRemoveBackForwardItem): ditto.
+        (WebCore::EmptyFrameLoaderClient::dispatchDidChangeBackForwardIndex): ditto.
+        * loader/FrameLoaderClient.h:
+
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
         [Android] Upstream WebCore/history/android: Require some platform specific state attached to HistoryItem.
         https://bugs.webkit.org/show_bug.cgi?id=31913
 

@@ -1,3 +1,16 @@
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
+        [Android] The FrameLoaderClient is unaware of BackForwardList changes.
+        https://bugs.webkit.org/show_bug.cgi?id=31914
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchDidAddBackForwardItem): Add an empty implementation. Method added to FrameLoaderClient by Android (see bug).
+        (WebCore::FrameLoaderClientHaiku::dispatchDidRemoveBackForwardItem): ditto.
+        (WebCore::FrameLoaderClientHaiku::dispatchDidChangeBackForwardIndex): ditto.
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
 2009-11-13  Adam Roben  <aroben@apple.com>
 
         Update for changes to FrameLoaderClient

@@ -877,6 +877,18 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:webItem];
 }
 
+void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
+{
+}
+
+void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
+{
+}
+
+void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
+{
+}
+
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
     WebView *webView = getWebView(m_webFrame.get());   

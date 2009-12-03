@@ -149,6 +149,9 @@ namespace WebCore {
         virtual void updateGlobalHistory();
         virtual void updateGlobalHistoryRedirectLinks();
         virtual bool shouldGoToHistoryItem(HistoryItem*) const;
+        virtual void dispatchDidAddBackForwardItem(HistoryItem*) const;
+        virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const;
+        virtual void dispatchDidChangeBackForwardIndex() const;
         virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
         virtual bool canCachePage() const;
         

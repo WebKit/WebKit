@@ -1,3 +1,16 @@
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
+        [Android] The FrameLoaderClient is unaware of BackForwardList changes.
+        https://bugs.webkit.org/show_bug.cgi?id=31914
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidAddBackForwardItem): Add an empty implementation. Method added to FrameLoaderClient by Android (see bug).
+        (WebFrameLoaderClient::dispatchDidRemoveBackForwardItem): ditto.
+        (WebFrameLoaderClient::dispatchDidChangeBackForwardIndex): ditto.
+
 2009-12-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
