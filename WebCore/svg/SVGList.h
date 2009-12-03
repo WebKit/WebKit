@@ -56,6 +56,10 @@ namespace WebCore {
 
         Item initialize(Item newItem, ExceptionCode& ec)
         {
+            if (!newItem) {
+                ec = TYPE_MISMATCH_ERR;
+                return TypeOperations::nullItem();
+            }
             clear(ec);
             return appendItem(newItem, ec);
         }
@@ -92,8 +96,13 @@ namespace WebCore {
             return m_vector[index];
         }
 
-        Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode&)
+        Item insertItemBefore(Item newItem, unsigned int index, ExceptionCode& ec)
         {
+            if (!newItem) {
+                ec = TYPE_MISMATCH_ERR;
+                return TypeOperations::nullItem();
+            }
+
             if (index < m_vector.size()) {
                 m_vector.insert(index, newItem);
             } else {
@@ -106,6 +115,11 @@ namespace WebCore {
         {
             if (index >= m_vector.size()) {
                 ec = INDEX_SIZE_ERR;
+                return TypeOperations::nullItem();
+            }
+    
+            if (!newItem) {
+                ec = TYPE_MISMATCH_ERR;
                 return TypeOperations::nullItem();
             }
 
@@ -125,8 +139,13 @@ namespace WebCore {
             return item;
         }
 
-        Item appendItem(Item newItem, ExceptionCode&)
+        Item appendItem(Item newItem, ExceptionCode& ec)
         {
+            if (!newItem) {
+                ec = TYPE_MISMATCH_ERR;
+                return TypeOperations::nullItem();
+            }
+
             m_vector.append(newItem);
             return newItem;
         }

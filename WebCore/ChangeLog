@@ -1,3 +1,31 @@
+2009-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        NULL ptr in SVGPathSegList::getPathSegAtLength()
+        https://bugs.webkit.org/show_bug.cgi?id=30313
+
+        Add exception checks to SVGPathSegList's implementation to catch (and propagate) exceptions.
+        Add null checks to SVGList's content manipulation functions to prevent
+        null values from entering the list in the first place.
+
+        Test: svg/dom/svgpath-out-of-bounds-getPathSeg.html
+
+        * svg/SVGList.h:
+        (WebCore::SVGList::initialize):
+        (WebCore::SVGList::insertItemBefore):
+        (WebCore::SVGList::replaceItem):
+        (WebCore::SVGList::appendItem):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPathSegAtLength):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getPathSegAtLength):
+        (WebCore::SVGPathSegList::toPathData):
+        (WebCore::SVGPathSegList::createAnimated):
+        * svg/SVGPathSegList.h:
+
 2009-12-02  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -51,15 +51,16 @@ SVGPathSegList::~SVGPathSegList()
 {
 }
 
-unsigned SVGPathSegList::getPathSegAtLength(double)
+unsigned SVGPathSegList::getPathSegAtLength(double, ExceptionCode& ec)
 {
     // FIXME : to be useful this will need to support non-normalized SVGPathSegLists
-    ExceptionCode ec = 0;
     int len = numberOfItems();
     // FIXME: Eventually this will likely move to a "path applier"-like model, until then PathTraversalState is less useful as we could just use locals
     PathTraversalState traversalState(PathTraversalState::TraversalSegmentAtLength);
     for (int i = 0; i < len; ++i) {
         SVGPathSeg* segment = getItem(i, ec).get();
+        if (ec)
+            return 0;
         float segmentLength = 0;
         switch (segment->pathSegType()) {
         case SVGPathSeg::PATHSEG_MOVETO_ABS:
@@ -104,10 +105,12 @@ Path SVGPathSegList::toPathData()
 {
     // FIXME : This should also support non-normalized PathSegLists
     Path pathData;
-    ExceptionCode ec = 0;
     int len = numberOfItems();
+    ExceptionCode ec = 0;
     for (int i = 0; i < len; ++i) {
         SVGPathSeg* segment = getItem(i, ec).get();
+        if (ec)
+            return Path();
         switch (segment->pathSegType()) {
             case SVGPathSeg::PATHSEG_MOVETO_ABS:
             {
@@ -182,10 +185,14 @@ PassRefPtr<SVGPathSegList> SVGPathSegList::createAnimated(const SVGPathSegList* 
     if (!itemCount || itemCount != toList->numberOfItems())
         return 0;
     RefPtr<SVGPathSegList> result = create(fromList->associatedAttributeName());
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     for (unsigned n = 0; n < itemCount; ++n) {
         SVGPathSeg* from = fromList->getItem(n, ec).get();
+        if (ec)
+            return 0;
         SVGPathSeg* to = toList->getItem(n, ec).get();
+        if (ec)
+            return 0;
         if (from->pathSegType() == SVGPathSeg::PATHSEG_UNKNOWN || from->pathSegType() != to->pathSegType())
             return 0;
         RefPtr<SVGPathSeg> segment = 0;
@@ -251,6 +258,8 @@ PassRefPtr<SVGPathSegList> SVGPathSegList::createAnimated(const SVGPathSegList* 
             ASSERT_NOT_REACHED();
         }
         result->appendItem(segment, ec);
+        if (ec)
+            return 0;
     }
     return result.release();
 }

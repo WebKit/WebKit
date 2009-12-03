@@ -1,3 +1,15 @@
+2009-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        NULL ptr in SVGPathSegList::getPathSegAtLength()
+        https://bugs.webkit.org/show_bug.cgi?id=30313
+
+        Add testcases for incorrect pathSeg usage.
+
+        * svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt: Added.
+        * svg/dom/svgpath-out-of-bounds-getPathSeg.html: Added.
+
 2009-12-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
