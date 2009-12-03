@@ -1119,6 +1119,16 @@ class _ClassState(object):
                   self.classinfo_stack[0].name)
 
 
+class _FileState(object):
+    def __init__(self):
+        self._did_inside_namespace_indent_warning = False
+
+    def set_did_inside_namespace_indent_warning(self):
+        self._did_inside_namespace_indent_warning = True
+
+    def did_inside_namespace_indent_warning(self):
+        return self._did_inside_namespace_indent_warning
+
 def check_for_non_standard_constructs(filename, clean_lines, line_number,
                                       class_state, error):
     """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
@@ -1675,7 +1685,7 @@ def get_previous_non_blank_line(clean_lines, line_number):
     return ('', -1)
 
 
-def check_namespace_indentation(filename, clean_lines, line_number, file_extension, error):
+def check_namespace_indentation(filename, clean_lines, line_number, file_extension, file_state, error):
     """Looks for indentation errors inside of namespaces.
 
     Args:
@@ -1683,6 +1693,8 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       file_extension: The extension (dot not included) of the file.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
 
@@ -1694,8 +1706,10 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
 
     current_indentation_level = len(namespace_match.group('namespace_indentation'))
     if current_indentation_level > 0:
-        error(filename, line_number, 'whitespace/indent', 4,
-              'namespace should never be indented.')
+        # Don't warn about an indented namespace if we already warned about indented code.
+        if not file_state.did_inside_namespace_indent_warning():
+            error(filename, line_number, 'whitespace/indent', 4,
+                  'namespace should never be indented.')
         return
     looking_for_semicolon = False;
     line_offset = 0
@@ -1706,7 +1720,8 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
             continue
         if not current_indentation_level:
             if not (in_preprocessor_directive or looking_for_semicolon):
-                if not match(r'\S', current_line):
+                if not match(r'\S', current_line) and not file_state.did_inside_namespace_indent_warning():
+                    file_state.set_did_inside_namespace_indent_warning()
                     error(filename, line_number + line_offset, 'whitespace/indent', 4,
                           'Code inside a namespace should not be indented.')
             if in_preprocessor_directive or (current_line.strip()[0] == '#'): # This takes care of preprocessor directive syntax.
@@ -2124,7 +2139,7 @@ def get_line_width(line):
     return len(line)
 
 
-def check_style(filename, clean_lines, line_number, file_extension, error):
+def check_style(filename, clean_lines, line_number, file_extension, file_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
     Most of these rules are hard to test (naming, comment style), but we
@@ -2136,6 +2151,8 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       file_extension: The extension (without the dot) of the filename.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
 
@@ -2203,7 +2220,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
               'operators on the left side of the line instead of the right side.')
 
     # Some more style checks
-    check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
+    check_namespace_indentation(filename, clean_lines, line_number, file_extension, file_state, error)
     check_using_std(filename, clean_lines, line_number, error)
     check_max_min_macros(filename, clean_lines, line_number, error)
     check_switch_indentation(filename, clean_lines, line_number, error)
@@ -2914,7 +2931,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
 
 def process_line(filename, file_extension,
                  clean_lines, line, include_state, function_state,
-                 class_state, error):
+                 class_state, file_state, error):
     """Processes a single line in the file.
 
     Args:
@@ -2927,6 +2944,8 @@ def process_line(filename, file_extension,
       function_state: A _FunctionState instance which counts function lines, etc.
       class_state: A _ClassState instance which maintains information about
                    the current stack of nested class declarations being parsed.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: A callable to which errors are reported, which takes 4 arguments:
              filename, line number, error level, and message
 
@@ -2936,7 +2955,7 @@ def process_line(filename, file_extension,
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
     check_for_multiline_comments_and_strings(filename, clean_lines, line, error)
-    check_style(filename, clean_lines, line, file_extension, error)
+    check_style(filename, clean_lines, line, file_extension, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
                    error)
     check_for_non_standard_constructs(filename, clean_lines, line,
@@ -2961,6 +2980,7 @@ def process_file_data(filename, file_extension, lines, error):
     include_state = _IncludeState()
     function_state = _FunctionState()
     class_state = _ClassState()
+    file_state = _FileState()
 
     check_for_copyright(filename, lines, error)
 
@@ -2971,7 +2991,7 @@ def process_file_data(filename, file_extension, lines, error):
     clean_lines = CleansedLines(lines)
     for line in xrange(clean_lines.num_lines()):
         process_line(filename, file_extension, clean_lines, line,
-                     include_state, function_state, class_state, error)
+                     include_state, function_state, class_state, file_state, error)
     class_state.check_finished(filename, error)
 
     check_for_include_what_you_use(filename, clean_lines, include_state, error)

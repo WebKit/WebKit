@@ -120,9 +120,10 @@ class CppStyleTestBase(unittest.TestCase):
         function_state = cpp_style._FunctionState()
         ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpp_style._ClassState()
+        file_state = cpp_style._FileState()
         cpp_style.process_line(file_name, ext, clean_lines, 0,
                                include_state, function_state,
-                               class_state, error_collector)
+                               class_state, file_state, error_collector)
         # Single-line lint tests are allowed to fail the 'unlintable function'
         # check.
         error_collector.remove_if_present(
@@ -137,8 +138,9 @@ class CppStyleTestBase(unittest.TestCase):
         lines = cpp_style.CleansedLines(lines)
         ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpp_style._ClassState()
+        file_state = cpp_style._FileState()
         for i in xrange(lines.num_lines()):
-            cpp_style.check_style(file_name, lines, i, ext, error_collector)
+            cpp_style.check_style(file_name, lines, i, ext, file_state, error_collector)
             cpp_style.check_for_non_standard_constructs(file_name, lines, i, class_state,
                                                         error_collector)
         class_state.check_finished(file_name, error_collector)
@@ -2834,7 +2836,16 @@ class WebKitStyleTest(CppStyleTestBase):
             '};\n'
             '};\n'
             '}',
-            ['Code inside a namespace should not be indented.  [whitespace/indent] [4]', 'namespace should never be indented.  [whitespace/indent] [4]'],
+            'Code inside a namespace should not be indented.  [whitespace/indent] [4]',
+            'foo.h')
+        self.assert_multi_line_lint(
+            'namespace OuterNamespace {\n'
+            '    class Document {\n'
+            '    namespace InnerNamespace {\n'
+            '};\n'
+            '};\n'
+            '}',
+            'Code inside a namespace should not be indented.  [whitespace/indent] [4]',
             'foo.h')
         self.assert_multi_line_lint(
             'namespace WebCore {\n'

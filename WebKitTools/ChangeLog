@@ -1,3 +1,19 @@
+2009-12-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        check-webkit-style is too noisy about namespace indenting issues.
+        https://bugs.webkit.org/show_bug.cgi?id=32096
+
+        * Scripts/modules/cpp_style.py:
+        Added a _FileState object to be able to track file level information. In this
+        case, it simply tracks whether the error has already been given, so that it isn't
+        done again.
+        * Scripts/modules/cpp_style_unittest.py:
+        Modified test cases to pass in the _FileState object and fix a test that expected
+        to see the namespace error twice (now it only occurs once). No new tests because
+        existing tests cover the change in functionality.
+
 2009-12-01  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.
