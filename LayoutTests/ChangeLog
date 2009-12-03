@@ -1,3 +1,24 @@
+2009-12-02  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Rewrite two tests with dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=32014
+
+        * fast/block/positioning/complex-percentage-height-expected.txt: Added.
+        * fast/block/positioning/complex-percentage-height.html:
+        * fast/lists/item-not-in-list-line-wrapping-expected.txt: Added.
+        * fast/lists/item-not-in-list-line-wrapping.html:
+        * platform/mac/fast/block/positioning/complex-percentage-height-expected.checksum: Removed.
+        * platform/mac/fast/block/positioning/complex-percentage-height-expected.png: Removed.
+        * platform/mac/fast/block/positioning/complex-percentage-height-expected.txt: Removed.
+        * platform/mac/fast/lists/item-not-in-list-line-wrapping-expected.checksum: Removed.
+        * platform/mac/fast/lists/item-not-in-list-line-wrapping-expected.png: Removed.
+        * platform/mac/fast/lists/item-not-in-list-line-wrapping-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/fast/block/positioning/complex-percentage-height-expected.txt: Removed.
+        * platform/qt/fast/lists/item-not-in-list-line-wrapping-expected.txt: Removed.
+
 2009-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Fisher.

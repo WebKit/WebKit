@@ -11,9 +11,22 @@
         Text should not overflow the yellow box.
     </p>
     <div style="background-color:yellow; width: 125px;">
-        <li>
+        <li><span id="text">
             Lorem ipsum dolor sit amet
-        </li>
+        </span></li>
     </div>
+    <div id="result">
+    </div>
+    <script>
+        var result = document.getElementById("result");
+        var text = document.getElementById("text");
+        if (text.offsetWidth <= 125)
+            result.innerHTML = "PASS";
+        else
+            result.innerHTML = "FAILED: text.offsetWidth=" + text.offsetWidth;
+
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
 </body>
 </html>

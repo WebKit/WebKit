@@ -5281,6 +5281,3 @@ fast/css/namespaces/namespaces-empty.xml
 # Failure introduced by http://trac.webkit.org/changeset/51429
 # hamaji will look into this.
 editing/selection/last-empty-inline.html
-
-fast/block/positioning/complex-percentage-height.html
-fast/lists/item-not-in-list-line-wrapping.html
