@@ -1,3 +1,17 @@
+2009-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        ~96 regression tests fail when using QuickTime 7.6 (they pass with QuickTime 7.3)
+        https://bugs.webkit.org/show_bug.cgi?id=30256
+
+        Add the QuickTime dll directory to the PATH environment variable so
+        inialization can succeed.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (addQTDirToPATH):
+        (initialize):
+
 2009-12-03  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
