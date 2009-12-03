@@ -64,7 +64,7 @@ static inline CFStringRef createKeyForPreferences(const String& key)
     return CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), keyCFString.get());
 }
 
-void WebInspectorClient::populateSetting(const String& key, InspectorController::Setting& setting)
+void WebInspectorClient::populateSetting(const String& key, String* setting)
 {
     RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
     RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
@@ -74,88 +74,19 @@ void WebInspectorClient::populateSetting(const String& key, InspectorController:
 
     CFTypeID type = CFGetTypeID(value.get());
     if (type == CFStringGetTypeID())
-        setting.set(static_cast<String>(static_cast<CFStringRef>(value.get())));
+        *setting = static_cast<String>(static_cast<CFStringRef>(value.get()));
     else if (type == CFBooleanGetTypeID())
-        setting.set(static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()))));
-    else if (type == CFNumberGetTypeID()) {
-        CFNumberRef number = static_cast<CFNumberRef>(value.get());
-        if (CFNumberIsFloatType(number)) {
-            double doubleNumber = 0.0;
-            CFNumberGetValue(static_cast<CFNumberRef>(value.get()), kCFNumberDoubleType, &doubleNumber);
-            setting.set(doubleNumber);
-        } else {
-            long longNumber = 0;
-            CFNumberGetValue(static_cast<CFNumberRef>(value.get()), kCFNumberLongType, &longNumber);
-            setting.set(longNumber);
-        }
-    } else if (type == CFArrayGetTypeID()) {
-        Vector<String> strings;
-
-        CFArrayRef array = static_cast<CFArrayRef>(value.get());
-        unsigned length = CFArrayGetCount(array);
-        for (unsigned i = 0; i < length; ++i) {
-            CFStringRef string = static_cast<CFStringRef>(CFArrayGetValueAtIndex(array, i));
-            if (CFGetTypeID(string) == CFStringGetTypeID())
-                strings.append(static_cast<String>(static_cast<CFStringRef>(string)));
-        }
-
-        setting.set(strings);
-    } else
-        ASSERT_NOT_REACHED();
+        *setting = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()))) ? "true" : "false";
+    else
+        *setting = "";
 }
 
-void WebInspectorClient::storeSetting(const String& key, const InspectorController::Setting& setting)
+void WebInspectorClient::storeSetting(const String& key, const String& setting)
 {
     RetainPtr<CFPropertyListRef> objectToStore;
-
-    switch (setting.type()) {
-        default:
-        case InspectorController::Setting::NoType:
-            ASSERT_NOT_REACHED();
-            break;
-        case InspectorController::Setting::StringType:
-            objectToStore.adoptCF(setting.string().createCFString());
-            break;
-        case InspectorController::Setting::BooleanType:
-            objectToStore = (setting.booleanValue() ? kCFBooleanTrue : kCFBooleanFalse);
-            break;
-
-        case InspectorController::Setting::DoubleType: {
-            double value = setting.doubleValue();
-            objectToStore.adoptCF(CFNumberCreate(0, kCFNumberDoubleType, &value));
-            break;
-        }
-
-        case InspectorController::Setting::IntegerType: {
-            long value = setting.integerValue();
-            objectToStore.adoptCF(CFNumberCreate(0, kCFNumberLongType, &value));
-            break;
-        }
-
-        case InspectorController::Setting::StringVectorType: {
-            const Vector<String>& strings = setting.stringVector();
-            const unsigned length = strings.size();
-
-            RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, length, &kCFTypeArrayCallBacks));
-
-            for (unsigned i = 0; i < length; ++i) {
-                RetainPtr<CFStringRef> string(AdoptCF, strings[i].createCFString());
-                CFArraySetValueAtIndex(array.get(), i, string.get());
-            }
-
-            objectToStore = array;
-            break;
-        }
-    }
-
+    objectToStore.adoptCF(setting.createCFString());
     ASSERT(objectToStore);
 
     RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
     CFPreferencesSetAppValue(preferencesKey.get(), objectToStore.get(), kCFPreferencesCurrentApplication);
-}
-
-void WebInspectorClient::removeSetting(const String& key)
-{
-    RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
-    CFPreferencesSetAppValue(preferencesKey.get(), 0, kCFPreferencesCurrentApplication);
 }

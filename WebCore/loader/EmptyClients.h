@@ -482,9 +482,8 @@ public:
     virtual void hideHighlight() { }
     virtual void inspectedURLChanged(const String&) { }
 
-    virtual void populateSetting(const String&, InspectorController::Setting&) { }
-    virtual void storeSetting(const String&, const InspectorController::Setting&) { }
-    virtual void removeSetting(const String&) { }
+    virtual void populateSetting(const String&, String*) { }
+    virtual void storeSetting(const String&, const String&) { }
 
     virtual void inspectorWindowObjectCleared() { }
 };

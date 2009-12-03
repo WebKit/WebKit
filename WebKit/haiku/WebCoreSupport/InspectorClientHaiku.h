@@ -61,9 +61,8 @@ namespace WebCore {
 
         virtual void inspectedURLChanged(const String& newURL);
 
-        virtual void populateSetting(const String& key, InspectorController::Setting&);
-        virtual void storeSetting(const String& key, const InspectorController::Setting&);
-        virtual void removeSetting(const String& key);
+        virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
+        virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
         virtual void inspectorWindowObjectCleared();
     };

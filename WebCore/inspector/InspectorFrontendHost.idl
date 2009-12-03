@@ -51,8 +51,9 @@ module core {
         void addResourceSourceToFrame(in long identifier, in Node frame);
         boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
 
+        DOMString setting(in DOMString key);
+        void setSetting(in DOMString key, in DOMString value);
+
         [Custom] void search(in Node node, in DOMString query);
-        [Custom] DOMObject setting(in DOMString key);
-        [Custom] void setSetting(in DOMString key, in DOMObject  value);
     };
 }

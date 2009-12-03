@@ -1,0 +1,5 @@
+Tests front-end settings read/write.
+
+Setting should have 'bar' value, was: 'bar'
+Setting should have 'baz' value, was: 'baz'
+

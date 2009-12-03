@@ -143,28 +143,21 @@ String InspectorClientImpl::localizedStringsURL()
 
 String InspectorClientImpl::hiddenPanels()
 {
-    // Enumerate tabs that are currently disabled.
-    return "scripts,profiles,databases";
+    notImplemented();
+    return "";
 }
 
-void InspectorClientImpl::populateSetting(const String& key, InspectorController::Setting& setting)
+void InspectorClientImpl::populateSetting(const String& key, String* value)
 {
     loadSettings();
     if (m_settings->contains(key))
-        setting = m_settings->get(key);
+        *value = m_settings->get(key);
 }
 
-void InspectorClientImpl::storeSetting(const String& key, const InspectorController::Setting& setting)
+void InspectorClientImpl::storeSetting(const String& key, const String& value)
 {
     loadSettings();
-    m_settings->set(key, setting);
-    saveSettings();
-}
-
-void InspectorClientImpl::removeSetting(const String& key)
-{
-    loadSettings();
-    m_settings->remove(key);
+    m_settings->set(key, value);
     saveSettings();
 }
 
@@ -193,21 +186,15 @@ void InspectorClientImpl::loadSettings()
 
         String name = decodeURLEscapeSequences(tokens[0]);
         String type = tokens[1];
-        InspectorController::Setting setting;
-        bool ok = true;
+        String setting;
         if (type == "string")
-            setting.set(decodeURLEscapeSequences(tokens[2]));
-        else if (type == "double")
-            setting.set(tokens[2].toDouble(&ok));
-        else if (type == "integer")
-            setting.set(static_cast<long>(tokens[2].toInt(&ok)));
+            setting = decodeURLEscapeSequences(tokens[2]);
         else if (type == "boolean")
-            setting.set(tokens[2] == "true");
+            setting = tokens[2];
         else
             continue;
 
-        if (ok)
-            m_settings->set(name, setting);
+        m_settings->set(name, setting);
     }
 }
 
@@ -215,40 +202,12 @@ void InspectorClientImpl::saveSettings()
 {
     String data;
     for (SettingsMap::iterator it = m_settings->begin(); it != m_settings->end(); ++it) {
-        String entry;
-        InspectorController::Setting value = it->second;
         String name = encodeWithURLEscapeSequences(it->first);
-        switch (value.type()) {
-        case InspectorController::Setting::StringType:
-            entry = String::format(
-                "%s:string:%s",
-                name.utf8().data(),
-                encodeWithURLEscapeSequences(value.string()).utf8().data());
-            break;
-        case InspectorController::Setting::DoubleType:
-            entry = String::format(
-                "%s:double:%f",
-                name.utf8().data(),
-                value.doubleValue());
-            break;
-        case InspectorController::Setting::IntegerType:
-            entry = String::format(
-                "%s:integer:%ld",
-                name.utf8().data(),
-                value.integerValue());
-            break;
-        case InspectorController::Setting::BooleanType:
-            entry = String::format("%s:boolean:%s",
-                                   name.utf8().data(),
-                                   value.booleanValue() ? "true" : "false");
-            break;
-        case InspectorController::Setting::StringVectorType:
-            notImplemented();
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        String value = it->second;
+        String entry = String::format(
+            "%s:string:%s",
+            name.utf8().data(),
+            encodeWithURLEscapeSequences(value).utf8().data());
         data.append(entry);
         data.append("\n");
     }

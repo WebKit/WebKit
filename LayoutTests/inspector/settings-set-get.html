@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script>
+
+function doit()
+{
+    evaluateInWebInspector("frontend_setSetting('foo', 'bar')");
+    function callback(result)
+    {
+        output("Setting should have 'bar' value, was: '" + result + "'");
+    }
+    evaluateInWebInspector("frontend_setting('foo')", callback);
+
+    evaluateInWebInspector("frontend_setSetting('foo', 'baz')");
+    function callback2(result)
+    {
+        output("Setting should have 'baz' value, was: '" + result + "'");
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_setting('foo')", callback2);
+}
+
+// Frontend functions.
+
+function frontend_setSetting(key, value)
+{
+    InspectorFrontendHost.setSetting(key, value);
+}
+
+function frontend_setting(key)
+{
+    return InspectorFrontendHost.setting(key);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p id="test-topic">
+Tests front-end settings read/write.
+</p>
+
+</body>
+</html>

@@ -70,6 +70,9 @@ public:
     void addResourceSourceToFrame(long identifier, Node* frame);
     bool addSourceToFrame(const String& mimeType, const String& source, Node* frame);
 
+    String setting(const String& key);
+    void setSetting(const String& key, const String& value);
+
 private:
     InspectorFrontendHost(InspectorController* inspectorController, InspectorClient* client);
 

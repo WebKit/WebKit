@@ -327,8 +327,8 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     _visible = YES;
     
     // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-    InspectorController::Setting shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
-    _shouldAttach = (shouldAttach.type() == InspectorController::Setting::BooleanType) ? shouldAttach.booleanValue() : true;
+    String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
+    _shouldAttach = shouldAttach != "false";
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
@@ -362,7 +362,7 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     if (_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, InspectorController::Setting(true));
+    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, "true");
     _movingWindows = YES;
 
     [self close];
@@ -376,7 +376,7 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     if (!_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, InspectorController::Setting(false));
+    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, "false");
     _movingWindows = YES;
 
     [self close];

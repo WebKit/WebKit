@@ -105,17 +105,12 @@ void InspectorClientHaiku::inspectorWindowObjectCleared()
     notImplemented();
 }
 
-void InspectorClientHaiku::populateSetting(const String& key, InspectorController::Setting&)
+void InspectorClientHaiku::populateSetting(const String& key, String* value)
 {
     notImplemented();
 }
 
-void InspectorClientHaiku::storeSetting(const String& key, const InspectorController::Setting&)
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::removeSetting(const String& key)
+void InspectorClientHaiku::storeSetting(const String& key, const String& value)
 {
     notImplemented();
 }

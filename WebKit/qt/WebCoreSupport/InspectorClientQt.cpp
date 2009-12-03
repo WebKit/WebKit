@@ -50,8 +50,8 @@ namespace WebCore {
 static const QLatin1String settingStoragePrefix("Qt/QtWebKit/QWebInspector/");
 static const QLatin1String settingStorageTypeSuffix(".type");
 
-static InspectorController::Setting variantToSetting(const QVariant& qvariant);
-static QVariant settingToVariant(const InspectorController::Setting& icSetting);
+static String variantToSetting(const QVariant& qvariant);
+static QVariant settingToVariant(const String& value);
 
 class InspectorClientWebPage : public QWebPage {
     Q_OBJECT
@@ -169,7 +169,7 @@ void InspectorClientQt::updateWindowTitle()
     }
 }
 
-void InspectorClientQt::populateSetting(const String& key, InspectorController::Setting& setting)
+void InspectorClientQt::populateSetting(const String& key, String* setting)
 {
     QSettings qsettings;
     if (qsettings.status() == QSettings::AccessError) {
@@ -183,10 +183,10 @@ void InspectorClientQt::populateSetting(const String& key, InspectorController::
     QString storedValueType = qsettings.value(settingKey + settingStorageTypeSuffix).toString();
     QVariant storedValue = qsettings.value(settingKey);
     storedValue.convert(QVariant::nameToType(storedValueType.toAscii().data()));
-    setting = variantToSetting(storedValue);
+    *setting = variantToSetting(storedValue);
 }
 
-void InspectorClientQt::storeSetting(const String& key, const InspectorController::Setting& setting)
+void InspectorClientQt::storeSetting(const String& key, const String& setting)
 {
     QSettings qsettings;
     if (qsettings.status() == QSettings::AccessError) {
@@ -201,70 +201,24 @@ void InspectorClientQt::storeSetting(const String& key, const InspectorControlle
     qsettings.setValue(settingKey + settingStorageTypeSuffix, QVariant::typeToName(valueToStore.type()));
 }
 
-void InspectorClientQt::removeSetting(const String&)
+static String variantToSetting(const QVariant& qvariant)
 {
-    notImplemented();
-}
-
-static InspectorController::Setting variantToSetting(const QVariant& qvariant)
-{
-    InspectorController::Setting retVal;
+    String retVal;
 
     switch (qvariant.type()) {
     case QVariant::Bool:
-        retVal.set(qvariant.toBool());
-        break;
-    case QVariant::Double:
-        retVal.set(qvariant.toDouble());
-        break;
-    case QVariant::Int:
-        retVal.set((long)qvariant.toInt());
-        break;
+        retVal = qvariant.toBool() ? "true" : "false";
     case QVariant::String:
-        retVal.set(qvariant.toString());
-        break;
-    case QVariant::StringList: {
-        QStringList qsList = qvariant.toStringList();
-        int listCount = qsList.count();
-        Vector<String> vector(listCount);
-        for (int i = 0; i < listCount; ++i)
-            vector[i] = qsList[i];
-        retVal.set(vector);
-        break;
-    }
+        retVal = qvariant.toString();
     }
 
     return retVal;
 }
 
-static QVariant settingToVariant(const InspectorController::Setting& icSetting)
+static QVariant settingToVariant(const String& setting)
 {
     QVariant retVal;
-
-    switch (icSetting.type()) {
-    case InspectorController::Setting::StringType:
-        retVal.setValue(static_cast<QString>(icSetting.string()));
-        break;
-    case InspectorController::Setting::StringVectorType: {
-        const Vector<String>& vector = icSetting.stringVector();
-        Vector<String>::const_iterator iter;
-        QStringList qsList;
-        for (iter = vector.begin(); iter != vector.end(); ++iter)
-            qsList << *iter;
-        retVal.setValue(qsList);
-        break;
-    }
-    case InspectorController::Setting::DoubleType:
-        retVal.setValue(icSetting.doubleValue());
-        break;
-    case InspectorController::Setting::IntegerType:
-        retVal.setValue((int)icSetting.integerValue());
-        break;
-    case InspectorController::Setting::BooleanType:
-        retVal.setValue(icSetting.booleanValue());
-        break;
-    }
-
+    retVal.setValue(static_cast<QString>(setting));
     return retVal;
 }
 

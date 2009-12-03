@@ -1,3 +1,14 @@
+2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Simplify the settings support in inspector controller.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32076
+
+        * inspector/settings-set-get-expected.txt: Added.
+        * inspector/settings-set-get.html: Added.
+
 2009-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

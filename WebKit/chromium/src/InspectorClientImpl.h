@@ -59,11 +59,10 @@ public:
     virtual void inspectedURLChanged(const WebCore::String& newURL);
     virtual void populateSetting(
         const WebCore::String& key,
-        WebCore::InspectorController::Setting&);
+        WebCore::String* value);
     virtual void storeSetting(
         const WebCore::String& key,
-        const WebCore::InspectorController::Setting&);
-    virtual void removeSetting(const WebCore::String& key);
+        const WebCore::String& value);
     virtual void inspectorWindowObjectCleared();
 
 private:
@@ -73,7 +72,7 @@ private:
     // The WebViewImpl of the page being inspected; gets passed to the constructor
     WebViewImpl* m_inspectedWebView;
 
-    typedef HashMap<WebCore::String, WebCore::InspectorController::Setting> SettingsMap;
+    typedef HashMap<WebCore::String, WebCore::String> SettingsMap;
     OwnPtr<SettingsMap> m_settings;
 };
 

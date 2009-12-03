@@ -1,3 +1,44 @@
+2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Simplify the settings support in inspector controller.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32076
+
+        Test: inspector/settings-set-get.html
+
+        * WebCore.Inspector.exp:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::setting):
+        (WebCore::InspectorController::setSetting):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::attachWindow):
+        (WebCore::InspectorController::setAttachedWindowHeight):
+        (WebCore::InspectorController::storeLastActivePanel):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::showWindow):
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        (WebCore::InspectorController::ensureResourceTrackingSettingsLoaded):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setting):
+        (WebCore::InspectorFrontendHost::setSetting):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyInspectorClient::populateSetting):
+        (WebCore::EmptyInspectorClient::storeSetting):
+
 2009-12-03  Ben Murdoch  <benm@google.com>
 
         Reviewed by Brady Eidson.

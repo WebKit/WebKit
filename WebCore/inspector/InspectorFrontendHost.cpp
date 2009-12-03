@@ -188,6 +188,17 @@ bool InspectorFrontendHost::addSourceToFrame(const String& mimeType, const Strin
     return true;
 }
 
+String InspectorFrontendHost::setting(const String& key)
+{
+    return m_inspectorController ? m_inspectorController->setting(key) : "";
+}
+
+void InspectorFrontendHost::setSetting(const String& key, const String& value)
+{
+    if (m_inspectorController)
+        m_inspectorController->setSetting(key, value);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

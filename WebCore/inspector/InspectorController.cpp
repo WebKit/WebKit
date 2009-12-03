@@ -121,7 +121,6 @@ static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
 
 static unsigned s_inspectorControllerCount;
-static HashMap<String, InspectorController::Setting*>* s_settingCache;
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
@@ -168,12 +167,6 @@ InspectorController::~InspectorController()
     ASSERT(s_inspectorControllerCount);
     --s_inspectorControllerCount;
 
-    if (!s_inspectorControllerCount && s_settingCache) {
-        deleteAllValues(*s_settingCache);
-        delete s_settingCache;
-        s_settingCache = 0;
-    }
-    
     releaseDOMAgent();
 
     m_inspectorBackend->disconnectController();
@@ -204,46 +197,22 @@ bool InspectorController::enabled() const
     return m_inspectedPage->settings()->developerExtrasEnabled();
 }
 
-const InspectorController::Setting& InspectorController::setting(const String& key) const
+String InspectorController::setting(const String& key) const
 {
-    if (!s_settingCache)
-        s_settingCache = new HashMap<String, Setting*>;
+    Settings::iterator it = m_settings.find(key);
+    if (it != m_settings.end())
+        return it->second;
 
-    if (Setting* cachedSetting = s_settingCache->get(key))
-        return *cachedSetting;
-
-    Setting* newSetting = new Setting;
-    s_settingCache->set(key, newSetting);
-
-    m_client->populateSetting(key, *newSetting);
-
-    return *newSetting;
+    String value;
+    m_client->populateSetting(key, &value);
+    m_settings.set(key, value);
+    return value;
 }
 
-void InspectorController::setSetting(const String& key, const Setting& setting)
+void InspectorController::setSetting(const String& key, const String& value)
 {
-    if (setting.type() == Setting::NoType) {
-        if (s_settingCache) {
-            Setting* cachedSetting = s_settingCache->get(key);
-            if (cachedSetting) {
-                s_settingCache->remove(key);
-                delete cachedSetting;
-            }
-        }
-
-        m_client->removeSetting(key);
-        return;
-    }
-
-    if (!s_settingCache)
-        s_settingCache = new HashMap<String, Setting*>;
-
-    if (Setting* cachedSetting = s_settingCache->get(key))
-        *cachedSetting = setting;
-    else
-        s_settingCache->set(key, new Setting(setting));
-
-    m_client->storeSetting(key, setting);
+    m_settings.set(key, value);
+    m_client->storeSetting(key, value);
 }
 
 // Trying to inspect something in a frame with JavaScript disabled would later lead to
@@ -323,11 +292,8 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         populateScriptObjects();
 
         if (m_showAfterVisible == CurrentPanel) {
-          Setting lastActivePanelSetting = setting(lastActivePanelSettingName);
-          if (lastActivePanelSetting.type() == Setting::StringType)
-              m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting.string());
-          else
-              m_showAfterVisible = ElementsPanel;
+          String lastActivePanelSetting = setting(lastActivePanelSettingName);
+          m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting);
         }
 
         if (m_nodeToFocus)
@@ -439,8 +405,10 @@ void InspectorController::attachWindow()
 
     m_client->attachWindow();
 
-    Setting attachedHeight = setting(inspectorAttachedHeightName);
-    unsigned preferredHeight = attachedHeight.type() == Setting::IntegerType ? attachedHeight.integerValue() : defaultAttachedHeight;
+    String attachedHeight = setting(inspectorAttachedHeightName);
+    bool success = true;
+    int height = attachedHeight.toInt(&success);
+    unsigned preferredHeight = success ? height : defaultAttachedHeight;
 
     // We need to constrain the window height here in case the user has resized the inspected page's window so that
     // the user's preferred height would be too big to display.
@@ -470,14 +438,14 @@ void InspectorController::setAttachedWindowHeight(unsigned height)
     unsigned totalHeight = m_page->mainFrame()->view()->visibleHeight() + m_inspectedPage->mainFrame()->view()->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     
-    setSetting(inspectorAttachedHeightName, Setting(attachedHeight));
+    setSetting(inspectorAttachedHeightName, String::number(attachedHeight));
     
     m_client->setAttachedWindowHeight(attachedHeight);
 }
 
 void InspectorController::storeLastActivePanel(const String& panelName)
 {
-    setSetting(lastActivePanelSettingName, Setting(panelName));
+    setSetting(lastActivePanelSettingName, panelName);
 }
 
 void InspectorController::toggleSearchForNodeInPage()
@@ -549,11 +517,11 @@ void InspectorController::scriptObjectReady()
     setFrontendProxyObject(m_scriptState, webInspectorObj, injectedScriptObj);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    Setting debuggerEnabled = setting(debuggerEnabledSettingName);
-    if (debuggerEnabled.type() == Setting::BooleanType && debuggerEnabled.booleanValue())
+    String debuggerEnabled = setting(debuggerEnabledSettingName);
+    if (debuggerEnabled == "true")
         enableDebugger();
-    Setting profilerEnabled = setting(profilerEnabledSettingName);
-    if (profilerEnabled.type() == Setting::BooleanType && profilerEnabled.booleanValue())
+    String profilerEnabled = setting(profilerEnabledSettingName);
+    if (profilerEnabled == "true")
         enableProfiler();
 #endif
 
@@ -645,8 +613,10 @@ void InspectorController::showWindow()
 
     m_client->showWindow();
 
-    Setting attachedHeight = setting(inspectorAttachedHeightName);
-    unsigned preferredHeight = attachedHeight.type() == Setting::IntegerType ? attachedHeight.integerValue() : defaultAttachedHeight;
+    String attachedHeight = setting(inspectorAttachedHeightName);
+    bool success = true;
+    int height = attachedHeight.toInt(&success);
+    unsigned preferredHeight = success ? height : defaultAttachedHeight;
 
     // This call might not go through (if the window starts out detached), but if the window is initially created attached,
     // InspectorController::attachWindow is never called, so we need to make sure to set the attachedWindowHeight.
@@ -1077,7 +1047,7 @@ void InspectorController::enableResourceTracking(bool always, bool reload)
         return;
 
     if (always)
-        setSetting(resourceTrackingEnabledSettingName, Setting(true));
+        setSetting(resourceTrackingEnabledSettingName, "true");
 
     if (m_resourceTrackingEnabled)
         return;
@@ -1097,7 +1067,7 @@ void InspectorController::disableResourceTracking(bool always)
         return;
 
     if (always)
-        setSetting(resourceTrackingEnabledSettingName, Setting(false));
+        setSetting(resourceTrackingEnabledSettingName, "false");
 
     ASSERT(m_inspectedPage);
     m_resourceTrackingEnabled = false;
@@ -1111,8 +1081,8 @@ void InspectorController::ensureResourceTrackingSettingsLoaded()
         return;
     m_resourceTrackingSettingsLoaded = true;
 
-    Setting resourceTracking = setting(resourceTrackingEnabledSettingName);
-    if (resourceTracking.type() == Setting::BooleanType && resourceTracking.booleanValue())
+    String resourceTracking = setting(resourceTrackingEnabledSettingName);
+    if (resourceTracking == "true")
         m_resourceTrackingEnabled = true;
 }
 
@@ -1500,7 +1470,7 @@ void InspectorController::toggleRecordButton(bool isProfiling)
 void InspectorController::enableProfiler(bool always, bool skipRecompile)
 {
     if (always)
-        setSetting(profilerEnabledSettingName, Setting(true));
+        setSetting(profilerEnabledSettingName, "true");
 
     if (m_profilerEnabled)
         return;
@@ -1517,7 +1487,7 @@ void InspectorController::enableProfiler(bool always, bool skipRecompile)
 void InspectorController::disableProfiler(bool always)
 {
     if (always)
-        setSetting(profilerEnabledSettingName, Setting(false));
+        setSetting(profilerEnabledSettingName, "false");
 
     if (!m_profilerEnabled)
         return;
@@ -1533,7 +1503,7 @@ void InspectorController::disableProfiler(bool always)
 void InspectorController::enableDebuggerFromFrontend(bool always)
 {
     if (always)
-        setSetting(debuggerEnabledSettingName, Setting(true));
+        setSetting(debuggerEnabledSettingName, "true");
 
     ASSERT(m_inspectedPage);
 
@@ -1566,7 +1536,7 @@ void InspectorController::disableDebugger(bool always)
         return;
 
     if (always)
-        setSetting(debuggerEnabledSettingName, Setting(false));
+        setSetting(debuggerEnabledSettingName, "false");
 
     ASSERT(m_inspectedPage);
 

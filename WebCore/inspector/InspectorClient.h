@@ -59,9 +59,8 @@ public:
 
     virtual void inspectedURLChanged(const String& newURL) = 0;
 
-    virtual void populateSetting(const String& key, InspectorController::Setting&) = 0;
-    virtual void storeSetting(const String& key, const InspectorController::Setting&) = 0;
-    virtual void removeSetting(const String& key) = 0;
+    virtual void populateSetting(const String& key, String* value) = 0;
+    virtual void storeSetting(const String& key, const String& value) = 0;
 
     virtual void inspectorWindowObjectCleared() = 0;
 };
