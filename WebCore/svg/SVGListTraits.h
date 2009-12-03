@@ -60,7 +60,7 @@ namespace WebCore {
 
     template<>
     struct SVGListTraits<false, float> {
-        static double nullItem() { return 0.0; }
+        static double nullItem() { return 0; }
         static bool isNull(double) { return false; }
     };
 
