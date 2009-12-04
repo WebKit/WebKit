@@ -30,15 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <qwebpage.h>
-#include <qwebview.h>
-#include <qwebframe.h>
-#include <qwebsettings.h>
-#include <qwebelement.h>
-#include <qwebinspector.h>
-
 #include <QtGui>
-#include <QDebug>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkRequest>
 #if !defined(QT_NO_PRINTER)
@@ -49,10 +41,19 @@
 #include <QtUiTools/QUiLoader>
 #endif
 
-#include <QVector>
-#include <QTextStream>
+#include <QDebug>
 #include <QFile>
+#include <QTextStream>
+#include <QVector>
+
 #include <cstdio>
+#include <qwebelement.h>
+#include <qwebframe.h>
+#include <qwebinspector.h>
+#include <qwebpage.h>
+#include <qwebsettings.h>
+#include <qwebview.h>
+
 
 #ifndef NDEBUG
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
@@ -67,8 +68,7 @@ static QUrl urlFromUserInput(const QString& input)
 #endif
 }
 
-class WebView : public QWebView
-{
+class WebView : public QWebView {
     Q_OBJECT
 public:
     WebView(QWidget* parent) : QWebView(parent) {}
@@ -112,8 +112,7 @@ public:
     Qt::KeyboardModifiers keyboardModifiers;
 };
 
-class WebPage : public QWebPage
-{
+class WebPage : public QWebPage {
 public:
     WebPage(QWidget *parent) : QWebPage(parent) {}
 
@@ -135,7 +134,8 @@ public:
             QWebPage* page = createWindow(QWebPage::WebBrowserWindow);
             page->mainFrame()->load(request);
             return false;
-        } else if (webView->keyboardModifiers & Qt::AltModifier) {
+        }
+        if (webView->keyboardModifiers & Qt::AltModifier) {
             webView->openUrlInDefaultBrowser(request.url());
             return false;
         }
@@ -163,11 +163,11 @@ protected:
     }
 };
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QString url = QString()): currentZoom(100) {
+    MainWindow(QString url = QString()): currentZoom(100)
+    {
         setAttribute(Qt::WA_DeleteOnClose);
         if (qgetenv("QTLAUNCHER_USE_ARGB_VISUALS").toInt() == 1)
             setAttribute(Qt::WA_TranslucentBackground);
@@ -219,17 +219,20 @@ public:
         zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
     }
 
-    QWebPage* webPage() const {
+    QWebPage* webPage() const
+    {
         return view->page();
     }
 
-    QWebView* webView() const {
+    QWebView* webView() const
+    {
         return view;
     }
 
 protected slots:
 
-    void changeLocation() {
+    void changeLocation()
+    {
         QString string = urlEdit->text();
         QUrl url = urlFromUserInput(string);
         if (url.scheme().isEmpty())
@@ -241,7 +244,8 @@ protected slots:
         }
     }
 
-    void loadFinished() {
+    void loadFinished()
+    {
         urlEdit->setText(view->url().toString());
 
         QUrl::FormattingOptions opts;
@@ -258,7 +262,8 @@ protected slots:
         urlModel.setStringList(urlList);
     }
 
-    void showLinkHover(const QString &link, const QString &toolTip) {
+    void showLinkHover(const QString &link, const QString &toolTip)
+    {
         statusBar()->showMessage(link);
 #ifndef QT_NO_TOOLTIP
         if (!toolTip.isEmpty())
@@ -266,22 +271,24 @@ protected slots:
 #endif
     }
 
-    void zoomIn() {
+    void zoomIn()
+    {
         int i = zoomLevels.indexOf(currentZoom);
         Q_ASSERT(i >= 0);
         if (i < zoomLevels.count() - 1)
             currentZoom = zoomLevels[i + 1];
 
-        view->setZoomFactor(qreal(currentZoom)/100.0);
+        view->setZoomFactor(qreal(currentZoom) / 100.0);
     }
 
-    void zoomOut() {
+    void zoomOut()
+    {
         int i = zoomLevels.indexOf(currentZoom);
         Q_ASSERT(i >= 0);
         if (i > 0)
             currentZoom = zoomLevels[i - 1];
 
-        view->setZoomFactor(qreal(currentZoom)/100.0);
+        view->setZoomFactor(qreal(currentZoom) / 100.0);
     }
 
     void resetZoom()
@@ -295,7 +302,8 @@ protected slots:
         view->page()->settings()->setAttribute(QWebSettings::ZoomTextOnly, b);
     }
 
-    void print() {
+    void print()
+    {
 #if !defined(QT_NO_PRINTER)
         QPrintPreviewDialog dlg(this);
         connect(&dlg, SIGNAL(paintRequested(QPrinter *)),
@@ -320,7 +328,8 @@ protected slots:
         }
     }
 
-    void setEditable(bool on) {
+    void setEditable(bool on)
+    {
         view->page()->setContentEditable(on);
         formatMenuAction->setVisible(on);
     }
@@ -337,11 +346,13 @@ protected slots:
     }
     */
 
-    void dumpHtml() {
+    void dumpHtml()
+    {
         qDebug() << "HTML: " << view->page()->mainFrame()->toHtml();
     }
 
-    void selectElements() {
+    void selectElements()
+    {
         bool ok;
         QString str = QInputDialog::getText(this, "Select elements", "Choose elements",
                                             QLineEdit::Normal, "a", &ok);
@@ -356,8 +367,9 @@ protected slots:
 
 public slots:
 
-    void newWindow(const QString &url = QString()) {
-        MainWindow *mw = new MainWindow(url);
+    void newWindow(const QString &url = QString())
+    {
+        MainWindow* mw = new MainWindow(url);
         mw->show();
     }
 
@@ -367,7 +379,8 @@ private:
     int currentZoom;
 
     // create the status bar, tool bar & menu
-    void setupUI() {
+    void setupUI()
+    {
         progress = new QProgressBar(this);
         progress->setRange(0, 100);
         progress->setMinimumSize(100, 20);
@@ -383,24 +396,24 @@ private:
         urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
-        QCompleter *completer = new QCompleter(this);
+        QCompleter* completer = new QCompleter(this);
         urlEdit->setCompleter(completer);
         completer->setModel(&urlModel);
 
-        QToolBar *bar = addToolBar("Navigation");
+        QToolBar* bar = addToolBar("Navigation");
         bar->addAction(view->pageAction(QWebPage::Back));
         bar->addAction(view->pageAction(QWebPage::Forward));
         bar->addAction(view->pageAction(QWebPage::Reload));
         bar->addAction(view->pageAction(QWebPage::Stop));
         bar->addWidget(urlEdit);
 
-        QMenu *fileMenu = menuBar()->addMenu("&File");
-        QAction *newWindow = fileMenu->addAction("New Window", this, SLOT(newWindow()));
+        QMenu* fileMenu = menuBar()->addMenu("&File");
+        QAction* newWindow = fileMenu->addAction("New Window", this, SLOT(newWindow()));
         fileMenu->addAction(tr("Print"), this, SLOT(print()), QKeySequence::Print);
         QAction* screenshot = fileMenu->addAction("Screenshot", this, SLOT(screenshot()));
         fileMenu->addAction("Close", this, SLOT(close()));
 
-        QMenu *editMenu = menuBar()->addMenu("&Edit");
+        QMenu* editMenu = menuBar()->addMenu("&Edit");
         editMenu->addAction(view->pageAction(QWebPage::Undo));
         editMenu->addAction(view->pageAction(QWebPage::Redo));
         editMenu->addSeparator();
@@ -408,30 +421,30 @@ private:
         editMenu->addAction(view->pageAction(QWebPage::Copy));
         editMenu->addAction(view->pageAction(QWebPage::Paste));
         editMenu->addSeparator();
-        QAction *setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
+        QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
         setEditable->setCheckable(true);
 
-        QMenu *viewMenu = menuBar()->addMenu("&View");
+        QMenu* viewMenu = menuBar()->addMenu("&View");
         viewMenu->addAction(view->pageAction(QWebPage::Stop));
         viewMenu->addAction(view->pageAction(QWebPage::Reload));
         viewMenu->addSeparator();
-        QAction *zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
-        QAction *zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
-        QAction *resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
-        QAction *zoomTextOnly = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
+        QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
+        QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
+        QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
+        QAction* zoomTextOnly = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
         zoomTextOnly->setCheckable(true);
         zoomTextOnly->setChecked(false);
         viewMenu->addSeparator();
         viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
         //viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
 
-        QMenu *formatMenu = new QMenu("F&ormat", this);
+        QMenu* formatMenu = new QMenu("F&ormat", this);
         formatMenuAction = menuBar()->addMenu(formatMenu);
         formatMenuAction->setVisible(false);
         formatMenu->addAction(view->pageAction(QWebPage::ToggleBold));
         formatMenu->addAction(view->pageAction(QWebPage::ToggleItalic));
         formatMenu->addAction(view->pageAction(QWebPage::ToggleUnderline));
-        QMenu *writingMenu = formatMenu->addMenu(tr("Writing Direction"));
+        QMenu* writingMenu = formatMenu->addMenu(tr("Writing Direction"));
         writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionDefault));
         writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionLeftToRight));
         writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionRightToLeft));
@@ -454,7 +467,7 @@ private:
         view->pageAction(QWebPage::ToggleItalic)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
         view->pageAction(QWebPage::ToggleUnderline)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
 
-        QMenu *toolsMenu = menuBar()->addMenu("&Tools");
+        QMenu* toolsMenu = menuBar()->addMenu("&Tools");
         toolsMenu->addAction("Select elements...", this, SLOT(selectElements()));
         QAction* showInspectorAction = toolsMenu->addAction("Show inspector", inspector, SLOT(setVisible(bool)));
         showInspectorAction->setCheckable(true);
@@ -463,12 +476,12 @@ private:
 
     }
 
-    QWebView *view;
-    QLineEdit *urlEdit;
-    QProgressBar *progress;
+    QWebView* view;
+    QLineEdit* urlEdit;
+    QProgressBar* progress;
     WebInspector* inspector;
 
-    QAction *formatMenuAction;
+    QAction* formatMenuAction;
 
     QStringList urlList;
     QStringListModel urlModel;
@@ -485,14 +498,14 @@ bool WebPage::extension(Extension extension, const ExtensionOption *option, Exte
     return true;
 }
 
-QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
+QWebPage* WebPage::createWindow(QWebPage::WebWindowType)
 {
-    MainWindow *mw = new MainWindow;
+    MainWindow* mw = new MainWindow;
     mw->show();
     return mw->webPage();
 }
 
-QObject *WebPage::createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues)
+QObject* WebPage::createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues)
 {
     Q_UNUSED(url);
     Q_UNUSED(paramNames);
@@ -506,8 +519,7 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url, const QS
 #endif
 }
 
-class URLLoader : public QObject
-{
+class URLLoader : public QObject {
     Q_OBJECT
 public:
     URLLoader(QWebView* view, const QString& inputFileName)
@@ -615,7 +627,7 @@ int main(int argc, char **argv)
             exit(0);
         }
         MainWindow* window = new MainWindow;
-        QWebView *view = window->webView();
+        QWebView* view = window->webView();
         URLLoader loader(view, listFile);
         QObject::connect(view, SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
         loader.loadNext();
