@@ -1,3 +1,22 @@
+2009-12-03  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        New History changes do not compile for Chromium/V8
+        https://bugs.webkit.org/show_bug.cgi?id=32148
+
+        Existing tests suffice (just trying to get code to compile).
+
+        * WebCore.gypi:
+        Added V8HistoryCustom.cpp and other missing files.
+        * bindings/v8/custom/V8CustomBinding.h:
+        Added custom handlers for History.pushState()/replaceState().
+        * bindings/v8/custom/V8HistoryCustom.cpp: Added.
+        Added custom handlers for History.pushState()/replaceState().
+        * history/BackForwardListChromium.cpp:
+        (WebCore::BackForwardList::pushStateItem):
+        Stubbed out this routine for now - will implement in the future.
+
 2009-12-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
