@@ -135,11 +135,6 @@ public:
 
     // Zoom ----------------------------------------------------------------
 
-    // DEPRECATED: Will be removed very soon!
-    virtual void zoomIn(bool textOnly) = 0;
-    virtual void zoomOut(bool textOnly) = 0;
-    virtual void zoomDefault() = 0;
-
     // Returns the current zoom level.  0 is "original size", and each increment
     // above or below represents zooming 20% larger or smaller to limits of 300%
     // and 50% of original size, respectively.

@@ -1246,42 +1246,6 @@ void WebViewImpl::clearFocusedNode()
     }
 }
 
-// DEPRECATED
-void WebViewImpl::zoomIn(bool textOnly)
-{
-    Frame* frame = mainFrameImpl()->frame();
-    double multiplier = std::min(std::pow(textSizeMultiplierRatio, m_zoomLevel + 1),
-                                 maxTextSizeMultiplier);
-    float zoomFactor = static_cast<float>(multiplier);
-    if (zoomFactor != frame->zoomFactor()) {
-        ++m_zoomLevel;
-        frame->setZoomFactor(zoomFactor, textOnly);
-    }
-}
-
-// DEPRECATED
-void WebViewImpl::zoomOut(bool textOnly)
-{
-    Frame* frame = mainFrameImpl()->frame();
-    double multiplier = std::max(std::pow(textSizeMultiplierRatio, m_zoomLevel - 1),
-                                 minTextSizeMultiplier);
-    float zoomFactor = static_cast<float>(multiplier);
-    if (zoomFactor != frame->zoomFactor()) {
-        --m_zoomLevel;
-        frame->setZoomFactor(zoomFactor, textOnly);
-    }
-}
-
-// DEPRECATED
-void WebViewImpl::zoomDefault()
-{
-    // We don't change the zoom mode (text only vs. full page) here. We just want
-    // to reset whatever is already set.
-    m_zoomLevel = 0;
-    mainFrameImpl()->frame()->setZoomFactor(
-        1.0f, mainFrameImpl()->frame()->isZoomFactorTextOnly());
-}
-
 int WebViewImpl::zoomLevel()
 {
     return m_zoomLevel;

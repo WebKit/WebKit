@@ -116,9 +116,6 @@ public:
     virtual void setFocusedFrame(WebFrame* frame);
     virtual void setInitialFocus(bool reverse);
     virtual void clearFocusedNode();
-    virtual void zoomIn(bool textOnly);   // DEPRECATED
-    virtual void zoomOut(bool textOnly);  // DEPRECATED
-    virtual void zoomDefault();           // DEPRECATED
     virtual int zoomLevel();
     virtual int setZoomLevel(bool textOnly, int zoomLevel);
     virtual void performMediaPlayerAction(
