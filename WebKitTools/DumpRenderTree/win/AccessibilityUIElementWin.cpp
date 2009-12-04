@@ -176,6 +176,11 @@ JSStringRef AccessibilityUIElement::subrole()
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::roleDescription()
+{
+    return 0;
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     BSTR titleBSTR;

@@ -161,6 +161,11 @@ JSStringRef AccessibilityUIElement::subrole()
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::roleDescription()
+{
+    return 0;
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     const gchar* name = atk_object_get_name(ATK_OBJECT(m_element));

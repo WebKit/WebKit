@@ -43,17 +43,12 @@ var successfullyParsed = false;
           var subroles = new Array("AXLandmarkApplication","AXDocumentArticle","AXLandmarkBanner","AXLandmarkComplementary",
                           "AXLandmarkContentInfo", "AXDocument", "AXApplicationLog", "AXLandmarkMain", "AXApplicationMarquee",
                           "AXDocumentNote", "AXLandmarkNavigation", "AXDocumentRegion", "AXLandmarkSearch", "AXApplicationStatus", 
-                          "AXUserInterfaceTooltip", "AXDocumentMath");
+                          "AXUserInterfaceTooltip", "AXDocumentMath", "AXDefinition");
 
           for (var k = 0; k < subroles.length; k++) {
               shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
               shouldBe("obj.childAtIndex(k).subrole", '"AXSubrole: ' + subroles[k] + '"');
           }
-
-          // Definition role is a plain AXGroup with a AXDescription
-          shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
-          shouldBe("obj.childAtIndex(k).description", "'AXDescription: definition'");
-
     }
 
     successfullyParsed = true;

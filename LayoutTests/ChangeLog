@@ -1,5 +1,18 @@
 2009-12-03  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Eric Seidel.
+
+        AX: VO just says "term" on many web sites
+        https://bugs.webkit.org/show_bug.cgi?id=32139
+
+        * platform/mac/accessibility/aria-grouping-roles-expected.txt:
+        * platform/mac/accessibility/aria-grouping-roles.html:
+        * platform/mac/accessibility/definition-list-term-expected.txt: Added.
+        * platform/mac/accessibility/definition-list-term.html: Added.
+        * platform/mac/accessibility/lists-expected.txt:
+
+2009-12-03  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         Implement WAI-ARIA scrollbar role and related property aria-orientation

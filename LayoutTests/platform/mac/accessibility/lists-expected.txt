@@ -249,14 +249,14 @@ AXTitleUIElement: (null)
 
 
 AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
+AXSubrole: AXTerm
+AXRoleDescription: term
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
 AXTitle: 
-AXDescription: term
+AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
@@ -272,14 +272,14 @@ AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
+AXSubrole: AXDefinition
+AXRoleDescription: definition
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle: 
-AXDescription: definition
+AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
@@ -295,14 +295,14 @@ AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
+AXSubrole: AXTerm
+AXRoleDescription: term
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
 AXTitle: 
-AXDescription: term
+AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
@@ -318,14 +318,14 @@ AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
+AXSubrole: AXDefinition
+AXRoleDescription: definition
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle: 
-AXDescription: definition
+AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
@@ -341,14 +341,14 @@ AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
+AXSubrole: AXDefinition
+AXRoleDescription: definition
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
 AXTitle: 
-AXDescription: definition
+AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1

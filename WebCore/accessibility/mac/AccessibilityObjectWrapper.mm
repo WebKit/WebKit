@@ -1190,7 +1190,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXUserInterfaceTooltip";
         case TabPanelRole:
             return @"AXTabPanel";
-
+        case DefinitionListTermRole:
+            return @"AXTerm";
+        case DefinitionListDefinitionRole:
+            return @"AXDefinition";
         // Default doesn't return anything, so roles defined below can be chosen.
         default:
             break;
@@ -1259,6 +1262,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
             case TabPanelRole:
                 return AXARIAContentGroupText(@"ARIATabPanel");
+            case DefinitionListTermRole:
+                return AXDefinitionListTermText();
+            case DefinitionListDefinitionRole:
+                return AXDefinitionListDefinitionText();
         }
     }        
     

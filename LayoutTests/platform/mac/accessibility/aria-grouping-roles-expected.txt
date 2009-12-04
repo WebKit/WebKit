@@ -53,7 +53,7 @@ PASS obj.childAtIndex(k).subrole is "AXSubrole: AXUserInterfaceTooltip"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXDocumentMath"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
-PASS obj.childAtIndex(k).description is 'AXDescription: definition'
+PASS obj.childAtIndex(k).subrole is "AXSubrole: AXDefinition"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1116,12 +1116,7 @@ String AccessibilityRenderObject::accessibilityDescription() const
         if (owner && owner->isHTMLElement())
             return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
     }
-    
-    if (roleValue() == DefinitionListTermRole)
-        return AXDefinitionListTermText();
-    if (roleValue() == DefinitionListDefinitionRole)
-        return AXDefinitionListDefinitionText();
-    
+
     return String();
 }
 
@@ -1761,10 +1756,6 @@ bool AccessibilityRenderObject::isSelected() const
     String ariaSelected = getAttribute(aria_selectedAttr).string();
     if (equalIgnoringCase(ariaSelected, "true"))
         return true;    
-    
-    // ARIA says that selection should follow focus unless specifically set otherwise.
-    if (!equalIgnoringCase(ariaSelected, "false") && isFocused())
-        return true;
     
     if (isTabItem() && isTabItemSelected())
         return true;
