@@ -2,28 +2,6 @@
 
         Reviewed by Eric Seidel.
 
-        Allow custom memory allocation control for 2 classes of the platform directory in WebCore
-        https://bugs.webkit.org/show_bug.cgi?id=
-
-        Inherits the following class from Noncopyable because it is instantiated
-        by 'new' and no need to be copyable:
-
-        class/struct name         - instantiated at: WebCore/'location'
-
-        class SharedTimer         - (its child class) workers/WorkerRunLoop.cpp:91
-
-        Inherits the following class from FastAllocBase because it is
-        instantiated by 'new':
-
-        class TransformOperations - rendering/style/RenderStyle.h:1175
-
-        * platform/SharedTimer.h:
-        * platform/graphics/transforms/TransformOperations.h:
-
-2009-12-04  Zoltan Horvath  <zoltan@webkit.org>
-
-        Reviewed by Eric Seidel.
-
         Allow custom memory allocation control for the svg directory in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=
 
