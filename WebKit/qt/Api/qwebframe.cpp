@@ -267,7 +267,7 @@ WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
     return frame->view()->verticalScrollbar();
 }
 
-void QWebFramePrivate::renderPrivate(QPainter *painter, QWebFrame::RenderLayer layer, const QRegion &clip)
+void QWebFramePrivate::renderContentsLayerAbsoluteCoords(GraphicsContext* context, const QRegion& clip)
 {
     if (!frame->view() || !frame->contentRenderer())
         return;
@@ -276,15 +276,42 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, QWebFrame::RenderLayer l
     if (vector.isEmpty())
         return;
 
-    GraphicsContext context(painter);
-    if (context.paintingDisabled() && !context.updatingControlTints())
-        return;
+    QPainter* painter = context->platformContext();
 
     WebCore::FrameView* view = frame->view();
     view->layoutIfNeededRecursive();
 
     for (int i = 0; i < vector.size(); ++i) {
         const QRect& clipRect = vector.at(i);
+
+        painter->save();
+        painter->setClipRect(clipRect, Qt::IntersectClip);
+
+        context->save();
+        view->paintContents(context, clipRect);
+        context->restore();
+
+        painter->restore();
+    }
+}
+
+void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame::RenderLayer layer, const QRegion& clip)
+{
+    if (!frame->view() || !frame->contentRenderer())
+        return;
+
+    QVector<QRect> vector = clip.rects();
+    if (vector.isEmpty())
+        return;
+
+    QPainter* painter = context->platformContext();
+
+    WebCore::FrameView* view = frame->view();
+    view->layoutIfNeededRecursive();
+
+    for (int i = 0; i < vector.size(); ++i) {
+        const QRect& clipRect = vector.at(i);
+
         QRect intersectedRect = clipRect.intersected(view->frameRect());
 
         painter->save();
@@ -294,39 +321,41 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, QWebFrame::RenderLayer l
         int y = view->y();
 
         if (layer & QWebFrame::ContentsLayer) {
-            context.save();
+            context->save();
 
             int scrollX = view->scrollX();
             int scrollY = view->scrollY();
 
             QRect rect = intersectedRect;
-            context.translate(x, y);
+            context->translate(x, y);
             rect.translate(-x, -y);
-            context.translate(-scrollX, -scrollY);
+            context->translate(-scrollX, -scrollY);
             rect.translate(scrollX, scrollY);
-            context.clip(view->visibleContentRect());
+            context->clip(view->visibleContentRect());
 
-            view->paintContents(&context, rect);
+            view->paintContents(context, rect);
 
-            context.restore();
+            context->restore();
         }
 
         if (layer & QWebFrame::ScrollBarLayer
             && !view->scrollbarsSuppressed()
             && (view->horizontalScrollbar() || view->verticalScrollbar())) {
-            context.save();
+            context->save();
 
             QRect rect = intersectedRect;
-            context.translate(x, y);
+            context->translate(x, y);
             rect.translate(-x, -y);
 
-            view->paintScrollbars(&context, rect);
+            view->paintScrollbars(context, rect);
 
-            context.restore();
+            context->restore();
         }
 
+#if ENABLE(PAN_SCROLLING)
         if (layer & QWebFrame::PanIconLayer)
-            view->paintPanScrollIcon(&context);
+            view->paintPanScrollIcon(context);
+#endif
 
         painter->restore();
     }
@@ -1002,29 +1031,41 @@ void QWebFrame::setScrollPosition(const QPoint &pos)
 
 void QWebFrame::render(QPainter* painter, RenderLayer layer, const QRegion& clip)
 {
+    GraphicsContext context(painter);
+    if (context.paintingDisabled() && !context.updatingControlTints())
+        return;
+
     if (!clip.isEmpty())
-        d->renderPrivate(painter, layer, clip);
+        d->renderRelativeCoords(&context, layer, clip);
     else if (d->frame->view())
-        d->renderPrivate(painter, layer, QRegion(d->frame->view()->frameRect()));
+        d->renderRelativeCoords(&context, layer, QRegion(d->frame->view()->frameRect()));
 }
 
 /*!
   Render the frame into \a painter clipping to \a clip.
 */
-void QWebFrame::render(QPainter *painter, const QRegion &clip)
+void QWebFrame::render(QPainter* painter, const QRegion& clip)
 {
-    d->renderPrivate(painter, AllLayers, clip);
+    GraphicsContext context(painter);
+    if (context.paintingDisabled() && !context.updatingControlTints())
+        return;
+
+    d->renderRelativeCoords(&context, AllLayers, clip);
 }
 
 /*!
   Render the frame into \a painter.
 */
-void QWebFrame::render(QPainter *painter)
+void QWebFrame::render(QPainter* painter)
 {
     if (!d->frame->view())
         return;
 
-    d->renderPrivate(painter, AllLayers, QRegion(d->frame->view()->frameRect()));
+    GraphicsContext context(painter);
+    if (context.paintingDisabled() && !context.updatingControlTints())
+        return;
+
+    d->renderRelativeCoords(&context, AllLayers, QRegion(d->frame->view()->frameRect()));
 }
 
 /*!

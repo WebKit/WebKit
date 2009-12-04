@@ -1,3 +1,21 @@
+2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Split out the renderPrivate in two methods, one for working on
+        relative coordinates (relative to the viewport) and one for
+        working on absolute coordinates. The latter is more effecient
+        for implementing tiling, as you don't need translate the coords,
+        and because it avoid clipping to the viewport.
+
+        No behaviour changes, so no new tests.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderContentsLayerAbsoluteCoords):
+        (QWebFramePrivate::renderRelativeCoords):
+        (QWebFrame::render):
+        * Api/qwebframe_p.h:
+
 2009-12-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
