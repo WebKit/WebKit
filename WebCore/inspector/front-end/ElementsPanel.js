@@ -205,35 +205,31 @@ WebInspector.ElementsPanel.prototype = {
         this.rootDOMNode = inspectedRootDocument;
         this.treeOutline.suppressSelectHighlight = false;
 
-        function selectDefaultNode()
+        function selectNode(candidateFocusNode)
         {
-            this.treeOutline.suppressSelectHighlight = true;
-            var candidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
-            if (candidateFocusNode) {
-                this.focusedDOMNode = candidateFocusNode;
+            if (!candidateFocusNode)
+                candidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
 
-                if (this.treeOutline.selectedTreeElement)
-                    this.treeOutline.selectedTreeElement.expand();
-            }
+            if (!candidateFocusNode)
+                return;
+
+            this.treeOutline.suppressSelectHighlight = true;
+            this.focusedDOMNode = candidateFocusNode;
+            if (this.treeOutline.selectedTreeElement)
+                this.treeOutline.selectedTreeElement.expand();
+            this.treeOutline.suppressSelectHighlight = false;
         }
 
         function selectLastSelectedNode(nodeId)
         {
             var node = nodeId ? WebInspector.domAgent.nodeForId(nodeId) : 0;
-            if (!node) {
-                selectDefaultNode.call(this);
-                return;
-            }
-
-            this.treeOutline.suppressSelectHighlight = true;
-            this.focusedDOMNode = node;
-            this.treeOutline.suppressSelectHighlight = false;
+            selectNode.call(this, node);
         }
 
         if (this._selectedPathOnReset)
             InjectedScriptAccess.nodeByPath(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
         else
-            selectDefaultNode.call(this);
+            selectNode.call(this);
         delete this._selectedPathOnReset;
     },
 
