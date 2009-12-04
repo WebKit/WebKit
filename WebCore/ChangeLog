@@ -1,3 +1,17 @@
+2009-12-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The code should say that Document owns DocLoader
+        https://bugs.webkit.org/show_bug.cgi?id=32143
+
+        It's the truth.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        (WebCore::Document::docLoader):
+
 2009-12-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.

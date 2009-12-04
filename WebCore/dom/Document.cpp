@@ -485,8 +485,8 @@ Document::~Document()
     delete m_tokenizer;
     m_document = 0;
     delete m_styleSelector;
-    delete m_docLoader;
-    
+    m_docLoader.clear();
+
     if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;

@@ -453,7 +453,7 @@ public:
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
     static void updateStyleForAllDocuments(); // FIXME: Try to reduce the # of calls to this function.
-    DocLoader* docLoader() { return m_docLoader; }
+    DocLoader* docLoader() { return m_docLoader.get(); }
 
     virtual void attach();
     virtual void detach();
@@ -960,7 +960,7 @@ private:
     bool m_didCalculateStyleSelector;
 
     Frame* m_frame;
-    DocLoader* m_docLoader;
+    OwnPtr<DocLoader> m_docLoader;
     Tokenizer* m_tokenizer;
     bool m_wellFormed;
 
