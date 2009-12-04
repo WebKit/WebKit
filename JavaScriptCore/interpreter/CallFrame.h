@@ -39,7 +39,11 @@ namespace JSC  {
     public:
         JSFunction* callee() const { return this[RegisterFile::Callee].function(); }
         CodeBlock* codeBlock() const { return this[RegisterFile::CodeBlock].Register::codeBlock(); }
-        ScopeChainNode* scopeChain() const { return this[RegisterFile::ScopeChain].Register::scopeChain(); }
+        ScopeChainNode* scopeChain() const
+        {
+            ASSERT(this[RegisterFile::ScopeChain].Register::scopeChain());
+            return this[RegisterFile::ScopeChain].Register::scopeChain();
+        }
         int argumentCount() const { return this[RegisterFile::ArgumentCount].i(); }
 
         JSValue thisValue();
@@ -66,6 +70,7 @@ namespace JSC  {
         // or a pointer everywhere.
         JSGlobalData& globalData() const
         {
+            ASSERT(scopeChain()->globalData);
             return *scopeChain()->globalData;
         }
 

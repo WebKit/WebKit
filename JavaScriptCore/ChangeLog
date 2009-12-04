@@ -1,3 +1,20 @@
+2009-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION(4.0.3-48777): Crash in JSC::ExecState::propertyNames() (Debug-only?)
+        https://bugs.webkit.org/show_bug.cgi?id=32133
+
+        Work around odd GCC-ism and correct the scopechain for use by
+        calls made while a cachedcall is active on the callstack.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::newCallFrame):
+        * runtime/JSArray.cpp:
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2009-12-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver "Brraaaaiiiinnnnnzzzzzzzz" Hunt.

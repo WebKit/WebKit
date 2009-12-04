@@ -52,7 +52,14 @@ namespace JSC {
         }
         void setThis(JSValue v) { m_closure.setArgument(0, v); }
         void setArgument(int n, JSValue v) { m_closure.setArgument(n + 1, v); }
-        CallFrame* newCallFrame() { return m_closure.newCallFrame; }
+
+        CallFrame* newCallFrame(ExecState* exec)
+        {
+            CallFrame* callFrame = m_closure.newCallFrame;
+            callFrame->setScopeChain(exec->scopeChain());
+            return callFrame;
+        }
+
         ~CachedCall()
         {
             if (m_valid)

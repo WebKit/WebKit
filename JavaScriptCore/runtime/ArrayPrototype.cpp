@@ -745,8 +745,8 @@ JSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValue th
             cachedCall.setArgument(0, array->getIndex(k));
             cachedCall.setArgument(1, jsNumber(exec, k));
             cachedCall.setArgument(2, thisObj);
-            
-            if (!cachedCall.call().toBoolean(exec))
+            JSValue result = cachedCall.call();
+            if (!result.toBoolean(cachedCall.newCallFrame(exec)))
                 return jsBoolean(false);
         }
     }
@@ -846,8 +846,8 @@ JSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec, JSObject*, JSValue thi
             cachedCall.setArgument(0, array->getIndex(k));
             cachedCall.setArgument(1, jsNumber(exec, k));
             cachedCall.setArgument(2, thisObj);
-            
-            if (cachedCall.call().toBoolean(exec))
+            JSValue result = cachedCall.call();
+            if (result.toBoolean(cachedCall.newCallFrame(exec)))
                 return jsBoolean(true);
         }
     }
