@@ -1,3 +1,9 @@
+2009-12-03  Drew Wilson  <atwilson@chromium.org>
+
+        Rolled back r51633 because it causes a perf regression in Chromium.
+
+        * wtf/Platform.h:
+
 2009-12-03  Gavin Barraclough  <barraclough@apple.com>
 
         Try and fix the Windows build.

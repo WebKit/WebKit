@@ -115,7 +115,7 @@ public:
     virtual String description() const;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC)
     NSFont* getNSFont() const { return m_platformData.font(); }
 #endif
 

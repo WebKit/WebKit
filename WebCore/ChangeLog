@@ -1,3 +1,10 @@
+2009-12-03  Drew Wilson  <atwilson@chromium.org>
+
+        Rolling back r51633 because it causes a chromium perf regression.
+
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+
 2009-12-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

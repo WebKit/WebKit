@@ -199,8 +199,7 @@
 #if PLATFORM(DARWIN)
 #define WTF_PLATFORM_CG 1
 #define WTF_PLATFORM_CI 1
-#define WTF_USE_ATSUI 0
-#define WTF_USE_CORE_TEXT 1
+#define WTF_USE_ATSUI 1
 #else
 #define WTF_PLATFORM_SKIA 1
 #endif
