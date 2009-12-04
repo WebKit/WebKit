@@ -1,3 +1,9 @@
+2009-12-03  Mark Rowe  <mrowe@apple.com>
+
+        Try and fix the Mac build.
+
+        * JavaScriptCore.exp:  Export a symbol that should be exported.
+
 2009-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
