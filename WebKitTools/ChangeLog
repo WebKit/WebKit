@@ -1,3 +1,13 @@
+2009-12-03  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Levin.
+
+        check-webkit-style should check for camelCase variable names
+        https://bugs.webkit.org/show_bug.cgi?id=32051
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-12-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.
