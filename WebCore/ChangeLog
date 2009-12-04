@@ -1,3 +1,18 @@
+2009-12-04  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Check whether the right side of a string append is non-empty
+        https://bugs.webkit.org/show_bug.cgi?id=32151
+
+        Especially beneficial for CachedScript::script() method
+        which usually appends an empty string returned by flush()
+        to its m_script member. m_script is often hundreds of kbytes
+        which is duplated without reason.
+
+        * platform/text/String.cpp:
+        (WebCore::String::append):
+
 2009-12-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by John Sullivan.

@@ -81,6 +81,9 @@ String::String(const char* str, unsigned length)
 
 void String::append(const String& str)
 {
+    if (str.isEmpty())
+       return;
+
     // FIXME: This is extremely inefficient. So much so that we might want to take this
     // out of String's API. We can make it better by optimizing the case where exactly
     // one String is pointing at this StringImpl, but even then it's going to require a
