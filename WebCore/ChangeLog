@@ -1,3 +1,12 @@
+2009-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fix up some issues in my SVGListTraits change from yesterday.
+
+        * svg/SVGListTraits.h:
+        (WebCore::):
+
 2009-12-04  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed: chromium build fix.
