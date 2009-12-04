@@ -30,7 +30,7 @@ using namespace WTF::Unicode;
 
 PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direction, bool override, BidiContext* parent)
 {
-    ASSERT(direction == level % 2 ? RightToLeft : LeftToRight);
+    ASSERT(direction == (level % 2 ? RightToLeft : LeftToRight));
 
     if (parent)
         return adoptRef(new BidiContext(level, direction, override, parent));

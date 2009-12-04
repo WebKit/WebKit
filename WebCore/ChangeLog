@@ -1,3 +1,13 @@
+2009-12-04  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix wrong assert that was only working through sheer luck.
+        https://bugs.webkit.org/show_bug.cgi?id=32162
+
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::create):
+
 2009-12-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
