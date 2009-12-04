@@ -26,20 +26,62 @@
 
 #include "FontDescription.h"
 #include <QFont>
+#include <QHash>
 
 namespace WebCore {
 
 class String;
-
-class FontPlatformData : public FastAllocBase
-{
+class FontPlatformDataPrivate {
 public:
-#if ENABLE(SVG_FONTS)
+    FontPlatformDataPrivate()
+        : refCount(1)
+        , size(font.pointSizeF())
+        , bold(font.bold())
+        , oblique(false)
+    {}
+    FontPlatformDataPrivate(const float size, const bool bold, const bool oblique)
+        : refCount(1)
+        , size(size)
+        , bold(bold)
+        , oblique(oblique)
+    {}
+    FontPlatformDataPrivate(const QFont& font)
+        : refCount(1)
+        , font(font)
+        , size(font.pointSizeF())
+        , bold(font.bold())
+        , oblique(false)
+    {}
+    unsigned refCount;
+    QFont font;
+    float size;
+    bool bold : 1;
+    bool oblique : 1;
+};
+
+
+
+class FontPlatformData : public FastAllocBase {
+public:
     FontPlatformData(float size, bool bold, bool oblique);
-#endif
-    FontPlatformData();
+    FontPlatformData(const FontPlatformData &);
     FontPlatformData(const FontDescription&, int wordSpacing = 0, int letterSpacing = 0);
-    FontPlatformData(const QFont&, bool bold);
+    FontPlatformData(const QFont& font)
+        : m_data(new FontPlatformDataPrivate(font))
+    {}
+    FontPlatformData(WTF::HashTableDeletedValueType)
+        : m_data(reinterpret_cast<FontPlatformDataPrivate*>(-1))
+    {}
+
+    ~FontPlatformData();
+
+    FontPlatformData& operator=(const FontPlatformData&);
+    bool operator==(const FontPlatformData&) const;
+
+    bool isHashTableDeletedValue() const
+    {
+        return m_data == reinterpret_cast<FontPlatformDataPrivate*>(-1);
+    }
 
     static inline QFont::Weight toQFontWeight(FontWeight fontWeight)
     {
@@ -62,22 +104,62 @@ public:
         }
     }
 
-    QFont font() const { return m_font; }
-    float size() const { return m_size; }
-    QString family() const { return m_font.family(); }
-    bool bold() const { return m_bold; }
-    bool italic() const { return m_font.italic(); }
-    bool smallCaps() const { return m_font.capitalization() == QFont::SmallCaps; }
-    int pixelSize() const { return m_font.pixelSize(); }
+    QFont font() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->font;
+        return QFont();
+    }
+    float size() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->size;
+        return 0.0f;
+    }
+    QString family() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->font.family();
+        return QString();
+    }
+    bool bold() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->bold;
+        return false;
+    }
+    bool italic() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->font.italic();
+        return false;
+    }
+    bool smallCaps() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->font.capitalization() == QFont::SmallCaps;
+        return false;
+    }
+    int pixelSize() const
+    {
+        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
+        if (m_data)
+            return m_data->font.pixelSize();
+        return 0;
+    }
+    unsigned hash() const;
 
 #ifndef NDEBUG
     String description() const;
 #endif
-
-    float m_size;
-    bool m_bold;
-    bool m_oblique;
-    QFont m_font;
+private:
+    FontPlatformDataPrivate* m_data;
 };
 
 } // namespace WebCore

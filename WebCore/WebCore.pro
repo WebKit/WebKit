@@ -1195,6 +1195,7 @@ SOURCES += \
     platform/image-decoders/qt/RGBA32BufferQt.cpp \
     platform/graphics/filters/FEGaussianBlur.cpp \
     platform/graphics/FontDescription.cpp \
+    platform/graphics/FontFallbackList.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
@@ -1205,6 +1206,7 @@ SOURCES += \
     platform/graphics/FloatSize.cpp \
     platform/graphics/FontData.cpp \
     platform/graphics/Font.cpp \
+    platform/graphics/FontCache.cpp \
     platform/graphics/GeneratedImage.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
@@ -2392,7 +2394,6 @@ SOURCES += \
     platform/qt/SharedBufferQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformData.cpp \
-    platform/graphics/qt/FontFallbackListQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/qt/KURLQt.cpp \
