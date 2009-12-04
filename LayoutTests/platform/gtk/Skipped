@@ -5717,3 +5717,7 @@ editing/selection/5825350-2.html
 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
 fast/loader/stateobjects/document-destroyed-navigate-back.html
 http/tests/loading/state-object-security-exception.html
+
+# Fails because of new behaviour enforced by libsoup
+# See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
+fast/cookies/local-file-can-set-cookies.html

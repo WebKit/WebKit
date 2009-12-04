@@ -1,5 +1,12 @@
 2009-12-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Skip test that is failing because of new behaviour enforced by
+        libsoup. Bug reported.
+
+        * platform/gtk/Skipped:
+
+2009-12-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Skip tests that require support for frame loader callbacks
         reporting, and a new test.
 
