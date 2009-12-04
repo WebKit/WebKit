@@ -1,3 +1,12 @@
+2009-12-04  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move the render result to svg/custom as a cross platform render result.
+
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Removed.
+        * svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Added.
+
 2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Treat.
