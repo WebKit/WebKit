@@ -113,16 +113,11 @@ void InspectorClientQt::showWindow()
     updateWindowTitle();
 
     m_inspectedWebPage->d->inspectorController()->setWindowVisible(true, true);
-    // We don't allow the inspector to ask for widget visibility itself because showWindow is
-    // not always called when we want.
-    // Inspecting an element or calling QWebInspector::show() should already have made the
-    // widget visible.
 }
 
 void InspectorClientQt::closeWindow()
 {
-    if (m_inspectedWebPage->d->inspector)
-        m_inspectedWebPage->d->inspector->close();
+    m_inspectedWebPage->d->inspectorController()->setWindowVisible(false);
 }
 
 void InspectorClientQt::attachWindow()
