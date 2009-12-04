@@ -144,6 +144,25 @@ public:
     }
 };
 
+class WebInspector : public QWebInspector {
+    Q_OBJECT
+public:
+    WebInspector(QWidget* parent) : QWebInspector(parent) {}
+signals:
+    void visibleChanged(bool nowVisible);
+protected:
+    void showEvent(QShowEvent* event)
+    {
+        QWebInspector::showEvent(event);
+        emit visibleChanged(true);
+    }
+    void hideEvent(QHideEvent* event)
+    {
+        QWebInspector::hideEvent(event);
+        emit visibleChanged(false);
+    }
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -167,7 +186,7 @@ public:
                 this, SLOT(showLinkHover(const QString&, const QString&)));
         connect(view->page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
 
-        inspector = new QWebInspector(splitter);
+        inspector = new WebInspector(splitter);
         inspector->setPage(page);
         inspector->hide();
         connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
@@ -437,13 +456,17 @@ private:
 
         QMenu *toolsMenu = menuBar()->addMenu("&Tools");
         toolsMenu->addAction("Select elements...", this, SLOT(selectElements()));
+        QAction* showInspectorAction = toolsMenu->addAction("Show inspector", inspector, SLOT(setVisible(bool)));
+        showInspectorAction->setCheckable(true);
+        showInspectorAction->setShortcuts(QList<QKeySequence>() << QKeySequence(tr("F12")));
+        showInspectorAction->connect(inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
 
     }
 
     QWebView *view;
     QLineEdit *urlEdit;
     QProgressBar *progress;
-    QWebInspector* inspector;
+    WebInspector* inspector;
 
     QAction *formatMenuAction;
 
