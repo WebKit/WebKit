@@ -1,3 +1,28 @@
+2009-12-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for the xml directory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=
+
+        Inherits the following class from Noncopyable because it is instantiated 
+        by 'new' and no need to be copyable:
+
+        class/struct name               - instantiated at: WebCore/'location'
+
+        struct XMLHttpRequestStaticData - xml/XMLHttpRequest.cpp:134
+
+        Inherits the following classes from FastAllocBase because these are instantiated by 'new':
+
+        class NodeTest                  - xml/XPathGrammar.y:258
+        class NodeSet                   - xml/XPathValue.cpp:52
+        struct EvaluationContext        - xml/XPathExpressionNode.cpp:40
+
+        * xml/XMLHttpRequest.cpp:
+        * xml/XPathExpressionNode.h:
+        * xml/XPathNodeSet.h:
+        * xml/XPathStep.h:
+
 2009-12-03  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Adam Barth.

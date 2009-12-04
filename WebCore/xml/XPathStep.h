@@ -49,7 +49,7 @@ namespace WebCore {
                 SelfAxis
             };
             
-            class NodeTest {
+            class NodeTest : public FastAllocBase {
             public:
                 enum Kind {
                     TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest
