@@ -29,7 +29,7 @@ namespace WebCore {
 class AtomicStringImpl;
 class Element;
 
-struct CollectionCache {
+struct CollectionCache : FastAllocBase {
     CollectionCache();
     CollectionCache(const CollectionCache&);
     CollectionCache& operator=(const CollectionCache& other)

@@ -1,3 +1,19 @@
+2009-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for WebCore's CollectionCache
+        https://bugs.webkit.org/show_bug.cgi?id=32109
+
+        Inherits the following class from FastAllocBase because it is
+        instantiated by 'new':
+
+        struct name            - instantiated at: WebCore/'location'
+
+        struct CollectionCache - dom/Document.cpp:4029
+
+        * html/CollectionCache.h:
+
 2009-12-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
