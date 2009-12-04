@@ -1,3 +1,21 @@
+2009-12-04  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add test to see if unicode messages can be sent over web socket.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31341
+
+        * websocket/tests/script-tests/unicode.js: Added.
+        (endTest):
+        (ws.onopen):
+        (ws.onmessage):
+        (ws.onclose):
+        (timeOutCallback):
+        * websocket/tests/unicode-expected.txt: Added.
+        * websocket/tests/unicode.html: Added.
+        * websocket/tests/unicode_wsh.py: Added.
+
 2009-12-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
