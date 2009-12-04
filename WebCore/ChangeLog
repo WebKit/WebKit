@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        OwnPtr<XBLBindingManager> Document::m_bindingManager;
+        https://bugs.webkit.org/show_bug.cgi?id=32147
+
+        The document actually owns the bindingManager.  That's what the code
+        should say.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        (WebCore::Document::bindingManager):
+
+2009-12-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         OwnPtr<Tokenizer> Document::m_tokenizer;
         https://bugs.webkit.org/show_bug.cgi?id=32145
 

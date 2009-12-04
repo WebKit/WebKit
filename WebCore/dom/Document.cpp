@@ -487,7 +487,7 @@ Document::~Document()
     m_renderArena.clear();
 
 #if ENABLE(XBL)
-    delete m_bindingManager;
+    m_bindingManager.clear();
 #endif
 
     deleteAllValues(m_markers);
