@@ -1,3 +1,21 @@
+2009-12-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        OwnPtr<RenderArena> Document::m_renderArena;
+        https://bugs.webkit.org/show_bug.cgi?id=32146
+
+        The document owns the renderArena.  That's what the code should say.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Also, removed a redundant initialization
+        of the tokenizer that I missed in my previous patch.
+        (WebCore::Document::~Document):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        (WebCore::Document::renderArena):
+
 2009-12-03  Drew Wilson  <atwilson@chromium.org>
 
         Rolling back r51633 because it causes a chromium perf regression.
