@@ -106,10 +106,6 @@ public:
         return m_atomicString;
     }
 
-    // Returns right string type based on a dummy parameter.
-    String string(String) { return webcoreString(); }
-    AtomicString string(AtomicString) { return atomicString(); }
-
     static WebCoreStringResource* toStringResource(v8::Handle<v8::String> v8String)
     {
         return static_cast<WebCoreStringResource*>(v8String->GetExternalStringResource());
@@ -244,12 +240,63 @@ v8::Handle<v8::Value> v8StringOrFalse(const String& str)
 }
 
 
+template <class S> struct StringTraits
+{
+    static S fromStringResource(WebCoreStringResource* resource);
+
+    static S fromV8String(v8::Handle<v8::String> v8String, int length);
+};
+
+template<>
+struct StringTraits<String>
+{
+    static String fromStringResource(WebCoreStringResource* resource)
+    {
+        return resource->webcoreString();
+    }
+
+    static String fromV8String(v8::Handle<v8::String> v8String, int length)
+    {
+        ASSERT(v8String->Length() == length);
+        // NOTE: as of now, String(const UChar*, int) performs String::createUninitialized
+        // anyway, so no need to optimize like we do for AtomicString below.
+        UChar* buffer;
+        String result = String::createUninitialized(length, buffer);
+        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+        return result;
+    }
+};
+
+template<>
+struct StringTraits<AtomicString>
+{
+    static AtomicString fromStringResource(WebCoreStringResource* resource)
+    {
+        return resource->atomicString();
+    }
+
+    static AtomicString fromV8String(v8::Handle<v8::String> v8String, int length)
+    {
+        ASSERT(v8String->Length() == length);
+        static const int inlineBufferSize = 16;
+        if (length <= inlineBufferSize) {
+            UChar inlineBuffer[inlineBufferSize];
+            v8String->Write(reinterpret_cast<uint16_t*>(inlineBuffer), 0, length);
+            return AtomicString(inlineBuffer, length);
+        }
+        UChar* buffer;
+        String tmp = String::createUninitialized(length, buffer);
+        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+        return AtomicString(tmp);
+    }
+};
+
 template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
 {
     WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
     if (stringResource)
-        return stringResource->string(StringType());
+        return StringTraits<StringType>::fromStringResource(stringResource);
 
     int length = v8String->Length();
     if (!length) {
@@ -257,18 +304,7 @@ StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode
         return StringImpl::empty();
     }
 
-    StringType result;
-    static const int inlineBufferSize = 16;
-    if (length <= inlineBufferSize) {
-        UChar inlineBuffer[inlineBufferSize];
-        v8String->Write(reinterpret_cast<uint16_t*>(inlineBuffer), 0, length);
-        result = StringType(inlineBuffer, length);
-    } else {
-        UChar* buffer;
-        String tmp = String::createUninitialized(length, buffer);
-        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
-        result = StringType(tmp);
-    }
+    StringType result(StringTraits<StringType>::fromV8String(v8String, length));
 
     if (external == Externalize && v8String->CanMakeExternal()) {
         stringResource = new WebCoreStringResource(result);
