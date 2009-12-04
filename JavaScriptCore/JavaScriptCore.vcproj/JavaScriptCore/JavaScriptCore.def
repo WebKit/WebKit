@@ -26,6 +26,7 @@ EXPORTS
     ??1JSGlobalObject@JSC@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
+    ??1Rope@JSString@JSC@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??2JSCell@JSC@@SAPAXIPAVExecState@1@@Z
@@ -230,6 +231,7 @@ EXPORTS
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
+    ?resolveRope@JSString@JSC@@ABEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z

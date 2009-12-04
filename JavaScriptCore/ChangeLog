@@ -1,3 +1,9 @@
+2009-12-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Try and fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:  Export a symbol that should be exported.
+
 2009-12-03  Mark Rowe  <mrowe@apple.com>
 
         Try and fix the Mac build.
