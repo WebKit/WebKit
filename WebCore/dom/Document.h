@@ -506,7 +506,7 @@ public:
     CSSStyleSheet* mappedElementSheet();
     
     virtual Tokenizer* createTokenizer();
-    Tokenizer* tokenizer() { return m_tokenizer; }
+    Tokenizer* tokenizer() { return m_tokenizer.get(); }
     
     bool printing() const { return m_printing; }
     void setPrinting(bool p) { m_printing = p; }
@@ -961,7 +961,7 @@ private:
 
     Frame* m_frame;
     OwnPtr<DocLoader> m_docLoader;
-    Tokenizer* m_tokenizer;
+    OwnPtr<Tokenizer> m_tokenizer;
     bool m_wellFormed;
 
     // Document URLs.

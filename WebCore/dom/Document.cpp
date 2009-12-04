@@ -445,8 +445,7 @@ void Document::removedLastRef()
         deleteAllValues(m_markers);
         m_markers.clear();
 
-        delete m_tokenizer;
-        m_tokenizer = 0;
+        m_tokenizer.clear();
 
         m_cssCanvasElements.clear();
 
@@ -480,7 +479,7 @@ Document::~Document()
     forgetAllDOMNodesForDocument(this);
 #endif
 
-    delete m_tokenizer;
+    m_tokenizer.clear();
     m_document = 0;
     delete m_styleSelector;
     m_docLoader.clear();
@@ -1593,8 +1592,7 @@ void Document::cancelParsing()
         // the onload handler when closing as a side effect of a cancel-style
         // change, such as opening a new document or closing the window while
         // still parsing
-        delete m_tokenizer;
-        m_tokenizer = 0;
+        m_tokenizer.clear();
         close();
     }
 }
@@ -1603,8 +1601,7 @@ void Document::implicitOpen()
 {
     cancelParsing();
 
-    delete m_tokenizer;
-    m_tokenizer = 0;
+    m_tokenizer.clear();
 
     removeChildren();
 
@@ -1701,8 +1698,7 @@ void Document::implicitClose()
 
     // We have to clear the tokenizer, in case someone document.write()s from the
     // onLoad event handler, as in Radar 3206524.
-    delete m_tokenizer;
-    m_tokenizer = 0;
+    m_tokenizer.clear();
 
     // Parser should have picked up all preloads by now
     m_docLoader->clearPreloads();
