@@ -114,6 +114,7 @@ void NetworkAccessManager::sslErrorsEncountered(QNetworkReply* reply, const QLis
 
 WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     : QWebPage(parent)
+    , m_webInspector(0)
     , m_drt(drt)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
@@ -137,6 +138,20 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
 
     setNetworkAccessManager(new NetworkAccessManager(this));
     setPluginFactory(new TestPlugin(this));
+}
+
+WebPage::~WebPage()
+{
+    delete m_webInspector;
+}
+
+QWebInspector* WebPage::webInspector()
+{
+    if (!m_webInspector) {
+        m_webInspector = new QWebInspector;
+        m_webInspector->setPage(this);
+    }
+    return m_webInspector;
 }
 
 void WebPage::resetSettings()

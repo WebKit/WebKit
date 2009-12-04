@@ -10,6 +10,23 @@
 
         Reviewed by Adam Treat.
 
+        Add some missing methods for showing and hiding the
+        Web Inspector.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::~WebPage):
+        (WebCore::WebPage::webInspector):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::hideWebInspector):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
+2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
         Implement the setAllowUniversalAccessFromFileURLs method
         for the Qt LayoutTestController.
 

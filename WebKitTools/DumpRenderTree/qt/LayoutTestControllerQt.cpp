@@ -237,6 +237,17 @@ QString LayoutTestController::decodeHostName(const QString& host)
     return decoded;
 }
 
+void LayoutTestController::showWebInspector()
+{
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    m_drt->webPage()->webInspector()->show();
+}
+
+void LayoutTestController::hideWebInspector()
+{
+    m_drt->webPage()->webInspector()->hide();
+}
+
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, enabled);
