@@ -1,3 +1,17 @@
+2009-12-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK]Enable DNS prefetching
+        https://bugs.webkit.org/show_bug.cgi?id=23846
+
+        Enable DNS prefetching.
+
+        Based on a patch by José Millán.
+
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::prefetchDNS):
+
 2009-12-04  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +27,17 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "NotImplemented.h"
+#include "CString.h"
+#include "ResourceHandle.h"
 
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    notImplemented();
+    String uri = "http://"+hostname;
+    SoupURI* soupUri = soup_uri_new(uri.utf8().data());
+    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupUri);
+    soup_uri_free(soupUri);
 }
 
 }
