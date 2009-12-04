@@ -105,23 +105,37 @@ void SVGRadialGradientElement::buildGradient() const
         radius = attributes.r().value(this);
     }
 
-    float adjustedFocusX = focalPoint.x();
-    float adjustedFocusY = focalPoint.y();
-
-    float fdx = focalPoint.x() - centerPoint.x();
-    float fdy = focalPoint.y() - centerPoint.y();
+    FloatPoint adjustedFocalPoint = focalPoint;
+    float dfx = focalPoint.x() - centerPoint.x();
+    float dfy = focalPoint.y() - centerPoint.y();
 
     // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and
     // r, set (fx, fy) to the point of intersection of the line through
     // (fx, fy) and the circle.
-    if (sqrt(fdx * fdx + fdy * fdy) > radius) {
-        float angle = atan2f(focalPoint.y() * 100.0f, focalPoint.x() * 100.0f);
-        adjustedFocusX = cosf(angle) * radius;
-        adjustedFocusY = sinf(angle) * radius;
+    if (sqrt(dfx * dfx + dfy * dfy) >= radius) {
+        float angle = atan2f(dfx, dfy);
+
+        // The maximum deviation of 0.2% is needed on Cairo, since Cairo
+        // is working with fixed point numbers.
+#if PLATFORM(CAIRO)
+        if (focalPoint.x() < centerPoint.x())
+            dfx = cosf(angle) * radius + 0.002f;
+        else
+            dfx = cosf(angle) * radius - 0.002f;
+        if (focalPoint.y() < centerPoint.y())
+            dfy = sinf(angle) * radius + 0.002f;
+        else
+            dfy = sinf(angle) * radius - 0.002f;
+#else
+        dfx = cosf(angle) * radius;
+        dfy = sinf(angle) * radius;
+#endif
+
+        adjustedFocalPoint = FloatPoint(dfx + centerPoint.x(), dfy + centerPoint.y());
     }
 
     RefPtr<Gradient> gradient = Gradient::create(
-        FloatPoint(adjustedFocusX, adjustedFocusY),
+        adjustedFocalPoint,
         0.f, // SVG does not support a "focus radius"
         centerPoint,
         radius);

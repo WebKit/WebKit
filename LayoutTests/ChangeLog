@@ -1,3 +1,21 @@
+2009-12-04  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Gradient SVG animation demonstrates tearing at animation extremes
+        https://bugs.webkit.org/show_bug.cgi?id=11929
+
+        In SVG a focalPoint must be inside the radius of a radial gradient.
+        It this isn't the case, we have to move the focalPoint into the radius.
+        This checks the correct behavior of WebKit on false values for fx, fy.
+
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Added.
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Added.
+        * svg/custom/radial-gradient-with-outstanding-focalPoint.svg: Added.
+
 2009-12-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
