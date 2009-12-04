@@ -33,7 +33,8 @@ namespace WebCore {
     class SVGTransformList;
 
     class SVGViewSpec : public SVGFitToViewBox,
-                        public SVGZoomAndPan {
+                        public SVGZoomAndPan,
+                        public Noncopyable {
     public:
         SVGViewSpec(const SVGSVGElement*);
         virtual ~SVGViewSpec();

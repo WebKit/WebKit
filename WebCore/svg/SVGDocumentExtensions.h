@@ -44,7 +44,7 @@ class SVGStyledElement;
 class SVGSMILElement;
 class SVGSVGElement;
 
-class SVGDocumentExtensions {
+class SVGDocumentExtensions : public Noncopyable {
 public:
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
