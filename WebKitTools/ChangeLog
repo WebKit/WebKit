@@ -1,3 +1,16 @@
+2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
+        Implement the setAllowUniversalAccessFromFileURLs method
+        for the Qt LayoutTestController.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2009-12-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

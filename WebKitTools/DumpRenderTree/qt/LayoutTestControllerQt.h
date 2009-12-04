@@ -107,6 +107,7 @@ public slots:
     QString encodeHostName(const QString& host);
     QString decodeHostName(const QString& host);
     void dumpSelectionRect() const {}
+    void setAllowUniversalAccessFromFileURLs(bool enable);
     void setJavaScriptProfilingEnabled(bool enable);
     void setFixedContentsSize(int width, int height);
     void setPrivateBrowsingEnabled(bool enable);

@@ -1,3 +1,12 @@
+2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
+        Remove test that works after adding setAllowUniversalAccessFromFileURLs
+        to Qt's version of the LayoutTestController.
+
+        * platform/qt/Skipped:
+
 2009-12-04  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

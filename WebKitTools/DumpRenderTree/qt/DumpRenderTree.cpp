@@ -152,6 +152,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::PrivateBrowsingEnabled);
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
+    settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
     QWebSettings::setMaximumPagesInCache(0); // reset to default
 }
 

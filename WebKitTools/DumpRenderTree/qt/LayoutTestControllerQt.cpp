@@ -237,6 +237,11 @@ QString LayoutTestController::decodeHostName(const QString& host)
     return decoded;
 }
 
+void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
+{
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, enabled);
+}
+
 void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
 {
     m_topLoadingFrame->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);

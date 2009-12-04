@@ -224,9 +224,6 @@ http/tests/cache/subresource-failover-to-network.html
 # Missing layoutTestController.setUserStyleSheetLocation() and layoutTestController.setUserStyleSheetEnabled()
 http/tests/security/local-user-CSS-from-remote.html
 
-# Missing layoutTestController.setAllowUniversalAccessFromFileURLs()
-fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
-
 # Missing layoutTestController.evaluateInWebInspector()
 inspector/elements-img-tooltip.html
 inspector/elements-panel-selection-on-refresh.html
