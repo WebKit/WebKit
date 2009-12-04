@@ -1,3 +1,14 @@
+2009-12-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Mail.app crashes when indenting table pasted from Numbers.app.
+        <rdar://problem/7209507>
+        https://bugs.webkit.org/show_bug.cgi?id=32166
+
+        * editing/execCommand/indent-partial-table-expected.txt: Added.
+        * editing/execCommand/indent-partial-table.html: Added.
+
 2009-12-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
