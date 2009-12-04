@@ -1,0 +1,20 @@
+<head>
+    <script src="resources/repaint.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    function repaintTest()
+    {
+        var target = document.getElementById("target");
+        getSelection().setBaseAndExtent(target, 0, target.nextSibling, 1);
+    }
+    </script>
+    <style>
+        #target::selection { background-color: #0f0; }
+    </style>
+</head>
+<body onload="runRepaintTest()">
+    <div style="-webkit-transform: translateZ(0); margin-top: 50px; margin-left: 50px;">
+        <div id="target" style="background-color: red; width: 100px; height: 100px; position: absolute;"><br></div>a
+    </div>
+    <script>
+    </script>
+</body>

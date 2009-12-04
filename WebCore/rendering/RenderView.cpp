@@ -446,7 +446,10 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
                     break;
                 blockInfo = new RenderBlockSelectionInfo(cb);
                 newSelectedBlocks.set(cb, blockInfo);
-                m_cachedSelectionBounds.unite(blockInfo->rects());
+                IntRect rect = blockInfo->rects();
+                if (blockInfo->repaintContainer())
+                    rect = blockInfo->repaintContainer()->localToAbsoluteQuad(FloatQuad(rect)).enclosingBoundingBox();
+                m_cachedSelectionBounds.unite(rect);
                 cb = cb->containingBlock();
             }
         }
@@ -523,7 +526,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
 
 void RenderView::clearSelection()
 {
-    repaintViewRectangle(m_cachedSelectionBounds);
+    repaintRectangleInViewAndCompositedLayers(m_cachedSelectionBounds);
     setSelection(0, -1, 0, -1, RepaintNewMinusOld);
 }
 
