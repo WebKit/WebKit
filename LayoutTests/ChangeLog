@@ -1,3 +1,12 @@
+2009-12-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Re-enable audio/video tests after updated buildbot's Qt
+        to Phonon supported one, and put 2 bad tests into skiplist.
+
+        * platform/qt/Skipped:
+
 2009-12-04  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Fisher.
