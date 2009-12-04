@@ -220,9 +220,20 @@ static JSValueRef elementAtPointCallback(JSContextRef context, JSObjectRef funct
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->elementAtPoint(x, y));
 }
 
+static JSValueRef isAttributeSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSStringRef attribute = 0;
+    if (argumentCount == 1)
+        attribute = JSValueToStringCopy(context, arguments[0], exception);    
+    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSupported(attribute));
+    if (attribute)
+        JSStringRelease(attribute);
+    return result;
+}
+
 static JSValueRef isAttributeSettableCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = NULL;
+    JSStringRef attribute = 0;
     if (argumentCount == 1)
         attribute = JSValueToStringCopy(context, arguments[0], exception);    
     JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->isAttributeSettable(attribute));
@@ -245,7 +256,7 @@ static JSValueRef isActionSupportedCallback(JSContextRef context, JSObjectRef fu
 
 static JSValueRef attributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = NULL;
+    JSStringRef attribute = 0;
     if (argumentCount == 1)
         attribute = JSValueToStringCopy(context, arguments[0], exception);
     JSRetainPtr<JSStringRef> attributeValue(Adopt, toAXElement(thisObject)->attributeValue(attribute));
@@ -569,6 +580,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "titleUIElement", titleUIElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributeValue", attributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isAttributeSupported", isAttributeSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAttributeSettable", isAttributeSettableCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isActionSupported", isActionSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "parentElement", parentElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

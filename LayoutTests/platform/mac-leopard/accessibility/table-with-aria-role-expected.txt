@@ -15,7 +15,6 @@ AXTitle: test	test	test
 test	test	test
 
 AXDescription: 
-AXValue: 
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXButton: 'test	test	test
@@ -37,7 +36,6 @@ test	test	test
 '>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
-AXRequired: 0
 
 ------------
 AXRole: AXMenu

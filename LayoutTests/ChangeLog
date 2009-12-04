@@ -1,3 +1,15 @@
+2009-12-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: AX: buttons now extremely repetitive
+        https://bugs.webkit.org/show_bug.cgi?id=32164
+
+        * platform/mac-leopard/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/button-shouldnot-have-axvalue-expected.txt: Added.
+        * platform/mac/accessibility/button-shouldnot-have-axvalue.html: Added.
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+
 2009-12-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by John Sullivan.

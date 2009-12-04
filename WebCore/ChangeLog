@@ -1,3 +1,17 @@
+2009-12-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: AX: buttons now extremely repetitive
+        https://bugs.webkit.org/show_bug.cgi?id=32164
+
+        Test: platform/mac/accessibility/button-shouldnot-have-axvalue.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isButton):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2009-12-04  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

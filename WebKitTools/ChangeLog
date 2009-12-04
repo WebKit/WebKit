@@ -1,3 +1,21 @@
+2009-12-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: AX: buttons now extremely repetitive
+        https://bugs.webkit.org/show_bug.cgi?id=32164
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isAttributeSupportedCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isAttributeSupported):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isAttributeSupported):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isAttributeSupported):
+
 2009-12-03  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.

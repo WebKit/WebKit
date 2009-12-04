@@ -350,6 +350,11 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
 }
 
+bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
+{
+    return [[m_element accessibilityAttributeNames] containsObject:[NSString stringWithJSStringRef:attribute]];
+}
+
 JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
 {
     NSArray* supportedParameterizedAttributes = [m_element accessibilityParameterizedAttributeNames];

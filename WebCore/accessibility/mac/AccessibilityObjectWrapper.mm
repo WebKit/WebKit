@@ -637,6 +637,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* comboBoxAttrs = nil;
     static NSArray* outlineAttrs = nil;
     static NSArray* outlineRowAttrs = nil;
+    static NSArray* buttonAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -776,6 +777,15 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         controlAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (buttonAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        // Buttons should not expose AXValue.
+        [tempArray removeObject:NSAccessibilityValueAttribute];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
+        buttonAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     if (comboBoxAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
         [tempArray addObject:NSAccessibilityExpandedAttribute];
@@ -824,9 +834,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray release];
     }
     if (inputImageAttrs == nil) {
-        tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
+        tempArray = [[NSMutableArray alloc] initWithArray:buttonAttrs];
         [tempArray addObject:NSAccessibilityURLAttribute];
-        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         inputImageAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -900,9 +909,11 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     else if (m_object->isProgressIndicator() || m_object->isSlider())
         objectAttributes = rangeAttrs;
 
+    // These are processed in order because an input image is a button, and a button is a control.
     else if (m_object->isInputImage())
         objectAttributes = inputImageAttrs;
-    
+    else if (m_object->isButton())
+        objectAttributes = buttonAttrs;
     else if (m_object->isControl())
         objectAttributes = controlAttrs;
     
@@ -921,10 +932,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         objectAttributes = menuItemAttrs;
 
     NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
-    if ( [additionalAttributes count] > 0 )
-    {
+    if ([additionalAttributes count])
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
-    }
     
     return objectAttributes;
 }

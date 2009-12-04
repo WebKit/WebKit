@@ -86,6 +86,7 @@ public:
 
     // Attributes - platform-independent implementations
     JSStringRef attributeValue(JSStringRef attribute);
+    bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
     bool isActionSupported(JSStringRef action);
     JSStringRef role();

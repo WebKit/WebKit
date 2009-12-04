@@ -413,6 +413,11 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     return false;
 }
 
+bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
+{
+    return false;
+}
+
 void AccessibilityUIElement::increment()
 {
 }
