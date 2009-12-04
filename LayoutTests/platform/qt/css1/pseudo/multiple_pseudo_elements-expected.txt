@@ -51,8 +51,8 @@ layer at (0,0) size 784x1170
           RenderText {#text} at (0,0) size 73x69
             text run at (0,0) width 73: "\"W"
         RenderText {#text} at (73,38) size 762x91
-          text run at (73,38) width 344: "e should check for quotation support,\" it was said. "
-          text run at (417,38) width 308: "The first two characters in this paragraph-- a"
+          text run at (73,38) width 353: "e should check for quotation support,\" it was said. "
+          text run at (426,38) width 310: "The first two characters in this paragraph-- a"
           text run at (0,69) width 735: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
           text run at (0,89) width 76: "(dark red). "
           text run at (76,89) width 681: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required"
@@ -97,8 +97,8 @@ layer at (0,0) size 784x1170
                   RenderText {#text} at (0,0) size 73x69
                     text run at (0,0) width 73: "\"W"
                 RenderText {#text} at (73,38) size 745x111
-                  text run at (73,38) width 344: "e should check for quotation support,\" it was said. "
-                  text run at (417,38) width 308: "The first two characters in this paragraph-- a"
+                  text run at (73,38) width 353: "e should check for quotation support,\" it was said. "
+                  text run at (426,38) width 310: "The first two characters in this paragraph-- a"
                   text run at (0,69) width 735: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
                   text run at (0,89) width 76: "(dark red). "
                   text run at (76,89) width 618: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not"
