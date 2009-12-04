@@ -1,3 +1,20 @@
+2009-12-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes a crashing bug in Geolocation when a watch is cleared from some callbacks. 
+        https://bugs.webkit.org/show_bug.cgi?id=32111
+
+        * fast/dom/Geolocation/resources/permission-denied-already-clear-watch.js: Added. Tests clearing the watch from the error callback after a permission denied message when permissions have already been denied.
+        * fast/dom/Geolocation/permission-denied-already-clear-watch.html: Added. HTML wrapper for above test.
+        * fast/dom/Geolocation/permission-denied-already-clear-watch-expected.txt: Added. Expected result for above test.
+
+        * fast/dom/Geolocation/resources/timeout-clear-watch.js: Added. Tests clearing the watch from the error callback due to a timeout.
+        * fast/dom/Geolocation/timeout-clear-watch.html: Added. HTML wrapper for above test.
+        * fast/dom/Geolocation/timeout-clear-watch-expected.txt: Added. Expected result for above test.
+
+        * platform/gtk/Skipped: Modified. Skips new tests.
+
 2009-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

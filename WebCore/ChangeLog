@@ -1,3 +1,23 @@
+2009-12-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes a crashing bug in Geolocation when a watch is cleared from some callbacks. 
+        https://bugs.webkit.org/show_bug.cgi?id=32111
+
+        In Geolocation::GeoNotifier::timerFired, a JS callback may be invoked if a
+        fatal error was registered on this GeoNotifier or if this request has timed
+        out. If the request is a watch, and is cleared by a call to clearWatch in the
+        callback, the GeoNotifier object will be destroyed. We must therefore cache the
+        m_geolocation member to allow us to call Geolocation::fatalErrorOccurred or
+        Geolocation::requestTimedOut.
+
+        Tests: fast/dom/Geolocation/permission-denied-already-clear-watch.html
+               fast/dom/Geolocation/timeout-clear-watch.html
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::GeoNotifier::timerFired): Modified. Cache the m_geolocation member before invoking the JS callback.
+
 2009-12-04  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
