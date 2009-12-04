@@ -5423,6 +5423,7 @@ fast/overflow/overflow-with-local-background-attachment.html
 fast/overflow/position-fixed-transform-clipping.html
 fast/repaint/background-generated.html
 fast/repaint/background-misaligned.html
+fast/repaint/block-selection-gap-in-composited-layer.html
 fast/repaint/float-in-new-block-with-layout-delta.html
 fast/repaint/float-new-in-block.html
 fast/repaint/line-in-scrolled-clipped-block.html
@@ -5711,3 +5712,8 @@ editing/selection/mixed-editability-10.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 
+# Need proper frame loader callbacks reporting
+# See https://bugs.webkit.org/show_bug.cgi?id=32170
+fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
+fast/loader/stateobjects/document-destroyed-navigate-back.html
+http/tests/loading/state-object-security-exception.html

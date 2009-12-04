@@ -1,3 +1,10 @@
+2009-12-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip tests that require support for frame loader callbacks
+        reporting, and a new test.
+
+        * platform/gtk/Skipped:
+
 2009-12-04  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Gustavo Noronha Silva.
