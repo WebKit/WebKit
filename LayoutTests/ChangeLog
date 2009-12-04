@@ -1,3 +1,14 @@
+2009-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7441571> Hardware-backed layers are skipped when printing
+        
+        Testcase for printing with a compositing layer.
+
+        * printing/compositing-layer-printing-expected.pdf: Added.
+        * printing/compositing-layer-printing.html: Added.
+
 2009-12-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip test that is failing because of new behaviour enforced by

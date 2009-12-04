@@ -1,3 +1,17 @@
+2009-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7441571> Hardware-backed layers are skipped when printing
+        
+        When printing, set the PaintBehaviorFlattenCompositingLayers flag so that compositing layers
+        paint. This also causes 3D transforms to be flattened to 2D.
+
+        Test: printing/compositing-layer-printing.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2009-12-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Beth Dakin.

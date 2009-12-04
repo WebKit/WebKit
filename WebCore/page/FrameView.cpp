@@ -1699,9 +1699,15 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
-    if (m_paintBehavior == PaintBehaviorNormal)
+
+    PaintBehavior paintBehavior = m_paintBehavior;
+    if (paintBehavior == PaintBehaviorNormal)
         document->invalidateRenderedRectsForMarkersInRect(rect);
-    contentRenderer->layer()->paint(p, rect, m_paintBehavior, eltRenderer);
+
+    if (document->printing())
+        paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+
+    contentRenderer->layer()->paint(p, rect, paintBehavior, eltRenderer);
     
     m_isPainting = false;
     m_lastPaintTime = currentTime();
