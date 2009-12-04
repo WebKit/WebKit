@@ -201,6 +201,7 @@ public:
     virtual void setSelected(bool);
     virtual void setSelectedRows(AccessibilityChildrenVector&);
     virtual void changeValueByPercent(float percentChange);
+    virtual AccessibilityOrientation orientation() const;
     virtual void increment();
     virtual void decrement();
     

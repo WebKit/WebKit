@@ -239,6 +239,10 @@ double AccessibilityUIElement::clickPointY()
     return 0.f;
 }
 
+JSStringRef AccessibilityUIElement::orientation() const
+{
+    return 0;
+}
 
 double AccessibilityUIElement::intValue()
 {

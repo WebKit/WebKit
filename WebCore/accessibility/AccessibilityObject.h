@@ -285,6 +285,7 @@ public:
     bool isComboBox() const { return roleValue() == ComboBoxRole; }
     bool isTree() const { return roleValue() == TreeRole; }
     bool isTreeItem() const { return roleValue() == TreeItemRole; }
+    bool isScrollbar() const { return roleValue() == ScrollBarRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }

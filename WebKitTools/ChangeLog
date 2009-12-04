@@ -1,3 +1,21 @@
+2009-12-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Implement WAI-ARIA scrollbar role and related property aria-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=32126
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getOrientationCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::orientation):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::orientation):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::orientation):
+
 2009-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

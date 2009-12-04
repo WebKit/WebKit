@@ -1,3 +1,26 @@
+2009-12-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Implement WAI-ARIA scrollbar role and related property aria-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=32126
+
+        Test: accessibility/aria-scrollbar-role.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isScrollbar):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::valueForRange):
+        (WebCore::AccessibilityRenderObject::orientation):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+
 2009-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

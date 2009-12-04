@@ -370,6 +370,7 @@ accessibility/aria-list-and-listitem.html
 accessibility/aria-presentational-role.html
 accessibility/aria-readonly.html
 accessibility/aria-roles.html
+accessibility/aria-scrollbar-role.html
 accessibility/aria-tables.html
 accessibility/aria-tab-roles.html
 accessibility/aria-text-role.html

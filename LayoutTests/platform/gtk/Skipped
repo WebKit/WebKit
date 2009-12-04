@@ -53,6 +53,7 @@ accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
 accessibility/aria-readonly.html
+accessibility/aria-scrollbar-role.html
 accessibility/aria-tab-roles.html
 accessibility/aria-text-role.html
 accessibility/aria-used-on-image-maps.html
