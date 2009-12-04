@@ -1,3 +1,11 @@
+2009-12-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix.
+
+        [Qt] build fix after r51634 removed unused QBoxLayout include which included limits.h.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+
 2009-12-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Treat.

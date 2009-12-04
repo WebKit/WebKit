@@ -64,9 +64,7 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
-#if PLATFORM(ARM) && PLATFORM(LINUX)
 #include <limits.h>
-#endif
 
 #include <unistd.h>
 #include <qdebug.h>
