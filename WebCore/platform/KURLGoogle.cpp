@@ -38,16 +38,21 @@
 #include <stdio.h>
 #endif
 
+#include <algorithm>
+
 #include "CString.h"
+#include "StringHash.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
 #include <wtf/Vector.h>
+#include <wtf/StdLibExtras.h>
 
 #include <googleurl/src/url_canon_internal.h>
 #include <googleurl/src/url_util.h>
 
 using WTF::isASCIILower;
 using WTF::toASCIILower;
+using std::binary_search;
 
 namespace WebCore {
 
@@ -738,6 +743,130 @@ bool isValidProtocol(const String& protocol)
             return false;
     }
     return true;
+}
+
+// We copied the KURL version here on Dec 4, 2009 while doing a WebKit
+// merge.
+//
+// FIXME Somehow share this with KURL? Like we'd theoretically merge with
+// decodeURLEscapeSequences below?
+bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
+{
+    if (protocol.isEmpty())
+        return false;
+
+    typedef HashMap<String, unsigned, CaseFoldingHash> DefaultPortsMap;
+    DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
+    if (defaultPorts.isEmpty()) {
+        defaultPorts.set("http", 80);
+        defaultPorts.set("https", 443);
+        defaultPorts.set("ftp", 21);
+        defaultPorts.set("ftps", 990);
+    }
+    return defaultPorts.get(protocol) == port;
+}
+
+// We copied the KURL version here on Dec 4, 2009 while doing a WebKit
+// merge.
+//
+// FIXME Somehow share this with KURL? Like we'd theoretically merge with
+// decodeURLEscapeSequences below?
+bool portAllowed(const KURL& url)
+{
+    unsigned short port = url.port();
+
+    // Since most URLs don't have a port, return early for the "no port" case.
+    if (!port)
+        return true;
+
+    // This blocked port list matches the port blocking that Mozilla implements.
+    // See http://www.mozilla.org/projects/netlib/PortBanning.html for more information.
+    static const unsigned short blockedPortList[] = {
+        1,    // tcpmux
+        7,    // echo
+        9,    // discard
+        11,   // systat
+        13,   // daytime
+        15,   // netstat
+        17,   // qotd
+        19,   // chargen
+        20,   // FTP-data
+        21,   // FTP-control
+        22,   // SSH
+        23,   // telnet
+        25,   // SMTP
+        37,   // time
+        42,   // name
+        43,   // nicname
+        53,   // domain
+        77,   // priv-rjs
+        79,   // finger
+        87,   // ttylink
+        95,   // supdup
+        101,  // hostriame
+        102,  // iso-tsap
+        103,  // gppitnp
+        104,  // acr-nema
+        109,  // POP2
+        110,  // POP3
+        111,  // sunrpc
+        113,  // auth
+        115,  // SFTP
+        117,  // uucp-path
+        119,  // nntp
+        123,  // NTP
+        135,  // loc-srv / epmap
+        139,  // netbios
+        143,  // IMAP2
+        179,  // BGP
+        389,  // LDAP
+        465,  // SMTP+SSL
+        512,  // print / exec
+        513,  // login
+        514,  // shell
+        515,  // printer
+        526,  // tempo
+        530,  // courier
+        531,  // Chat
+        532,  // netnews
+        540,  // UUCP
+        556,  // remotefs
+        563,  // NNTP+SSL
+        587,  // ESMTP
+        601,  // syslog-conn
+        636,  // LDAP+SSL
+        993,  // IMAP+SSL
+        995,  // POP3+SSL
+        2049, // NFS
+        3659, // apple-sasl / PasswordServer [Apple addition]
+        4045, // lockd
+        6000, // X11
+    };
+    const unsigned short* const blockedPortListEnd = blockedPortList + sizeof(blockedPortList) / sizeof(blockedPortList[0]);
+
+#ifndef NDEBUG
+    // The port list must be sorted for binary_search to work.
+    static bool checkedPortList = false;
+    if (!checkedPortList) {
+        for (const unsigned short* p = blockedPortList; p != blockedPortListEnd - 1; ++p)
+            ASSERT(*p < *(p + 1));
+        checkedPortList = true;
+    }
+#endif
+
+    // If the port is not in the blocked port list, allow it.
+    if (!binary_search(blockedPortList, blockedPortListEnd, port))
+        return true;
+
+    // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
+    if ((port == 21 || port == 22) && url.protocolIs("ftp"))
+        return true;
+
+    // Allow any port number in a file URL, since the port number is ignored.
+    if (url.protocolIs("file"))
+        return true;
+
+    return false;
 }
 
 // We copied the KURL version here on Sept 12, 2008 while doing a WebKit
