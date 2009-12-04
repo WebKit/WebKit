@@ -264,6 +264,9 @@ bool protocolIs(const String& url, const char* protocol);
 bool protocolIsJavaScript(const String& url);
 bool isValidProtocol(const String& protocol);
 
+bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
+bool portAllowed(const KURL&); // Blacklist ports that should never be used for Web resources.
+
 String mimeTypeFromDataURL(const String& url);
 
 // Unescapes the given string using URL escaping rules, given an optional

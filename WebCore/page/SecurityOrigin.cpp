@@ -75,22 +75,6 @@ static URLSchemesMap& noAccessSchemes()
     return noAccessSchemes;
 }
 
-bool SecurityOrigin::isDefaultPortForProtocol(unsigned short port, const String& protocol)
-{
-    if (protocol.isEmpty())
-        return false;
-
-    typedef HashMap<String, unsigned> DefaultPortsMap;
-    DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
-    if (defaultPorts.isEmpty()) {
-        defaultPorts.set("http", 80);
-        defaultPorts.set("https", 443);
-        defaultPorts.set("ftp", 21);
-        defaultPorts.set("ftps", 990);
-    }
-    return defaultPorts.get(protocol) == port;
-}
-
 SecurityOrigin::SecurityOrigin(const KURL& url)
     : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
@@ -411,7 +395,7 @@ void SecurityOrigin::removeURLSchemeRegisteredAsLocal(const String& scheme)
     localSchemes().remove(scheme);
 }
 
-const URLSchemesMap&  SecurityOrigin::localURLSchemes()
+const URLSchemesMap& SecurityOrigin::localURLSchemes()
 {
     return localSchemes();
 }

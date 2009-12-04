@@ -179,8 +179,6 @@ namespace WebCore {
         static void whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
         static void resetOriginAccessWhiteLists();
 
-        static bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
-
     private:
         explicit SecurityOrigin(const KURL&);
         explicit SecurityOrigin(const SecurityOrigin*);

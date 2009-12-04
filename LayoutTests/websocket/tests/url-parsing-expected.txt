@@ -1,0 +1,11 @@
+Test WebSocket URL parsing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS new WebSocket("/applet") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket("ws://127.0.0.1:25/") threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS (new WebSocket("ws://127.0.0.1/a/../")).URL is "ws://127.0.0.1/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

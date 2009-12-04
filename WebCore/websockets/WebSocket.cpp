@@ -43,7 +43,6 @@
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "WebSocketChannel.h"
 #include <wtf/StdLibExtras.h>
 
@@ -126,18 +125,23 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
     m_protocol = protocol;
 
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
-        LOG_ERROR("Error: wrong url for WebSocket %s", url.string().utf8().data());
+        LOG(Network, "Wrong url scheme for WebSocket %s", url.string().utf8().data());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!isValidProtocolString(m_protocol)) {
-        LOG_ERROR("Error: wrong protocol for WebSocket %s", m_protocol.utf8().data());
+        LOG(Network, "Wrong protocol for WebSocket %s", m_protocol.utf8().data());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
-    // FIXME: if m_url.port() is blocking port, raise SECURITY_ERR.
+    if (!portAllowed(url)) {
+        LOG(Network, "WebSocket port %d blocked", url.port());
+        m_state = CLOSED;
+        ec = SECURITY_ERR;
+        return;
+    }
 
     m_channel = WebSocketChannel::create(scriptExecutionContext(), this, m_url, m_protocol);
     m_channel->connect();

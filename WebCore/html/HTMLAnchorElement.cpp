@@ -386,7 +386,7 @@ String HTMLAnchorElement::host() const
     const KURL& url = href();
     if (url.hostEnd() == url.pathStart())
         return url.host();
-    if (SecurityOrigin::isDefaultPortForProtocol(url.port(), url.protocol()))
+    if (isDefaultPortForProtocol(url.port(), url.protocol()))
         return url.host();
     return url.host() + ":" + String::number(url.port());
 }
@@ -414,7 +414,7 @@ void HTMLAnchorElement::setHost(const String& value)
             // requires setting the port to "0" if it is set to empty string.
             url.setHostAndPort(value.substring(0, separator + 1) + "0");
         } else {
-            if (SecurityOrigin::isDefaultPortForProtocol(port, url.protocol()))
+            if (isDefaultPortForProtocol(port, url.protocol()))
                 url.setHostAndPort(value.substring(0, separator));
             else
                 url.setHostAndPort(value.substring(0, portEnd));
@@ -482,7 +482,7 @@ void HTMLAnchorElement::setPort(const String& value)
     // specifically goes against RFC 3986 (p3.2) and
     // requires setting the port to "0" if it is set to empty string.
     unsigned port = value.toUInt();
-    if (SecurityOrigin::isDefaultPortForProtocol(port, url.protocol()))
+    if (isDefaultPortForProtocol(port, url.protocol()))
         url.removePort();
     else
         url.setPort(port);
