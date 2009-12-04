@@ -59,6 +59,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
     String macNotification;
     switch (notification) {
+        case AXActiveDescendantChanged:
+            // An active descendant change for trees means a selected rows change.
+            if (obj->isTree())
+                macNotification = NSAccessibilitySelectedRowsChangedNotification;
+            else
+                macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
+            break;
         case AXCheckedStateChanged:
             macNotification = "AXCheckedStateChanged";
             break;

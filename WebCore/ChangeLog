@@ -1,3 +1,36 @@
+2009-12-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: aria-activedescendant doesn't work as intended
+        https://bugs.webkit.org/show_bug.cgi?id=32100
+
+        Fixes a number of issues regarding the "tree" role and aria-activedescendant.
+        1. The indexes were being reported incorrectly by treeitems.
+        2. aria-activedescendant changes were not being sent to the containing item.
+        3. The tree's selected rows need to consult aria-activedescendant.
+        4. Since a tree changes what it returns as its children (it returns its rows)
+           the mac-specific array indexing methods need to correctly handle the tree case.
+
+        Tests: platform/mac/accessibility/aria-tree-activedescendant.html
+               platform/mac/accessibility/aria-tree-index-of-items.html
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::shouldFocusActiveDescendant):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::ariaTreeSelectedRows):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2009-12-03  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
