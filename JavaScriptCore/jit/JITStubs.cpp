@@ -1043,6 +1043,14 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
 
     bool leftIsString = v1.isString();
     if (leftIsString && v2.isString()) {
+        if (asString(v1)->isRope() || asString(v2)->isRope()) {
+            RefPtr<JSString::Rope> rope = JSString::Rope::create(2);
+            rope->initializeFiber(0, asString(v1));
+            rope->initializeFiber(1, asString(v2));
+            JSGlobalData* globalData = &callFrame->globalData();
+            return JSValue::encode(new (globalData) JSString(globalData, rope.release()));
+        }
+
         RefPtr<UString::Rep> value = concatenate(asString(v1)->value().rep(), asString(v2)->value().rep());
         if (UNLIKELY(!value)) {
             throwOutOfMemoryError(callFrame);

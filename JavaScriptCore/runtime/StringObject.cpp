@@ -84,7 +84,7 @@ bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyNam
 
 void StringObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    int size = internalValue()->value().size();
+    int size = internalValue()->length();
     for (int i = 0; i < size; ++i)
         propertyNames.add(Identifier(exec, UString::from(i)));
     return JSObject::getOwnPropertyNames(exec, propertyNames);

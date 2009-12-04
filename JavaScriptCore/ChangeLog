@@ -1,3 +1,87 @@
+2009-12-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver "Brraaaaiiiinnnnnzzzzzzzz" Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32136
+        Add a rope representation to JSString.  Presently JSString always holds its data in UString form.
+        Instead, allow the result of a string concatenation to be represented in a tree form - with a
+        variable sized, reference-counted rope node retaining a set of UString::Reps (or other rope nopes).
+
+        Strings must still currently be resolved down to a flat UString representation before being used,
+        but by holding the string in a rope representation during construction we can avoid copying data
+        until we know the final size of the string.
+
+        ~2% progression on SunSpider (~25% on date-format-xparb, ~20% on string-validate-input).
+
+        * JavaScriptCore.exp:
+
+            - Update exports.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
+            - Make use of new JSString::length() method to avoid prematurely resolving ropes.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+
+            - Switch the string length trampoline to read the length directly from JSString::m_length,
+              rather than from the JSString's UString::Rep's 'len' property.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+            - Modify op_add such that addition of two strings, where either or both strings are already
+              in rope representation, produces a rope as a result.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::Rope::~Rope):
+        (JSC::copyChars):
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::toBoolean):
+        (JSC::JSString::toNumber):
+        (JSC::JSString::toString):
+        (JSC::JSString::toThisString):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::JSString::Rope::Fiber::Fiber):
+        (JSC::JSString::Rope::Fiber::destroy):
+        (JSC::JSString::Rope::Fiber::isRope):
+        (JSC::JSString::Rope::Fiber::rope):
+        (JSC::JSString::Rope::Fiber::string):
+        (JSC::JSString::Rope::create):
+        (JSC::JSString::Rope::initializeFiber):
+        (JSC::JSString::Rope::ropeLength):
+        (JSC::JSString::Rope::stringLength):
+        (JSC::JSString::Rope::fibers):
+        (JSC::JSString::Rope::Rope):
+        (JSC::JSString::Rope::operator new):
+        (JSC::JSString::JSString):
+        (JSC::JSString::value):
+        (JSC::JSString::length):
+        (JSC::JSString::isRope):
+        (JSC::JSString::rope):
+        (JSC::JSString::string):
+        (JSC::JSString::canGetIndex):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::JSString::getIndex):
+        (JSC::jsSubstring):
+        (JSC::JSString::getStringPropertySlot):
+
+            - Add rope form.
+
+        * runtime/Operations.h:
+        (JSC::jsAdd):
+        (JSC::concatenateStrings):
+
+            - Update string concatenation, and addition of ropes, to produce ropes.
+
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+
+            - Make use of new JSString::length() method to avoid prematurely resolving ropes.
+
 2009-11-23  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

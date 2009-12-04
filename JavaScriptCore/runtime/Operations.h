@@ -204,6 +204,14 @@ namespace JSC {
         
         bool leftIsString = v1.isString();
         if (leftIsString && v2.isString()) {
+            if (asString(v1)->isRope() || asString(v2)->isRope()) {
+                RefPtr<JSString::Rope> rope = JSString::Rope::create(2);
+                rope->initializeFiber(0, asString(v1));
+                rope->initializeFiber(1, asString(v2));
+                JSGlobalData* globalData = &callFrame->globalData();
+                return new (globalData) JSString(globalData, rope.release());
+            }
+
             RefPtr<UString::Rep> value = concatenate(asString(v1)->value().rep(), asString(v2)->value().rep());
             if (!value)
                 return throwOutOfMemoryError(callFrame);
@@ -298,47 +306,19 @@ namespace JSC {
     {
         ASSERT(count >= 3);
 
-        // Estimate the amount of space required to hold the entire string.  If all
-        // arguments are strings, we can easily calculate the exact amount of space
-        // required.  For any other arguments, for now let's assume they may require
-        // 11 UChars of storage.  This is enouch to hold any int, and likely is also
-        // reasonable for the other immediates.  We may want to come back and tune
-        // this value at some point.
-        unsigned bufferSize = 0;
+        RefPtr<JSString::Rope> rope = JSString::Rope::create(count);
+
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
             if (LIKELY(v.isString()))
-                bufferSize += asString(v)->value().size();
+                rope->initializeFiber(i, asString(v));
             else
-                bufferSize += 11;
+                rope->initializeFiber(i, v.toString(callFrame).rep());
         }
 
-        // Allocate an output string to store the result.
-        // If the first argument is a String, and if it has the capacity (or can grow
-        // its capacity) to hold the entire result then use this as a base to concatenate
-        // onto.  Otherwise, allocate a new empty output buffer.
-        JSValue firstValue = strings[0].jsValue();
-        RefPtr<UString::Rep> resultRep;
-        if (firstValue.isString() && (resultRep = asString(firstValue)->value().rep())->reserveCapacity(bufferSize)) {
-            // We're going to concatenate onto the first string - remove it from the list of items to be appended.
-            ++strings;
-            --count;
-        } else
-            resultRep = UString::Rep::createEmptyBuffer(bufferSize);
-        UString result(resultRep);
-
-        // Loop over the operands, writing them into the output buffer.
-        for (unsigned i = 0; i < count; ++i) {
-            JSValue v = strings[i].jsValue();
-            if (LIKELY(v.isString()))
-                result.append(asString(v)->value());
-            else
-                result.append(v.toString(callFrame));
-        }
-
-        return jsString(callFrame, result);
+        JSGlobalData* globalData = &callFrame->globalData();
+        return new (globalData) JSString(globalData, rope.release());
     }
-
 } // namespace JSC
 
 #endif // Operations_h
