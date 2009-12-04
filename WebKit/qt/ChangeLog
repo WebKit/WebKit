@@ -2,6 +2,14 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Allow removing 'qrc' as a local security origin scheme
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+
+2009-12-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Clean up argument parsing in the QtLauncher
 
         * QtLauncher/main.cpp:

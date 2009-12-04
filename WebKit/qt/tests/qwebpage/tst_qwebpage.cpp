@@ -1534,10 +1534,17 @@ void tst_QWebPage::protectBindingsRuntimeObjectsFromCollector()
 void tst_QWebPage::localURLSchemes()
 {
     int i = QWebSecurityOrigin::localSchemes().size();
+
     QWebSecurityOrigin::removeLocalScheme("file");
     QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
     QWebSecurityOrigin::addLocalScheme("file");
     QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+
+    QWebSecurityOrigin::removeLocalScheme("qrc");
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i - 1);
+    QWebSecurityOrigin::addLocalScheme("qrc");
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+
     QString myscheme = "myscheme";
     QWebSecurityOrigin::addLocalScheme(myscheme);
     QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i + 1);

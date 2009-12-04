@@ -408,10 +408,6 @@ void SecurityOrigin::removeURLSchemeRegisteredAsLocal(const String& scheme)
     if (scheme == "applewebdata")
         return;
 #endif
-#if PLATFORM(QT)
-    if (scheme == "qrc")
-        return;
-#endif
     localSchemes().remove(scheme);
 }
 

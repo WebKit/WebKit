@@ -1,3 +1,11 @@
+2009-12-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Allow removing 'qrc' as a local security origin scheme
+
+        * page/SecurityOrigin.cpp:
+
 2009-12-04  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
