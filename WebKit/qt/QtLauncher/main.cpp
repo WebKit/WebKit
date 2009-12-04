@@ -565,7 +565,7 @@ int launcherMain(const QApplication& app)
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    QString url = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
+    QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
 
     QWebSettings::setMaximumPagesInCache(4);
 
@@ -599,14 +599,21 @@ int main(int argc, char **argv)
         window->show();
         launcherMain(app);
     } else {
-        if (args.count() > 1)
-            url = args.at(1);
+        MainWindow* window = 0;
 
-        MainWindow* window = new MainWindow(url);
+        // Look though the args for something we can open
+        for (int i = 1; i < args.count(); i++) {
+            if (!args.at(i).startsWith("-")) {
+                if (!window)
+                    window = new MainWindow(args.at(i));
+                else
+                    window->newWindow(args.at(i));
+            }
+        }
 
-        // Opens every given urls in new windows
-        for (int i = 2; i < args.count(); i++)
-            window->newWindow(args.at(i));
+        // If not, just open the default URL
+        if (!window)
+            window = new MainWindow(defaultUrl);
 
         window->show();
         launcherMain(app);

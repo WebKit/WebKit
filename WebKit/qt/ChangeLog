@@ -1,3 +1,11 @@
+2009-12-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Clean up argument parsing in the QtLauncher
+
+        * QtLauncher/main.cpp:
+
 2009-12-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
