@@ -1,3 +1,15 @@
+2009-12-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32175
+        REGRESSION: websocket/tests/url-parsing.html is crashing on Leopard Bot
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback): Call platformClose() to unschedule both
+        streams, guaranteeing that there will be no callbacks after SocketStreamHandle is destroyed.
+        (WebCore::SocketStreamHandle::writeStreamCallback): Edited a comment a bit.
+
 2009-12-05  Adam Langley  <agl@google.com>
 
         Reviewed by Adam Barth.

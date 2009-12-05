@@ -529,7 +529,7 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         break;
     }
     case kCFStreamEventEndEncountered:
-        m_client->didClose(this);
+        platformClose();
         break;
     }
 }
@@ -571,7 +571,7 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
         break;
     }
     case kCFStreamEventEndEncountered:
-        // FIXME: Currently, we call didClose from read callback, but these can come independently (e.g. a server can stop listening, but keep sending data).
+        // FIXME: Currently, we handle closing in read callback, but these can come independently (e.g. a server can stop listening, but keep sending data).
         break;
     }
 }
