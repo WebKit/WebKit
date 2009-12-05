@@ -1,3 +1,14 @@
+2009-12-04  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Add test for JavaScript string property deletion
+        https://bugs.webkit.org/show_bug.cgi?id=32012
+
+        * fast/js/script-tests/string-property-deletion.js: Added.
+        * fast/js/string-property-deletion-expected.txt: Added.
+        * fast/js/string-property-deletion.html: Added.
+
 2009-12-04  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.

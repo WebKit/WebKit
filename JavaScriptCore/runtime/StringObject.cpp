@@ -79,6 +79,10 @@ bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyNam
 {
     if (propertyName == exec->propertyNames().length)
         return false;
+    bool isStrictUInt32;
+    unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
+    if (isStrictUInt32 && internalValue()->canGetIndex(i))
+        return false;
     return JSObject::deleteProperty(exec, propertyName);
 }
 
