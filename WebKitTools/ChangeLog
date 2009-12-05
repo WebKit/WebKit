@@ -1,3 +1,16 @@
+2009-12-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        update-webkit should call git svn rebase and resolve-ChangeLogs -f
+        https://bugs.webkit.org/show_bug.cgi?id=27162
+
+        Teach update-webkit about Git.  I didn't add the call to
+        resolve-ChangeLogs -f because sometimes that script goes bananas.  We
+        can iterate from here, however.
+
+        * Scripts/update-webkit:
+
 2009-12-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed build fix.

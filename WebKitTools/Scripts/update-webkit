@@ -39,12 +39,16 @@ use VCSUtils;
 use webkitdirs;
 
 sub runSvnUpdate();
+sub runGitUpdate();
 
 # Handle options
 my $quiet = '';
 my $showHelp;
 
 determineIsChromium();
+
+my $isGit = isGit();
+my $isSVN = isSVN();
 
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
@@ -69,12 +73,14 @@ push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
-runSvnUpdate();
+runSvnUpdate() if $isSVN;
+runGitUpdate() if $isGit;
 
 if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    runSvnUpdate();
+    runSvnUpdate() if $isSVN;
+    runGitUpdate() if $isGit;
 } elsif (isChromium()) {
     system("perl", "WebKitTools/Scripts/update-webkit-chromium") == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
@@ -103,4 +109,9 @@ sub runSvnUpdate()
         (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
             or die "Could not open resolve-ChangeLogs script: $!.\n";
     }
+}
+
+sub runGitUpdate()
+{
+    system("git", "svn", "rebase") == 0 or die;
 }
