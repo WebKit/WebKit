@@ -1,3 +1,27 @@
+2009-12-04  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: make rounded borders heavier.
+
+        Skia draws its rounded corners differently from the other ports.
+        Whereas they have anti-aliased clipping regions, Skia only has 1-bit
+        regions. (Which is technically more correct, but somewhat unhelpful
+        for us.) Instead, with Skia we use a layer and collect all the
+        clipping paths in effect. When the state is popped, we paint
+        transparency outside the clipping paths and merge the layer down.
+
+        This appears to cause rounded borders to look a little thin, which is
+        addressed in this patch.
+
+        This is well covered by existing tests but will require new baselines
+        in the Chromium tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31778
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+
 2009-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
