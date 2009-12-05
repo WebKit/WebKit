@@ -77,7 +77,7 @@ class LandingSequence:
         self._tool.steps.clean_working_directory(self._tool.scm(), self._options)
 
     def update(self):
-        self._tool.scm().update_webkit()
+        self._tool.steps.update()
 
     def apply_patch(self):
         log("Processing patch %s from bug %s." % (self._patch["id"], self._patch["bug_id"]))

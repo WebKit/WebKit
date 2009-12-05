@@ -251,9 +251,6 @@ class SCM:
     def clean_working_directory(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def update_webkit(self):
-        raise NotImplementedError, "subclasses must implement"
-
     def status_command(self):
         raise NotImplementedError, "subclasses must implement"
 
@@ -362,9 +359,6 @@ class SVN(SCM):
     def clean_working_directory(self):
         self.run_command(['svn', 'revert', '-R', '.'])
 
-    def update_webkit(self):
-        self.run_command(self.script_path("update-webkit"))
-
     def status_command(self):
         return ['svn', 'status']
 
@@ -457,11 +451,6 @@ class Git(SCM):
         # Aborting rebase even though this does not match working_directory_is_clean
         if self.rebase_in_progress():
             self.run_command(['git', 'rebase', '--abort'])
-
-    def update_webkit(self):
-        # FIXME: Call update-webkit once https://bugs.webkit.org/show_bug.cgi?id=27162 is fixed.
-        log("Updating working directory")
-        self.run_command(['git', 'svn', 'rebase'])
 
     def status_command(self):
         return ['git', 'status']

@@ -109,7 +109,7 @@ class WebKitApplyingScripts:
     def setup_for_patch_apply(tool, options):
         tool.steps.clean_working_directory(tool.scm(), options, allow_local_commits=True)
         if options.update:
-            tool.scm().update_webkit()
+            tool.steps.update()
 
     @staticmethod
     def apply_patches_with_options(scm, patches, options):
@@ -386,7 +386,7 @@ class Rollout(Command):
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
         tool.steps.clean_working_directory(tool.scm(), options)
-        tool.scm().update_webkit()
+        tool.steps.update()
         tool.scm().apply_reverse_diff(revision)
         self._create_changelogs_for_revert(tool, revision)
 

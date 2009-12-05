@@ -62,12 +62,16 @@ class WebKitPort():
         raise NotImplementedError, "subclasses must implement"
 
     @classmethod
-    def run_webkit_tests_command(cls):
-        return [cls.script_path("run-webkit-tests")]
+    def update_webkit_command(cls):
+        return [cls.script_path("update-webkit")]
 
     @classmethod
     def build_webkit_command(cls):
         return [cls.script_path("build-webkit")]
+
+    @classmethod
+    def run_webkit_tests_command(cls):
+        return [cls.script_path("run-webkit-tests")]
 
 
 class MacPort(WebKitPort):

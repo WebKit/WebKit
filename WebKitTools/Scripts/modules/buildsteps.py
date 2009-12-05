@@ -76,6 +76,10 @@ class BuildSteps:
         if options.clean:
             scm.ensure_clean_working_directory(force_clean=options.force_clean)
 
+    def update(self, port=WebKitPort):
+        log("Updating working directory")
+        run_and_throw_if_fail(port.update_webkit_command())
+
     def run_tests(self, launch_safari, fail_fast=False, quiet=False, port=WebKitPort):
         args = port.run_webkit_tests_command()
         if not launch_safari:
