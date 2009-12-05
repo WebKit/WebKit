@@ -194,7 +194,7 @@ dt {
     line-height: normal;
 }
 
-.mac-instructions, .windows-instructions {
+.mac-instructions, .windows-instructions, .gtk-instructions, .qt-instructions {
     border: 1px solid black;
     background-color: white;
     -webkit-border-radius: 5px;
