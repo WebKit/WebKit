@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] Implement ChromiumPort
+        https://bugs.webkit.org/show_bug.cgi?id=32182
+
+        * Scripts/modules/webkitport.py:
+        * Scripts/modules/webkitport_unittest.py:
+
+2009-12-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move update-webkit into BuildSteps
         https://bugs.webkit.org/show_bug.cgi?id=32181
 

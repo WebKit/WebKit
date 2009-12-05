@@ -50,6 +50,8 @@ class WebKitPort():
             return MacPort
         if options.port == "qt":
             return QtPort
+        if options.port == "chromium":
+            return ChromiumPort
         # FIXME: We should default to WinPort on Windows.
         return MacPort
 
@@ -97,4 +99,26 @@ class QtPort(WebKitPort):
     def build_webkit_command(cls):
         command = WebKitPort.build_webkit_command()
         command.append("--qt")
+        return command
+
+
+class ChromiumPort(WebKitPort):
+    @classmethod
+    def name(cls):
+        return "Chromium"
+
+    @classmethod
+    def flag(cls):
+        return "--port=chromium"
+
+    @classmethod
+    def update_webkit_command(cls):
+        command = WebKitPort.update_webkit_command()
+        command.append("--chromium")
+        return command
+
+    @classmethod
+    def build_webkit_command(cls):
+        command = WebKitPort.build_webkit_command()
+        command.append("--chromium")
         return command

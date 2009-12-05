@@ -29,7 +29,7 @@
 
 import unittest
 
-from modules.webkitport import WebKitPort, MacPort, QtPort
+from modules.webkitport import WebKitPort, MacPort, QtPort, ChromiumPort
 
 class WebKitPortTest(unittest.TestCase):
     def test_mac_port(self):
@@ -43,6 +43,13 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(QtPort.flag(), "--port=qt")
         self.assertEquals(QtPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
         self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt"])
+
+    def test_chromium_port(self):
+        self.assertEquals(ChromiumPort.name(), "Chromium")
+        self.assertEquals(ChromiumPort.flag(), "--port=chromium")
+        self.assertEquals(ChromiumPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
+        self.assertEquals(ChromiumPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--chromium"])
+        self.assertEquals(ChromiumPort.update_webkit_command(), [WebKitPort.script_path("update-webkit"), "--chromium"])
 
 
 if __name__ == '__main__':
