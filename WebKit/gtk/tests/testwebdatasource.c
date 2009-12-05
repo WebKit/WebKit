@@ -66,7 +66,7 @@ static void load_finished_unreachable_cb(WebKitWebView* view, WebKitWebFrame* fr
     frame = webkit_web_view_get_main_frame(view);
     datasource = webkit_web_frame_get_data_source(frame);
 
-    g_assert_cmpstr("http://localhost/doireallyexist.html", ==,
+    g_assert_cmpstr("http://this.host.does.not.exist/doireallyexist.html", ==,
                     webkit_web_data_source_get_unreachable_uri(datasource));
 
     if (g_main_loop_is_running(loop))
@@ -149,7 +149,7 @@ static void test_webkit_web_data_source_unreachable_uri()
     g_object_ref_sink(view);
     loop = g_main_loop_new(NULL, TRUE);
     g_signal_connect(view, "load-finished", G_CALLBACK(load_finished_unreachable_cb), loop);
-    webkit_web_view_load_uri(view, "http://localhost/doireallyexist.html");
+    webkit_web_view_load_uri(view, "http://this.host.does.not.exist/doireallyexist.html");
 
     if (!waitTimer)
         waitTimer = g_timeout_add_seconds(defaultTimeout, (GSourceFunc)wait_timer_fired, loop);

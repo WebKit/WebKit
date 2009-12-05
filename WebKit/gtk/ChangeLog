@@ -1,3 +1,14 @@
+2009-12-05  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Use a better URI for the unreachable test. localhost:80 is very
+        likely to be open.
+
+        * tests/testwebdatasource.c:
+        (load_finished_unreachable_cb):
+        (test_webkit_web_data_source_unreachable_uri):
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
