@@ -3337,6 +3337,12 @@ bool CSSParser::parseFontWeight(bool important)
     return false;
 }
 
+static bool isValidFormatFunction(CSSParserValue* val)
+{
+    CSSParserValueList* args = val->function->args;
+    return equalIgnoringCase(val->function->name, "format(") && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT);
+}
+
 bool CSSParser::parseFontFaceSrc()
 {
     RefPtr<CSSValueList> values(CSSValueList::createCommaSeparated());
@@ -3364,7 +3370,7 @@ bool CSSParser::parseFontFaceSrc()
                     CSSParserValue* a = args->current();
                     uriValue.clear();
                     parsedValue = CSSFontFaceSrcValue::createLocal(a->string);
-                } else if (equalIgnoringCase(val->function->name, "format(") && allowFormat && uriValue) {
+                } else if (allowFormat && uriValue && isValidFormatFunction(val)) {
                     expectComma = true;
                     allowFormat = false;
                     uriValue->setFormat(args->current()->string);

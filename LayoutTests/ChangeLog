@@ -1,3 +1,15 @@
+2009-12-05  Adam Langley  <agl@google.com>
+
+        Reviewed by Adam Barth.
+
+        Check that a CSS format() argument is of a valid type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31815
+        http://code.google.com/p/chromium/issues/detail?id=28582
+
+        * fast/css/url-format-non-string-expected.txt: Added
+        * fast/css/url-format-non-string.html: Added.
+
 2009-12-04  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

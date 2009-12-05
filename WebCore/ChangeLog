@@ -1,3 +1,17 @@
+2009-12-05  Adam Langley  <agl@google.com>
+
+        Reviewed by Adam Barth.
+
+        Check that a CSS format() argument is of a valid type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31815
+        http://code.google.com/p/chromium/issues/detail?id=28582
+
+        Test: fast/css/url-format-non-string.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceSrc):
+
 2009-12-04  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.
