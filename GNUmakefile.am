@@ -432,7 +432,7 @@ WEBKIT_GIRSOURCES += WebKit-1.0.gir
 JSCore-1.0.gir: $(srcdir)/WebKit/gtk/JSCore-1.0.gir
 	cp $(srcdir)/WebKit/gtk/JSCore-1.0.gir $(builddir)/
 
-$(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
+$(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER) libwebkit-1.0.la
 	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=1.0 \
 	     --include=GObject-2.0 \
 	     --include=Gtk-2.0 \

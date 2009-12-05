@@ -1,3 +1,12 @@
+2009-12-05  Vincent Untz <vuntz@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Fixes race for builds with introspection enabled, and parallel
+        make.
+
+        * GNUmakefile.am:
+
 2009-12-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
