@@ -1,3 +1,21 @@
+2009-12-04  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32095
+        Implement WebRegularExpression, a WebKit API for accessing
+        WebCore::RegularExpression.
+
+        * WebKit.gyp:
+        * public/WebRegularExpression.h: Added.
+        * public/WebTextCaseSensitivity.h: Added.
+        (WebKit::):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebRegularExpression.cpp: Added.
+        (WebKit::WebRegularExpression::WebRegularExpression):
+        (WebKit::WebRegularExpression::~WebRegularExpression):
+        (WebKit::WebRegularExpression::match):
+
 2009-12-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.

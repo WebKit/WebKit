@@ -41,6 +41,7 @@
 #include "NotificationPresenter.h"
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
+#include "StringImpl.h"
 #include "TextAffinity.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
@@ -51,6 +52,7 @@
 #include "WebMediaPlayer.h"
 #include "WebNotificationPresenter.h"
 #include "WebTextAffinity.h"
+#include "WebTextCaseSensitivity.h"
 #include <wtf/Assertions.h>
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
@@ -272,3 +274,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebNotificationPresenter::PermissionDenied, Notific
 
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityUpstream, UPSTREAM);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityDownstream, DOWNSTREAM);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebTextCaseSensitive, TextCaseSensitive);
+COMPILE_ASSERT_MATCHING_ENUM(WebTextCaseInsensitive, TextCaseInsensitive);
