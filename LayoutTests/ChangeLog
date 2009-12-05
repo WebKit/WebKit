@@ -1,3 +1,15 @@
+2009-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Disabled a test because it puts the WebView into compositing mode,
+        which remains in effect for all subsequent repaint tests, causing them
+        to fail because DumpRenderTree always forces a full repaint when
+        generating the image of a WebView that is in compositing mode.
+
+        * fast/repaint/block-selection-gap-in-composited-layer.html: Removed.
+        * fast/repaint/block-selection-gap-in-composited-layer.html.disabled: Copied from LayoutTests/fast/repaint/block-selection-gap-in-composited-layer.html.
+
 2009-12-05  Adam Langley  <agl@google.com>
 
         Reviewed by Adam Barth.
