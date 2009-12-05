@@ -1,3 +1,22 @@
+2009-12-04  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add test for web socket send.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31337
+
+        * websocket/tests/script-tests/send.js: Added.
+        (endTest):
+        (ws.onopen):
+        (ws.onmessage.ws.onmessage):
+        (ws.onmessage):
+        (ws.onclose):
+        (timeOutCallback):
+        * websocket/tests/send-expected.txt: Added.
+        * websocket/tests/send.html: Added.
+        * websocket/tests/send_wsh.py: Added.
+
 2009-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
