@@ -1,3 +1,21 @@
+2009-12-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Refactored web site documentation so that advice to add
+        WebKitTools/Scripts to your shell path does not appear 
+        on multiple pages.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32112
+        
+        * building/build.html:
+        * building/checkout.html:
+        * building/run.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * coding/scripts.html: Added.
+        * quality/testing.html:
+
 2009-12-04  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Eric Seidel.

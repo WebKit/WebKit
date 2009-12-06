@@ -40,14 +40,16 @@ to install Subversion.</p>
 
 <div class="windows-instructions">
 <h4>Windows</h4>
+<ol>
 <li><p>Install the WebKit Support Libraries</p>
 <p>Download the <a href="http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html">WebKit Support Libraries</a> to the root of your source tree (<tt>C:\cygwin\home\&lt;username&gt;\WebKit</tt>).</p>
 <p>If the file is incorrectly named, rename it to <tt>WebKitSupportLibrary.zip</tt>. Do not extract its contents.</p>
+</ol>
 </div>
 
 <ol>
-<li><p>Type this command to update your source tree:</p>
-<p class="code">WebKit/WebKitTools/Scripts/update-webkit</p>
+<li><p>Run the <tt>update-webkit</tt> <a href="/coding/scripts.html">script</a>
+to update your source tree.</p>
 <p>If you downloaded the tarball, this will bring it up to date.  Windows users
 must always execute this command after first obtaining the code, since it will
 download additional libraries that are needed to build.</p>
@@ -57,11 +59,9 @@ download additional libraries that are needed to build.</p>
 <a href="build.html">building WebKit</a>.</p>
 
 <h2>Keeping up to Date</h2>
-<p>At any time, you can retype the <tt>update-webkit</tt> command to update your source tree:</p>
-<p class="code">WebKit/WebKitTools/Scripts/update-webkit</p>
+<p>At any time, you can rerun the <tt>update-webkit</tt> script to update
+your source tree.</p>
 
-<hr>
-<p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>update-webkit</tt> without specifying a full path.</p>
 <?php
 include("../footer.inc");
 ?>

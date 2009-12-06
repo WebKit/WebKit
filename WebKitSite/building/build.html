@@ -17,10 +17,11 @@ installed</a> and that you have a copy of the <a href="checkout.html">WebKit sou
 </div>
 
 <ol>
-<li><p>Type this command to build WebKit:</p>
-<p class="code">WebKit/WebKitTools/Scripts/build-webkit</p>
-<p>Use the <tt>--debug</tt> option for a debug build, which includes debugging symbols and assertions:</p>
-<p class="code">WebKit/WebKitTools/Scripts/build-webkit --debug</p>
+<li><p>Run the <tt>build-webkit</tt> <a href="/coding/scripts.html">script</a>
+to build WebKit.</p>
+<p>Use the <tt>--debug</tt> option for a debug build, which includes
+debugging symbols and assertions:</p>
+<p class="code">build-webkit --debug</p>
 </li>
 </ol>
 
@@ -38,18 +39,18 @@ are still there and add them again if necessary.</p>
 <p>Don't forget that if you have any questions or problems building WebKit, feel free to <a href="/contact.html">get in touch!</a></p>
 </div>
 
+<p>Once your build has finished, you can <a href="run.html">run it inside
+Safari.</a></p>
+
 <h2>Setting a Default Configuration</h2>
 <ol>
-<li><p>To set a default build configuration for <tt>build-webkit</tt> and other scripts, use the <tt>set-webkit-configuration</tt> script:</p>
-<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --debug</p>
-<p class="code">WebKit/WebKitTools/Scripts/set-webkit-configuration --release</p>
+<li><p>To set a default build configuration for <tt>build-webkit</tt> and
+other <a href="/coding/scripts.html">scripts</a>, use the
+<tt>set-webkit-configuration</tt> script:</p>
+<p class="code">set-webkit-configuration --debug</p>
+<p class="code">set-webkit-configuration --release</p>
 </li>
 </ol>
-
-<hr>
-<p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>build-webkit</tt> without specifying a full path.</p>
-
-<p>Once your build has finished, you can <A href="run.html">run it inside Safari.</a></p>
 
 <?php
     include("../footer.inc");

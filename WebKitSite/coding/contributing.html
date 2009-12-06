@@ -4,9 +4,17 @@
 ?>
 <h2>Contributing Code</h2>
 <p>Contributing code to the WebKit project is a straightforward process.
-Once you have the code <a href="/building/checkout.html">checked out</a>, <a href="/building/build.html">built</a>, and made your changes, you'll need to do a few things in order to get it landed in the tree:</p>
+The project maintains several <a href="scripts.html">scripts</a>
+to assist you with this process.</p>
+
+<p>Once you have <a href="/building/checkout.html">checked out</a>,
+<a href="/building/build.html">built</a>, and made your changes to the code,
+you'll need to do a few things to get your changes landed in the tree:</p>
+
 <ol>
-    <li>Make sure your changes meet the <a href="/coding/coding-style.html">code style guidelines</a>. <tt>check-webkit-style</tt> may be of help.</li>
+    <li>Make sure your changes meet the <a href="/coding/coding-style.html">code
+        style guidelines</a>. The <tt>check-webkit-style</tt> script may be of
+        help.</li>
     <li>Run the layout tests using the <tt>run-webkit-tests</tt> script and make sure they all pass.
         See the <a href="/quality/testwriting.html">testing page</a> for more information, as well as what you need to do if you've modified JavaScriptCore.</li>
     <li>Add any new files and layout tests to Subversion using the <tt>svn add</tt> command.</li>
@@ -18,6 +26,7 @@ Once you have the code <a href="/building/checkout.html">checked out</a>, <a hre
     <li>Please watch for any regressions it may have caused (hopefully none)!</li>
 </ol>
 
+<p>More detail about these steps is below.</p>
 
 <h3>Code Style Guidelines</h3>
 <p>Patches must comply with the <a href="/coding/coding-style.html">code style guidelines</a>.
@@ -51,14 +60,20 @@ More information on Subversion commands can be found via <tt>svn help</tt> or th
 <p>The line WARNING: NO TEST CASES ADDED OR CHANGED appears if prepare-ChangeLog did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), you should include a line stating such.  Otherwise all changes require test cases which should be mentioned in the ChangeLog.</p>
 
 <h3>Create the patch</h3>
-<p>WebKit uses the <tt>svn-create-patch</tt> script to create patches.  <tt>svn-create-patch</tt> is just a small wrapper around Subversion's <tt>diff</tt> command which knows how to better handle moved, added, and deleted files. This command is best run from the top level of your checkout to make
-sure no changes are left out of your patch. It is not necessary to break a patch into multiple files.</p>
+<p>WebKit uses <tt>svn-create-patch</tt> to create patches. The 
+<tt>svn-create-patch</tt> script is a small wrapper around Subversion's 
+<tt>diff</tt> command that better handles moved, added, and deleted files.
+This command is best run from the top level of your checkout 
+to make sure no changes are left out of your patch. It is not necessary to 
+break a patch into multiple files.</p>
 
-<p><tt>svn-create-patch</tt> does not create a file automatically, you need to redirect the output yourself using something like: <tt>svn-create-patch > MyExcellentPatch.txt</tt></p>
+<p>The <tt>svn-create-patch</tt> script does not create a file automatically.
+You need to redirect the output yourself using something like--</p>
+<p class="code">svn-create-patch > MyExcellentPatch.txt</p>
 
 <h3>Patch review</h3>
-<p>Once you have a patch file, it must be reviewed by one of the approved WebKit reviewers. To request a review, attach the patch
-to the bug report, and mark the patch with the flag <tt>review:?</tt>. The reviewer will typically either approve the patch
+<p>Once you have a patch file, one of the approved WebKit reviewers must review it.
+To request a review, attach the patch to the bug report, and mark the patch with the flag <tt>review:?</tt>. The reviewer will typically either approve the patch
 (by responding with an <tt>r=me</tt> in the bug report and marking the patch <tt>review:+</tt>) or request revisions
 to the patch (and mark the patch <tt>review:-</tt>). In rare cases a patch may be permanently rejected, meaning that the reviewer
 believes the feature should never be committed to the tree. The review process can consist of multiple iterations between you and
@@ -74,12 +89,6 @@ the reviewer as revisions are made to your patch.</p>
 
 <h4 id="commitqueue">Optional: Use of the WebKit Commit Bot</h4>
 <p>WebKit provides an automated system (commit-queue) for landing patches for any who would like to use it.  To use the commit-queue, set the <tt>commit-queue:?</tt> flag on your patch.  A committer will set <tt>commit-queue:+</tt> and an automated process will download, build, run the layout tests, and submit your patch on your behalf.  If the <a href="http://build.webkit.org/">WebKit buildbots</a> are passing, your patch should be landed within 15 minutes after <tt>commit-queue:+</tt> is set. See the <a href="https://trac.webkit.org/wiki/CommitQueue">commit-queue documentation</a> for more information.</p>
-
-<h2>WebKit Scripts</h2>
-<p><tt>WebKitTools/Scripts</tt> contains a number of scripts to help make life easier when submitting a patch. All scripts mentioned
-on this page (and on the rest of the site as well) are located here unless otherwise mentioned.</p>
-<p>It's handy to put this directory in your shell path so you can just type the commands without having to specify the path to
-the script each time.</p>
 
 <h2>Obtaining Commit and Review Privileges</h2>
 <p>Our <a href="commit-review-policy.html">Committer and Reviewer policy</a> provides details on obtaining commit and review privileges.</p>
