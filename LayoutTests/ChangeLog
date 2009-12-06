@@ -1,3 +1,23 @@
+2009-12-05  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        New test for video.canPlayType and ogg containers.
+
+        [GTK] Recognize oga as audio/ogg
+        https://bugs.webkit.org/show_bug.cgi?id=31990
+
+        * media/media-can-play-ogg-expected.txt: Added.
+        * media/media-can-play-ogg.html: Added.
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt-win/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-12-05  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

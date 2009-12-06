@@ -777,56 +777,78 @@ static HashSet<String> mimeTypeCache()
             GstTypeFindFactory* factory = GST_TYPE_FIND_FACTORY(iterator->data);
             GstCaps* caps = gst_type_find_factory_get_caps(factory);
 
-            // Splitting the capability by comma and taking the first part
-            // as capability can be something like "audio/x-wavpack, framed=(boolean)false"
-            GOwnPtr<gchar> capabilityString(gst_caps_to_string(caps));
-            gchar** capability = g_strsplit(capabilityString.get(), ",", 2);
-            gchar** mimetype = g_strsplit(capability[0], "/", 2);
+            if (!caps)
+                continue;
 
-            // GStreamer plugins can be capable of supporting types which WebKit supports
-            // by default. In that case, we should not consider these types supportable by GStreamer.
-            // Examples of what GStreamer can support but should not be added:
-            // text/plain, text/html, image/jpeg, application/xml
-            if (g_str_equal(mimetype[0], "audio")
-                || g_str_equal(mimetype[0], "video")
-                || (g_str_equal(mimetype[0], "application")
-                    && !ignoredApplicationSubtypes.contains(String(mimetype[1])))) {
-                cache.add(String(capability[0]));
+            for (guint structureIndex = 0; structureIndex < gst_caps_get_size(caps); structureIndex++) {
+                GstStructure* structure = gst_caps_get_structure(caps, structureIndex);
+                const gchar* name = gst_structure_get_name(structure);
+                bool cached = false;
 
-                // These formats are supported by GStreamer, but not correctly advertised
-                if (g_str_equal(capability[0], "video/x-h264")
-                    || g_str_equal(capability[0], "audio/x-m4a")) {
+                // These formats are supported by GStreamer, but not
+                // correctly advertised.
+                if (g_str_equal(name, "video/x-h264")
+                    || g_str_equal(name, "audio/x-m4a")) {
                     cache.add(String("video/mp4"));
                     cache.add(String("audio/aac"));
+                    cached = true;
                 }
 
-                if (g_str_equal(capability[0], "video/x-theora"))
+                if (g_str_equal(name, "video/x-theora")) {
                     cache.add(String("video/ogg"));
+                    cached = true;
+                }
 
-                if (g_str_equal(capability[0], "audio/x-wav"))
+                if (g_str_equal(name, "audio/x-vorbis")) {
+                    cache.add(String("audio/ogg"));
+                    cached = true;
+                }
+
+                if (g_str_equal(name, "audio/x-wav")) {
                     cache.add(String("audio/wav"));
+                    cached = true;
+                }
 
-                if (g_str_equal(capability[0], "audio/mpeg")) {
-                    // This is what we are handling: mpegversion=(int)1, layer=(int)[ 1, 3 ]
-                    gchar** versionAndLayer = g_strsplit(capability[1], ",", 2);
+                if (g_str_equal(name, "audio/mpeg")) {
+                    cache.add(String(name));
+                    cached = true;
 
-                    if (g_str_has_suffix(versionAndLayer[0], "(int)1")) {
-                        for (int i = 0; versionAndLayer[1][i] != '\0'; i++) {
-                            if (versionAndLayer[1][i] == '1')
+                    // This is what we are handling:
+                    // mpegversion=(int)1, layer=(int)[ 1, 3 ]
+                    gint mpegVersion = 0;
+                    if (gst_structure_get_int(structure, "mpegversion", &mpegVersion) && (mpegVersion == 1)) {
+                        const GValue* layer = gst_structure_get_value(structure, "layer");
+                        if (G_VALUE_TYPE(layer) == GST_TYPE_INT_RANGE) {
+                            gint minLayer = gst_value_get_int_range_min(layer);
+                            gint maxLayer = gst_value_get_int_range_max(layer);
+                            if (minLayer <= 1 <= maxLayer)
                                 cache.add(String("audio/mp1"));
-                            else if (versionAndLayer[1][i] == '2')
+                            if (minLayer <= 2 <= maxLayer)
                                 cache.add(String("audio/mp2"));
-                            else if (versionAndLayer[1][i] == '3')
+                            if (minLayer <= 3 <= maxLayer)
                                 cache.add(String("audio/mp3"));
                         }
                     }
+                }
 
-                    g_strfreev(versionAndLayer);
+                if (!cached) {
+                    // GStreamer plugins can be capable of supporting
+                    // types which WebKit supports by default. In that
+                    // case, we should not consider these types
+                    // supportable by GStreamer.  Examples of what
+                    // GStreamer can support but should not be added:
+                    // text/plain, text/html, image/jpeg,
+                    // application/xml
+                    gchar** mimetype = g_strsplit(name, "/", 2);
+                    if (g_str_equal(mimetype[0], "audio")
+                        || g_str_equal(mimetype[0], "video")
+                        || (g_str_equal(mimetype[0], "application")
+                            && !ignoredApplicationSubtypes.contains(String(mimetype[1]))))
+                        cache.add(String(name));
+
+                    g_strfreev(mimetype);
                 }
             }
-
-            g_strfreev(capability);
-            g_strfreev(mimetype);
         }
 
         gst_plugin_feature_list_free(factories);

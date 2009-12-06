@@ -108,3 +108,7 @@ plugins/reloadplugins-no-pages.html
 
 # These test require Qt Widgets
 plugins/qt-qwidget-plugin.html
+
+# This test requires ogg codecs
+media/media-can-play-ogg.html
+

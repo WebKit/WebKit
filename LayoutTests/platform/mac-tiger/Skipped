@@ -77,3 +77,6 @@ inspector/console-dirxml.html
 inspector/console-format-collections.html
 inspector/console-format.html
 inspector/console-tests.html
+
+# This test requires ogg codecs
+media/media-can-play-ogg.html

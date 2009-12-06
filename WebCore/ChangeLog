@@ -1,3 +1,18 @@
+2009-12-03  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Advertize audio/ogg correctly and refactored mime-type cache
+        building.
+
+        [GTK] Recognize oga as audio/ogg
+        https://bugs.webkit.org/show_bug.cgi?id=31990
+
+        Test: media/media-can-play-ogg.html
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2009-12-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Eric Seidel.

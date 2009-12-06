@@ -49,3 +49,5 @@ svg/css/glyph-orientation-rounding-test.xhtml
 # thrown
 plugins/netscape-invoke-failure.html
 
+# This test requires ogg codecs
+media/media-can-play-ogg.html
