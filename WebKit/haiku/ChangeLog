@@ -1,3 +1,15 @@
+2009-12-06  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Build fix. Add in FrameLoaderClientHaiku the declaration of three functions introduced in r51644.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchDidPushStateWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReplaceStateWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidPopStateWithinPage):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
 2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.
