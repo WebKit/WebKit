@@ -1,3 +1,19 @@
+2009-12-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        texImage2D pixel junk for transparency
+        https://bugs.webkit.org/show_bug.cgi?id=32188
+
+        Use kCGBlendModeCopy when drawing an image to the intermediate context
+        used to create a GL texture.
+
+        No test as we don't currently have any mechanism to retrieve pixel data
+        from the webgl context.
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::imageToTexture):
+
 2009-12-03  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

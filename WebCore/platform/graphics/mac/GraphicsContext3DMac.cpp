@@ -1132,7 +1132,7 @@ static void imageToTexture(Image* image, unsigned target, unsigned level)
         
     CGContextRef textureContext = CGBitmapContextCreate(textureData, textureWidth, textureHeight, 8, textureWidth * 4, 
                                                         CGImageGetColorSpace(textureImage), kCGImageAlphaPremultipliedLast);
-    
+    CGContextSetBlendMode(textureContext, kCGBlendModeCopy);
     CGContextDrawImage(textureContext, CGRectMake(0, 0, (CGFloat)textureWidth, (CGFloat)textureHeight), textureImage);
     CGContextRelease(textureContext);
     
