@@ -2,6 +2,15 @@
 
         Not reviewed, build fix.
 
+        Actually tested 64-bit *and* 32-bit build this time.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_false):
+
+2009-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
         Really really fix 64-bit build for prior patch (actually tested this time).
 
         * jit/JITOpcodes.cpp:
