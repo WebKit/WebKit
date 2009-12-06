@@ -1,3 +1,122 @@
+2009-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        conway benchmark spends half it's time in op_less (jump fusion fails)
+        https://bugs.webkit.org/show_bug.cgi?id=32190
+
+        <1% speedup on SunSpider and V8
+        2x speedup on "conway" benchmark
+        
+        Two optimizations:
+        1) Improve codegen for logical operators &&, || and ! in a condition context
+        
+        When generating code for combinations of &&, || and !, in a
+        condition context (i.e. in an if statement or loop condition), we
+        used to produce a value, and then separately jump based on its
+        truthiness. Now we pass the false and true targets in, and let the
+        logical operators generate jumps directly. This helps in four
+        ways:
+
+        a) Individual clauses of a short-circuit logical operator can now
+        jump directly to the then or else clause of an if statement (or to
+        the top or exit of a loop) instead of jumping to a jump.
+        
+        b) It used to be that jump fusion with the condition of the first
+        clause of a logical operator was inhibited, because the register
+        was ref'd to be used later, in the actual condition jump; this no
+        longer happens since a jump straight to the final target is
+        generated directly.
+
+        c) It used to be that jump fusion with the condition of the second
+        clause of a logical operator was inhibited, because there was a
+        jump target right after the second clause and before the actual
+        condition jump. But now it's no longer necessary for the first
+        clause to jump there so jump fusion is not blocked.
+
+        d) We avoid generating excess mov statements in some cases.
+        
+        As a concrete example this source:
+        
+        if (!((x < q && y < q) || (t < q && z < q))) {
+            // ...
+        }
+        
+        Used to generate this bytecode:
+        
+        [  34] less              r1, r-15, r-19
+        [  38] jfalse            r1, 7(->45)
+        [  41] less              r1, r-16, r-19
+        [  45] jtrue             r1, 14(->59)
+        [  48] less              r1, r-17, r-19
+        [  52] jfalse            r1, 7(->59)
+        [  55] less              r1, r-18, r-19
+        [  59] jtrue             r1, 17(->76)
+        
+        And now generates this bytecode (also taking advantage of the second optimization below):
+        
+        [  34] jnless            r-15, r-19, 8(->42)
+        [  38] jless             r-16, r-19, 26(->64)
+        [  42] jnless            r-17, r-19, 8(->50)
+        [  46] jless             r-18, r-19, 18(->64)
+        
+        Note the jump fusion and the fact that there's less jump
+        indirection - three of the four jumps go straight to the target
+        clause instead of indirecting through another jump.
+        
+        2) Implement jless opcode to take advantage of the above, since we'll now often generate
+        a less followed by a jtrue where fusion is not forbidden.
+       
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::hasConditionContextCodegen): Helper function to determine
+        whether a node supports special conditional codegen. Return false as this is the default.
+        (JSC::ExpressionNode::emitBytecodeInConditionContext): Assert not reached - only really
+        defined for nodes that do have conditional codegen.
+        (JSC::UnaryOpNode::expr): Add const version.
+        (JSC::LogicalNotNode::hasConditionContextCodegen): Returne true only if subexpression
+        supports it.
+        (JSC::LogicalOpNode::hasConditionContextCodegen): Return true.
+        * parser/Nodes.cpp:
+        (JSC::LogicalNotNode::emitBytecodeInConditionContext): Implemented - just swap
+        the true and false targets for the child node.
+        (JSC::LogicalOpNode::emitBytecodeInConditionContext): Implemented - handle jumps
+        directly, improving codegen quality. Also handles further nested conditional codegen.
+        (JSC::ConditionalNode::emitBytecode): Use condition context codegen when available.
+        (JSC::IfNode::emitBytecode): ditto
+        (JSC::IfElseNode::emitBytecode): ditto
+        (JSC::DoWhileNode::emitBytecode): ditto
+        (JSC::WhileNode::emitBytecode): ditto
+        (JSC::ForNode::emitBytecode): ditto
+
+        * bytecode/Opcode.h: 
+        - Added loop_if_false opcode - needed now that falsey jumps can be backwards.
+        - Added jless opcode to take advantage of new fusion opportunities.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Handle above.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfTrue): Add peephole for less + jtrue ==> jless.
+        (JSC::BytecodeGenerator::emitJumpIfFalse): Add handling of backwrds falsey jumps.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeInConditionContext): Wrapper to handle tracking of
+        overly deep expressions etc.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Implement the two new opcodes (loop_if_false, jless).
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Implement JIT support for the two new opcodes.
+        (JSC::JIT::privateCompileSlowCases): ditto
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_jless): ditto
+        (JSC::JIT::emitBinaryDoubleOp): ditto
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_loop_if_less): ditto
+        (JSC::JIT::emit_op_loop_if_false): ditto
+        (JSC::JIT::emitSlow_op_loop_if_false): ditto
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        (JSC::):
+
 2009-12-04  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

@@ -616,7 +616,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJump(Label* target)
 
 PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* target)
 {
-    if (m_lastOpcodeID == op_less && !target->isForward()) {
+    if (m_lastOpcodeID == op_less) {
         int dstIndex;
         int src1Index;
         int src2Index;
@@ -627,7 +627,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(op_loop_if_less);
+            emitOpcode(target->isForward() ? op_jless : op_loop_if_less);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));
@@ -692,9 +692,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
 
 PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* target)
 {
-    ASSERT(target->isForward());
-
-    if (m_lastOpcodeID == op_less) {
+    if (m_lastOpcodeID == op_less && target->isForward()) {
         int dstIndex;
         int src1Index;
         int src2Index;
@@ -711,7 +709,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
             instructions().append(target->bind(begin, instructions().size()));
             return target;
         }
-    } else if (m_lastOpcodeID == op_lesseq) {
+    } else if (m_lastOpcodeID == op_lesseq && target->isForward()) {
         int dstIndex;
         int src1Index;
         int src2Index;
@@ -738,12 +736,12 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
             rewindUnaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(op_jtrue);
+            emitOpcode(target->isForward() ? op_jtrue : op_loop_if_true);
             instructions().append(srcIndex);
             instructions().append(target->bind(begin, instructions().size()));
             return target;
         }
-    } else if (m_lastOpcodeID == op_eq_null) {
+    } else if (m_lastOpcodeID == op_eq_null && target->isForward()) {
         int dstIndex;
         int srcIndex;
 
@@ -758,7 +756,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
             instructions().append(target->bind(begin, instructions().size()));
             return target;
         }
-    } else if (m_lastOpcodeID == op_neq_null) {
+    } else if (m_lastOpcodeID == op_neq_null && target->isForward()) {
         int dstIndex;
         int srcIndex;
 
@@ -776,7 +774,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
     }
 
     size_t begin = instructions().size();
-    emitOpcode(op_jfalse);
+    emitOpcode(target->isForward() ? op_jfalse : op_loop_if_false);
     instructions().append(cond->index());
     instructions().append(target->bind(begin, instructions().size()));
     return target;

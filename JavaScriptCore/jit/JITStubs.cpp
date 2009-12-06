@@ -1119,19 +1119,6 @@ DEFINE_STUB_FUNCTION(void, register_file_check)
     throwStackOverflowError(oldCallFrame, stackFrame.globalData, ReturnAddressPtr(oldCallFrame->returnPC()), STUB_RETURN_ADDRESS);
 }
 
-DEFINE_STUB_FUNCTION(int, op_loop_if_less)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue src1 = stackFrame.args[0].jsValue();
-    JSValue src2 = stackFrame.args[1].jsValue();
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    bool result = jsLess(callFrame, src1, src2);
-    CHECK_FOR_EXCEPTION_AT_END();
-    return result;
-}
-
 DEFINE_STUB_FUNCTION(int, op_loop_if_lesseq)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2097,19 +2084,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_lesseq)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(int, op_loop_if_true)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue src1 = stackFrame.args[0].jsValue();
-
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    bool result = src1.toBoolean(callFrame);
-    CHECK_FOR_EXCEPTION_AT_END();
-    return result;
-}
-    
 DEFINE_STUB_FUNCTION(int, op_load_varargs)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

@@ -1,3 +1,14 @@
+2009-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        conway benchmark spends half it's time in op_less (jump fusion fails)
+        https://bugs.webkit.org/show_bug.cgi?id=32190
+
+        * fast/js/codegen-loops-logical-nodes-expected.txt:
+        * fast/js/script-tests/codegen-loops-logical-nodes.js: Update to test some newly
+        sensitive cases of codegen that were not already covered.
+
 2009-12-05  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

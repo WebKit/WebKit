@@ -736,6 +736,7 @@ namespace JSC {
         void emit_op_jneq_null(Instruction*);
         void emit_op_jneq_ptr(Instruction*);
         void emit_op_jnless(Instruction*);
+        void emit_op_jless(Instruction*);
         void emit_op_jnlesseq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
@@ -744,6 +745,7 @@ namespace JSC {
         void emit_op_loop_if_less(Instruction*);
         void emit_op_loop_if_lesseq(Instruction*);
         void emit_op_loop_if_true(Instruction*);
+        void emit_op_loop_if_false(Instruction*);
         void emit_op_lshift(Instruction*);
         void emit_op_method_check(Instruction*);
         void emit_op_mod(Instruction*);
@@ -818,11 +820,13 @@ namespace JSC {
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jless(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_true(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_false(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&);
