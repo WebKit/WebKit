@@ -2,6 +2,16 @@
 
         Not reviewed, build fix.
 
+        Really really fix 64-bit build for prior patch (actually tested this time).
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_false):
+        (JSC::JIT::emitSlow_op_loop_if_false):
+
+2009-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
         Really fix 64-bit build for prior patch.
 
         * jit/JITArithmetic.cpp:

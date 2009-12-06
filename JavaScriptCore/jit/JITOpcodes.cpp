@@ -745,33 +745,19 @@ void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowC
 
 void JIT::emit_op_loop_if_false(Instruction* currentInstruction)
 {
-    unsigned cond = currentInstruction[1].u.operand;
-    unsigned target = currentInstruction[2].u.operand;
-
     emitTimeoutCheck();
 
-    emitLoad(cond, regT1, regT0);
+    unsigned target = currentInstruction[2].u.operand;
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    Jump isTrue = branch32(Equal, regT1, Imm32(JSValue::TrueTag));
-    addJump(branch32(Equal, regT1, Imm32(JSValue::FalseTag)), target);
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))), target);
+    Jump isNonZero = emitJumpIfImmediateInteger(regT0);
 
-    Jump isNotInteger = branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag));
-    Jump isTrue2 = branch32(NotEqual, regT0, Imm32(0));
-    addJump(jump(), target);
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(false)))), target);
+    addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValue::encode(jsBoolean(true)))));
 
-    if (supportsFloatingPoint()) {
-        isNotInteger.link(this);
-
-        addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
-
-        zeroDouble(fpRegT0);
-        emitLoadDouble(cond, fpRegT1);
-        addJump(branchDouble(DoubleEqualOrUnordered, fpRegT0, fpRegT1), target);
-    } else
-        addSlowCase(isNotInteger);
-
-    isTrue.link(this);
-    isTrue2.link(this);
+    isNonZero.link(this);
+    RECORD_JUMP_TARGET(target);
 }
 
 void JIT::emitSlow_op_loop_if_false(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -2299,6 +2285,23 @@ void JIT::emit_op_loop_if_true(Instruction* currentInstruction)
 
     isZero.link(this);
 };
+
+void JIT::emit_op_loop_if_false(Instruction* currentInstruction)
+{
+    emitTimeoutCheck();
+
+    unsigned target = currentInstruction[2].u.operand;
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+
+    Jump isZero = branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0))));
+    addJump(emitJumpIfImmediateInteger(regT0), target);
+
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(true)))), target);
+    addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValue::encode(jsBoolean(false)))));
+
+    isZero.link(this);
+};
+
 void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_base);
@@ -3055,6 +3058,15 @@ void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowC
     stubCall.addArgument(regT0);
     stubCall.call();
     emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand);
+}
+
+void JIT::emitSlow_op_loop_if_false(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_jtrue);
+    stubCall.addArgument(regT0);
+    stubCall.call();
+    emitJumpSlowToHot(branchTest32(Zero, regT0), currentInstruction[2].u.operand); // inverted!
 }
 
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
