@@ -2985,14 +2985,14 @@ void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowC
     unsigned target = currentInstruction[3].u.operand;
     if (isOperandConstantImmediateInt(op2)) {
         linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_loop_if_less);
+        JITStubCall stubCall(this, cti_op_jless);
         stubCall.addArgument(regT0);
         stubCall.addArgument(op2, regT2);
         stubCall.call();
         emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_loop_if_less);
+        JITStubCall stubCall(this, cti_op_jless);
         stubCall.addArgument(op1, regT2);
         stubCall.addArgument(regT0);
         stubCall.call();
@@ -3000,7 +3000,7 @@ void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowC
     } else {
         linkSlowCase(iter);
         linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_loop_if_less);
+        JITStubCall stubCall(this, cti_op_jless);
         stubCall.addArgument(regT0);
         stubCall.addArgument(regT1);
         stubCall.call();
