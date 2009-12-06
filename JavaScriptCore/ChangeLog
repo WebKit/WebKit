@@ -2,6 +2,15 @@
 
         Not reviewed, build fix.
 
+        Really fix 64-bit build for prior patch.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jless):
+
+2009-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+
         Fix 64-bit build for prior patch.
 
         * jit/JITOpcodes.cpp:
