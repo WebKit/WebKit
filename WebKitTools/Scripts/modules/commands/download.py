@@ -291,8 +291,7 @@ class BuildAttachment(AbstractPatchProcessingCommand):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
     def _prepare_to_process(self, options, args, tool):
-        # Check the tree status first so we can fail early.
-        tool.steps.ensure_builders_are_green(tool.buildbot, options)
+        pass
 
     def _process_patch(self, patch, options, args, tool):
         sequence = BuildAttachmentSequence(patch, options, tool)
