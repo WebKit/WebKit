@@ -145,7 +145,7 @@ class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
         tool.bugs.reject_patch_from_commit_queue(patch["id"], script_error.message_with_output())
 
 
-class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, LandingSequenceErrorHandler):
+class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, LandingSequenceErrorHandler):
     def __init__(self, options=None):
         AbstractQueue.__init__(self, options)
 
@@ -188,11 +188,11 @@ class AbstractTryQueue(AbstractQueue, PersistentPatchCollectionDelegate, Landing
         log(script_error.message_with_output())
 
 
-class StyleQueue(AbstractTryQueue):
+class StyleQueue(AbstractReviewQueue):
     name = "style-queue"
     show_in_main_help = False
     def __init__(self):
-        AbstractTryQueue.__init__(self)
+        AbstractReviewQueue.__init__(self)
 
     def should_proceed_with_work_item(self, patch):
         return (True, "Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
@@ -219,15 +219,15 @@ class StyleQueue(AbstractTryQueue):
             tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
 
 
-class BuildQueue(AbstractTryQueue):
+class BuildQueue(AbstractReviewQueue):
     name = "build-queue"
     show_in_main_help = False
     def __init__(self):
         options = WebKitPort.port_options()
-        AbstractTryQueue.__init__(self, options)
+        AbstractReviewQueue.__init__(self, options)
 
     def begin_work_queue(self):
-        AbstractTryQueue.begin_work_queue(self)
+        AbstractReviewQueue.begin_work_queue(self)
         self.port = WebKitPort.port(self.options)
 
     def should_proceed_with_work_item(self, patch):
