@@ -1,3 +1,9 @@
+2009-12-07  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding two recently approved committers.
+
+        * Scripts/modules/committers.py:
+
 2009-12-07  Alexey Proskuryakov  <ap@apple.com>
 
         * Scripts/run-webkit-websocketserver: Added property svn:executable.
