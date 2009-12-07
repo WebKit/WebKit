@@ -1,5 +1,14 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Attempt to get all mac build slaves to green again. Disable crashing test, and notify the author of it to fix it.
+
+        New test "websocket/tests/url-with-credential.html" crashes in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=32226
+
+        * platform/mac/Skipped:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add missing layout test result.
 
         * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt: Added.

@@ -112,3 +112,5 @@ plugins/qt-qwidget-plugin.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
+# This test crashes on the intel debug slave (bug filed: https://bugs.webkit.org/show_bug.cgi?id=32226)
+websocket/tests/url-with-credential.html
