@@ -45,7 +45,7 @@ class LandingSequence:
         self._patch = patch
         self._options = options
         self._tool = tool
-        self._port = WebKitPort.port(self._options)
+        self._port = WebKitPort.port(self._options.port)
 
     def run(self):
         self.clean()

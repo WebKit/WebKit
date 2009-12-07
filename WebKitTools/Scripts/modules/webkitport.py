@@ -45,12 +45,12 @@ class WebKitPort():
         ]
 
     @staticmethod
-    def port(options):
-        if options.port == "mac":
+    def port(port_name):
+        if port_name == "mac":
             return MacPort
-        if options.port == "qt":
+        if port_name == "qt":
             return QtPort
-        if options.port == "chromium":
+        if port_name == "chromium":
             return ChromiumPort
         # FIXME: We should default to WinPort on Windows.
         return MacPort

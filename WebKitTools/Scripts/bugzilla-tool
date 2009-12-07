@@ -36,6 +36,7 @@ from modules.bugzilla import Bugzilla
 from modules.buildbot import BuildBot
 from modules.buildsteps import BuildSteps
 from modules.commands.download import *
+from modules.commands.early_warning_system import *
 from modules.commands.queries import *
 from modules.commands.queues import *
 from modules.commands.upload import *
