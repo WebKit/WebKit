@@ -1,3 +1,29 @@
+2009-12-07  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Daring Adler.
+
+        Remove partial SharedScript implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=32237
+        The patch was obtained by running "git revert" command and then un-reverting WebCore/ChangeLog.
+
+        * DerivedSources.make:
+        * SharedScript/SharedScriptContext.cpp: Removed.
+        * SharedScript/SharedScriptContext.h: Removed.
+        * SharedScript/SharedScriptContext.idl: Removed.
+        * SharedScript/SharedScriptController.h: Removed.
+        * SharedScript/WebKitSharedScript.cpp: Removed.
+        * SharedScript/WebKitSharedScript.h: Removed.
+        * SharedScript/WebKitSharedScript.idl: Removed.
+        * SharedScript/WebKitSharedScriptRepository.cpp: Removed.
+        * SharedScript/WebKitSharedScriptRepository.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/ScriptExecutionContext.h:
+
 2009-12-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Nikolas Zimmermann.

@@ -144,10 +144,6 @@
 #include "SharedWorkerRepository.h"
 #endif
 
-#if ENABLE(SHARED_SCRIPT)
-#include "WebKitSharedScriptRepository.h"
-#endif
-
 #if ENABLE(DOM_STORAGE)
 #include "StorageEvent.h"
 #endif
@@ -1439,10 +1435,6 @@ void Document::detach()
 
 #if ENABLE(SHARED_WORKERS)
     SharedWorkerRepository::documentDetached(this);
-#endif
-
-#if ENABLE(SHARED_SCRIPT)
-    WebKitSharedScriptRepository::documentDetached(this);
 #endif
 
     if (m_frame) {
