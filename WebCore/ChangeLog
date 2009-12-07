@@ -1,6 +1,6 @@
 2009-12-07  Dmitry Titov  <dimich@chromium.org>
 
-        Reviewed by Daring Adler.
+        Reviewed by Darin Adler.
 
         Remove partial SharedScript implementation.
         https://bugs.webkit.org/show_bug.cgi?id=32237
