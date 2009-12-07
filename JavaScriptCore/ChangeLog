@@ -1,3 +1,9 @@
+2009-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix. Be flexible about which version of ICU is used on Windows.
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Add optional xcopy commands to copy ICU 4.2.
+
 2009-12-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

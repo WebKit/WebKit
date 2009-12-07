@@ -1,3 +1,9 @@
+2009-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix. Be flexible about which version of ICU is used on Windows.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Add optional xcopy commands to copy ICU 4.2.
+
 2009-12-07  Dirk Schulze  <krit@webkit.org>
 
         Not reviewed, adding myself to the reviewers list.
