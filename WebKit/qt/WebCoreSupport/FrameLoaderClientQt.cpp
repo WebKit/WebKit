@@ -4,6 +4,7 @@
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Coypright (C) 2008 Holger Hans Peter Freyther
+ * Coypright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  *
  * All rights reserved.
  *
@@ -1300,8 +1301,23 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
             // FIXME: make things work for widgetless plugins as well
             delete object;
     } else { // NPAPI Plugins
+        Vector<String> params = paramNames;
+        Vector<String> values = paramValues;
+        if (mimeType == "application/x-shockwave-flash") {
+            QWebPageClient* client = m_webFrame->page()->d->client;
+            if (!client || !qobject_cast<QWidget*>(client->pluginParent())) {
+                // inject wmode=opaque when there is no client or the client is not a QWebView
+                size_t wmodeIndex = params.find("wmode");
+                if (wmodeIndex == -1) {
+                    params.append("wmode");
+                    values.append("opaque");
+                } else
+                    values[wmodeIndex] = "opaque";
+            }
+        }
+
         RefPtr<PluginView> pluginView = PluginView::create(m_frame, pluginSize, element, url,
-            paramNames, paramValues, mimeType, loadManually);
+            params, values, mimeType, loadManually);
         return pluginView;
     }
 

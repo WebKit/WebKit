@@ -1,3 +1,17 @@
+2009-12-07  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Plugins: Force windowless mode when there is no native window handle
+        
+        Inject wmode=opaque while instantiating the plugin for the case when the
+        webpage is not backed by a native window handle.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32059
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2009-12-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
