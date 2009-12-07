@@ -156,6 +156,7 @@ class ShowResults(webapp.RequestHandler):
         if not status:
             self.error(404)
             return
+        self.response.headers["Content-Type"] = "text/plain"
         self.response.out.write(status.results_file)
 
 
