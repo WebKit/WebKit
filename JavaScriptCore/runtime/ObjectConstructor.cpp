@@ -148,14 +148,14 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
     }
     JSObject* description = asObject(in);
 
-    PropertySlot enumerableSlot;
+    PropertySlot enumerableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().enumerable, enumerableSlot)) {
         desc.setEnumerable(enumerableSlot.getValue(exec, exec->propertyNames().enumerable).toBoolean(exec));
         if (exec->hadException())
             return false;
     }
 
-    PropertySlot configurableSlot;
+    PropertySlot configurableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().configurable, configurableSlot)) {
         desc.setConfigurable(configurableSlot.getValue(exec, exec->propertyNames().configurable).toBoolean(exec));
         if (exec->hadException())
@@ -163,21 +163,21 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
     }
 
     JSValue value;
-    PropertySlot valueSlot;
+    PropertySlot valueSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().value, valueSlot)) {
         desc.setValue(valueSlot.getValue(exec, exec->propertyNames().value));
         if (exec->hadException())
             return false;
     }
 
-    PropertySlot writableSlot;
+    PropertySlot writableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().writable, writableSlot)) {
         desc.setWritable(writableSlot.getValue(exec, exec->propertyNames().writable).toBoolean(exec));
         if (exec->hadException())
             return false;
     }
 
-    PropertySlot getSlot;
+    PropertySlot getSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().get, getSlot)) {
         JSValue get = getSlot.getValue(exec, exec->propertyNames().get);
         if (exec->hadException())
@@ -193,7 +193,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         desc.setGetter(get);
     }
 
-    PropertySlot setSlot;
+    PropertySlot setSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().set, setSlot)) {
         JSValue set = setSlot.getValue(exec, exec->propertyNames().set);
         if (exec->hadException())

@@ -1,3 +1,19 @@
+2009-12-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Object.create fails if properties on the descriptor are getters
+        https://bugs.webkit.org/show_bug.cgi?id=32219
+
+        Add tests for descriptors using getters instead of raw values
+
+        * fast/js/Object-create-expected.txt:
+        * fast/js/script-tests/Object-create.js:
+        (valueGet):
+        (get var):
+        (get var.DescriptorWithGetGetter.foo.Object.create.):
+        (get var.DescriptorWithSetGetter.foo.Object.create.):
+
 2009-12-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -1,3 +1,15 @@
+2009-12-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Object.create fails if properties on the descriptor are getters
+        https://bugs.webkit.org/show_bug.cgi?id=32219
+
+        Correctly initialise the PropertySlots with the descriptor object.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+
 2009-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.

@@ -13,6 +13,12 @@ PASS JSON.stringify(Object.create({},{property:{value:'foo'}, property2:{value:'
 PASS JSON.stringify(Object.create(null,{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'
 PASS Object.getPrototypeOf(Object.create(Array.prototype)) is Array.prototype
 PASS Object.getPrototypeOf(Object.create(null)) is null
+PASS Object.create(null, DescriptorWithValueGetter).foo is true
+PASS Object.create(null, DescriptorWithEnumerableGetter).foo is true
+PASS Object.create(null, DescriptorWithConfigurableGetter).foo is true
+PASS Object.create(null, DescriptorWithWritableGetter).foo is true
+PASS Object.create(null, DescriptorWithGetGetter).foo is true
+PASS Object.create(null, DescriptorWithSetGetter).foo is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
