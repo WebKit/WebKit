@@ -908,15 +908,30 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
         return 0;
 
     // Create a string with the layout as it appears on the screen
-    InlineTextBox* box = renderText->firstTextBox();
-    while (box) {
-        gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
-        g_string_append(str, text);
-        // Newline chars in the source result in separate text boxes, so check
-        // before adding a newline in the layout. See bug 25415 comment #78.
-        if (!box->nextOnLineExists())
+    if (accObject->isTextControl()) {
+        unsigned textLength = accObject->textLength();
+        int lineNumber = 0;
+        PlainTextRange range = accObject->doAXRangeForLine(lineNumber);
+        while (range.length) {
+            // When a line of text wraps in a text area, the final space is removed.
+            if (range.start + range.length < textLength)
+                range.length -= 1;
+            String lineText = accObject->doAXStringForRange(range);
+            g_string_append(str, lineText.utf8().data());
             g_string_append(str, "\n");
-        box = box->nextTextBox();
+            range = accObject->doAXRangeForLine(++lineNumber);
+        }
+    } else {
+        InlineTextBox* box = renderText->firstTextBox();
+        while (box) {
+            gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
+            g_string_append(str, text);
+            // Newline chars in the source result in separate text boxes, so check
+            // before adding a newline in the layout. See bug 25415 comment #78.
+            if (!box->nextOnLineExists())
+                g_string_append(str, "\n");
+            box = box->nextTextBox();
+        }
     }
 
     PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), g_string_free(str, FALSE));

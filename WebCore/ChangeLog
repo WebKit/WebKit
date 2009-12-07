@@ -1,3 +1,16 @@
+2009-12-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Eliminate the segfaults which occur when accessing the text interface now
+        implemented by text controls.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getPangoLayoutForAtk):
+
 2009-12-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
