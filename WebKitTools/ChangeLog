@@ -1,3 +1,13 @@
+2009-12-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Implement Qt EarlyWarningSystem and Chromium EarlyWarningSystem
+        https://bugs.webkit.org/show_bug.cgi?id=32205
+
+        * Scripts/modules/commands/early_warning_system.py: Added.
+        * Scripts/modules/commands/queues.py:
+
 2009-12-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
