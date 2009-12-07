@@ -53,7 +53,7 @@ namespace JSC {
             bool s1 = v1.isString();
             bool s2 = v2.isString();
             if (s1 && s2)
-                return asString(v1)->value() == asString(v2)->value();
+                return asString(v1)->value(exec) == asString(v2)->value(exec);
 
             if (v1.isUndefinedOrNull()) {
                 if (v2.isUndefinedOrNull())
@@ -110,17 +110,17 @@ namespace JSC {
     }
 
     // ECMA 11.9.3
-    ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(JSValue v1, JSValue v2)
+    ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2)
     {
         ASSERT(v1.isCell() && v2.isCell());
 
         if (v1.asCell()->isString() && v2.asCell()->isString())
-            return asString(v1)->value() == asString(v2)->value();
+            return asString(v1)->value(exec) == asString(v2)->value(exec);
 
         return v1 == v2;
     }
 
-    inline bool JSValue::strictEqual(JSValue v1, JSValue v2)
+    inline bool JSValue::strictEqual(ExecState* exec, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
             return v1 == v2;
@@ -131,7 +131,7 @@ namespace JSC {
         if (!v1.isCell() || !v2.isCell())
             return v1 == v2;
 
-        return strictEqualSlowCaseInline(v1, v2);
+        return strictEqualSlowCaseInline(exec, v1, v2);
     }
 
     inline bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
@@ -146,7 +146,7 @@ namespace JSC {
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
-            return asString(v1)->value() < asString(v2)->value();
+            return asString(v1)->value(callFrame) < asString(v2)->value(callFrame);
 
         JSValue p1;
         JSValue p2;
@@ -156,7 +156,7 @@ namespace JSC {
         if (wasNotString1 | wasNotString2)
             return n1 < n2;
 
-        return asString(p1)->value() < asString(p2)->value();
+        return asString(p1)->value(callFrame) < asString(p2)->value(callFrame);
     }
 
     inline bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
@@ -171,7 +171,7 @@ namespace JSC {
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
-            return !(asString(v2)->value() < asString(v1)->value());
+            return !(asString(v2)->value(callFrame) < asString(v1)->value(callFrame));
 
         JSValue p1;
         JSValue p2;
@@ -181,7 +181,7 @@ namespace JSC {
         if (wasNotString1 | wasNotString2)
             return n1 <= n2;
 
-        return !(asString(p2)->value() < asString(p1)->value());
+        return !(asString(p2)->value(callFrame) < asString(p1)->value(callFrame));
     }
 
     // Fast-path choices here are based on frequency data from SunSpider:
@@ -205,14 +205,16 @@ namespace JSC {
         bool leftIsString = v1.isString();
         if (leftIsString && v2.isString()) {
             if (asString(v1)->isRope() || asString(v2)->isRope()) {
-                RefPtr<JSString::Rope> rope = JSString::Rope::create(2);
+                RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(2);
+                if (UNLIKELY(!rope))
+                    return throwOutOfMemoryError(callFrame);
                 rope->initializeFiber(0, asString(v1));
                 rope->initializeFiber(1, asString(v2));
                 JSGlobalData* globalData = &callFrame->globalData();
                 return new (globalData) JSString(globalData, rope.release());
             }
 
-            RefPtr<UString::Rep> value = concatenate(asString(v1)->value().rep(), asString(v2)->value().rep());
+            RefPtr<UString::Rep> value = concatenate(asString(v1)->value(callFrame).rep(), asString(v2)->value(callFrame).rep());
             if (!value)
                 return throwOutOfMemoryError(callFrame);
             return jsString(callFrame, value.release());
@@ -220,8 +222,8 @@ namespace JSC {
 
         if (rightIsNumber & leftIsString) {
             RefPtr<UString::Rep> value = v2.isInt32() ?
-                concatenate(asString(v1)->value().rep(), v2.asInt32()) :
-                concatenate(asString(v1)->value().rep(), right);
+                concatenate(asString(v1)->value(callFrame).rep(), v2.asInt32()) :
+                concatenate(asString(v1)->value(callFrame).rep(), right);
 
             if (!value)
                 return throwOutOfMemoryError(callFrame);
@@ -306,7 +308,9 @@ namespace JSC {
     {
         ASSERT(count >= 3);
 
-        RefPtr<JSString::Rope> rope = JSString::Rope::create(count);
+        RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(count);
+        if (UNLIKELY(!rope))
+            return throwOutOfMemoryError(callFrame);
 
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();

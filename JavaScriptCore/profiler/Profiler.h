@@ -52,7 +52,7 @@ namespace JSC {
         }
 
         static Profiler* profiler(); 
-        static CallIdentifier createCallIdentifier(JSGlobalData*, JSValue, const UString& sourceURL, int lineNumber);
+        static CallIdentifier createCallIdentifier(ExecState* exec, JSValue, const UString& sourceURL, int lineNumber);
 
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);

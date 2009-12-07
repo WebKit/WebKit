@@ -1,3 +1,14 @@
+2009-12-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32184
+        Handle out-of-memory conditions with JSC Ropes with a JS exception, rather than crashing.
+        Switch from using fastMalloc to tryFastMalloc, pass an ExecState to record the exception on.
+
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Holger Hans Peter Freyther.

@@ -172,7 +172,7 @@ static inline UString gap(ExecState* exec, JSValue space)
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
-    UString spaces = space.getString();
+    UString spaces = space.getString(exec);
     if (spaces.size() > maxGapLength) {
         spaces = spaces.substr(0, maxGapLength);
     }
@@ -229,7 +229,7 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
                 break;
 
             UString propertyName;
-            if (name.getString(propertyName)) {
+            if (name.getString(exec, propertyName)) {
                 m_arrayReplacerPropertyNames.add(Identifier(exec, propertyName));
                 continue;
             }
@@ -407,7 +407,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     UString stringValue;
-    if (value.getString(stringValue)) {
+    if (value.getString(m_exec, stringValue)) {
         appendQuotedString(builder, stringValue);
         return StringifySucceeded;
     }

@@ -25,6 +25,7 @@
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "Operations.h"
 #include "StringObject.h"
 #include "StringPrototype.h"
 
@@ -38,6 +39,7 @@ JSString::Rope::~Rope()
             fiber.rope()->deref();
         else
             fiber.string()->deref();
+        fiber = Fiber(reinterpret_cast<UString::Rep*>(0xfeedbeee));
     }
 }
 
@@ -65,12 +67,20 @@ static inline void copyChars(UChar* destination, const UChar* source, unsigned n
 // Vector before performing any concatenation, but by working backwards we likely
 // only fill the queue with the number of substrings at any given level in a
 // rope-of-ropes.)
-void JSString::resolveRope() const
+void JSString::resolveRope(ExecState* exec) const
 {
     ASSERT(isRope());
 
     // Allocate the buffer to hold the final string, position initially points to the end.
-    UChar* buffer = static_cast<UChar*>(fastMalloc(m_length * sizeof(UChar)));
+    UChar* buffer;
+    if (!tryFastMalloc(m_length * sizeof(UChar)).getValue(buffer)) {
+        m_rope.clear();
+        ASSERT(!isRope());
+        ASSERT(m_value == UString());
+
+        throwOutOfMemoryError(exec);
+        return;
+    }
     UChar* position = buffer + m_length;
 
     // Start with the current Rope.
@@ -93,8 +103,16 @@ void JSString::resolveRope() const
             copyChars(position, string->data(), length);
 
             // Was this the last item in the work queue?
-            if (workQueue.isEmpty())
-                goto breakOutOfTwoLoops;
+            if (workQueue.isEmpty()) {
+                // Create a string from the UChar buffer, clear the rope RefPtr.
+                ASSERT(buffer == position);
+                m_value = UString(buffer, m_length, false);
+                m_rope.clear();
+
+                ASSERT(!isRope());
+                return;
+            }
+
             // No! - set the next item up to process.
             currentFiber = workQueue.last();
             workQueue.removeLast();
@@ -105,14 +123,6 @@ void JSString::resolveRope() const
         ASSERT(currentFiber.isRope());
         rope = currentFiber.rope();
     }
-breakOutOfTwoLoops:
-
-    // Create a string from the UChar buffer, clear the rope RefPtr.
-    ASSERT(buffer == position);
-    m_value = UString::Rep::create(buffer, m_length, false);
-    m_rope.clear();
-
-    ASSERT(!isRope());
 }
 
 JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
@@ -120,10 +130,10 @@ JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
     return const_cast<JSString*>(this);
 }
 
-bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValue& result)
+bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result)
 {
     result = this;
-    number = value().toDouble();
+    number = value(exec).toDouble();
     return false;
 }
 
@@ -132,19 +142,19 @@ bool JSString::toBoolean(ExecState*) const
     return m_length;
 }
 
-double JSString::toNumber(ExecState*) const
+double JSString::toNumber(ExecState* exec) const
 {
-    return value().toDouble();
+    return value(exec).toDouble();
 }
 
-UString JSString::toString(ExecState*) const
+UString JSString::toString(ExecState* exec) const
 {
-    return value();
+    return value(exec);
 }
 
-UString JSString::toThisString(ExecState*) const
+UString JSString::toThisString(ExecState* exec) const
 {
-    return value();
+    return value(exec);
 }
 
 JSString* JSString::toThisJSString(ExecState*)
@@ -198,7 +208,7 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& pr
     bool isStrictUInt32;
     unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
     if (isStrictUInt32 && i < m_length) {
-        descriptor.setDescriptor(jsSingleCharacterSubstring(exec, value(), i), DontDelete | ReadOnly);
+        descriptor.setDescriptor(jsSingleCharacterSubstring(exec, value(exec), i), DontDelete | ReadOnly);
         return true;
     }
     

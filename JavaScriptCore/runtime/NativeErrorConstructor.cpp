@@ -33,7 +33,7 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
 NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, NonNullPassRefPtr<Structure> structure, NativeErrorPrototype* nativeErrorPrototype)
-    : InternalFunction(&exec->globalData(), structure, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name).getString()))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name).getString(exec)))
     , m_errorStructure(ErrorInstance::createStructure(nativeErrorPrototype))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5

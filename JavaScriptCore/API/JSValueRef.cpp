@@ -169,7 +169,7 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
     JSValue jsA = toJS(exec, a);
     JSValue jsB = toJS(exec, b);
 
-    return JSValue::strictEqual(jsA, jsB);
+    return JSValue::strictEqual(exec, jsA, jsB);
 }
 
 bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception)

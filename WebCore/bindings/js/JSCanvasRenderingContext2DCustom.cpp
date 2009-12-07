@@ -51,10 +51,10 @@ static JSValue toJS(ExecState* exec, CanvasStyle* style)
     return jsString(exec, style->color());
 }
 
-static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState*, JSValue value)
+static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState* exec, JSValue value)
 {
     if (value.isString())
-        return CanvasStyle::create(asString(value)->value());
+        return CanvasStyle::create(asString(value)->value(exec));
     if (!value.isObject())
         return 0;
     JSObject* object = asObject(value);
@@ -102,13 +102,13 @@ JSValue JSCanvasRenderingContext2D::setFillColor(ExecState* exec, const ArgList&
     switch (args.size()) {
         case 1:
             if (args.at(0).isString())
-                context->setFillColor(asString(args.at(0))->value());
+                context->setFillColor(asString(args.at(0))->value(exec));
             else
                 context->setFillColor(args.at(0).toFloat(exec));
             break;
         case 2:
             if (args.at(0).isString())
-                context->setFillColor(asString(args.at(0))->value(), args.at(1).toFloat(exec));
+                context->setFillColor(asString(args.at(0))->value(exec), args.at(1).toFloat(exec));
             else
                 context->setFillColor(args.at(0).toFloat(exec), args.at(1).toFloat(exec));
             break;
@@ -139,13 +139,13 @@ JSValue JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec, const ArgLis
     switch (args.size()) {
         case 1:
             if (args.at(0).isString())
-                context->setStrokeColor(asString(args.at(0))->value());
+                context->setStrokeColor(asString(args.at(0))->value(exec));
             else
                 context->setStrokeColor(args.at(0).toFloat(exec));
             break;
         case 2:
             if (args.at(0).isString())
-                context->setStrokeColor(asString(args.at(0))->value(), args.at(1).toFloat(exec));
+                context->setStrokeColor(asString(args.at(0))->value(exec), args.at(1).toFloat(exec));
             else
                 context->setStrokeColor(args.at(0).toFloat(exec), args.at(1).toFloat(exec));
             break;
@@ -298,7 +298,7 @@ JSValue JSCanvasRenderingContext2D::setShadow(ExecState* exec, const ArgList& ar
         case 4:
             if (args.at(3).isString())
                 context->setShadow(args.at(0).toFloat(exec), args.at(1).toFloat(exec),
-                                   args.at(2).toFloat(exec), asString(args.at(3))->value());
+                                   args.at(2).toFloat(exec), asString(args.at(3))->value(exec));
             else
                 context->setShadow(args.at(0).toFloat(exec), args.at(1).toFloat(exec),
                                    args.at(2).toFloat(exec), args.at(3).toFloat(exec));
@@ -306,7 +306,7 @@ JSValue JSCanvasRenderingContext2D::setShadow(ExecState* exec, const ArgList& ar
         case 5:
             if (args.at(3).isString())
                 context->setShadow(args.at(0).toFloat(exec), args.at(1).toFloat(exec),
-                                   args.at(2).toFloat(exec), asString(args.at(3))->value(),
+                                   args.at(2).toFloat(exec), asString(args.at(3))->value(exec),
                                    args.at(4).toFloat(exec));
             else
                 context->setShadow(args.at(0).toFloat(exec), args.at(1).toFloat(exec),

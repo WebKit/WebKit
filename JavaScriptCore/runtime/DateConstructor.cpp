@@ -84,7 +84,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);
             if (primitive.isString())
-                value = parseDate(exec, primitive.getString());
+                value = parseDate(exec, primitive.getString(exec));
             else
                 value = primitive.toNumber(exec);
         }

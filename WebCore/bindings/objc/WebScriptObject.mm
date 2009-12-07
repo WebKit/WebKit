@@ -529,7 +529,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     }
 
     if (value.isString()) {
-        const UString& u = asString(value)->value();
+        ExecState* exec = rootObject->globalObject()->globalExec();
+        const UString& u = asString(value)->value(exec);
         return [NSString stringWithCharacters:u.data() length:u.size()];
     }
 

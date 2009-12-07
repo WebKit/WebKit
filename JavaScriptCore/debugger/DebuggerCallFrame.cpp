@@ -44,7 +44,7 @@ const UString* DebuggerCallFrame::functionName() const
     JSFunction* function = asFunction(m_callFrame->callee());
     if (!function)
         return 0;
-    return &function->name(&m_callFrame->globalData());
+    return &function->name(m_callFrame);
 }
     
 UString DebuggerCallFrame::calculatedFunctionName() const
@@ -55,7 +55,7 @@ UString DebuggerCallFrame::calculatedFunctionName() const
     JSFunction* function = asFunction(m_callFrame->callee());
     if (!function)
         return 0;
-    return function->calculatedDisplayName(&m_callFrame->globalData());
+    return function->calculatedDisplayName(m_callFrame);
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const

@@ -522,12 +522,12 @@ void JSObject::removeDirect(const Identifier& propertyName)
 
 void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirectFunction(Identifier(exec, function->name(&exec->globalData())), function, attr);
+    putDirectFunction(Identifier(exec, function->name(exec)), function, attr);
 }
 
 void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirectFunctionWithoutTransition(Identifier(exec, function->name(&exec->globalData())), function, attr);
+    putDirectFunctionWithoutTransition(Identifier(exec, function->name(exec)), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue* location)
@@ -599,7 +599,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     if (descriptor.isEmpty())
         return true;
 
-    if (current.equalTo(descriptor))
+    if (current.equalTo(exec, descriptor))
         return true;
 
     // Filter out invalid changes
@@ -645,7 +645,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
                 return false;
             }
             if (!current.writable()) {
-                if (descriptor.value() || !JSValue::strictEqual(current.value(), descriptor.value())) {
+                if (descriptor.value() || !JSValue::strictEqual(exec, current.value(), descriptor.value())) {
                     if (throwException)
                         throwError(exec, TypeError, "Attempting to change value of a readonly property.");
                     return false;
@@ -667,12 +667,12 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     // Changing the accessor functions of an existing accessor property
     ASSERT(descriptor.isAccessorDescriptor());
     if (!current.configurable()) {
-        if (descriptor.setterPresent() && !(current.setter() && JSValue::strictEqual(current.setter(), descriptor.setter()))) {
+        if (descriptor.setterPresent() && !(current.setter() && JSValue::strictEqual(exec, current.setter(), descriptor.setter()))) {
             if (throwException)
                 throwError(exec, TypeError, "Attempting to change the setter of an unconfigurable property.");
             return false;
         }
-        if (descriptor.getterPresent() && !(current.getter() && JSValue::strictEqual(current.getter(), descriptor.getter()))) {
+        if (descriptor.getterPresent() && !(current.getter() && JSValue::strictEqual(exec, current.getter(), descriptor.getter()))) {
             if (throwException)
                 throwError(exec, TypeError, "Attempting to change the getter of an unconfigurable property.");
             return false;

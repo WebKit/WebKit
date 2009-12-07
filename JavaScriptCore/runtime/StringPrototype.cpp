@@ -224,7 +224,7 @@ static inline int localeCompare(const UString& a, const UString& b)
 JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSString* sourceVal = thisValue.toThisJSString(exec);
-    const UString& source = sourceVal->value();
+    const UString& source = sourceVal->value(exec);
 
     JSValue pattern = args.at(0);
 
@@ -697,7 +697,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec, JSObject*, JSVal
 JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSString* sVal = thisValue.toThisJSString(exec);
-    const UString& s = sVal->value();
+    const UString& s = sVal->value(exec);
 
     int sSize = s.size();
     if (!sSize)
@@ -731,7 +731,7 @@ JSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec, JSObject*, JSV
 JSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     JSString* sVal = thisValue.toThisJSString(exec);
-    const UString& s = sVal->value();
+    const UString& s = sVal->value(exec);
 
     int sSize = s.size();
     if (!sSize)

@@ -36,9 +36,9 @@ bool JSValue::equalSlowCase(ExecState* exec, JSValue v1, JSValue v2)
     return equalSlowCaseInline(exec, v1, v2);
 }
 
-bool JSValue::strictEqualSlowCase(JSValue v1, JSValue v2)
+bool JSValue::strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2)
 {
-    return strictEqualSlowCaseInline(v1, v2);
+    return strictEqualSlowCaseInline(exec, v1, v2);
 }
 
 NEVER_INLINE JSValue throwOutOfMemoryError(ExecState* exec)

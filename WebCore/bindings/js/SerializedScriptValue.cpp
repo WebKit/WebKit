@@ -481,7 +481,7 @@ struct SerializingTreeWalker : public BaseWalker {
             return SerializedScriptValueData(value);
 
         if (value.isString())
-            return SerializedScriptValueData(asString(value)->value());
+            return SerializedScriptValueData(asString(value)->value(m_exec));
 
         if (value.isNumber())
             return SerializedScriptValueData(SerializedScriptValueData::NumberType, value.uncheckedGetNumber());

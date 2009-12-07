@@ -65,8 +65,8 @@ namespace JSC {
         Structure* structure() const;
 
         // Extracting the value.
-        bool getString(UString&) const;
-        UString getString() const; // null string if not a string
+        bool getString(ExecState* exec, UString&) const;
+        UString getString(ExecState* exec) const; // null string if not a string
         JSObject* getObject(); // NULL if not an object
         const JSObject* getObject() const; // NULL if not an object
         
@@ -179,14 +179,14 @@ namespace JSC {
         return isCell() && asCell()->isObject();
     }
 
-    inline bool JSValue::getString(UString& s) const
+    inline bool JSValue::getString(ExecState* exec, UString& s) const
     {
-        return isCell() && asCell()->getString(s);
+        return isCell() && asCell()->getString(exec, s);
     }
 
-    inline UString JSValue::getString() const
+    inline UString JSValue::getString(ExecState* exec) const
     {
-        return isCell() ? asCell()->getString() : UString();
+        return isCell() ? asCell()->getString(exec) : UString();
     }
 
     inline JSObject* JSValue::getObject() const

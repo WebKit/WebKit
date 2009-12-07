@@ -137,8 +137,8 @@ namespace JSC {
         bool getBoolean() const; // false if not a boolean
         bool getNumber(double&) const;
         double uncheckedGetNumber() const;
-        bool getString(UString&) const;
-        UString getString() const; // null string if not a string
+        bool getString(ExecState* exec, UString&) const;
+        UString getString(ExecState* exec) const; // null string if not a string
         JSObject* getObject() const; // 0 if not an object
 
         CallType getCallData(CallData&);
@@ -192,9 +192,9 @@ namespace JSC {
         static bool equal(ExecState* exec, JSValue v1, JSValue v2);
         static bool equalSlowCase(ExecState* exec, JSValue v1, JSValue v2);
         static bool equalSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2);
-        static bool strictEqual(JSValue v1, JSValue v2);
-        static bool strictEqualSlowCase(JSValue v1, JSValue v2);
-        static bool strictEqualSlowCaseInline(JSValue v1, JSValue v2);
+        static bool strictEqual(ExecState* exec, JSValue v1, JSValue v2);
+        static bool strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2);
+        static bool strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2);
 
         JSValue getJSNumber(); // JSValue() if this is not a JSNumber or number object
 

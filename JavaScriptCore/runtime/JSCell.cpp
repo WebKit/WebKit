@@ -86,17 +86,17 @@ bool JSCell::getUInt32(uint32_t&) const
     return false;
 }
 
-bool JSCell::getString(UString&stringValue) const
+bool JSCell::getString(ExecState* exec, UString&stringValue) const
 {
     if (!isString())
         return false;
-    stringValue = static_cast<const JSString*>(this)->value();
+    stringValue = static_cast<const JSString*>(this)->value(exec);
     return true;
 }
 
-UString JSCell::getString() const
+UString JSCell::getString(ExecState* exec) const
 {
-    return isString() ? static_cast<const JSString*>(this)->value() : UString();
+    return isString() ? static_cast<const JSString*>(this)->value(exec) : UString();
 }
 
 JSObject* JSCell::getObject()

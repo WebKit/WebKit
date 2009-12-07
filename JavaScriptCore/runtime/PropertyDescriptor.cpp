@@ -153,15 +153,15 @@ void PropertyDescriptor::setGetter(JSValue getter)
     m_attributes &= ~ReadOnly;
 }
 
-bool PropertyDescriptor::equalTo(const PropertyDescriptor& other) const
+bool PropertyDescriptor::equalTo(ExecState* exec, const PropertyDescriptor& other) const
 {
     if (!other.m_value == m_value ||
         !other.m_getter == m_getter ||
         !other.m_setter == m_setter)
         return false;
-    return (!m_value || JSValue::strictEqual(other.m_value, m_value)) && 
-           (!m_getter || JSValue::strictEqual(other.m_getter, m_getter)) && 
-           (!m_setter || JSValue::strictEqual(other.m_setter, m_setter)) &&
+    return (!m_value || JSValue::strictEqual(exec, other.m_value, m_value)) && 
+           (!m_getter || JSValue::strictEqual(exec, other.m_getter, m_getter)) && 
+           (!m_setter || JSValue::strictEqual(exec, other.m_setter, m_setter)) &&
            attributesEqual(other);
 }
 

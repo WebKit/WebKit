@@ -90,13 +90,13 @@ JSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec, JSObject*, JSVa
             FunctionExecutable* executable = function->jsExecutable();
             UString sourceString = executable->source().toString();
             insertSemicolonIfNeeded(sourceString);
-            return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + executable->paramString() + ") " + sourceString);
+            return jsString(exec, "function " + function->name(exec) + "(" + executable->paramString() + ") " + sourceString);
         }
     }
 
     if (thisValue.inherits(&InternalFunction::info)) {
         InternalFunction* function = asInternalFunction(thisValue);
-        return jsString(exec, "function " + function->name(&exec->globalData()) + "() {\n    [native code]\n}");
+        return jsString(exec, "function " + function->name(exec) + "() {\n    [native code]\n}");
     }
 
     return throwError(exec, TypeError);
