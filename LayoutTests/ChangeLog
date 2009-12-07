@@ -1,3 +1,9 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add two tests generating new results to gtks collection of tests doing so.
+
+        * platform/gtk/Skipped:
+
 2009-12-07  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Adam Barth.
