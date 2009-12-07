@@ -1,4 +1,13 @@
-2009-12-06  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
+2009-12-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. Revert r51748.
+
+        Bugzilla should show images in git patches
+        https://bugs.webkit.org/show_bug.cgi?id=31395
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-12-06  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Kilzer.
 
