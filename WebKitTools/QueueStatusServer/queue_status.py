@@ -35,9 +35,8 @@ use_library('django', '1.1')
 
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
-from google.appengine.ext import webapp
+from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.ext import db
 
 webapp.template.register_template_library('filters.webkit_extras')
 
@@ -49,6 +48,7 @@ class QueueStatus(db.Model):
     active_patch_id = db.IntegerProperty()
     message = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
+    results_file = db.BlobProperty()
 
 
 class MainPage(webapp.RequestHandler):
@@ -144,8 +144,19 @@ class UpdateStatus(webapp.RequestHandler):
         queue_status.active_bug_id = self._int_from_request('bug_id')
         queue_status.active_patch_id = self._int_from_request('patch_id')
         queue_status.message = self.request.get('status')
+        results_file = self.request.get("results_file")
+        queue_status.results_file = db.Blob(results_file)
         queue_status.put()
         self.redirect('/')
+
+
+class ShowResults(webapp.RequestHandler):
+    def get(self, status_id):
+        status = QueueStatus.get_by_id(int(status_id))
+        if not status:
+            self.error(404)
+            return
+        self.response.out.write(status.results_file)
 
 
 routes = [
@@ -153,6 +164,7 @@ routes = [
     ('/update-status', UpdateStatus),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
     (r'/status-bubble/(.*)', StatusBubble),
+    (r'/results/(.*)', ShowResults)
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)

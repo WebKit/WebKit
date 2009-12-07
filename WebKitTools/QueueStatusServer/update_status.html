@@ -1,4 +1,4 @@
-<form name="update_status" method="post">
+<form name="update_status" enctype="multipart/form-data" method="post">
 Update status for a queue: <input name="queue_name">
  <div>
      Active Bug Id:
@@ -12,5 +12,6 @@ Update status for a queue: <input name="queue_name">
       Status Text:<br>
       <textarea name="status" rows="3" cols="60"></textarea>
   </div>
+  <div>Results file: <input type="file" name="results_file"></div>
   <div><input type="submit" value="Add Status"></div>
 </form>
