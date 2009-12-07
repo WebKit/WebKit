@@ -1,0 +1,28 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=31889">https://bugs.webkit.org/show_bug.cgi?id=31889</a> : <code>[v8] WebCore::WebGLArrayBufferInternal::byteLengthAttrGetter NULL pointer</code>');
+
+<!-- The following used to cause a crash in Chrome -->
+new WebGLArrayBuffer().byteLength;
+
+testPassed("new WebGLArrayBuffer().byteLength did not crash");
+successfullyParsed = true;
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

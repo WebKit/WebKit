@@ -1,3 +1,17 @@
+2009-12-07  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] WebCore::WebGLArrayBufferInternal::byteLengthAttrGetter NULL pointer
+        https://bugs.webkit.org/show_bug.cgi?id=31889
+
+        Fixed bug in handling of zero-argument constructor call.
+
+        Test: fast/canvas/webgl/bug-31889.html
+
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-12-07  Gyuyoung Kim  <gyuyoung@gmail.com>
 
         Reviewed by Eric Seidel.

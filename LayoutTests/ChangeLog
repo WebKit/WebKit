@@ -1,3 +1,17 @@
+2009-12-07  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] WebCore::WebGLArrayBufferInternal::byteLengthAttrGetter NULL pointer
+        https://bugs.webkit.org/show_bug.cgi?id=31889
+
+        Fixed bug in handling of zero-argument constructor call.
+
+        Test: fast/canvas/webgl/bug-31889.html
+
+        * fast/canvas/webgl/bug-31889-expected.txt: Added.
+        * fast/canvas/webgl/bug-31889.html: Added.
+
 2009-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Landing files I forgot to add to my working copy
