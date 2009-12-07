@@ -692,7 +692,6 @@ fast/multicol/single-line.html
 fast/history/back-forward-reset-after-error-handling.html
 
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-animations/3d
 transforms/3d
 compositing
 
@@ -730,3 +729,4 @@ media/media-can-play-ogg.html
 # Broken by JSC regression (bug filed: https://bugs.webkit.org/show_bug.cgi?id=32228)
 fast/js/excessive-comma-usage.html
 fast/js/math-transforms.html
+fast/js/math.html

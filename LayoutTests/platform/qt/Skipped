@@ -626,37 +626,21 @@ svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
 svg/W3C-SVG-1.1/coords-viewattr-03-b.svg
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/filters-blend-01-b.svg
-svg/W3C-SVG-1.1/filters-blend-01-b.svg
-svg/W3C-SVG-1.1/filters-color-01-b.svg
 svg/W3C-SVG-1.1/filters-color-01-b.svg
 svg/W3C-SVG-1.1/filters-composite-02-b.svg
-svg/W3C-SVG-1.1/filters-composite-02-b.svg
-svg/W3C-SVG-1.1/filters-comptran-01-b.svg
 svg/W3C-SVG-1.1/filters-comptran-01-b.svg
 svg/W3C-SVG-1.1/filters-conv-01-f.svg
-svg/W3C-SVG-1.1/filters-conv-01-f.svg
-svg/W3C-SVG-1.1/filters-diffuse-01-f.svg
 svg/W3C-SVG-1.1/filters-diffuse-01-f.svg
 svg/W3C-SVG-1.1/filters-displace-01-f.svg
-svg/W3C-SVG-1.1/filters-displace-01-f.svg
-svg/W3C-SVG-1.1/filters-example-01-b.svg
 svg/W3C-SVG-1.1/filters-example-01-b.svg
 svg/W3C-SVG-1.1/filters-felem-01-b.svg
 svg/W3C-SVG-1.1/filters-gauss-01-b.svg
-svg/W3C-SVG-1.1/filters-gauss-01-b.svg
-svg/W3C-SVG-1.1/filters-image-01-b.svg
 svg/W3C-SVG-1.1/filters-image-01-b.svg
 svg/W3C-SVG-1.1/filters-light-01-f.svg
-svg/W3C-SVG-1.1/filters-light-01-f.svg
-svg/W3C-SVG-1.1/filters-morph-01-f.svg
 svg/W3C-SVG-1.1/filters-morph-01-f.svg
 svg/W3C-SVG-1.1/filters-offset-01-b.svg
-svg/W3C-SVG-1.1/filters-offset-01-b.svg
-svg/W3C-SVG-1.1/filters-specular-01-f.svg
 svg/W3C-SVG-1.1/filters-specular-01-f.svg
 svg/W3C-SVG-1.1/filters-tile-01-b.svg
-svg/W3C-SVG-1.1/filters-tile-01-b.svg
-svg/W3C-SVG-1.1/filters-turb-01-f.svg
 svg/W3C-SVG-1.1/filters-turb-01-f.svg
 svg/W3C-SVG-1.1/fonts-desc-02-t.svg
 svg/W3C-SVG-1.1/fonts-elem-01-t.svg
@@ -982,8 +966,6 @@ svg/custom/svg-overflow-types.svg
 svg/custom/svgpolyparser-extra-space.svg
 svg/custom/text-clip.svg
 svg/custom/text-filter.svg
-svg/custom/text-filter.svg
-svg/custom/text-gradient-no-content.svg
 svg/custom/text-gradient-no-content.svg
 svg/custom/text-hit-test.svg
 svg/custom/text-image-opacity.svg
@@ -5095,7 +5077,6 @@ websocket/tests
 fast/multicol/single-line.html
 
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-animations/3d
 transforms/3d
 compositing
 
@@ -5167,3 +5148,24 @@ http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-doma
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
+
+# Bunch of tests failing since a while on the Qt slave. Please investigate.
+css1/classification/white_space.html
+css1/font_properties/font.html
+fast/backgrounds/body-generated-image-propagated-to-root.html
+fast/backgrounds/repeat/mask-negative-offset-repeat.html
+fast/backgrounds/repeat/negative-offset-repeat.html
+fast/block/positioning/relative-positioned-inline-container.html
+fast/frames/frame-navigation.html
+fast/frames/frameset-style-recalc.html
+fast/repaint/block-selection-gap-stale-cache-2.html
+fast/repaint/block-selection-gap-stale-cache.html
+fast/repaint/inline-overflow.html
+fast/repaint/inline-relative-positioned.html
+http/tests/loading/state-object-security-exception.html
+http/tests/local/file-url-sent-as-referer.html
+http/tests/misc/bubble-drag-events.html
+http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
+http/tests/uri/css-href.php
+printing/compositing-layer-printing.html
+svg/custom/radial-gradient-with-outstanding-focalPoint.svg

@@ -1,5 +1,16 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Cleaning up Skipped files in order to make more bots green, as I plan to land changes, that affect all bots (svg filters support).
+
+        Remove non-existant animations/3d directory in qt&win Skipped lists.
+        Skip one more test on windows (see bug #32228, already in radar, just guessing - not yet sure if it's a random crash issue though)
+        Skip 19 (!) tests on the Qt slave, failing since a longer time. Qt developers: Please investigate.
+
+        * platform/qt/Skipped: Also remove some duplicates I spotted.
+        * platform/win/Skipped:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Disable two flaky SnowLeopard tests, filed bug and notified author.
 
         Tests "plugins/document-open.html" and "plugins/mouse-events.html" are flaky on SnowLeopard
