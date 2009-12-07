@@ -1102,6 +1102,8 @@
 		54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		599D1E3210C97D6E00E0EF12 /* jni_utility_private.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */; };
+		599D1E3310C97D6E00E0EF12 /* jni_utility_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 599D1E3110C97D6E00E0EF12 /* jni_utility_private.h */; };
 		59C77F2A10545B3B00506104 /* GeolocationServiceMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */; };
 		59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F2910545B3B00506104 /* GeolocationServiceMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D15E3AB0F9E6AC1009E0E3F /* XMLTokenizerScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */; };
@@ -6426,6 +6428,8 @@
 		54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerLibxml2.cpp; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jni_utility_private.cpp; path = jsc/jni_utility_private.cpp; sourceTree = "<group>"; };
+		599D1E3110C97D6E00E0EF12 /* jni_utility_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jni_utility_private.h; path = jsc/jni_utility_private.h; sourceTree = "<group>"; };
 		59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationServiceMock.cpp; path = mock/GeolocationServiceMock.cpp; sourceTree = "<group>"; };
 		59C77F2910545B3B00506104 /* GeolocationServiceMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationServiceMock.h; path = mock/GeolocationServiceMock.h; sourceTree = "<group>"; };
 		5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerScope.cpp; sourceTree = "<group>"; };
@@ -10294,6 +10298,7 @@
 		1A569CCE0D7E2B82007C3983 /* jni */ = {
 			isa = PBXGroup;
 			children = (
+				599D1E2F10C97D4C00E0EF12 /* jsc */,
 				1A569CCF0D7E2B82007C3983 /* jni_class.cpp */,
 				1A569CD00D7E2B82007C3983 /* jni_class.h */,
 				1A569CD10D7E2B82007C3983 /* jni_instance.cpp */,
@@ -10991,6 +10996,15 @@
 				51ABAE431043AB4A008C5260 /* WebSocketHandshake.h */,
 			);
 			path = websockets;
+			sourceTree = "<group>";
+		};
+		599D1E2F10C97D4C00E0EF12 /* jsc */ = {
+			isa = PBXGroup;
+			children = (
+				599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */,
+				599D1E3110C97D6E00E0EF12 /* jni_utility_private.h */,
+			);
+			name = jsc;
 			sourceTree = "<group>";
 		};
 		59C77F101054591C00506104 /* mock */ = {
@@ -18243,6 +18257,7 @@
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
+				599D1E3310C97D6E00E0EF12 /* jni_utility_private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20399,6 +20414,7 @@
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
 				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
+				599D1E3210C97D6E00E0EF12 /* jni_utility_private.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

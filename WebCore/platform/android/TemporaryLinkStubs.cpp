@@ -1,5 +1,5 @@
 /*
- * Copyright 2007, The Android Open Source Project
+ * Copyright 2009, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,7 @@
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
 #include "JavaScriptProfile.h"
-#include "jni_utility.h"
+#include "jni_utility_private.h"
 #endif
 
 using namespace WebCore;

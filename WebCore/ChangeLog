@@ -1,3 +1,26 @@
+2009-12-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Moves JSC-specific functions from jni_utility and moves them to new jsc/jni_utility_private files.
+        https://bugs.webkit.org/show_bug.cgi?id=32157
+
+        Build fix only, no new tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Modified. Add jni_utility_private.[cpp|h].
+        * bridge/jni/jni_instance.cpp: Modified. Include jni_utility_private.h for JSC.
+        * bridge/jni/jni_jsobject.mm: Modified. Include jni_utility_private.h for JSC.
+        * bridge/jni/jni_objc.mm: Modified. Include jni_utility_private.h for JSC.
+        * bridge/jni/jni_runtime.cpp: Modified. Include jni_utility_private.h for JSC.
+        * bridge/jni/jni_utility.cpp: Modified. Removed convertValueToJValue and convertArrayInstanceToJavaArray.
+        * bridge/jni/jni_utility.h: Modified. Removed convertValueToJValue and dispatchJNICall.
+        * bridge/jni/jsc: Added.
+        * bridge/jni/jsc/jni_utility_private.cpp: Added.
+        (JSC::Bindings::convertArrayInstanceToJavaArray):
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/jsc/jni_utility_private.h: Added. Header for convertValueToJValue and dispatchJNICall.
+        * platform/android/TemporaryLinkStubs.cpp: Modified. Include jni_utility_private.h for JSC.
+
 2009-12-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

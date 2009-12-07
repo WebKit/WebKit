@@ -28,7 +28,6 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include <runtime/JSValue.h>
 #include <JavaVM/jni.h>
 
 // The order of these items can not be modified as they are tightly
@@ -53,9 +52,6 @@ typedef enum {
 
 namespace JSC {
 
-class ExecState;
-class JSObject;    
-
 namespace Bindings {
 
 class JavaParameter;
@@ -71,8 +67,6 @@ void releaseUCharactersForJStringInEnv(JNIEnv *env, jstring aJString, const jcha
 JNIType JNITypeFromClassName(const char *name);
 JNIType JNITypeFromPrimitiveType(char type);
 const char *signatureFromPrimitiveType(JNIType type);
-
-jvalue convertValueToJValue(ExecState*, JSValue, JNIType, const char* javaClassName);
 
 jvalue getJNIField(jobject obj, JNIType type, const char *name, const char *signature);
 
@@ -279,8 +273,6 @@ T callJNIStaticMethod(jclass cls, const char* methodName, const char* methodSign
     return result;
 }
     
-bool dispatchJNICall(ExecState*, const void* targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue* args, jvalue& result, const char* callingURL, JSValue& exceptionDescription);
-
 } // namespace Bindings
 
 } // namespace JSC

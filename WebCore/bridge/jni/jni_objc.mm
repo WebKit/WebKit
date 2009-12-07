@@ -29,6 +29,7 @@
 
 #import <Foundation/Foundation.h>
 #import "jni_utility.h"
+#import "jni_utility_private.h"
 #import "objc_utility.h"
 #include <runtime/JSLock.h>
 

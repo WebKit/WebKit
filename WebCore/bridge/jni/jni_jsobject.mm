@@ -35,6 +35,7 @@
 #include "WebCoreFrameView.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "jni_utility_private.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <interpreter/CallFrame.h>
