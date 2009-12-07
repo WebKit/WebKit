@@ -1,3 +1,19 @@
+2009-12-07  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Improve the autotests of QtWebkit
+        https://bugs.webkit.org/show_bug.cgi?id=32216
+
+        Refactor the test of QGraphicsWebView:
+        -make waitForSignal() available to all the tests.
+        -remove QTest::qWait()
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::crashOnViewlessWebPages):
+        * tests/util.h:
+        (waitForSignal):
+
 2009-12-07  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
