@@ -1919,12 +1919,17 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
     mapLocalToContainer(repaintContainer, false, false, transformState);
     FloatPoint offsetFromRepaintContainer = transformState.mappedPoint();
+    int x = offsetFromRepaintContainer.x();
+    int y = offsetFromRepaintContainer.y();
+
+    if (hasOverflowClip())
+        layer()->subtractScrolledContentOffset(x, y);
 
     int lastTop = 0;
     int lastLeft = leftSelectionOffset(this, lastTop);
     int lastRight = rightSelectionOffset(this, lastTop);
     
-    return fillSelectionGaps(this, offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), lastTop, lastLeft, lastRight);
+    return fillSelectionGaps(this, x, y, x, y, lastTop, lastLeft, lastRight);
 }
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
@@ -1934,7 +1939,14 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
         int lastLeft = leftSelectionOffset(this, lastTop);
         int lastRight = rightSelectionOffset(this, lastTop);
         paintInfo.context->save();
-        fillSelectionGaps(this, tx, ty, tx, ty, lastTop, lastLeft, lastRight, &paintInfo);
+        IntRect gapRectsBounds = fillSelectionGaps(this, tx, ty, tx, ty, lastTop, lastLeft, lastRight, &paintInfo);
+        if (!gapRectsBounds.isEmpty()) {
+            if (RenderLayer* layer = enclosingLayer()) {
+                IntSize offset = hasLayer() ? IntSize() : offsetFromAncestorContainer(layer->renderer());
+                gapRectsBounds.move(offset - IntSize(tx, ty));
+                layer->addBlockSelectionGapsBounds(gapRectsBounds);
+            }
+        }
         paintInfo.context->restore();
     }
 }

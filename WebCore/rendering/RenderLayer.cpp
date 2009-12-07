@@ -2852,6 +2852,36 @@ IntRect RenderLayer::selfClipRect() const
     return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(backgroundRect)).enclosingBoundingBox();
 }
 
+void RenderLayer::addBlockSelectionGapsBounds(const IntRect& bounds)
+{
+    m_blockSelectionGapsBounds.unite(bounds);
+}
+
+void RenderLayer::clearBlockSelectionGapsBounds()
+{
+    m_blockSelectionGapsBounds = IntRect();
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        child->clearBlockSelectionGapsBounds();
+}
+
+void RenderLayer::repaintBlockSelectionGaps()
+{
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        child->repaintBlockSelectionGaps();
+
+    if (m_blockSelectionGapsBounds.isEmpty())
+        return;
+
+    IntRect rect = m_blockSelectionGapsBounds;
+    rect.move(-scrolledContentOffset());
+    if (renderer()->hasOverflowClip())
+        rect.intersect(toRenderBox(renderer())->overflowClipRect(0, 0));
+    if (renderer()->hasClip())
+        rect.intersect(toRenderBox(renderer())->clipRect(0, 0));
+    if (!rect.isEmpty())
+        renderer()->repaintRectangle(rect);
+}
+
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect, const RenderLayer* rootLayer) const
 {
     // Always examine the canvas and the root.

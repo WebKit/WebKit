@@ -1,3 +1,33 @@
+2009-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/7437820> Weird selection artifacts
+
+        Tests: fast/repaint/block-selection-gap-stale-cache-2.html
+               fast/repaint/block-selection-gap-stale-cache.html
+
+        Instead of caching the block selection gaps’ bounds in the RenderView at setSelection()
+        time, cache them in each RenderLayer at paint time. This prevents the cache from getting
+        stale due to layout changes and overflow scrolling.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint): Account for overflow scroll.
+        (WebCore::RenderBlock::paintSelection): Update the enclosing layer’s selection gaps bounds.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addBlockSelectionGapsBounds): Added. Updates the selection gaps
+        bounds to include the given rect.
+        (WebCore::RenderLayer::clearBlockSelectionGapsBounds): Added. Recursively clears the cached
+        selection gaps bounds.
+        (WebCore::RenderLayer::repaintBlockSelectionGaps): Added. Recursively invalidates the
+        selection gaps bounds.
+        * rendering/RenderLayer.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Clear the layer-level selection gaps bounds instead
+        of the view-level cache.
+        (WebCore::RenderView::clearSelection): Changed to call repaintBlockSelectionGaps().
+        * rendering/RenderView.h:
+
 2009-12-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -193,8 +193,6 @@ protected:
     RenderWidgetSet m_widgets;
 
 private:
-    IntRect m_cachedSelectionBounds;
-
     int m_bestTruncatedAt;
     int m_truncatorWidth;
     int m_minimumColumnHeight;

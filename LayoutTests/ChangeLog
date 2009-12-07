@@ -1,3 +1,18 @@
+2009-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for <rdar://problem/7437820> Weird selection artifacts
+
+        * fast/repaint/block-selection-gap-stale-cache-2.html: Added.
+        * fast/repaint/block-selection-gap-stale-cache.html: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.png: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.txt: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-expected.png: Added.
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-expected.txt: Added.
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

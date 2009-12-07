@@ -431,7 +431,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         o = o->nextInPreOrder();
     }
 
-    m_cachedSelectionBounds = IntRect();
+    m_layer->clearBlockSelectionGapsBounds();
 
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
@@ -444,12 +444,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
                 RenderBlockSelectionInfo* blockInfo = newSelectedBlocks.get(cb);
                 if (blockInfo)
                     break;
-                blockInfo = new RenderBlockSelectionInfo(cb);
-                newSelectedBlocks.set(cb, blockInfo);
-                IntRect rect = blockInfo->rects();
-                if (blockInfo->repaintContainer())
-                    rect = blockInfo->repaintContainer()->localToAbsoluteQuad(FloatQuad(rect)).enclosingBoundingBox();
-                m_cachedSelectionBounds.unite(rect);
+                newSelectedBlocks.set(cb, new RenderBlockSelectionInfo(cb));
                 cb = cb->containingBlock();
             }
         }
@@ -526,7 +521,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
 
 void RenderView::clearSelection()
 {
-    repaintRectangleInViewAndCompositedLayers(m_cachedSelectionBounds);
+    m_layer->repaintBlockSelectionGaps();
     setSelection(0, -1, 0, -1, RepaintNewMinusOld);
 }
 
