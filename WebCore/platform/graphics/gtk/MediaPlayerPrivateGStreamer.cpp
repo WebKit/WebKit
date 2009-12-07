@@ -757,17 +757,13 @@ static HashSet<String> mimeTypeCache()
     static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
-        // These subtypes are already beeing supported by WebKit itself
+        // Build a whitelist of mime-types known to be supported by
+        // GStreamer.
         HashSet<String> handledApplicationSubtypes;
-        handledApplicationSubtypes.add(String("x-id3v2"));
-        handledApplicationSubtypes.add(String("x-id3v1"));
-        handledApplicationSubtypes.add(String("x-apetag"));
         handledApplicationSubtypes.add(String("ogg"));
         handledApplicationSubtypes.add(String("x-3gp"));
         handledApplicationSubtypes.add(String("vnd.rn-realmedia"));
         handledApplicationSubtypes.add(String("x-pn-realaudio"));
-        handledApplicationSubtypes.add(String("sdp"));
-        handledApplicationSubtypes.add(String("smil"));
 
         GList* factories = gst_type_find_factory_get_list();
         for (GList* iterator = factories; iterator; iterator = iterator->next) {

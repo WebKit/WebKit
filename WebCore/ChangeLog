@@ -1,3 +1,13 @@
+2009-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fixed whitelist comment and removed useless (tags, sdp) mimetypes
+        from it. Also, GStreamer doesn't handle directly SMIL.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2009-12-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
