@@ -1,3 +1,14 @@
+2009-12-07  Gyuyoung Kim  <gyuyoung@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32024
+        [GTK] WebKit does not compile without JAVASCRIPT_DEBUGGER
+
+        Fix build errors when javascript-debugger is disabled on GTK
+
+        * GNUmakefile.am:
+
 2009-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

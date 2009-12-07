@@ -1,3 +1,16 @@
+2009-12-07  Gyuyoung Kim  <gyuyoung@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32024
+        [GTK] WebKit does not compile without JAVASCRIPT_DEBUGGER
+
+        Fix build errors when javascript-debugger is disabled on GTK
+
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_set_property):
+        (webkit_web_inspector_get_property):
+
 2009-12-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
