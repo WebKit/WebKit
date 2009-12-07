@@ -1,3 +1,12 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Disable two flaky SnowLeopard tests, filed bug and notified author.
+
+        Tests "plugins/document-open.html" and "plugins/mouse-events.html" are flaky on SnowLeopard
+        https://bugs.webkit.org/show_bug.cgi?id=32229
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
