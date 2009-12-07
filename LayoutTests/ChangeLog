@@ -1,3 +1,12 @@
+2009-12-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Add one more fast/js test to the Skipped list - also due to:
+        https://bugs.webkit.org/show_bug.cgi?id=32228.
+
+        * platform/win/Skipped:
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Cleaning up Skipped files in order to make more bots green, as I plan to land changes, that affect all bots (svg filters support).
