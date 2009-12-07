@@ -1,5 +1,12 @@
 2009-12-07  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Windows build fix part III).
+
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
+2009-12-07  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Windows build fix part II).
 
         * WebView.cpp:
