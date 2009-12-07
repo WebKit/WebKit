@@ -1,3 +1,18 @@
+2009-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7443417> - Closing a window opened with "New windows open with: Same Page" results in crash in ::~HistoryItem
+
+        The HistoryItem copy constructor has one very specific use case - to support the feature of a WebView copying another WebView's
+        BackForwardList.  That constructor wasn't initializing its m_document pointer, leading to this crash in the destructor.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::~HistoryItem): Change the setDocument(0) to an ASSERT that the document is already 0. A HistoryItem cannot
+          outlive its Document and Documents will always clear the back-pointer in their ::detach() method.
+        (WebCore::HistoryItem::HistoryItem): Missed the m_document initializer in the copy constructor. Also remove an invalid assertion
+          about the original items m_cachedPage object (which is irrelevant to the copy).
+
 2009-12-07  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

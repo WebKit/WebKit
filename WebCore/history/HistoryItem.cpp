@@ -100,8 +100,8 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
 HistoryItem::~HistoryItem()
 {
     ASSERT(!m_cachedPage);
+    ASSERT(!m_document);
     iconDatabase()->releaseIconForPageURL(m_urlString);
-    setDocument(0);
 }
 
 inline HistoryItem::HistoryItem(const HistoryItem& item)
@@ -121,10 +121,9 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_visitCount(item.m_visitCount)
     , m_dailyVisitCounts(item.m_dailyVisitCounts)
     , m_weeklyVisitCounts(item.m_weeklyVisitCounts)
+    , m_document(0)
     , m_formContentType(item.m_formContentType)
 {
-    ASSERT(!item.m_cachedPage);
-
     if (item.m_formData)
         m_formData = item.m_formData->copy();
         
