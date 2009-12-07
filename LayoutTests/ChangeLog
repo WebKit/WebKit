@@ -1,3 +1,11 @@
+2009-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Landing files I forgot to add to my working copy
+        before committing r51734.
+
+        * media/media-can-play-ogg-expected.txt: Added.
+        * media/media-can-play-ogg.html: Added.
+
 2009-12-07  Alexey Proskuryakov  <ap@apple.com>
 
         Don't skip websocket/tests/url-with-credential.html, it's one of earlier tests that is
