@@ -13,7 +13,7 @@ function endTest()
     }
 }
 
-var ws = new WebSocket("ws://localhost:8880/websocket/tests/handshake-error");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/handshake-error");
 
 ws.onopen = function()
 {

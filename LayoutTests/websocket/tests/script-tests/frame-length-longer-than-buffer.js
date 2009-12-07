@@ -18,7 +18,7 @@ function finish() {
         layoutTestController.notifyDone();
 }
 
-var ws = new WebSocket("ws://localhost:8880/websocket/tests/frame-length-longer-than-buffer");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/frame-length-longer-than-buffer");
 ws.onopen = function () {
     debug("WebSocket is open");
 };

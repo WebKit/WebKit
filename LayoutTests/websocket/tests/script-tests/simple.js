@@ -13,7 +13,7 @@ function endTest()
     }
 }
 
-var ws = new WebSocket("ws://localhost:8880/websocket/tests/simple");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/simple");
 debug("Created a socket to '" + ws.URL + "'; readyState " + ws.readyState + ".");
 
 ws.onopen = function()

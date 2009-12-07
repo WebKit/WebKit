@@ -1,3 +1,24 @@
+2009-12-06  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests for cross-origin WebSocket usage
+        https://bugs.webkit.org/show_bug.cgi?id=32055
+
+        * websocket/tests/cross-origin-expected.txt: Added.
+        * websocket/tests/cross-origin.html: Added.
+        * websocket/tests/fixed-origin_wsh.py: Added.
+        * websocket/tests/handshake-fail-by-cross-origin-expected.txt: Added.
+        * websocket/tests/handshake-fail-by-cross-origin.html: Added.
+        * websocket/tests/origin-test_wsh.py: Added.
+        * websocket/tests/script-tests/cross-origin.js: Added.
+        * websocket/tests/script-tests/frame-length-longer-than-buffer.js:
+        * websocket/tests/script-tests/frame-length-skip.js:
+        * websocket/tests/script-tests/handshake-error.js:
+        * websocket/tests/script-tests/handshake-fail-by-cross-origin.js: Added.
+        * websocket/tests/script-tests/simple.js:
+        * websocket/tests/simple-expected.txt:
+
 2009-12-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
