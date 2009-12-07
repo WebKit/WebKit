@@ -102,7 +102,7 @@ static const unsigned char characterClassTable[256] = {
     /* 42  * */ UserInfoChar,    /* 43  + */ SchemeChar | UserInfoChar,
     /* 44  , */ UserInfoChar,
     /* 45  - */ SchemeChar | UserInfoChar | HostnameChar,
-    /* 46  . */ SchemeChar | UserInfoChar | HostnameChar,
+    /* 46  . */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
     /* 47  / */ PathSegmentEndChar,
     /* 48  0 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
     /* 49  1 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,    

@@ -1,3 +1,17 @@
+2009-12-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Some changes to ValidityState-typeMismatch-url.html.
+        https://bugs.webkit.org/show_bug.cgi?id=29913
+
+        - Add more test cases
+          Username, IPv6 address, mailto:, file:, tel:, fragment, and IDN.
+        - Handle difference between KURL and KURLGoogle
+
+        * fast/forms/ValidityState-typeMismatch-url-expected.txt:
+        * fast/forms/script-tests/ValidityState-typeMismatch-url.js:
+
 2009-12-07  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
