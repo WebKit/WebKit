@@ -1,3 +1,17 @@
+2009-12-07  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        If the tile of a pattern is bigger than the pattern and the
+        pattern size is < 0.5, the SVGPaintServer produced a division
+        by zero. This also only happens, if the attribute overflow is
+        set to visible.
+        This is a test with a pattern size of 0.1 and a tile size of 1. 
+
+        * svg/custom/script-tests/small-pattern.js: Added.
+        * svg/custom/small-pattern-expected.txt: Added.
+        * svg/custom/small-pattern.html: Added.
+
 2009-12-07  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

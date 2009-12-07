@@ -1,3 +1,19 @@
+2009-12-07  Shiki Okasaka  <shiki@google.com>
+
+        Reviewed by Dirk Schulze.
+
+        Avoid zero division during SVGPaintServerPattern::setup()
+        https://bugs.webkit.org/show_bug.cgi?id=29912
+
+        Fix zero division bugs in SVGPaintServerPattern::setup() that occurred
+        if the tile of a pattern was bigger than the pattern and the pattern
+        size was < 0.5, and if the attribute overflow was set to visible.
+
+        Test: svg/custom/small-pattern.html
+
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2009-12-07  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
