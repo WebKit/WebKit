@@ -2304,16 +2304,18 @@ void JIT::emit_op_loop_if_false(Instruction* currentInstruction)
 {
     emitTimeoutCheck();
 
+
     unsigned target = currentInstruction[2].u.operand;
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    Jump isZero = branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0))));
-    addJump(emitJumpIfImmediateInteger(regT0), target);
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))), target);
+    Jump isNonZero = emitJumpIfImmediateInteger(regT0);
 
-    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(true)))), target);
-    addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValue::encode(jsBoolean(false)))));
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(false)))), target);
+    addSlowCase(branchPtr(NotEqual, regT0, ImmPtr(JSValue::encode(jsBoolean(true)))));
 
-    isZero.link(this);
+    isNonZero.link(this);
+    RECORD_JUMP_TARGET(target);
 };
 
 void JIT::emit_op_resolve_base(Instruction* currentInstruction)
