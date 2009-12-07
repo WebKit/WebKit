@@ -1,3 +1,25 @@
+2009-12-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Object.getOwnPropertyDescriptor() allows cross-frame access
+        https://bugs.webkit.org/show_bug.cgi?id=32119
+
+        Make all implementations of getOwnPropertyDescriptor that have
+        cross domain restrictions simply fail immediately on cross domain
+        access, rather than trying to mimic the behaviour of normal
+        property access.
+
+        Test: http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertyDescriptorDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-12-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

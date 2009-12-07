@@ -58,6 +58,18 @@ function canGet(keyPath)
     }
 }
 
+function canGetDescriptor(target, property)
+{
+    try {
+        var desc = Object.getOwnPropertyDescriptor(target, property);
+        // To deal with an idiosyncrasy in how binding objects work in conjunction with
+        // slot and descriptor delegates we also allow descriptor with undefined value/getter/setter
+        return  desc !== undefined && (desc.value !== undefined || desc.get !== undefined || desc.set !== undefined);
+    } catch(e) {
+        return false;
+    }
+}
+
 window.marker = { };
 
 function canSet(keyPath, valuePath)

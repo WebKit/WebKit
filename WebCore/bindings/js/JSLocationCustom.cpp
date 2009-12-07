@@ -102,14 +102,9 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
         return true;
     }
     
-    // When accessing Location cross-domain, functions are always the native built-in ones.
-    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
-    
-    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
-    // allowed, return false so the normal lookup will take place.
-    String message;
-    if (allowsAccessFromFrame(exec, frame, message))
-        return false;
+    // throw out all cross domain access
+    if (!allowsAccessFromFrame(exec, frame))
+        return true;
     
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
@@ -133,8 +128,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
     // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
     // but for now we have decided not to, partly because it seems silly to return "[Object Location]" in
     // such cases when normally the string form of Location would be the URL.
-    
-    printErrorMessageForFrame(frame, message);
+
     descriptor.setUndefined();
     return true;
 }

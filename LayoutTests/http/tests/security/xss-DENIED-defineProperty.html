@@ -16,12 +16,12 @@ function finish()
     else
         document.getElementById("console").innerHTML += "FAIL: cross-site assignment of new property was allowed!<br/>";
 
-    if (Object.getOwnPropertyDescriptor(location, "hash").value.length == 0)
+    if (location.hash.length == 0)
         document.getElementById("console").innerHTML += "PASS: cross-site assignment of location.hash not allowed<br/>";
     else
         document.getElementById("console").innerHTML += "FAIL: cross-site assignment of location.hash was allowed!<br/>";
 
-    if (Object.getOwnPropertyDescriptor(location, "hash").value.length == 0)
+    if (location.search.length == 0)
         document.getElementById("console").innerHTML += "PASS: cross-site assignment of location.search not allowed<br/>";
     else
         document.getElementById("console").innerHTML += "FAIL: cross-site assignment of location.search was allowed!<br/>";

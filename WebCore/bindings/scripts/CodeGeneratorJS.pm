@@ -375,6 +375,14 @@ sub GenerateGetOwnPropertyDescriptorBody
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     
     my @getOwnPropertyDescriptorImpl = ();
+    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+        if ($interfaceName eq "DOMWindow") {
+            push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
+        } else {
+            push(@implContent, "    if (!allowsAccessFromFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+        }
+        push(@implContent, "        return false;\n");
+    }
     
     if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
         push(@getOwnPropertyDescriptorImpl, "    ${namespaceMaybe}JSValue proto = prototype();\n");

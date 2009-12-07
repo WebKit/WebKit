@@ -95,15 +95,15 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& pr
 
 bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    // When accessing History cross-domain, functions are always the native built-in ones.
-    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
-    
-    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
-    // allowed, return false so the normal lookup will take place.
-    String message;
-    if (allowsAccessFromFrame(exec, impl()->frame(), message))
-        return false;
-    
+    if (!impl()->frame()) {
+        descriptor.setUndefined();
+        return true;
+    }
+
+    // Throw out all cross domain access
+    if (!allowsAccessFromFrame(exec, impl()->frame()))
+        return true;
+
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
@@ -133,8 +133,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifi
             return true;
         }
     }
-    
-    printErrorMessageForFrame(impl()->frame(), message);
+
     descriptor.setUndefined();
     return true;
 }
