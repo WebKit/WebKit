@@ -306,7 +306,7 @@ WebView *createWebViewAndOffscreenWindow()
     [window orderBack:nil];
     [window setAutodisplay:NO];
 
-    [window startObservingWebView];
+    [window startListeningForAcceleratedCompositingChanges];
     
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
@@ -1122,6 +1122,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView _clearMainFrameName];
     [[webView undoManager] removeAllActions];
     [WebView _removeAllUserContentFromGroup:[webView groupName]];
+    [[webView window] setAutodisplay:NO];
 
     resetDefaultsToConsistentValues();
 

@@ -321,10 +321,6 @@ macro(yankAndSelect) \
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
 #define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
-#if USE(ACCELERATED_COMPOSITING)
-#define UsingAcceleratedCompositingProperty @"_isUsingAcceleratedCompositing"
-#endif            
-
 static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
@@ -399,6 +395,8 @@ NSString *_WebMainFrameIconKey =        @"mainFrameIcon";
 NSString *_WebMainFrameTitleKey =       @"mainFrameTitle";
 NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
+
+NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStartAcceleratedCompositing";
 
 @interface WebProgressItem : NSObject
 {
@@ -1553,9 +1551,6 @@ static inline IMP getMethod(id o, SEL s)
     if (!manualNotifyKeys)
         manualNotifyKeys = [[NSSet alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
             _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey,
-#if USE(ACCELERATED_COMPOSITING)
-            UsingAcceleratedCompositingProperty, // used by DRT
-#endif            
             nil];
     if ([manualNotifyKeys containsObject:key])
         return NO;
@@ -2100,10 +2095,35 @@ static inline IMP getMethod(id o, SEL s)
     return handCursor().impl();
 }
 
+- (BOOL)_postsAcceleratedCompositingNotifications
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return _private->postsAcceleratedCompositingNotifications;
+#else
+    return NO;
+#endif
+
+}
+- (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag
+{
+#if USE(ACCELERATED_COMPOSITING)
+    _private->postsAcceleratedCompositingNotifications = flag;
+#endif
+}
+
 - (BOOL)_isUsingAcceleratedCompositing
 {
 #if USE(ACCELERATED_COMPOSITING)
-    return _private->acceleratedFramesCount > 0;
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (_private->usesDocumentViews) {
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+            NSView *documentView = [[kit(frame) frameView] documentView];
+            if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
+                return YES;
+        }
+    }
+
+    return NO;
 #else
     return NO;
 #endif
@@ -5439,28 +5459,6 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization
 {
     _private->needsOneShotDrawingSynchronization = needsSynchronization;
-}
-
-- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame
-{
-    BOOL entering = _private->acceleratedFramesCount == 0;
-    if (entering)
-        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
-    ++_private->acceleratedFramesCount;
-    if (entering)
-        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
-}
-
-- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame
-{
-    BOOL leaving = _private->acceleratedFramesCount == 1;
-    ASSERT(_private->acceleratedFramesCount > 0);
-    
-    if (leaving)
-        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
-    --_private->acceleratedFramesCount;
-    if (leaving)
-        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
 }
 
 - (BOOL)_syncCompositingChanges

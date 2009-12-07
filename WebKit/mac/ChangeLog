@@ -1,3 +1,37 @@
+2009-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7450481> One compositing test keeps DRT in "compositing mode", breaks repaint tests
+
+        The counter that WebView used to keep track of the number of enclosed WebHTMLViews using
+        accelerated compositing was hard to manage, and maintained incorrectly in a number of cases.
+        This caused one compositing test make DumpRenderTree think that all subsequent tests
+        were compositing too.
+        
+        Replace this counter with notifications, which are only fired if a client (DRT) requests them. The
+        notification informs the client that a WebHTMLView entered compositing mode (or an already-
+        compositing WebHTML was added); it does not say when a view becomes uncomposited, or all
+        compositing subviews were removed, since this is tricky to get right.
+        
+        Change -[WebView _isUsingAcceleratedCompositing] to manually walk the frames, and
+        return YES if any document view is composited.
+
+        * WebKit.exp:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]):
+        (-[WebHTMLView viewDidMoveToSuperview]):
+        (-[WebHTMLView attachRootLayer:]):
+        (-[WebHTMLView detachRootLayer]):
+        * WebView/WebView.mm:
+        (+[WebView automaticallyNotifiesObserversForKey:]):
+        (-[WebView _postsAcceleratedCompositingNotifications]):
+        (-[WebView _setPostsAcceleratedCompositingNotifications:]):
+        (-[WebView _isUsingAcceleratedCompositing]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2009-12-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

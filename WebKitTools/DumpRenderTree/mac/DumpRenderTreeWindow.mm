@@ -67,7 +67,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (void)close
 {
-    [self stopObservingWebView];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(openWindowsRef));
     CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, self);
@@ -99,32 +99,20 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return nil;
 }
 
-- (void)startObservingWebView
+- (void)startListeningForAcceleratedCompositingChanges
 {
-    [self stopObservingWebView];
-    [[self webView] addObserver:self forKeyPath:@"_isUsingAcceleratedCompositing" options:0 context:0];
-    observingWebView = YES;
+    [[self webView] _setPostsAcceleratedCompositingNotifications:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(webViewStartedAcceleratedCompositing:)
+        name:_WebViewDidStartAcceleratedCompositingNotification object:nil];
 }
 
-- (void)stopObservingWebView
+- (void)webViewStartedAcceleratedCompositing:(NSNotification *)notification
 {
-    if (!observingWebView)
-        return;
-    [[self webView] removeObserver:self forKeyPath:@"_isUsingAcceleratedCompositing"];
-    observingWebView = NO;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"_isUsingAcceleratedCompositing"]) {
-        // When using accelerated compositing, the window needs to be autodisplay for AppKit/CA to
-        // start accelerated animations correctly.
-        BOOL isAccelerated = [[self webView] _isUsingAcceleratedCompositing];
-        [self setAutodisplay:isAccelerated];
-        return;
-    }
-    
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    // If the WebView has gone into compositing mode, turn on window autodisplay. This is necessary for CA
+    // to update layers and start animations.
+    // We only ever turn autodisplay on here, because we turn it off before every test.
+    if ([[self webView] _isUsingAcceleratedCompositing])
+        [self setAutodisplay:YES];
 }
 
 @end

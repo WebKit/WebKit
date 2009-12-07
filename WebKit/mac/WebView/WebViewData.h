@@ -141,8 +141,7 @@ extern int pluginDatabaseClientCount;
     // When this flag is set, next time a WebHTMLView draws, it needs to temporarily disable screen updates
     // so that the NSView drawing is visually synchronized with CALayer updates.
     BOOL needsOneShotDrawingSynchronization;
-    // Number of WebHTMLViews using accelerated compositing. Used to implement _isUsingAcceleratedCompositing.
-    int acceleratedFramesCount;
+    BOOL postsAcceleratedCompositingNotifications;
     // Run loop observer used to implement the compositing equivalent of -viewWillDraw
     CFRunLoopObserverRef layerSyncRunLoopObserver;
 #endif

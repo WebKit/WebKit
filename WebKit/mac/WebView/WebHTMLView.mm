@@ -1976,11 +1976,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
     [self removeAllToolTips];
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (_private->layerHostingView)
-        [[self _webView] _stoppedAcceleratedCompositingForFrame:[self _frame]];
-#endif
-
     [_private clear];
 
     Page* page = core([self _webView]);
@@ -2888,6 +2883,14 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     if ([self superview] != nil)
         [self addSuperviewObservers];
+
+#if USE(ACCELERATED_COMPOSITING)
+    if ([self superview] && [self _isUsingAcceleratedCompositing]) {
+        WebView *webView = [self _webView];
+        if ([webView _postsAcceleratedCompositingNotifications])
+            [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:webView userInfo:nil];
+    }
+#endif
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -5413,7 +5416,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         [hostingView release];
         // hostingView is owned by being a subview of self
         _private->layerHostingView = hostingView;
-        [[self _webView] _startedAcceleratedCompositingForFrame:[self _frame]];
     }
 
     // Make a container layer, which will get sized/positioned by AppKit and CA.
@@ -5442,6 +5444,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Parent our root layer in the container layer
     [viewLayer addSublayer:layer];
     
+    if ([[self _webView] _postsAcceleratedCompositingNotifications])
+        [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
+    
 #if defined(BUILDING_ON_LEOPARD)
     [self _updateLayerHostingViewPosition];
 #endif
@@ -5454,7 +5459,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         [_private->layerHostingView setWantsLayer:NO];
         [_private->layerHostingView removeFromSuperview];
         _private->layerHostingView = nil;
-        [[self _webView] _stoppedAcceleratedCompositingForFrame:[self _frame]];
     }
 }
 

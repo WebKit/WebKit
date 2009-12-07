@@ -67,6 +67,9 @@ extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether 
 // other WebElementDictionary keys
 extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indictating whether the link is live or not
 
+// One of the subviews of the WebView entered compositing mode.
+extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
+
 #if ENABLE_DASHBOARD_SUPPORT
 typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
@@ -461,6 +464,8 @@ Could be worth adding to the API.
 + (NSCursor *)_pointingHandCursor;
 
 // SPI for DumpRenderTree
+- (BOOL)_postsAcceleratedCompositingNotifications;
+- (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag;
 - (BOOL)_isUsingAcceleratedCompositing;
 
 // SPI for PluginHalter
