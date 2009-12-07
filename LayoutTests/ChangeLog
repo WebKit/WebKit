@@ -1,3 +1,10 @@
+2009-12-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't skip websocket/tests/url-with-credential.html, it's one of earlier tests that is
+        to blame.
+
+        * platform/mac/Skipped:
+
 2009-12-07  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Steve Falkenburg.
