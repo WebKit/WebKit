@@ -1,3 +1,15 @@
+KCanvasResource {id="over" [type=FILTER] }
+KCanvasResource {id="over50" [type=FILTER] }
+KCanvasResource {id="in" [type=FILTER] }
+KCanvasResource {id="in50" [type=FILTER] }
+KCanvasResource {id="out" [type=FILTER] }
+KCanvasResource {id="out50" [type=FILTER] }
+KCanvasResource {id="atop" [type=FILTER] }
+KCanvasResource {id="atop50" [type=FILTER] }
+KCanvasResource {id="xor" [type=FILTER] }
+KCanvasResource {id="xor50" [type=FILTER] }
+KCanvasResource {id="arithmetic" [type=FILTER] }
+KCanvasResource {id="arithmetic50" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

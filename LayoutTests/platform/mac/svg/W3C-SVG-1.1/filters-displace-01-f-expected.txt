@@ -1,3 +1,8 @@
+KCanvasResource {id="DispMapChecker" [type=FILTER] }
+KCanvasResource {id="RotateMap" [type=FILTER] }
+KCanvasResource {id="SphereMap" [type=FILTER] }
+KCanvasResource {id="RotateMapTest" [type=FILTER] }
+KCanvasResource {id="SphereMapTest" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

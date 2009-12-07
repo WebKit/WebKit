@@ -1,4 +1,8 @@
 KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}
+KCanvasResource {id="Identity" [type=FILTER] }
+KCanvasResource {id="TableBlank" [type=FILTER] }
+KCanvasResource {id="TableFull" [type=FILTER] }
+KCanvasResource {id="TableOrd" [type=FILTER] }
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

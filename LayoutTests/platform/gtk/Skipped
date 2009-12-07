@@ -5721,3 +5721,11 @@ http/tests/loading/state-object-security-exception.html
 # Fails because of new behaviour enforced by libsoup
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
 fast/cookies/local-file-can-set-cookies.html
+
+# Tests that can only be re-enabled once filter support is turned on. Will be done soon.
+fast/dom/prototype-inheritance-2.html
+fast/dom/prototype-inheritance.html
+fast/js/global-constructors.html
+svg/dom/operatorAttribute.html
+svg/custom/js-svg-constructors.svg
+svg/custom/svg-features.html

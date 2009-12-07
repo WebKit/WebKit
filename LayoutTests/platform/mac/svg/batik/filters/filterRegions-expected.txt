@@ -1,12 +1,29 @@
+KCanvasResource {id="filterRegion_0" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
+KCanvasResource {id="filterRegion_1" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_2" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_3" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_4" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_5" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_6" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0]}
+KCanvasResource {id="filterRegion_2_0" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_2_1" [type=FILTER]  [bounding box=at (-45,-50) size 540x600] [bounding box mode=0] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_2_2" [type=FILTER]  [bounding box=at (-45,-50) size 540x600] [bounding box mode=0] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_2_3" [type=FILTER]  [bounding box=at (-45,-50) size 540x600] [bounding box mode=0] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_2_4" [type=FILTER]  [bounding box=at (-45,-50) size 540x600] [bounding box mode=0] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_2_5" [type=FILTER]  [bounding box=at (20,30) size 50x40] [bounding box mode=0] [effect bounding box mode=1]}
+KCanvasResource {id="filterRegion_3_0" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
+KCanvasResource {id="filterRegion_3_1" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
+KCanvasResource {id="filterRegion_3_2" [type=FILTER]  [bounding box=at (-100.00%,-100.00%) size 200.00%x200.00%]}
+KCanvasResource {id="filterRegion_3_3" [type=FILTER]  [bounding box=at (-50.00%,-50.00%) size 75.00%x75.00%]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (9,26) size 20000320x3124
+  RenderSVGRoot {svg} at (-15,26) size 20000344x3124
     RenderSVGText {text} at (175,40) size 100x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 100x17
         chunk 1 (middle anchor) text run 1 at (175.00,40.00) startOffset 0 endOffset 14 width 100.00: "Filter Regions"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (9,59) size 20000320x3091 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,50.00)}]
+    RenderSVGContainer {g} at (-15,59) size 20000344x3091 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,50.00)}]
       RenderSVGContainer {g} at (259,119) size 121.50x81.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,95.00)}]
         RenderPath {rect} at (270,145) size 100x50 [fill={[type=SOLID] [color=#000000]}] [filter=filterRegion_0] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
         RenderPath {rect} at (259.50,139.50) size 121x61 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M-10.00,-5.00 L110.00,-5.00 L110.00,55.00 L-10.00,55.00 Z"]
@@ -42,7 +59,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-11,25) size 112x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 112x19
             chunk 1 (middle anchor) text run 1 at (-11.00,25.00) startOffset 0 endOffset 14 width 112.00: "filterRegion_5"
-      RenderSVGContainer {g} at (130,3125) size 20000000x25 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,75.00)}] [filter=filterRegion_6]
+      RenderSVGContainer {g} at (130,155) size 20000000x2995 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,75.00)}] [filter=filterRegion_6]
         RenderPath {rect} at (130,3125) size 20000000x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,3000.00 L20000000.00,3000.00 L20000000.00,3025.00 L0.00,3025.00 Z"]
       RenderSVGContainer {g} at (119,134) size 112x61.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,75.00)}]
         RenderPath {rect} at (149.50,154.50) size 41x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M20.00,30.00 L60.00,30.00 L60.00,70.00 L20.00,70.00 Z"]
@@ -55,7 +72,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-41,-20) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-41.00,-20.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_2_0"
-      RenderSVGContainer {g} at (50,240) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}] [filter=filterRegion_2_1]
+      RenderSVGContainer {g} at (-15,160) size 540x600 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}] [filter=filterRegion_2_1]
         RenderPath {rect} at (50,240) size 50x40 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,30.00 L70.00,30.00 L70.00,70.00 L20.00,70.00 Z"]
       RenderSVGContainer {g} at (9,219) size 132x61.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
         RenderPath {rect} at (49.50,239.50) size 51x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M20.00,30.00 L70.00,30.00 L70.00,70.00 L20.00,70.00 Z"]
@@ -69,14 +86,14 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_2_2"
-      RenderSVGContainer {g} at (250,240) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,160.00)}] [filter=filterRegion_2_3]
+      RenderSVGContainer {g} at (185,160) size 540x600 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,160.00)}] [filter=filterRegion_2_3]
         RenderPath {rect} at (250,240) size 50x40 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,30.00 L70.00,30.00 L70.00,70.00 L20.00,70.00 Z"]
       RenderSVGContainer {g} at (209,219) size 132x51.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,160.00)}]
         RenderPath {rect} at (262,259.50) size 26x11 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M32.50,50.00 L57.50,50.00 L57.50,60.00 L32.50,60.00 Z"]
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_2_3"
-      RenderSVGContainer {g} at (350,240) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,160.00)}] [filter=filterRegion_2_4]
+      RenderSVGContainer {g} at (285,160) size 540x600 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,160.00)}] [filter=filterRegion_2_4]
         RenderPath {rect} at (350,240) size 50x40 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,30.00 L70.00,30.00 L70.00,70.00 L20.00,70.00 Z"]
       RenderSVGContainer {g} at (309,219) size 132x51.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,160.00)}]
         RenderPath {rect} at (362,259.50) size 26x11 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M32.50,50.00 L57.50,50.00 L57.50,60.00 L32.50,60.00 Z"]
@@ -90,28 +107,28 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_2_5"
-      RenderSVGContainer {g} at (30,380) size 450x450 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}] [filter=filterRegion_3_1]
+      RenderSVGContainer {g} at (-15,335) size 540x540 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}] [filter=filterRegion_3_1]
         RenderPath {rect} at (30,380) size 450x450 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L450.00,0.00 L450.00,450.00 L0.00,450.00 Z"]
       RenderSVGContainer {g} at (9,389) size 132x46.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}]
         RenderPath {rect} at (49.50,409.50) size 21x26 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M20.00,30.00 L40.00,30.00 L40.00,55.00 L20.00,55.00 Z"]
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_3_1"
-      RenderSVGContainer {g} at (350,380) size 40x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,330.00)}] [filter=filterRegion_3_0]
+      RenderSVGContainer {g} at (346,375) size 48x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,330.00)}] [filter=filterRegion_3_0]
         RenderPath {rect} at (350,380) size 40x50 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L40.00,0.00 L40.00,50.00 L0.00,50.00 Z"]
       RenderSVGContainer {g} at (329,374.50) size 132x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,330.00)}]
         RenderPath {rect} at (345.50,374.50) size 49x61 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M-4.00,-5.00 L44.00,-5.00 L44.00,55.00 L-4.00,55.00 Z"]
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_3_0"
-      RenderSVGContainer {g} at (180,420) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,330.00)}] [filter=filterRegion_3_2]
+      RenderSVGContainer {g} at (130,380) size 100x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,330.00)}] [filter=filterRegion_3_2]
         RenderPath {rect} at (180,420) size 50x40 [fill={[type=SOLID] [color=#000000]}] [data="M50.00,40.00 L100.00,40.00 L100.00,80.00 L50.00,80.00 Z"]
       RenderSVGContainer {g} at (109,379.50) size 132x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,330.00)}]
         RenderPath {rect} at (129.50,379.50) size 101x81 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M0.00,0.00 L100.00,0.00 L100.00,80.00 L0.00,80.00 Z"]
         RenderSVGText {text} at (-21,25) size 132x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-16) size 132x19
             chunk 1 (middle anchor) text run 1 at (-21.00,25.00) startOffset 0 endOffset 16 width 132.00: "filterRegion_3_2"
-      RenderSVGContainer {g} at (280,420) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,330.00)}] [filter=filterRegion_3_3]
+      RenderSVGContainer {g} at (255,400) size 75x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,330.00)}] [filter=filterRegion_3_3]
         RenderPath {rect} at (280,420) size 50x40 [fill={[type=SOLID] [color=#000000]}] [data="M50.00,40.00 L100.00,40.00 L100.00,80.00 L50.00,80.00 Z"]
       RenderSVGContainer {g} at (209,389) size 132x41.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,330.00)}]
         RenderPath {rect} at (254.50,399.50) size 38.50x31 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [data="M25.00,20.00 L62.50,20.00 L62.50,50.00 L25.00,50.00 Z"]

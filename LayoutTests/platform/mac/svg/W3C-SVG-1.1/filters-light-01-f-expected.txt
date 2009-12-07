@@ -1,3 +1,15 @@
+KCanvasResource {id="distantLightA" [type=FILTER] }
+KCanvasResource {id="distantLightB" [type=FILTER] }
+KCanvasResource {id="distantLightC" [type=FILTER] }
+KCanvasResource {id="distantLightD" [type=FILTER] }
+KCanvasResource {id="pointLightA" [type=FILTER] }
+KCanvasResource {id="pointLightB" [type=FILTER] }
+KCanvasResource {id="pointLightC" [type=FILTER] }
+KCanvasResource {id="pointLightD" [type=FILTER] }
+KCanvasResource {id="spotLightA" [type=FILTER] }
+KCanvasResource {id="spotLightB" [type=FILTER] }
+KCanvasResource {id="spotLightC" [type=FILTER] }
+KCanvasResource {id="spotLightD" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

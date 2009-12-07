@@ -1,3 +1,4 @@
+KCanvasResource {id="FOMTest" [type=FILTER]  [bounding box=at (0.00%,0.00%) size 250.00%x400.00%]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

@@ -5169,3 +5169,23 @@ http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
 http/tests/uri/css-href.php
 printing/compositing-layer-printing.html
 svg/custom/radial-gradient-with-outstanding-focalPoint.svg
+
+# Tests that can only be re-enabled once filter support is turned on. Will be done soon.
+fast/dom/Window/window-properties.html
+fast/js/global-constructors.html
+svg/custom/js-svg-constructors.svg
+svg/custom/svg-features.html
+svg/dom/operatorAttribute.html
+svg/filters/feComposite.svg
+svg/filters/feGaussianBlur.svg
+svg/filters/feMerge.svg
+svg/filters/feMerge-wrong-input.svg
+svg/filters/feOffset.svg
+svg/filters/feTile.svg
+svg/filters/shadow-on-filter.svg
+svg/filters/shadow-on-rect-with-filter.svg
+svg/filters/sourceAlpha.svg
+svg/filters/subRegion-in-userSpace.svg
+svg/filters/subRegion-one-effect.svg
+svg/filters/subRegion-two-effects.svg
+svg/webarchive/svg-feimage-subresources.svg

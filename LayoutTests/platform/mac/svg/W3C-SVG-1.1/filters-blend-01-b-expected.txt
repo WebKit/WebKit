@@ -1,3 +1,8 @@
+KCanvasResource {id="BlendNormal" [type=FILTER] }
+KCanvasResource {id="BlendMultiply" [type=FILTER] }
+KCanvasResource {id="BlendScreen" [type=FILTER] }
+KCanvasResource {id="BlendDarken" [type=FILTER] }
+KCanvasResource {id="BlendLighten" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

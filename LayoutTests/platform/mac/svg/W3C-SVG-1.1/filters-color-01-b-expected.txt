@@ -1,4 +1,8 @@
 KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}
+KCanvasResource {id="Matrix" [type=FILTER] }
+KCanvasResource {id="Saturate40" [type=FILTER]  [bounding box=at (-5.00%,-5.00%) size 110.00%x110.00%]}
+KCanvasResource {id="HueRotate90" [type=FILTER]  [bounding box=at (-5.00%,-5.00%) size 110.00%x110.00%]}
+KCanvasResource {id="LuminanceToAlpha" [type=FILTER]  [bounding box=at (-5.00%,-5.00%) size 110.00%x110.00%]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

@@ -1,3 +1,6 @@
+KCanvasResource {id="filter_1" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effect bounding box mode=1]}
+KCanvasResource {id="filter_2" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effect bounding box mode=1]}
+KCanvasResource {id="filter_3" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effect bounding box mode=1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

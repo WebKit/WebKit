@@ -1,4 +1,5 @@
 KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (0.10,#FF0000)]] [start=(0,0)] [end=(1,1)]}
+KCanvasResource {id="filter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

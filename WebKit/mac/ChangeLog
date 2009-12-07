@@ -1,3 +1,12 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        Turn on (SVG) Filters support, by default.
+        https://bugs.webkit.org/show_bug.cgi?id=32224
+
+        * Configurations/FeatureDefines.xcconfig: Enable FILTERS build flag.
+
 2009-12-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

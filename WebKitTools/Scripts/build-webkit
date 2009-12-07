@@ -86,7 +86,7 @@ my @features = (
       define => "ENABLE_EVENTSOURCE", default => 1, value => \$eventsourceSupport },
 
     { option => "filters", desc => "Toggle Filters support",
-      define => "ENABLE_FILTERS", default => 0, value => \$filtersSupport },
+      define => "ENABLE_FILTERS", default => (isAppleMacWebKit()), value => \$filtersSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => isGtk(), value => \$geolocationSupport },

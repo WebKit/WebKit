@@ -1,3 +1,15 @@
+KCanvasResource {id="surfaceScaleA" [type=FILTER] }
+KCanvasResource {id="surfaceScaleB" [type=FILTER] }
+KCanvasResource {id="surfaceScaleC" [type=FILTER] }
+KCanvasResource {id="specularConstantA" [type=FILTER] }
+KCanvasResource {id="specularConstantB" [type=FILTER] }
+KCanvasResource {id="specularConstantC" [type=FILTER] }
+KCanvasResource {id="specularExponentA" [type=FILTER] }
+KCanvasResource {id="specularExponentB" [type=FILTER] }
+KCanvasResource {id="specularExponentC" [type=FILTER] }
+KCanvasResource {id="lightingColorA" [type=FILTER] }
+KCanvasResource {id="lightingColorB" [type=FILTER] }
+KCanvasResource {id="lightingColorC" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
