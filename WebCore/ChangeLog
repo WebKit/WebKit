@@ -1,3 +1,13 @@
+2009-12-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32226
+        Random crashes in WebSocket tests on Leopard Debug builbot
+
+        * platform/network/SocketStreamHandleBase.cpp: (WebCore::SocketStreamHandleBase::close):
+        Make sure the object still exists when setting m_state.
+
 2009-12-07  Shiki Okasaka  <shiki@google.com>
 
         Reviewed by Dirk Schulze.
