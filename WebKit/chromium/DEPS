@@ -143,6 +143,14 @@ deps_os = {
     'third_party/pthreads-win32':
       Var('chromium_deps_svn')+'/pthreads-win32@'+Var('pthreads-win32_rev'),
   },
+  'unix': {
+    # Linux, actually.
+    'third_party/harfbuzz':
+      Var('chromium_svn')+'/third_party/harfbuzz@'+Var('chromium_rev'),
+
+    'tools/xdisplaycheck':
+      Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
+  },
 }
 
 skip_child_includes = [

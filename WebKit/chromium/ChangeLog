@@ -1,3 +1,14 @@
+2009-12-07  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        fixes to build-webkit --chromium
+        https://bugs.webkit.org/show_bug.cgi?id=32179
+
+        * DEPS:
+        * WebKit.gyp:
+        * gyp_webkit:
+
 2009-12-07  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

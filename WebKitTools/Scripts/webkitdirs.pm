@@ -1131,9 +1131,6 @@ sub buildVisualStudioProject
     }
 
     my $useenv = "/useenv";
-    if (isChromium()) {
-        $useenv = "";
-    }
 
     my @command = ($vcBuildPath, $useenv, $winProjectPath, $action, $config);
 
@@ -1405,6 +1402,46 @@ sub buildGtkProject($$@)
     return buildAutotoolsProject($clean, @buildArgs);
 }
 
+sub buildChromiumMakefile($$$)
+{
+    my ($dir, $target, $clean) = @_;
+    chdir $dir;
+    if ($clean) {
+        return system qw(rm -rf out);
+    }
+    my $config = configuration();
+    my @command = ("make", "-j4", "BUILDTYPE=$config", $target);
+    print join(" ", @command) . "\n";
+    return system @command;
+}
+
+sub buildChromiumVisualStudioProject($$)
+{
+    my ($projectPath, $clean) = @_;
+
+    my $config = configuration();
+    my $action = "/build";
+    $action = "/clean" if $clean;
+
+    # Find Visual Studio installation.
+    my $vsInstallDir;
+    my $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
+    if ($ENV{'VSINSTALLDIR'}) {
+        $vsInstallDir = $ENV{'VSINSTALLDIR'};
+    } else {
+        $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
+    }
+    $vsInstallDir = `cygpath "$vsInstallDir"` if isCygwin();
+    chomp $vsInstallDir;
+    $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
+
+    # Create command line and execute it.
+    my @command = ($vcBuildPath, $projectPath, $action, $config);
+    print "Building results into: ", baseProductDir(), "\n";
+    print join(" ", @command), "\n";
+    return system @command;
+}
+
 sub buildChromium($@)
 {
     my ($clean, @options) = @_;
@@ -1412,19 +1449,15 @@ sub buildChromium($@)
     my $result = 1;
     if (isDarwin()) {
         # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("WebKit/chromium/webkit",
-                                    $clean,
-                                    (@options));
-    } elsif (isCygwin()) {
+        $result = buildXCodeProject("WebKit/chromium/WebKit", $clean, (@options));
+    } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
-        $result = buildVisualStudioProject("WebKit/chromium/webkit.sln",
-                                           $clean);
+        $result = buildChromiumVisualStudioProject("WebKit/chromium/WebKit.sln", $clean);
     } elsif (isLinux()) {
-        # Linux build
-        # FIXME support linux.
-        print STDERR "Linux build is not supported. Yet.";
+        # Linux build - build using make.
+        $ result = buildChromiumMakefile("WebKit/chromium/", "WebKit", $clean);
     } else {
-        print STDERR "This platform is not supported by chromium.";
+        print STDERR "This platform is not supported by chromium.\n";
     }
     return $result;
 }

@@ -40,6 +40,9 @@
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '.',
+                # FIXME: To enable shared_library in linux all code (including
+                # dependencies) must be complied with -fPIC flag. That is
+                # pending on changes in gyp.
                 'webkit_target_type': 'shared_library',
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
@@ -50,6 +53,12 @@
             # WebKit API.
             ['OS=="mac"', {
                 'chromium_code': 1,
+            }],
+            # FIXME: To enable shared_library in linux all code (including
+            # dependencies) must be complied with -fPIC flag. That is
+            # pending on changes in gyp.
+            ['OS=="linux" or OS=="freebsd"', {
+              'webkit_target_type': 'static_library',
             }],
         ],
     },
