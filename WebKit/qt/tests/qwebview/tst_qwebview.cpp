@@ -132,18 +132,18 @@ void tst_QWebView::reusePage()
     mainFrame->setHtml(html, QUrl::fromLocalFile(QDir::currentPath()));
     if (html.contains("</embed>")) {
         // some reasonable time for the PluginStream to feed test.swf to flash and start painting
-        QTest::qWait(2000);
+        waitForSignal(view1, SIGNAL(loadFinished(bool)), 2000);
     }
 
     view1->show();
-    QTest::qWait(2000);
+    QTest::qWaitForWindowShown(view1);
     delete view1;
     QVERIFY(page != 0); // deleting view must not have deleted the page, since it's not a child of view
 
     QWebView *view2 = new QWebView;
     view2->setPage(page);
     view2->show(); // in Windowless mode, you should still be able to see the plugin here
-    QTest::qWait(2000);
+    QTest::qWaitForWindowShown(view2);
     delete view2;
 
     delete page; // must not crash

@@ -5,6 +5,18 @@
         [Qt] Improve the autotests of QtWebkit
         https://bugs.webkit.org/show_bug.cgi?id=32216
 
+        Remove the calls to qWait() of the autotest of QWebView
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+
+2009-12-07  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Improve the autotests of QtWebkit
+        https://bugs.webkit.org/show_bug.cgi?id=32216
+
         Refactor tst_qwebframe to remove qWait() and use
         the function waitForSignal() from util.h
 
