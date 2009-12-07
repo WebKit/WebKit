@@ -1,5 +1,16 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed.
+
+        REGRESSION: fast/js/excessive-comma-usage.html and fast/js/math-transforms.html fail on win
+        https://bugs.webkit.org/show_bug.cgi?id=32228
+
+        Adding above two tests to the Skipped list on win, attempting to turn the win slave green again.
+
+        * platform/win/Skipped:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Remove non-existant files in gtk/Skipped list, and exclude a printing test, without results. Should turn the gtk slave green again.
 
         * platform/gtk/Skipped:
