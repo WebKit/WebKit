@@ -60,7 +60,7 @@ class StatusBot:
         self.statusbot_host = host
         self.statusbot_server_url = "http://%s" % self.statusbot_host
 
-    def update_status(self, queue_name, status, patch=None):
+    def update_status(self, queue_name, status, patch=None, results_file=None):
         # During unit testing, statusbot_host is None
         if not self.statusbot_host:
             return
@@ -75,6 +75,8 @@ class StatusBot:
             if patch.get('id'):
                 self.browser['patch_id'] = str(patch['id'])
         self.browser['status'] = status
+        if results_file:
+            self.browser.add_file(results_file, "text/plain", "results.txt", 'results_file')
         self.browser.submit()
 
     def patch_status(self, queue_name, patch_id):
