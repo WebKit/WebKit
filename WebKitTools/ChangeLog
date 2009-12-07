@@ -1,3 +1,14 @@
+2009-12-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r51728): update-webkit fails when the current directory is
+        not inside a Subversion working copy
+        https://bugs.webkit.org/show_bug.cgi?id=32204
+
+        * Scripts/update-webkit: Invoke isSVN() in the correct working
+        directory.
+
 2009-12-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

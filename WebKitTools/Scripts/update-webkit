@@ -47,6 +47,8 @@ my $showHelp;
 
 determineIsChromium();
 
+chdirWebKit();
+
 my $isGit = isGit();
 my $isSVN = isSVN();
 
@@ -71,7 +73,6 @@ push @svnOptions, '-q' if $quiet;
 # Don't prompt when using svn-1.6 or newer.
 push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 
-chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
 runSvnUpdate() if $isSVN;
 runGitUpdate() if $isGit;
