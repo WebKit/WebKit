@@ -1,3 +1,9 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing layout test result.
+
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt: Added.
+
 2009-12-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
