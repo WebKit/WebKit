@@ -1,3 +1,19 @@
+2009-12-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix support for generic font families
+
+        By not propagating the resolved font family in FontCacheQt and
+        only concidering the font description we ended up passing the
+        generic font families to Qt directly. Since most systems don't
+        have a mapping for these font families we ended up using the
+        default font in most cases.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        * platform/graphics/qt/FontPlatformData.h:
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+
 2009-12-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

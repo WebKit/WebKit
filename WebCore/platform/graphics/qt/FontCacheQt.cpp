@@ -34,6 +34,8 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
 
+#include <QFont>
+
 using namespace WTF;
 
 namespace WebCore {
@@ -49,22 +51,22 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font&, const UCh
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
-    return new FontPlatformData(font.fontDescription());
+    return 0;
 }
 
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    return new FontPlatformData(fontDescription);
+    const AtomicString fallbackFamily = QFont(fontDescription.family().family()).lastResortFont();
+    return new FontPlatformData(fontDescription, fallbackFamily);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)
 {
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString&)
+FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    // FIXME : we must take into account the familly name (second argument)
-    return new FontPlatformData(fontDescription);
+    return new FontPlatformData(fontDescription, familyName);
 }
 
 } // namespace WebCore
