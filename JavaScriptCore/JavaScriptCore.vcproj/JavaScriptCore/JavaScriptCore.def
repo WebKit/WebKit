@@ -160,8 +160,6 @@ EXPORTS
     ?getPropertyDescriptor@JSObject@JSC@@QAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z
-    ?getString@JSCell@JSC@@QBE?AVUString@2@XZ
-    ?getString@JSCell@JSC@@QBE_NAAVUString@2@@Z
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
@@ -200,7 +198,6 @@ EXPORTS
     ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
-    ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
     ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
@@ -231,7 +228,6 @@ EXPORTS
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
-    ?resolveRope@JSString@JSC@@ABEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
