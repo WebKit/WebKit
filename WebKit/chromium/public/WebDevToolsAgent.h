@@ -72,6 +72,12 @@ public:
     // Asynchronously request debugger to pause immediately.
     WEBKIT_API static void debuggerPauseScript();
 
+    WEBKIT_API static bool dispatchMessageFromFrontendOnIOThread(const WebString& className,
+                                                                 const WebString& methodName,
+                                                                 const WebString& param1,
+                                                                 const WebString& param2,
+                                                                 const WebString& param3);
+
     typedef void (*MessageLoopDispatchHandler)();
 
     // Installs dispatch handle that is going to be called periodically

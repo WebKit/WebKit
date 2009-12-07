@@ -1,3 +1,15 @@
+2009-12-07  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Add declarations for DevTools message dispatching on IO thread
+        (see http://codereview.chromium.org/460018)
+
+        https://bugs.webkit.org/show_bug.cgi?id=32217
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+
 2009-12-04  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

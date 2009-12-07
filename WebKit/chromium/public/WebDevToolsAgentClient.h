@@ -53,6 +53,12 @@ public:
     // Notifies host upon runtime feature being enabled/disabled.
     virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) = 0;
 
+    WEBKIT_API static void sendMessageToFrontendOnIOThread(const WebString& className,
+                                                           const WebString& methodName,
+                                                           const WebString& param1,
+                                                           const WebString& param2,
+                                                           const WebString& param3);
+
 protected:
     ~WebDevToolsAgentClient() {}
 };
