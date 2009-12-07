@@ -1,3 +1,24 @@
+2009-12-07  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        http/tests/cache/subresource-failover-to-network.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=32038
+
+        Rewrite test to avoid dumpResourceLoadCallbacks, which do not
+        interleave predictably with the output of dumpFrameLoadCallbacks.
+        Other things besides resource loading can delay onload.
+
+        The newly written test uses a cookie to determine if the test has
+        passed.
+
+        Unskip this test for platform/win.
+
+        * http/tests/cache/resources/subresource-failover-to-network.cgi:
+        * http/tests/cache/subresource-failover-to-network-expected.txt:
+        * http/tests/cache/subresource-failover-to-network.html:
+        * platform/win/Skipped:
+
 2009-12-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

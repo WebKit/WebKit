@@ -2,9 +2,8 @@
 <script>
   if ("layoutTestController" in window) {
     layoutTestController.dumpAsText();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpFrameLoadCallbacks();
-    layoutTestController.dumpResourceLoadCallbacks();
+
+    document.cookie = "result=FAIL"
 
     // The results of the form submission is a page that performs a non-
     // cacheable sync XHR request.  Upon returning to that page, we expect the
