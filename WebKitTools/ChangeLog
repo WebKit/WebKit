@@ -1,3 +1,13 @@
+2009-12-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add run-webkit-websocketserver
+
+        https://bugs.webkit.org/show_bug.cgi?id=31390
+
+        * Scripts/run-webkit-websocketserver: Added.
+
 2009-12-07  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix. Be flexible about which version of ICU is used on Windows.
