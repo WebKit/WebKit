@@ -10,7 +10,7 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 }
 
-function getComputedStyleForElement (element, cssPropertyName)
+function getComputedStyleForElement(element, cssPropertyName)
 {
     if (!element) {
         return null;
@@ -24,74 +24,103 @@ function getComputedStyleForElement (element, cssPropertyName)
     return null;
 }
 
+function getWidth(id)
+{
+    return getComputedStyleForElement(document.getElementById(id), 'width');
+}
+
+function getHeight(id)
+{
+    return getComputedStyleForElement(document.getElementById(id), 'height');
+}
+
+function parsePixelValue(str)
+{
+    if (typeof str != "string" || str.length < 3 || str.substr(str.length - 2) != "px") {
+        testFailed(str + " is unparsable.");
+        return -1;
+    }
+    return parseFloat(str);
+}
+
+function is75PercentOf(expression75, expression100)
+{
+    var str75 = eval(expression75);
+    var str100 = eval(expression100);
+    var num75 = parsePixelValue(str75);
+    var num100 = parsePixelValue(str100);
+    if (num75 < 0 || num100 < 0)
+        return;
+    if (num75 == Math.floor(num100 * 75 / 100))
+        testPassed(expression75 + " [" + str75 + "] is 75% of " + expression100 + " [" + str100 + "].");
+    else
+        testFailed(expression75 + " [" + str75 + "] is not 75% of " + expression100 + " [" + str100 + "].");
+}
+
 function test()
 {
     description("This test checks that replaced elements with percentage heights within table cells have the correct height.");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('canvas-75'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('canvas-75'), 'height')", "'112px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('canvas-100'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('canvas-100'), 'height')", "'150px'");
+    shouldBe("getWidth('canvas-75')", "'300px'");
+    shouldBe("getHeight('canvas-75')", "'112px'");
+    shouldBe("getWidth('canvas-100')", "'300px'");
+    shouldBe("getHeight('canvas-100')", "'150px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('embed-75'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('embed-75'), 'height')", "'112px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('embed-100'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('embed-100'), 'height')", "'150px'");
+    shouldBe("getWidth('embed-75')", "'300px'");
+    shouldBe("getHeight('embed-75')", "'112px'");
+    shouldBe("getWidth('embed-100')", "'300px'");
+    shouldBe("getHeight('embed-100')", "'150px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('img-75'), 'width')", "'75px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('img-75'), 'height')", "'75px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('img-100'), 'width')", "'100px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('img-100'), 'height')", "'100px'");
+    shouldBe("getWidth('img-75')", "'75px'");
+    shouldBe("getHeight('img-75')", "'75px'");
+    shouldBe("getWidth('img-100')", "'100px'");
+    shouldBe("getHeight('img-100')", "'100px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('object-75'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('object-75'), 'height')", "'112px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('object-100'), 'width')", "'300px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('object-100'), 'height')", "'150px'");
+    shouldBe("getWidth('object-75')", "'300px'");
+    shouldBe("getHeight('object-75')", "'112px'");
+    shouldBe("getWidth('object-100')", "'300px'");
+    shouldBe("getHeight('object-100')", "'150px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('button-75'), 'width')", "'51px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('button-75'), 'height')", "'15px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('button-100'), 'width')", "'51px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('button-100'), 'height')", "'15px'");
+    shouldBe("getWidth('button-75')", "getWidth('button-100')");
+    shouldBeTrue("getHeight('button-75') != '0px'");
+    shouldBe("getHeight('button-75')", "getHeight('button-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-button-75'), 'width')", "'16px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-button-75'), 'height')", "'18px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-button-100'), 'width')", "'16px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-button-100'), 'height')", "'18px'");
+    shouldBe("getWidth('input-button-75')", "getWidth('input-button-100')");
+    shouldBeTrue("getHeight('input-button-75') != '0px'");
+    shouldBe("getHeight('input-button-75')", "getHeight('input-button-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'width')", "'12px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'height')", "'4px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'width')", "'12px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'height')", "'6px'");
+    shouldBe("getWidth('input-checkbox-75')", "getWidth('input-checkbox-100')");
+    shouldBeTrue("getHeight('input-checkbox-75') != '0px'");
+    // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
+    is75PercentOf("getHeight('input-checkbox-75')", "getHeight('input-checkbox-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-file-75'), 'width')", "'237px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-file-75'), 'height')", "'13px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-file-100'), 'width')", "'237px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-file-100'), 'height')", "'18px'");
+    shouldBe("getWidth('input-file-75')", "getWidth('input-file-100')");
+    shouldBeTrue("getHeight('input-file-75') != '0px'");
+    // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
+    is75PercentOf("getHeight('input-file-75')", "getHeight('input-file-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-image-75'), 'width')", "'75px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-image-75'), 'height')", "'75px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'width')", "'100px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'height')", "'100px'");
+    // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
+    shouldBe("getWidth('input-image-75')", "'75px'");
+    shouldBe("getHeight('input-image-75')", "'75px'");
+    shouldBe("getWidth('input-image-100')", "'100px'");
+    shouldBe("getHeight('input-image-100')", "'100px'");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'width')", "'12px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'height')", "'4px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-100'), 'width')", "'12px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-100'), 'height')", "'6px'");
+    shouldBe("getWidth('input-radio-75')", "getWidth('input-radio-100')");
+    shouldBeTrue("getHeight('input-radio-75') != '0px'");
+    // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
+    is75PercentOf("getHeight('input-radio-75')", "getHeight('input-radio-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-75'), 'width')", "'45px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-75'), 'height')", "'18px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-100'), 'width')", "'45px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-100'), 'height')", "'18px'");
+    shouldBe("getWidth('input-reset-75')", "getWidth('input-reset-100')");
+    shouldBeTrue("getHeight('input-reset-75') != '0px'");
+    shouldBe("getHeight('input-reset-75')", "getHeight('input-reset-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-75'), 'width')", "'54px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-75'), 'height')", "'18px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'width')", "'54px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'height')", "'18px'");
+    shouldBe("getWidth('input-submit-75')", "getWidth('input-submit-100')");
+    shouldBeTrue("getHeight('input-submit-75') != '0px'");
+    shouldBe("getHeight('input-submit-75')", "getHeight('input-submit-100')");
 
-    shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'width')", "'68px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'height')", "'18px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'width')", "'68px'");
-    shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'height')", "'18px'");
+    shouldBe("getWidth('select-75')", "getWidth('select-100')");
+    shouldBeTrue("getHeight('select-75') != '0px'");
+    shouldBe("getHeight('select-75')", "getHeight('select-100')");
 
     isSuccessfullyParsed();
 

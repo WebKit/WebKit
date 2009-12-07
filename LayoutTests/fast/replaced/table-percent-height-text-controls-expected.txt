@@ -11,22 +11,18 @@ This test checks that text controls with percentage heights within table cells h
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS MAC input-password-75 width = 128px. Expects: MAC 128px, WIN 152px
-PASS MAC/WIN input-password-75 height = 8px. Expects: MAC 8px, WIN 8px
-PASS MAC input-password-100 width = 128px. Expects: MAC 128px, WIN 152px
-PASS MAC/WIN input-password-100 height = 13px. Expects: MAC 13px, WIN 13px
-PASS MAC input-text-75 width = 128px. Expects: MAC 128px, WIN 152px
-PASS MAC/WIN input-text-75 height = 8px. Expects: MAC 8px, WIN 8px
-PASS MAC input-text-100 width = 128px. Expects: MAC 128px, WIN 152px
-PASS MAC/WIN input-text-100 height = 13px. Expects: MAC 13px, WIN 13px
-PASS MAC isindex-75 width = 122px. Expects: MAC 122px, WIN 146px
-PASS MAC/WIN isindex-75 height = 13px. Expects: MAC 13px, WIN 13px
-PASS MAC isindex-100 width = 122px. Expects: MAC 122px, WIN 146px
-PASS MAC/WIN isindex-100 height = 13px. Expects: MAC 13px, WIN 13px
-PASS MAC textarea-75 width = 129px. Expects: MAC 129px, WIN 161px
-FAIL. Doesn't match any platform's results. textarea-75 height = 18px. Expects: MAC 19px, WIN 19px
-PASS MAC textarea-100 width = 129px. Expects: MAC 129px, WIN 161px
-FAIL. Doesn't match any platform's results. textarea-100 height = 26px. Expects: MAC 28px, WIN 28px
+PASS getWidth('input-password-75') is getWidth('input-password-100')
+PASS getFullHeight('input-password-75') != '0px' is true
+PASS getFullHeight('input-password-75') [14px] is 75% of getFullHeight('input-password-100') [19px].
+PASS getWidth('input-text-75') is getWidth('input-text-100')
+PASS getFullHeight('input-text-75') != '0px' is true
+PASS getFullHeight('input-text-75') [14px] is 75% of getFullHeight('input-text-100') [19px].
+PASS getWidth('isindex-75') is getWidth('isindex-100')
+PASS getFullHeight('isindex-75') != '0px' is true
+PASS getFullHeight('isindex-75') is getFullHeight('isindex-100')
+PASS getWidth('textarea-75') is getWidth('textarea-100')
+PASS getFullHeight('textarea-75') != '0px' is true
+PASS getFullHeight('textarea-75') [24px] is 75% of getFullHeight('textarea-100') [32px].
 PASS successfullyParsed is true
 
 TEST COMPLETE

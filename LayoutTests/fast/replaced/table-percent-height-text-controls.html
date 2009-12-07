@@ -10,7 +10,7 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 }
 
-function getComputedStyleForElement (element, cssPropertyName)
+function getComputedStyleForElement(element, cssPropertyName)
 {
     if (!element)
         return null;
@@ -24,21 +24,43 @@ function getComputedStyleForElement (element, cssPropertyName)
     return null;
 }
 
-function printMetrics(id, cssPropertyName, expectedMacValue, expectedWinValue) {
-  var value = getComputedStyleForElement(document.getElementById(id), cssPropertyName);
+function getWidth(id)
+{
+    return getComputedStyleForElement(document.getElementById(id), 'width');
+}
 
-  var matchingPlatform;
-  if (expectedMacValue == expectedWinValue && value == expectedMacValue)
-      matchingPlatform = 'PASS MAC/WIN';
-  else if (value == expectedMacValue)
-      matchingPlatform = 'PASS MAC';
-  else if (value == expectedWinValue)
-      matchingPlatform = 'PASS WIN';
-  else
-      matchingPlatform = 'FAIL. Doesn\'t match any platform\'s results.';
+function getFullHeight(id)
+{
+    var element = document.getElementById(id);
+    var h = parseFloat(getComputedStyleForElement(element, 'border-top-width'));
+    h += parseFloat(getComputedStyleForElement(element, 'padding-top'));
+    h += parseFloat(getComputedStyleForElement(element, 'height'));
+    h += parseFloat(getComputedStyleForElement(element, 'padding-bottom'));
+    h += parseFloat(getComputedStyleForElement(element, 'border-bottom-width'));
+    return h + 'px';
+}
 
-  debug(matchingPlatform + ' ' + id + ' ' + cssPropertyName + ' = ' + value + '. ' +
-       'Expects: MAC ' + expectedMacValue + ', WIN ' + expectedWinValue);
+function parsePixelValue(str)
+{
+    if (typeof str != "string" || str.length < 3 || str.substr(str.length - 2) != "px") {
+        testFailed(str + " is unparsable.");
+        return -1;
+    }
+    return parseFloat(str);
+}
+
+function is75PercentOf(expression75, expression100)
+{
+    var str75 = eval(expression75);
+    var str100 = eval(expression100);
+    var num75 = parsePixelValue(str75);
+    var num100 = parsePixelValue(str100);
+    if (num75 < 0 || num100 < 0)
+        return;
+    if (num75 == Math.floor(num100 * 75 / 100))
+        testPassed(expression75 + " [" + str75 + "] is 75% of " + expression100 + " [" + str100 + "].");
+    else
+        testFailed(expression75 + " [" + str75 + "] is not 75% of " + expression100 + " [" + str100 + "].");
 }
 
 function test()
@@ -46,25 +68,24 @@ function test()
     description("This test checks that text controls with percentage heights within table cells have the correct height." +
         "Text controls are in a different test than other replaced elements because their metrics are platform-specific.");
 
-    printMetrics('input-password-75', 'width', '128px', '152px');
-    printMetrics('input-password-75', 'height', '8px', '8px');
-    printMetrics('input-password-100', 'width', '128px', '152px');
-    printMetrics('input-password-100', 'height', '13px', '13px');
+    shouldBe("getWidth('input-password-75')", "getWidth('input-password-100')");
+    shouldBeTrue("getFullHeight('input-password-75') != '0px'");
+    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
+    is75PercentOf("getFullHeight('input-password-75')", "getFullHeight('input-password-100')");
 
-    printMetrics('input-text-75', 'width', '128px', '152px');
-    printMetrics('input-text-75', 'height', '8px', '8px');
-    printMetrics('input-text-100', 'width', '128px', '152px');
-    printMetrics('input-text-100', 'height', '13px', '13px');
+    shouldBe("getWidth('input-text-75')", "getWidth('input-text-100')");
+    shouldBeTrue("getFullHeight('input-text-75') != '0px'");
+    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
+    is75PercentOf("getFullHeight('input-text-75')", "getFullHeight('input-text-100')");
 
-    printMetrics('isindex-75', 'width', '122px', '146px');
-    printMetrics('isindex-75', 'height', '13px', '13px');
-    printMetrics('isindex-100', 'width', '122px', '146px');
-    printMetrics('isindex-100', 'height', '13px', '13px');
+    shouldBe("getWidth('isindex-75')", "getWidth('isindex-100')");
+    shouldBeTrue("getFullHeight('isindex-75') != '0px'");
+    shouldBe("getFullHeight('isindex-75')", "getFullHeight('isindex-100')");
 
-    printMetrics('textarea-75', 'width', '129px', '161px');
-    printMetrics('textarea-75', 'height', '19px', '19px');
-    printMetrics('textarea-100', 'width', '129px', '161px');
-    printMetrics('textarea-100', 'height', '28px', '28px');
+    shouldBe("getWidth('textarea-75')", "getWidth('textarea-100')");
+    shouldBeTrue("getFullHeight('textarea-75') != '0px'");
+    // Note: This behavior doesn't match to IE 8, Firefox 3.5 and Opera 10.
+    is75PercentOf("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
 
     isSuccessfullyParsed();
 
