@@ -42,36 +42,6 @@
 # define SRCDIR ""
 #endif
 
-//TESTED_CLASS=
-//TESTED_FILES=
-
-// Task 160192
-/**
- * Starts an event loop that runs until the given signal is received.
- Optionally the event loop
- * can return earlier on a timeout.
- *
- * \return \p true if the requested signal was received
- *         \p false on timeout
- */
-static bool waitForSignal(QObject* obj, const char* signal, int timeout = 0)
-{
-    QEventLoop loop;
-    QObject::connect(obj, signal, &loop, SLOT(quit()));
-    QTimer timer;
-    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    if (timeout > 0) {
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.setSingleShot(true);
-        timer.start(timeout);
-    }
-    loop.exec();
-    return timeoutSpy.isEmpty();
-}
-
-/* Mostly a test for the JavaScript related parts of QWebFrame */
-
-
 struct CustomType {
     QString string;
 };
@@ -2271,19 +2241,19 @@ void tst_QWebFrame::requestedUrl()
     page.setNetworkAccessManager(networkManager);
 
     frame->setUrl(QUrl("qrc:/test1.html"));
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/test1.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/test2.html"));
 
     frame->setUrl(QUrl("qrc:/non-existent.html"));
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/non-existent.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/non-existent.html"));
 
     frame->setUrl(QUrl("http://abcdef.abcdef"));
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.count(), 3);
     QCOMPARE(frame->requestedUrl(), QUrl("http://abcdef.abcdef/"));
     QCOMPARE(frame->url(), QUrl("http://abcdef.abcdef/"));
@@ -2294,7 +2264,7 @@ void tst_QWebFrame::requestedUrl()
 
     QSignalSpy spy2(page.networkAccessManager(), SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)));
     frame->setUrl(QUrl("qrc:/fake-ssl-error.html"));
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy2.count(), 1);
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/fake-ssl-error.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/fake-ssl-error.html"));
@@ -2352,7 +2322,7 @@ void tst_QWebFrame::setHtmlWithResource()
     // in few seconds, the image should be completey loaded
     QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
     frame->setHtml(html);
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.count(), 1);
 
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
@@ -2371,7 +2341,7 @@ void tst_QWebFrame::setHtmlWithResource()
 
     // in few seconds, the CSS should be completey loaded
     frame->setHtml(html2);
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.size(), 2);
 
     QWebElement p = frame->documentElement().findAll("p").at(0);
@@ -2389,7 +2359,7 @@ void tst_QWebFrame::setHtmlWithBaseURL()
     QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
 
     frame->setHtml(html, QUrl::fromLocalFile(QDir::currentPath()));
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(spy.count(), 1);
 
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
@@ -2500,15 +2470,15 @@ void tst_QWebFrame::popupFocus()
     combo->hidePopup();
     QTRY_VERIFY(view.hasFocus() && !combo->view()->hasFocus()); // Focus should be back on the WebView
 
-    // triple the flashing time, should at least blink twice already
-    int delay = qApp->cursorFlashTime() * 3;
+    // double the flashing time, should at least blink once already
+    int delay = qApp->cursorFlashTime() * 2;
 
     // focus the lineedit and check if it blinks
     QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(200, 25));
     m_popupTestView = &view;
     view.installEventFilter( this );
     QTest::qWait(delay);
-    QVERIFY2(m_popupTestPaintCount >= 4,
+    QVERIFY2(m_popupTestPaintCount >= 3,
              "The input field should have a blinking caret");
 }
 
@@ -2652,7 +2622,7 @@ void tst_QWebFrame::hasSetFocus()
     QSignalSpy loadSpy(m_page, SIGNAL(loadFinished(bool)));
     m_page->mainFrame()->setHtml(html);
 
-    QTest::qWait(200);
+    waitForSignal(m_page->mainFrame(), SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(loadSpy.size(), 1);
 
     QList<QWebFrame*> children = m_page->mainFrame()->childFrames();
@@ -2662,7 +2632,7 @@ void tst_QWebFrame::hasSetFocus()
                       "</body></html>");
     frame->setHtml(innerHtml);
 
-    QTest::qWait(200);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(loadSpy.size(), 2);
 
     m_page->mainFrame()->setFocus();
@@ -2749,14 +2719,12 @@ void tst_QWebFrame::evaluateWillCauseRepaint()
     view.setHtml(html);
     view.show();
 
-    QTest::qWait(200);
+    QTest::qWaitForWindowShown(&view);
 
     view.page()->mainFrame()->evaluateJavaScript(
         "document.getElementById('junk').style.display = 'none';");
 
     ::waitForSignal(view.page(), SIGNAL(repaintRequested(QRect)));
-
-    QTest::qWait(2000);
 }
 
 class TestFactory : public QObject
