@@ -3655,6 +3655,7 @@ plugins/netscape-dom-access.html
 # Tests in printing/ directory
 #   Tests generating new results
 printing/media-queries-print.html
+printing/compositing-layer-printing.html
 
 # Tests in scrollbars/ directory
 #   Tests generating new results
@@ -5423,7 +5424,6 @@ fast/overflow/overflow-with-local-background-attachment.html
 fast/overflow/position-fixed-transform-clipping.html
 fast/repaint/background-generated.html
 fast/repaint/background-misaligned.html
-fast/repaint/block-selection-gap-in-composited-layer.html
 fast/repaint/float-in-new-block-with-layout-delta.html
 fast/repaint/float-new-in-block.html
 fast/repaint/line-in-scrolled-clipped-block.html
@@ -5692,7 +5692,6 @@ fast/events/tab-focus-hidden.html
 
 # Tests failing once in a while
 fast/events/overflow-events.html
-media/progress-event-total.html
 http/tests/xmlhttprequest/interactive-state.html
 
 # New test infrastructure required
@@ -5703,7 +5702,6 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 fast/history/back-forward-reset-after-error-handling.html
 
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-animations/3d
 transforms/3d
 compositing
 

@@ -1,5 +1,11 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Remove non-existant files in gtk/Skipped list, and exclude a printing test, without results. Should turn the gtk slave green again.
+
+        * platform/gtk/Skipped:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Attempt to get all mac build slaves to green again. Disable crashing test, and notify the author of it to fix it.
 
         New test "websocket/tests/url-with-credential.html" crashes in debug builds
