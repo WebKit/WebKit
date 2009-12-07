@@ -159,28 +159,50 @@ static const gchar* nameFromChildren(AccessibilityObject* object)
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
+    if (!coreObject->isAccessibilityRenderObject())
+        return returnString(coreObject->stringValue());
+
+    AccessibilityRenderObject* renderObject = static_cast<AccessibilityRenderObject*>(coreObject);
     if (coreObject->isControl()) {
-        AccessibilityRenderObject* renderObject = static_cast<AccessibilityRenderObject*>(coreObject);
         AccessibilityObject* label = renderObject->correspondingLabelForControlElement();
         if (label)
             return returnString(nameFromChildren(label));
     }
+
+    if (renderObject->isImage() || renderObject->isInputImage()) {
+        Node* node = renderObject->renderer()->node();
+        if (node && node->isHTMLElement()) {
+            // Get the attribute rather than altText String so as not to fall back on title.
+            String alt = static_cast<HTMLElement*>(node)->getAttribute(HTMLNames::altAttr);
+            if (!alt.isEmpty())
+                return returnString(alt);
+        }
+    }
+
     return returnString(coreObject->stringValue());
 }
 
 static const gchar* webkit_accessible_get_description(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
+    Node* node = 0;
+    if (coreObject->isAccessibilityRenderObject())
+        node = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
+    if (!node || !node->isHTMLElement() || coreObject->ariaRoleAttribute() != UnknownRole)
+        return returnString(coreObject->accessibilityDescription());
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
-    if (coreObject->roleValue() == TableRole && coreObject->ariaRoleAttribute() == UnknownRole) {
-        Node* node = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
-        if (node && node->isHTMLElement()) {
-            String summary = static_cast<HTMLTableElement*>(node)->summary();
-            if (!summary.isEmpty())
-                return returnString(summary);
-        }
+    if (coreObject->roleValue() == TableRole) {
+        String summary = static_cast<HTMLTableElement*>(node)->summary();
+        if (!summary.isEmpty())
+            return returnString(summary);
     }
+
+    // The title attribute should be reliably available as the object's descripton.
+    // We do not want to fall back on other attributes in its absence. See bug 25524.
+    String title = static_cast<HTMLElement*>(node)->title();
+    if (!title.isEmpty())
+        return returnString(title);
 
     return returnString(coreObject->accessibilityDescription());
 }

@@ -1,3 +1,19 @@
+2009-12-07  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25524
+        [Gtk] Expose the title attribute to assistive technologies
+
+        Expose 'alt' attribute from images as accessible name.
+        Expose the 'title' core HTML attribute as accessible description.
+        This is a modified version of the original fix submitted by Mario Sanchez Prada,
+        adjusted so that it doesn't impact other platforms.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+        (webkit_accessible_get_description):
+
 2009-12-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

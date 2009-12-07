@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<img src="image.jpg" alt="Image alt attr" title="Image title attr">
+<form>
+<a href="" title="Link title attr">Functional label</a>:<input title="Entry title attr" type="text" /><input value="Clear" type="reset" /><input value="Submit" title="Submit button title attr" type="submit" />
+</form>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure of alt and title information.");
+    if (window.accessibilityController) {
+        layoutTestController.dumpAsText();
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var image = webArea.childAtIndex(0);
+        shouldBe("image.title", "'Image alt attr'");
+        shouldBe("image.description", "'Image title attr'");
+
+        var link = webArea.childAtIndex(1);
+        shouldBe("link.title", "''");
+        shouldBe("link.description", "'Link title attr'");
+
+        var entry = webArea.childAtIndex(2);
+        shouldBe("entry.title", "''");
+        shouldBe("entry.description", "'Entry title attr'");
+
+        var button = webArea.childAtIndex(4);
+        shouldBe("button.title", "'Submit'");
+        shouldBe("button.description", "'Submit button title attr'");
+        }
+    successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
