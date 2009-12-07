@@ -2,6 +2,15 @@
 
         Reviewed by Darin Fisher.
 
+        Chromium buildbots are not red when they fail
+        https://bugs.webkit.org/show_bug.cgi?id=32235
+
+        * Scripts/build-webkit:
+
+2009-12-07  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         Typo in chromium linux builder
         https://bugs.webkit.org/show_bug.cgi?id=32238
 

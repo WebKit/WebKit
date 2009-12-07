@@ -325,7 +325,7 @@ if (isChromium()) {
     # Chromium doesn't build by project directories.
     @projects = ();
     my $result = buildChromium($clean, @options);
-    exit $result if $result;
+    exit exitStatus($result) if exitStatus($result);
 }
 
 # Build, and abort if the build fails.
