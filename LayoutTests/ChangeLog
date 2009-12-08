@@ -1,3 +1,21 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Now that the Qt slave has been rebuilt, reenable all tests that failed
+        because of the build problems (Qt slave didn't rebuild all files with ENABLE_FILTERS set).
+
+        Update some Qt specfic filter test results.
+
+        * platform/qt/Skipped:
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/feMerge-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt:
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/filters/subRegion-in-userSpace-expected.txt:
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt:
+
 2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Darin Adler.

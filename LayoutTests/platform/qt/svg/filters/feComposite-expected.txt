@@ -1,3 +1,9 @@
+KCanvasResource {id="over" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="in" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="out" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="atop" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="xor" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="arithmetic" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
