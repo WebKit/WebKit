@@ -1,3 +1,9 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add some missing files that depend on SVG Filters support, only mac supports it for now.
+
+        * platform/win/Skipped:
+
 2009-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Skip a timeouter flakey test.

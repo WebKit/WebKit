@@ -779,3 +779,12 @@ svg/filters/feDisplacementMap.svg
 svg/filters/feGaussianBlur.svg
 svg/filters/feMerge.svg
 svg/filters/feMerge-wrong-input.svg
+svg/filters/feOffset.svg
+svg/filters/feTile.svg
+svg/filters/filterRes.svg
+svg/filters/shadow-on-filter.svg
+svg/filters/shadow-on-rect-with-filter.svg
+svg/filters/sourceAlpha.svg
+svg/filters/subRegion-in-userSpace.svg
+svg/filters/subRegion-one-effect.svg
+svg/filters/subRegion-two-effects.svg
