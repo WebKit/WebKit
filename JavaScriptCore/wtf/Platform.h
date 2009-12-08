@@ -739,10 +739,6 @@
 #define ENABLE_NOTIFICATIONS 0
 #endif
 
-#if !defined(ENABLE_SHARED_SCRIPT)
-#define ENABLE_SHARED_SCRIPT 0
-#endif
-
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 1
 #endif

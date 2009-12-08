@@ -1,3 +1,13 @@
+2009-12-07  Dmitry Titov  <dimich@chromium.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Remove ENABLE_SHARED_SCRIPT flags
+        https://bugs.webkit.org/show_bug.cgi?id=32245
+        This patch was obtained by "git revert" command and then un-reverting of ChangeLog files.
+
+        * features.gypi:
+
 2009-12-07  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.

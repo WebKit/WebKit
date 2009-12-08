@@ -55,7 +55,6 @@
         'ENABLE_ORIENTATION_EVENTS=0',
         'ENABLE_XSLT=1',
         'ENABLE_XPATH=1',
-        'ENABLE_SHARED_SCRIPT=0',
         'ENABLE_SHARED_WORKERS=1',
         'ENABLE_SVG=1',
         'ENABLE_SVG_ANIMATION=1',
