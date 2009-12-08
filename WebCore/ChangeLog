@@ -1,3 +1,22 @@
+2009-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fixed block selection gap repainting in table cells
+
+        Test: fast/repaint/block-selection-gap-in-table-cell.html
+
+        This recently-introduced regression exposed the fact that
+        RenderTableCell did not override offsetFromContainer() to adjust for
+        the fact that table cells’ coordinates are relative to the table
+        section, not the table row. With this fixed, RenderTableCell no longer
+        needs to override mapLocalToContainer() and mapAbsoluteToLocalPoint(),
+        since the base class implementations of those use offsetFromContainer().
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer):
+        * rendering/RenderTableCell.h:
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Sane way to force a rebuild on all win slaves, according to Adam Roben.

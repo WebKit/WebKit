@@ -1,3 +1,14 @@
+2009-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Added a test of block selection gap repainting in table cells
+
+        * fast/repaint/block-selection-gap-in-table-cell.html: Added.
+        * platform/mac/fast/repaint/block-selection-gap-in-table-cell-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-selection-gap-in-table-cell-expected.png: Added.
+        * platform/mac/fast/repaint/block-selection-gap-in-table-cell-expected.txt: Added.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

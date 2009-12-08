@@ -154,6 +154,17 @@ void RenderTableCell::setOverrideSize(int size)
     RenderBlock::setOverrideSize(size);
 }
 
+IntSize RenderTableCell::offsetFromContainer(RenderObject* o) const
+{
+    ASSERT(o == container());
+
+    IntSize offset = RenderBlock::offsetFromContainer(o);
+    if (parent())
+        offset.expand(-parentBox()->x(), -parentBox()->y());
+
+    return offset;
+}
+
 IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
@@ -215,30 +226,6 @@ void RenderTableCell::computeRectForRepaint(RenderBoxModelObject* repaintContain
     if ((!v || !v->layoutStateEnabled()) && parent())
         r.move(-parentBox()->x(), -parentBox()->y()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeRectForRepaint(repaintContainer, r, fixed);
-}
-
-void RenderTableCell::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
-{
-    if (repaintContainer == this)
-        return;
-
-    RenderView* v = view();
-    if ((!v || !v->layoutStateEnabled()) && parent()) {
-        // Rows are in the same coordinate space, so don't add their offset in.
-        // FIXME: this is wrong with transforms
-        transformState.move(-parentBox()->x(), -parentBox()->y());
-    }
-    RenderBlock::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
-}
-
-void RenderTableCell::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
-{
-    RenderBlock::mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
-    if (parent()) {
-        // Rows are in the same coordinate space, so add their offset back in.
-        // FIXME: this is wrong with transforms
-        transformState.move(parentBox()->x(), parentBox()->y());
-    }
 }
 
 int RenderTableCell::baselinePosition(bool firstLine, bool isRootLineBox) const
