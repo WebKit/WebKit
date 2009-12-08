@@ -460,6 +460,8 @@ void DOMWindow::clear()
 #endif
 
 #if ENABLE(NOTIFICATIONS)
+    if (m_notifications)
+        m_notifications->disconnectFrame();
     m_notifications = 0;
 #endif
 }

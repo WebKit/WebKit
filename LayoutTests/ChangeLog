@@ -1,3 +1,14 @@
+2009-12-08  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31886
+
+        Test for accessing the notificationCenter of a window after it's closed.
+
+        * fast/notifications/notification-after-close-expected.txt: Added.
+        * fast/notifications/notification-after-close.html: Added.
+
 2009-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

@@ -47,11 +47,15 @@ NotificationCenter::NotificationCenter(ScriptExecutionContext* context, Notifica
 
 int NotificationCenter::checkPermission() 
 {
+    if (!presenter())
+        return NotificationPresenter::PermissionDenied;
     return m_notificationPresenter->checkPermission(m_scriptExecutionContext->securityOrigin());
 }
 
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
+    if (!presenter())
+        return;
     m_notificationPresenter->requestPermission(m_scriptExecutionContext->securityOrigin(), callback);
 }
 
