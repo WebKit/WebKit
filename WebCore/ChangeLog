@@ -1,3 +1,12 @@
+2009-12-08  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Build fix of duplicated platform/graphics/filters/FEGaussianBlur.cpp in WebCore.pro after enabled svg filters.
+
+        No new tests needed.
+        * WebCore.pro:
+
 2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
