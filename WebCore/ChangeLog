@@ -1,3 +1,11 @@
+2009-12-08  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Xan Lopez.
+
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::prefetchDNS): Conditionalize prefetching on
+        the libSoup version.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

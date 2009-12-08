@@ -1,3 +1,10 @@
+2009-12-08  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac: Require only libSoup 2.27.91 but check for 2.29.3
+        and define HAVE_LIBSOUP_2_29_3 in that case.
+
 2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.
