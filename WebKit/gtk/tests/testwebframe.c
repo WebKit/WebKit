@@ -155,6 +155,14 @@ cleanup:
     g_free(temporaryFilename);
 }
 
+static void test_webkit_web_frame_response()
+{
+    WebKitWebFrame* frame = g_object_new(WEBKIT_TYPE_WEB_FRAME, NULL);
+    WebKitNetworkResponse* response = webkit_web_frame_get_network_response(frame);
+    g_assert(!response);
+    g_object_unref(frame);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -164,6 +172,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/create_destroy", test_webkit_web_frame_create_destroy);
     g_test_add_func("/webkit/webframe/lifetime", test_webkit_web_frame_lifetime);
     g_test_add_func("/webkit/webview/printing", test_webkit_web_frame_printing);
+    g_test_add_func("/webkit/webview/response", test_webkit_web_frame_response);
     return g_test_run ();
 }
 

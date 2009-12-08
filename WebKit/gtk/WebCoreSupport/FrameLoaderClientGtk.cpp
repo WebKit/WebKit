@@ -305,10 +305,19 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     if (isHandled)
         return;
 
+    GOwnPtr<WebKitNetworkResponse> networkResponse(webkit_web_frame_get_network_response(m_frame));
+    if (networkResponse) {
+        ResourceResponse response = core(networkResponse.get());
+        if (response.isAttachment()) {
+            webkit_web_policy_decision_download(policyDecision);
+            return;
+        }
+    }
+
     if (canShowMIMEType(mimeType))
-        webkit_web_policy_decision_use (policyDecision);
+        webkit_web_policy_decision_use(policyDecision);
     else
-        webkit_web_policy_decision_ignore (policyDecision);
+        webkit_web_policy_decision_ignore(policyDecision);
 }
 
 static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& action, const char* targetFrame)

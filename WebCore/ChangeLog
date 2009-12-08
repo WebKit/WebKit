@@ -1,3 +1,19 @@
+2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Doesn't respect Content-Disposition for downloads, and provides no way for apps to do that
+        https://bugs.webkit.org/show_bug.cgi?id=32247
+
+        Allow creating a ResourceResponse from a SoupMessage.
+
+        Covered by API test.
+
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Reverting problematic patch, causing errors.

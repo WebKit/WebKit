@@ -37,8 +37,10 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
+#include "ResourceResponse.h"
 #include <runtime/InitializeThreading.h>
 #include "SecurityOrigin.h"
+#include "webkitnetworkresponse.h"
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -110,6 +112,15 @@ WebCore::ResourceRequest core(WebKitNetworkRequest* request)
 
     KURL url = KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
     return ResourceRequest(url);
+}
+
+WebCore::ResourceResponse core(WebKitNetworkResponse* response)
+{
+    SoupMessage* soupMessage = webkit_network_response_get_message(response);
+    if (soupMessage)
+        return ResourceResponse(soupMessage);
+
+    return ResourceResponse();
 }
 
 WebCore::EditingBehavior core(WebKitEditingBehavior type)

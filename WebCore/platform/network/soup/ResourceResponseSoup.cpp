@@ -22,6 +22,7 @@
 #include "ResourceResponse.h"
 
 #include "CString.h"
+#include "GOwnPtr.h"
 #include "PlatformString.h"
 
 using namespace std;
@@ -47,6 +48,23 @@ SoupMessage* ResourceResponse::toSoupMessage() const
 
     // Body data is not in the message.
     return soupMessage;
+}
+
+void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
+{
+    SoupURI* soupURI = soup_message_get_uri(soupMessage);
+    GOwnPtr<gchar> uri(soup_uri_to_string(soupURI, FALSE));
+    m_url = KURL(KURL(), String::fromUTF8(uri.get()));
+
+    m_httpStatusCode = soupMessage->status_code;
+
+    SoupMessageHeadersIter headersIter;
+    const char* headerName;
+    const char* headerValue;
+
+    soup_message_headers_iter_init(&headersIter, soupMessage->response_headers);
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
+        m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
 }
 
 }

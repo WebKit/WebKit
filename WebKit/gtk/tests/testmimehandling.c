@@ -67,6 +67,8 @@ server_callback(SoupServer *server, SoupMessage *msg,
         gsize length;
         GError* error = NULL;
 
+        soup_message_headers_append(msg->response_headers, "Content-Disposition", "attachment; filename=test.txt");
+
         g_file_get_contents("test.txt", &contents, &length, &error);
         g_assert(!error);
 
@@ -104,6 +106,18 @@ static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebK
         g_assert_cmpstr(mime_type, ==, "text/html");
         g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
     } else if (g_str_equal(type, "text")) {
+        WebKitNetworkResponse* response = webkit_web_frame_get_network_response(frame);
+        SoupMessage* message = webkit_network_response_get_message(response);
+        char* disposition;
+
+        g_assert(message);
+        soup_message_headers_get_content_disposition(message->response_headers,
+                                                     &disposition, NULL);
+        g_object_unref(response);
+
+        g_assert_cmpstr(disposition, ==, "attachment");
+        g_free(disposition);
+
         g_assert_cmpstr(mime_type, ==, "text/plain");
         g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
     } else if (g_str_equal(type, "ogg")) {

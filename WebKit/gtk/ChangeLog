@@ -1,3 +1,29 @@
+2009-12-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Doesn't respect Content-Disposition for downloads, and provides no way for apps to do that
+        https://bugs.webkit.org/show_bug.cgi?id=32247
+
+        Provide a way for applications to respect Content-Disposition, by
+        fetching the WebKitNetworkResponse from the frame during
+        mime-type-policy-decision-requested.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType): Download
+        content when Content-Disposition is attachment.
+        * tests/testmimehandling.c:
+        (server_callback):
+        (mime_type_policy_decision_requested_cb):
+        * tests/testwebframe.c:
+        (test_webkit_web_frame_response):
+        (main):
+        * webkit/webkitprivate.cpp:
+        (WebKit::core):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_network_response):
+        * webkit/webkitwebframe.h:
+
 2009-12-07  Gyuyoung Kim  <gyuyoung@gmail.com>
 
         Reviewed by Eric Seidel.
