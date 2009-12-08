@@ -82,8 +82,8 @@ SliderRange::SliderRange(HTMLInputElement* element)
     } else
         hasStep = element->getAllowedValueStep(&step);
 
-    maximum = element->rangeMaximum();
-    minimum = element->rangeMinimum();
+    maximum = element->maximum();
+    minimum = element->minimum();
 }
 
 double SliderRange::clampValue(double value)
@@ -379,7 +379,7 @@ void RenderSlider::updateFromElement()
     bool clamped;
     double value = range.valueFromElement(element, &clamped);
     if (clamped)
-        element->setValueFromRenderer(String::number(value));
+        element->setValueFromRenderer(HTMLInputElement::formStringFromDouble(value));
 
     // Layout will take care of the thumb's size and position.
     if (!m_thumb) {
@@ -435,7 +435,7 @@ void RenderSlider::setValueForPosition(int position)
     if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         fraction = 1 - fraction;
     double value = range.clampValue(range.valueFromProportion(fraction));
-    element->setValueFromRenderer(String::number(value));
+    element->setValueFromRenderer(HTMLInputElement::formStringFromDouble(value));
 
     // Also update the position if appropriate.
     if (position != currentPosition()) {

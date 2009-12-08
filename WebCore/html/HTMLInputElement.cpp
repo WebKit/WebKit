@@ -65,6 +65,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/dtoa.h>
 
 using namespace std;
 
@@ -77,6 +78,12 @@ const int maxSavedResults = 256;
 // Constant values for getAllowedValueStep().
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
+// Constant values for minimum().
+static const double numberDefaultMinimum = -DBL_MAX;
+static const double rangeDefaultMinimum = 0.0;
+// Constant values for maximum().
+static const double numberDefaultMaximum = DBL_MAX;
+static const double rangeDefaultMaximum = 100.0;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLTextFormControlElement(tagName, doc, f)
@@ -259,58 +266,60 @@ bool HTMLInputElement::tooLong() const
 
 bool HTMLInputElement::rangeUnderflow() const
 {
-    if (inputType() == NUMBER) {
-        double min = 0.0;
-        double doubleValue = 0.0;
-        if (formStringToDouble(getAttribute(minAttr), &min) && formStringToDouble(value(), &doubleValue))
-            return doubleValue < min;
-    } else if (inputType() == RANGE) {
+    if (inputType() == NUMBER || inputType() == RANGE) {
         double doubleValue;
         if (formStringToDouble(value(), &doubleValue))
-            return doubleValue < rangeMinimum();
+            return doubleValue < minimum();
     }
     return false;
 }
 
 bool HTMLInputElement::rangeOverflow() const
 {
-    if (inputType() == NUMBER) {
-        double max = 0.0;
-        double doubleValue = 0.0;
-        if (formStringToDouble(getAttribute(maxAttr), &max) && formStringToDouble(value(), &doubleValue))
-            return doubleValue > max;
-    } else if (inputType() == RANGE) {
+    if (inputType() == NUMBER || inputType() == RANGE) {
         double doubleValue;
         if (formStringToDouble(value(), &doubleValue))
-            return doubleValue > rangeMaximum();
+            return doubleValue > maximum();
     }
     return false;
 }
 
-double HTMLInputElement::rangeMinimum() const
+double HTMLInputElement::minimum() const
 {
-    ASSERT(inputType() == RANGE);
-    // The range type's "default minimum" is 0.
-    double min = 0.0;
+    ASSERT(inputType() == NUMBER || inputType() == RANGE);
+    double min = inputType() == RANGE ? rangeDefaultMinimum : numberDefaultMinimum;
     formStringToDouble(getAttribute(minAttr), &min);
     return min;
 }
 
-double HTMLInputElement::rangeMaximum() const
+double HTMLInputElement::maximum() const
 {
-    ASSERT(inputType() == RANGE);
-    // The range type's "default maximum" is 100.
-    static const double defaultMaximum = 100.0;
+    ASSERT(inputType() == NUMBER || inputType() == RANGE);
+    double defaultMaximum = inputType() == RANGE ? rangeDefaultMaximum : numberDefaultMaximum;
     double max = defaultMaximum;
     formStringToDouble(getAttribute(maxAttr), &max);
-    const double min = rangeMinimum();
-
-    if (max < min) {
-        // A remedy for the inconsistent min/max values.
-        // Sets the maxmimum to the default (100.0) or the minimum value.
-        max = min < defaultMaximum ? defaultMaximum : min;
+    if (inputType() == RANGE) {
+        // A remedy for the inconsistent min/max values for RANGE.
+        // Sets the maxmimum to the default or the minimum value.
+        double min = minimum();
+        if (max < min)
+            max = std::max(min, defaultMaximum);
     }
     return max;
+}
+
+double HTMLInputElement::stepBase() const
+{
+    if (inputType() == RANGE)
+        return minimum();
+    if (inputType() == NUMBER) {
+        static const double defaultStepBase = 0.0;
+        double min = defaultStepBase;
+        formStringToDouble(getAttribute(minAttr), &min);
+        return min;
+    }
+    ASSERT_NOT_REACHED();
+    return 0.0;
 }
 
 bool HTMLInputElement::stepMismatch() const
@@ -322,9 +331,7 @@ bool HTMLInputElement::stepMismatch() const
         double doubleValue;
         if (!formStringToDouble(value(), &doubleValue))
             return false;
-        double stepBase = 0.0;
-        formStringToDouble(getAttribute(minAttr), &stepBase);
-        doubleValue = fabs(doubleValue - stepBase);
+        doubleValue = fabs(doubleValue - stepBase());
         if (isinf(doubleValue))
             return false;
         // double's fractional part size is DBL_MAN_DIG-bit.  If the current
@@ -404,7 +411,57 @@ bool HTMLInputElement::getAllowedValueStep(double* step) const
         return true;
     }
     *step = parsed * stepScaleFactor;
+    ASSERT(*step > 0);
     return true;
+}
+
+void HTMLInputElement::applyStepForNumberOrRange(double count, ExceptionCode& ec)
+{
+    ASSERT(inputType() == NUMBER || inputType() == RANGE);
+    double step;
+    if (!getAllowedValueStep(&step)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    double current;
+    if (!formStringToDouble(value(), &current)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    double newValue = current + step * count;
+    if (isinf(newValue)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    if (newValue < minimum()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    double base = stepBase();
+    newValue = base + round((newValue - base) / step) * step;
+    if (newValue > maximum()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    setValue(formStringFromDouble(newValue));
+}
+
+void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
+{
+    if (inputType() != NUMBER && inputType() != RANGE) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    applyStepForNumberOrRange(n, ec);
+}
+
+void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
+{
+    if (inputType() != NUMBER && inputType() != RANGE) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    applyStepForNumberOrRange(-n, ec);
 }
 
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
@@ -1995,6 +2052,16 @@ bool HTMLInputElement::willValidate() const
     // FIXME: This shall check for new WF2 input types too
     return HTMLFormControlElementWithState::willValidate() && inputType() != HIDDEN &&
            inputType() != BUTTON && inputType() != RESET;
+}
+
+String HTMLInputElement::formStringFromDouble(double number)
+{
+    // According to HTML5, "the best representation of the number n as a floating
+    // point number" is a string produced by applying ToString() to n.
+    DtoaBuffer buffer;
+    unsigned length;
+    doubleToStringInJavaScriptFormat(number, buffer, &length);
+    return String(buffer, length);
 }
 
 bool HTMLInputElement::formStringToDouble(const String& src, double* out)

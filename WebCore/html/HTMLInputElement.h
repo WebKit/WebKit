@@ -106,16 +106,21 @@ public:
     // For ValidityState
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
-    // Returns the minimum value for type=range.  Don't call this for other types.
-    double rangeMinimum() const;
-    // Returns the maximum value for type=range.  Don't call this for other types.
-    // This always returns a value which is <= rangeMinimum().
-    double rangeMaximum() const;
+    // Returns the minimum value for type=number or range.  Don't call this for other types.
+    double minimum() const;
+    // Returns the maximum value for type=number or range.  Don't call this for other types.
+    // This always returns a value which is >= minimum().
+    double maximum() const;
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
     // For ValidityState.
     bool stepMismatch() const;
+    // Implementations of HTMLInputElement::stepUp() and stepDown().
+    void stepUp(int, ExceptionCode&);
+    void stepDown(int, ExceptionCode&);
+    void stepUp(ExceptionCode& ec) { stepUp(1, ec); }
+    void stepDown(ExceptionCode& ec) { stepDown(1, ec); }
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
@@ -249,6 +254,9 @@ public:
     // If the conversion fails, the return value is false. Take care that leading or trailing unnecessary characters make failures.  This returns false for an empty string input.
     // The double* parameter may be 0.
     static bool formStringToDouble(const String&, double*);
+    // Converts the specified number to a string. This is an implementation of
+    // HTML5's "algorithm to convert a number to a string" for NUMBER/RANGE types.
+    static String formStringFromDouble(double);
     // Parses the specified string as the InputType, and returns true if it is successfully parsed.
     // An instance pointed by the ISODateTime* parameter will have parsed values and be
     // modified even if the parsing fails.  The ISODateTime* parameter may be 0.
@@ -278,6 +286,11 @@ private:
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
     // Helper for getAllowedValueStep();
     bool getStepParameters(double* defaultStep, double* stepScaleFactor) const;
+    // Helper for stepUp()/stepDown().  Adds step value * count to the current number/range value.
+    void applyStepForNumberOrRange(double count, ExceptionCode&);
+    // Helper for applyStepForNumberOrRange().
+    double stepBase() const;
+
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif

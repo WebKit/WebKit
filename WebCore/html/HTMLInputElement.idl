@@ -71,6 +71,11 @@ module html {
         readonly attribute HTMLOptionElement selectedOption;
 #endif
 
+        void               stepUp(in [Optional] long n)
+            raises(DOMException);
+        void               stepDown(in [Optional] long n)
+            raises(DOMException);
+
         readonly attribute boolean         willValidate;
         readonly attribute DOMString       validationMessage;
         boolean            checkValidity();
