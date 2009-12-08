@@ -1,3 +1,12 @@
+2009-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Re-enabled this test now that <rdar://problem/7450481> is fixed.
+
+        * fast/repaint/block-selection-gap-in-composited-layer.html: Copied from LayoutTests/fast/repaint/block-selection-gap-in-composited-layer.html.disabled.
+        * fast/repaint/block-selection-gap-in-composited-layer.html.disabled: Removed.
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Holger Hans Peter Freyther.
