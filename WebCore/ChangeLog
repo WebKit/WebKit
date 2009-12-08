@@ -1,3 +1,18 @@
+2009-12-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Android] Adds Makefiles for Android port.
+        https://bugs.webkit.org/show_bug.cgi?id=31325
+
+        Build system change only. No tests possible.
+
+        * Android.derived.jscbindings.mk: Added.
+        * Android.derived.mk: Added.
+        * Android.jscbindings.mk: Added.
+        * Android.mk: Added.
+        * WebCorePrefix.h: Modified. Sets up some flags and adds a header required for building on Android.
+
 2009-12-08  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Xan Lopez.

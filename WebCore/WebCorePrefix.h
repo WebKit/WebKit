@@ -62,6 +62,19 @@
 #include <pthread.h>
 #endif // defined(WIN32) || defined(_WIN32)
 
+#if defined(ANDROID)
+#ifdef __cplusplus
+// Must come before include of algorithm.
+#define PREFIX_FOR_WEBCORE 1
+#define EXPORT __attribute__((visibility("default")))
+#endif
+// Android uses a single set of include directories when building WebKit and
+// JavaScriptCore. Since WebCore/ is included before JavaScriptCore/, Android
+// includes JavaScriptCore/config.h explicitly here to make sure it gets picked
+// up.
+#include <JavaScriptCore/config.h>
+#endif
+
 #include <sys/types.h>
 #include <fcntl.h>
 #if defined(__APPLE__)
@@ -105,7 +118,7 @@
 
 #include <time.h>
 
-#ifndef BUILDING_WX__
+#if !defined(BUILDING_WX__) && !defined(ANDROID)
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef WIN_CAIRO
 #include <ConditionalMacros.h>
@@ -121,7 +134,7 @@
 #endif
 
 #endif
-#endif
+#endif  // !defined(BUILDING_WX__) && !defined(ANDROID)
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>

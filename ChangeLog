@@ -1,3 +1,12 @@
+2009-12-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Android] Adds Makefiles for Android port.
+        https://bugs.webkit.org/show_bug.cgi?id=31325
+
+        * Android.mk: Added.
+
 2009-12-08  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Xan Lopez.
