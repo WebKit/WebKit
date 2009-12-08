@@ -1,3 +1,9 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Touch svgtags.in to eventually fix the win debug build.
+
+        * svg/svgtags.in:
+
 2009-12-08  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Fisher.
