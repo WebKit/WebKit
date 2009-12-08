@@ -44,8 +44,7 @@ IconRecord::IconRecord(const String& url)
     , m_stamp(0)
     , m_dataSet(false)
 {
-    // Currently, this class is shared cross-thread in IconDatabase.
-    disableThreadVerification();
+
 }
 
 IconRecord::~IconRecord()

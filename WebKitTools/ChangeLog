@@ -1,5 +1,15 @@
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
+        Rubber-stamped by David Levin.
+
+        Revert and reopen "Add asserts to RefCounted to make sure ref/deref happens on the right thread."
+        It may have caused massive increase of reported leaks on the bots.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        * DumpRenderTree/ForwardingHeaders/wtf/ThreadVerifier.h: Removed.
+
+2009-12-08  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Darin Adler.
 
         Add asserts to RefCounted to make sure ref/deref happens on the right thread.

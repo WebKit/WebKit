@@ -83,9 +83,6 @@ StringImpl::StringImpl()
     , m_length(0)
     , m_hash(0)
 {
-    // FIXME: It should be possible to check for proper cross-thread usage (see crossThreadString).
-    disableThreadVerification();
-
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
     // with impunity. The empty string is special because it is never entered into
     // AtomicString's HashKey, but still needs to compare correctly.
@@ -99,8 +96,6 @@ inline StringImpl::StringImpl(const UChar* characters, unsigned length)
 {
     ASSERT(characters);
     ASSERT(length);
-    // FIXME: It should be possible to check for proper cross-thread usage (see crossThreadString).
-    disableThreadVerification();
 }
 
 StringImpl::~StringImpl()
