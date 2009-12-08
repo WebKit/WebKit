@@ -1,3 +1,13 @@
+2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Darin Adler.
+
+        Make WebKit build correctly on FreeBSD, IA64, and Alpha.
+        Based on work by Petr Salinger <Petr.Salinger@seznam.cz>,
+        and Colin Watson <cjwatson@ubuntu.com>.
+
+        * wtf/Platform.h:
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
