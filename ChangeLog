@@ -1,3 +1,15 @@
+2009-12-08  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Create a TextBreakIterator implementation based on GLib (without ICU)
+        https://bugs.webkit.org/show_bug.cgi?id=31469
+
+        Removing hybrid configuration for --with-unicode-backend=glib
+        ICU not required anymore.
+
+        * autotools/webkit.m4:
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

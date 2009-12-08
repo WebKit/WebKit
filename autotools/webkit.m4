@@ -139,11 +139,7 @@ esac
 
 AC_MSG_RESULT([$with_unicode_backend])
 
-# https://bugs.webkit.org/show_bug.cgi?id=15914
-# Splitting ICU removal patch into smaller portions. We compile a hybrid version
-# with the WTF Unicode backend being based on GLib while text codecs and TextBreakIterator
-# keep the ICU dependency. That's why we temporarily add icu headers and libs for glib config case as well.
-if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; then
+if test "$with_unicode_backend" = "icu"; then
         case "$host" in
             *-*-darwin*)
 		UNICODE_CFLAGS="-I$srcdir/JavaScriptCore/icu -I$srcdir/WebCore/icu"
@@ -169,14 +165,7 @@ if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; the
 fi
 
 if test "$with_unicode_backend" = "glib"; then
-	# https://bugs.webkit.org/show_bug.cgi?id=15914
-	# Splitting ICU removal patch into smaller portions, that's why we
-	# temporarily retrieve flags & libs info for glib into UNICODEGLIB
-	# instead of UNICODE variable, then concatenate.
-	# Patch 3/4 of the above issue will rename the variable back to UNICODE.
-	PKG_CHECK_MODULES([UNICODEGLIB], [glib-2.0 pango >= 1.21.0])
-	UNICODE_CFLAGS="$UNICODE_CFLAGS $UNICODEGLIB_CFLAGS"
-	UNICODE_LIBS="$UNICODE_LIBS $UNICODEGLIB_LIBS"
+	PKG_CHECK_MODULES([UNICODE], [glib-2.0 pango >= 1.21.0])
 fi
 
 AC_SUBST([UNICODE_CFLAGS])
