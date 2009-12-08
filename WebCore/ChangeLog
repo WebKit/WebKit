@@ -15,7 +15,7 @@
 
         Reviewed by Darin Fisher.
 
-        https://bugs.webkit.org/show_bug.cgi?id=32152
+        https://bugs.webkit.org/show_bug.cgi?id=32167
         Update the ResourceRequest::RequestType.  This previously
         was specific to Chromium.  Moved into ResourceRequestBase, enabling
         more specificity about the type (which is otherwise only known to the
