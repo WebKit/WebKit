@@ -1,3 +1,26 @@
+2009-12-07  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement NamedPropertyEnumerator and IndexedPropertyEnumerator for
+        V8 NPObject. This should make the object enumerable and fix the
+        enumeration issue in layout test plugins/netscape-enumerate.html.
+
+        Also fix some existing style issues per webkit style guidelines.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32254
+
+        Test: plugins/netscape-enumerate.html
+
+        * bindings/v8/V8NPObject.cpp:
+        (npObjectInvokeImpl):
+        (npObjectInvokeDefaultHandler):
+        (npObjectGetProperty):
+        (npObjectPropertyEnumerator):
+        (npObjectNamedPropertyEnumerator):
+        (npObjectIndexedPropertyEnumerator):
+        (createV8ObjectForNPObject):
+
 2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -33,6 +33,7 @@
 #include "V8NPObject.h"
 
 #include "HTMLPlugInElement.h"
+#include "IdentifierRep.h"
 #include "NPV8Object.h"
 #include "V8CustomBinding.h"
 #include "V8DOMMap.h"
@@ -44,7 +45,7 @@
 #include "V8Proxy.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
-#include "wtf/OwnArrayPtr.h"
+#include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 
@@ -117,7 +118,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     if (!retval)
         throwError("Error calling method on NPObject!", V8Proxy::GeneralError);
 
-    for (int i=0; i < numArgs; i++)
+    for (int i = 0; i < numArgs; i++)
         _NPN_ReleaseVariantValue(&npArgs[i]);
 
     // Unwrap return values.
@@ -138,8 +139,8 @@ v8::Handle<v8::Value> npObjectInvokeDefaultHandler(const v8::Arguments& args)
 {
     if (args.IsConstructCall())
         return npObjectInvokeImpl(args, InvokeConstruct);
-    else
-        return npObjectInvokeImpl(args, InvokeDefault);
+
+    return npObjectInvokeImpl(args, InvokeDefault);
 }
 
 
@@ -180,7 +181,9 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
         _NPN_ReleaseVariantValue(&result);
         return returnValue;
 
-    } else if (key->IsString() && npObject->_class->hasMethod && npObject->_class->hasMethod(npObject, identifier)) {
+    }
+
+    if (key->IsString() && npObject->_class->hasMethod && npObject->_class->hasMethod(npObject, identifier)) {
         PrivateIdentifier* id = static_cast<PrivateIdentifier*>(identifier);
         v8::Persistent<v8::FunctionTemplate> functionTemplate = staticTemplateMap.get(id);
         // Cache templates using identifier as the key.
@@ -275,6 +278,44 @@ v8::Handle<v8::Value> npObjectSetIndexedProperty(v8::Local<v8::Object> self, uin
     return npObjectSetProperty(self, identifier, value);
 }
 
+v8::Handle<v8::Array> npObjectPropertyEnumerator(const v8::AccessorInfo& info, bool namedProperty)
+{
+    NPObject* npObject = V8DOMWrapper::convertToNativeObject<NPObject>(V8ClassIndex::NPOBJECT, info.Holder());
+
+    // Verify that our wrapper wasn't using a NPObject which
+    // has already been deleted.
+    if (!npObject || !_NPN_IsAlive(npObject))
+        throwError("NPObject deleted", V8Proxy::ReferenceError);
+
+    if (NP_CLASS_STRUCT_VERSION_HAS_ENUM(npObject->_class) && npObject->_class->enumerate) {
+        uint32_t count;
+        NPIdentifier* identifiers;
+        if (npObject->_class->enumerate(npObject, &identifiers, &count)) {
+            v8::Handle<v8::Array> properties = v8::Array::New(count);
+            for (uint32_t i = 0; i < count; ++i) {
+                IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
+                if (namedProperty)
+                    properties->Set(v8::Integer::New(i), v8::String::New(identifier->string()));
+                else
+                    properties->Set(v8::Integer::New(i), v8::Integer::New(identifier->number()));
+            }
+
+            return properties;
+        }
+    }
+
+    return v8::Handle<v8::Array>();
+}
+
+v8::Handle<v8::Array> npObjectNamedPropertyEnumerator(const v8::AccessorInfo& info)
+{
+    return npObjectPropertyEnumerator(info, true);
+}
+
+v8::Handle<v8::Array> npObjectIndexedPropertyEnumerator(const v8::AccessorInfo& info)
+{
+    return npObjectPropertyEnumerator(info, false);
+}
 
 static void weakNPObjectCallback(v8::Persistent<v8::Value>, void* parameter);
 
@@ -317,8 +358,8 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     if (npObjectDesc.IsEmpty()) {
         npObjectDesc = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
         npObjectDesc->InstanceTemplate()->SetInternalFieldCount(V8Custom::kNPObjectInternalFieldCount);
-        npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter);
-        npObjectDesc->InstanceTemplate()->SetIndexedPropertyHandler(npObjectIndexedPropertyGetter, npObjectIndexedPropertySetter);
+        npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter, 0, 0, npObjectNamedPropertyEnumerator);
+        npObjectDesc->InstanceTemplate()->SetIndexedPropertyHandler(npObjectIndexedPropertyGetter, npObjectIndexedPropertySetter, 0, 0, npObjectIndexedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetCallAsFunctionHandler(npObjectInvokeDefaultHandler);
     }
 
