@@ -1,3 +1,13 @@
+KCanvasResource {id="0x0" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="0x5" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="5x0" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="3x3" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="1x6" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="6x1" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="2x10" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="1x1" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="10x100" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="15x15" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
