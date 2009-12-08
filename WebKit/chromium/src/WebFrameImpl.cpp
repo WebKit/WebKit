@@ -1669,19 +1669,28 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         if (node && node != frame()->document()) {
             // Found a focusable parent node. Set focus to it.
             frame()->document()->setFocusedNode(node);
-        } else {
-            // Iterate over all the nodes in the range until we find a focusable node.
-            // This, for example, sets focus to the first link if you search for
-            // text and text that is within one or more links.
-            node = m_activeMatch->firstNode();
-            while (node && node != m_activeMatch->pastLastNode()) {
-                if (node->isFocusable()) {
-                    frame()->document()->setFocusedNode(node);
-                    break;
-                }
-                node = node->traverseNextNode();
-            }
+            return;
         }
+
+        // Iterate over all the nodes in the range until we find a focusable node.
+        // This, for example, sets focus to the first link if you search for
+        // text and text that is within one or more links.
+        node = m_activeMatch->firstNode();
+        while (node && node != m_activeMatch->pastLastNode()) {
+            if (node->isFocusable()) {
+                frame()->document()->setFocusedNode(node);
+                return;
+            }
+            node = node->traverseNextNode();
+        }
+
+        // No node related to the active match was focusable, so set the
+        // active match as the selection (so that when you end the Find session,
+        // you'll have the last thing you found highlighted) and make sure that
+        // we have nothing focused (otherwise you might have text selected but
+        // a link focused, which is weird).
+        frame()->selection()->setSelection(m_activeMatch.get());
+        frame()->document()->setFocusedNode(0);
     }
 }
 

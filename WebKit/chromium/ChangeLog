@@ -1,3 +1,18 @@
+2009-12-07  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        A patch for Chromium to restrict the scope of the Gmail focus fix,
+        where we set the Selection to 0,0 for content-editable fields and
+        also make sure we set the selection end-state for find to select the
+        text found (when not focusing a link we found).
+        WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=32248
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setFocus):
+
 2009-12-07  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by Darin Adler.
