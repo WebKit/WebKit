@@ -1,3 +1,21 @@
+2009-12-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Split two-clause assertions into two separate assertions.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::isTextField):
+        Split a two-clause assertion into two separate assertions.
+        (DOMHTMLInputElement::rectOnScreen):
+        Added the two assertions here that all other functions in this group shared.
+        (DOMHTMLInputElement::selectedRange):
+        Split a two-clause assertion into two separate assertions.
+        (DOMHTMLInputElement::setAutofilled):
+        Split a two-clause assertion into two separate assertions.
+        (DOMHTMLInputElement::isAutofilled):
+        Split a two-clause assertion into two separate assertions.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

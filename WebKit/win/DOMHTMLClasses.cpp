@@ -1291,7 +1291,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectionEnd(
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isTextField(
     /* [retval][out] */ BOOL* result)
 {
-    ASSERT(m_element && m_element->hasTagName(inputTag));
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
     *result = inputElement->isTextField() ? TRUE : FALSE;
     return S_OK;
@@ -1300,6 +1301,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isTextField(
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::rectOnScreen( 
     /* [retval][out] */ LPRECT rect)
 {
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
     rect->left = rect->top = rect->right = rect->bottom = 0;
     RenderObject* renderer = m_element->renderer();
     FrameView* view = m_element->document()->view();
@@ -1341,7 +1344,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectedRange(
     /* [out] */ int* start,
     /* [out] */ int* end)
 {
-    ASSERT(m_element && m_element->hasTagName(inputTag));
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
     *start = inputElement->selectionStart();
     *end = inputElement->selectionEnd();
@@ -1351,7 +1355,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectedRange(
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAutofilled( 
     /* [in] */ BOOL filled)
 {
-    ASSERT(m_element && m_element->hasTagName(inputTag));
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
     inputElement->setAutofilled(!!filled);
     return S_OK;
@@ -1360,7 +1365,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAutofilled(
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isAutofilled(
     /* [retval][out] */ BOOL* result)
 {
-    ASSERT(m_element && m_element->hasTagName(inputTag));
+    ASSERT(m_element);
+    ASSERT(m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
     *result = inputElement->isAutofilled() ? TRUE : FALSE;
     return S_OK;
