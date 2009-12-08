@@ -1,3 +1,10 @@
+2009-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Build fix
+
+        * loader/loader.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Touch svgtags.in to eventually fix the win debug build.

@@ -71,7 +71,7 @@ Loader::~Loader()
     ASSERT_NOT_REACHED();
 }
     
-ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
+static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
     switch (type) {
     case CachedResource::CSSStyleSheet:
