@@ -1,3 +1,16 @@
+2009-12-07  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed: Chromium build fix.
+
+        Fix Chromium build break caused by an added dependency from
+        ScriptControllerBase to JSDOMWindowShell, and an API change in
+        ScriptValue.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::getString):
+
 2009-12-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
