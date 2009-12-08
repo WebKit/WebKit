@@ -1,5 +1,11 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Skip yet another test, what a journey...
+
+        * platform/gtk/Skipped:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Adjust one layout test to the results of the Leopard Intel slave.
 
         * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
