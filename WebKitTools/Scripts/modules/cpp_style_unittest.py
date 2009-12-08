@@ -1118,6 +1118,12 @@ class CppStyleTest(CppStyleTestBase):
             'if (condition) {',
             '')
         self.assert_multi_line_lint(
+            '    MACRO1(macroArg) {',
+            '')
+        self.assert_multi_line_lint(
+            'ACCESSOR_GETTER(MessageEventPorts) {',
+            'Place brace on its own line for function definitions.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
             'int foo() {',
             'Place brace on its own line for function definitions.  [whitespace/braces] [4]')
         self.assert_multi_line_lint(

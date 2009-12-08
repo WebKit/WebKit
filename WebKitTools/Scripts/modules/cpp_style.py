@@ -1901,7 +1901,8 @@ def check_braces(filename, clean_lines, line_number, error):
                   'This { should be at the end of the previous line')
     elif (search(r'\)\s*(const\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
-          and not search(r'\b(if|for|foreach|while|switch)\b', line)):
+          and not search(r'\b(if|for|foreach|while|switch)\b', line)
+          and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(filename, line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
 
