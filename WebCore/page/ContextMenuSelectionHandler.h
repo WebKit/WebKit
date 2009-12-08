@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,31 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        GenerateConstructor
-    ] InspectorFrontendHost {
-        void loaded();
-        void attach();
-        void detach();
-        void closeWindow();
-        void windowUnloading();
+#ifndef ContextMenuSelectionHandler_h
+#define ContextMenuSelectionHandler_h
 
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
+#include <wtf/RefCounted.h>
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
+namespace WebCore {
 
-        void addResourceSourceToFrame(in long identifier, in Node frame);
-        boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
+    class ContextMenuItem;
 
-        DOMString setting(in DOMString key);
-        void setSetting(in DOMString key, in DOMString value);
+    class ContextMenuSelectionHandler : public RefCounted<ContextMenuSelectionHandler> {
+    public:
+        ContextMenuSelectionHandler() { }
+        virtual ~ContextMenuSelectionHandler() { };
 
-        [Custom] void search(in Node node, in DOMString query);
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
+        virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
+        virtual void contextMenuCleared() = 0;
     };
+
 }
+
+#endif // ContextMenuSelectionHandler_h

@@ -143,6 +143,7 @@ namespace WebCore {
         ContextMenuItemTagCapitalize,
         ContextMenuItemTagChangeBack,
 #endif
+        ContextMenuItemBaseCustomTag = 5000,
         ContextMenuItemBaseApplicationTag = 10000
     };
 

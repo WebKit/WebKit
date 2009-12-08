@@ -84,4 +84,9 @@ CALLBACK_FUNC_DECL(InspectorFrontendHostSearch)
     return result;
 }
 
+CALLBACK_FUNC_DECL(InspectorFrontendHostShowContextMenu)
+{
+    return v8::Undefined();
+}
+
 } // namespace WebCore

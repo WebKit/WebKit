@@ -32,12 +32,19 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "ContextMenu.h"
+#include "ContextMenuItem.h"
+#include "ContextMenuController.h"
+#include "ContextMenuSelectionHandler.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
+#include "InspectorFrontend.h"
 #include "InspectorResource.h"
+#include "Page.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -49,11 +56,13 @@ namespace WebCore {
 InspectorFrontendHost::InspectorFrontendHost(InspectorController* inspectorController, InspectorClient* client)
     : m_inspectorController(inspectorController)
     , m_client(client)
+    , m_menuSelectionHandler(MenuSelectionHandler::create(this))
 {
 }
 
 InspectorFrontendHost::~InspectorFrontendHost()
 {
+    m_menuSelectionHandler->disconnect();
 }
 
 void InspectorFrontendHost::loaded()
@@ -197,6 +206,31 @@ void InspectorFrontendHost::setSetting(const String& key, const String& value)
 {
     if (m_inspectorController)
         m_inspectorController->setSetting(key, value);
+}
+
+void InspectorFrontendHost::showContextMenu(Event* event, Vector<ContextMenuItem>& items)
+{
+    if (!m_inspectorController)
+        return;
+    if (!m_inspectorController->windowVisible())
+        return;
+
+    ContextMenuController* menuController = m_inspectorController->m_page->contextMenuController();
+    menuController->showContextMenu(event, items, m_menuSelectionHandler);
+}
+
+void InspectorFrontendHost::contextMenuItemSelected(ContextMenuItem* item)
+{
+    if (m_inspectorController && m_inspectorController->windowVisible()) {
+        int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
+        m_inspectorController->m_frontend->contextMenuItemSelected(itemNumber);
+    }
+}
+
+void InspectorFrontendHost::contextMenuCleared()
+{
+    if (m_inspectorController && m_inspectorController->windowVisible())
+        m_inspectorController->m_frontend->contextMenuCleared();
 }
 
 } // namespace WebCore

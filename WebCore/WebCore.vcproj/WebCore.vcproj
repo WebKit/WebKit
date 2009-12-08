@@ -20527,6 +20527,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\ContextMenuSelectionHandler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Coordinates.h"
 				>
 			</File>
@@ -42431,6 +42435,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ConsoleView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ContextMenu.js"
 					>
 				</File>
 				<File

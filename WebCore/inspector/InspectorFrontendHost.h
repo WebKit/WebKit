@@ -30,13 +30,17 @@
 #define InspectorFrontendHost_h
 
 #include "Console.h"
+#include "ContextMenuSelectionHandler.h"
 #include "InspectorController.h"
 #include "PlatformString.h"
 
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class ContextMenuItem;
+class Event;
 class InspectorClient;
 class Node;
 
@@ -51,6 +55,7 @@ public:
     ~InspectorFrontendHost();
 
     InspectorController* inspectorController() { return m_inspectorController; }
+
     void disconnectController() { m_inspectorController = 0; }
 
     void loaded();
@@ -73,11 +78,46 @@ public:
     String setting(const String& key);
     void setSetting(const String& key, const String& value);
 
+    // Called from [Custom] implementations.
+    void showContextMenu(Event*, Vector<ContextMenuItem>& items);
+    void contextMenuItemSelected(ContextMenuItem*);
+    void contextMenuCleared();
+
 private:
+    class MenuSelectionHandler : public ContextMenuSelectionHandler {
+    public:
+        static PassRefPtr<MenuSelectionHandler> create(InspectorFrontendHost* frontendHost)
+        {
+            return adoptRef(new MenuSelectionHandler(frontendHost));
+        }
+
+        virtual ~MenuSelectionHandler() { }
+
+        void disconnect() { m_frontendHost = 0; }
+
+        virtual void contextMenuItemSelected(ContextMenuItem* item)
+        {
+            if (m_frontendHost)
+                m_frontendHost->contextMenuItemSelected(item);
+        }
+
+        virtual void contextMenuCleared()
+        {
+            if (m_frontendHost)
+                m_frontendHost->contextMenuCleared();
+        }
+
+    private:
+        MenuSelectionHandler(InspectorFrontendHost* frontendHost)
+            : m_frontendHost(frontendHost) { }
+        InspectorFrontendHost* m_frontendHost;
+    };
+
     InspectorFrontendHost(InspectorController* inspectorController, InspectorClient* client);
 
     InspectorController* m_inspectorController;
     InspectorClient* m_client;
+    RefPtr<MenuSelectionHandler> m_menuSelectionHandler;
 };
 
 } // namespace WebCore

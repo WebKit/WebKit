@@ -1,3 +1,58 @@
+2009-12-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: provide custom context menu in the front-end window.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32200
+
+        * English.lproj/localizedStrings.js:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::contextMenuItemSelected):
+        (WebCore::InspectorFrontend::contextMenuCleared):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::~InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        (WebCore::InspectorFrontendHost::contextMenuItemSelected):
+        (WebCore::InspectorFrontendHost::contextMenuCleared):
+        * inspector/InspectorFrontendHost.h:
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::create):
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::~MenuSelectionHandler):
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::disconnect):
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::contextMenuItemSelected):
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::contextMenuCleared):
+        (WebCore::InspectorFrontendHost::MenuSelectionHandler::MenuSelectionHandler):
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/ContextMenu.js: Added.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.documentContextMenu):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController):
+        (WebCore::ContextMenuController::clearContextMenu):
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::ContextMenuController::createContextMenu):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/ContextMenuController.h:
+        * page/ContextMenuSelectionHandler.h: Added.
+        (WebCore::ContextMenuSelectionHandler::ContextMenuSelectionHandler):
+        (WebCore::ContextMenuSelectionHandler::~ContextMenuSelectionHandler):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+
 2009-12-08  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,31 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        GenerateConstructor
-    ] InspectorFrontendHost {
-        void loaded();
-        void attach();
-        void detach();
-        void closeWindow();
-        void windowUnloading();
+WebInspector.ContextMenu = function() {
+    this._items = [];
+    this._handlers = {};
+    this._appendItem(WebInspector.UIString("Edit as HTML"), this._noop.bind(this));
+    this._appendItem(WebInspector.UIString("Add attribute"), this._noop.bind(this));
+    this._appendSeparator();
+    this._appendItem(WebInspector.UIString("Copy"), this._copy.bind(this));
+    this._appendItem(WebInspector.UIString("Delete"), this._delete.bind(this));
+}
 
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
+WebInspector.ContextMenu.prototype = {
+    show: function(event)
+    {
+        // FIXME: Uncomment when popup menu has meaningful items.
+        // InspectorFrontendHost.showContextMenu(event, this._items);
+        // event.preventDefault();
+    },
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
+    _appendItem: function(label, handler)
+    {
+        var id = this._items.length;
+        this._items.push({id: id, label: label});
+        this._handlers[id] = handler;
+    },
 
-        void addResourceSourceToFrame(in long identifier, in Node frame);
-        boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
+    _appendSeparator: function()
+    {
+        this._items.push({});
+    },
 
-        DOMString setting(in DOMString key);
-        void setSetting(in DOMString key, in DOMString value);
+    itemSelected: function(id)
+    {
+        if (this._handlers[id])
+            this._handlers[id].call(this);
+    },
 
-        [Custom] void search(in Node node, in DOMString query);
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
-    };
+    _copy: function()
+    {
+        console.log("context menu: copy");
+    },
+
+    _delete: function()
+    {
+        console.log("context menu: delete");
+    },
+
+    _noop: function()
+    {
+        console.log("context menu: noop");
+    }
+}
+
+
+WebInspector.contextMenuItemSelected = function(id)
+{
+    if (WebInspector.contextMenu)
+        WebInspector.contextMenu.itemSelected(id);
+}
+
+WebInspector.contextMenuCleared = function()
+{
+    console.log("context menu: cleared");
 }

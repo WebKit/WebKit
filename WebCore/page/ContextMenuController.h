@@ -28,12 +28,16 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
     class ContextMenu;
     class ContextMenuClient;
     class ContextMenuItem;
+    class ContextMenuSelectionHandler;
     class Event;
     class Page;
 
@@ -48,12 +52,18 @@ namespace WebCore {
         void clearContextMenu();
 
         void handleContextMenuEvent(Event*);
+        void showContextMenu(Event*, Vector<ContextMenuItem>&, PassRefPtr<ContextMenuSelectionHandler>);
+
         void contextMenuItemSelected(ContextMenuItem*);
 
     private:
+        ContextMenu* createContextMenu(Event*);
+        void showContextMenu(Event*);
+
         Page* m_page;
         ContextMenuClient* m_client;
         OwnPtr<ContextMenu> m_contextMenu;
+        RefPtr<ContextMenuSelectionHandler> m_selectionHandler;
     };
 
 }

@@ -530,6 +530,19 @@ void InspectorFrontend::addNodesToSearchResult(const String& nodeIds)
     function.call();
 }
 
+void InspectorFrontend::contextMenuItemSelected(int itemId)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch");
+    function.appendArgument("contextMenuItemSelected");
+    function.appendArgument(itemId);
+    function.call();
+}
+
+void InspectorFrontend::contextMenuCleared()
+{
+    callSimpleFunction("contextMenuCleared");
+}
+
 void InspectorFrontend::evaluateForTestInFrontend(int callId, const String& script)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 
