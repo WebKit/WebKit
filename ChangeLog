@@ -1,3 +1,11 @@
+2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Late post-release version bump.
+
+        * configure.ac:
+
 2009-12-08  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Gustavo Noronha Silva.
