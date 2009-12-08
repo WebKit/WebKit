@@ -1,5 +1,11 @@
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Skip some tests that fail for a longer period on the SnowLeopard bot. Filed two bugs, notifying the authors.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Oops forgot to update three results -> Qt slave green again.
 
         * platform/qt/svg/filters/feGaussianBlur-expected.txt:

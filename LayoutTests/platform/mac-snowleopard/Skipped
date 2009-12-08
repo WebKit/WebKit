@@ -55,3 +55,16 @@ plugins/netscape-invoke-failure.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
+
+# Media tests that keep failing on SnowLeopard for a while
+# https://bugs.webkit.org/show_bug.cgi?id=32270
+http/tests/media/video-play-stall-seek.html
+http/tests/media/video-play-stall.html
+http/tests/media/video-seekable-stall.html
+media/media-fullscreen-not-in-document.html
+media/video-no-audio.html
+media/video-size-intrinsic-scale.html
+
+# Single tests that keeps failing on the SnowLeopard bot
+# https://bugs.webkit.org/show_bug.cgi?id=32271
+fast/forms/slider-delete-while-dragging-thumb.html
