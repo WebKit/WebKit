@@ -1,3 +1,10 @@
+2009-12-07  Adam Roben  <aroben@apple.com>
+
+        Windows build fix for checkouts with a space in the path
+
+        * win/tools/scripts/auto-version.sh: Quote the output file's directory
+        before passing it to mkdir.
+
 2009-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

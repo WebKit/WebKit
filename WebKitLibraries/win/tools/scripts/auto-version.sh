@@ -34,7 +34,7 @@ chomp()
 
 FALLBACK_VERSION_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\VERSION"`
 OUTPUT_FILE=$(cygpath -u "$1")/include/autoversion.h
-mkdir -p $(dirname "$OUTPUT_FILE")
+mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 # Take the initial version number from RC_PROJECTSOURCEVERSION if it
 # exists, otherwise fall back to the version number stored in the source.
