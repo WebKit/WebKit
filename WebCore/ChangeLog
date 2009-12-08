@@ -1,3 +1,9 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Sane way to force a rebuild on all win slaves, according to Adam Roben.
+
+        * WebCorePrefix.h:
+
 2009-12-08  Dan Bernstein  <mitz@apple.com>
 
         Build fix

@@ -18,7 +18,7 @@
  *
  */
 
-/* This prefix file should contain only:
+/* This prefix file should contain only: 
  *    1) files to precompile for faster builds
  *    2) in one case at least: OS-X-specific performance bug workarounds
  *    3) the special trick to catch us using new or delete without including "config.h"
