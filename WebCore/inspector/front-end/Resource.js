@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComponent, identifier, mainResource, cached, requestMethod, requestFormData)
+WebInspector.Resource = function(requestHeaders, url, documentURL, domain, path, lastPathComponent, identifier, mainResource, cached, requestMethod, requestFormData)
 {
     this.identifier = identifier;
 
@@ -35,6 +35,7 @@ WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComp
     this.mainResource = mainResource;
     this.requestHeaders = requestHeaders;
     this.url = url;
+    this.documentURL = documentURL;
     this.domain = domain;
     this.path = path;
     this.lastPathComponent = lastPathComponent;
@@ -160,6 +161,18 @@ WebInspector.Resource.prototype = {
         WebInspector.resourceURLChanged(this, oldURL);
 
         this.dispatchEventToListeners("url changed");
+    },
+
+    get documentURL()
+    {
+        return this._documentURL;
+    },
+
+    set documentURL(x)
+    {
+        if (this._documentURL === x)
+            return;
+        this._documentURL = x;
     },
 
     get domain()

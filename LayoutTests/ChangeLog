@@ -1,3 +1,17 @@
+2009-12-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Change the way cookies are retrieved in the WebInspector frontend.
+
+        Moved the cookie filtering from the native code into the frontend so that
+        all cookies can be retrieved regardless of the associated domain
+        (required for certain audits to run.)
+        https://bugs.webkit.org/show_bug.cgi?id=32160
+
+        * inspector/cookie-resource-match-expected.txt: Added.
+        * inspector/cookie-resource-match.html: Added.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

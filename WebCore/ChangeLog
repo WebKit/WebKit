@@ -1,3 +1,38 @@
+2009-12-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Change the way cookies are retrieved in the WebInspector frontend.
+
+        Moved the cookie filtering from the native code into the frontend so that
+        all cookies can be retrieved regardless of the associated domain
+        (required for certain audits to run.)
+        https://bugs.webkit.org/show_bug.cgi?id=32160
+
+        Test: inspector/cookie-resource-match.html
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getCookies):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getCookies):
+        * inspector/InspectorController.h:
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.update.callback):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype._cookiesForDomain):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        (WebInspector.Cookies.cookieDomainMatchesResourceDomain):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get documentURL):
+        (WebInspector.Resource.prototype.set documentURL):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Touch svgtags.in, in order to force SVGNames.* regeneration. Praying for gtk bot to be fixed :-)

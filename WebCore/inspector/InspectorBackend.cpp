@@ -357,11 +357,11 @@ void InspectorBackend::hideDOMNodeHighlight()
         m_inspectorController->hideHighlight();
 }
 
-void InspectorBackend::getCookies(long callId, const String& domain)
+void InspectorBackend::getCookies(long callId)
 {
     if (!m_inspectorController)
         return;
-    m_inspectorController->getCookies(callId, domain);
+    m_inspectorController->getCookies(callId);
 }
 
 void InspectorBackend::deleteCookie(const String& cookieName, const String& domain)

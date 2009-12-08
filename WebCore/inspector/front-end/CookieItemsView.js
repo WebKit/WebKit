@@ -67,7 +67,8 @@ WebInspector.CookieItemsView.prototype = {
         this.element.removeChildren();
 
         var self = this;
-        function callback(cookies, isAdvanced) {
+        function callback(allCookies, isAdvanced) {
+            var cookies = self._cookiesForDomain(allCookies);
             var dataGrid = (isAdvanced ? self.dataGridForCookies(cookies) : self.simpleDataGridForCookies(cookies));
             if (dataGrid) {
                 self._dataGrid = dataGrid;
@@ -85,7 +86,31 @@ WebInspector.CookieItemsView.prototype = {
             }
         }
 
-        WebInspector.Cookies.getCookiesAsync(callback, this._cookieDomain);
+        WebInspector.Cookies.getCookiesAsync(callback);
+    },
+
+    _cookiesForDomain: function(allCookies)
+    {
+        var cookiesForDomain = [];
+        var resourceURLsForDocumentURL = [];
+
+        for (var id in WebInspector.resources) {
+            var resource = WebInspector.resources[id];
+            var match = resource.documentURL.match(WebInspector.URLRegExp);
+            if (match && match[2] === this._cookieDomain)
+                resourceURLsForDocumentURL.push(resource.url);
+        }
+
+        for (var i = 0; i < allCookies.length; ++i) {
+            for (var j = 0; j < resourceURLsForDocumentURL.length; ++j) {
+                var resourceURL = resourceURLsForDocumentURL[j];
+                if (WebInspector.Cookies.cookieMatchesResourceURL(allCookies[i], resourceURL)) {
+                    cookiesForDomain.push(allCookies[i]);
+                    break;
+                }
+            }
+        }
+        return cookiesForDomain;
     },
 
     dataGridForCookies: function(cookies)

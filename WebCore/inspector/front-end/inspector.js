@@ -74,6 +74,14 @@ var WebInspector = {
     missingLocalizedStrings: {},
     pendingDispatches: 0,
 
+    // RegExp groups:
+    // 1 - scheme
+    // 2 - hostname
+    // 3 - ?port
+    // 4 - ?path
+    // 5 - ?fragment
+    URLRegExp: /^(http[s]?|file):\/\/([^\/:]+)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
+
     get platform()
     {
         if (!("_platform" in this))
@@ -1009,6 +1017,7 @@ WebInspector.addResource = function(identifier, payload)
     var resource = new WebInspector.Resource(
         payload.requestHeaders,
         payload.requestURL,
+        payload.documentURL,
         payload.host,
         payload.path,
         payload.lastPathComponent,

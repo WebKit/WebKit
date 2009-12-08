@@ -87,7 +87,7 @@ module core {
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
 
-        void getCookies(in long callId, in DOMString domain);
+        void getCookies(in long callId);
         void deleteCookie(in DOMString cookieName, in DOMString domain);
 
         void releaseWrapperObjectGroup(in DOMString objectGroup);

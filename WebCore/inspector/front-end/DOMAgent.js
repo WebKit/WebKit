@@ -439,7 +439,7 @@ WebInspector.DOMAgent.prototype = {
 
 WebInspector.Cookies = {}
 
-WebInspector.Cookies.getCookiesAsync = function(callback, cookieDomain)
+WebInspector.Cookies.getCookiesAsync = function(callback)
 {
     function mycallback(cookies, cookiesString) {
         if (cookiesString)
@@ -448,7 +448,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback, cookieDomain)
             callback(cookies, true);
     }
     var callId = WebInspector.Callback.wrap(mycallback);
-    InspectorBackend.getCookies(callId, cookieDomain);
+    InspectorBackend.getCookies(callId);
 }
 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
@@ -468,6 +468,28 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
     }
 
     return cookies;
+}
+
+WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
+{
+    var match = resourceURL.match(WebInspector.URLRegExp);
+    if (!match)
+        return false;
+    // See WebInspector.URLRegExp for definitions of the group index constants.
+    if (!this.cookieDomainMatchesResourceDomain(cookie.domain, match[2]))
+        return false;
+    var resourcePort = match[3] ? match[3] : undefined;
+    var resourcePath = match[4] ? match[4] : '/';
+    return (resourcePath.indexOf(cookie.path) === 0
+        && (!cookie.port || resourcePort == cookie.port)
+        && (!cookie.secure || match[1].toLowerCase() === 'https'));
+}
+
+WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)
+{
+    if (cookieDomain.charAt(0) !== '.')
+        return resourceDomain === cookieDomain;
+    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
 }
 
 WebInspector.EventListeners = {}
