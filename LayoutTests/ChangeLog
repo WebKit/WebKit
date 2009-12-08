@@ -1,3 +1,14 @@
+2009-12-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(4.0.4-42a12): Indent does not work for twice modified with background text in gmail.
+        <rdar://problem/7442387>
+        https://bugs.webkit.org/show_bug.cgi?id=32233
+
+        * editing/execCommand/indent-with-style2-expected.txt: Added.
+        * editing/execCommand/indent-with-style2.html: Added.
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Add some missing files that depend on SVG Filters support, only mac supports it for now.
