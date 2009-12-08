@@ -187,14 +187,17 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
         unsigned char frameByte = static_cast<unsigned char>(*p++);
         if ((frameByte & 0x80) == 0x80) {
             int length = 0;
-            while (p < end && (*p & 0x80) == 0x80) {
+            while (p < end) {
                 if (length > std::numeric_limits<int>::max() / 128) {
                     LOG(Network, "frame length overflow %d", length);
                     handle->close();
                     return;
                 }
-                length = length * 128 + (*p & 0x7f);
+                char msgByte = *p;
+                length = length * 128 + (msgByte & 0x7f);
                 ++p;
+                if (!(msgByte & 0x80))
+                    break;
             }
             if (p + length < end) {
                 p += length;

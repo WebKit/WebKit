@@ -1,3 +1,20 @@
+2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix wrong length parsing in WebSocket.
+        https://bugs.webkit.org/show_bug.cgi?id=32203
+
+        These two tests assumed wrong length encoding in frame: it parsed
+        length from bytes with 8th bit on.  But spec says length is encoded
+        as a series of 7-bit bytes stored in octests with the 8th bit on
+        *but the last byte*.
+        These tests encodes a frame that has 129 length, so it must be
+        \x81\0x01 instead of \x81\0x81.
+
+        * websocket/tests/frame-length-longer-than-buffer_wsh.py:
+        * websocket/tests/frame-length-skip_wsh.py:
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

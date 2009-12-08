@@ -1,3 +1,13 @@
+2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix wrong length parsing in WebSocket.
+        https://bugs.webkit.org/show_bug.cgi?id=32203
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData):
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.
