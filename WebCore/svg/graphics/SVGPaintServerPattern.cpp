@@ -122,8 +122,8 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
   
         GraphicsContext* tileImageContext = tileImage->context();
 
-        int numY = static_cast<int>(ceilf(tileRect.height() / patternBoundaries().height())) + 1;
-        int numX = static_cast<int>(ceilf(tileRect.width() / patternBoundaries().width())) + 1;
+        int numY = static_cast<int>(ceilf(tileRect.height() / tileHeight)) + 1;
+        int numX = static_cast<int>(ceilf(tileRect.width() / tileWidth)) + 1;
 
         tileImageContext->save();
         tileImageContext->translate(-patternBoundaries().width() * numX, -patternBoundaries().height() * numY);

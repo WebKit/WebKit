@@ -1,3 +1,13 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Reverting problematic patch, causing errors.
+
+        Revert r51789 (Avoid zero division during SVGPaintServerPattern::setup()). Crashes on all Windows slaves.
+        Reopen bug https://bugs.webkit.org/show_bug.cgi?id=29912.
+
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2009-12-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
