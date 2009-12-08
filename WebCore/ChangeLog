@@ -1,3 +1,15 @@
+2009-12-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/7397808> Crash occurs at 
+        RenderObject::containingBlock() as I type in the Google Search 
+        field (during page load)
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea): ownerRenderer() needs to be 
+        null checked.
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

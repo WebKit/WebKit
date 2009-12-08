@@ -2753,6 +2753,9 @@ bool Editor::insideVisibleArea(const IntPoint& point) const
         return true;
     
     RenderPart* renderer = frame->ownerRenderer();
+    if (!renderer)
+        return false;
+
     RenderBlock* container = renderer->containingBlock();
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
@@ -2779,6 +2782,9 @@ bool Editor::insideVisibleArea(Range* range) const
         return true;
     
     RenderPart* renderer = frame->ownerRenderer();
+    if (!renderer)
+        return false;
+
     RenderBlock* container = renderer->containingBlock();
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
