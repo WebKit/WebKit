@@ -1,3 +1,29 @@
+2009-12-08  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32152
+        Update the ResourceRequest::RequestType.  This previously
+        was specific to Chromium.  Moved into ResourceRequestBase, enabling
+        more specificity about the type (which is otherwise only known to the
+        loader), and also making this information available to all platforms.
+        Any platform with a network layer which can utilize this information
+        may want to use it for prioritization.
+
+        Note to Chromium glue: TargetIsSubResource renamed to TargetIsSubresource.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::CachedResourceTypeToTargetType):
+        (WebCore::Loader::Host::servePendingRequests):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::):
+        (WebCore::ResourceRequestBase::targetType):
+        (WebCore::ResourceRequestBase::setTargetType):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * platform/network/chromium/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+
 2009-12-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
