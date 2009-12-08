@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0;
-unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0;
-unsigned RenderThemeChromiumLinux::m_trackColor = 0;
+unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0xf0ebe5;
+unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0xfaf8f5;
+unsigned RenderThemeChromiumLinux::m_trackColor = 0xe3ddd8;
 
 PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
 {

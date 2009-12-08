@@ -1,3 +1,20 @@
+2009-12-08  Adam Langley  <agl@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium Linux: set default scrollbar colours.
+
+        This is so that layout tests have sane defaults for the scrollbar
+        colours, even if the API user doesn't set any.
+
+        This is a fix due to r51827.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32287
+
+        This is very well covered by existing layout tests.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+
 2009-12-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
