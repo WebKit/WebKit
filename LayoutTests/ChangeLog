@@ -1,8 +1,17 @@
 2009-12-07  Dan Bernstein  <mitz@apple.com>
 
+        Corrected expected results
+
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.checksum:
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.png:
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-expected.checksum:
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-expected.png:
+
+2009-12-07  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Simon Fraser.
 
-        Re-enabled this test now that <rdar://problem/7450481> is fixed.
+        Re-enabled this test now that <rdar://problem/7450481> is fixed
 
         * fast/repaint/block-selection-gap-in-composited-layer.html: Copied from LayoutTests/fast/repaint/block-selection-gap-in-composited-layer.html.disabled.
         * fast/repaint/block-selection-gap-in-composited-layer.html.disabled: Removed.
