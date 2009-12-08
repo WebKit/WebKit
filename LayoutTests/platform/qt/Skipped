@@ -226,6 +226,7 @@ http/tests/cache/subresource-failover-to-network.html
 http/tests/security/local-user-CSS-from-remote.html
 
 # Missing layoutTestController.evaluateInWebInspector()
+inspector/cookie-resource-match.html
 inspector/elements-img-tooltip.html
 inspector/elements-panel-selection-on-refresh.html
 inspector/settings-set-get.html

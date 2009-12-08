@@ -1,3 +1,9 @@
+2009-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Put test into skiplist because of missing layoutTestController.evaluateInWebInspector().
+
+        * platform/qt/Skipped: inspector/cookie-resource-match.html added.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Update Gtk's custom prototype-inheritance-2-expected.txt, after enabling filters
