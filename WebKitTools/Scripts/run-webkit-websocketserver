@@ -34,7 +34,7 @@ use warnings;
 
 use File::Spec;
 use FindBin;
-use IPC::Open3;
+use IPC::Open2;
 
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -46,7 +46,6 @@ my $webSocketPort = 8880;
 
 my $srcDir = sourceDir();
 my $layoutTestsName = "$srcDir/LayoutTests";
-my $logFile = "/tmp/webkit-websocketserver.txt";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
 my $webSocketServerPID = 0;
 
@@ -54,7 +53,6 @@ my $webSocketServerPID = 0;
 print "Starting Web Socket server...\n";
 openWebSocketServer();
 print "Started.\n";
-print "Logging to: $logFile\n";
 print "Hit [ENTER] to stop it.";
 <STDIN>;
 print "Stopping Web Socket server...\n";
@@ -75,11 +73,10 @@ sub openWebSocketServer()
         "-p", "$webSocketPort",
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
-        "-l", "$logFile",
     );
 
     $ENV{"PYTHONPATH"} = $webSocketPythonPath;
-    $webSocketServerPID = open3(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, \*WEBSOCKETSERVER_ERR, $webSocketServerPath, @args);
+    $webSocketServerPID = open2(\*WEBSOCKETSERVER_IN, \*WEBSOCKETSERVER_OUT, $webSocketServerPath, @args);
 
     my $listen = "http://127.0.0.1:$webSocketPort";
     my $retryCount = 10;
@@ -94,7 +91,6 @@ sub closeWebSocketServer()
 {
     close WEBSOCKETSERVER_IN;
     close WEBSOCKETSERVER_OUT;
-    close WEBSOCKETSERVER_ERR;
     kill 15, $webSocketServerPID;
 }
 

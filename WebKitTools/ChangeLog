@@ -1,3 +1,12 @@
+2009-12-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make run-webkit-websocketserver log to stderr rather than to a file.
+        https://bugs.webkit.org/show_bug.cgi?id=32234
+
+        * Scripts/run-webkit-websocketserver:
+
 2009-12-07  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by Darin Adler.
