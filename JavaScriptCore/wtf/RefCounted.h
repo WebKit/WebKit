@@ -23,6 +23,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadVerifier.h>
 
 namespace WTF {
 
@@ -33,19 +34,38 @@ class RefCountedBase {
 public:
     void ref()
     {
+#ifndef NDEBUG
+        // Start thread verification as soon as the ref count gets to 2.
+        // The class gets created with a ref count of 1 and then passed
+        // to another thread where to ref count get increased. This
+        // is a heuristic but it seems to always work and has helped
+        // find some bugs.
+        if (m_refCount == 1)
+            m_threadVerifier.activate();
+#endif
+        ASSERT(m_threadVerifier.verifyThread());
         ASSERT(!m_deletionHasBegun);
         ++m_refCount;
     }
 
     bool hasOneRef() const
     {
+        ASSERT(m_threadVerifier.verifyThread());
         ASSERT(!m_deletionHasBegun);
         return m_refCount == 1;
     }
 
     int refCount() const
     {
+        ASSERT(m_threadVerifier.verifyThread());
         return m_refCount;
+    }
+
+    void disableThreadVerification()
+    {
+#ifndef NDEBUG
+        m_threadVerifier.disableThreadVerification();
+#endif
     }
 
 protected:
@@ -64,6 +84,7 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase()
     {
+        ASSERT(m_threadVerifier.verifyThread());
         ASSERT(!m_deletionHasBegun);
         ASSERT(m_refCount > 0);
         if (m_refCount == 1) {
@@ -74,6 +95,12 @@ protected:
         }
 
         --m_refCount;
+#ifndef NDEBUG
+        // Stop thread verification when the ref goes to 1 because it
+        // is safe to be passed to another thread at this point.
+        if (m_refCount == 1)
+            m_threadVerifier.deactivate();
+#endif
         return false;
     }
 
@@ -97,6 +124,7 @@ private:
     int m_refCount;
 #ifndef NDEBUG
     bool m_deletionHasBegun;
+    ThreadVerifier m_threadVerifier;
 #endif
 };
 

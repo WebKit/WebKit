@@ -427,6 +427,7 @@
             'wtf/ThreadingWin.cpp',
             'wtf/ThreadSpecific.h',
             'wtf/ThreadSpecificWin.cpp',
+            'wtf/ThreadVerifier.h',
             'wtf/TypeTraits.cpp',
             'wtf/TypeTraits.h',
             'wtf/unicode/Collator.h',

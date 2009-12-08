@@ -146,6 +146,10 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
         ignoreSet.add(this);
     else
         structureCounter.increment();
+
+    // Use of addressOfCount() in this class prevents thread verification in RefCounted
+    // since it modifies refcount via other means than ref()/deref().
+    disableThreadVerification();
 #endif
 
 #if DUMP_STRUCTURE_ID_STATISTICS

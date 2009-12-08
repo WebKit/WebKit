@@ -1,3 +1,29 @@
+2009-12-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add asserts to RefCounted to make sure ref/deref happens on the right thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure): Disable thread verification on this class since it uses addressOfCount().
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref): Add ASSERT.
+        (WTF::RefCountedBase::hasOneRef): Ditto.
+        (WTF::RefCountedBase::refCount): Ditto.
+        (WTF::RefCountedBase::derefBase): Ditto.
+        (WTF::RefCountedBase::disableThreadVerification): delegate to ThreadVerifier method.
+        * wtf/ThreadVerifier.h: Added.
+        (WTF::ThreadVerifier::ThreadVerifier): New Debug-only class to verify that ref/deref of RefCounted is done on the same thread.
+        (WTF::ThreadVerifier::activate): Activates checks. Called when ref count becomes above 2.
+        (WTF::ThreadVerifier::deactivate): Deactivates checks. Called when ref count drops below 2.
+        (WTF::ThreadVerifier::disableThreadVerification): used on objects that should not be checked (StringImpl etc)
+        (WTF::ThreadVerifier::verifyThread):
+        * GNUmakefile.am: Add ThreadVerifier.h to the build file.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+
 2009-12-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

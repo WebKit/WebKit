@@ -513,6 +513,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ThreadVerifier.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\TypeTraits.cpp"
 			>
 		</File>

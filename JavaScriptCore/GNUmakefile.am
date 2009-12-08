@@ -281,6 +281,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Threading.h \
 	JavaScriptCore/wtf/Threading.cpp \
 	JavaScriptCore/wtf/ThreadingPthreads.cpp \
+	JavaScriptCore/wtf/ThreadVerifier.h \
 	JavaScriptCore/wtf/TypeTraits.cpp \
 	JavaScriptCore/wtf/TypeTraits.h \
 	JavaScriptCore/wtf/UnusedParam.h \

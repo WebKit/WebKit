@@ -1,3 +1,12 @@
+2009-12-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add asserts to RefCounted to make sure ref/deref happens on the right thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        * DumpRenderTree/ForwardingHeaders/wtf/ThreadVerifier.h: Added.
+
 2009-12-08  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
