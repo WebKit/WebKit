@@ -1,3 +1,15 @@
+2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        editing/selection/last-empty-inline is failing in Windows
+        https://bugs.webkit.org/show_bug.cgi?id=31985
+
+        * editing/selection/last-empty-inline-expected.txt:
+        * editing/selection/last-empty-inline.html:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

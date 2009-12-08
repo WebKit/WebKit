@@ -1,9 +1,9 @@
 <div>
-To test this manually, press mouse button below the comma between "Hello" and "world!" and drag the mouse to the comma. It's OK if "world!" is selected.
+To test this manually, press mouse button below the '!' and drag the mouse to the comma between "Hello" and "world!". It's OK if "world!" is selected.
 </div>
 
 <div id="result" style="width: 200px;">
-<span>Hello,</span><span id="world">world!</span><span style="padding-left: 200px; padding-bottom: 200px; background-color: blue; height: 200px;"></span>
+<span>Hello,</span><span id="world">world!</span><br><span style="padding-left: 200px; padding-bottom: 200px; background-color: blue; height: 200px;"></span>
 </div>
 
 <script>
@@ -11,13 +11,15 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 
     var world = document.getElementById("world");
-    var x = world.offsetLeft;
-    var y = world.offsetTop;
+    var endX = world.offsetLeft;
+    var startX = endX + world.offsetWidth;
+    var endY = world.offsetTop;
+    var startY = endY + 50;
 
-    eventSender.mouseMoveTo(x, y + 50);
+    eventSender.mouseMoveTo(startX, startY);
     eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, y + 50);
-    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseMoveTo(startX, startY);
+    eventSender.mouseMoveTo(endX, endY);
     eventSender.mouseUp();
 
     var result = document.getElementById("result");

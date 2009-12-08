@@ -322,6 +322,7 @@ editing/selection/expanding-selections.html
 editing/selection/fake-doubleclick.html
 editing/selection/fake-drag.html
 editing/selection/inline-closest-leaf-child.html
+editing/selection/last-empty-inline.html
 editing/selection/mixed-editability-1.html
 editing/selection/paragraph-granularity.html
 editing/selection/select-from-textfield-outwards.html
@@ -5126,10 +5127,6 @@ fast/css/namespaces/namespaces-comments.xml
 
 # new test without expected file introduced by http://trac.webkit.org/changeset/51556
 fast/css/namespaces/namespaces-empty.xml
-
-# Failure introduced by http://trac.webkit.org/changeset/51429
-# hamaji will look into this.
-editing/selection/last-empty-inline.html
 
 # Failing tests due to
 # layoutTestController.notifyDone() bug
