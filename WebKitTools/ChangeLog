@@ -1,3 +1,16 @@
+2009-12-08  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [check-webkit-style] False positive for camel case of JSC op codes
+        https://bugs.webkit.org/show_bug.cgi?id=32192
+
+        * Scripts/modules/cpp_style.py: Added an exception for the JSC op
+          code functions and const_iterator as well since I noticed a false
+          positive there when testing the fix.
+        * Scripts/modules/cpp_style_unittest.py: Added tests for these
+          changes.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

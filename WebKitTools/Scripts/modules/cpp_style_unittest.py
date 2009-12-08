@@ -3693,6 +3693,14 @@ class WebKitStyleTest(CppStyleTestBase):
                          ['variable_1' + name_error_message,
                           'variable_2' + name_error_message])
 
+        # There is an exception for op code functions but only in the JavaScriptCore directory.
+        self.assert_lint('void this_op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
+        self.assert_lint('void this_op_code(int var1, int var2)', 'this_op_code' + name_error_message)
+
+        # const_iterator is allowed as well.
+        self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')
+
+
     def test_other(self):
         # FIXME: Implement this.
         pass

@@ -2734,7 +2734,10 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
         # Remove "m_" and "s_" to allow them.
         modified_identifier = sub(r'(^|(?<=::))[ms]_', '', identifier)
         if modified_identifier.find('_') >= 0:
-            error(filename, line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
+            # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
+            if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('_op_') >= 0)
+                and not modified_identifier == "const_iterator"):
+                error(filename, line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
 
         # There can be only one declaration in non-for-control statements.
         if control_statement:
