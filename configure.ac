@@ -464,8 +464,8 @@ AC_MSG_RESULT([$enable_svg_animation])
 AC_MSG_CHECKING([whether to enable support for filters])
 AC_ARG_ENABLE(filters,
               AC_HELP_STRING([--enable-filters],
-                             [enable support for filters (experimental) [default=no]]),
-              [],[enable_filters="no"])
+                             [enable support for filters (experimental) [default=yes]]),
+              [],[enable_filters="yes"])
 AC_MSG_RESULT([$enable_filters])
 
 # check whether to enable support for SVG fonts

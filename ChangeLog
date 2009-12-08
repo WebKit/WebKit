@@ -1,3 +1,12 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Turn on (SVG) Filters for Gtk.
+        https://bugs.webkit.org/show_bug.cgi?id=32224
+
+        * configure.ac:
+
 2009-12-07  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by Darin Adler.
