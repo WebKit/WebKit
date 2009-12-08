@@ -1,5 +1,11 @@
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Force JS binding regeneration, eventually fixing the broken tests on the bots.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Try to fix mac builds by touching svgtags.in - I only tried from-scratch builds.
 
         * svg/svgtags.in:
