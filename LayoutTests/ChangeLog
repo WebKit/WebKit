@@ -1,3 +1,9 @@
+2009-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Skip a timeouter flakey test.
+
+        * platform/qt/Skipped: fast/frames/sandboxed-iframe-plugins.html added.
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip yet another test, what a journey...
