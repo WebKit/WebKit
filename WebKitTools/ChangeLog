@@ -1,3 +1,13 @@
+2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Levin.
+
+        [check-webkit-style] S_OK is a fine identifier
+        https://bugs.webkit.org/show_bug.cgi?id=32225
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.

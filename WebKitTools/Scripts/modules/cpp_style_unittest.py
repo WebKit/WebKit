@@ -3660,6 +3660,7 @@ class WebKitStyleTest(CppStyleTestBase):
                          'under_score' + name_error_message)
         self.assert_lint('while (foo & value_in_thirdparty_library) {', '')
         self.assert_lint('while (foo * value_in_thirdparty_library) {', '')
+        self.assert_lint('if (mli && S_OK == mli->foo()) {', '')
 
         # More member variables and functions.
         self.assert_lint('int SomeClass::s_validName', '')

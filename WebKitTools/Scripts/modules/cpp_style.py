@@ -2704,7 +2704,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
     # Detect variable and functions.
     type_regexp = r'\w([\w]|\s*[*&]\s*|::)+'
     identifier_regexp = r'(?P<identifier>[\w:]+)'
-    character_after_identifier_regexp = r'(?P<character_after_identifier>[[;()=,])'
+    character_after_identifier_regexp = r'(?P<character_after_identifier>[[;()=,])(?!=)'
     declaration_without_type_regexp = r'\s*' + identifier_regexp + r'\s*' + character_after_identifier_regexp
     declaration_with_type_regexp = r'\s*' + type_regexp + r'\s' + declaration_without_type_regexp
     is_function_arguments = False
