@@ -1,3 +1,29 @@
+2009-12-07  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: theme scrollbars to match GTK theme.
+        Add functions to RenderThemeChromiumLinux to change the scrollbar
+        color.
+
+        Since the change is to the Chromium WebKit API layer, testing will
+        be in Chromium's test shell.
+        http://bugs.webkit.org/show_bug.cgi?id=32048
+
+        Patch from Markus Gutschke <markus@chromium.org>.
+
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::saturateAndBrighten):
+        (WebCore::outlineColor):
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::setScrollbarColors):
+        * rendering/RenderThemeChromiumLinux.h:
+        (WebCore::RenderThemeChromiumLinux::thumbInactiveColor):
+        (WebCore::RenderThemeChromiumLinux::thumbActiveColor):
+        (WebCore::RenderThemeChromiumLinux::trackColor):
+
 2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

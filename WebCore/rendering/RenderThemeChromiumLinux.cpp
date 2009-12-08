@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+unsigned RenderThemeChromiumLinux::m_thumbInactiveColor = 0;
+unsigned RenderThemeChromiumLinux::m_thumbActiveColor = 0;
+unsigned RenderThemeChromiumLinux::m_trackColor = 0;
+
 PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
 {
     return adoptRef(new RenderThemeChromiumLinux());
@@ -120,6 +124,14 @@ void RenderThemeChromiumLinux::setCaretBlinkInterval(double interval)
 double RenderThemeChromiumLinux::caretBlinkIntervalInternal() const
 {
     return m_caretBlinkInterval;
+}
+
+void RenderThemeChromiumLinux::setScrollbarColors(
+    SkColor inactiveColor, SkColor activeColor, SkColor trackColor)
+{
+    m_thumbInactiveColor = inactiveColor;
+    m_thumbActiveColor = activeColor;
+    m_trackColor = trackColor;
 }
 
 } // namespace WebCore

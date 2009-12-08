@@ -245,6 +245,10 @@ public:
     // their links.
     WEBKIT_API static void resetVisitedLinkState();
 
+    // Scrollbar colors ----------------------------------------------------
+    virtual void setScrollbarColors(unsigned inactiveColor,
+                                    unsigned activeColor,
+                                    unsigned trackColor) = 0;
 
 protected:
     ~WebView() {}

@@ -1,3 +1,21 @@
+2009-12-07  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: theme scrollbars to match GTK theme.
+        Add API to set the colors.
+
+        Since the change is to the Chromium WebKit API layer, testing will
+        be in Chromium's test shell.
+        http://bugs.webkit.org/show_bug.cgi?id=32048
+
+        Patch from Markus Gutschke <markus@chromium.org>.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setScrollbarColors):
+        * src/WebViewImpl.h:
+
 2009-12-07  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
         Reviewed by Darin Fisher.
