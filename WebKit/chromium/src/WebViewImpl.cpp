@@ -464,7 +464,7 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     PlatformKeyboardEventBuilder evt(event);
 
     if (handler->keyEvent(evt)) {
-        if (WebInputEvent::RawKeyDown == event.type && !evt.isSystemKey())
+        if (WebInputEvent::RawKeyDown == event.type)
             m_suppressNextKeypressEvent = true;
         return true;
     }
@@ -529,21 +529,23 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
     // handled by Webkit. A keyDown event is typically associated with a
     // keyPress(char) event and a keyUp event. We reset this flag here as it
     // only applies to the current keyPress event.
-    if (m_suppressNextKeypressEvent) {
-        m_suppressNextKeypressEvent = false;
-        return true;
-    }
+    bool suppress = m_suppressNextKeypressEvent;
+    m_suppressNextKeypressEvent = false;
 
     Frame* frame = focusedWebCoreFrame();
     if (!frame)
-        return false;
+        return suppress;
 
     EventHandler* handler = frame->eventHandler();
     if (!handler)
-        return keyEventDefault(event);
+        return suppress || keyEventDefault(event);
 
     PlatformKeyboardEventBuilder evt(event);
     if (!evt.isCharacterKey())
+        return true;
+
+    // Accesskeys are triggered by char events and can't be suppressed.
+    if (handler->handleAccessKey(evt))
         return true;
 
     // Safari 3.1 does not pass off windows system key messages (WM_SYSCHAR) to
@@ -551,9 +553,9 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
     // for now we are converting other platform's key events to windows key
     // events.
     if (evt.isSystemKey())
-        return handler->handleAccessKey(evt);
+        return false;
 
-    if (!handler->keyEvent(evt))
+    if (!suppress && !handler->keyEvent(evt))
         return keyEventDefault(event);
 
     return true;

@@ -1,3 +1,21 @@
+2009-12-07  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] accesskey is not supported on Chromium Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=32213
+
+        This change fixes (partially) the accesskey issue by decoupling the
+        code for handling accesskeys and system keys. Because on Mac,
+        the modifiers of accesskeys are ctrl+alt, which are not marked as
+        system keys.
+        In order to fully fix this issue, some changes in Chromium code is
+        also required.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::charEvent):
+
 2009-12-07  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
