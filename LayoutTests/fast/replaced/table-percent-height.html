@@ -52,7 +52,7 @@ function is75PercentOf(expression75, expression100)
     if (num75 < 0 || num100 < 0)
         return;
     if (num75 == Math.floor(num100 * 75 / 100))
-        testPassed(expression75 + " [" + str75 + "] is 75% of " + expression100 + " [" + str100 + "].");
+        testPassed(expression75 + " is 75% of " + expression100 + ".");
     else
         testFailed(expression75 + " [" + str75 + "] is not 75% of " + expression100 + " [" + str100 + "].");
 }

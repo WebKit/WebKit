@@ -1,3 +1,18 @@
+2009-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        These test results should not have platform-dependent pixel values.
+        https://bugs.webkit.org/show_bug.cgi?id=32265
+
+        Change is75PercentOf() so that it doesn't show pixel values when
+        the check is passed.
+
+        * fast/replaced/table-percent-height-expected.txt:
+        * fast/replaced/table-percent-height-text-controls-expected.txt:
+        * fast/replaced/table-percent-height-text-controls.html:
+        * fast/replaced/table-percent-height.html:
+
 2009-12-08  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.
