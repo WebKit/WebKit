@@ -1452,11 +1452,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Decide whether or not to display the given MIME type.  If this
      * signal is not handled, the default behavior is to show the
      * content of the requested URI if WebKit can show this MIME
-     * type; if WebKit is not able to show the MIME type nothing
-     * happens.
+     * type and the content disposition is not a download; if WebKit
+     * is not able to show the MIME type nothing happens.
      *
      * Notice that if you return TRUE, meaning that you handled the
-     * signal, you are expected to have decided what to do, by calling
+     * signal, you are expected to be aware of the "Content-Disposition"
+     * header. A value of "attachment" usually indicates a download
+     * regardless of the MIME type, see also
+     * soup_message_headers_get_content_disposition(). And you must call
      * webkit_web_policy_decision_ignore(),
      * webkit_web_policy_decision_use(), or
      * webkit_web_policy_decision_download() on the @policy_decision
