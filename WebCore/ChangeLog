@@ -1,5 +1,11 @@
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Touch svgtags.in, in order to force SVGNames.* regeneration. Praying for gtk bot to be fixed :-)
+
+        * svg/svgtags.in:
+
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Trying to force a rebuild on the Gtk slave. If that doesn't work, someone must force a rebuild from scratch.
 
         * bindings/scripts/CodeGeneratorJS.pm:
