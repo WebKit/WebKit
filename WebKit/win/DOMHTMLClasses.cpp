@@ -1357,6 +1357,15 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAutofilled(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isAutofilled(
+    /* [retval][out] */ BOOL* result)
+{
+    ASSERT(m_element && m_element->hasTagName(inputTag));
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
+    *result = inputElement->isAutofilled() ? TRUE : FALSE;
+    return S_OK;
+}
+
 // DOMHTMLInputElement -- IFormPromptAdditions ------------------------------------
 
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isUserEdited( 

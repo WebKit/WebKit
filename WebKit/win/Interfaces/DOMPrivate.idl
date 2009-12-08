@@ -51,9 +51,8 @@ interface IDOMElementPrivate : IUnknown
 
 /*
     All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
-    They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
-    replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
-    and these will be deleted.
+    Each one should eventually be replaced by public DOM API, and when that happens Safari will switch to implementations 
+    using that public API, and these will be deleted.
 
     @interface DOMHTMLInputElement(FormsAutoFillTransition)
 */
@@ -89,6 +88,11 @@ interface IFormsAutoFillTransition : IUnknown
         - (void)_setAutofilled:(BOOL)filled;
     */
     HRESULT setAutofilled([in] BOOL filled);
+
+    /*
+        - (BOOL)_isAutofilled;
+    */
+    HRESULT isAutofilled([out, retval] BOOL* result);
 }
 
 /*

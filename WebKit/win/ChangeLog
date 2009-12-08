@@ -1,3 +1,19 @@
+2009-12-08  John Sullivan  <sullivan@apple.com>
+
+        Add isAutofilled getter to match existing setter.
+
+        Reviewed by Ada Chan.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::isAutofilled):
+        Implemented new cover function.
+        
+        * DOMHTMLClasses.h:
+        Declared new cover function.
+        
+        * Interfaces/DOMPrivate.idl:
+        Declared new interface.
+
 2009-12-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Windows build fix part III).

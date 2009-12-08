@@ -1,3 +1,16 @@
+2009-12-08  John Sullivan  <sullivan@apple.com>
+
+        Add isAutofilled getter to match existing setter.
+
+        Reviewed by Ada Chan.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isAutofilled]):
+        Implemented new cover function.
+        
+        * bindings/objc/DOMPrivate.h:
+        Declared new cover function.
+
 2009-12-08  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Gustavo Noronha Silva.

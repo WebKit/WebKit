@@ -140,7 +140,12 @@
         return NSMakeRange(start, end - start); 
     }
     return NSMakeRange(NSNotFound, 0);
-}    
+}
+
+- (BOOL)_isAutofilled
+{
+    return core(self)->isAutofilled();
+}
 
 - (void)_setAutofilled:(BOOL)filled
 {
