@@ -1,3 +1,14 @@
+2009-12-08  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS Counter Nesting still does not work according to the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=31723
+
+        * fast/css/counters/nesting-expected.txt: Added.
+        * fast/css/counters/nesting.html: Added.
+        This test tests compliance with the CSS2.1 counter scoping and nesting rules.
+
 2009-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Put test into skiplist because of missing layoutTestController.evaluateInWebInspector().

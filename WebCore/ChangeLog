@@ -1,3 +1,16 @@
+2009-12-08  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS Counter Nesting still does not work according to the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=31723
+
+        Test: fast/css/counters/nesting.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        Replaced the faulty counter insertion algorithm with one that works.
+
 2009-12-08  John Sullivan  <sullivan@apple.com>
 
         Add isAutofilled getter to match existing setter.
