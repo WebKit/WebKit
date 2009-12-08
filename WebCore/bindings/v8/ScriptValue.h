@@ -144,7 +144,7 @@ public:
     }
 
     v8::Handle<v8::Value> v8Value() const { return m_value; }
-    bool getString(ScriptState*, String& result) const { getString(result); }
+    bool getString(ScriptState*, String& result) const { return getString(result); }
     bool getString(String& result) const;
     String toString(ScriptState*) const;
 

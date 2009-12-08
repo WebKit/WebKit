@@ -1,5 +1,12 @@
 2009-12-07  Albert J. Wong  <ajwong@chromium.org>
 
+        Not reviewed: Chromium build fix try 2 (dumb error).
+
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::getString):
+
+2009-12-07  Albert J. Wong  <ajwong@chromium.org>
+
         Not reviewed: Chromium build fix.
 
         Fix Chromium build break caused by an added dependency from
