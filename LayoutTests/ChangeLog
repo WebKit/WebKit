@@ -1,3 +1,21 @@
+2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add tests that WebSocket protocol argument works.
+        https://bugs.webkit.org/show_bug.cgi?id=3178
+
+        * websocket/tests/bad-sub-protocol-expected.txt: Added.
+        * websocket/tests/bad-sub-protocol.html: Added.
+        * websocket/tests/handshake-fail-by-sub-protocol-mismatch-expected.txt: Added.
+        * websocket/tests/handshake-fail-by-sub-protocol-mismatch.html: Added.
+        * websocket/tests/protocol-test_wsh.py: Added.
+        * websocket/tests/script-tests/bad-sub-protocol.js: Added.
+        * websocket/tests/script-tests/handshake-fail-by-sub-protocol-mismatch.js: Added.
+        * websocket/tests/script-tests/sub-protocol.js: Added.
+        * websocket/tests/sub-protocol-expected.txt: Added.
+        * websocket/tests/sub-protocol.html: Added.
+
 2009-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix to make QtBuildBot green.
