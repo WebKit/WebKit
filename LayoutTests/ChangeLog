@@ -1,3 +1,12 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update Gtk's custom prototype-inheritance-2-expected.txt, after enabling filters
+        (As gtk builds with geolocation, unlike the other platforms, it needs its own results)
+
+        This turns the Gtk slave to green again.
+
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+
 2009-12-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

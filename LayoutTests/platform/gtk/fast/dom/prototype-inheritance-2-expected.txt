@@ -278,6 +278,13 @@ Never found ProcessingInstruction
 Never found Range
 Never found SVGAngle
 Never found SVGColor
+Never found SVGComponentTransferFunctionElement
+Never found SVGFEBlendElement
+Never found SVGFEColorMatrixElement
+Never found SVGFECompositeElement
+Never found SVGFEDisplacementMapElement
+Never found SVGFEMorphologyElement
+Never found SVGFETurbulenceElement
 Never found SVGGradientElement
 Never found SVGLength
 Never found SVGMarkerElement
