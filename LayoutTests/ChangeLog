@@ -1,5 +1,18 @@
 2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Fragments now make WebSocket URL parsing fail.
+        https://bugs.webkit.org/show_bug.cgi?id=32144
+
+        * websocket/tests/script-tests/url-parsing.js:
+        * websocket/tests/script-tests/url-with-fragment.js: Removed.
+        * websocket/tests/url-parsing-expected.txt:
+        * websocket/tests/url-with-fragment-expected.txt: Removed.
+        * websocket/tests/url-with-fragment.html: Removed.
+
+2009-12-07  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Darin Adler.
 
         Fix wrong length parsing in WebSocket.

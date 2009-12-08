@@ -130,6 +130,12 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
         ec = SYNTAX_ERR;
         return;
     }
+    if (m_url.hasFragmentIdentifier()) {
+        LOG(Network, "URL has fragment component %s", url.string().utf8().data());
+        m_state = CLOSED;
+        ec = SYNTAX_ERR;
+        return;
+    }
     if (!isValidProtocolString(m_protocol)) {
         LOG(Network, "Wrong protocol for WebSocket %s", m_protocol.utf8().data());
         m_state = CLOSED;
