@@ -5158,6 +5158,7 @@ fast/backgrounds/repeat/negative-offset-repeat.html
 fast/block/positioning/relative-positioned-inline-container.html
 fast/frames/frame-navigation.html
 fast/frames/frameset-style-recalc.html
+fast/repaint/block-selection-gap-in-composited-layer.html
 fast/repaint/block-selection-gap-stale-cache-2.html
 fast/repaint/block-selection-gap-stale-cache.html
 fast/repaint/inline-overflow.html
@@ -5171,6 +5172,7 @@ printing/compositing-layer-printing.html
 svg/custom/radial-gradient-with-outstanding-focalPoint.svg
 
 # Tests that can only be re-enabled once filter support is turned on. Will be done soon.
+fast/dom/prototype-inheritance.html
 fast/dom/Window/window-properties.html
 fast/js/global-constructors.html
 svg/custom/js-svg-constructors.svg

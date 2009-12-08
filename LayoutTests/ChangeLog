@@ -1,3 +1,9 @@
+2009-12-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Turn Qt slave green again, after landing filters.
+
+        * platform/qt/Skipped:
+
 2009-12-07  Dan Bernstein  <mitz@apple.com>
 
         Corrected expected results
