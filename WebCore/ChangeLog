@@ -1,3 +1,18 @@
+2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a function to show render tree for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=31288
+
+        No new tests because this just adds a function for debugging.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::RenderObject::showRenderTreeAndMark):
+        (showRenderTree):
+        * rendering/RenderObject.h:
+
 2009-12-07  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Dimitri Glazkov.
