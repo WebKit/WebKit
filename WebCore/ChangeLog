@@ -1,3 +1,9 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Trying to force a rebuild on the Gtk slave. If that doesn't work, someone must force a rebuild from scratch.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-12-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
