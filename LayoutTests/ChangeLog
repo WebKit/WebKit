@@ -1,3 +1,10 @@
+2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Skip fast/repaint/block-selection-gap-in-table-cell.html (generates new result) to turn Qt/Gtk builds green again.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2009-12-08  John Gregg  <johnnyg@google.com>
 
         Reviewed by Adam Barth.

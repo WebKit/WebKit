@@ -2787,6 +2787,7 @@ fast/repaint/4774354.html
 fast/repaint/4776765.html
 fast/repaint/backgroundSizeRepaint.html
 fast/repaint/block-selection-gap-in-composited-layer.html
+fast/repaint/block-selection-gap-in-table-cell.html
 fast/repaint/block-selection-gap-stale-cache-2.html
 fast/repaint/block-selection-gap-stale-cache.html
 fast/repaint/body-background-image.html
