@@ -78,6 +78,8 @@ namespace WebCore {
         RetainPtr<NSMutableArray> m_platformDescription;
 #elif PLATFORM(QT)
         QList<ContextMenuItem> m_items;
+#elif PLATFORM(CHROMIUM)
+        Vector<ContextMenuItem> m_items;
 #else
         PlatformMenuDescription m_platformDescription;
 #endif

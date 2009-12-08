@@ -33,6 +33,9 @@
 
 #include "AutocompletePopupMenuClient.h"
 #include "AXObjectCache.h"
+#include "ContextMenu.h"
+#include "ContextMenuController.h"
+#include "ContextMenuItem.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Cursor.h"
@@ -1584,6 +1587,19 @@ void WebViewImpl::applyAutofillSuggestions(
 void WebViewImpl::hideAutofillPopup()
 {
     hideAutoCompletePopup();
+}
+
+void WebViewImpl::performCustomContextMenuAction(unsigned action)
+{
+    if (!m_page)
+        return;
+    ContextMenu* menu = m_page->contextMenuController()->contextMenu();
+    if (!menu)
+        return;
+    ContextMenuItem* item = menu->itemWithAction(static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + action));
+    if (item)
+        m_page->contextMenuController()->contextMenuItemSelected(item);
+    m_page->contextMenuController()->clearContextMenu();
 }
 
 // WebView --------------------------------------------------------------------

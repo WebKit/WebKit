@@ -31,9 +31,11 @@
 #ifndef WebContextMenuData_h
 #define WebContextMenuData_h
 
+#include "WebMenuItemInfo.h"
 #include "WebPoint.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
@@ -111,6 +113,9 @@ struct WebContextMenuData {
 
     // Security information for the context.
     WebCString securityInfo;
+
+    // Custom context menu items provided by the WebCore internals.
+    WebVector<WebMenuItemInfo> customItems;
 };
 
 } // namespace WebKit

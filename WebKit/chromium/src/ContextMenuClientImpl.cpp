@@ -50,10 +50,12 @@
 #include "WebContextMenuData.h"
 #include "WebDataSourceImpl.h"
 #include "WebFrameImpl.h"
+#include "WebMenuItemInfo.h"
 #include "WebPoint.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLResponse.h"
+#include "WebVector.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 
@@ -228,11 +230,50 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     // We can always select all...
     data.editFlags |= WebContextMenuData::CanSelectAll;
 
+    // Filter out custom menu elements and add them into the data.
+    populateCustomMenuItems(defaultMenu, &data);
+
     WebFrame* selected_web_frame = WebFrameImpl::fromFrame(selectedFrame);
     if (m_webView->client())
         m_webView->client()->showContextMenu(selected_web_frame, data);
 
     return 0;
+}
+
+void ContextMenuClientImpl::populateCustomMenuItems(WebCore::ContextMenu* defaultMenu, WebContextMenuData* data)
+{
+    Vector<WebMenuItemInfo> customItems;
+    for (size_t i = 0; i < defaultMenu->itemCount(); ++i) {
+        ContextMenuItem* inputItem = defaultMenu->itemAtIndex(i, defaultMenu->platformDescription());
+        if (inputItem->action() < ContextMenuItemBaseCustomTag || inputItem->action() >=  ContextMenuItemBaseApplicationTag)
+            continue;
+
+        WebMenuItemInfo outputItem;
+        outputItem.label = inputItem->title();
+        outputItem.enabled = inputItem->enabled();
+        outputItem.checked = inputItem->checked();
+        outputItem.action = static_cast<unsigned>(inputItem->action() - ContextMenuItemBaseCustomTag);
+        switch (inputItem->type()) {
+        case ActionType:
+            outputItem.type = WebMenuItemInfo::Option;
+            break;
+        case CheckableActionType:
+            outputItem.type = WebMenuItemInfo::CheckableOption;
+            break;
+        case SeparatorType:
+            outputItem.type = WebMenuItemInfo::Separator;
+            break;
+        case SubmenuType:
+            outputItem.type = WebMenuItemInfo::Group;
+            break;
+        }
+        customItems.append(outputItem);
+    }
+
+    WebVector<WebMenuItemInfo> outputItems(customItems.size());
+    for (size_t i = 0; i < customItems.size(); ++i)
+        outputItems[i] = customItems[i];
+    data->customItems.swap(outputItems);
 }
 
 } // namespace WebKit

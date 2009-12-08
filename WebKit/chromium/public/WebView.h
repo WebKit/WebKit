@@ -235,6 +235,11 @@ public:
     virtual void hideAutofillPopup() = 0;
 
 
+    // Context menu --------------------------------------------------------
+
+    virtual void performCustomContextMenuAction(unsigned action) = 0;
+
+
     // Visited link state --------------------------------------------------
 
     // Tells all WebView instances to update the visited link state for the
@@ -244,6 +249,7 @@ public:
     // Tells all WebView instances to update the visited state for all
     // their links.
     WEBKIT_API static void resetVisitedLinkState();
+
 
     // Scrollbar colors ----------------------------------------------------
     virtual void setScrollbarColors(unsigned inactiveColor,

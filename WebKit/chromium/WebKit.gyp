@@ -131,6 +131,7 @@
                 'public/WebMediaPlayer.h',
                 'public/WebMediaPlayerAction.h',
                 'public/WebMediaPlayerClient.h',
+                'public/WebMenuItemInfo.h',
                 'public/WebMessagePortChannel.h',
                 'public/WebMessagePortChannelClient.h',
                 'public/WebMimeRegistry.h',
