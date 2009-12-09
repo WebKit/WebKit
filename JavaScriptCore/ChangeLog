@@ -1,3 +1,15 @@
+2009-12-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31930
+
+        Update to r51457. ASSERTs changed to COMPILE_ASSERTs.
+        The speedup is 25%.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::VPtrSet::VPtrSet):
+
 2009-12-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
