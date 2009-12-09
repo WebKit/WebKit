@@ -1,3 +1,16 @@
+2009-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix some things found while trying to compile JavaScriptCore with clang++.
+
+        * wtf/FastMalloc.h:
+        Add correct exception specifications for the allocation/deallocation operators.
+        
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+        Fix a bunch of struct/class mismatches.
+
 2009-12-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
