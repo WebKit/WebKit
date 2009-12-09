@@ -40,7 +40,7 @@ from modules.grammar import pluralize
 from modules.landingsequence import LandingSequence, ConditionalLandingSequence
 from modules.logging import error, log
 from modules.multicommandtool import Command
-from modules.scm import ScriptError
+from modules.processutils import ScriptError
 
 
 class BuildSequence(ConditionalLandingSequence):

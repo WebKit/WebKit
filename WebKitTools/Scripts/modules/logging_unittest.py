@@ -33,7 +33,7 @@ import tempfile
 import unittest
 
 from modules.logging import *
-from modules.scm import ScriptError
+from modules.processutils import ScriptError
 
 class LoggingTest(unittest.TestCase):
 

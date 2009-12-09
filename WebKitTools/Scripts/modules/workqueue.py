@@ -35,7 +35,7 @@ import traceback
 from datetime import datetime, timedelta
 
 from modules.logging import log, OutputTee
-from modules.scm import ScriptError
+from modules.processutils import ScriptError
 from modules.statusbot import StatusBot
 
 class WorkQueueDelegate:

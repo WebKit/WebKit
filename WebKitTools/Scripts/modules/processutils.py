@@ -33,7 +33,36 @@ import subprocess
 import sys
 
 from modules.logging import tee
-from modules.scm import ScriptError
+
+# FIXME: These methods could all be unified into one!
+
+class ScriptError(Exception):
+    def __init__(self, message=None, script_args=None, exit_code=None, output=None, cwd=None):
+        if not message:
+            message = 'Failed to run "%s"' % script_args
+            if exit_code:
+                message += " exit_code: %d" % exit_code
+            if cwd:
+                message += " cwd: %s" % cwd
+
+        Exception.__init__(self, message)
+        self.script_args = script_args # 'args' is already used by Exception
+        self.exit_code = exit_code
+        self.output = output
+        self.cwd = cwd
+
+    def message_with_output(self, output_limit=500):
+        if self.output:
+            if output_limit and len(self.output) > output_limit:
+                 return "%s\nLast %s characters of output:\n%s" % (self, output_limit, self.output[-output_limit:])
+            return "%s\n%s" % (self, self.output)
+        return str(self)
+
+def default_error_handler(error):
+    raise error
+
+def ignore_error(error):
+    pass
 
 def run_command_with_teed_output(args, teed_output):
     child_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -45,6 +74,27 @@ def run_command_with_teed_output(args, teed_output):
         if output_line == "" and child_process.poll() != None:
             return child_process.poll()
         teed_output.write(output_line)
+
+def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False, return_stderr=True):
+    if hasattr(input, 'read'): # Check if the input is a file.
+        stdin = input
+        string_to_communicate = None
+    else:
+        stdin = subprocess.PIPE if input else None
+        string_to_communicate = input
+    if return_stderr:
+        stderr = subprocess.STDOUT
+    else:
+        stderr = None
+    process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd)
+    output = process.communicate(string_to_communicate)[0]
+    exit_code = process.wait()
+    if exit_code:
+        script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
+        error_handler(script_error)
+    if return_exit_code:
+        return exit_code
+    return output
 
 def run_and_throw_if_fail(args, quiet=False):
     # Cache the child's output locally so it can be used for error reports.

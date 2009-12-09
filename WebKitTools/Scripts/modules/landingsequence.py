@@ -30,7 +30,8 @@
 
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import log
-from modules.scm import ScriptError, CheckoutNeedsUpdate
+from modules.processutils import ScriptError
+from modules.scm import CheckoutNeedsUpdate
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue
 

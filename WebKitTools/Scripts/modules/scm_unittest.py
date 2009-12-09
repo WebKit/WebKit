@@ -38,15 +38,13 @@ import unittest
 import urllib
 
 from datetime import date
-from modules.scm import detect_scm_system, SCM, ScriptError, CheckoutNeedsUpdate, ignore_error, commit_error_handler
-
+from modules.scm import detect_scm_system, SCM, CheckoutNeedsUpdate, commit_error_handler
+from modules.processutils import run_command, ignore_error, ScriptError
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
-def run(args, cwd=None):
-    return SCM.run_command(args, cwd=cwd)
-
+# FIXME: This should be unified into one of the processutils.py commands!
 def run_silent(args, cwd=None):
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
     process.communicate() # ignore output
@@ -75,26 +73,26 @@ class SVNTestRepository:
         test_file.write("test1")
         test_file.flush()
         
-        run(['svn', 'add', 'test_file'])
-        run(['svn', 'commit', '--quiet', '--message', 'initial commit'])
+        run_command(['svn', 'add', 'test_file'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'initial commit'])
         
         test_file.write("test2")
         test_file.flush()
         
-        run(['svn', 'commit', '--quiet', '--message', 'second commit'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'second commit'])
         
         test_file.write("test3\n")
         test_file.flush()
         
-        run(['svn', 'commit', '--quiet', '--message', 'third commit'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'third commit'])
 
         test_file.write("test4\n")
         test_file.close()
 
-        run(['svn', 'commit', '--quiet', '--message', 'fourth commit'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'fourth commit'])
 
         # svn does not seem to update after commit as I would expect.
-        run(['svn', 'update'])
+        run_command(['svn', 'update'])
 
     @classmethod
     def setup(cls, test_object):
@@ -103,18 +101,18 @@ class SVNTestRepository:
         test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path # Not sure this will work on windows
         # git svn complains if we don't pass --pre-1.5-compatible, not sure why:
         # Expected FS format '2'; found format '3' at /usr/local/libexec/git-core//git-svn line 1477
-        run(['svnadmin', 'create', '--pre-1.5-compatible', test_object.svn_repo_path])
+        run_command(['svnadmin', 'create', '--pre-1.5-compatible', test_object.svn_repo_path])
 
         # Create a test svn checkout
         test_object.svn_checkout_path = tempfile.mkdtemp(suffix="svn_test_checkout")
-        run(['svn', 'checkout', '--quiet', test_object.svn_repo_url, test_object.svn_checkout_path])
+        run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url, test_object.svn_checkout_path])
 
         cls._setup_test_commits(test_object)
 
     @classmethod
     def tear_down(cls, test_object):
-        run(['rm', '-rf', test_object.svn_repo_path])
-        run(['rm', '-rf', test_object.svn_checkout_path])
+        run_command(['rm', '-rf', test_object.svn_repo_path])
+        run_command(['rm', '-rf', test_object.svn_checkout_path])
 
 # For testing the SCM baseclass directly.
 class SCMClassTests(unittest.TestCase):
@@ -126,20 +124,20 @@ class SCMClassTests(unittest.TestCase):
 
     def test_run_command_with_pipe(self):
         input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null)
-        self.assertEqual(SCM.run_command(['grep', 'bar'], input=input_process.stdout), "bar\n")
+        self.assertEqual(run_command(['grep', 'bar'], input=input_process.stdout), "bar\n")
 
         # Test the non-pipe case too:
-        self.assertEqual(SCM.run_command(['grep', 'bar'], input="foo\nbar"), "bar\n")
+        self.assertEqual(run_command(['grep', 'bar'], input="foo\nbar"), "bar\n")
 
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
         # Test when the input pipe process fails.
         input_process = subprocess.Popen(command_returns_non_zero, stdout=subprocess.PIPE, stderr=self.dev_null)
         self.assertTrue(input_process.poll() != 0)
-        self.assertRaises(ScriptError, SCM.run_command, ['grep', 'bar'], input=input_process.stdout)
+        self.assertRaises(ScriptError, run_command, ['grep', 'bar'], input=input_process.stdout)
 
         # Test when the run_command process fails.
         input_process = subprocess.Popen(['echo', 'foo\nbar'], stdout=subprocess.PIPE, stderr=self.dev_null) # grep shows usage and calls exit(2) when called w/o arguments.
-        self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero, input=input_process.stdout)
+        self.assertRaises(ScriptError, run_command, command_returns_non_zero, input=input_process.stdout)
 
     def test_error_handlers(self):
         git_failure_message="Merge conflict during commit: Your file or directory 'WebCore/ChangeLog' is probably out-of-date: resource out of date; try updating at /usr/local/libexec/git-core//git-svn line 469"
@@ -148,13 +146,13 @@ svn: File or directory 'ChangeLog' is out of date; try updating
 svn: resource out of date; try updating
 """
         command_does_not_exist = ['does_not_exist', 'invalid_option']
-        self.assertRaises(OSError, SCM.run_command, command_does_not_exist)
-        self.assertRaises(OSError, SCM.run_command, command_does_not_exist, error_handler=ignore_error)
+        self.assertRaises(OSError, run_command, command_does_not_exist)
+        self.assertRaises(OSError, run_command, command_does_not_exist, error_handler=ignore_error)
 
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
-        self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero)
+        self.assertRaises(ScriptError, run_command, command_returns_non_zero)
         # Check if returns error text:
-        self.assertTrue(SCM.run_command(command_returns_non_zero, error_handler=ignore_error))
+        self.assertTrue(run_command(command_returns_non_zero, error_handler=ignore_error))
 
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=git_failure_message))
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=svn_failure_message))
@@ -365,14 +363,14 @@ class SVNTest(SCMTest):
         * scm_unittest.py:
 """
         write_into_file_at_path('ChangeLog', first_entry)
-        run(['svn', 'add', 'ChangeLog'])
-        run(['svn', 'commit', '--quiet', '--message', 'ChangeLog commit'])
+        run_command(['svn', 'add', 'ChangeLog'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'ChangeLog commit'])
 
         # Patch files were created against just 'first_entry'.
         # Add a second commit to make svn-apply have to apply the patches with fuzz.
         changelog_contents = "%s\n%s" % (intermediate_entry, first_entry)
         write_into_file_at_path('ChangeLog', changelog_contents)
-        run(['svn', 'commit', '--quiet', '--message', 'Intermediate commit'])
+        run_command(['svn', 'commit', '--quiet', '--message', 'Intermediate commit'])
 
         self._setup_webkittools_scripts_symlink(self.scm)
         self.scm.apply_patch(self._create_patch(one_line_overlap_patch))
@@ -397,7 +395,7 @@ class SVNTest(SCMTest):
         os.mkdir(test_dir_path)
         test_file_path = os.path.join(test_dir_path, 'test_file2')
         write_into_file_at_path(test_file_path, 'test content')
-        run(['svn', 'add', 'test_dir'])
+        run_command(['svn', 'add', 'test_dir'])
 
         # create_patch depends on 'svn-create-patch', so make a dummy version.
         scripts_path = os.path.join(self.svn_checkout_path, 'WebKitTools', 'Scripts')
@@ -442,13 +440,13 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_apply_svn_patch(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(run(['svn', 'diff', '-r4:3']))
+        patch = self._create_patch(run_command(['svn', 'diff', '-r4:3']))
         self._setup_webkittools_scripts_symlink(scm)
         scm.apply_patch(patch)
 
     def test_apply_svn_patch_force(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(run(['svn', 'diff', '-r2:4']))
+        patch = self._create_patch(run_command(['svn', 'diff', '-r2:4']))
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
 
@@ -477,7 +475,7 @@ class GitTest(SCMTest):
         run_silent(['git', 'svn', '--quiet', 'clone', self.svn_repo_url, self.git_checkout_path])
 
     def _tear_down_git_clone_of_svn_repository(self):
-        run(['rm', '-rf', self.git_checkout_path])
+        run_command(['rm', '-rf', self.git_checkout_path])
 
     def setUp(self):
         SVNTestRepository.setup(self)
@@ -497,11 +495,11 @@ class GitTest(SCMTest):
     def test_rebase_in_progress(self):
         svn_test_file = os.path.join(self.svn_checkout_path, 'test_file')
         write_into_file_at_path(svn_test_file, "svn_checkout")
-        run(['svn', 'commit', '--message', 'commit to conflict with git commit'], cwd=self.svn_checkout_path)
+        run_command(['svn', 'commit', '--message', 'commit to conflict with git commit'], cwd=self.svn_checkout_path)
 
         git_test_file = os.path.join(self.git_checkout_path, 'test_file')
         write_into_file_at_path(git_test_file, "git_checkout")
-        run(['git', 'commit', '-a', '-m', 'commit to be thrown away by rebase abort'])
+        run_command(['git', 'commit', '-a', '-m', 'commit to be thrown away by rebase abort'])
 
         # --quiet doesn't make git svn silent, so use run_silent to redirect output
         self.assertRaises(ScriptError, run_silent, ['git', 'svn', '--quiet', 'rebase']) # Will fail due to a conflict leaving us mid-rebase.
@@ -533,19 +531,19 @@ class GitTest(SCMTest):
 
         actual_commits = scm.commit_ids_from_commitish_arguments([commit_range])
         expected_commits = []
-        expected_commits += reversed(run(['git', 'rev-list', commit_range]).splitlines())
+        expected_commits += reversed(run_command(['git', 'rev-list', commit_range]).splitlines())
 
         self.assertEqual(actual_commits, expected_commits)
 
     def test_apply_git_patch(self):
         scm = detect_scm_system(self.git_checkout_path)
-        patch = self._create_patch(run(['git', 'diff', 'HEAD..HEAD^']))
+        patch = self._create_patch(run_command(['git', 'diff', 'HEAD..HEAD^']))
         self._setup_webkittools_scripts_symlink(scm)
         scm.apply_patch(patch)
 
     def test_apply_git_patch_force(self):
         scm = detect_scm_system(self.git_checkout_path)
-        patch = self._create_patch(run(['git', 'diff', 'HEAD~2..HEAD']))
+        patch = self._create_patch(run_command(['git', 'diff', 'HEAD~2..HEAD']))
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
 
@@ -568,21 +566,21 @@ class GitTest(SCMTest):
         test_file_path = os.path.join(self.git_checkout_path, test_file_name)
         file_contents = ''.join(map(chr, range(256)))
         write_into_file_at_path(test_file_path, file_contents)
-        run(['git', 'add', test_file_name])
+        run_command(['git', 'add', test_file_name])
         patch = scm.create_patch()
         self.assertTrue(re.search(r'\nliteral 0\n', patch))
         self.assertTrue(re.search(r'\nliteral 256\n', patch))
 
         # Check if we can apply the created patch.
-        run(['git', 'rm', '-f', test_file_name])
+        run_command(['git', 'rm', '-f', test_file_name])
         self._setup_webkittools_scripts_symlink(scm)
         self.scm.apply_patch(self._create_patch(patch))
         self.assertEqual(file_contents, read_from_path(test_file_path))
 
         # Check if we can create a patch from a local commit.
         write_into_file_at_path(test_file_path, file_contents)
-        run(['git', 'add', test_file_name])
-        run(['git', 'commit', '-m', 'binary diff'])
+        run_command(['git', 'add', test_file_name])
+        run_command(['git', 'commit', '-m', 'binary diff'])
         patch_from_local_commit = scm.create_patch_from_local_commit('HEAD')
         self.assertTrue(re.search(r'\nliteral 0\n', patch_from_local_commit))
         self.assertTrue(re.search(r'\nliteral 256\n', patch_from_local_commit))

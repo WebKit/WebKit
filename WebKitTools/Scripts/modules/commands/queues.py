@@ -38,8 +38,7 @@ from modules.landingsequence import LandingSequence, ConditionalLandingSequence,
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
-from modules.processutils import run_and_throw_if_fail
-from modules.scm import ScriptError
+from modules.processutils import run_and_throw_if_fail, ScriptError
 from modules.statusbot import StatusBot
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
