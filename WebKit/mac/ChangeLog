@@ -1,3 +1,17 @@
+2009-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7295070> WebKit video fullscreen keeps playing after closing the window
+        
+        Fix a leak of the QTMovieView when exiting fullscreen video, and remove the
+        old workaround.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]): Set the movie view as the contentView directly.
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]): Cast the contentView to a movie view.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Remove the old workaround.
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by David Levin.

@@ -49,11 +49,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 {
     SEL _controllerActionOnAnimationEnd;
     WebWindowScaleAnimation *_fullscreenAnimation; // (retain)
-    QTMovieView *_movieView; // (retain)
 }
 - (void)animateFromRect:(NSRect)startRect toRect:(NSRect)endRect withSubAnimation:(NSAnimation *)subAnimation controllerAction:(SEL)controllerAction;
-- (QTMovieView *)movieView;
-- (void)setMovieView:(QTMovieView *)movieView;
 @end
 
 @interface WebVideoFullscreenController(HUDWindowControllerDelegate) <WebVideoFullscreenHUDWindowControllerDelegate>
@@ -90,7 +87,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
     QTMovieView *view = [[getQTMovieViewClass() alloc] init];
     [view setFillColor:[NSColor clearColor]];
-    [window setMovieView:view];
+    [window setContentView:view];
     [view setControllerVisible:NO];
     [view setPreservesAspectRatio:YES];
     if (_mediaElement)
@@ -109,10 +106,10 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 {
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
-        QTMovieView *movieView = [[self fullscreenWindow] movieView];
+        QTMovieView *movieView = (QTMovieView *)[[self fullscreenWindow] contentView];
         QTMovie *movie = _mediaElement->platformMedia().qtMovie;
 
-        ASSERT(movieView);
+        ASSERT(movieView && [movieView isKindOfClass:[getQTMovieViewClass() class]]);
         ASSERT(movie);
         [movieView setMovie:movie];
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -144,9 +141,6 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 
 - (void)windowDidExitFullscreen
 {
-    // If we don't clear the movie, underlying movie data structures are leaked and the movie keeps playing <rdar://problem/7295070>
-    [[[self fullscreenWindow] movieView] setMovie:nil];
-
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];
@@ -335,20 +329,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 {
     ASSERT(!_fullscreenAnimation);
     [super dealloc];
-}
-
-- (QTMovieView *)movieView
-{
-    return _movieView;
-}
-
-- (void)setMovieView:(QTMovieView *)movieView
-{
-    if (_movieView == movieView)
-        return;
-    [_movieView release];
-    _movieView = [movieView retain];
-    [self setContentView:_movieView];
 }
 
 - (BOOL)resignFirstResponder
