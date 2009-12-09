@@ -1,5 +1,14 @@
 2009-12-09  Brent Fulgham  <bfulgham@webkit.org>
 
+        Revert incorrect commit-box update r51911.
+        It mistakenly set the selectAll implementation in the
+        deslectAll method. 
+
+        * WebFrame.cpp:
+        (WebFrame::deselectAll):
+
+2009-12-09  Brent Fulgham  <bfulgham@webkit.org>
+
         Reviewed by Darin Adler.
 
         Provide an implementation for 'selectAll'
