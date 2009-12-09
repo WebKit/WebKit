@@ -1,5 +1,18 @@
 2009-12-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Darin Adler.
+
+        Adds ENABLE(INSPECTOR) guards around script binding methods that use types
+        defined only when INSPECTOR is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=32328
+
+        Build fix only, no new tests.
+
+        * bindings/js/ScriptValue.cpp: Modified. Added ENABLE(INSPECTOR) guard to ScriptValue::quarantineValue.
+        * bindings/v8/ScriptObject.cpp: Modified. Added ENABLE(INSPECTOR) guard to some overloads of ScriptGlobalObject::set.
+
+2009-12-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Adam Barth.
 
         Adds Android Makefiles for building with V8.
