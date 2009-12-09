@@ -36,6 +36,7 @@
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
 #include "WebGLShader.h"
+#include "WebGLUniformLocation.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
@@ -1147,13 +1148,15 @@ WebGLGetInfo WebGLRenderingContext::getTexParameter(unsigned long target, unsign
     }
 }
 
-WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, long location, ExceptionCode& ec)
+WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebGLUniformLocation* uniformLocation, ExceptionCode& ec)
 {
-    if (!program || program->context() != this) {
+    if (!program || uniformLocation->program() != program || program->context() != this) {
         // FIXME: raise GL_INVALID_VALUE error
         ec = TYPE_MISMATCH_ERR;
         return WebGLGetInfo();
     }
+    long location = uniformLocation->location();
+    
     WebGLStateRestorer(this, false);
     // FIXME: make this more efficient using WebGLUniformLocation and caching types in it
     int activeUniforms = 0;
@@ -1275,13 +1278,14 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, long locat
     return WebGLGetInfo();
 }
 
-long WebGLRenderingContext::getUniformLocation(WebGLProgram* program, const String& name, ExceptionCode& ec)
+PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGLProgram* program, const String& name, ExceptionCode& ec)
 {
     if (!program || program->context() != this) {
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
-    return m_context->getUniformLocation(program, name);
+    WebGLStateRestorer(this, false);
+    return WebGLUniformLocation::create(program, m_context->getUniformLocation(program, name));
 }
 
 WebGLGetInfo WebGLRenderingContext::getVertexAttrib(unsigned long index, unsigned long pname, ExceptionCode& ec)
@@ -1646,289 +1650,469 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1f(long location, float x)
+void WebGLRenderingContext::uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode& ec)
 {
-    m_context->uniform1f(location, x);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    m_context->uniform1f(location->location(), x);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1fv(long location, WebGLFloatArray* v)
+void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
-    m_context->uniform1fv(location, v->data(), v->length());
+    m_context->uniform1fv(location->location(), v->data(), v->length());
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1fv(long location, float* v, int size)
+void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
-    m_context->uniform1fv(location, v, size);
+    m_context->uniform1fv(location->location(), v, size);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1i(long location, int x)
+void WebGLRenderingContext::uniform1i(const WebGLUniformLocation* location, int x, ExceptionCode& ec)
 {
-    m_context->uniform1i(location, x);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform1i(location->location(), x);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1iv(long location, WebGLIntArray* v)
+void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
-    m_context->uniform1iv(location, v->data(), v->length());
+    m_context->uniform1iv(location->location(), v->data(), v->length());
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform1iv(long location, int* v, int size)
+void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
-    m_context->uniform1iv(location, v, size);
+    m_context->uniform1iv(location->location(), v, size);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2f(long location, float x, float y)
+void WebGLRenderingContext::uniform2f(const WebGLUniformLocation* location, float x, float y, ExceptionCode& ec)
 {
-    m_context->uniform2f(location, x, y);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform2f(location->location(), x, y);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2fv(long location, WebGLFloatArray* v)
+void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context->uniform2fv(location, v->data(), v->length() / 2);
+    m_context->uniform2fv(location->location(), v->data(), v->length() / 2);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2fv(long location, float* v, int size)
+void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context->uniform2fv(location, v, size / 2);
+    m_context->uniform2fv(location->location(), v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2i(long location, int x, int y)
+void WebGLRenderingContext::uniform2i(const WebGLUniformLocation* location, int x, int y, ExceptionCode& ec)
 {
-    m_context->uniform2i(location, x, y);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform2i(location->location(), x, y);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2iv(long location, WebGLIntArray* v)
+void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context->uniform2iv(location, v->data(), v->length() / 2);
+    m_context->uniform2iv(location->location(), v->data(), v->length() / 2);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform2iv(long location, int* v, int size)
+void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 2
-    m_context->uniform2iv(location, v, size / 2);
+    m_context->uniform2iv(location->location(), v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3f(long location, float x, float y, float z)
+void WebGLRenderingContext::uniform3f(const WebGLUniformLocation* location, float x, float y, float z, ExceptionCode& ec)
 {
-    m_context->uniform3f(location, x, y, z);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform3f(location->location(), x, y, z);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3fv(long location, WebGLFloatArray* v)
+void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context->uniform3fv(location, v->data(), v->length() / 3);
+    m_context->uniform3fv(location->location(), v->data(), v->length() / 3);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3fv(long location, float* v, int size)
+void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context->uniform3fv(location, v, size / 3);
+    m_context->uniform3fv(location->location(), v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3i(long location, int x, int y, int z)
+void WebGLRenderingContext::uniform3i(const WebGLUniformLocation* location, int x, int y, int z, ExceptionCode& ec)
 {
-    m_context->uniform3i(location, x, y, z);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform3i(location->location(), x, y, z);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3iv(long location, WebGLIntArray* v)
+void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context->uniform3iv(location, v->data(), v->length() / 3);
+    m_context->uniform3iv(location->location(), v->data(), v->length() / 3);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform3iv(long location, int* v, int size)
+void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 3
-    m_context->uniform3iv(location, v, size / 3);
+    m_context->uniform3iv(location->location(), v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4f(long location, float x, float y, float z, float w)
+void WebGLRenderingContext::uniform4f(const WebGLUniformLocation* location, float x, float y, float z, float w, ExceptionCode& ec)
 {
-    m_context->uniform4f(location, x, y, z, w);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform4f(location->location(), x, y, z, w);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4fv(long location, WebGLFloatArray* v)
+void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniform4fv(location, v->data(), v->length() / 4);
+    m_context->uniform4fv(location->location(), v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4fv(long location, float* v, int size)
+void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniform4fv(location, v, size / 4);
+    m_context->uniform4fv(location->location(), v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4i(long location, int x, int y, int z, int w)
+void WebGLRenderingContext::uniform4i(const WebGLUniformLocation* location, int x, int y, int z, int w, ExceptionCode& ec)
 {
-    m_context->uniform4i(location, x, y, z, w);
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
+    m_context->uniform4i(location->location(), x, y, z, w);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4iv(long location, WebGLIntArray* v)
+void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, WebGLIntArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniform4iv(location, v->data(), v->length() / 4);
+    m_context->uniform4iv(location->location(), v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniform4iv(long location, int* v, int size)
+void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniform4iv(location, v, size / 4);
+    m_context->uniform4iv(location->location(), v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix2fv(long location, bool transpose, WebGLFloatArray* v)
+void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniformMatrix2fv(location, transpose, v->data(), v->length() / 4);
+    m_context->uniformMatrix2fv(location->location(), transpose, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix2fv(long location, bool transpose, float* v, int size)
+void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 4
-    m_context->uniformMatrix2fv(location, transpose, v, size / 4);
+    m_context->uniformMatrix2fv(location->location(), transpose, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix3fv(long location, bool transpose, WebGLFloatArray* v)
+void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 9
-    m_context->uniformMatrix3fv(location, transpose, v->data(), v->length() / 9);
+    m_context->uniformMatrix3fv(location->location(), transpose, v->data(), v->length() / 9);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix3fv(long location, bool transpose, float* v, int size)
+void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 9
-    m_context->uniformMatrix3fv(location, transpose, v, size / 9);
+    m_context->uniformMatrix3fv(location->location(), transpose, v, size / 9);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix4fv(long location, bool transpose, WebGLFloatArray* v)
+void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, WebGLFloatArray* v, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 16
-    m_context->uniformMatrix4fv(location, transpose, v->data(), v->length() / 16);
+    m_context->uniformMatrix4fv(location->location(), transpose, v->data(), v->length() / 16);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::uniformMatrix4fv(long location, bool transpose, float* v, int size)
+void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, float* v, int size, ExceptionCode& ec)
 {
+    if (!location || location->program() != m_currentProgram) {
+        // FIXME: raise GL_INVALID_OPERATION error
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    
     // FIXME: we need to throw if no array passed in
     if (!v)
         return;
         
     // FIXME: length needs to be a multiple of 16
-    m_context->uniformMatrix4fv(location, transpose, v, size / 16);
+    m_context->uniformMatrix4fv(location->location(), transpose, v, size / 16);
     cleanupAfterGraphicsCall(false);
 }
 

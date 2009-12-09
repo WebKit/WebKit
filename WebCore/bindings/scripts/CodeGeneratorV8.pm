@@ -1816,6 +1816,7 @@ sub IsRefPtrType
     return 1 if $type eq "WebGLShader";
     return 1 if $type eq "WebGLShortArray";
     return 1 if $type eq "WebGLTexture";
+    return 1 if $type eq "WebGLUniformLocation";
     return 1 if $type eq "WebGLUnsignedByteArray";
     return 1 if $type eq "WebGLUnsignedIntArray";
     return 1 if $type eq "WebGLUnsignedShortArray";
@@ -1918,6 +1919,7 @@ my %typeCanFailConversion = (
     "WebGLShader" => 0,
     "WebGLShortArray" => 0,
     "WebGLTexture" => 0,
+    "WebGLUniformLocation" => 0,
     "CompareHow" => 0,
     "DataGridColumn" => 0,
     "DOMString" => 0,

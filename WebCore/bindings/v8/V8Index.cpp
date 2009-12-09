@@ -407,6 +407,7 @@
 #include "V8WebGLShader.h"
 #include "V8WebGLShortArray.h"
 #include "V8WebGLTexture.h"
+#include "V8WebGLUniformLocation.h"
 #include "V8WebGLUnsignedByteArray.h"
 #include "V8WebGLUnsignedIntArray.h"
 #include "V8WebGLUnsignedShortArray.h"

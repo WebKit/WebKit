@@ -57,6 +57,7 @@
 #include "bindings/V8WebGLShader.cpp"
 #include "bindings/V8WebGLShortArray.cpp"
 #include "bindings/V8WebGLTexture.cpp"
+#include "bindings/V8WebGLUniformLocation.cpp"
 #include "bindings/V8WebGLUnsignedByteArray.cpp"
 #include "bindings/V8WebGLUnsignedIntArray.cpp"
 #include "bindings/V8WebGLUnsignedShortArray.cpp"

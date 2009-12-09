@@ -156,6 +156,11 @@
 		0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */; };
 		0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */; };
+		0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */; };
+		0C3F1F5C10C8871200D72CE1 /* WebGLUniformLocation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */; };
+		0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */; };
+		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
 		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
 		0F500AAF0F54DB1B00EEF928 /* TransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F500AAE0F54DB1B00EEF928 /* TransformState.h */; };
@@ -5351,6 +5356,11 @@
 		0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableLoader.cpp; sourceTree = "<group>"; };
 		0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableLoader.h; sourceTree = "<group>"; };
 		0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLineBoxList.h; sourceTree = "<group>"; };
+		0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLUniformLocation.cpp; path = canvas/WebGLUniformLocation.cpp; sourceTree = "<group>"; };
+		0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLUniformLocation.h; path = canvas/WebGLUniformLocation.h; sourceTree = "<group>"; };
+		0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLUniformLocation.idl; path = canvas/WebGLUniformLocation.idl; sourceTree = "<group>"; };
+		0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLUniformLocation.cpp; sourceTree = "<group>"; };
+		0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLUniformLocation.h; sourceTree = "<group>"; };
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
 		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationControllerPrivate.h; path = animation/AnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F500AAE0F54DB1B00EEF928 /* TransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformState.h; sourceTree = "<group>"; };
@@ -10739,6 +10749,9 @@
 				49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */,
 				49C7B9C61042D32F0009D447 /* WebGLTexture.h */,
 				49C7B9C71042D32F0009D447 /* WebGLTexture.idl */,
+				0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */,
+				0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */,
+				0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */,
 				49EECDD610503C2300099FAB /* WebGLUnsignedByteArray.cpp */,
 				49EECDD710503C2300099FAB /* WebGLUnsignedByteArray.h */,
 				49EECDD810503C2300099FAB /* WebGLUnsignedByteArray.idl */,
@@ -12899,6 +12912,8 @@
 				49EECEF9105070C400099FAB /* JSWebGLShortArray.h */,
 				49C7B9911042D2D30009D447 /* JSWebGLTexture.cpp */,
 				49C7B9921042D2D30009D447 /* JSWebGLTexture.h */,
+				0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */,
+				0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */,
 				49EECEFA105070C400099FAB /* JSWebGLUnsignedByteArray.cpp */,
 				49EECEFB105070C400099FAB /* JSWebGLUnsignedByteArray.h */,
 				49EECEFC105070C400099FAB /* JSWebGLUnsignedIntArray.cpp */,
@@ -18229,6 +18244,8 @@
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 				599D1E3310C97D6E00E0EF12 /* jni_utility_private.h in Headers */,
 				7ADE722610CBBB9B006B3B3A /* ContextMenuSelectionHandler.h in Headers */,
+ 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
+ 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18330,6 +18347,7 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				5174E20C10A1F49A00F95E6F /* PopStateEvent.idl in Resources */,
+				0C3F1F5C10C8871200D72CE1 /* WebGLUniformLocation.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20383,6 +20401,8 @@
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
 				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
 				599D1E3210C97D6E00E0EF12 /* jni_utility_private.cpp in Sources */,
+				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
+				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

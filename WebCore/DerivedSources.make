@@ -88,6 +88,7 @@ DOM_CLASSES = \
     WebGLShader \
     WebGLShortArray \
     WebGLTexture \
+    WebGLUniformLocation \
     WebGLUnsignedByteArray \
     WebGLUnsignedIntArray \
     WebGLUnsignedShortArray \

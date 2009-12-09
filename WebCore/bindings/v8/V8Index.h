@@ -460,6 +460,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(WEBGLSHADER, WebGLShader)                                         \
     V(WEBGLSHORTARRAY, WebGLShortArray)                                 \
     V(WEBGLTEXTURE, WebGLTexture)                                       \
+    V(WEBGLUNIFORMLOCATION, WebGLUniformLocation)                       \
     V(WEBGLUNSIGNEDBYTEARRAY, WebGLUnsignedByteArray)                   \
     V(WEBGLUNSIGNEDINTARRAY, WebGLUnsignedIntArray)                     \
     V(WEBGLUNSIGNEDSHORTARRAY, WebGLUnsignedShortArray)

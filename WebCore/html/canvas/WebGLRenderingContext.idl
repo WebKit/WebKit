@@ -567,10 +567,10 @@ module html {
         // any getTexParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
         [Custom] void getTexParameter();
 
-        // any getUniform(in WebGLProgram program, in long location) raises(DOMException);
+        // any getUniform(in WebGLProgram program, in WebGLUniformLocation location) raises(DOMException);
         [Custom] void getUniform();
-        
-        long getUniformLocation(in WebGLProgram program, in DOMString name) raises(DOMException);
+
+        WebGLUniformLocation getUniformLocation(in WebGLProgram program, in DOMString name) raises(DOMException);
 
         // any getVertexAttrib(in unsigned long index, in unsigned long pname) raises(DOMException);
         [Custom] void getVertexAttrib();
@@ -638,26 +638,26 @@ module html {
         //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         [Custom] void texSubImage2D();
 
-        void uniform1f(in long location, in float x);
-        [Custom] void uniform1fv(in long location, in WebGLFloatArray v);
-        void uniform1i(in long location, in long x);
-        [Custom] void uniform1iv(in long location, in WebGLIntArray v);
-        void uniform2f(in long location, in float x, in float y);
-        [Custom] void uniform2fv(in long location, in WebGLFloatArray v);
-        void uniform2i(in long location, in long x, in long y);
-        [Custom] void uniform2iv(in long location, in WebGLIntArray v);
-        void uniform3f(in long location, in float x, in float y, in float z);
-        [Custom] void uniform3fv(in long location, in WebGLFloatArray v);
-        void uniform3i(in long location, in long x, in long y, in long z);
-        [Custom] void uniform3iv(in long location, in WebGLIntArray v);
-        void uniform4f(in long location, in float x, in float y, in float z, in float w);
-        [Custom] void uniform4fv(in long location, in WebGLFloatArray v);
-        void uniform4i(in long location, in long x, in long y, in long z, in long w);
-        [Custom] void uniform4iv(in long location, in WebGLIntArray v);
+        void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
+        [Custom] void uniform1fv(in WebGLUniformLocation location, in WebGLFloatArray v) raises(DOMException);
+        void uniform1i(in WebGLUniformLocation location, in long x) raises(DOMException);
+        [Custom] void uniform1iv(in WebGLUniformLocation location, in WebGLIntArray v) raises(DOMException);
+        void uniform2f(in WebGLUniformLocation location, in float x, in float y) raises(DOMException);
+        [Custom] void uniform2fv(in WebGLUniformLocation location, in WebGLFloatArray v) raises(DOMException);
+        void uniform2i(in WebGLUniformLocation location, in long x, in long y) raises(DOMException);
+        [Custom] void uniform2iv(in WebGLUniformLocation location, in WebGLIntArray v) raises(DOMException);
+        void uniform3f(in WebGLUniformLocation location, in float x, in float y, in float z) raises(DOMException);
+        [Custom] void uniform3fv(in WebGLUniformLocation location, in WebGLFloatArray v) raises(DOMException);
+        void uniform3i(in WebGLUniformLocation location, in long x, in long y, in long z) raises(DOMException);
+        [Custom] void uniform3iv(in WebGLUniformLocation location, in WebGLIntArray v) raises(DOMException);
+        void uniform4f(in WebGLUniformLocation location, in float x, in float y, in float z, in float w) raises(DOMException);
+        [Custom] void uniform4fv(in WebGLUniformLocation location, in WebGLFloatArray v) raises(DOMException);
+        void uniform4i(in WebGLUniformLocation location, in long x, in long y, in long z, in long w) raises(DOMException);
+        [Custom] void uniform4iv(in WebGLUniformLocation location, in WebGLIntArray v) raises(DOMException);
 
-        [Custom] void uniformMatrix2fv(in long location, in boolean transpose, in WebGLFloatArray array);
-        [Custom] void uniformMatrix3fv(in long location, in boolean transpose, in WebGLFloatArray array);
-        [Custom] void uniformMatrix4fv(in long location, in boolean transpose, in WebGLFloatArray array);
+        [Custom] void uniformMatrix2fv(in WebGLUniformLocation location, in boolean transpose, in WebGLFloatArray array) raises(DOMException);
+        [Custom] void uniformMatrix3fv(in WebGLUniformLocation location, in boolean transpose, in WebGLFloatArray array) raises(DOMException);
+        [Custom] void uniformMatrix4fv(in WebGLUniformLocation location, in boolean transpose, in WebGLFloatArray array) raises(DOMException);
 
         void         useProgram(in WebGLProgram program) raises(DOMException);
         void         validateProgram(in WebGLProgram program) raises(DOMException);

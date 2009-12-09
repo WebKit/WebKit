@@ -1,3 +1,15 @@
+2009-12-08  Peterson Trethewey  <petersont@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Implement WebGLUniformLocation and change API to use it.
+        https://bugs.webkit.org/show_bug.cgi?id=31173
+
+        * fast/canvas/webgl/resources/structUniformShader.vert: Added.
+        * fast/canvas/webgl/script-tests/uniform-location.js: Added.
+        * fast/canvas/webgl/uniform-location-expected.txt: Added.
+        * fast/canvas/webgl/uniform-location.html: Added.
+
 2009-12-08  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Adler.
