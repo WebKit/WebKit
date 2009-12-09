@@ -1,5 +1,14 @@
 2009-12-09  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Fix ScriptError includes.  I don't understand why these
+        didn't throw during unit testing...
+
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/logging_unittest.py:
+        * Scripts/modules/workqueue.py:
+
+2009-12-09  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Remove unused PatchCollection class

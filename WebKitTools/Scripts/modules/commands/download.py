@@ -36,11 +36,11 @@ from modules.bugzilla import parse_bug_id
 from modules.buildsteps import BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, BuildStep, CheckStyleStep, PrepareChangelogStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
+from modules.executive import ScriptError
 from modules.grammar import pluralize
 from modules.landingsequence import LandingSequence
 from modules.logging import error, log
 from modules.multicommandtool import Command
-from modules.processutils import ScriptError
 from modules.stepsequence import StepSequence
 
 

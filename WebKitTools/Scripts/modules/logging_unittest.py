@@ -32,8 +32,8 @@ import StringIO
 import tempfile
 import unittest
 
+from modules.executive import ScriptError
 from modules.logging import *
-from modules.processutils import ScriptError
 
 class LoggingTest(unittest.TestCase):
 
