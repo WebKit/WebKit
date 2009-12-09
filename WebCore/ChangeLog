@@ -1,3 +1,18 @@
+2009-12-09  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium build fix.
+
+        No new tests.
+
+        * bindings/v8/DOMData.cpp
+        * bindings/v8/V8DOMWrapper.cpp
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+
 2009-12-09  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Pavel Feldman.

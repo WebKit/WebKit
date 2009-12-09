@@ -51,6 +51,7 @@
 #include "V8IsolatedWorld.h"
 #include "V8Proxy.h"
 #include "WebGLArray.h"
+#include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
