@@ -1,3 +1,17 @@
+2009-12-09  Søren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Isolated world reuse failure
+        https://bugs.webkit.org/show_bug.cgi?id=32306
+
+        Fixed bug introduced in r51407: (http://trac.webkit.org/changeset/51407) which caused layout test
+        LayoutTests/http/tests/security/isolatedWorld/world-reuse.html to fail.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId):
+        (WebCore::V8Proxy::contextDebugId):
+
 2009-12-09  Patrick Scott  <phanna@email.unc.edu>
 
         Fix the build with ENABLE_ORIENTATION_EVENTS

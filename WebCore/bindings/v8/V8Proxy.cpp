@@ -389,11 +389,12 @@ bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetCont
     if (m_context.IsEmpty())
         return false;
     int debugId = contextDebugId(m_context);
-    if (debugId == -1)
-        return false;
 
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
+    if (debugId == -1)
+        snprintf(buffer, sizeof(buffer), "injected");
+    else
+        snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
     targetContext->SetData(v8::String::New(buffer));
 
     return true;
@@ -1378,6 +1379,8 @@ int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
         return -1;
     v8::String::AsciiValue ascii(context->GetData());
     char* comma = strnstr(*ascii, ",", ascii.length());
+    if (!comma)
+        return -1;
     return atoi(comma + 1);
 }
 
