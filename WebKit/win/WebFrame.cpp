@@ -986,7 +986,14 @@ HRESULT STDMETHODCALLTYPE WebFrame::selectedString(
 
 HRESULT STDMETHODCALLTYPE WebFrame::selectAll()
 {
-    return E_NOTIMPL;
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    if (!coreFrame->editor()->command("SelectAll").execute())
+        return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::deselectAll()
