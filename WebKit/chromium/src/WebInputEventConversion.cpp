@@ -229,6 +229,7 @@ WebMouseEventBuilder::WebMouseEventBuilder(const ScrollView* view, const MouseEv
     windowY = p.y();
     x = event.offsetX();
     y = event.offsetY();
+    clickCount = event.detail();
 }
 
 WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
