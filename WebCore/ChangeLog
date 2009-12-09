@@ -1,3 +1,17 @@
+2009-12-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        Ogg mimetypes are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=27113
+
+        The ogg extension is handled by audio/ogg instead of
+        application/ogg. See
+        http://wiki.xiph.org/MIME_Types_and_File_Extensions
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::TypeExtensionPair::):
+
 2009-12-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
