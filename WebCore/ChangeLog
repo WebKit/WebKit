@@ -1,3 +1,13 @@
+2009-12-09  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium tickmarks in scrollbar now UX approved.
+        https://bugs.webkit.org/show_bug.cgi?id=32069
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
 2009-12-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.

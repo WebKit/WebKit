@@ -415,12 +415,10 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     Vector<IntRect> tickmarks;
     scrollbar->client()->getTickmarks(tickmarks);
     if (scrollbar->orientation() == VerticalScrollbar && tickmarks.size()) {
-        static RefPtr<Image> dash = Image::loadPlatformResource("tickmarkDash");
-        if (dash->isNull()) {
-            ASSERT_NOT_REACHED();
-        }
-
         drawingContext->save();
+        drawingContext->setShouldAntialias(false);
+        drawingContext->setStrokeColor(Color(0xCC, 0xAA, 0x00, 0xFF), DeviceColorSpace);
+        drawingContext->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), DeviceColorSpace);
 
         IntRect thumbArea = trackRect(scrollbar, false);
         if (!canDrawDirectly) {
@@ -428,17 +426,22 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
             thumbArea.setY(0);
         }
         // The ends are rounded and the thumb doesn't go there.
-        thumbArea.inflateY(-thumbArea.width() * 2 / 3);
+        thumbArea.inflateY(-thumbArea.width());
 
         for (Vector<IntRect>::const_iterator i = tickmarks.begin(); i != tickmarks.end(); ++i) {
             // Calculate how far down (in %) the tick-mark should appear.
             const float percent = static_cast<float>(i->y()) / scrollbar->totalSize();
+            if (percent < 0.0 || percent > 1.0)
+              continue;
 
             // Calculate how far down (in pixels) the tick-mark should appear.
-            const int yPos = thumbArea.topLeft().y() + (thumbArea.height() * percent);
+            const int yPos = static_cast<int>((thumbArea.topLeft().y() + (thumbArea.height() * percent))) & ~1;
 
-            IntPoint tick(thumbArea.topLeft().x(), yPos);
-            drawingContext->drawImage(dash.get(), DeviceColorSpace, tick);
+            // Paint.
+            const int indent = 2;
+            FloatRect tickRect(thumbArea.topLeft().x() + indent, yPos, thumbArea.width() - 2 * indent - 1, 2);
+            drawingContext->fillRect(tickRect);
+            drawingContext->strokeRect(tickRect, 1);
         }
 
         drawingContext->restore();
