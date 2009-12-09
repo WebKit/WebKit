@@ -38,7 +38,7 @@ from modules.grammar import pluralize
 from modules.landingsequence import LandingSequence, LandingSequenceErrorHandler
 from modules.logging import error, log
 from modules.multicommandtool import Command
-from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
+from modules.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.statusbot import StatusBot
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
