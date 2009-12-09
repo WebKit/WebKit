@@ -1,5 +1,11 @@
 2009-12-09  Adam Barth  <abarth@webkit.org>
 
+        Add missing file.
+
+        * Scripts/modules/executive.py: Added.
+
+2009-12-09  Adam Barth  <abarth@webkit.org>
+
         Unreviewed "build" fix.
 
         * Scripts/modules/landingsequence.py:
