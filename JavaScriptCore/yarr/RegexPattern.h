@@ -137,7 +137,7 @@ struct PatternTerm {
 
     PatternTerm(unsigned spatternId)
         : type(TypeBackReference)
-        , invertOrCapture(invertOrCapture)
+        , invertOrCapture(false)
     {
         subpatternId = spatternId;
         quantityType = QuantifierFixedCount;

@@ -1,3 +1,12 @@
+2009-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix a bug found while trying to compile JavaScriptCore with clang++.
+
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm): Don't self assign here.  Use false instead.
+
 2009-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
