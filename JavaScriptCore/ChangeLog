@@ -1,3 +1,24 @@
+2009-12-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        move code generation portions of Nodes.cpp to bytecompiler directory
+        https://bugs.webkit.org/show_bug.cgi?id=32284
+
+        * bytecompiler/NodesCodegen.cpp: Copied from parser/Nodes.cpp. Removed parts that
+        are not about codegen.
+        * parser/Nodes.cpp: Removed everything that is about codegen.
+
+        Update build systems:
+        
+        * Android.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+
 2009-12-08  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

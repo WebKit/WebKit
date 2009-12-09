@@ -35,6 +35,7 @@ LOCAL_SRC_FILES := \
 	bytecode/StructureStubInfo.cpp \
 	\
 	bytecompiler/BytecodeGenerator.cpp \
+	bytecompiler/NodesCodegen.cpp \
 	\
 	debugger/Debugger.cpp \
 	debugger/DebuggerActivation.cpp \

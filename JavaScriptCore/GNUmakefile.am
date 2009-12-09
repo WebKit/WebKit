@@ -342,6 +342,7 @@ javascriptcore_sources += \
 	JavaScriptCore/interpreter/RegisterFile.h \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.h \
+	JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	JavaScriptCore/bytecompiler/LabelScope.h \
 	JavaScriptCore/debugger/Debugger.cpp \
 	JavaScriptCore/debugger/Debugger.h \

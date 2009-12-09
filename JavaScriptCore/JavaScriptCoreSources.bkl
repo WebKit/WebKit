@@ -43,6 +43,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
         bytecompiler/BytecodeGenerator.cpp
+        bytecompiler/NodesCodegen.cpp
     </set>
     <set append="1" var="JSCORE_DEBUGGER_SOURCES">
         debugger/Debugger.cpp

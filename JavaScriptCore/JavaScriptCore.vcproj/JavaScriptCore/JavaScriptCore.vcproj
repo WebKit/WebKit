@@ -1549,6 +1549,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecompiler\NodesCodegen.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecompiler\Label.h"
 				>
 			</File>

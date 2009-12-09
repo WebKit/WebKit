@@ -108,6 +108,7 @@ SOURCES += \
     bytecode/SamplingTool.cpp \
     bytecode/StructureStubInfo.cpp \
     bytecompiler/BytecodeGenerator.cpp \
+    bytecompiler/NodesCodegen.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \

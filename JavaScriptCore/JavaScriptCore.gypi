@@ -64,6 +64,7 @@
             'bytecode/StructureStubInfo.h',
             'bytecompiler/BytecodeGenerator.cpp',
             'bytecompiler/BytecodeGenerator.h',
+            'bytecompiler/NodesCodegen.cpp',
             'bytecompiler/Label.h',
             'bytecompiler/LabelScope.h',
             'bytecompiler/RegisterID.h',
