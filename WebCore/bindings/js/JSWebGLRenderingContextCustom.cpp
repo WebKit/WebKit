@@ -461,7 +461,7 @@ enum DataFunctionMatrixToCall {
     f_uniformMatrix2fv, f_uniformMatrix3fv, f_uniformMatrix4fv
 };
 
-bool functionForUniform(DataFunctionToCall f)
+static bool functionForUniform(DataFunctionToCall f)
 {
     switch (f) {
     case f_uniform1v:

@@ -18244,8 +18244,8 @@
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 				599D1E3310C97D6E00E0EF12 /* jni_utility_private.h in Headers */,
 				7ADE722610CBBB9B006B3B3A /* ContextMenuSelectionHandler.h in Headers */,
- 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
- 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
+				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
+				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

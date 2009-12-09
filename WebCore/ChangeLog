@@ -1,3 +1,10 @@
+2009-12-09  Oliver Hunt  <oliver@apple.com>
+
+        Build fix
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::functionForUniform):
+
 2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Darin Adler.
