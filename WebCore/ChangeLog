@@ -2,6 +2,15 @@
 
         Reviewed by Anders Carlsson.
 
+        Use isMainThread() helper instead of pthread_main_np() != 0.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCScheduleDeallocateOnMainThread):
+
+2009-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add some #ifdefs to allow us to experiment with a single NSView mac WebKit.
 
         * page/Chrome.h:
