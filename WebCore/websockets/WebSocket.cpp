@@ -79,7 +79,7 @@ static bool isValidProtocolString(const WebCore::String& protocol)
         return false;
     const UChar* characters = protocol.characters();
     for (size_t i = 0; i < protocol.length(); i++) {
-        if (characters[i] < 0x21 || characters[i] > 0x7E)
+        if (characters[i] < 0x20 || characters[i] > 0x7E)
             return false;
     }
     return true;

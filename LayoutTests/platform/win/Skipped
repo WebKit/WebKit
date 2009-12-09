@@ -724,3 +724,6 @@ fast/js/excessive-comma-usage.html
 fast/js/math-transforms.html
 fast/js/math.html
 fast/js/lastModified.html
+
+# This test requires new pywebsocket
+websocket/tests/sub-protocol-with-space.html

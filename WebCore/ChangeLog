@@ -1,3 +1,15 @@
+2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebSocket allow space (U+0020) in sub protocol name.
+        https://bugs.webkit.org/show_bug.cgi?id=32266
+
+        Test: websocket/tests/sub-protocol-with-space.html
+
+        * websockets/WebSocket.cpp:
+        (WebCore::isValidProtocolString):
+
 2009-12-08  Peterson Trethewey  <petersont@google.com>
 
         Reviewed by Oliver Hunt.

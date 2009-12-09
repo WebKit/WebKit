@@ -2,6 +2,22 @@
 
         Reviewed by Darin Adler.
 
+        WebSocket allow space (U+0020) in sub protocol name.
+        https://bugs.webkit.org/show_bug.cgi?id=32266
+
+        Skipped sub-protocol-with-space.html for now until new pywebsocket is
+        landed.
+
+        * websocket/tests/bad-sub-protocol-expected.txt:
+        * websocket/tests/script-tests/bad-sub-protocol.js:
+        * websocket/tests/script-tests/sub-protocol-with-space.js: Added.
+        * websocket/tests/sub-protocol-with-space-expected.txt: Added.
+        * websocket/tests/sub-protocol-with-space.html: Added.
+
+2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Add tests that WebSocket-Protocol: is ignored if protocol was not specified.
         https://bugs.webkit.org/show_bug.cgi?id=32267
 
