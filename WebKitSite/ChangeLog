@@ -1,3 +1,17 @@
+2009-12-09  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Added the "using std::foo" rule to the coding style guidelines.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32301
+        
+        Added to the coding style guidelines the "using std::foo" rule
+        checked by the check-webkit-style script.  Also clarified the
+        "using" statement guidelines that apply to implementation files.
+
+        * coding/coding-style.html:
+
 2009-12-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Darin Adler.

@@ -709,8 +709,8 @@ Don't bother to organize them in a logical order.
 
 <ol>
 
-<li>In header files, do not use "using" statements in global or 
-"namespace" scope.
+<li>In header files, do not use "using" statements in namespace
+(or global) scope.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -741,9 +741,9 @@ class VectorBuffer {
 </pre>
 </li>
 
-<li>It is acceptable, however, to use "using" declarations at the end of 
-header files in the WTF sub-library to include one or more names in 
-the WTF namespace into the global scope.
+<li>In header files in the WTF sub-library, however, it is acceptable
+to use "using" declarations at the end of the file to import one
+or more names in the WTF namespace into the global scope.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -777,8 +777,36 @@ using WTF::PlacementNewAdopt;
 </pre>
 </li>
 
-<li>Any "using namespace" statements for a nested namespace whose parent namespace 
-is also defined in a file must be declared within that namespace definition.
+<li>In C++ implementation files, do not use statements of the form
+"using std::foo" to import names in the standard template library.
+Use "using namespace std" instead.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// HTMLBaseElement.cpp
+
+using namespace std;
+
+namespace WebCore {
+
+} // namespace WebCore
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLBaseElement.cpp
+
+using std::swap;
+
+namespace WebCore {
+
+} // namespace WebCore
+</pre>
+</li>
+
+<li>In implementation files, if a "using namespace" statement is
+for a nested namespace whose parent namespace is defined in the file,
+put the statement inside that namespace definition.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -803,8 +831,10 @@ namespace WebCore {
 </pre>
 </li>
 
-<li>Any other "using namespace" statements must be declared before the first namespace 
-definition in the file.
+<li>In implementation files, put all other "using" statements
+at the beginning of the file, before any namespace definitions and
+after any "include" statements.
+
 <h4 class="right">Right:</h4>
 <pre class="code">
 // HTMLSelectElement.cpp
