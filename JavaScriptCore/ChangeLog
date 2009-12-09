@@ -50,7 +50,6 @@
         (WTF::RefCountedBase::derefBase):
         * wtf/ThreadVerifier.h: Removed.
 
->>>>>>> .r51879
 2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Darin Adler.
