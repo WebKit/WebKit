@@ -1,3 +1,15 @@
+2009-12-09  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Brady Eidson.
+
+        Fixed a typo in http://trac.webkit.org/changeset/51644 that broke
+        the QWebPage autotest.
+
+        No new test required.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigateToDifferentDocument):
+
 2009-12-09  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.

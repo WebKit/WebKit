@@ -3760,7 +3760,7 @@ void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType l
             case FrameLoadTypeBackWMLDeckNotAccessible:
             case FrameLoadTypeForward:
             case FrameLoadTypeIndexedBackForward:
-                if (itemURL.protocolIs("https"))
+                if (!itemURL.protocolIs("https"))
                     request.setCachePolicy(ReturnCacheDataElseLoad);
                 break;
             case FrameLoadTypeStandard:
