@@ -1,3 +1,13 @@
+2009-12-09  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        Exclude JSSVG*.cpp generated files from --minimal and --no-svg builds.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32286
+
+        * WebCore.pro:
+
 2009-12-09  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

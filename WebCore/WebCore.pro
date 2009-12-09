@@ -497,6 +497,30 @@ IDL_BINDINGS += \
     storage/SQLResultSet.idl \
     storage/SQLResultSetRowList.idl \
     storage/SQLTransaction.idl \
+    websockets/WebSocket.idl \
+    workers/AbstractWorker.idl \
+    workers/DedicatedWorkerContext.idl \
+    workers/SharedWorker.idl \
+    workers/SharedWorkerContext.idl \
+    workers/Worker.idl \
+    workers/WorkerContext.idl \
+    workers/WorkerLocation.idl \
+    xml/DOMParser.idl \
+    xml/XMLHttpRequest.idl \
+    xml/XMLHttpRequestException.idl \
+    xml/XMLHttpRequestProgressEvent.idl \
+    xml/XMLHttpRequestUpload.idl \
+    xml/XMLSerializer.idl \
+    xml/XPathNSResolver.idl \
+    xml/XPathException.idl \
+    xml/XPathExpression.idl \
+    xml/XPathResult.idl \
+    xml/XPathEvaluator.idl \
+    xml/XSLTProcessor.idl
+
+contains(DEFINES, ENABLE_SVG=1) {
+
+  IDL_BINDINGS += \
     svg/SVGZoomEvent.idl \
     svg/SVGAElement.idl \
     svg/SVGAltGlyphElement.idl \
@@ -629,28 +653,9 @@ IDL_BINDINGS += \
     svg/SVGTSpanElement.idl \
     svg/SVGUnitTypes.idl \
     svg/SVGUseElement.idl \
-    svg/SVGViewElement.idl \
-    websockets/WebSocket.idl \
-    workers/AbstractWorker.idl \
-    workers/DedicatedWorkerContext.idl \
-    workers/SharedWorker.idl \
-    workers/SharedWorkerContext.idl \
-    workers/Worker.idl \
-    workers/WorkerContext.idl \
-    workers/WorkerLocation.idl \
-    xml/DOMParser.idl \
-    xml/XMLHttpRequest.idl \
-    xml/XMLHttpRequestException.idl \
-    xml/XMLHttpRequestProgressEvent.idl \
-    xml/XMLHttpRequestUpload.idl \
-    xml/XMLSerializer.idl \
-    xml/XPathNSResolver.idl \
-    xml/XPathException.idl \
-    xml/XPathExpression.idl \
-    xml/XPathResult.idl \
-    xml/XPathEvaluator.idl \
-    xml/XSLTProcessor.idl
+    svg/SVGViewElement.idl
 
+}
 
 SOURCES += \
     accessibility/AccessibilityImageMapLink.cpp \
