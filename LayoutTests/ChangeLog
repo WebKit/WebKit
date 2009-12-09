@@ -1,3 +1,10 @@
+2009-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip a failing test that needs DRT support to override standard
+        preferences.
+
+        * platform/gtk/Skipped:
+
 2009-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
        [Qt] Skip a failing test introduced in r51877.

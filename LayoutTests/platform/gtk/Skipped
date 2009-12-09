@@ -5537,6 +5537,7 @@ editing/selection/move-left-right.html
 # Missing DRT ability to override 'standard' preferences.
 fast/dom/Window/timer-resume-on-navigation-back.html
 fast/harness/use-page-cache.html
+fast/loader/input-element-page-cache-crash.html
 loader/go-back-to-different-window-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30583
