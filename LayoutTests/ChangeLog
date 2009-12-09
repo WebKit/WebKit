@@ -1,3 +1,9 @@
+2009-12-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix typo in the Skipped list s/.htm/.html/ in the last test I added.
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Darin Adler.

@@ -62,7 +62,7 @@ http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
 media/media-fullscreen-not-in-document.html
-media/unsupported-rtsp.htm
+media/unsupported-rtsp.html
 media/video-no-audio.html
 media/video-size-intrinsic-scale.html
 
