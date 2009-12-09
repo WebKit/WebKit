@@ -35,8 +35,8 @@ import subprocess
 
 # Import WebKit-specific modules.
 from modules.changelogs import ChangeLog
+from modules.executive import run_command, ScriptError, default_error_handler, ignore_error
 from modules.logging import error, log
-from modules.processutils import run_command, ScriptError, default_error_handler, ignore_error
 
 def detect_scm_system(path):
     if SVN.in_working_directory(path):

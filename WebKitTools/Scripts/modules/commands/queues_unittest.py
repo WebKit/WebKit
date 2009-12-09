@@ -62,5 +62,5 @@ class AbstractQueueTest(CommandsTest):
         self._assert_output(queue.run_bugzilla_tool, [run_args], expected_stdout=tool_output)
 
     def test_run_bugzilla_tool(self):
-        self._assert_run_bugzilla_tool_output([1], "1\n")
-        self._assert_run_bugzilla_tool_output(["one", 2], "one 2\n")
+        self._assert_run_bugzilla_tool_output([1], "")
+        self._assert_run_bugzilla_tool_output(["one", 2], "")

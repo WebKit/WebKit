@@ -38,13 +38,13 @@ import unittest
 import urllib
 
 from datetime import date
+from modules.executive import run_command, ignore_error, ScriptError
 from modules.scm import detect_scm_system, SCM, CheckoutNeedsUpdate, commit_error_handler
-from modules.processutils import run_command, ignore_error, ScriptError
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
-# FIXME: This should be unified into one of the processutils.py commands!
+# FIXME: This should be unified into one of the executive.py commands!
 def run_silent(args, cwd=None):
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
     process.communicate() # ignore output

@@ -39,12 +39,6 @@ class WebKitPort():
         return os.path.join("WebKitTools", "Scripts", script_name)
 
     @staticmethod
-    def port_options():
-        return [
-            make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...)."),
-        ]
-
-    @staticmethod
     def port(port_name):
         if port_name == "mac":
             return MacPort

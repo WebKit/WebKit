@@ -125,7 +125,7 @@ class MockBugzillaTool():
     def __init__(self):
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
-        self.steps = Mock()
+        self.executive = Mock()
         self._scm = MockSCM()
 
     def scm(self):

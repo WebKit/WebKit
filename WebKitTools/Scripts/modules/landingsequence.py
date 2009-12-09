@@ -34,6 +34,8 @@ from modules.processutils import ScriptError
 from modules.scm import CheckoutNeedsUpdate
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue
+from modules.buildsteps import CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, EnsureBuildersAreGreenStep, BuildStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep
+
 
 class LandingSequenceErrorHandler():
     @classmethod
@@ -75,66 +77,37 @@ class LandingSequence:
             WorkQueue.exit_after_handled_error(e)
 
     def clean(self):
-        self._tool.steps.clean_working_directory(self._tool.scm(), self._options)
+        step = CleanWorkingDirectoryStep(self._tool, self._options)
+        step.run()
 
     def update(self):
-        self._tool.steps.update(port=self._port)
+        step = UpdateStep(self._tool, self._options)
+        step.run()
 
     def apply_patch(self):
-        log("Processing patch %s from bug %s." % (self._patch["id"], self._patch["bug_id"]))
-        self._tool.scm().apply_patch(self._patch, force=self._options.non_interactive)
+        step = ApplyPatchStep(self._tool, self._options, self._patch)
+        step.run()
 
     def check_builders(self):
-        self._tool.steps.ensure_builders_are_green(self._tool.buildbot, self._options)
+        step = EnsureBuildersAreGreenStep(self._tool, self._options)
+        step.run()
 
     def build(self):
-        self._tool.steps.build_webkit(quiet=self._options.quiet, port=self._port)
+        step = BuildStep(self._tool, self._options)
+        step.run()
 
     def test(self):
-        # When running non-interactively we don't want to launch Safari and we want to exit after the first failure.
-        self._tool.steps.run_tests(launch_safari=not self._options.non_interactive, fail_fast=self._options.non_interactive, quiet=self._options.quiet, port=self._port)
+        step = RunTestsStep(self._tool, self._options)
+        step.run()
 
     def commit(self):
-        commit_message = self._tool.scm().commit_message_for_this_commit()
-        return self._tool.scm().commit_with_message(commit_message.message())
+        step = CommitStep(self._tool, self._options)
+        return step.run()
 
     def close_patch(self, commit_log):
-        comment_text = bug_comment_from_commit_text(self._tool.scm(), commit_log)
-        self._tool.bugs.clear_attachment_flags(self._patch["id"], comment_text)
+        step = ClosePatchStep(self._tool, self._options, self._patch)
+        step.run(commit_log)
 
     def close_bug(self):
-        # Check to make sure there are no r? or r+ patches on the bug before closing.
-        # Assume that r- patches are just previous patches someone forgot to obsolete.
-        patches = self._tool.bugs.fetch_patches_from_bug(self._patch["bug_id"])
-        for patch in patches:
-            review_flag = patch.get("review")
-            if review_flag == "?" or review_flag == "+":
-                log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch["bug_id"], patch["id"], review_flag))
-                return
-        self._tool.bugs.close_bug_as_fixed(self._patch["bug_id"], "All reviewed patches have been landed.  Closing bug.")
-
-
-class ConditionalLandingSequence(LandingSequence):
-    def __init__(self, patch, options, tool):
-        LandingSequence.__init__(self, patch, options, tool)
-
-    def update(self):
-        if self._options.update:
-            LandingSequence.update(self)
-
-    def check_builders(self):
-        if self._options.build:
-            LandingSequence.check_builders(self)
-
-    def build(self):
-        if self._options.build:
-            LandingSequence.build(self)
-
-    def test(self):
-        if self._options.build and self._options.test:
-            LandingSequence.test(self)
-
-    def close_bug(self):
-        if self._options.close_bug:
-            LandingSequence.close_bug(self)
-
+        step = CloseBugStep(self._tool, self._options, self._patch)
+        step.run()

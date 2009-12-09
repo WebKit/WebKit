@@ -40,6 +40,7 @@ from modules.commands.early_warning_system import *
 from modules.commands.queries import *
 from modules.commands.queues import *
 from modules.commands.upload import *
+from modules.executive import Executive
 from modules.logging import log
 from modules.multicommandtool import MultiCommandTool
 from modules.scm import detect_scm_system
@@ -51,6 +52,7 @@ class BugzillaTool(MultiCommandTool):
 
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
+        self.executive = Executive()
         self._scm = None
         self._status = None
         self.steps = BuildSteps()

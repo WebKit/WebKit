@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from modules.commands.queues import AbstractReviewQueue
-from modules.processutils import ScriptError
+from modules.executive import ScriptError
 from modules.webkitport import WebKitPort
 
 class AbstractEarlyWarningSystem(AbstractReviewQueue):

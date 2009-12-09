@@ -33,12 +33,12 @@ import re
 from datetime import datetime
 from optparse import make_option
 
+from modules.executive import ScriptError
 from modules.grammar import pluralize
-from modules.landingsequence import LandingSequence, ConditionalLandingSequence, LandingSequenceErrorHandler
+from modules.landingsequence import LandingSequence, LandingSequenceErrorHandler
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.patchcollection import PatchCollection, PersistentPatchCollection, PersistentPatchCollectionDelegate
-from modules.processutils import run_and_throw_if_fail, ScriptError
 from modules.statusbot import StatusBot
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
@@ -92,7 +92,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
 
     def run_bugzilla_tool(self, args):
         bugzilla_tool_args = [self.tool.path()] + map(str, args)
-        run_and_throw_if_fail(bugzilla_tool_args)
+        self.tool.executive.run_and_throw_if_fail(bugzilla_tool_args)
 
     def log_progress(self, patch_ids):
         log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))

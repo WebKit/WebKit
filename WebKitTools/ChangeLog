@@ -1,3 +1,28 @@
+2009-12-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Implement abstract Steps
+        https://bugs.webkit.org/show_bug.cgi?id=32212
+
+        This is a fairly disruptive change that refactors how we build
+        commands.  Instead of using a landing sequence, we can now assemble a
+        sequence of steps directly.  We still use the landing sequence in the
+        interim, but this will be removed soon.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/commands/early_warning_system.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/commands/queues_unittest.py:
+        * Scripts/modules/landingsequence.py:
+        * Scripts/modules/mock_bugzillatool.py:
+        * Scripts/modules/processutils.py: Removed.
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py:
+        * Scripts/modules/webkitport.py:
+
 2009-12-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

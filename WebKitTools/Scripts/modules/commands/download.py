@@ -33,20 +33,17 @@ import os
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import BuildSteps
+from modules.buildsteps import BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, CheckStyleStep, PrepareChangelogStep, CleanWorkingDirectoryStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
-from modules.landingsequence import LandingSequence, ConditionalLandingSequence
+from modules.landingsequence import LandingSequence
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.processutils import ScriptError
 
 
-class BuildSequence(ConditionalLandingSequence):
-    def __init__(self, options, tool):
-        ConditionalLandingSequence.__init__(self, None, options, tool)
-
+class BuildSequence(LandingSequence):
     def run(self):
         self.clean()
         self.update()
@@ -63,7 +60,7 @@ class Build(Command):
         Command.__init__(self, "Update working copy and build", "", options)
 
     def execute(self, options, args, tool):
-        sequence = BuildSequence(options, tool)
+        sequence = BuildSequence(None, options, tool)
         sequence.run_and_handle_errors()
 
 
@@ -107,9 +104,10 @@ class WebKitApplyingScripts:
 
     @staticmethod
     def setup_for_patch_apply(tool, options):
-        tool.steps.clean_working_directory(tool.scm(), options, allow_local_commits=True)
-        if options.update:
-            tool.steps.update()
+        clean_step = CleanWorkingDirectoryStep(tool, options, allow_local_commits=True)
+        clean_step.run()
+        update_step = UpdateStep(tool, options)
+        update_step.run()
 
     @staticmethod
     def apply_patches_with_options(scm, patches, options):
@@ -124,10 +122,7 @@ class WebKitApplyingScripts:
                 scm.commit_locally_with_message(commit_message.message() or patch["name"])
 
 
-class LandDiffSequence(ConditionalLandingSequence):
-    def __init__(self, patch, options, tool):
-        ConditionalLandingSequence.__init__(self, patch, options, tool)
-
+class LandDiffSequence(LandingSequence):
     def run(self):
         self.check_builders()
         self.build()
@@ -189,7 +184,7 @@ class LandDiff(Command):
     def execute(self, options, args, tool):
         bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
 
-        tool.steps.ensure_builders_are_green(tool.buildbot, options)
+        EnsureBuildersAreGreenStep(tool, options).run()
 
         os.chdir(tool.scm().checkout_root)
         self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
@@ -234,9 +229,6 @@ class AbstractPatchProcessingCommand(Command):
 
 
 class CheckStyleSequence(LandingSequence):
-    def __init__(self, patch, options, tool):
-        LandingSequence.__init__(self, patch, options, tool)
-
     def run(self):
         self.clean()
         self.update()
@@ -245,7 +237,8 @@ class CheckStyleSequence(LandingSequence):
 
     def build(self):
         # Instead of building, we check style.
-        self._tool.steps.check_style()
+        step = CheckStyleStep(self._tool, self._options)
+        step.run()
 
 
 class CheckStyle(AbstractPatchProcessingCommand):
@@ -267,10 +260,7 @@ class CheckStyle(AbstractPatchProcessingCommand):
         sequence.run_and_handle_errors()
 
 
-class BuildAttachmentSequence(ConditionalLandingSequence):
-    def __init__(self, patch, options, tool):
-        LandingSequence.__init__(self, patch, options, tool)
-
+class BuildAttachmentSequence(LandingSequence):
     def run(self):
         self.clean()
         self.update()
@@ -307,10 +297,10 @@ class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
 
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
-        tool.steps.ensure_builders_are_green(tool.buildbot, options)
+        EnsureBuildersAreGreenStep(tool, options).run()
 
     def _process_patch(self, patch, options, args, tool):
-        sequence = ConditionalLandingSequence(patch, options, tool)
+        sequence = LandingSequence(patch, options, tool)
         sequence.run_and_handle_errors()
 
 
@@ -358,7 +348,7 @@ class Rollout(Command):
 
         # Second, make new ChangeLog entries for this rollout.
         # This could move to prepare-ChangeLog by adding a --revert= option.
-        tool.steps.prepare_changelog()
+        PrepareChangelogStep(tool, None).run()
         for changelog_path in changelog_paths:
             ChangeLog(changelog_path).update_for_revert(revision)
 
@@ -384,8 +374,8 @@ class Rollout(Command):
             else:
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
-        tool.steps.clean_working_directory(tool.scm(), options)
-        tool.steps.update()
+        CleanWorkingDirectoryStep(tool, options).run()
+        UpdateStep(tool, options).run()
         tool.scm().apply_reverse_diff(revision)
         self._create_changelogs_for_revert(tool, revision)
 
