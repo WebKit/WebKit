@@ -197,7 +197,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define SVG_ANIMATION_ELEMENT_TYPES(V)
 #endif
 
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #define SVG_FILTERS_ELEMENT_TYPES(V)                                    \
     V(SVGCOMPONENTTRANSFERFUNCTIONELEMENT, SVGComponentTransferFunctionElement)\
     V(SVGFEBLENDELEMENT, SVGFEBlendElement)                             \
@@ -216,6 +216,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(SVGFEIMAGEELEMENT, SVGFEImageElement)                             \
     V(SVGFEMERGEELEMENT, SVGFEMergeElement)                             \
     V(SVGFEMERGENODEELEMENT, SVGFEMergeNodeElement)                     \
+    V(SVGFEMORPHOLOGYELEMENT, SVGFEMorphologyElement)                   \
     V(SVGFEOFFSETELEMENT, SVGFEOffsetElement)                           \
     V(SVGFEPOINTLIGHTELEMENT, SVGFEPointLightElement)                   \
     V(SVGFESPECULARLIGHTINGELEMENT, SVGFESpecularLightingElement)       \

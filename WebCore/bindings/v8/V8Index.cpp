@@ -220,7 +220,7 @@
 #include "V8SVGSetElement.h"
 #endif
 
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "V8SVGComponentTransferFunctionElement.h"
 #include "V8SVGFEBlendElement.h"
 #include "V8SVGFEColorMatrixElement.h"
@@ -238,6 +238,7 @@
 #include "V8SVGFEImageElement.h"
 #include "V8SVGFEMergeElement.h"
 #include "V8SVGFEMergeNodeElement.h"
+#include "V8SVGFEMorphologyElement.h"
 #include "V8SVGFEOffsetElement.h"
 #include "V8SVGFEPointLightElement.h"
 #include "V8SVGFESpecularLightingElement.h"

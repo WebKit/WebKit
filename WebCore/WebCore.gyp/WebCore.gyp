@@ -130,6 +130,7 @@
       '../platform/chromium',
       '../platform/graphics',
       '../platform/graphics/chromium',
+      '../platform/graphics/filters',
       '../platform/graphics/opentype',
       '../platform/graphics/skia',
       '../platform/graphics/transforms',
@@ -156,6 +157,7 @@
       '../svg',
       '../svg/animation',
       '../svg/graphics',
+      '../svg/graphics/filters',
       '../websockets',
       '../workers',
       '../xml',
@@ -214,11 +216,6 @@
         # idl rule
         '<@(webcore_bindings_idl_files)',
       ],
-      'sources/': [
-        # SVG_FILTERS only.
-        ['exclude', 'svg/SVG(FE|Filter)[^/]*\\.idl$'],
-
-      ],
       'sources!': [
         # Custom bindings in bindings/v8/custom exist for these.
         '../dom/EventListener.idl',
@@ -235,7 +232,6 @@
         # Extra SVG bindings to exclude.
         '../svg/ElementTimeControl.idl',
         '../svg/SVGAnimatedPathData.idl',
-        '../svg/SVGComponentTransferFunctionElement.idl',
         '../svg/SVGExternalResourcesRequired.idl',
         '../svg/SVGFitToViewBox.idl',
         '../svg/SVGHKernElement.idl',
@@ -660,11 +656,6 @@
         ['exclude', 'loader/appcache/'],
         ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
         ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp)$'],
-
-        # SVG_FILTERS only.
-        ['exclude', '(platform|svg)/graphics/filters/'],
-        ['exclude', 'svg/Filter[^/]*\\.cpp$'],
-        ['exclude', 'svg/SVG(FE|Filter)[^/]*\\.cpp$'],
 
         # Exclude some DB-related files.
         ['exclude', 'platform/sql/SQLiteFileSystem.cpp'],

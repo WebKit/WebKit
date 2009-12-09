@@ -564,7 +564,12 @@ END
     }
 
     my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
-    $getterFunc .= "Animated" if $codeGenerator->IsSVGAnimatedType($attribute->signature->type);
+
+    if ($codeGenerator->IsSVGAnimatedType($attribute->signature->type)) {
+        # Some SVGFE*Element.idl use 'operator' as attribute name; rewrite as '_operator' to avoid clashes with C/C++
+        $getterFunc = "_" . $getterFunc if ($attrName =~ /operator/);
+        $getterFunc .= "Animated";
+    }
 
     my $returnType = GetTypeFromSignature($attribute->signature);
 
