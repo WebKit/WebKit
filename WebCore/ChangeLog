@@ -1,5 +1,16 @@
 2009-12-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Darin Fisher.
+
+        Adds wtf/StdLibExtras.h include for DEFINE_STATIC_LOCAL in V8 ScriptState.
+        https://bugs.webkit.org/show_bug.cgi?id=32330
+
+        Build fix only, no new tests.
+
+        * bindings/v8/ScriptState.cpp: Modified. Adds wtf/StdLibExtras.h include.
+
+2009-12-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Darin Adler.
 
         Adds ENABLE(INSPECTOR) guards around script binding methods that use types

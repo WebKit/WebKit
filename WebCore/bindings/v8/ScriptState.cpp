@@ -37,6 +37,7 @@
 #include "ScriptController.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
