@@ -55,6 +55,7 @@ public:
 
     virtual void didNavigate() = 0;
 
+    // TODO(32320): remove this method from API.
     virtual void dispatchMessageFromFrontend(const WebString& className,
                                              const WebString& methodName,
                                              const WebString& param1,
@@ -74,11 +75,13 @@ public:
     // Asynchronously request debugger to pause immediately.
     WEBKIT_API static void debuggerPauseScript();
 
+    // TODO(32320): remove this method from API.
     WEBKIT_API static bool dispatchMessageFromFrontendOnIOThread(const WebString& className,
                                                                  const WebString& methodName,
                                                                  const WebString& param1,
                                                                  const WebString& param2,
                                                                  const WebString& param3);
+    WEBKIT_API static bool dispatchMessageFromFrontendOnIOThread(const WebDevToolsMessageData&);
 
     typedef void (*MessageLoopDispatchHandler)();
 
