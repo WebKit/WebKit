@@ -42,7 +42,7 @@ class LandingSequenceErrorHandler():
     def handle_script_error(cls, tool, patch, script_error):
         raise NotImplementedError, "subclasses must implement"
 
-
+# FIXME: This class is slowing being killed and replaced with StepSequence.
 class LandingSequence:
     def __init__(self, patch, options, tool):
         self._patch = patch

@@ -33,7 +33,7 @@ import os
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, CheckStyleStep, PrepareChangelogStep, CleanWorkingDirectoryStep
+from modules.buildsteps import BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, BuildStep, CheckStyleStep, PrepareChangelogStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
@@ -41,27 +41,22 @@ from modules.landingsequence import LandingSequence
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.processutils import ScriptError
-
-
-class BuildSequence(LandingSequence):
-    def run(self):
-        self.clean()
-        self.update()
-        self.build()
+from modules.stepsequence import StepSequence
 
 
 class Build(Command):
     name = "build"
     show_in_main_help = False
     def __init__(self):
-        options = BuildSteps.cleaning_options()
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        Command.__init__(self, "Update working copy and build", "", options)
+        self._sequence = StepSequence([
+            CleanWorkingDirectoryStep,
+            UpdateStep,
+            BuildStep
+        ])
+        Command.__init__(self, "Update working copy and build", "", self._sequence.options())
 
     def execute(self, options, args, tool):
-        sequence = BuildSequence(None, options, tool)
-        sequence.run_and_handle_errors()
+        self._sequence.run_and_handle_errors(tool, options)
 
 
 class ApplyAttachment(Command):

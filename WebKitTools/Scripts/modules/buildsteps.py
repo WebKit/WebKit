@@ -50,9 +50,10 @@ class CommandOptions(object):
 
 
 class AbstractStep(object):
-    def __init__(self, tool, options):
+    def __init__(self, tool, options, patch=None):
         self._tool = tool
         self._options = options
+        self._patch = patch
         self._port = None
 
     def _run_script(self, script_name, quiet=False, port=WebKitPort):
@@ -74,20 +75,14 @@ class AbstractStep(object):
         raise NotImplementedError, "subclasses must implement"
 
 
-class AbstractPatchStep(AbstractStep):
-    def __init__(self, tool, options, patch):
-        AbstractStep.__init__(self, tool, options)
-        self._patch = patch
-
-
 class PrepareChangelogStep(AbstractStep):
     def run(self):
         self._run_script("prepare-ChangeLog")
 
 
 class CleanWorkingDirectoryStep(AbstractStep):
-    def __init__(self, tool, options, allow_local_commits=False):
-        AbstractStep.__init__(self, tool, options)
+    def __init__(self, tool, options, patch=None, allow_local_commits=False):
+        AbstractStep.__init__(self, tool, options, patch)
         self._allow_local_commits = allow_local_commits
 
     @classmethod
@@ -98,7 +93,7 @@ class CleanWorkingDirectoryStep(AbstractStep):
         ]
 
     def run(self):
-        os.chdir(self._tool._scm.checkout_root)
+        os.chdir(self._tool.scm().checkout_root)
         if not self._allow_local_commits:
             self._tool.scm().ensure_no_local_commits(self._options.force_clean)
         if self._options.clean:
@@ -120,7 +115,7 @@ class UpdateStep(AbstractStep):
         self._tool.executive.run_and_throw_if_fail(self.port().update_webkit_command())
 
 
-class ApplyPatchStep(AbstractPatchStep):
+class ApplyPatchStep(AbstractStep):
     @classmethod
     def options(cls):
         return [
@@ -197,13 +192,13 @@ class CommitStep(AbstractStep):
         return self._tool.scm().commit_with_message(commit_message.message())
 
 
-class ClosePatchStep(AbstractPatchStep):
+class ClosePatchStep(AbstractStep):
     def run(self, commit_log):
         comment_text = bug_comment_from_commit_text(self._tool.scm(), commit_log)
         self._tool.bugs.clear_attachment_flags(self._patch["id"], comment_text)
 
 
-class CloseBugStep(AbstractPatchStep):
+class CloseBugStep(AbstractStep):
     @classmethod
     def options(cls):
         return [
