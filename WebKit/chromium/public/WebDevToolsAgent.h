@@ -40,6 +40,7 @@ class WebString;
 class WebURLRequest;
 class WebURLResponse;
 class WebView;
+struct WebDevToolsMessageData;
 struct WebPoint;
 struct WebURLError;
 
@@ -59,6 +60,7 @@ public:
                                              const WebString& param1,
                                              const WebString& param2,
                                              const WebString& param3) = 0;
+    virtual void dispatchMessageFromFrontend(const WebDevToolsMessageData&) = 0;
 
     virtual void inspectElementAt(const WebPoint&) = 0;
 

@@ -38,6 +38,7 @@ namespace WebKit {
 class WebDevToolsFrontendClient;
 class WebString;
 class WebView;
+struct WebDevToolsMessageData;
 
 // WebDevToolsFrontend represents DevTools client sitting in the Glue. It provides
 // direct and delegate Apis to the host.
@@ -54,6 +55,7 @@ public:
                                           const WebString& param1,
                                           const WebString& param2,
                                           const WebString& param3) = 0;
+    virtual void dispatchMessageFromAgent(const WebDevToolsMessageData&) = 0;
 };
 
 } // namespace WebKit

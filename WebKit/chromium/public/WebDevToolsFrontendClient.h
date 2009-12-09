@@ -34,6 +34,7 @@
 namespace WebKit {
 
 class WebString;
+struct WebDevToolsMessageData;
 
 class WebDevToolsFrontendClient {
 public:
@@ -44,6 +45,7 @@ public:
                                     const WebString& param1,
                                     const WebString& param2,
                                     const WebString& param3) {};
+    virtual void sendMessageToAgent(const WebDevToolsMessageData&) {};
     virtual void sendDebuggerCommandToAgent(const WebString& command) {};
     virtual void sendDebuggerPauseScript() {}
 

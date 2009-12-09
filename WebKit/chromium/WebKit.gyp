@@ -111,6 +111,7 @@
                 'public/WebDevToolsAgentClient.h',
                 'public/WebDevToolsFrontend.h',
                 'public/WebDevToolsFrontendClient.h',
+                'public/WebDevToolsMessageData.h',
                 'public/WebDragData.h',
                 'public/WebEditingAction.h',
                 'public/WebElement.h',

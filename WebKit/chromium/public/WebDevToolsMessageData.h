@@ -28,41 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDevToolsAgentClient_h
-#define WebDevToolsAgentClient_h
+#ifndef WebDevToolsMessageData_h
+#define WebDevToolsMessageData_h
 
 #include "WebCommon.h"
+#include "WebString.h"
+#include "WebVector.h"
 
 namespace WebKit {
-class WebString;
-struct WebDevToolsMessageData;
 
-class WebDevToolsAgentClient {
-public:
-    virtual void sendMessageToFrontend(const WebString& className,
-                                       const WebString& methodName,
-                                       const WebString& param1,
-                                       const WebString& param2,
-                                       const WebString& param3) {}
-    virtual void sendMessageToFrontend(const WebDevToolsMessageData&) { }
-
-    // Invalidates widget which leads to the repaint.
-    virtual void forceRepaint() { }
-
-    // Returns the identifier of the entity hosting this agent.
-    virtual int hostIdentifier() { }
-
-    // Notifies host upon runtime feature being enabled/disabled.
-    virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) { }
-
-    WEBKIT_API static void sendMessageToFrontendOnIOThread(const WebString& className,
-                                                           const WebString& methodName,
-                                                           const WebString& param1,
-                                                           const WebString& param2,
-                                                           const WebString& param3);
-
-protected:
-    ~WebDevToolsAgentClient() { }
+struct WebDevToolsMessageData {
+    WebString className;
+    WebString methodName;
+    WebVector<WebString> arguments;
 };
 
 } // namespace WebKit
