@@ -33,7 +33,7 @@ import os
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, BuildStep, CheckStyleStep, PrepareChangelogStep
+from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, BuildStep, CheckStyleStep, PrepareChangelogStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -95,6 +95,7 @@ class WebKitApplyingScripts:
         return [
             make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
             make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch"),
+            CommandOptions.port,
         ]
 
     @staticmethod
