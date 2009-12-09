@@ -1,3 +1,14 @@
+2009-12-08  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add tests that WebSocket-Protocol: is ignored if protocol was not specified.
+        https://bugs.webkit.org/show_bug.cgi?id=32267
+
+        * websocket/tests/script-tests/websocket-protocol-ignored.js: Added.
+        * websocket/tests/websocket-protocol-ignored-expected.txt: Added.
+        * websocket/tests/websocket-protocol-ignored.html: Added.
+
 2009-12-08  Peterson Trethewey  <petersont@google.com>
 
         Reviewed by Oliver Hunt.
