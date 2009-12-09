@@ -33,7 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(MAC) && !defined(__OBJC__)
+#if PLATFORM(MAC) && !defined(__OBJC__) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 class NSView;
 #endif
 
@@ -169,7 +169,7 @@ public:
     void sendResizeEvent();
     void sendScrollEvent();
     
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(MAC) && defined(__OBJC__) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
     void mouseDown(NSEvent *);
@@ -318,7 +318,7 @@ private:
 
     bool capturesDragging() const { return m_capturesDragging; }
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(MAC) && defined(__OBJC__) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
     NSView *mouseDownViewIfStillGood();
 
     PlatformMouseEvent currentPlatformMouseEvent() const;
@@ -393,7 +393,7 @@ private:
 
     RefPtr<Node> m_previousWheelScrolledNode;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
     NSView *m_mouseDownView;
     bool m_sendingEventToSubview;
     int m_activationEventNumber;

@@ -57,6 +57,8 @@ NSView *ScrollView::documentView() const
     return nil;
 }
 
+#if !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+
 void ScrollView::platformAddChild(Widget* child)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -203,4 +205,6 @@ bool ScrollView::platformIsOffscreen() const
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
-}
+#endif // !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+
+} // namespace WebCore

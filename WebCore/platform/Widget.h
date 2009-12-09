@@ -184,7 +184,7 @@ public:
 
     virtual void frameRectsChanged() {}
 
-#if PLATFORM(MAC)    
+#if PLATFORM(MAC) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
     NSView* getOuterView() const;
     
     static void beforeMouseDown(NSView*, Widget*);
@@ -221,7 +221,7 @@ private:
     
     IntRect m_frame; // Not used when a native widget exists.
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
     WidgetPrivate* m_data;
 #endif
 };

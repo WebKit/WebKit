@@ -42,6 +42,15 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
+#if ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+
+DragOperation DragController::dragOperation(DragData*)
+{
+    return DragOperationNone;
+} 
+
+#else
+
 bool DragController::isCopyKeyDown()
 {
     return [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
@@ -58,7 +67,9 @@ DragOperation DragController::dragOperation(DragData* dragData)
         return DragOperationCopy;
 
     return DragOperationNone;
-} 
+}
+
+#endif
 
 const IntSize& DragController::maxDragImageSize()
 {

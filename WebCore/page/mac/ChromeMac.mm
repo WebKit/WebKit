@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+#if !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+
 void Chrome::focusNSView(NSView* view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -47,5 +49,7 @@ void Chrome::focusNSView(NSView* view)
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
+#endif
 
 } // namespace WebCore

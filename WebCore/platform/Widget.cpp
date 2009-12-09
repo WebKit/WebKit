@@ -105,7 +105,7 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
     return convertFromRootToContainingWindow(this, localPoint);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
 {
     return rect;
@@ -127,7 +127,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint
 }
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(GTK)
+#if (!PLATFORM(MAC) && !PLATFORM(GTK)) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 void Widget::releasePlatformWidget()
 {
 }

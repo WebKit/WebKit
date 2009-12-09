@@ -1,3 +1,46 @@
+2009-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add some #ifdefs to allow us to experiment with a single NSView mac WebKit.
+
+        * page/Chrome.h:
+        * page/EventHandler.h:
+        * page/mac/ChromeMac.mm:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::createDraggingClipboard):
+        (WebCore::isKeyboardOptionTab):
+        (WebCore::EventHandler::invertSenseOfTabsToLinks):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        (WebCore::EventHandler::accessKeyModifiers):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Widget.cpp:
+        * platform/Widget.h:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+
 2009-12-09  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dimitri Glazkov.

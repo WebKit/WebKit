@@ -966,7 +966,7 @@ void ScrollView::platformDestroy()
 
 #endif
 
-#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(MAC)
+#if (!PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(MAC)) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 
 void ScrollView::platformAddChild(Widget*)
 {
@@ -978,7 +978,7 @@ void ScrollView::platformRemoveChild(Widget*)
 
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 
 void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 {
@@ -986,7 +986,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(WX)
+#if (!PLATFORM(MAC) && !PLATFORM(WX)) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 
 void ScrollView::platformSetScrollbarModes()
 {
@@ -1040,7 +1040,7 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
     return true;
 }
 
-void ScrollView::platformRepaintContentRectangle(const IntRect&, bool now)
+void ScrollView::platformRepaintContentRectangle(const IntRect&, bool /*now*/)
 {
 }
 
