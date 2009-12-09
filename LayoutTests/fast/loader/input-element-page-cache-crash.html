@@ -1,0 +1,43 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+function runTest()
+{
+    var input = document.getElementById("testinput");
+    input.setAttribute("autocomplete", "on");
+    input.parentNode.removeChild(input);
+    
+    window.location = "data:text/html,<script>history.back();</scrip" + "t>";
+}
+
+function pageHidden()
+{
+    window.finishTest = true;
+}
+
+function pageShown()
+{
+    if (window.layoutTestController && window.finishTest)
+        layoutTestController.notifyDone();
+}
+
+</script>    
+</head>
+
+<body onload="runTest();" onpagehide="pageHidden();" onpageshow="pageShown();">
+<pre>This test has an input element that starts out with autocomplete=off.
+It then changes autocomplete to on.
+It then removes the element so it is destroyed.
+It then navigates to a new page, placing the current page in the page cache.
+Finally it returns to the original page.</pre>
+<form>
+<input id="testinput" autocomplete="off">
+</form>
+</body>

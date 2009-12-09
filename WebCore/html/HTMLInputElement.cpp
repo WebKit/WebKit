@@ -850,12 +850,15 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
             m_autocomplete = Off;
             registerForActivationCallbackIfNeeded();
         } else {
-            if (m_autocomplete == Off)
-                unregisterForActivationCallbackIfNeeded();
+            bool needsToUnregister = m_autocomplete == Off;
+
             if (attr->isEmpty())
                 m_autocomplete = Uninitialized;
             else
                 m_autocomplete = On;
+
+            if (needsToUnregister)
+                unregisterForActivationCallbackIfNeeded();
         }
     } else if (attr->name() == typeAttr) {
         setInputType(attr->value());

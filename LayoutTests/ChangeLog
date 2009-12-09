@@ -1,3 +1,13 @@
+2009-12-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Navigating to a cached page can result in accessing a destroyed HTMLInputElement.
+        <rdar://problem/6856662> and https://webkit.org/b/32293
+
+        * fast/loader/input-element-page-cache-crash-expected.txt: Added.
+        * fast/loader/input-element-page-cache-crash.html: Added.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip fast/repaint/block-selection-gap-in-table-cell.html (generates new result) to turn Qt/Gtk builds green again.

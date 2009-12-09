@@ -1,3 +1,17 @@
+2009-12-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Navigating to a cached page can result in accessing a destroyed HTMLInputElement.
+        <rdar://problem/6856662> and https://webkit.org/b/32293
+
+        Test: fast/loader/input-element-page-cache-crash.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Make sure to unregister for the activation
+          callback after the new m_autocomplete setting has been stored so the unregistration actually
+          takes place.
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by David Levin.
