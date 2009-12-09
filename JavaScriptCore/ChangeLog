@@ -2,6 +2,14 @@
 
         Reviewed by Sam Weinig.
 
+        Attempt to fix the Windows build.
+        
+        * wtf/FastMalloc.h:
+
+2009-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fix some things found while trying to compile JavaScriptCore with clang++.
 
         * wtf/FastMalloc.h:

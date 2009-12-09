@@ -216,6 +216,10 @@ using WTF::fastMallocAllow;
 // We musn't customize the global operator new and delete for the Qt port.
 #if !PLATFORM(QT)
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4290) // Disable the C++ exception specification ignored warning.
+#endif
 WTF_PRIVATE_INLINE void* operator new(size_t size) throw (std::bad_alloc) { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void* operator new(size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void operator delete(void* p) throw() { fastFree(p); }
@@ -224,6 +228,9 @@ WTF_PRIVATE_INLINE void* operator new[](size_t size) throw (std::bad_alloc) { re
 WTF_PRIVATE_INLINE void* operator new[](size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) throw() { fastFree(p); }
 WTF_PRIVATE_INLINE void operator delete[](void* p, const std::nothrow_t&) throw() { fastFree(p); }
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 #endif
 
