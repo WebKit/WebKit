@@ -1,3 +1,23 @@
+2009-12-08  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix assertion failure in WebCore::RenderBlock::startDelayUpdateScrollInfo
+
+        startDelayUpdateScrollInfo calls a function that can end up calling
+        startDelayUpdateScrollInfo again. However, it's static state is
+        inconsistent when this happens leading to an assertion failure (or
+        probably a memory leak if assertions are off).
+
+        Thanks to Robert Swiecki for the test case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32172
+        http://code.google.com/p/chromium/issues/detail?id=28880
+
+
+        * fast/css/recursive-delay-update-scroll.html: Added.
+        * fast/css/recursive-delay-update-scroll-expected.txt: Added.
+
 2009-12-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip another failing media test, that I already mentioned in the bug report.

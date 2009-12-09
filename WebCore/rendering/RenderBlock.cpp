@@ -617,15 +617,15 @@ void RenderBlock::finishDelayUpdateScrollInfo()
     if (gDelayUpdateScrollInfo == 0) {
         ASSERT(gDelayedUpdateScrollInfoSet);
 
-        for (DelayedUpdateScrollInfoSet::iterator it = gDelayedUpdateScrollInfoSet->begin(); it != gDelayedUpdateScrollInfoSet->end(); ++it) {
+        OwnPtr<DelayedUpdateScrollInfoSet> infoSet(gDelayedUpdateScrollInfoSet);
+        gDelayedUpdateScrollInfoSet = 0;
+
+        for (DelayedUpdateScrollInfoSet::iterator it = infoSet->begin(); it != infoSet->end(); ++it) {
             RenderBlock* block = *it;
             if (block->hasOverflowClip()) {
                 block->layer()->updateScrollInfoAfterLayout();
             }
         }
-
-        delete gDelayedUpdateScrollInfoSet;
-        gDelayedUpdateScrollInfoSet = 0;
     }
 }
 
