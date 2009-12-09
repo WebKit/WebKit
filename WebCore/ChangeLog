@@ -1,3 +1,14 @@
+2009-12-09  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 32338 - [Chromium] Fix Chromium builder by including missing GeolocationServiceChromium
+        https://bugs.webkit.org/show_bug.cgi?id=32338
+
+        Fix build break: re-include file dropped out by merge in http://trac.webkit.org/changeset/51681/trunk/WebCore/WebCore.gypi
+
+        * WebCore.gypi: Add missing GeolocationServiceChromium.cpp
+
 2009-12-09  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Brady Eidson.
