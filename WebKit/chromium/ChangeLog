@@ -1,3 +1,28 @@
+2009-12-09  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32324
+        [Chromium] Suppress WebFrameClient callbacks from a detached frame.
+
+        This change means that we no longer need the ClientHandle class.
+        FrameLoaderClient::detachedFromParent3() is called on each frame
+        in the frame tree from within frameDetached().
+
+        Test: http/tests/loading/gmail-assert-on-load.html
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::detachedFromParent3):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::create):
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::createChildFrame):
+        * src/WebFrameImpl.h:
+        (WebKit::WebFrameImpl::client):
+        (WebKit::WebFrameImpl::dropClient):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::close):
+
 2009-12-08  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Darin Fisher.

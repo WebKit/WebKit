@@ -787,11 +787,6 @@ void WebViewImpl::close()
     if (m_devToolsAgent.get())
         m_devToolsAgent.clear();
 
-    // We drop the client after the page has been destroyed to support the
-    // WebFrameClient::didDestroyScriptContext method.
-    if (mainFrameImpl)
-        mainFrameImpl->dropClient();
-
     // Reset the delegate to prevent notifications being sent as we're being
     // deleted.
     m_client = 0;

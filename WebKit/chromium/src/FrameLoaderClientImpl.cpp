@@ -216,6 +216,10 @@ void FrameLoaderClientImpl::detachedFromParent3()
     // go to a page and then navigate to a new page without getting any asserts
     // or crashes.
     m_webFrame->frame()->script()->proxy()->clearForClose();
+    
+    // Stop communicating with the WebFrameClient at this point since we are no
+    // longer associated with the Page.
+    m_webFrame->dropClient();
 }
 
 // This function is responsible for associating the |identifier| with a given

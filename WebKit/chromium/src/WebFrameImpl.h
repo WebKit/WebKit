@@ -211,29 +211,13 @@ public:
     // be kept around as it is deleted when the page goes away.
     WebPasswordAutocompleteListener* getPasswordListener(WebCore::HTMLInputElement*);
 
-    WebFrameClient* client() const { return m_clientHandle->client(); }
-    void dropClient() { m_clientHandle->dropClient(); }
+    WebFrameClient* client() const { return m_client; }
+    void dropClient() { m_client = 0; }
 
 private:
     class DeferredScopeStringMatches;
     friend class DeferredScopeStringMatches;
     friend class FrameLoaderClientImpl;
-
-    // A weak reference to the WebFrameClient.  Each WebFrame in the hierarchy
-    // owns a reference to a ClientHandle.  When the main frame is destroyed, it
-    // clears the WebFrameClient.
-    class ClientHandle : public RefCounted<ClientHandle> {
-    public:
-        static PassRefPtr<ClientHandle> create(WebFrameClient* client)
-        {
-            return adoptRef(new ClientHandle(client));
-        }
-        WebFrameClient* client() { return m_client; }
-        void dropClient() { m_client = 0; }
-    private:
-        ClientHandle(WebFrameClient* client) : m_client(client) {}
-        WebFrameClient* m_client;
-    };
 
     // A bit mask specifying area of the frame to invalidate.
     enum AreaToInvalidate {
@@ -243,7 +227,7 @@ private:
       InvalidateAll          // Both content area and the scrollbar.
     };
 
-    WebFrameImpl(PassRefPtr<ClientHandle>);
+    WebFrameImpl(WebFrameClient*);
 
     // Informs the WebFrame that the Frame is being closed, called by the
     // WebFrameLoaderClient
@@ -297,7 +281,7 @@ private:
 
     FrameLoaderClientImpl m_frameLoaderClient;
 
-    RefPtr<ClientHandle> m_clientHandle;
+    WebFrameClient* m_client;
 
     // This is a weak pointer to our corresponding WebCore frame.  A reference to
     // ourselves is held while frame_ is valid.  See our Closing method.

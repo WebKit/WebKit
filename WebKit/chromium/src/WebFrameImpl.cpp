@@ -1462,12 +1462,12 @@ int WebFrameImpl::m_liveObjectCount = 0;
 
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)
 {
-    return adoptRef(new WebFrameImpl(ClientHandle::create(client)));
+    return adoptRef(new WebFrameImpl(client));
 }
 
-WebFrameImpl::WebFrameImpl(PassRefPtr<ClientHandle> clientHandle)
+WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     : m_frameLoaderClient(this)
-    , m_clientHandle(clientHandle)
+    , m_client(client)
     , m_activeMatchFrame(0)
     , m_activeMatchIndex(-1)
     , m_locatingActiveRect(false)
@@ -1508,7 +1508,7 @@ void WebFrameImpl::initializeAsMainFrame(WebViewImpl* webViewImpl)
 PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     const FrameLoadRequest& request, HTMLFrameOwnerElement* ownerElement)
 {
-    RefPtr<WebFrameImpl> webframe(adoptRef(new WebFrameImpl(m_clientHandle)));
+    RefPtr<WebFrameImpl> webframe(adoptRef(new WebFrameImpl(m_client)));
 
     // Add an extra ref on behalf of the Frame/FrameLoader, which references the
     // WebFrame via the FrameLoaderClient interface. See the comment at the top
