@@ -30,8 +30,8 @@
 #ifndef ClassNodeList_h
 #define ClassNodeList_h
 
-#include "ClassNames.h"
 #include "DynamicNodeList.h"
+#include "SpaceSplitString.h"
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ namespace WebCore {
 
         virtual bool nodeMatches(Element*) const;
 
-        ClassNames m_classNames;
+        SpaceSplitString m_classNames;
     };
 
 } // namespace WebCore

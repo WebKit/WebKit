@@ -104,7 +104,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/CharacterData.cpp \
 	dom/CheckedRadioButtons.cpp \
 	dom/ChildNodeList.cpp \
-	dom/ClassNames.cpp \
 	dom/ClassNodeList.cpp \
 	dom/ClientRect.cpp \
 	dom/ClientRectList.cpp \
@@ -160,6 +159,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ScriptExecutionContext.cpp \
 	dom/SelectElement.cpp \
 	dom/SelectorNodeList.cpp \
+	dom/SpaceSplitString.cpp \
 	dom/StaticNodeList.cpp \
 	dom/StyleElement.cpp \
 	dom/StyledElement.cpp \

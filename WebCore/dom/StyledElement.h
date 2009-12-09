@@ -66,7 +66,7 @@ public:
     CSSStyleDeclaration* style();
     void invalidateStyleAttribute();
 
-    const ClassNames& classNames() const { ASSERT(hasClass()); ASSERT(mappedAttributes()); return mappedAttributes()->classNames(); }
+    const SpaceSplitString& classNames() const { ASSERT(hasClass()); ASSERT(mappedAttributes()); return mappedAttributes()->classNames(); }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
 

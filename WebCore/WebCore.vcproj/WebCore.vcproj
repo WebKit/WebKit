@@ -28443,14 +28443,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\ClassNames.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\ClassNames.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\ClassNodeList.cpp"
 				>
 			</File>
@@ -28956,6 +28948,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\SelectorNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\SpaceSplitString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\SpaceSplitString.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,37 @@
+2009-12-09  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Rename dom/ClassNames to SpaceSplitString and update build files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32250
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+        * dom/ClassNames.cpp: Removed.
+        * dom/ClassNames.h: Removed.
+        * dom/ClassNodeList.h:
+        * dom/NamedMappedAttrMap.h:
+        (WebCore::NamedMappedAttrMap::classNames):
+        * dom/SpaceSplitString.cpp: Copied from WebCore/dom/ClassNames.cpp.
+        (WebCore::SpaceSplitStringData::createVector):
+        (WebCore::SpaceSplitStringData::containsAll):
+        * dom/SpaceSplitString.h: Copied from WebCore/dom/ClassNames.h.
+        (WebCore::SpaceSplitStringData::SpaceSplitStringData):
+        (WebCore::SpaceSplitString::SpaceSplitString):
+        (WebCore::SpaceSplitString::set):
+        (WebCore::SpaceSplitString::containsAll):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::classNames):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setRel):
+
 2009-12-09  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Fisher.

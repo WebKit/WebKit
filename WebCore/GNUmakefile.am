@@ -668,8 +668,6 @@ webcore_sources += \
 	WebCore/dom/CheckedRadioButtons.h \
 	WebCore/dom/ChildNodeList.cpp \
 	WebCore/dom/ChildNodeList.h \
-	WebCore/dom/ClassNames.cpp \
-	WebCore/dom/ClassNames.h \
 	WebCore/dom/ClassNodeList.cpp \
 	WebCore/dom/ClassNodeList.h \
 	WebCore/dom/ClientRect.cpp \
@@ -799,6 +797,8 @@ webcore_sources += \
 	WebCore/dom/SelectElement.h \
 	WebCore/dom/SelectorNodeList.cpp \
 	WebCore/dom/SelectorNodeList.h \
+	WebCore/dom/SpaceSplitString.cpp \
+	WebCore/dom/SpaceSplitString.h \
 	WebCore/dom/StaticNodeList.cpp \
 	WebCore/dom/StaticNodeList.h \
 	WebCore/dom/StyleElement.cpp \

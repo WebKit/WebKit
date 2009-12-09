@@ -450,7 +450,6 @@ This file contains the list of files needed to build WebCore.
         dom/CharacterData.cpp
         dom/CheckedRadioButtons.cpp
         dom/ChildNodeList.cpp
-        dom/ClassNames.cpp
         dom/ClassNodeList.cpp
         dom/ClientRect.cpp
         dom/ClientRectList.cpp
@@ -506,6 +505,7 @@ This file contains the list of files needed to build WebCore.
         dom/ScriptExecutionContext.cpp
         dom/SelectElement.cpp
         dom/SelectorNodeList.cpp
+        dom/SpaceSplitString.cpp
         dom/StaticNodeList.cpp
         dom/StyleElement.cpp
         dom/StyledElement.cpp

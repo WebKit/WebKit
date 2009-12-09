@@ -343,7 +343,7 @@ bool HTMLAnchorElement::hasRel(uint32_t relation) const
 void HTMLAnchorElement::setRel(const String& value)
 {
     m_linkRelations = 0;
-    ClassNames newLinkRelations(value, true);
+    SpaceSplitString newLinkRelations(value, true);
     // FIXME: Add link relations as they are implemented
     if (newLinkRelations.contains("noreferrer"))
         m_linkRelations |= RelationNoReferrer;

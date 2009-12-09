@@ -851,7 +851,6 @@ SOURCES += \
     dom/CharacterData.cpp \
     dom/CheckedRadioButtons.cpp \
     dom/ChildNodeList.cpp \
-    dom/ClassNames.cpp \
     dom/ClassNodeList.cpp \
     dom/ClientRect.cpp \
     dom/ClientRectList.cpp \
@@ -910,6 +909,7 @@ SOURCES += \
     dom/ScriptExecutionContext.cpp \
     dom/SelectElement.cpp \
     dom/SelectorNodeList.cpp \
+    dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \
     dom/StyleElement.cpp \
@@ -1537,7 +1537,6 @@ HEADERS += \
     dom/CharacterData.h \
     dom/CheckedRadioButtons.h \
     dom/ChildNodeList.h \
-    dom/ClassNames.h \
     dom/ClassNodeList.h \
     dom/ClientRect.h \
     dom/ClientRectList.h \
@@ -1594,6 +1593,7 @@ HEADERS += \
     dom/ScriptExecutionContext.h \
     dom/SelectElement.h \
     dom/SelectorNodeList.h \
+    dom/SpaceSplitString.h \
     dom/StaticNodeList.h \
     dom/StyledElement.h \
     dom/StyleElement.h \
