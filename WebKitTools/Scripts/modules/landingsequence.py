@@ -29,8 +29,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from modules.comments import bug_comment_from_commit_text
+from modules.executive import ScriptError
 from modules.logging import log
-from modules.processutils import ScriptError
 from modules.scm import CheckoutNeedsUpdate
 from modules.webkitport import WebKitPort
 from modules.workqueue import WorkQueue

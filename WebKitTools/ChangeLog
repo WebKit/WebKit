@@ -1,5 +1,11 @@
 2009-12-09  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.
+
+        * Scripts/modules/landingsequence.py:
+
+2009-12-09  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Implement abstract Steps
