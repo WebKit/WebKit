@@ -35,17 +35,23 @@
 #include "PlatformString.h"
 
 #include <wx/wx.h>
-#include <wx/filename.h>
-#include <wx/dir.h>
-#include <wx/file.h>
 #include <wx/datetime.h>
+#include <wx/dir.h>
+#include <wx/dynlib.h>
+#include <wx/file.h>
 #include <wx/filefn.h>
+#include <wx/filename.h>
+
+#if PLATFORM(DARWIN)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 namespace WebCore {
 
 bool fileExists(const String& path)
 {
-    return wxFileName::FileExists(path);
+    // NOTE: This is called for directory paths too so we need to check both.
+    return wxFileName::FileExists(path) || wxFileName::DirExists(path);
 }
 
 bool deleteFile(const String& path)
@@ -123,21 +129,63 @@ bool unloadModule(PlatformModule mod)
 {
 #if PLATFORM(WIN_OS)
     return ::FreeLibrary(mod);
+#elif PLATFORM(DARWIN)
+    CFRelease(mod);
+    return true;
 #else
-    notImplemented();
-    return false;
+    wxASSERT(mod);
+    delete mod;
+    return true;
 #endif
 }
+
+
+class wxDirTraverserNonRecursive : public wxDirTraverser {
+public:
+    wxDirTraverserNonRecursive(wxString basePath, wxArrayString& files) : m_basePath(basePath), m_files(files) { }
+
+    virtual wxDirTraverseResult OnFile(const wxString& filename)
+    {
+        wxFileName afile(filename);
+        afile.MakeRelativeTo(m_basePath);
+        if (afile.GetFullPath().Find(afile.GetPathSeparator()) == wxNOT_FOUND)
+            m_files.push_back(filename);
+
+        return wxDIR_CONTINUE;
+    }
+
+    virtual wxDirTraverseResult OnDir(const wxString& dirname)
+    {
+        wxFileName dirfile(dirname);
+        dirfile.MakeRelativeTo(m_basePath);
+        if (dirfile.GetFullPath().Find(dirfile.GetPathSeparator()) == wxNOT_FOUND)
+            m_files.push_back(dirname);
+
+        return wxDIR_CONTINUE;
+    }
+
+private:
+    wxString m_basePath;
+    wxArrayString& m_files;
+
+    DECLARE_NO_COPY_CLASS(wxDirTraverserNonRecursive)
+};
 
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     wxArrayString   file_paths;
+    // wxDir::GetAllFiles recurses and for platforms like Mac where
+    // a .plugin or .bundle can be a dir wx will recurse into the bundle
+    // and list the files rather than just returning the plugin name, so
+    // we write a special traverser that works around that issue.
+    wxDirTraverserNonRecursive traverser(path, file_paths);
     
-    int n_files = wxDir::GetAllFiles(path, &file_paths, _T(""), wxDIR_FILES);
+    wxDir dir(path);
+    dir.Traverse(traverser, _T(""), wxDIR_FILES | wxDIR_DIRS);
 
     Vector<String> entries;
     
-    for (int i = 0; i < n_files; i++)
+    for (int i = 0; i < file_paths.GetCount(); i++)
     {
         entries.append(file_paths[i]);
     }   

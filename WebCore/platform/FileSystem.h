@@ -39,9 +39,10 @@
 #if defined(Q_OS_WIN32)
 #include <windows.h>
 #endif
-#if defined(Q_WS_MAC)
-#include <CoreFoundation/CFBundle.h>
 #endif
+
+#if PLATFORM(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
+#include <CoreFoundation/CFBundle.h>
 #endif
 
 #include <time.h>
@@ -76,6 +77,8 @@ typedef QLibrary* PlatformModule;
 #endif // defined(Q_WS_MAC)
 #elif PLATFORM(GTK)
 typedef GModule* PlatformModule;
+#elif PLATFORM(CF)
+typedef CFBundleRef PlatformModule;
 #else
 typedef void* PlatformModule;
 #endif

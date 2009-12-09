@@ -26,6 +26,8 @@
 #ifndef BinaryPropertyList_h
 #define BinaryPropertyList_h
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -1,3 +1,13 @@
+2009-12-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Mac plugins support.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32236
+
+        * wtf/Platform.h:
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by David Levin.
@@ -19,6 +29,7 @@
         (WTF::RefCountedBase::derefBase):
         * wtf/ThreadVerifier.h: Removed.
 
+>>>>>>> .r51879
 2009-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Darin Adler.

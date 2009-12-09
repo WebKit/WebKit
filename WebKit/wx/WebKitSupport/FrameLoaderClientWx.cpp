@@ -37,9 +37,9 @@
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "FrameTree.h"
+#include "PluginView.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTMLPluginElement.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformString.h"
@@ -853,7 +853,7 @@ ObjectContentType FrameLoaderClientWx::objectContentType(const KURL& url, const 
 
 PassRefPtr<Widget> FrameLoaderClientWx::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-#if PLATFORM(WIN_OS)
+#if __WXMSW__ || __WXMAC__
     RefPtr<PluginView> pv = PluginView::create(m_frame, size, element, url, paramNames, paramValues, mimeType, loadManually);
     if (pv->status() == PluginStatusLoadedSuccessfully)
         return pv;
@@ -863,9 +863,9 @@ PassRefPtr<Widget> FrameLoaderClientWx::createPlugin(const IntSize& size, HTMLPl
 
 void FrameLoaderClientWx::redirectDataToPlugin(Widget* pluginWidget)
 {
-     ASSERT(!m_pluginView);
-     m_pluginView = static_cast<PluginView*>(pluginWidget);
-     m_hasSentResponseToPlugin = false;
+    ASSERT(!m_pluginView);
+    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_hasSentResponseToPlugin = false;
 }
 
 ResourceError FrameLoaderClientWx::pluginWillHandleLoadError(const ResourceResponse& response)

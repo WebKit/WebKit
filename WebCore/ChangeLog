@@ -1,3 +1,35 @@
+2009-12-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Mac plugins support.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32236
+
+        * platform/FileSystem.h:
+        * platform/cf/BinaryPropertyList.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::fileExists):
+        (WebCore::unloadModule):
+        (WebCore::wxDirTraverserNonRecursive::wxDirTraverserNonRecursive):
+        (WebCore::wxDirTraverserNonRecursive::OnFile):
+        (WebCore::wxDirTraverserNonRecursive::OnDir):
+        (WebCore::listDirectory):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::nativeWindowFor):
+        (WebCore::cgHandleFor):
+        (WebCore::topLevelOffsetFor):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::globalMousePosForPlugin):
+        * plugins/wx/PluginDataWx.cpp: Added.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * wscript:
+
 2009-12-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

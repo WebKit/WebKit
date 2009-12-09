@@ -87,6 +87,11 @@ extern Q_GUI_EXPORT OSWindowRef qt_mac_window_for(const QWidget* w);
 QT_END_NAMESPACE
 #endif
 
+#if PLATFORM(WX)
+#include <wx/defs.h>
+#include <wx/wx.h>
+#endif
+
 using std::min;
 
 using namespace WTF;
@@ -103,6 +108,10 @@ static inline WindowRef nativeWindowFor(PlatformWidget widget)
     if (widget)
         return static_cast<WindowRef>(qt_mac_window_for(widget));
 #endif
+#if PLATFORM(WX)
+    if (widget)
+        return (WindowRef)widget->MacGetTopLevelWindowRef();
+#endif
     return 0;
 }
 
@@ -111,6 +120,10 @@ static inline CGContextRef cgHandleFor(PlatformWidget widget)
 #if PLATFORM(QT)
     if (widget)
         return (CGContextRef)widget->macCGHandle();
+#endif
+#if PLATFORM(WX)
+    if (widget)
+        return (CGContextRef)widget->MacGetCGContextRef();
 #endif
     return 0;
 }
@@ -121,6 +134,12 @@ static inline IntPoint topLevelOffsetFor(PlatformWidget widget)
     if (widget) {
         PlatformWidget topLevel = widget->window();
         return widget->mapTo(topLevel, QPoint(0, 0)) + topLevel->geometry().topLeft() - topLevel->pos();
+    }
+#endif
+#if PLATFORM(WX)
+    if (widget) {
+        PlatformWidget toplevel = wxGetTopLevelParent(widget);
+        return toplevel->ScreenToClient(widget->GetScreenPosition());
     }
 #endif
     return IntPoint();
@@ -181,6 +200,10 @@ bool PluginView::platformStart()
         if (QWidget* widget = qobject_cast<QWidget*>(client->pluginParent()))
             setPlatformPluginWidget(widget);
     }
+#endif
+#if PLATFORM(WX)
+    if (wxWindow* widget = m_parentFrame->view()->hostWindow()->platformPageClient())
+        setPlatformPluginWidget(widget);
 #endif
 
     // Create a fake window relative to which all events will be sent when using offscreen rendering
@@ -336,7 +359,11 @@ void PluginView::setFocus()
     LOG(Plugins, "PluginView::setFocus()");
 
     if (platformPluginWidget())
+#if PLATFORM(QT)
        platformPluginWidget()->setFocus(Qt::OtherFocusReason);
+#else
+        platformPluginWidget()->SetFocus();
+#endif
    else
        Widget::setFocus();
 
@@ -513,7 +540,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 void PluginView::invalidateRect(const IntRect& rect)
 {
     if (platformPluginWidget())
+#if PLATFORM(QT)
         platformPluginWidget()->update(convertToContainingWindow(rect));
+#else
+        platformPluginWidget()->RefreshRect(convertToContainingWindow(rect));
+#endif
     else
         invalidateWindowlessPluginRect(rect);
 }
@@ -657,8 +688,10 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 
     LOG(Plugins, "PV::hKE(): record.modifiers: %d", record.modifiers);
 
+#if PLATFORM(QT)
     LOG(Plugins, "PV::hKE(): PKE.qtEvent()->nativeVirtualKey: 0x%02X, charCode: %d",
                keyCode, int(uchar(charCodes[0])));
+#endif
 
     if (!dispatchNPEvent(record))
         LOG(Events, "PluginView::handleKeyboardEvent(): Keyboard event type %d not accepted", record.what);
@@ -706,6 +739,18 @@ Point PluginView::globalMousePosForPlugin() const
 
     pos.h = short(pos.h * scaleFactor);
     pos.v = short(pos.v * scaleFactor);
+
+#if PLATFORM(WX)
+    // make sure the titlebar/toolbar size is included
+    WindowRef windowRef = nativeWindowFor(platformPluginWidget());
+    ::Rect content, structure;
+
+    GetWindowBounds(windowRef, kWindowStructureRgn, &structure);
+    GetWindowBounds(windowRef, kWindowContentRgn, &content);
+
+    int top = content.top  - structure.top;
+    pos.v -= top;
+#endif
 
     return pos;
 }

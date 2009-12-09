@@ -30,11 +30,6 @@ from settings import *
 webcore_sources = {}
 
 if build_port == "wx":
-    no_plugins = [      'plugins/PluginDataNone.cpp',
-                        'plugins/PluginViewNone.cpp',
-                        'plugins/PluginPackageNone.cpp'
-                 ]
-    
     if building_on_win32:
         webcore_dirs.extend(['platform/wx/wxcode/win', 'plugins/win'])
         webcore_sources['wx-win'] = [
@@ -51,15 +46,25 @@ if build_port == "wx":
                'plugins/win/PluginViewWin.cpp',
         ]
     elif sys.platform.startswith('darwin'):
+        webcore_dirs.append('plugins/mac')
         webcore_dirs.append('platform/wx/wxcode/mac/carbon')
+        webcore_dirs.append('platform/mac')
         webcore_sources['wx-mac'] = [
+               'platform/mac/WebCoreNSStringExtras.mm',
                'platform/mac/PurgeableBufferMac.cpp',
+               'plugins/wx/PluginDataWx.cpp',
+               'plugins/mac/PluginPackageMac.cpp',
+               'plugins/mac/PluginViewMac.cpp'
         ]
-        webcore_sources['plugins'] = no_plugins
     else:
+        webcore_sources['wx-gtk'] = [
+               'plugins/PluginDataNone.cpp',
+               'plugins/PluginViewNone.cpp',
+               'plugins/PluginPackageNone.cpp'
+        ]
         webcore_dirs.append('platform/wx/wxcode/gtk')
-        webcore_sources['plugins'] = no_plugins
         
+import TaskGen
 from TaskGen import taskgen, feature, after
 import Task, ccroot
 
@@ -87,7 +92,9 @@ def configure(conf):
 
 def build(bld):
     import Options
-
+    if sys.platform.startswith('darwin'):
+        TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cxx']
+    
     wk_includes = ['.', '..', 'DerivedSources',
                 wk_root, 
                 os.path.join(wk_root, 'JavaScriptCore'),
@@ -98,8 +105,14 @@ def build(bld):
         ]
 
     features = [build_port]
+    exclude_patterns = ['*None.cpp', '*CFNet.cpp', '*Qt.cpp', '*Win.cpp', '*Wince.cpp', '*Gtk.cpp', '*Mac.cpp', '*Safari.cpp', '*Chromium*.cpp','*SVG*.cpp', '*AllInOne.cpp', 'test*bindings.*']
     if build_port == 'wx':
         features.append('curl')
+        
+    if sys.platform.startswith('darwin'):
+        features.append('cf')
+    else:
+        exclude_patterns.append('*CF.cpp')
 
     full_dirs = get_dirs_for_features(webcore_dir, features=features, dirs=webcore_dirs)
 
@@ -129,8 +142,9 @@ def build(bld):
         )
         
     excludes = []
+    
     if build_port == 'wx':
-        excludes = get_excludes(webcore_dir, ['*None.cpp', '*CF.cpp', '*Qt.cpp', '*Win.cpp', '*Wince.cpp', '*Gtk.cpp', '*Mac.cpp', '*Safari.cpp', '*Chromium*.cpp','*SVG*.cpp', '*AllInOne.cpp', 'test*bindings.*'])
+        excludes = get_excludes(webcore_dir, exclude_patterns)
         excludes.extend(['UserStyleSheetLoader.cpp', 'RenderMediaControls.cpp'])
 
 
@@ -151,5 +165,8 @@ def build(bld):
         excludes.append('JSInspectorController.cpp')
         if building_on_win32:
             excludes.append('SharedTimerWx.cpp')
+            
+        excludes.append('AuthenticationCF.cpp')
+        excludes.append('LoaderRunLoopCF.cpp')
         
     webcore.find_sources_in_dirs(full_dirs, excludes = excludes, exts=['.c', '.cpp'])

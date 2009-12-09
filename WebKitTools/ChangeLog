@@ -1,3 +1,13 @@
+2009-12-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Mac plugins support.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32236
+
+        * wx/browser/wscript:
+
 2009-12-08  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
