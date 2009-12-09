@@ -35,6 +35,8 @@
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARender.h>
 
+#pragma comment(lib, "QuartzCore")
+
 namespace WebCore {
 
 using namespace std;

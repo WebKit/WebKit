@@ -40,6 +40,10 @@
 #include <d3dx9.h>
 #include <dxerr9.h>
 
+#pragma comment(lib, "d3d9")
+#pragma comment(lib, "d3dx9")
+#pragma comment(lib, "QuartzCore")
+
 static IDirect3D9* s_d3d = 0;
 static IDirect3D9* d3d()
 {
@@ -86,6 +90,29 @@ static D3DPRESENT_PARAMETERS initialPresentationParameters()
     return parameters;
 }
 
+bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
+{
+    static bool available;
+    static bool tested;
+
+    if (tested)
+        return available;
+
+    tested = true;
+    HMODULE library = LoadLibrary(TEXT("d3d9.dll"));
+    if (!library)
+        return false;
+
+    FreeLibrary(library);
+    library = LoadLibrary(TEXT("QuartzCore.dll"));
+    if (!library)
+        return false;
+
+    FreeLibrary(library);
+    available = true;
+    return available;
+}
+
 void WKCACFLayerRenderer::didFlushContext(CACFContextRef context)
 {
     WKCACFLayerRenderer* window = windowsForContexts().get(context);
@@ -93,6 +120,13 @@ void WKCACFLayerRenderer::didFlushContext(CACFContextRef context)
         return;
 
     window->renderSoon();
+}
+
+PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
+{
+    if (!acceleratedCompositingAvailable())
+        return 0;
+    return new WKCACFLayerRenderer;
 }
 
 WKCACFLayerRenderer::WKCACFLayerRenderer()

@@ -52,9 +52,10 @@ namespace WebCore {
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
 class WKCACFLayerRenderer : public Noncopyable {
 public:
-    WKCACFLayerRenderer();
+    static PassOwnPtr<WKCACFLayerRenderer> create();
     ~WKCACFLayerRenderer();
 
+    static bool acceleratedCompositingAvailable();
     static void didFlushContext(CACFContextRef);
 
     void setScrollFrame(int width, int height, int scrollX, int scrollY);
@@ -72,6 +73,8 @@ protected:
     WKCACFLayer* rootLayer() const { return m_rootLayer.get(); }
 
 private:
+    WKCACFLayerRenderer();
+
     void renderTimerFired(Timer<WKCACFLayerRenderer>*);
 
     CGRect bounds() const;

@@ -271,7 +271,6 @@ static const int maxToolTipWidth = 250;
 static const int delayBeforeDeletingBackingStoreMsec = 5000;
 
 static ATOM registerWebView();
-static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 static void initializeStaticObservers();
 
@@ -295,36 +294,36 @@ enum {
 bool WebView::s_allowSiteSpecificHacks = false;
 
 WebView::WebView()
-: m_refCount(0)
-, m_hostWindow(0)
-, m_viewWindow(0)
-, m_mainFrame(0)
-, m_page(0)
-, m_hasCustomDropTarget(false)
-, m_useBackForwardList(true)
-, m_userAgentOverridden(false)
-, m_zoomMultiplier(1.0f)
-, m_mouseActivated(false)
-, m_dragData(0)
-, m_currentCharacterCode(0)
-, m_isBeingDestroyed(false)
-, m_paintCount(0)
-, m_hasSpellCheckerDocumentTag(false)
-, m_smartInsertDeleteEnabled(false)
-, m_didClose(false)
-, m_inIMEComposition(0)
-, m_toolTipHwnd(0)
-, m_closeWindowTimer(this, &WebView::closeWindowTimerFired)
-, m_topLevelParent(0)
-, m_deleteBackingStoreTimerActive(false)
-, m_transparent(false)
-, m_selectTrailingWhitespaceEnabled(false)
-, m_lastPanX(0)
-, m_lastPanY(0)
-, m_xOverpan(0)
-, m_yOverpan(0)
+    : m_refCount(0)
+    , m_hostWindow(0)
+    , m_viewWindow(0)
+    , m_mainFrame(0)
+    , m_page(0)
+    , m_hasCustomDropTarget(false)
+    , m_useBackForwardList(true)
+    , m_userAgentOverridden(false)
+    , m_zoomMultiplier(1.0f)
+    , m_mouseActivated(false)
+    , m_dragData(0)
+    , m_currentCharacterCode(0)
+    , m_isBeingDestroyed(false)
+    , m_paintCount(0)
+    , m_hasSpellCheckerDocumentTag(false)
+    , m_smartInsertDeleteEnabled(false)
+    , m_didClose(false)
+    , m_inIMEComposition(0)
+    , m_toolTipHwnd(0)
+    , m_closeWindowTimer(this, &WebView::closeWindowTimerFired)
+    , m_topLevelParent(0)
+    , m_deleteBackingStoreTimerActive(false)
+    , m_transparent(false)
+    , m_selectTrailingWhitespaceEnabled(false)
+    , m_lastPanX(0)
+    , m_lastPanY(0)
+    , m_xOverpan(0)
+    , m_yOverpan(0)
 #if USE(ACCELERATED_COMPOSITING)
-, m_isAcceleratedCompositing(false)
+    , m_isAcceleratedCompositing(false)
 #endif
 {
     JSC::initializeThreading();
@@ -1824,7 +1823,7 @@ bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
     return frame->eventHandler()->keyEvent(keyEvent);
 }
 
-static bool registerWebViewWindowClass()
+bool WebView::registerWebViewWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
     if (haveRegisteredWindowClass)
@@ -1868,7 +1867,7 @@ static HWND findTopLevelParent(HWND window)
     return 0;
 }
 
-static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LRESULT lResult = 0;
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
@@ -1983,8 +1982,8 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SETFOCUS: {
             COMPtr<IWebUIDelegate> uiDelegate;
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
-                SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
+            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate
+                && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewReceivedFocus(webView);
 
             FocusController* focusController = webView->page()->focusController();
@@ -2003,8 +2002,8 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             COMPtr<IWebUIDelegate> uiDelegate;
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
             HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
-                SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
+            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate
+                && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
 
             FocusController* focusController = webView->page()->focusController();
@@ -2087,9 +2086,9 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 if (lpMsg->message == WM_KEYDOWN)
                     keyCode = (UINT) lpMsg->wParam;
             }
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
-                SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate &&
-                SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView, keyCode, &dlgCode)))
+            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate
+                && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate
+                && SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView, keyCode, &dlgCode)))
                 return dlgCode;
             handled = false;
             break;
@@ -5734,29 +5733,34 @@ void WebView::downloadURL(const KURL& url)
 void WebView::setRootChildLayer(WebCore::PlatformLayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
-    m_layerRenderer.setRootChildLayer(layer);
+    if (m_layerRenderer)
+        m_layerRenderer->setRootChildLayer(layer);
 }
 
 void WebView::setAcceleratedCompositing(bool accelerated)
 {
-    if (m_isAcceleratedCompositing == accelerated)
+    if (m_isAcceleratedCompositing == accelerated || !WKCACFLayerRenderer::acceleratedCompositingAvailable())
         return;
 
-    m_isAcceleratedCompositing = accelerated;
-    if (m_isAcceleratedCompositing) {
-        // Create the root layer
-        ASSERT(m_viewWindow);
-        m_layerRenderer.setHostWindow(m_viewWindow);
-        updateRootLayerContents();
+    if (accelerated) {
+        m_layerRenderer = WKCACFLayerRenderer::create();
+        if (m_layerRenderer) {
+            m_isAcceleratedCompositing = true;
+
+            // Create the root layer
+            ASSERT(m_viewWindow);
+            m_layerRenderer->setHostWindow(m_viewWindow);
+            updateRootLayerContents();
+        }
     } else {
-        // Tear down the root layer
-        m_layerRenderer.destroyRenderer();
+        m_layerRenderer = 0;
+        m_isAcceleratedCompositing = false;
     }
 }
 
 void WebView::updateRootLayerContents()
 {
-    if (!m_backingStoreBitmap)
+    if (!m_backingStoreBitmap || !m_layerRenderer)
         return;
 
     // Get the backing store into a CGImage
@@ -5777,7 +5781,7 @@ void WebView::updateRootLayerContents()
                                      kCGRenderingIntentDefault));
 
     // Hand the CGImage to CACF for compositing
-    m_layerRenderer.setRootContents(backingStoreImage.get());
+    m_layerRenderer->setRootContents(backingStoreImage.get());
 
     // Set the frame and scroll position
     Frame* coreFrame = core(m_mainFrame);
@@ -5785,7 +5789,7 @@ void WebView::updateRootLayerContents()
         return;
     FrameView* frameView = coreFrame->view();
 
-    m_layerRenderer.setScrollFrame(frameView->layoutWidth(), frameView->layoutHeight(), 
+    m_layerRenderer->setScrollFrame(frameView->layoutWidth(), frameView->layoutHeight(), 
                                  frameView->scrollX(), frameView->scrollY());
 }
 #endif

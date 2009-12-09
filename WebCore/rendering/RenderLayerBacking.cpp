@@ -28,7 +28,9 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "AnimationController.h"
+#if ENABLE(3D_CANVAS)    
 #include "WebGLRenderingContext.h"
+#endif
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "FrameView.h"

@@ -1,3 +1,26 @@
+2009-12-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Delay load DLLs for accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=31856
+        
+        Add logic to turn off accelerated compositing if d3d9 or QuartzCore
+        DLLs are not present.
+        
+        This patch also changes the WKCACFLayerRenderer to be a pointer.
+        This allows me to have a create() method which will not create it when
+        accelerated compositing is disabled because of missing DLLs. It 
+        avoids having to do so many checks. I also made WebViewWndProc 
+        a member function to allow several methods to be made protected, which
+        allows me to avoid doing availability checks there as well.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        * platform/graphics/win/WKCACFLayer.h:
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        * rendering/RenderLayerBacking.cpp:
+
 2009-12-09  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.

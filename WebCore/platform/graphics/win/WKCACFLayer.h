@@ -50,7 +50,7 @@ class WKCACFTimingFunction;
 
 class WKCACFLayer : public RefCounted<WKCACFLayer> {
 public:
-    static PassRefPtr<WKCACFLayer> create(CFStringRef className, GraphicsLayerCACF* owner=0) { return adoptRef(new WKCACFLayer(className, owner)); }
+    static PassRefPtr<WKCACFLayer> create(CFStringRef className, GraphicsLayerCACF* owner = 0) { return adoptRef(new WKCACFLayer(className, owner)); }
     static WKCACFLayer* layer(CACFLayerRef layer) { return static_cast<WKCACFLayer*>(CACFLayerGetUserData(layer)); }
 
     ~WKCACFLayer();
@@ -62,10 +62,22 @@ public:
     static RetainPtr<CFTypeRef> cfValue(const TransformationMatrix& value)
     {
         CATransform3D t;
-        t.m11 = value.m11(); t.m12 = value.m12(); t.m13 = value.m13(); t.m14 = value.m14(); 
-        t.m21 = value.m21(); t.m22 = value.m22(); t.m23 = value.m23(); t.m24 = value.m24(); 
-        t.m31 = value.m31(); t.m32 = value.m32(); t.m33 = value.m33(); t.m34 = value.m34(); 
-        t.m41 = value.m41(); t.m42 = value.m42(); t.m43 = value.m43(); t.m44 = value.m44(); 
+        t.m11 = value.m11();
+        t.m12 = value.m12();
+        t.m13 = value.m13();
+        t.m14 = value.m14(); 
+        t.m21 = value.m21();
+        t.m22 = value.m22();
+        t.m23 = value.m23();
+        t.m24 = value.m24(); 
+        t.m31 = value.m31();
+        t.m32 = value.m32();
+        t.m33 = value.m33();
+        t.m34 = value.m34(); 
+        t.m41 = value.m41();
+        t.m42 = value.m42();
+        t.m43 = value.m43();
+        t.m44 = value.m44(); 
         return RetainPtr<CFTypeRef>(AdoptCF, CACFVectorCreateTransform(t));
     }
     static RetainPtr<CFTypeRef> cfValue(const FloatPoint& value)
@@ -77,8 +89,10 @@ public:
     static RetainPtr<CFTypeRef> cfValue(const FloatRect& rect)
     {
         CGRect r;
-        r.origin.x = rect.x(); r.origin.y = rect.y();
-        r.size.width = rect.width(); r.size.height = rect.height();
+        r.origin.x = rect.x();
+        r.origin.y = rect.y();
+        r.size.width = rect.width();
+        r.size.height = rect.height();
         CGFloat v[4] = { CGRectGetMinX(r), CGRectGetMinY(r), CGRectGetMaxX(r), CGRectGetMaxY(r) };
         return RetainPtr<CFTypeRef>(AdoptCF, CACFVectorCreate(4, v));
     }
