@@ -63,15 +63,6 @@ WEBKIT_SRC_FILES :=
 include $(BASE_PATH)/bison_check.mk
 
 ifeq ($(JAVASCRIPT_ENGINE),v8)
-d := V8Binding
-LOCAL_PATH := $(BASE_PATH)/$d
-WEBCORE_PATH := $(BASE_PATH)/WebCore
-intermediates := $(base_intermediates)/WebCore
-JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
-include $(LOCAL_PATH)/V8Binding.derived.mk
-WEBKIT_SRC_FILES += $(addprefix $d/, $(LOCAL_SRC_FILES))
-WEBKIT_SRC_FILES += $(addprefix WebCore/, $(WEBCORE_SRC_FILES))
-
 # Include WTF source file.
 d := JavaScriptCore
 LOCAL_PATH := $(BASE_PATH)/$d
@@ -83,12 +74,17 @@ endif  # JAVASCRIPT_ENGINE == v8
 # Include source files for WebCore
 d := WebCore
 LOCAL_PATH := $(BASE_PATH)/$d
+JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
 intermediates := $(base_intermediates)/$d
 include $(LOCAL_PATH)/Android.mk
 ifeq ($(JAVASCRIPT_ENGINE),jsc)
 include $(LOCAL_PATH)/Android.jscbindings.mk
 endif
+ifeq ($(JAVASCRIPT_ENGINE),v8)
+include $(LOCAL_PATH)/Android.v8bindings.mk
+endif
 WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
+LOCAL_C_INCLUDES := $(BINDING_C_INCLUDES)
 
 # Include the derived source files for WebCore. Uses the same path as
 # WebCore
@@ -96,7 +92,9 @@ include $(LOCAL_PATH)/Android.derived.mk
 ifeq ($(JAVASCRIPT_ENGINE),jsc)
 include $(LOCAL_PATH)/Android.derived.jscbindings.mk
 endif
-WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
+ifeq ($(JAVASCRIPT_ENGINE),v8)
+include $(LOCAL_PATH)/Android.derived.v8bindings.mk
+endif
 
 # Redefine LOCAL_PATH here so the build system is not confused
 LOCAL_PATH := $(BASE_PATH)
@@ -132,7 +130,10 @@ LOCAL_LDLIBS += -lpthread -ldl
 # any files that include <unicode/ucnv.h> will include our ucnv.h first. We
 # also add external/ as an include directory so that we can specify the real
 # icu header directory as a more exact reference to avoid including our ucnv.h.
-LOCAL_C_INCLUDES := \
+#
+# Note that JavasCriptCore/ must be included after WebCore/, so that we pick up
+# the right config.h.
+LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(JNI_H_INCLUDE) \
 	$(LOCAL_PATH)/WebKit/android/icu \
 	external/ \
@@ -148,10 +149,6 @@ LOCAL_C_INCLUDES := \
 	external/skia/src/ports \
 	external/sqlite/dist \
 	frameworks/base/core/jni/android/graphics
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	external/v8/include
-endif
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebCore \
@@ -160,6 +157,7 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebCore/dom \
 	$(LOCAL_PATH)/WebCore/editing \
 	$(LOCAL_PATH)/WebCore/history \
+	$(LOCAL_PATH)/WebCore/history/android \
 	$(LOCAL_PATH)/WebCore/html \
 	$(LOCAL_PATH)/WebCore/html/canvas \
 	$(LOCAL_PATH)/WebCore/inspector \
@@ -191,13 +189,6 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebCore/storage \
 	$(LOCAL_PATH)/WebCore/workers \
 	$(LOCAL_PATH)/WebCore/xml
-ifeq ($(JAVASCRIPT_ENGINE),jsc)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/WebCore/bindings/js \
-	$(LOCAL_PATH)/WebCore/bridge \
-	$(LOCAL_PATH)/WebCore/bridge/c \
-	$(LOCAL_PATH)/WebCore/bridge/jni
-endif
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebKit/android \
@@ -208,55 +199,16 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebKit/android/stl
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
+	$(LOCAL_PATH)/JavaScriptCore \
 	$(LOCAL_PATH)/JavaScriptCore/wtf \
 	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode \
 	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode/icu
-ifeq ($(JAVASCRIPT_ENGINE),jsc)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/JavaScriptCore \
-	$(LOCAL_PATH)/JavaScriptCore/API \
-	$(LOCAL_PATH)/JavaScriptCore/assembler \
-	$(LOCAL_PATH)/JavaScriptCore/bytecode \
-	$(LOCAL_PATH)/JavaScriptCore/bytecompiler \
-	$(LOCAL_PATH)/JavaScriptCore/debugger \
-	$(LOCAL_PATH)/JavaScriptCore/parser \
-	$(LOCAL_PATH)/JavaScriptCore/jit \
-	$(LOCAL_PATH)/JavaScriptCore/interpreter \
-	$(LOCAL_PATH)/JavaScriptCore/pcre \
-	$(LOCAL_PATH)/JavaScriptCore/profiler \
-	$(LOCAL_PATH)/JavaScriptCore/runtime \
-	$(LOCAL_PATH)/JavaScriptCore/wrec \
-	$(LOCAL_PATH)/JavaScriptCore/ForwardingHeaders
-endif
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(base_intermediates)/WebCore/ \
 	$(base_intermediates)/WebCore/css \
 	$(base_intermediates)/WebCore/html \
 	$(base_intermediates)/WebCore/platform
-ifeq ($(JAVASCRIPT_ENGINE),jsc)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(base_intermediates)/WebCore/bindings/js \
-	$(base_intermediates)/WebCore/dom \
-	$(base_intermediates)/WebCore/html/canvas \
-	$(base_intermediates)/WebCore/inspector \
-	$(base_intermediates)/WebCore/loader/appcache \
-	$(base_intermediates)/WebCore/page \
-	$(base_intermediates)/WebCore/plugins \
-	$(base_intermediates)/WebCore/storage \
-	$(base_intermediates)/WebCore/workers \
-	$(base_intermediates)/WebCore/xml
-endif
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(base_intermediates)/WebCore/bindings \
-	$(base_intermediates)/JavaScriptCore
-endif
-
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(BINDING_C_INCLUDES)
-endif
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \

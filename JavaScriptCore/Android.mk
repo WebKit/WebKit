@@ -167,6 +167,8 @@ LOCAL_SRC_FILES := \
 	wtf/TypeTraits.cpp \
 	wtf/dtoa.cpp \
 	\
+	wtf/android/MainThreadAndroid.cpp \
+	\
 	wtf/unicode/CollatorDefault.cpp \
 	wtf/unicode/UTF8.cpp \
 	\

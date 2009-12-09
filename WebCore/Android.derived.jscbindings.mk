@@ -49,8 +49,9 @@ js_binding_scripts := $(addprefix $(LOCAL_PATH)/,\
 			bindings/scripts/generate-bindings.pl \
 		)
 
-FEATURE_DEFINES := ENABLE_DATABASE=1 ENABLE_OFFLINE_WEB_APPLICATIONS=1 ENABLE_DOM_STORAGE=1 ENABLE_VIDEO=1 ENABLE_WORKERS=1 ENABLE_GEOLOCATION=1 ENABLE_CHANNEL_MESSAGING=1
+FEATURE_DEFINES := ANDROID_ORIENTATION_SUPPORT ENABLE_TOUCH_EVENTS=1 ENABLE_DATABASE=1 ENABLE_OFFLINE_WEB_APPLICATIONS=1 ENABLE_DOM_STORAGE=1 ENABLE_VIDEO=1 ENABLE_WORKERS=1 ENABLE_GEOLOCATION=1 ENABLE_CHANNEL_MESSAGING=1
 
+# CSS
 GEN := \
     $(intermediates)/css/JSCSSCharsetRule.h \
     $(intermediates)/css/JSCSSFontFaceRule.h \
@@ -90,13 +91,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/css/%.cpp : $(intermediates)/css/%.h
 
-# MANUAL MERGE : I took this out because compiling the result shows:
-# out/.../JSEventTarget.cpp: In function 'JSC::JSValue* WebCore::jsEventTargetPrototypeFunctionAddEventListener(JSC::ExecState*, JSC::JSObject*, JSC::JSValue*, const JSC::ArgList&)':
-# out/.../JSEventTarget.cpp:90: error: 'toEventListener' was not declared in this scope
-# but I can't find toEventListener anywhere, nor can I figure out how toEventListener
-# is generated
-#    $(intermediates)/dom/JSEventTarget.h \
-
+# DOM
 GEN := \
     $(intermediates)/dom/JSAttr.h \
     $(intermediates)/dom/JSBeforeLoadEvent.h \
@@ -152,7 +147,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/dom/%.cpp : $(intermediates)/dom/%.h
 
-
+# HTML
 GEN := \
     $(intermediates)/html/JSDataGridColumn.h \
     $(intermediates)/html/JSDataGridColumnList.h \
@@ -245,6 +240,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/html/%.cpp : $(intermediates)/html/%.h
 
+# Canvas
 GEN := \
     $(intermediates)/html/canvas/JSCanvasGradient.h \
     $(intermediates)/html/canvas/JSCanvasNumberArray.h \
@@ -262,6 +258,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/html/canvas/%.cpp : $(intermediates)/html/canvas/%.h
 
+# Appcache
 GEN := \
     $(intermediates)/loader/appcache/JSDOMApplicationCache.h
 
@@ -275,11 +272,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/loader/appcache/%.cpp : $(intermediates)/loader/appcache/%.h
 
-# MANUAL MERGE : I took this out because compiling the result shows:
-# out/.../JSAbstractView.cpp:27:26: error: AbstractView.h: No such file or directory
-# I can't find AbstractView.h anywhere
-#    $(intermediates)/page/JSAbstractView.h \
-
+# page
 GEN := \
     $(intermediates)/page/JSBarInfo.h \
     $(intermediates)/page/JSConsole.h \
@@ -322,7 +315,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/plugins/%.cpp : $(intermediates)/plugins/%.h
 
-# New section for Database storage API
+# Database
 GEN := \
     $(intermediates)/storage/JSDatabase.h \
     $(intermediates)/storage/JSSQLError.h \
@@ -340,7 +333,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/storage/%.cpp : $(intermediates)/storage/%.h
 
-# new section for DOM Storage APIs
+# DOM Storage
 GEN := \
     $(intermediates)/storage/JSStorage.h \
     $(intermediates)/storage/JSStorageEvent.h
@@ -355,7 +348,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/storage/%.cpp : $(intermediates)/storage/%.h
 
-#new section for svg
+# SVG
 ifeq ($(ENABLE_SVG), true)
 GEN := \
     $(intermediates)/svg/JSSVGAElement.h \
@@ -501,7 +494,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/svg/%.cpp : $(intermediates)/svg/%.h
 endif
 
-# new section for Workers
+# Workers
 GEN := \
     $(intermediates)/workers/JSAbstractWorker.h \
     $(intermediates)/workers/JSDedicatedWorkerContext.h \
@@ -521,7 +514,7 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/workers/%.cpp : $(intermediates)/workers/%.h
 
-#new section for xml/DOMParser.idl
+# XML
 GEN := \
     $(intermediates)/xml/JSDOMParser.h \
     $(intermediates)/xml/JSXMLHttpRequest.h \
@@ -545,10 +538,8 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/xml/%.cpp : $(intermediates)/xml/
 
 GEN:= $(intermediates)/HTMLNames.cpp $(intermediates)/HTMLElementFactory.cpp  $(intermediates)/JSHTMLElementWrapperFactory.cpp
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --tags $(html_tags) --attrs $(html_attrs)  --extraDefines "$(FEATURE_DEFINES)" --factory --wrapperFactory --output $(dir $@)
-$(GEN): html_tags := $(LOCAL_PATH)/html/HTMLTagNames.in
-$(GEN): html_attrs := $(LOCAL_PATH)/html/HTMLAttributeNames.in
-$(GEN): $(LOCAL_PATH)/dom/make_names.pl $(html_tags) $(html_attrs)
+$(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --tags $(PRIVATE_PATH)/html/HTMLTagNames.in --attrs $(PRIVATE_PATH)/html/HTMLAttributeNames.in --extraDefines "$(FEATURE_DEFINES)" --factory --wrapperFactory --output $(dir $@)
+$(GEN): $(LOCAL_PATH)/dom/make_names.pl $(LOCAL_PATH)/html/HTMLTagNames.in $(LOCAL_PATH)/html/HTMLAttributeNames.in
 	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN)
 
@@ -558,10 +549,8 @@ ifeq ($(ENABLE_SVG), true)
 GEN:= $(intermediates)/SVGNames.cpp  $(intermediates)/SVGElementFactory.cpp $(intermediates)/JSSVGElementWrapperFactory.cpp
 SVG_FLAGS:=ENABLE_SVG_AS_IMAGE=1 ENABLE_SVG_FILTERS=1 ENABLE_SVG_FONTS=1 ENABLE_SVG_FOREIGN_OBJECT=1 ENABLE_SVG_USE=1
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --tags $(svg_tags) --attrs $(svg_attrs) --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory --output $(dir $@)
-$(GEN): svg_tags := $(LOCAL_PATH)/svg/svgtags.in
-$(GEN): svg_attrs := $(LOCAL_PATH)/svg/svgattrs.in
-$(GEN): $(LOCAL_PATH)/dom/make_names.pl $(svg_tags) $(svg_attrs)
+$(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --tags $(PRIVATE_PATH)/svg/svgtags.in --attrs $(PRIVATE_PATH)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory --output $(dir $@)
+$(GEN): $(LOCAL_PATH)/dom/make_names.pl $(LOCAL_PATH)/svg/svgtags.in $(LOCAL_PATH)/svg/svgattrs.in
 	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN)
 endif

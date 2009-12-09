@@ -23,6 +23,38 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
 
+BINDING_C_INCLUDES := \
+	$(LOCAL_PATH)/bindings/js \
+	$(LOCAL_PATH)/bridge \
+	$(LOCAL_PATH)/bridge/c \
+	$(LOCAL_PATH)/bridge/jni \
+	$(LOCAL_PATH)/bridge/jni/jsc \
+	\
+	$(JAVASCRIPTCORE_PATH)/API \
+	$(JAVASCRIPTCORE_PATH)/assembler \
+	$(JAVASCRIPTCORE_PATH)/bytecode \
+	$(JAVASCRIPTCORE_PATH)/bytecompiler \
+	$(JAVASCRIPTCORE_PATH)/debugger \
+	$(JAVASCRIPTCORE_PATH)/parser \
+	$(JAVASCRIPTCORE_PATH)/jit \
+	$(JAVASCRIPTCORE_PATH)/interpreter \
+	$(JAVASCRIPTCORE_PATH)/pcre \
+	$(JAVASCRIPTCORE_PATH)/profiler \
+	$(JAVASCRIPTCORE_PATH)/runtime \
+	$(JAVASCRIPTCORE_PATH)/wrec \
+	$(JAVASCRIPTCORE_PATH)/ForwardingHeaders \
+	\
+	$(base_intermediates)/WebCore/bindings/js \
+	$(base_intermediates)/WebCore/dom \
+	$(base_intermediates)/WebCore/html/canvas \
+	$(base_intermediates)/WebCore/inspector \
+	$(base_intermediates)/WebCore/loader/appcache \
+	$(base_intermediates)/WebCore/page \
+	$(base_intermediates)/WebCore/plugins \
+	$(base_intermediates)/WebCore/storage \
+	$(base_intermediates)/WebCore/workers \
+	$(base_intermediates)/WebCore/xml
+
 LOCAL_SRC_FILES += \
 	bindings/js/GCController.cpp \
 	bindings/js/JSAbstractWorkerCustom.cpp \
@@ -157,6 +189,7 @@ LOCAL_SRC_FILES += \
 	bridge/jni/jni_instance.cpp \
 	bridge/jni/jni_runtime.cpp \
 	bridge/jni/jni_utility.cpp \
+	bridge/jni/jsc/jni_utility_private.cpp \
 	bridge/npruntime.cpp \
 	bridge/runtime.cpp \
 	bridge/runtime_array.cpp \

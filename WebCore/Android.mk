@@ -232,6 +232,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	history/HistoryItem.cpp \
 	history/PageCache.cpp \
 	\
+	history/android/HistoryItemAndroid.cpp \
+	\
 	html/CollectionCache.cpp \
 	html/File.cpp \
 	html/FileList.cpp \
@@ -389,6 +391,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/android/EventLoopAndroid.cpp \
 	platform/android/FileChooserAndroid.cpp \
 	platform/android/FileSystemAndroid.cpp \
+	platform/android/GeolocationServiceAndroid.cpp \
+	platform/android/GeolocationServiceBridge.cpp \
 	platform/android/KeyEventAndroid.cpp \
 	platform/android/LocalizedStringsAndroid.cpp \
 	platform/android/PopupMenuAndroid.cpp \
@@ -396,6 +400,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/android/ScreenAndroid.cpp \
 	platform/android/ScrollViewAndroid.cpp \
 	platform/android/SearchPopupMenuAndroid.cpp \
+	platform/android/SharedTimerAndroid.cpp \
+	platform/android/SoundAndroid.cpp \
+	platform/android/SSLKeyGeneratorAndroid.cpp \
 	platform/android/SystemTimeAndroid.cpp \
 	platform/android/TemporaryLinkStubs.cpp \
 	platform/android/WidgetAndroid.cpp \

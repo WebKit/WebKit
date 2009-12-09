@@ -1,3 +1,12 @@
+2009-12-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds Android Makefiles for building with V8.
+        https://bugs.webkit.org/show_bug.cgi?id=32278
+
+        * Android.mk: Modified. Includes Makefiles for V8.
+
 2009-12-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

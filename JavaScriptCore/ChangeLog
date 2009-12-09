@@ -1,3 +1,13 @@
+2009-12-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Updates Android Makefiles with latest additions.
+        https://bugs.webkit.org/show_bug.cgi?id=32278
+
+        * Android.mk: Modified.
+        * Android.v8.wtf.mk: Modified.
+
 2009-12-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

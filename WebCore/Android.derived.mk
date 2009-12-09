@@ -23,7 +23,6 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
 
-LOCAL_SRC_FILES :=
 # CSS property names and value keywords
 
 GEN := $(intermediates)/css/CSSPropertyNames.h
@@ -101,16 +100,6 @@ $(GEN): $(LOCAL_BISON)
 
 LOCAL_GENERATED_SOURCES += $(GEN)
 
-# XPath grammar
-
-GEN := $(intermediates)/XPathGrammar.cpp
-$(GEN) : PRIVATE_YACCFLAGS := -p xpathyy
-$(GEN): $(LOCAL_PATH)/xml/XPathGrammar.y
-	$(call local-transform-y-to-cpp,.cpp)
-$(GEN): $(LOCAL_BISON)
-
-LOCAL_GENERATED_SOURCES += $(GEN)
-	                         
 # user agent style sheets
 
 style_sheets := $(LOCAL_PATH)/css/html.css $(LOCAL_PATH)/css/quirks.css $(LOCAL_PATH)/css/view-source.css $(LOCAL_PATH)/css/mediaControls.css

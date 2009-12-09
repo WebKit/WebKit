@@ -1,3 +1,20 @@
+2009-12-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds Android Makefiles for building with V8.
+        Also updates existing Android Makefiles with latest additions.
+        https://bugs.webkit.org/show_bug.cgi?id=32278
+
+        Build fix only, no new tests.
+
+        * Android.derived.jscbindings.mk: Modified.
+        * Android.derived.mk: Modified.
+        * Android.derived.v8bindings.mk: Added.
+        * Android.jscbindings.mk: Modified.
+        * Android.mk: Modified.
+        * Android.v8bindings.mk: Added.
+
 2009-12-09  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Dimitri Glazkov.
