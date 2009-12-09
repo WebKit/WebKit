@@ -5170,3 +5170,7 @@ http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
 http/tests/uri/css-href.php
 printing/compositing-layer-printing.html
 svg/custom/radial-gradient-with-outstanding-focalPoint.svg
+
+# CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
+# This test introduced in r51877
+fast/loader/input-element-page-cache-crash.html
