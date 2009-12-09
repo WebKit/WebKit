@@ -242,6 +242,7 @@ class CheckStyle(AbstractPatchProcessingCommand):
     def __init__(self):
         options = BuildSteps.cleaning_options()
         options += BuildSteps.build_options()
+        options += BuildSteps.land_options()
         AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
