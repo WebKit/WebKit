@@ -197,8 +197,8 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!selectedElement)
             return;
 
-        // Delete or backspace pressed, delete the node.
-        if (event.keyCode === 8 || event.keyCode === 46) {
+        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Backspace ||
+                event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
             selectedElement.remove();
             event.preventDefault();
             return;

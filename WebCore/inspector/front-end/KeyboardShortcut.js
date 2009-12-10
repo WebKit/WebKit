@@ -44,6 +44,7 @@ WebInspector.KeyboardShortcut.Modifiers = {
 };
 
 WebInspector.KeyboardShortcut.KeyCodes = {
+    Backspace: 8,
     Esc: 27,
     Space: 32,
     PageUp: 33,      // also NUM_NORTH_EAST
@@ -54,6 +55,7 @@ WebInspector.KeyboardShortcut.KeyCodes = {
     Up: 38,          // also NUM_NORTH
     Right: 39,       // also NUM_EAST
     Down: 40,        // also NUM_SOUTH
+    Delete: 46,
     F1: 112,
     F2: 113,
     F3: 114,

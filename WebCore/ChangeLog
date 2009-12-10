@@ -1,3 +1,18 @@
+2009-12-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: debugger shortcuts don't work when
+        Search field or Console drawer has focus.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32392
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector.documentKeyUp):
+        (WebInspector.searchKeyDown):
+
 2009-12-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

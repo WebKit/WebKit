@@ -482,8 +482,6 @@ WebInspector.loaded = function()
     document.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
 
     var mainPanelsElement = document.getElementById("main-panels");
-    mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
-    mainPanelsElement.handleKeyUpEvent = this.mainKeyUp.bind(this);
     mainPanelsElement.handleCopyEvent = this.mainCopy.bind(this);
 
     // Focus the mainPanelsElement in a timeout so it happens after the initial focus,
@@ -640,12 +638,17 @@ WebInspector.documentClick = function(event)
 
 WebInspector.documentKeyDown = function(event)
 {
-    if (!this.currentFocusElement)
-        return;
-    if (this.currentFocusElement.handleKeyEvent)
-        this.currentFocusElement.handleKeyEvent(event);
-    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "KeyDown"])
-        WebInspector[this.currentFocusElement.id + "KeyDown"](event);
+    if (this.currentFocusElement) {
+        if (this.currentFocusElement.handleKeyEvent)
+            this.currentFocusElement.handleKeyEvent(event);
+        else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "KeyDown"])
+            WebInspector[this.currentFocusElement.id + "KeyDown"](event);
+        if (event.handled)
+            return;
+    }
+
+    if (this.currentPanel && this.currentPanel.handleKeyEvent)
+        this.currentPanel.handleKeyEvent(event);
 
     if (!event.handled) {
         var isMac = WebInspector.isMac();
@@ -730,9 +733,15 @@ WebInspector.documentKeyDown = function(event)
 
 WebInspector.documentKeyUp = function(event)
 {
-    if (!this.currentFocusElement || !this.currentFocusElement.handleKeyUpEvent)
-        return;
-    this.currentFocusElement.handleKeyUpEvent(event);
+    if (this.currentFocusElement) {
+        if (this.currentFocusElement.handleKeyUpEvent)
+            this.currentFocusElement.handleKeyUpEvent(event);
+        if (event.handled)
+            return;
+    }
+
+    if (this.currentPanel && this.currentPanel.handleKeyUpEvent)
+        this.currentPanel.handleKeyUpEvent(event);
 }
 
 WebInspector.documentCanCopy = function(event)
@@ -760,18 +769,6 @@ WebInspector.contextMenuEventFired = function(event)
 {
     if (event.handled || event.target.hasStyleClass("popup-glasspane"))
         event.preventDefault();
-}
-
-WebInspector.mainKeyDown = function(event)
-{
-    if (this.currentPanel && this.currentPanel.handleKeyEvent)
-        this.currentPanel.handleKeyEvent(event);
-}
-
-WebInspector.mainKeyUp = function(event)
-{
-    if (this.currentPanel && this.currentPanel.handleKeyUpEvent)
-        this.currentPanel.handleKeyUpEvent(event);
 }
 
 WebInspector.mainCopy = function(event)
@@ -1550,14 +1547,19 @@ WebInspector.searchKeyDown = function(event)
     // Escape Key will clear the field and clear the search results
     if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
         event.preventDefault();
-        event.handled = true;
+        // When search was selected manually and is currently blank, we'd like Esc stay unhandled
+        // and hit console drawer handler.
+        event.handled = !(this.previousFocusElement === event.target && event.target.value === "");
         event.target.value = "";
 
         this.performSearch(event);
         this.currentFocusElement = this.previousFocusElement;
         if (this.currentFocusElement === event.target)
             this.currentFocusElement.select();
-
+        return false;
+    } else if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Backspace ||
+               event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
+        event.handled = true;
         return false;
     }
 
