@@ -176,6 +176,7 @@ class Bugzilla:
         attachment['id'] = int(element.find('attachid').string)
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
         attachment['name'] = unicode(element.find('desc').string)
+        attachment['attacher_email'] = str(element.find('attacher').string)
         attachment['type'] = str(element.find('type').string)
         self._parse_attachment_flag(element, 'review', attachment, 'reviewer_email')
         self._parse_attachment_flag(element, 'commit-queue', attachment, 'committer_email')
@@ -307,7 +308,7 @@ class Bugzilla:
         # Grab the cells in the first column (which happens to be the bug ids)
         for bug_link_cell in soup('td', "first-child"): # tds with the class "first-child"
             bug_link = bug_link_cell.find("a")
-            bug_ids.append(bug_link.string) # the contents happen to be the bug id
+            bug_ids.append(int(bug_link.string)) # the contents happen to be the bug id
 
         return bug_ids
 
@@ -324,6 +325,11 @@ class Bugzilla:
         commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
 
+    # List of all r+'d bugs.
+    def fetch_bug_ids_from_needs_commit_list(self):
+        needs_commit_query_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
+        return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
+
     def fetch_bug_ids_from_review_queue(self):
         review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
         return self._fetch_bug_ids_advanced_query(review_queue_url)
@@ -338,6 +344,13 @@ class Bugzilla:
             patches = self.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
             patches_to_land += patches
         return patches_to_land
+
+    def fetch_patches_from_pending_commit_list(self):
+        patches_needing_commit = []
+        for bug_id in self.fetch_bug_ids_from_needs_commit_list():
+            patches = self.fetch_reviewed_patches_from_bug(bug_id)
+            patches_needing_commit += patches
+        return patches_needing_commit
 
     def fetch_patches_from_review_queue(self, limit=None):
         patches_to_review = []

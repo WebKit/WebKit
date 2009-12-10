@@ -72,6 +72,7 @@ class BugzillaTest(unittest.TestCase):
         'reviewer_email' : 'one@test.com',
         'commit-queue' : '+',
         'committer_email' : 'two@test.com',
+        'attacher_email' : 'christian.plesner.hansen@gmail.com',
     }
 
     def test_parse_bug_id(self):

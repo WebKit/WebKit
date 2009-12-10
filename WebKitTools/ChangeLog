@@ -1,3 +1,21 @@
+2009-12-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool needs a command to list patches needing cq+
+        https://bugs.webkit.org/show_bug.cgi?id=32351
+
+        * Scripts/modules/bugzilla.py:
+         - Parse attacher_email from attachment xml.
+        * Scripts/modules/bugzilla_unittest.py:
+         - Test new attacher_email parsing.
+        * Scripts/modules/commands/queries.py:
+         - Add PatchesToCommitQueue
+        * Scripts/modules/commands/queries_unittest.py:
+         - Tests for PatchesToCommitQueue
+        * Scripts/modules/mock_bugzillatool.py:
+         - Add necessary mock methods for running PatchesToCommitQueue
+
 2009-12-10  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Turns out every StepSequence command needs a --quiet

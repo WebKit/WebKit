@@ -32,8 +32,10 @@
 from optparse import make_option
 
 from modules.buildbot import BuildBot
+from modules.committers import CommitterList
 from modules.logging import log
 from modules.multicommandtool import Command
+
 
 class BugsToCommit(Command):
     name = "bugs-to-commit"
@@ -58,6 +60,41 @@ class PatchesToCommit(Command):
         log("Patches in commit queue:")
         for patch in patches:
             print "%s" % patch["url"]
+
+
+class PatchesToCommitQueue(Command):
+    name = "patches-to-commit-queue"
+    show_in_main_help = False
+    def __init__(self):
+        options = [
+            make_option("--bugs", action="store_true", dest="bugs", help="Output bug links instead of patch links"),
+        ]
+        Command.__init__(self, "Patches which should be added to the commit queue", options=options)
+
+    @staticmethod
+    def _needs_commit_queue(patch):
+        commit_queue_flag = patch.get("commit-queue")
+        if (commit_queue_flag and commit_queue_flag == '+'): # If it's already cq+, ignore the patch.
+            log("%s already has cq=%s" % (patch["id"], commit_queue_flag))
+            return False
+
+        # We only need to worry about patches from contributers who are not yet committers.
+        committer_record = CommitterList().committer_by_email(patch["attacher_email"])
+        if committer_record:
+            log("%s committer = %s" % (patch["id"], committer_record))
+        return not committer_record
+
+    def execute(self, options, args, tool):
+        patches = tool.bugs.fetch_patches_from_pending_commit_list()
+        patches_needing_cq = filter(self._needs_commit_queue, patches)
+        if options.bugs:
+            bugs_needing_cq = map(lambda patch: patch['bug_id'], patches_needing_cq)
+            bugs_needing_cq = sorted(set(bugs_needing_cq))
+            for bug_id in bugs_needing_cq:
+                print "%s" % tool.bugs.bug_url_for_bug_id(bug_id)
+        else:
+            for patch in patches_needing_cq:
+                print "%s" % tool.bugs.attachment_url_for_id(patch["id"], action="edit")
 
 
 class PatchesToReview(Command):

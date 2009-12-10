@@ -28,8 +28,11 @@
 
 import unittest
 
+from modules.bugzilla import Bugzilla
 from modules.commands.commandtest import CommandsTest
 from modules.commands.queries import *
+from modules.mock import Mock
+from modules.mock_bugzillatool import MockBugzillaTool
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
@@ -39,6 +42,17 @@ class QueryCommandsTest(CommandsTest):
         expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
         expected_stderr = "Patches in commit queue:\n"
         self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
+
+    def test_patches_to_commit_queue(self):
+        expected_stdout = "http://example.com/197&action=edit\nhttp://example.com/128&action=edit\n"
+        expected_stderr = ""
+        options = Mock()
+        options.bugs = False
+        self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
+
+        expected_stdout = "http://example.com/42\n"
+        options.bugs = True
+        self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
 
     def test_patches_to_review(self):
         expected_stdout = "197\n128\n"

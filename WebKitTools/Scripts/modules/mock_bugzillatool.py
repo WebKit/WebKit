@@ -31,21 +31,25 @@ import os
 from modules.mock import Mock
 from modules.scm import CommitMessage
 
+
 class MockBugzilla(Mock):
     patch1 = {
-        "id": 197,
-        "bug_id": 42,
-        "url": "http://example.com/197",
-        "is_obsolete": False,
-        "reviewer": "Reviewer1"
+        "id" : 197,
+        "bug_id" : 42,
+        "url" : "http://example.com/197",
+        "is_obsolete" : False,
+        "reviewer" : "Reviewer1",
+        "attacher_email" : "Contributer1",
     }
     patch2 = {
-        "id": 128,
-        "bug_id": 42,
-        "url": "http://example.com/128",
-        "is_obsolete": False,
-        "reviewer": "Reviewer2"
+        "id" : 128,
+        "bug_id" : 42,
+        "url" : "http://example.com/128",
+        "is_obsolete" : False,
+        "reviewer" : "Reviewer2",
+        "attacher_email" : "Contributer2",
     }
+    bug_server_url = "http://example.com"
 
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
@@ -54,6 +58,9 @@ class MockBugzilla(Mock):
         return [197, 128]
 
     def fetch_patches_from_commit_queue(self):
+        return [self.patch1, self.patch2]
+
+    def fetch_patches_from_pending_commit_list(self):
         return [self.patch1, self.patch2]
 
     def fetch_reviewed_patches_from_bug(self, bug_id):
@@ -77,6 +84,15 @@ class MockBugzilla(Mock):
         if attachment_id == 128:
             return self.patch2
         raise Exception("Bogus attachment_id in fetch_attachment.")
+
+    def bug_url_for_bug_id(self, bug_id):
+        return "%s/%s" % (self.bug_server_url, bug_id)
+
+    def attachment_url_for_id(self, attachment_id, action):
+        action_param = ""
+        if action and action != "view":
+            action_param = "&action=%s" % action
+        return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
 
 class MockBuildBot(Mock):
