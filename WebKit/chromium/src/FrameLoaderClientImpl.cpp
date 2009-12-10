@@ -237,8 +237,8 @@ void FrameLoaderClientImpl::assignIdentifierToInitialRequest(
     }
 }
 
-// Determines whether the request being loaded by |loader| is a frame or a
-// subresource. A subresource in this context is anything other than a frame --
+// If the request being loaded by |loader| is a frame, update the ResourceType.
+// A subresource in this context is anything other than a frame --
 // this includes images and xmlhttp requests.  It is important to note that a
 // subresource is NOT limited to stuff loaded through the frame's subresource
 // loader. Synchronous xmlhttp requests for example, do not go through the
@@ -246,14 +246,16 @@ void FrameLoaderClientImpl::assignIdentifierToInitialRequest(
 //
 // The important edge cases to consider when modifying this function are
 // how synchronous resource loads are treated during load/unload threshold.
-static ResourceRequest::TargetType determineTargetTypeFromLoader(DocumentLoader* loader)
+static void setTargetTypeFromLoader(ResourceRequest& request, DocumentLoader* loader)
 {
     if (loader == loader->frameLoader()->provisionalDocumentLoader()) {
+        ResourceRequest::TargetType type;
         if (loader->frameLoader()->isLoadingMainFrame())
-            return ResourceRequest::TargetIsMainFrame;
-        return ResourceRequest::TargetIsSubframe;
+            type = ResourceRequest::TargetIsMainFrame;
+        else
+            type = ResourceRequest::TargetIsSubframe;
+        request.setTargetType(type);
     }
-    return ResourceRequest::TargetIsSubresource;
 }
 
 void FrameLoaderClientImpl::dispatchWillSendRequest(
@@ -263,7 +265,7 @@ void FrameLoaderClientImpl::dispatchWillSendRequest(
     if (loader) {
         // We want to distinguish between a request for a document to be loaded into
         // the main frame, a sub-frame, or the sub-objects in that document.
-        request.setTargetType(determineTargetTypeFromLoader(loader));
+        setTargetTypeFromLoader(request, loader));
 
         // Avoid repeating a form submission when navigating back or forward.
         if (loader == loader->frameLoader()->provisionalDocumentLoader()

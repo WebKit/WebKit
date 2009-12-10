@@ -1,3 +1,17 @@
+2009-12-10  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix FrameLoader to use the new ResourceTypes properly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32336
+
+        * public/WebURLRequest.h:
+        (WebKit::WebURLRequest::):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::setTargetTypeFromLoader):
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendRequest):
+
 2009-12-10  Ilya Tikhonovsky <loislo@google.com>
 
         Reviewed by Pavel Feldman.
