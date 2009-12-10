@@ -1,3 +1,25 @@
+2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Pass more information about a plug-in to the PluginHalterDelegate
+
+        Reviewed by Adam Roben.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::isWindowed):
+        Return false - the Mac doesn't really have windowed plug-ins.
+        (WebHaltablePlugin::pluginName):
+        Return the name from the plug-in package.
+
+        * WebCoreSupport/WebPluginHalterClient.h:
+        Update for new parameters.
+
+        * WebCoreSupport/WebPluginHalterClient.mm:
+        (WebPluginHalterClient::shouldHaltPlugin):
+        Ditto; pass them when making the delegate call.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Update for new parameters.
+
 2009-12-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

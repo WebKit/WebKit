@@ -27,6 +27,7 @@
 
 namespace WebCore {
     class Node;
+    class String;
 }
 
 @class WebView;
@@ -35,7 +36,7 @@ class WebPluginHalterClient : public WebCore::PluginHalterClient {
 public:
     WebPluginHalterClient(WebView *);
     
-    virtual bool shouldHaltPlugin(WebCore::Node*) const;
+    virtual bool shouldHaltPlugin(WebCore::Node*, bool, const WebCore::String&) const;
     virtual bool enabled() const;
     
 private:

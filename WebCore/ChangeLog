@@ -1,3 +1,30 @@
+2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Pass more information about a plug-in to the PluginHalterDelegate
+
+        Reviewed by Adam Roben.
+
+        * loader/EmptyClients.h:
+        Remove this unused class.
+
+        * page/HaltablePlugin.h:
+        Add new functions to return the plug-in's name and whether it is
+        windowed.
+
+        * page/PluginHalter.cpp:
+        (WebCore::PluginHalter::timerFired):
+        Pass new arguments to the client.
+
+        * page/PluginHalterClient.h:
+        Add new parameters.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::pluginName):
+        Return the name from the PluginPackage.
+
+        * plugins/PluginView.h:
+        (WebCore::PluginView::isWindowed):
+
 2009-12-09  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Pavel Feldman.

@@ -491,13 +491,6 @@ public:
     virtual void inspectorWindowObjectCleared() { }
 };
 
-class EmptyPluginHalterClient : public PluginHalterClient
-{
-public:
-    virtual bool shouldHaltPlugin(Node*) const { return false; }
-    virtual bool enabled() const { return false; }
-};
-
 }
 
 #endif // EmptyClients_h

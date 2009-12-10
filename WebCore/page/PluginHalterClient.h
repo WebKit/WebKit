@@ -29,12 +29,13 @@
 namespace WebCore {
 
 class Node;
+class String;
 
 class PluginHalterClient {
 public:
     virtual ~PluginHalterClient() { }
 
-    virtual bool shouldHaltPlugin(Node*) const = 0;
+    virtual bool shouldHaltPlugin(Node*, bool isWindowed, const String& pluginName) const = 0;
     virtual bool enabled() const = 0;
 };
 

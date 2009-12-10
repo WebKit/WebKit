@@ -39,5 +39,5 @@ interface IWebView;
 ]
 interface IWebPluginHalterDelegate : IUnknown
 {
-    HRESULT shouldHaltPlugin([in] IWebView* webView, [in] IDOMNode*, [out, retval] BOOL* result);
+    HRESULT shouldHaltPlugin([in] IWebView* webView, [in] IDOMNode*, [in] BOOL isWindowed, [in] BSTR pluginName, [out, retval] BOOL* result);
 }

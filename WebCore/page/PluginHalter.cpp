@@ -28,6 +28,7 @@
 #include "PluginHalter.h"
 
 #include "HaltablePlugin.h"
+#include "PlatformString.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
@@ -93,7 +94,7 @@ void PluginHalter::timerFired(Timer<PluginHalter>*)
             continue;
         }
 
-        if (m_client->shouldHaltPlugin(plugins[i]->node()))
+        if (m_client->shouldHaltPlugin(plugins[i]->node(), plugins[i]->isWindowed(), plugins[i]->pluginName()))
             plugins[i]->halt();
 
         m_plugins.remove(plugins[i]);

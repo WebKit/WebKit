@@ -79,6 +79,8 @@ private:
     virtual void halt();
     virtual void restart();
     virtual Node* node() const;
+    virtual bool isWindowed() const;
+    virtual String pluginName() const;
 
     WebBaseNetscapePluginView* m_view;
 };
@@ -96,6 +98,16 @@ void WebHaltablePlugin::restart()
 Node* WebHaltablePlugin::node() const
 {
     return [m_view element];
+}
+
+bool WebHaltablePlugin::isWindowed() const
+{
+    return false;
+}
+
+String WebHaltablePlugin::pluginName() const
+{
+    return [[m_view pluginPackage] name];
 }
 
 @implementation WebBaseNetscapePluginView

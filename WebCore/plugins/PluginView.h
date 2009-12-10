@@ -203,6 +203,8 @@ namespace WebCore {
         virtual void halt();
         virtual void restart();
         virtual Node* node() const;
+        virtual bool isWindowed() const { return m_isWindowed; }
+        virtual String pluginName() const;
 
         bool isHalted() const { return m_isHalted; }
         bool hasBeenHalted() const { return m_hasBeenHalted; }

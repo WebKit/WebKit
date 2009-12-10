@@ -1,3 +1,19 @@
+2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Pass more information about a plug-in to the PluginHalterDelegate
+
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebPluginHalterDelegate.idl:
+        Add new parameters.
+
+        * WebCoreSupport/WebPluginHalterClient.cpp:
+        (WebPluginHalterClient::shouldHaltPlugin):
+        Update for new parameters. Pass them when making the delegate call.
+
+        * WebCoreSupport/WebPluginHalterClient.h:
+        Update for new parameters.
+
 2009-12-09  Brent Fulgham  <bfulgham@webkit.org>
 
         Revert incorrect commit-box update r51911.
