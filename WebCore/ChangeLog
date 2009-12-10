@@ -1,3 +1,22 @@
+2009-12-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32355
+        Assertion failure when opening a WebSocket connection
+
+        I couldn't make a reliable test for this. Once the test from bug 32299 is landed, it
+        will provide partial coverage, as I was frequently seeing the assertion failure with it.
+
+        * platform/network/SocketStreamHandleBase.cpp: (WebCore::SocketStreamHandleBase::send):
+        It's not an error if zero is returned from platformSend() - it just means that nothing could
+        be pushed down to the network layer, and all data was queued for later.
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback): This will no longer happen with SocketStream,
+        but a client can potentially destroy the handle from any callback, so we need to check that
+        this didn't happen.
+        (WebCore::SocketStreamHandle::writeStreamCallback): Ditto.
+
 2009-12-09  Sam Weinig  <sam@webkit.org>
 
         Roll out 51919 and 51920. They were incorrect and unnecessary right now.
