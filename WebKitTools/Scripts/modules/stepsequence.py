@@ -38,7 +38,10 @@ class StepSequence(object):
         self._steps = steps
 
     def options(self):
-        collected_options = [CommandOptions.parent_command]
+        collected_options = [
+            CommandOptions.parent_command,
+            CommandOptions.quiet,
+        ]
         for step in self._steps:
             collected_options = collected_options + step.options()
         # Remove duplicates.

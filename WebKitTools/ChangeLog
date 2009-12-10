@@ -1,3 +1,10 @@
+2009-12-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Turns out every StepSequence command needs a --quiet
+        option.
+
+        * Scripts/modules/stepsequence.py:
+
 2009-12-10  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.
