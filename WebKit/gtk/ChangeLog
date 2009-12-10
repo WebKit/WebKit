@@ -2,6 +2,15 @@
 
         Reviewed by Xan Lopez.
 
+        Add a missing null-check, that is causing some crash reports.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::committedLoad):
+
+2009-12-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Should provide an API to control the IconDatabase
         https://bugs.webkit.org/show_bug.cgi?id=32334
 
