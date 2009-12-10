@@ -366,6 +366,10 @@ webkit_web_view_get_view_source_mode            (WebKitWebView        *web_view)
 WEBKIT_API WebKitHitTestResult*
 webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
                                                  GdkEventButton       *event);
+
+WEBKIT_API G_CONST_RETURN gchar *
+webkit_web_view_get_icon_uri                    (WebKitWebView        *webView);
+
 G_END_DECLS
 
 #endif

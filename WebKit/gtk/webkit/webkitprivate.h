@@ -142,6 +142,8 @@ extern "C" {
         char* encoding;
         char* customEncoding;
 
+        char* iconURI;
+
         gboolean disposing;
         gboolean usePrimaryForPaste;
 

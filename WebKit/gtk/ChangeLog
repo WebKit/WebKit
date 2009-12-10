@@ -1,3 +1,36 @@
+2009-12-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Should provide an API to control the IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=32334
+
+        First step towards a full IconDatabase API. This provides
+        notification for pages with favicons, and lets clients handle
+        them.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::registerForIconNotification):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon):
+        * tests/resources/blank.ico: Added.
+        * tests/testwebview.c: Added.
+        (server_callback):
+        (idle_quit_loop_cb):
+        (icon_uri_changed_cb):
+        (icon_loaded_cb):
+        (test_webkit_web_view_icon_uri):
+        (main):
+        * webkit/webkitprivate.cpp:
+        (closeIconDatabaseOnExit):
+        (webkit_init):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_property):
+        (webkit_web_view_finalize):
+        (webkit_web_view_class_init):
+        (webkit_web_view_get_icon_uri):
+        * webkit/webkitwebview.h:
+
 2009-12-08  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha Silva.
