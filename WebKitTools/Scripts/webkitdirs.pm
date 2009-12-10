@@ -67,6 +67,7 @@ my $isChromium;
 # Variables for Win32 support
 my $vcBuildPath;
 my $windowsTmpPath;
+my $windowsSourceDir;
 
 sub determineSourceDir
 {
@@ -986,6 +987,11 @@ sub isSnowLeopard()
     return isDarwin() && osXVersion()->{"minor"} == 6;
 }
 
+sub isWindowsNT()
+{
+    return $ENV{'OS'} eq 'Windows_NT';
+}
+
 sub relativeScriptsDir()
 {
     my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
@@ -1051,6 +1057,68 @@ sub checkRequiredSystemConfig
         }
     }
     # Win32 and other platforms may want to check for minimum config
+}
+
+sub determineWindowsSourceDir()
+{
+    return if $windowsSourceDir;
+    my $sourceDir = sourceDir();
+    chomp($windowsSourceDir = `cygpath -w $sourceDir`);
+}
+
+sub windowsSourceDir()
+{
+    determineWindowsSourceDir();
+    return $windowsSourceDir;
+}
+
+sub windowsLibrariesDir()
+{
+    return windowsSourceDir() . "\\WebKitLibraries\\win";
+}
+
+sub windowsOutputDir()
+{
+    return windowsSourceDir() . "\\WebKitBuild";
+}
+
+sub setupAppleWinEnv()
+{
+    return unless isAppleWinWebKit();
+
+    if (isWindowsNT()) {
+        my $restartNeeded = 0;
+        my %variablesToSet = ();
+
+        # Setting the environment variable 'CYGWIN' to 'tty' makes cygwin enable extra support (i.e., termios)
+        # for UNIX-like ttys in the Windows console
+        $variablesToSet{CYGWIN} = "tty" unless $ENV{CYGWIN};
+        
+        # Those environment variables must be set to be able to build inside Visual Studio.
+        $variablesToSet{WEBKITLIBRARIESDIR} = windowsLibrariesDir() unless $ENV{WEBKITLIBRARIESDIR};
+        $variablesToSet{WEBKITOUTPUTDIR} = windowsOutputDir() unless $ENV{WEBKITOUTPUTDIR};
+
+        foreach my $variable (keys %variablesToSet) {
+            print "Setting the Environment Variable '" . $variable . "' to '" . $variablesToSet{$variable} . "'\n\n";
+            system qw(regtool -s set), '\\HKEY_CURRENT_USER\\Environment\\' . $variable, $variablesToSet{$variable};
+            $restartNeeded ||= $variable eq "WEBKITLIBRARIESDIR" || $variable eq "WEBKITOUTPUTDIR";
+        }
+
+        if ($restartNeeded) {
+            print "Please restart your computer before attempting to build inside Visual Studio.\n\n";
+        }
+    } else {
+        if (!$ENV{'WEBKITLIBRARIESDIR'}) {
+            print "Warning: You must set the 'WebKitLibrariesDir' environment variable\n";
+            print "         to be able build WebKit from within Visual Studio.\n";
+            print "         Make sure that 'WebKitLibrariesDir' points to the\n";
+            print "         'WebKitLibraries/win' directory, not the 'WebKitLibraries/' directory.\n\n";
+        }
+        if (!$ENV{'WEBKITOUTPUTDIR'}) {
+            print "Warning: You must set the 'WebKitOutputDir' environment variable\n";
+            print "         to be able build WebKit from within Visual Studio.\n\n";
+        }
+    }
 }
 
 sub setupCygwinEnv()

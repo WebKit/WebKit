@@ -88,6 +88,8 @@ if (-d "../Internal") {
     system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
 }
 
+setupAppleWinEnv() if isAppleWinWebKit();
+
 exit 0;
 
 sub runSvnUpdate()

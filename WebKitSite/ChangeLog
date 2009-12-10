@@ -1,3 +1,16 @@
+2009-12-09  Marwan Al Jubeh  <marwan.aljubeh@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=31228
+        Set the WebKitOutputDir, WebKitLibrariesDir and Cygwin environment variables automatically
+        in Windows as part of running update_webkit.
+
+        * building/build.html:
+         - removed the reference to forgetting to set environment variables as a common source of errors
+           on Windows. This is because this patch would make it unnecessary for the user to set these
+           variables manually.
+
 2009-12-09  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Darin Adler.

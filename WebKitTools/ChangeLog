@@ -1,3 +1,19 @@
+2009-12-09  Marwan Al Jubeh  <marwan.aljubeh@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=31228
+        Set the WebKitOutputDir, WebKitLibrariesDir and Cygwin environment variables automatically
+        in Windows as part of running update_webkit.
+
+        * Scripts/update-webkit:
+         - Run setupAppleWinEnv() on Apple's Windows port.
+        * Scripts/webkitdirs.pm:
+         - Added functions that return the source directory, libraries directory and default build directory on Windows.
+         - Added isWindowsNT() which tests if the current Windows version is from the Windows NT family.
+         - Implemented setupAppleWinEnv() which sets the environment variables WebKitOutputDir, WebKitLibrariesDir
+           and Cygwin to their desired values.
+
 2009-12-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
