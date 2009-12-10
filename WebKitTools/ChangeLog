@@ -1,3 +1,15 @@
+2009-12-10  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Implements displayWebView() to force an invalidation and repaint.
+        This fixes a problem running the timeline-paint.html unit test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31729
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (displayWebView):
+
 2009-12-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

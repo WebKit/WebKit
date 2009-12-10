@@ -1,3 +1,14 @@
+2009-12-10  Eric Z. Ayers  <zundel@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        DumpRenderTree has been patched so that the timeline-paint.html 
+        unit test now runs under GTK+.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31729
+
+        * platform/gtk/Skipped:
+
 2009-12-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Skip two tests on gtk/qt that generate new results.
