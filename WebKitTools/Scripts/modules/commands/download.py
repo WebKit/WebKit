@@ -33,7 +33,7 @@ import os
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, BuildStep, CheckStyleStep, PrepareChangelogStep
+from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, PrepareChangelogStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -224,27 +224,17 @@ class AbstractPatchProcessingCommand(Command):
             self._process_patch(patch, options, args, tool)
 
 
-class CheckStyleSequence(LandingSequence):
-    def run(self):
-        self.clean()
-        self.update()
-        self.apply_patch()
-        self.build()
-
-    def build(self):
-        # Instead of building, we check style.
-        step = CheckStyleStep(self._tool, self._options)
-        step.run()
-
-
 class CheckStyle(AbstractPatchProcessingCommand):
     name = "check-style"
     show_in_main_help = False
     def __init__(self):
-        options = BuildSteps.cleaning_options()
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
+        self._sequence = StepSequence([
+            CleanWorkingDirectoryStep,
+            UpdateStep,
+            ApplyPatchStep,
+            CheckStyleStep,
+        ])
+        AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", self._sequence.options())
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
@@ -253,26 +243,20 @@ class CheckStyle(AbstractPatchProcessingCommand):
         pass
 
     def _process_patch(self, patch, options, args, tool):
-        sequence = CheckStyleSequence(patch, options, tool)
-        sequence.run_and_handle_errors()
-
-
-class BuildAttachmentSequence(LandingSequence):
-    def run(self):
-        self.clean()
-        self.update()
-        self.apply_patch()
-        self.build()
+        self._sequence.run_and_handle_errors(tool, options, patch)
 
 
 class BuildAttachment(AbstractPatchProcessingCommand):
     name = "build-attachment"
     show_in_main_help = False
     def __init__(self):
-        options = BuildSteps.cleaning_options()
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", options)
+        self._sequence = StepSequence([
+            CleanWorkingDirectoryStep,
+            UpdateStep,
+            ApplyPatchStep,
+            BuildStep,
+        ])
+        AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", self._sequence.options())
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
@@ -281,8 +265,7 @@ class BuildAttachment(AbstractPatchProcessingCommand):
         pass
 
     def _process_patch(self, patch, options, args, tool):
-        sequence = BuildAttachmentSequence(patch, options, tool)
-        sequence.run_and_handle_errors()
+        self._sequence.run_and_handle_errors(tool, options, patch)
 
 
 class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):

@@ -1,3 +1,15 @@
+2009-12-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Convert more commands to StepSequences
+        https://bugs.webkit.org/show_bug.cgi?id=32362
+
+        We should eventually convert all the commands, but I'm starting with
+        the easy ones.
+
+        * Scripts/modules/commands/download.py:
+
 2009-12-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
