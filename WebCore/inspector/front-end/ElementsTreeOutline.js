@@ -41,6 +41,8 @@ WebInspector.ElementsTreeOutline = function() {
     this.showInElementsPanelEnabled = false;
     this.rootDOMNode = null;
     this.focusedDOMNode = null;
+
+    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
@@ -259,6 +261,23 @@ WebInspector.ElementsTreeOutline.prototype = {
         }
 
         WebInspector.hoveredDOMNode = null;
+    },
+
+    _contextMenuEventFired: function(event)
+    {
+        var listItem = event.target.enclosingNodeOrSelfWithNodeName("LI");
+        if (!listItem || !listItem.treeElement)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu();
+
+        var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
+        var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        if (tag)
+            listItem.treeElement._populateTagContextMenu(contextMenu, event);
+        else if (textNode)
+            listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+        contextMenu.show(event);
     }
 }
 
@@ -549,12 +568,12 @@ WebInspector.ElementsTreeElement.prototype = {
             event.preventDefault();
     },
 
-    ondblclick: function(treeElement, event)
+    ondblclick: function(event)
     {
         if (this._editing)
             return;
 
-        if (this._startEditingFromEvent(event, treeElement))
+        if (this._startEditingFromEvent(event))
             return;
 
         if (this.hasChildren && !this.expanded)
@@ -576,7 +595,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this.updateSelection();
     },
 
-    _startEditingFromEvent: function(event, treeElement)
+    _startEditingFromEvent: function(event)
     {
         if (this.treeOutline.focusedDOMNode != this.representedObject)
             return;
@@ -594,9 +613,29 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
         if (newAttribute)
-            return this._addNewAttribute(treeElement.listItemElement);
+            return this._addNewAttribute();
 
         return false;
+    },
+
+    _populateTagContextMenu: function(contextMenu, event)
+    {
+        var attribute = event.target.enclosingNodeOrSelfWithClass("webkit-html-attribute");
+        var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
+
+        // Add attribute-related actions.
+        contextMenu.appendItem(WebInspector.UIString("Add Attribute"), this._addNewAttribute.bind(this));
+        if (attribute && !newAttribute)
+            contextMenu.appendItem(WebInspector.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
+        contextMenu.appendSeparator();
+
+        // Add node-related actions.
+        contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
+    },
+
+    _populateTextContextMenu: function(contextMenu, textNode)
+    {
+        contextMenu.appendItem(WebInspector.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
     },
 
     _startEditing: function()
@@ -612,7 +651,7 @@ WebInspector.ElementsTreeElement.prototype = {
             if (attribute)
                 return this._startEditingAttribute(attribute, attribute.getElementsByClassName("webkit-html-attribute-value")[0]);
 
-            return this._addNewAttribute(listItem);
+            return this._addNewAttribute();
         }
 
         if (this.representedObject.nodeType === Node.TEXT_NODE) {
@@ -623,7 +662,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
     },
 
-    _addNewAttribute: function(listItemElement)
+    _addNewAttribute: function()
     {
         var attr = document.createElement("span");
         attr.className = "webkit-html-attribute";
@@ -637,7 +676,7 @@ WebInspector.ElementsTreeElement.prototype = {
         attr.appendChild(name);
         attr.appendChild(value);
 
-        var tag = listItemElement.getElementsByClassName("webkit-html-tag")[0];
+        var tag = this.listItemElement.getElementsByClassName("webkit-html-tag")[0];
         this._insertInLastAttributePosition(tag, attr);
         return this._startEditingAttribute(attr, attr);
     },

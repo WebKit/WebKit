@@ -31,63 +31,53 @@
 WebInspector.ContextMenu = function() {
     this._items = [];
     this._handlers = {};
-    this._appendItem(WebInspector.UIString("Edit as HTML"), this._noop.bind(this));
-    this._appendItem(WebInspector.UIString("Add attribute"), this._noop.bind(this));
-    this._appendSeparator();
-    this._appendItem(WebInspector.UIString("Copy"), this._copy.bind(this));
-    this._appendItem(WebInspector.UIString("Delete"), this._delete.bind(this));
 }
 
 WebInspector.ContextMenu.prototype = {
     show: function(event)
     {
-        // FIXME: Uncomment when popup menu has meaningful items.
-        // InspectorFrontendHost.showContextMenu(event, this._items);
-        // event.preventDefault();
+        // Remove trailing separator.
+        while (this._items.length > 0 && !("id" in this._items[this._items.length - 1]))
+            this._items.splice(this._items.length - 1, 1);
+
+        if (this._items.length) {
+            WebInspector._contextMenu = this;
+            InspectorFrontendHost.showContextMenu(event, this._items);
+        }
     },
 
-    _appendItem: function(label, handler)
+    appendItem: function(label, handler)
     {
         var id = this._items.length;
         this._items.push({id: id, label: label});
         this._handlers[id] = handler;
     },
 
-    _appendSeparator: function()
+    appendSeparator: function()
     {
+        // No separator dupes allowed.
+        if (this._items.length === 0)
+            return;
+        if (!("id" in this._items[this._items.length - 1]))
+            return;
         this._items.push({});
     },
 
-    itemSelected: function(id)
+    _itemSelected: function(id)
     {
         if (this._handlers[id])
             this._handlers[id].call(this);
-    },
-
-    _copy: function()
-    {
-        console.log("context menu: copy");
-    },
-
-    _delete: function()
-    {
-        console.log("context menu: delete");
-    },
-
-    _noop: function()
-    {
-        console.log("context menu: noop");
     }
 }
 
-
 WebInspector.contextMenuItemSelected = function(id)
 {
-    if (WebInspector.contextMenu)
-        WebInspector.contextMenu.itemSelected(id);
+    if (WebInspector._contextMenu)
+        WebInspector._contextMenu._itemSelected(id);
 }
 
 WebInspector.contextMenuCleared = function()
 {
-    console.log("context menu: cleared");
+    // FIXME: Unfortunately, contextMenuCleared is invoked between show and item selected
+    // so we can't delete last menu object from WebInspector. Fix the contract.
 }

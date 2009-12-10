@@ -1,3 +1,42 @@
+2009-12-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Add context menu actions for DOM tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32348
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ContextMenu.js:
+        (WebInspector.ContextMenu):
+        (WebInspector.ContextMenu.prototype.show):
+        (WebInspector.ContextMenu.prototype.appendItem):
+        (WebInspector.ContextMenu.prototype.appendSeparator):
+        (WebInspector.ContextMenu.prototype._itemSelected):
+        (WebInspector.contextMenuItemSelected):
+        (WebInspector.contextMenuCleared):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._onmouseout):
+        (WebInspector.ElementsTreeOutline.prototype.populateContextMenu):
+        (WebInspector.ElementsTreeElement.prototype.ondblclick):
+        (WebInspector.ElementsTreeElement.prototype._startEditingFromEvent):
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._populateTextContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._startEditing):
+        (WebInspector.ElementsTreeElement.prototype._addNewAttribute):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.ondblclick):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._toggleURLdecoding):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.ondblclick):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.js:
+        (WebInspector.contextMenuEventFired):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.treeElementDoubleClicked):
+
 2009-12-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Oliver Hunt.

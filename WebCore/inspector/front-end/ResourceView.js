@@ -248,7 +248,7 @@ WebInspector.ResourceView.prototype = {
         }
     },
 
-    _toggleURLdecoding: function(treeElement, event)
+    _toggleURLdecoding: function(event)
     {
         this._decodeRequestParameters = !this._decodeRequestParameters;
         this._refreshQueryString();

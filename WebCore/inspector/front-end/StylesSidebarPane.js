@@ -1098,7 +1098,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
     },
 
-    ondblclick: function(element, event)
+    ondblclick: function(event)
     {
         this.startEditing(event.target);
         event.stopPropagation();

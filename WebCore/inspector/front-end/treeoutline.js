@@ -624,7 +624,7 @@ TreeElement.treeElementDoubleClicked = function(event)
         return;
 
     if (element.treeElement.ondblclick)
-        element.treeElement.ondblclick(element.treeElement, event);
+        element.treeElement.ondblclick.call(element.treeElement, event);
     else if (element.treeElement.hasChildren && !element.treeElement.expanded)
         element.treeElement.expand();
 }

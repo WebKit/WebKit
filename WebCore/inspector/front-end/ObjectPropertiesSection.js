@@ -150,7 +150,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         InjectedScriptAccess.getProperties(this.property.value, false, callback.bind(this));
     },
 
-    ondblclick: function(element, event)
+    ondblclick: function(event)
     {
         this.startEditing();
     },

@@ -760,10 +760,6 @@ WebInspector.contextMenuEventFired = function(event)
 {
     if (event.handled || event.target.hasStyleClass("popup-glasspane"))
         event.preventDefault();
-
-    if (!this.contextMenu)
-        this.contextMenu = new WebInspector.ContextMenu();
-    this.contextMenu.show(event);
 }
 
 WebInspector.mainKeyDown = function(event)
