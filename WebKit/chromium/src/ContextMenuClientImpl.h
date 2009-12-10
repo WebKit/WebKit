@@ -35,8 +35,8 @@
 
 namespace WebKit {
 
-class WebContextMenuData;
 class WebViewImpl;
+struct WebContextMenuData;
 
 class ContextMenuClientImpl : public  WebCore::ContextMenuClient {
 public:

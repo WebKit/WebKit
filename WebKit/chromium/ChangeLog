@@ -1,3 +1,13 @@
+2009-12-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, build fix.
+
+        Change forward declaration of WebContextMenuData from class to
+        struct to match its definition. The bug was introduced by
+        http://trac.webkit.org/changeset/51874
+
+        * src/ContextMenuClientImpl.h:
+
 2009-12-09  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
