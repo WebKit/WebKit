@@ -70,20 +70,18 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-LightSource* SVGFESpecularLightingElement::findLights() const
+PassRefPtr<LightSource> SVGFESpecularLightingElement::findLights() const
 {
-    LightSource* light = 0;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feDistantLightTag) ||
             n->hasTagName(SVGNames::fePointLightTag) ||
             n->hasTagName(SVGNames::feSpotLightTag)) {
             SVGFELightElement* lightNode = static_cast<SVGFELightElement*>(n); 
-            light = lightNode->lightSource();
-            break;
+            return lightNode->lightSource();
         }
     }
 
-    return light;
+    return 0;
 }
 
 bool SVGFESpecularLightingElement::build(SVGResourceFilter* filterResource)

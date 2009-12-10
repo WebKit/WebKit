@@ -48,8 +48,8 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, SVGNames::feSpecularLightingTagString, SVGNames::surfaceScaleAttrString, float, SurfaceScale, surfaceScale)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, SVGNames::feSpecularLightingTagString, SVGKernelUnitLengthXIdentifier, float, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, SVGNames::feSpecularLightingTagString, SVGKernelUnitLengthYIdentifier, float, KernelUnitLengthY, kernelUnitLengthY)
-        
-        LightSource* findLights() const;
+
+        PassRefPtr<LightSource> findLights() const;
     };
 
 } // namespace WebCore

@@ -49,7 +49,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, SVGNames::feDiffuseLightingTagString, SVGKernelUnitLengthXIdentifier, float, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, SVGNames::feDiffuseLightingTagString, SVGKernelUnitLengthYIdentifier, float, KernelUnitLengthY, kernelUnitLengthY)
 
-        LightSource* findLights() const;
+        PassRefPtr<LightSource> findLights() const;
     };
 
 } // namespace WebCore

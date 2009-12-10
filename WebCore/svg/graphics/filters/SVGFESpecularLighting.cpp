@@ -30,7 +30,7 @@ namespace WebCore {
 
 FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingColor, const float& surfaceScale,
     const float& specularConstant, const float& specularExponent, const float& kernelUnitLengthX,
-    const float& kernelUnitLengthY, LightSource* lightSource)
+    const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
     : FilterEffect()
     , m_in(in)
     , m_lightingColor(lightingColor)
@@ -45,7 +45,7 @@ FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingCo
 
 PassRefPtr<FESpecularLighting> FESpecularLighting::create(FilterEffect* in, const Color& lightingColor,
     const float& surfaceScale, const float& specularConstant, const float& specularExponent,
-    const float& kernelUnitLengthX, const float& kernelUnitLengthY, LightSource* lightSource)
+    const float& kernelUnitLengthX, const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
 {
     return adoptRef(new FESpecularLighting(in, lightingColor, surfaceScale, specularConstant, specularExponent,
         kernelUnitLengthX, kernelUnitLengthY, lightSource));
@@ -120,7 +120,7 @@ const LightSource* FESpecularLighting::lightSource() const
     return m_lightSource.get();
 }
 
-void FESpecularLighting::setLightSource(LightSource* lightSource)
+void FESpecularLighting::setLightSource(PassRefPtr<LightSource> lightSource)
 {
     m_lightSource = lightSource;
 }

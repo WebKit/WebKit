@@ -34,9 +34,9 @@ SVGFEDistantLightElement::~SVGFEDistantLightElement()
 {
 }
 
-LightSource* SVGFEDistantLightElement::lightSource() const
+PassRefPtr<LightSource> SVGFEDistantLightElement::lightSource() const
 {
-    return new DistantLightSource(azimuth(), elevation());
+    return DistantLightSource::create(azimuth(), elevation());
 }
 
 }

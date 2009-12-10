@@ -1,3 +1,54 @@
+2009-12-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        Filters contain some leaks in untested code
+        https://bugs.webkit.org/show_bug.cgi?id=32325
+
+        Fix obvious leak in SVGFE*Lighting classes. Implement the create() idiom for 
+        all classes in svg/graphics, that were missing it. The lighting filters aren't
+        implemented so far, but the associated FilterEffect objects are build, which created
+        these leaks.
+
+        This removes the SVG related failures in the leaks bot.
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::findLights):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::findLights):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * svg/SVGFESpotLightElement.h:
+        * svg/graphics/filters/SVGDistantLightSource.h:
+        (WebCore::DistantLightSource::create):
+        (WebCore::DistantLightSource::DistantLightSource):
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::create):
+        (WebCore::FEDiffuseLighting::setLightSource):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::FESpecularLighting):
+        (WebCore::FESpecularLighting::create):
+        (WebCore::FESpecularLighting::setLightSource):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGLightSource.h:
+        * svg/graphics/filters/SVGPointLightSource.h:
+        (WebCore::PointLightSource::create):
+        (WebCore::PointLightSource::PointLightSource):
+        * svg/graphics/filters/SVGSpotLightSource.h:
+        (WebCore::SpotLightSource::create):
+        (WebCore::SpotLightSource::SpotLightSource):
+
 2009-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

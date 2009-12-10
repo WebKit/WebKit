@@ -33,7 +33,7 @@ namespace WebCore {
     class FESpecularLighting : public FilterEffect {
     public:
         static PassRefPtr<FESpecularLighting> create(FilterEffect*, const Color&, const float&, const float&,
-            const float&, const float&, const float&, LightSource*);
+            const float&, const float&, const float&, PassRefPtr<LightSource>);
         virtual ~FESpecularLighting();
 
         Color lightingColor() const;
@@ -55,7 +55,7 @@ namespace WebCore {
         void setKernelUnitLengthY(float);
 
         const LightSource* lightSource() const;
-        void setLightSource(LightSource*);
+        void setLightSource(PassRefPtr<LightSource>);
 
         virtual FloatRect uniteEffectRect(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
@@ -64,7 +64,7 @@ namespace WebCore {
 
     private:
         FESpecularLighting(FilterEffect*, const Color&, const float&, const float&, const float&,
-            const float&, const float&, LightSource*);
+            const float&, const float&, PassRefPtr<LightSource>);
 
         RefPtr<FilterEffect> m_in;
         Color m_lightingColor;

@@ -36,7 +36,7 @@ namespace WebCore {
         SVGFELightElement(const QualifiedName&, Document*);
         virtual ~SVGFELightElement();
         
-        virtual LightSource* lightSource() const = 0;
+        virtual PassRefPtr<LightSource> lightSource() const = 0;
         virtual void parseMappedAttribute(MappedAttribute*);
 
     private:

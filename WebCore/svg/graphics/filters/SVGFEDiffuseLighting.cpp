@@ -30,7 +30,7 @@
 namespace WebCore {
 
 FEDiffuseLighting::FEDiffuseLighting(FilterEffect* in , const Color& lightingColor, const float& surfaceScale,
-    const float& diffuseConstant, const float& kernelUnitLengthX, const float& kernelUnitLengthY, LightSource* lightSource)
+    const float& diffuseConstant, const float& kernelUnitLengthX, const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
     : FilterEffect()
     , m_in(in)
     , m_lightingColor(lightingColor)
@@ -44,7 +44,7 @@ FEDiffuseLighting::FEDiffuseLighting(FilterEffect* in , const Color& lightingCol
 
 PassRefPtr<FEDiffuseLighting> FEDiffuseLighting::create(FilterEffect* in , const Color& lightingColor,
     const float& surfaceScale, const float& diffuseConstant, const float& kernelUnitLengthX,
-    const float& kernelUnitLengthY, LightSource* lightSource)
+    const float& kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
 {
     return adoptRef(new FEDiffuseLighting(in, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, lightSource));
 }
@@ -108,7 +108,7 @@ const LightSource* FEDiffuseLighting::lightSource() const
     return m_lightSource.get();
 }
 
-void FEDiffuseLighting::setLightSource(LightSource* lightSource)
+void FEDiffuseLighting::setLightSource(PassRefPtr<LightSource> lightSource)
 {    
     m_lightSource = lightSource;
 }
