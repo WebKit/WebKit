@@ -1,3 +1,18 @@
+2009-12-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=32346 SVG property 
+        -webkit-shadow should apply shadow on the result after compositing
+        -and corresponding-
+        <rdar://problem/7389404>
+
+        Set a transparency layer when setting a shadow to apply the shadow 
+        to the composite.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+
 2009-12-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,27 @@
+2009-12-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=32346 SVG 
+        property -webkit-shadow should apply shadow on the result after 
+        compositing
+        -and corresponding-
+        <rdar://problem/7389404>
+
+        New tests:
+        * platform/mac/svg/css/composite-shadow-example-expected.checksum: Added.
+        * platform/mac/svg/css/composite-shadow-example-expected.png: Added.
+        * platform/mac/svg/css/composite-shadow-example-expected.txt: Added.
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.checksum: Added.
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png: Added.
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.txt: Added.
+        * svg/css/composite-shadow-example.html: Added.
+        * svg/css/composite-shadow-with-opacity.html: Added.
+
+        New and improved results:
+        * platform/mac/svg/css/group-with-shadow-expected.checksum:
+        * platform/mac/svg/css/group-with-shadow-expected.png:
+
 2009-12-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

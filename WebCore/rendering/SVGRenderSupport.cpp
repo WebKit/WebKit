@@ -94,8 +94,17 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         paintInfo.context->beginTransparencyLayer(opacity);
     }
 
-    if (ShadowData* shadow = svgStyle->shadow())
-        paintInfo.context->setShadow(IntSize(shadow->x, shadow->y), shadow->blur, shadow->color, style->colorSpace()); 
+    if (ShadowData* shadow = svgStyle->shadow()) {
+        int xShift = shadow->x < 0 ? shadow->x : 0;
+        int yShift = shadow->y < 0 ? shadow->y :0;
+        int widthShift = shadow->x < 0 ? 0 : shadow->x;
+        int heightShift = shadow->y < 0 ? 0 : shadow->y;
+        FloatRect shadowRect = FloatRect(boundingBox.x() + xShift, boundingBox.y() + yShift,
+            boundingBox.width() + widthShift, boundingBox.height() + heightShift);
+        paintInfo.context->clip(enclosingIntRect(shadowRect));
+        paintInfo.context->setShadow(IntSize(shadow->x, shadow->y), shadow->blur, shadow->color, style->colorSpace());
+        paintInfo.context->beginTransparencyLayer(1.0f);
+    }
 
 #if ENABLE(FILTERS)
     AtomicString filterId(svgStyle->filter());
@@ -162,6 +171,11 @@ void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::P
 
     float opacity = style->opacity();    
     if (opacity < 1.0f)
+        paintInfo.context->endTransparencyLayer();
+
+    // This needs to be done separately from opacity, because if both properties are set,
+    // then the transparency layers are nested. 
+    if (style->svgStyle()->shadow())
         paintInfo.context->endTransparencyLayer();
 }
 
