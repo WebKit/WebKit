@@ -1,3 +1,14 @@
+2009-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Test for: Google reader gets stuck in the "Loading..." state and does not complete
+        https://bugs.webkit.org/show_bug.cgi?id=32256
+
+        * fast/js/codegen-jless-expected.txt: Added.
+        * fast/js/codegen-jless.html: Added.
+        * fast/js/script-tests/codegen-jless.js: Added.
+
 2009-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Skip a timeouter flakey test.
