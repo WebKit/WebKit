@@ -1,3 +1,11 @@
+2009-12-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, fixing layout test mishap.
+
+        Add a newline to the layout test.
+
+        * http/tests/security/isolatedWorld/events-expected.txt: Added a newline at the end of the file.
+
 2009-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
