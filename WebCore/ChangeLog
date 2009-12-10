@@ -1,3 +1,94 @@
+2009-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Changed WebGLRenderingContext to synthesize GL errors rather than
+        raising JavaScript exceptions. Removed internal getError() calls
+        after each graphics call. The GraphicsContext3D maintains the
+        synthetic exceptions because only it has complete information
+        about certain conditions requiring them to be raised.
+
+        Based on idea from Ilmari Heikkinen, added create3DDebugContext()
+        to webgl-test.js and changed the WebGL layout tests expecting
+        error conditions to use it. Updated expected.txt files, which now
+        implicitly test the OpenGL error as it is part of the exception's
+        message.
+
+        Added new targeted test covering aspects of synthetic errors as
+        well as regression tests for bugs uncovered during its development.
+
+        Test: fast/canvas/webgl/error-reporting.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::sizeInBytes):
+        (WebCore::WebGLRenderingContext::activeTexture):
+        (WebCore::WebGLRenderingContext::attachShader):
+        (WebCore::WebGLRenderingContext::bindAttribLocation):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::bindRenderbuffer):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::compileShader):
+        (WebCore::WebGLRenderingContext::createShader):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getBufferParameter):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getTexParameter):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::shaderSource):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::uniform1f):
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform1i):
+        (WebCore::WebGLRenderingContext::uniform1iv):
+        (WebCore::WebGLRenderingContext::uniform2f):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform2i):
+        (WebCore::WebGLRenderingContext::uniform2iv):
+        (WebCore::WebGLRenderingContext::uniform3f):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform3i):
+        (WebCore::WebGLRenderingContext::uniform3iv):
+        (WebCore::WebGLRenderingContext::uniform4f):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniform4i):
+        (WebCore::WebGLRenderingContext::uniform4iv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::validateProgram):
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::cleanupAfterGraphicsCall):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getError):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+
 2009-12-10  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test shaders
 PASS shader = context.createShader(context.FRAGMENT_SHADER) is shader
 PASS shader = context.createShader(context.VERTEX_SHADER) is shader
-PASS context.createShader(0) threw exception Error: SYNTAX_ERR: DOM Exception 12.
-PASS context.createShader(context.TRIANGLES) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS context.createShader(0) threw exception GL error 1280 in createShader.
+PASS context.createShader(context.TRIANGLES) threw exception GL error 1280 in createShader.
 
 PASS successfullyParsed is true
 

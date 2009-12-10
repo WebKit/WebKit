@@ -1,3 +1,33 @@
+2009-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Changed WebGLRenderingContext to synthesize GL errors rather than
+        raising JavaScript exceptions. Removed internal getError() calls
+        after each graphics call. The GraphicsContext3D maintains the
+        synthetic exceptions because only it has complete information
+        about certain conditions requiring them to be raised.
+
+        Based on idea from Ilmari Heikkinen, added create3DDebugContext()
+        to webgl-test.js and changed the WebGL layout tests expecting
+        error conditions to use it. Updated expected.txt files, which now
+        implicitly test the OpenGL error as it is part of the exception's
+        message.
+
+        Added new targeted test covering aspects of synthetic errors as
+        well as regression tests for bugs uncovered during its development.
+
+        Test: fast/canvas/webgl/error-reporting.html
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::getError):
+        (WebCore::GraphicsContext3DInternal::synthesizeGLError):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getError):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+
 2009-12-10  Mike Belshe  <mike@belshe.com>
 
         Reviewed by Darin Fisher.

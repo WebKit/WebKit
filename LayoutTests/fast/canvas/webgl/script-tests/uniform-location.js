@@ -1,7 +1,7 @@
 description("Tests calling WebGL APIs with objects from other contexts");
 
-var contextA = create3DContext();
-var contextB = create3DContext();
+var contextA = create3DDebugContext();
+var contextB = create3DDebugContext();
 var programA1 = loadStandardProgram(contextA);
 var programA2 = loadStandardProgram(contextA);
 var programB = loadStandardProgram(contextB);

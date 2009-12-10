@@ -16,6 +16,37 @@ function create3DContext() {
     return canvas.getContext("moz-webgl");
 }
 
+function createGLErrorWrapper(context, fname) {
+    return function() {
+        var rv = context[fname].apply(context, arguments);
+        var err = context.getError();
+        if (err != 0)
+            throw "GL error " + err + " in " + fname;
+        return rv;
+    };
+}
+
+function create3DDebugContext() {
+    var context = create3DContext();
+    // Thanks to Ilmari Heikkinen for the idea on how to implement this so elegantly.
+    var wrap = {};
+    for (var i in context) {
+        try {
+            if (typeof context[i] == 'function') {
+                wrap[i] = createGLErrorWrapper(context, i);
+            } else {
+                wrap[i] = context[i];
+            }
+        } catch (e) {
+            // console.log("create3DDebugContext: Error accessing " + i);
+        }
+    }
+    wrap.getError = function() {
+        return context.getError();
+    };
+    return wrap;
+}
+
 function loadStandardProgram(context) {
     var program = context.createProgram();
     context.attachShader(program, loadStandardVertexShader(context));

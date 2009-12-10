@@ -175,15 +175,6 @@ GraphicsContext3D::~GraphicsContext3D()
     }
 }
 
-void GraphicsContext3D::checkError() const
-{
-    // FIXME: This needs to only be done in the debug context. It will probably throw an exception
-    // on error and print the error message to the debug console
-    GLenum error = ::glGetError();
-    if (error != GL_NO_ERROR)
-        notImplemented();
-}
-
 void GraphicsContext3D::makeContextCurrent()
 {
     CGLSetCurrentContext(m_contextObj);
@@ -502,8 +493,10 @@ void GraphicsContext3D::generateMipmap(unsigned long target)
 
 bool GraphicsContext3D::getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo& info)
 {
-    if (!program->object())
+    if (!program->object()) {
+        synthesizeGLError(INVALID_VALUE);
         return false;
+    }
     ensureContext(m_contextObj);
     GLint maxAttributeSize = 0;
     ::glGetProgramiv(static_cast<GLuint>(program->object()), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeSize);
@@ -522,8 +515,10 @@ bool GraphicsContext3D::getActiveAttrib(WebGLProgram* program, unsigned long ind
     
 bool GraphicsContext3D::getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo& info)
 {
-    if (!program->object())
+    if (!program->object()) {
+        synthesizeGLError(INVALID_VALUE);
         return false;
+    }
     ensureContext(m_contextObj);
     GLint maxUniformSize = 0;
     ::glGetProgramiv(static_cast<GLuint>(program->object()), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
@@ -551,6 +546,13 @@ int GraphicsContext3D::getAttribLocation(WebGLProgram* program, const String& na
 
 unsigned long GraphicsContext3D::getError()
 {
+    if (m_syntheticErrors.size() > 0) {
+        ListHashSet<unsigned long>::iterator iter = m_syntheticErrors.begin();
+        unsigned long err = *iter;
+        m_syntheticErrors.remove(iter);
+        return err;
+    }
+
     ensureContext(m_contextObj);
     return ::glGetError();
 }
@@ -1351,6 +1353,11 @@ int GraphicsContext3D::sizeInBytes(int type)
         default:
             return 0;
     }
+}
+
+void GraphicsContext3D::synthesizeGLError(unsigned long error)
+{
+    m_syntheticErrors.add(error);
 }
 
 }

@@ -1,7 +1,7 @@
 description("Test of getActiveAttrib and getActiveUniform");
 
-var context = create3DContext();
-var context2 = create3DContext();
+var context = create3DDebugContext();
+var context2 = create3DDebugContext();
 var program = loadStandardProgram(context);
 var program2 = loadStandardProgram(context2);
 
@@ -10,9 +10,9 @@ shouldBe("context.getActiveUniform(program, 0).name", "'u_modelViewProjMatrix'")
 shouldBe("context.getActiveUniform(program, 0).type", "context.FLOAT_MAT4");
 shouldBe("context.getActiveUniform(program, 0).size", "1");
 shouldThrow("context.getActiveUniform(program, 1)");
-shouldBe("context.getError()", "context.INVALID_VALUE");
+shouldBe("context.getError()", "0");
 shouldThrow("context.getActiveUniform(program, -1)");
-shouldBe("context.getError()", "context.INVALID_VALUE");
+shouldBe("context.getError()", "0");
 shouldThrow("context.getActiveUniform(null, 0)");
 shouldBe("context.getError()", "0");
 
@@ -23,9 +23,9 @@ shouldBe("context.getActiveAttrib(program, 1).name", "'a_vertex'");
 shouldBe("context.getActiveAttrib(program, 1).type", "context.FLOAT_VEC4");
 shouldBe("context.getActiveAttrib(program, 1).size", "1");
 shouldThrow("context.getActiveAttrib(program, 2)");
-shouldBe("context.getError()", "context.INVALID_VALUE");
+shouldBe("context.getError()", "0");
 shouldThrow("context.getActiveAttrib(program, -1)");
-shouldBe("context.getError()", "context.INVALID_VALUE");
+shouldBe("context.getError()", "0");
 shouldThrow("context.getActiveAttrib(null, 0)");
 shouldBe("context.getError()", "0");
 

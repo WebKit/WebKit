@@ -1,3 +1,45 @@
+2009-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Changed WebGLRenderingContext to synthesize GL errors rather than
+        raising JavaScript exceptions. Removed internal getError() calls
+        after each graphics call. The GraphicsContext3D maintains the
+        synthetic exceptions because only it has complete information
+        about certain conditions requiring them to be raised.
+
+        Based on idea from Ilmari Heikkinen, added create3DDebugContext()
+        to webgl-test.js and changed the WebGL layout tests expecting
+        error conditions to use it. Updated expected.txt files, which now
+        implicitly test the OpenGL error as it is part of the exception's
+        message.
+
+        Added new targeted test covering aspects of synthetic errors as
+        well as regression tests for bugs uncovered during its development.
+
+        Test: fast/canvas/webgl/error-reporting.html
+
+        * fast/canvas/webgl/drawArraysOutOfBounds-expected.txt:
+        * fast/canvas/webgl/drawArraysOutOfBounds.html:
+        * fast/canvas/webgl/drawElementssOutOfBounds-expected.txt:
+        * fast/canvas/webgl/drawElementssOutOfBounds.html:
+        * fast/canvas/webgl/error-reporting-expected.txt: Added.
+        * fast/canvas/webgl/error-reporting.html: Added.
+        * fast/canvas/webgl/getActiveTest-expected.txt:
+        * fast/canvas/webgl/incorrect-context-object-behaviour-expected.txt:
+        * fast/canvas/webgl/invalidPassedParams-expected.txt:
+        * fast/canvas/webgl/invalidPassedParams.html:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (create3DDebugContext.wrap.getError):
+        (create3DDebugContext):
+        * fast/canvas/webgl/script-tests/error-reporting.js: Added.
+        * fast/canvas/webgl/script-tests/getActiveTest.js:
+        * fast/canvas/webgl/script-tests/incorrect-context-object-behaviour.js:
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js:
+        * fast/canvas/webgl/script-tests/uniform-location.js:
+        * fast/canvas/webgl/uniform-location-expected.txt:
+
 2009-12-10  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.

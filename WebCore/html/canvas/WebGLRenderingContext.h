@@ -297,7 +297,6 @@ class WebKitCSSMatrix;
         void markContextChanged();
         void cleanupAfterGraphicsCall(bool changed)
         {
-            m_context->checkError();
             if (changed)
                 markContextChanged();
         }

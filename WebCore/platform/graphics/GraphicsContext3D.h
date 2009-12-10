@@ -28,6 +28,7 @@
 
 #include "PlatformString.h"
 
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -397,7 +398,6 @@ namespace WebCore {
         PlatformGraphicsContext3D platformGraphicsContext3D() const { return NullPlatformGraphicsContext3D; }
         Platform3DObject platformTexture() const { return NullPlatform3DObject; }
 #endif
-        void checkError() const;
         void makeContextCurrent();
         
         // Helper to return the size in bytes of OpenGL data types
@@ -612,6 +612,16 @@ namespace WebCore {
         void deleteShader(unsigned);
         void deleteTexture(unsigned);        
         
+        // Synthesizes an OpenGL error which will be returned from a
+        // later call to getError. This is used to emulate OpenGL ES
+        // 2.0 behavior on the desktop and to enforce additional error
+        // checking mandated by WebGL.
+        //
+        // Per the behavior of glGetError, this stores at most one
+        // instance of any given error, and returns them from calls to
+        // getError in the order they were added.
+        void synthesizeGLError(unsigned long error);
+
     private:        
         GraphicsContext3D();
 
@@ -624,6 +634,8 @@ namespace WebCore {
         GLuint m_texture;
         GLuint m_fbo;
         GLuint m_depthBuffer;
+        // Errors raised by synthesizeGLError().
+        ListHashSet<unsigned long> m_syntheticErrors;
 #endif        
 
         // FIXME: ideally this would be used on all platforms.

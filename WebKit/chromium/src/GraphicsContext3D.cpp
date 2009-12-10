@@ -101,7 +101,6 @@ public:
     GraphicsContext3DInternal();
     ~GraphicsContext3DInternal();
 
-    void checkError() const;
     bool makeContextCurrent();
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
@@ -122,9 +121,12 @@ public:
     void bufferDataImpl(unsigned long target, int size, const void* data, unsigned long usage);
     void disableVertexAttribArray(unsigned long index);
     void enableVertexAttribArray(unsigned long index);
+    unsigned long getError();
     void vertexAttribPointer(unsigned long indx, int size, int type, bool normalized,
                              unsigned long stride, unsigned long offset);
     void viewportImpl(long x, long y, unsigned long width, unsigned long height);
+
+    void synthesizeGLError(unsigned long error);
 
 private:
     unsigned int m_texture;
@@ -161,6 +163,9 @@ private:
         NumTrackedPointerStates = 2
     };
     VertexAttribPointerState m_vertexAttribPointerState[NumTrackedPointerStates];
+
+    // Errors raised by synthesizeGLError().
+    ListHashSet<unsigned long> m_syntheticErrors;
 
 #if PLATFORM(SKIA)
     // If the width and height of the Canvas's backing store don't
@@ -515,17 +520,6 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     m_contextObj = 0;
 }
 
-void GraphicsContext3DInternal::checkError() const
-{
-    // FIXME: This needs to only be done in the debug context. It
-    // will need to throw an exception on error.
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR) {
-        printf("GraphicsContext3DInternal: GL Error : %x\n", error);
-        notImplemented();
-    }
-}
-
 bool GraphicsContext3DInternal::makeContextCurrent()
 {
 #if PLATFORM(WIN_OS)
@@ -592,7 +586,6 @@ void GraphicsContext3DInternal::reshape(int width, int height)
         glGenFramebuffersEXT(1, &m_fbo);
         // Generate the depth buffer
         glGenRenderbuffersEXT(1, &m_depthBuffer);
-        checkError();
     }
 
     // Reallocate the color and depth buffers
@@ -858,6 +851,19 @@ void GraphicsContext3DInternal::enableVertexAttribArray(unsigned long index)
     glEnableVertexAttribArray(index);
 }
 
+unsigned long GraphicsContext3DInternal::getError()
+{
+    if (m_syntheticErrors.size() > 0) {
+        ListHashSet<unsigned long>::iterator iter = m_syntheticErrors.begin();
+        unsigned long err = *iter;
+        m_syntheticErrors.remove(iter);
+        return err;
+    }
+
+    makeContextCurrent();
+    return glGetError();
+}
+
 void GraphicsContext3DInternal::vertexAttribPointer(unsigned long indx, int size, int type, bool normalized,
                                                     unsigned long stride, unsigned long offset)
 {
@@ -887,6 +893,11 @@ void GraphicsContext3DInternal::vertexAttribPointer(unsigned long indx, int size
 void GraphicsContext3DInternal::viewportImpl(long x, long y, unsigned long width, unsigned long height)
 {
     glViewport(x, y, width, height);
+}
+
+void GraphicsContext3DInternal::synthesizeGLError(unsigned long error)
+{
+    m_syntheticErrors.add(error);
 }
 
 // GraphicsContext3D -----------------------------------------------------
@@ -1027,11 +1038,6 @@ PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
 Platform3DObject GraphicsContext3D::platformTexture() const
 {
     return m_internal->platformTexture();
-}
-
-void GraphicsContext3D::checkError() const
-{
-    m_internal->checkError();
 }
 
 void GraphicsContext3D::makeContextCurrent()
@@ -1361,15 +1367,19 @@ void GraphicsContext3D::generateMipmap(unsigned long target)
 
 bool GraphicsContext3D::getActiveAttrib(WebGLProgram* program, unsigned long index, ActiveInfo& info)
 {
-    if (!program)
+    if (!program) {
+        synthesizeGLError(INVALID_VALUE);
         return false;
+    }
     GLint maxNameLength = -1;
     glGetProgramiv(EXTRACT(program), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
     if (maxNameLength < 0)
         return false;
     GLchar* name = 0;
-    if (!tryFastMalloc(maxNameLength * sizeof(GLchar)).getValue(name))
+    if (!tryFastMalloc(maxNameLength * sizeof(GLchar)).getValue(name)) {
+        synthesizeGLError(OUT_OF_MEMORY);
         return false;
+    }
     GLsizei length = 0;
     GLint size = -1;
     GLenum type = 0;
@@ -1388,15 +1398,19 @@ bool GraphicsContext3D::getActiveAttrib(WebGLProgram* program, unsigned long ind
 
 bool GraphicsContext3D::getActiveUniform(WebGLProgram* program, unsigned long index, ActiveInfo& info)
 {
-    if (!program)
+    if (!program) {
+        synthesizeGLError(INVALID_VALUE);
         return false;
+    }
     GLint maxNameLength = -1;
     glGetProgramiv(EXTRACT(program), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
     if (maxNameLength < 0)
         return false;
     GLchar* name = 0;
-    if (!tryFastMalloc(maxNameLength * sizeof(GLchar)).getValue(name))
+    if (!tryFastMalloc(maxNameLength * sizeof(GLchar)).getValue(name)) {
+        synthesizeGLError(OUT_OF_MEMORY);
         return false;
+    }
     GLsizei length = 0;
     GLint size = -1;
     GLenum type = 0;
@@ -1436,8 +1450,7 @@ void GraphicsContext3D::getBufferParameteriv(unsigned long target, unsigned long
 
 unsigned long GraphicsContext3D::getError()
 {
-    makeContextCurrent();
-    return glGetError();
+    return m_internal->getError();
 }
 
 void GraphicsContext3D::getFloatv(unsigned long pname, float* value)
@@ -1708,6 +1721,11 @@ GL_SAME_METHOD_2(StencilMaskSeparate, stencilMaskSeparate, unsigned long, unsign
 GL_SAME_METHOD_3(StencilOp, stencilOp, unsigned long, unsigned long, unsigned long)
 
 GL_SAME_METHOD_4(StencilOpSeparate, stencilOpSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
+
+void GraphicsContext3D::synthesizeGLError(unsigned long error)
+{
+    m_internal->synthesizeGLError(error);
+}
 
 int GraphicsContext3D::texImage2D(unsigned target,
                                   unsigned level,
