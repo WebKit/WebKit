@@ -57,33 +57,11 @@ class ScriptError(Exception):
             return "%s\n%s" % (self, self.output)
         return str(self)
 
-def default_error_handler(error):
-    raise error
-
-def ignore_error(error):
-    pass
 
 # FIXME: This should not be a global static.
-def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False, return_stderr=True):
-    if hasattr(input, 'read'): # Check if the input is a file.
-        stdin = input
-        string_to_communicate = None
-    else:
-        stdin = subprocess.PIPE if input else None
-        string_to_communicate = input
-    if return_stderr:
-        stderr = subprocess.STDOUT
-    else:
-        stderr = None
-    process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd)
-    output = process.communicate(string_to_communicate)[0]
-    exit_code = process.wait()
-    if exit_code:
-        script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
-        error_handler(script_error)
-    if return_exit_code:
-        return exit_code
-    return output
+# New code should use Executive.run_command directly instead
+def run_command(*args, **kwargs):
+    return Executive().run_command(*args, **kwargs)
 
 
 class Executive(object):
@@ -113,3 +91,34 @@ class Executive(object):
 
         if exit_code:
             raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
+
+    # Error handlers do not need to be static methods once all callers are updated to use an Executive object.
+    @staticmethod
+    def default_error_handler(error):
+        raise error
+
+    @staticmethod
+    def ignore_error(error):
+        pass
+
+    # FIXME: This should be merged with run_and_throw_if_fail
+    def run_command(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True):
+        if hasattr(input, 'read'): # Check if the input is a file.
+            stdin = input
+            string_to_communicate = None
+        else:
+            stdin = subprocess.PIPE if input else None
+            string_to_communicate = input
+        if return_stderr:
+            stderr = subprocess.STDOUT
+        else:
+            stderr = None
+        process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd)
+        output = process.communicate(string_to_communicate)[0]
+        exit_code = process.wait()
+        if exit_code:
+            script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
+            (error_handler or self.default_error_handler)(script_error)
+        if return_exit_code:
+            return exit_code
+        return output

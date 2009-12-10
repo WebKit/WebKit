@@ -35,7 +35,7 @@ import subprocess
 
 # Import WebKit-specific modules.
 from modules.changelogs import ChangeLog
-from modules.executive import run_command, ScriptError, default_error_handler, ignore_error
+from modules.executive import Executive, run_command, ScriptError
 from modules.logging import error, log
 
 def detect_scm_system(path):
@@ -87,7 +87,7 @@ class CheckoutNeedsUpdate(ScriptError):
 def commit_error_handler(error):
     if re.search("resource out of date", error.output):
         raise CheckoutNeedsUpdate(script_args=error.script_args, exit_code=error.exit_code, output=error.output, cwd=error.cwd)
-    default_error_handler(error)
+    Executive.default_error_handler(error)
 
 
 class SCM:
@@ -104,7 +104,7 @@ class SCM:
 
     def ensure_clean_working_directory(self, force_clean):
         if not force_clean and not self.working_directory_is_clean():
-            print run_command(self.status_command(), error_handler=ignore_error)
+            print run_command(self.status_command(), error_handler=Executive.ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
@@ -368,7 +368,7 @@ class Git(SCM):
 
     @classmethod
     def in_working_directory(cls, path):
-        return run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=ignore_error).rstrip() == "true"
+        return run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
 
     @classmethod
     def find_checkout_root(cls, path):
@@ -438,7 +438,7 @@ class Git(SCM):
 
         # I think this will always fail due to ChangeLogs.
         # FIXME: We need to detec specific failure conditions and handle them.
-        run_command(['git', 'revert', '--no-commit', git_commit], error_handler=ignore_error)
+        run_command(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
 
         # Fix any ChangeLogs if necessary.
         changelog_paths = self.modified_changelogs()

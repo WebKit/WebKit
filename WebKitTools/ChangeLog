@@ -1,3 +1,15 @@
+2009-12-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move run_command onto Executive to make code which uses run_command testable
+        https://bugs.webkit.org/show_bug.cgi?id=32396
+
+        * Scripts/modules/executive.py:
+         - Move run_command and error handlers onto Executive.
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py:
+
 2009-12-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
