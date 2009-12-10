@@ -1,3 +1,23 @@
+2009-12-10  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Layout test for video element on HTTP
+        https://bugs.webkit.org/show_bug.cgi?id=32333
+
+        Added a new layout test that tests video element on HTTP protocol.
+        This test load the same video file twice. The first load will cache
+        the video file if caching is supported. The second load ensure
+        the cache works correctly.
+
+        * http/tests/media/resources/test.mp4: Copied from LayoutTests/media/content/test.mp4.
+        * http/tests/media/resources/test.ogv: Copied from LayoutTests/media/content/test.ogv.
+        The above two files are copied from LayoutTests/media/content because the HTTP
+        server is rooted at LayoutTests/http/tests. And we don't want to serve these
+        files with cgi because that will ruin the HTTP headers.
+        * http/tests/media/video-load-twice-expected.txt: Added.
+        * http/tests/media/video-load-twice.html: Added.
+
 2009-12-10  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
