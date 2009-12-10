@@ -105,6 +105,9 @@ Image* ImageBuffer::image() const
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 {
     const SkBitmap& bitmap = *context()->platformContext()->bitmap();
+    if (bitmap.isNull())
+        return;
+
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
     for (int y = 0; y < m_size.height(); ++y) {
