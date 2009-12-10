@@ -111,7 +111,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
         uint32_t* srcRow = bitmap.getAddr32(0, y);
         for (int x = 0; x < m_size.width(); ++x) {
             SkColor color = SkPMColorToColor(srcRow[x]);
-            srcRow[x] = SkPreMultiplyARGB(lookUpTable[SkColorGetA(color)],
+            srcRow[x] = SkPreMultiplyARGB(SkColorGetA(color),
                                           lookUpTable[SkColorGetR(color)],
                                           lookUpTable[SkColorGetG(color)],
                                           lookUpTable[SkColorGetB(color)]);
