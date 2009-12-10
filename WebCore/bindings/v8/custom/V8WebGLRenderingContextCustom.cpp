@@ -52,6 +52,7 @@
 #include "V8WebGLUnsignedByteArray.h"
 #include "V8WebGLUnsignedIntArray.h"
 #include "V8WebGLUnsignedShortArray.h"
+#include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
 #include "V8Proxy.h"
 
@@ -459,6 +460,8 @@ CALLBACK_FUNC_DECL(WebGLRenderingContextTexImage2D)
     //                   in GLenum format, in GLenum type, in WebGLArray pixels);
     // * void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image,
     //                   [Optional] in GLboolean flipY, [Optional] in GLboolean premultiplyAlpha);
+    // * void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement image,
+    //                   [Optional] in GLboolean flipY, [Optional] in GLboolean premultiplyAlpha);
     if (args.Length() != 3 &&
         args.Length() != 4 &&
         args.Length() != 5 &&
@@ -486,16 +489,20 @@ CALLBACK_FUNC_DECL(WebGLRenderingContextTexImage2D)
         args.Length() == 4 ||
         args.Length() == 5) {
         v8::Handle<v8::Value> arg = args[2];
+        bool flipY = false;
+        bool premultiplyAlpha = false;
+        if (args.Length() >= 4)
+            flipY = args[3]->BooleanValue();
+        if (args.Length() >= 5)
+            premultiplyAlpha = args[4]->BooleanValue();
         if (V8HTMLImageElement::HasInstance(arg)) {
-            HTMLImageElement* image_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLImageElement>(v8::Handle<v8::Object>::Cast(arg));
-            bool flipY = false;
-            bool premultiplyAlpha = false;
-            if (args.Length() >= 4)
-                flipY = args[3]->BooleanValue();
-            if (args.Length() >= 5)
-                premultiplyAlpha = args[4]->BooleanValue();
-            context->texImage2D(target, level, image_element, flipY, premultiplyAlpha, ec);
+            HTMLImageElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLImageElement>(v8::Handle<v8::Object>::Cast(arg));
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+        } else if (V8HTMLCanvasElement::HasInstance(arg)) {
+            HTMLCanvasElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(v8::Handle<v8::Object>::Cast(arg));
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
         } else {
+            // FIXME: support HTMLVideoElement and ImageData.
             // FIXME: consider different / better exception type.
             V8Proxy::setDOMException(SYNTAX_ERR);
             return notHandledByInterceptor();
@@ -613,7 +620,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     // * glVertexAttrib4fv(GLint index, Array data);
     // * glVertexAttrib4fv(GLint index, WebGLFloatArray data);
 
-    if (args.Length() != 3) {
+    if (args.Length() != 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
     }
@@ -698,7 +705,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     // * glUniform4iv(GLUniformLocation location, Array data);
     // * glUniform4iv(GLUniformLocation location, WebGLIntArray data);
 
-    if (args.Length() != 3) {
+    if (args.Length() != 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
     }

@@ -1,3 +1,15 @@
+2009-12-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        [Chromium] SporeViewer demo doesn't work in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=32364
+
+        Test: fast/canvas/webgl/bug-32364.html
+
+        * fast/canvas/webgl/bug-32364-expected.txt: Added.
+        * fast/canvas/webgl/bug-32364.html: Added.
+
 2009-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
