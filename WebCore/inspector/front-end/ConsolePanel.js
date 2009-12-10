@@ -46,6 +46,19 @@ WebInspector.ConsolePanel.prototype = {
         this._previousConsoleState = WebInspector.drawer.state;
         WebInspector.drawer.enterPanelMode();
         WebInspector.showConsole();
+        
+        // Move the scope bar to the top of the messages, like the resources filter.
+        var scopeBar = document.getElementById("console-filter");
+        var consoleMessages = document.getElementById("console-messages");
+
+        scopeBar.parentNode.removeChild(scopeBar);
+        document.getElementById("console-view").insertBefore(scopeBar, consoleMessages);
+        
+        // Update styles, and give console-messages a top margin so it doesn't overwrite the scope bar.
+        scopeBar.addStyleClass("console-filter-top");
+        scopeBar.removeStyleClass("status-bar-item");
+
+        consoleMessages.addStyleClass("console-filter-top");
     },
 
     hide: function()
@@ -57,6 +70,18 @@ WebInspector.ConsolePanel.prototype = {
         else
             WebInspector.drawer.exitPanelMode();
         delete this._previousConsoleState;
+        
+        // Move the scope bar back to the bottom bar, next to Clear Console.
+        var scopeBar = document.getElementById("console-filter");
+
+        scopeBar.parentNode.removeChild(scopeBar);
+        document.getElementById("other-drawer-status-bar-items").appendChild(scopeBar);
+        
+        // Update styles, and remove the top margin on console-messages.
+        scopeBar.removeStyleClass("console-filter-top");
+        scopeBar.addStyleClass("status-bar-item");
+
+        document.getElementById("console-messages").removeStyleClass("console-filter-top");
     }
 }
 

@@ -1,3 +1,20 @@
+2009-12-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fixes <http://webkit.org/b/31738>.
+        Web Inspector: Console Scope Bar should be on top of console when Console is a Panel.
+        
+        When the console is set to be shown as a full panel, move the scope bar to the top
+        where it looks best. When it is only shown as a drawer, move it to the bottom, where
+        it originally was. This takes up less space as a drawer, and makes it more discoverable
+        and usable when it is the full panel.
+
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.show): Move filter bar to top.
+        (WebInspector.ConsolePanel.prototype.hide): Move filter bar back to bottom.
+        * inspector/front-end/inspector.css:
+
 2009-12-10  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dirk Schulze.
