@@ -3530,7 +3530,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int src = vPC[2].u.operand;
         int count = vPC[3].u.operand;
 
-        callFrame->r(dst) = concatenateStrings(callFrame, &callFrame->registers()[src], count);
+        callFrame->r(dst) = jsString(callFrame, &callFrame->registers()[src], count);
         CHECK_FOR_EXCEPTION();
         vPC += OPCODE_LENGTH(op_strcat);
 

@@ -1,3 +1,46 @@
+2009-12-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt & Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32367
+        Add support for short Ropes (up to 3 entries) inline within JSString.
+        (rather than externally allocating an object to hold the rope).
+        Switch jsAdd of (JSString* + JSString*) to now make use of Ropes.
+
+        ~1% progression on Sunspidey.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::toBoolean):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::JSString::Rope::Fiber::deref):
+        (JSC::JSString::Rope::Fiber::ref):
+        (JSC::JSString::Rope::Fiber::refAndGetLength):
+        (JSC::JSString::Rope::append):
+        (JSC::JSString::JSString):
+        (JSC::JSString::~JSString):
+        (JSC::JSString::value):
+        (JSC::JSString::tryGetValue):
+        (JSC::JSString::length):
+        (JSC::JSString::canGetIndex):
+        (JSC::JSString::appendStringInConstruct):
+        (JSC::JSString::appendValueInConstructAndIncrementLength):
+        (JSC::JSString::isRope):
+        (JSC::JSString::string):
+        (JSC::JSString::ropeLength):
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsAdd):
+        (JSC::resolveBase):
+
 2009-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -35,6 +35,58 @@ namespace JSC {
     bool jsIsObjectType(JSValue);
     bool jsIsFunctionType(JSValue);
 
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
+    {
+        unsigned ropeLength = s1->ropeLength() + s2->ropeLength();
+        JSGlobalData* globalData = &exec->globalData();
+
+        if (ropeLength <= JSString::s_maxInternalRopeLength)
+            return new (globalData) JSString(globalData, ropeLength, s1, s2);
+
+        unsigned index = 0;
+        RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(ropeLength);
+        if (UNLIKELY(!rope))
+            return throwOutOfMemoryError(exec);
+        rope->append(index, s1);
+        rope->append(index, s2);
+        ASSERT(index == ropeLength);
+        return new (globalData) JSString(globalData, rope.release());
+    }
+
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
+    {
+        ASSERT(count >= 3);
+
+        unsigned ropeLength = 0;
+        for (unsigned i = 0; i < count; ++i) {
+            JSValue v = strings[i].jsValue();
+            if (LIKELY(v.isString()))
+                ropeLength += asString(v)->ropeLength();
+            else
+                ++ropeLength;
+        }
+
+        JSGlobalData* globalData = &exec->globalData();
+        if (ropeLength == 3)
+            return new (globalData) JSString(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
+
+        RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(ropeLength);
+        if (UNLIKELY(!rope))
+            return throwOutOfMemoryError(exec);
+
+        unsigned index = 0;
+        for (unsigned i = 0; i < count; ++i) {
+            JSValue v = strings[i].jsValue();
+            if (LIKELY(v.isString()))
+                rope->append(index, asString(v));
+            else
+                rope->append(index, v.toString(exec));
+        }
+
+        ASSERT(index == ropeLength);
+        return new (globalData) JSString(globalData, rope.release());
+    }
+
     // ECMA 11.9.3
     inline bool JSValue::equal(ExecState* exec, JSValue v1, JSValue v2)
     {
@@ -204,20 +256,11 @@ namespace JSC {
         
         bool leftIsString = v1.isString();
         if (leftIsString && v2.isString()) {
-            if (asString(v1)->isRope() || asString(v2)->isRope()) {
-                RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(2);
-                if (UNLIKELY(!rope))
-                    return throwOutOfMemoryError(callFrame);
-                rope->initializeFiber(0, asString(v1));
-                rope->initializeFiber(1, asString(v2));
-                JSGlobalData* globalData = &callFrame->globalData();
-                return new (globalData) JSString(globalData, rope.release());
-            }
-
-            RefPtr<UString::Rep> value = concatenate(asString(v1)->value(callFrame).rep(), asString(v2)->value(callFrame).rep());
-            if (!value)
-                return throwOutOfMemoryError(callFrame);
-            return jsString(callFrame, value.release());
+            if (!asString(v1)->length())
+                return asString(v2);
+            if (!asString(v2)->length())
+                return asString(v1);
+            return jsString(callFrame, asString(v1), asString(v2));
         }
 
         if (rightIsNumber & leftIsString) {
@@ -302,26 +345,6 @@ namespace JSC {
 
         ASSERT_NOT_REACHED();
         return JSValue();
-    }
-
-    ALWAYS_INLINE JSValue concatenateStrings(CallFrame* callFrame, Register* strings, unsigned count)
-    {
-        ASSERT(count >= 3);
-
-        RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(count);
-        if (UNLIKELY(!rope))
-            return throwOutOfMemoryError(callFrame);
-
-        for (unsigned i = 0; i < count; ++i) {
-            JSValue v = strings[i].jsValue();
-            if (LIKELY(v.isString()))
-                rope->initializeFiber(i, asString(v));
-            else
-                rope->initializeFiber(i, v.toString(callFrame));
-        }
-
-        JSGlobalData* globalData = &callFrame->globalData();
-        return new (globalData) JSString(globalData, rope.release());
     }
 } // namespace JSC
 

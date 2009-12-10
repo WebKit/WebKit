@@ -1043,25 +1043,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
 
     bool leftIsString = v1.isString();
     if (leftIsString && v2.isString()) {
-        if (asString(v1)->isRope() || asString(v2)->isRope()) {
-            RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(2);
-            if (UNLIKELY(!rope)) {
-                throwOutOfMemoryError(callFrame);
-                VM_THROW_EXCEPTION();
-            }
-            rope->initializeFiber(0, asString(v1));
-            rope->initializeFiber(1, asString(v2));
-            JSGlobalData* globalData = &callFrame->globalData();
-            return JSValue::encode(new (globalData) JSString(globalData, rope.release()));
-        }
-
-        RefPtr<UString::Rep> value = concatenate(asString(v1)->value(callFrame).rep(), asString(v2)->value(callFrame).rep());
-        if (UNLIKELY(!value)) {
-            throwOutOfMemoryError(callFrame);
-            VM_THROW_EXCEPTION();
-        }
-
-        return JSValue::encode(jsString(stackFrame.globalData, value.release()));
+        JSValue result = jsString(callFrame, asString(v1), asString(v2));
+        CHECK_FOR_EXCEPTION_AT_END();
+        return JSValue::encode(result);
     }
 
     if (rightIsNumber & leftIsString) {
@@ -2851,7 +2835,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_strcat)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSValue result = concatenateStrings(stackFrame.callFrame, &stackFrame.callFrame->registers()[stackFrame.args[0].int32()], stackFrame.args[1].int32());
+    JSValue result = jsString(stackFrame.callFrame, &stackFrame.callFrame->registers()[stackFrame.args[0].int32()], stackFrame.args[1].int32());
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
