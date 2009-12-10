@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,46 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8LazyEventListener_h
-#define V8LazyEventListener_h
+#ifndef WorldContextHandle_h
+#define WorldContextHandle_h
 
-#include "PlatformString.h"
-#include "V8AbstractEventListener.h"
+#include "SharedPersistent.h"
+
 #include <v8.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Event;
-    class Frame;
+class V8Proxy;
 
-    // V8LazyEventListener is a wrapper for a JavaScript code string that is compiled and evaluated when an event is fired.
-    // A V8LazyEventListener is always a HTML event handler.
-    class V8LazyEventListener : public V8AbstractEventListener {
-    public:
-        static PassRefPtr<V8LazyEventListener> create(const String& functionName, bool isSVGEvent, const String& code, const String& sourceURL, int lineNumber, int columnNumber, const WorldContextHandle& worldContext)
-        {
-            return adoptRef(new V8LazyEventListener(functionName, isSVGEvent, code, sourceURL, lineNumber, columnNumber, worldContext));
-        }
+enum WorldToUse { UseMainWorld, UseCurrentWorld };
 
-        virtual bool isLazy() const { return true; }
+class WorldContextHandle {
+public:
+    WorldContextHandle(WorldToUse);
+    v8::Local<v8::Context> adjustedContext(V8Proxy*) const;
 
-    protected:
-        virtual void prepareListenerObject(ScriptExecutionContext*);
-
-    private:
-        V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, int lineNumber, int columnNumber, const WorldContextHandle& worldContext);
-
-        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
-
-        String m_functionName;
-        bool m_isSVGEvent;
-        String m_code;
-        String m_sourceURL;
-        int m_lineNumber;
-        int m_columnNumber;
-    };
+private:
+    WorldToUse m_worldToUse;
+    RefPtr<SharedPersistent<v8::Context> > m_context;
+};
 
 } // namespace WebCore
 
-#endif // V8LazyEventListener_h
+#endif // WorldContextHandle_h

@@ -48,8 +48,8 @@ static WorkerContextExecutionProxy* workerProxy(ScriptExecutionContext* context)
     return workerContext->script()->proxy();
 }
 
-V8WorkerContextEventListener::V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline)
-    : V8EventListener(listener, isInline)
+V8WorkerContextEventListener::V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
+    : V8EventListener(listener, isInline, worldContext)
 {
 }
 

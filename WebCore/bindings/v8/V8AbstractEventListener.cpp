@@ -50,10 +50,11 @@ static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter
     listener->disposeListenerObject();
 }
 
-V8AbstractEventListener::V8AbstractEventListener(bool isAttribute)
+V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext)
     : EventListener(JSEventListenerType)
     , m_isWeak(true)
     , m_isAttribute(isAttribute)
+    , m_worldContext(worldContext)
 {
 }
 
@@ -75,7 +76,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
 
     v8::HandleScope handleScope;
 
-    v8::Local<v8::Context> v8Context = toV8Context(context);
+    v8::Local<v8::Context> v8Context = toV8Context(context, worldContext());
     if (v8Context.IsEmpty())
         return;
 
@@ -115,7 +116,7 @@ void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)
 {
 
-    v8::Local<v8::Context> v8Context = toV8Context(context);
+    v8::Local<v8::Context> v8Context = toV8Context(context, worldContext());
     if (v8Context.IsEmpty())
         return;
 

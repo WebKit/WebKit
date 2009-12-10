@@ -168,7 +168,8 @@ void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
     // Do not report the exception if the current execution context is Document because we do not want to lead to duplicate error messages in the console.
     // FIXME (31171): need better design to solve the duplicate error message reporting problem.
     ScriptExecutionContext* context = getScriptExecutionContext(scriptState);
-    if (!context->isDocument())
+    // During the frame teardown, there may not be a valid context.
+    if (context && !context->isDocument())
       context->reportException(errorMessage, lineNumber, sourceURL);
     exceptionCatcher.Reset();
 }

@@ -838,6 +838,8 @@
             'bindings/v8/WorkerContextExecutionProxy.cpp',
             'bindings/v8/WorkerScriptController.h',
             'bindings/v8/WorkerScriptController.cpp',
+            'bindings/v8/WorldContextHandle.cpp',
+            'bindings/v8/WorldContextHandle.h',
             'bindings/v8/npruntime.cpp',
             'bindings/v8/npruntime_impl.h',
             'bindings/v8/npruntime_internal.h',

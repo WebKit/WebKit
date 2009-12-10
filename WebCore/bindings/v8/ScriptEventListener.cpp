@@ -68,7 +68,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
         sourceURL = node->document()->url().string();
     }
 
-    return V8LazyEventListener::create(attr->localName().string(), node->isSVGElement(), attr->value(), sourceURL, lineNumber, columnNumber);
+    return V8LazyEventListener::create(attr->localName().string(), node->isSVGElement(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
 }
 
 PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
@@ -95,7 +95,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
         columnNumber = frame->document()->tokenizer()->columnNumber();
     }
     sourceURL = frame->document()->url().string();
-    return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber);
+    return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
 }
 
 String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener)

@@ -32,6 +32,8 @@
 #define SharedPersistent_h
 
 #include <v8.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -40,7 +42,7 @@ namespace WebCore {
     // object and when it should no longer be accessible the object's
     // owner can clear it.
     template <typename T>
-    class SharedPersistent : public WTF::RefCounted<SharedPersistent<T> > {
+    class SharedPersistent : public RefCounted<SharedPersistent<T> > {
     public:
         void set(v8::Persistent<T> value)
         {

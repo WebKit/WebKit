@@ -1,3 +1,47 @@
+2009-12-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Events created in isolated worlds may fire in main world.
+        https://bugs.webkit.org/show_bug.cgi?id=32386
+
+        Test: http/tests/security/isolatedWorld/events.html
+
+        * WebCore.gypi: Added WorldContextHandle.
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): Added WorldContextHandle params.
+        * bindings/v8/SharedPersistent.h: Fixed a few style/include issues.
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener): Added WorldContextHandle params.
+        (WebCore::V8AbstractEventListener::handleEvent): Adjusted context retrieval to use WorldContextHandle.
+        (WebCore::V8AbstractEventListener::invokeEventHandler): Ditto.
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8AbstractEventListener::worldContext): Added WorldContextHandle params.
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findOrCreateWrapper): Ditto.
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener): Ditto.
+        (WebCore::V8LazyEventListener::prepareListenerObject): Adjusted context retrieval to use WorldContextHandle.
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::create): Added WorldContextHandle params.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::context): Refactored to use mainWorldContext();
+        (WebCore::V8Proxy::mainWorldContext): Added.
+        (WebCore::toV8Context): Changed to use WorldContextHandle.
+        * bindings/v8/V8Proxy.h: Added mainWorldContext decl.
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::reportException): Added an extra check to avoid crashes during frame teardown.
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::V8WorkerContextEventListener): Added WorldContextHandle params.
+        * bindings/v8/V8WorkerContextEventListener.h:
+        (WebCore::V8WorkerContextEventListener::create): Added WorldContextHandle params.
+        * bindings/v8/WorldContextHandle.cpp: Added.
+        * bindings/v8/WorldContextHandle.h: Added.
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener): Added WorldContextHandle params.
+        * bindings/v8/custom/V8CustomEventListener.h:
+        (WebCore::V8EventListener::create): Added WorldContextHandle params.
+
 2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Pass more information about a plug-in to the PluginHalterDelegate

@@ -35,13 +35,14 @@
 #include "V8Binding.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Proxy.h"
+#include "WorldContextHandle.h"
 
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-V8LazyEventListener::V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, int lineNumber, int columnNumber)
-    : V8AbstractEventListener(true)
+V8LazyEventListener::V8LazyEventListener(const String& functionName, bool isSVGEvent, const String& code, const String sourceURL, int lineNumber, int columnNumber, const WorldContextHandle& worldContext)
+    : V8AbstractEventListener(true, worldContext)
     , m_functionName(functionName)
     , m_isSVGEvent(isSVGEvent)
     , m_code(code)
@@ -83,7 +84,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
         return;
 
     // Use the outer scope to hold context.
-    v8::Handle<v8::Context> v8Context = proxy->context();
+    v8::Local<v8::Context> v8Context = worldContext().adjustedContext(proxy);
     // Bail out if we cannot get the context.
     if (v8Context.IsEmpty())
         return;

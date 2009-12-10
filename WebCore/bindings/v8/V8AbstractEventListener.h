@@ -32,8 +32,8 @@
 #define V8AbstractEventListener_h
 
 #include "EventListener.h"
-#include "OwnHandle.h"
-#include "SharedPersistent.h"
+#include "WorldContextHandle.h"
+
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -97,7 +97,7 @@ namespace WebCore {
         void disposeListenerObject();
 
     protected:
-        V8AbstractEventListener(bool isAttribute);
+        V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext);
 
         virtual void prepareListenerObject(ScriptExecutionContext*) { }
 
@@ -107,6 +107,9 @@ namespace WebCore {
 
         // Get the receiver object to use for event listener call.
         v8::Local<v8::Object> getReceiverObject(Event*);
+
+        const WorldContextHandle& worldContext() const { return m_worldContext; }
+
     private:
         // Implementation of EventListener function.
         virtual bool virtualisAttribute() const { return m_isAttribute; }
@@ -120,6 +123,8 @@ namespace WebCore {
 
         // Indicates if this is an HTML type listener.
         bool m_isAttribute;
+
+        WorldContextHandle m_worldContext;
     };
 
 } // namespace WebCore
