@@ -72,7 +72,7 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
 {
     ASSERT([object isKindOfClass:cls]);
     
-    if (isMainThread())
+    if (pthread_main_np() != 0)
         return false;
     
     ClassAndIdPair* pair = new ClassAndIdPair(cls, object);

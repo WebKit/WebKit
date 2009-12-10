@@ -1,3 +1,12 @@
+2009-12-09  Sam Weinig  <sam@webkit.org>
+
+        Roll out 51919 and 51920. They were incorrect and unnecessary right now.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCScheduleDeallocateOnMainThread):
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+
 2009-12-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Fisher.
