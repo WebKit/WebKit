@@ -1,5 +1,23 @@
 2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Mac build fix. Unreviewed.
+
+        Re-adds code that was mistakenly removed from my last patch.
+
+        * WebCoreSupport/WebPluginHalterClient.mm:
+        Add necessary #import.
+
+        * WebView/WebDelegateImplementationCaching.h:
+        Declare a new overload of CallUIDelegateReturningBoolean.
+
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegateReturningBoolean):
+        Add a new overload with different arguments.
+        (CallUIDelegateReturningBoolean):
+        Ditto.
+
+2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Pass more information about a plug-in to the PluginHalterDelegate
 
         Reviewed by Adam Roben.

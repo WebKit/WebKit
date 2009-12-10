@@ -233,6 +233,20 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     return result;
 }
 
+static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector, id object, BOOL boolean, id object2)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL, id)>(objc_msgSend)(delegate, selector, self, object, boolean, object2);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL, id)>(objc_msgSend)(delegate, selector, self, object, boolean, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
 static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector, id object1, id object2)
 {
     if (!delegate || ![delegate respondsToSelector:selector])
@@ -454,6 +468,11 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object, BOOL boolean)
 {
     return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object, boolean);
+}
+
+BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object, BOOL boolean, id object2)
+{
+    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object, boolean, object2);
 }
 
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object1, id object2)

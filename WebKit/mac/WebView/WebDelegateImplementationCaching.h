@@ -114,6 +114,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, BOOL);
+BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, BOOL, id);
 
 id CallFrameLoadDelegate(IMP, WebView *, SEL);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id);

@@ -28,6 +28,7 @@
 #import "DOMNodeInternal.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebView.h"
+#import <WebCore/PlatformString.h>
 
 using namespace WebCore;
 
