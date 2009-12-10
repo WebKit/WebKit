@@ -18,12 +18,12 @@ debug("Created a socket to '" + ws.URL + "'; readyState " + ws.readyState + ".")
 
 ws.onopen = function()
 {
-    debug("Connected; readyState " + ((ws.readyState >= 0) ? ">= 0." : ws.readyState));
+    debug("Connected; readyState " + ws.readyState);
 };
 
 ws.onmessage = function(messageEvent)
 {
-    debug("Received: '" + messageEvent.data + "'; readyState " + ((ws.readyState >= 1) ? ">= 1." : ws.readyState));
+    debug("Received: '" + messageEvent.data + "'; readyState " + ws.readyState);
 };
 
 ws.onclose = function()

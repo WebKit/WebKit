@@ -48,29 +48,6 @@
 
 namespace WebCore {
 
-class ProcessWebSocketEventTask : public ScriptExecutionContext::Task {
-public:
-    typedef void (WebSocket::*Method)(Event*);
-    static PassOwnPtr<ProcessWebSocketEventTask> create(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
-    {
-        return new ProcessWebSocketEventTask(webSocket, event);
-    }
-    virtual void performTask(ScriptExecutionContext*)
-    {
-        ExceptionCode ec = 0;
-        m_webSocket->dispatchEvent(m_event.get(), ec);
-        ASSERT(!ec);
-    }
-
-  private:
-    ProcessWebSocketEventTask(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
-        : m_webSocket(webSocket)
-        , m_event(event) { }
-
-    RefPtr<WebSocket> m_webSocket;
-    RefPtr<Event> m_event;
-};
-
 static bool isValidProtocolString(const WebCore::String& protocol)
 {
     if (protocol.isNull())
@@ -206,7 +183,7 @@ void WebSocket::didConnect()
         return;
     }
     m_state = OPEN;
-    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, Event::create(eventNames().openEvent, false, false)));
+    dispatchEvent(Event::create(eventNames().openEvent, false, false));
 }
 
 void WebSocket::didReceiveMessage(const String& msg)
@@ -217,15 +194,14 @@ void WebSocket::didReceiveMessage(const String& msg)
     RefPtr<MessageEvent> evt = MessageEvent::create();
     // FIXME: origin, lastEventId, source, messagePort.
     evt->initMessageEvent(eventNames().messageEvent, false, false, SerializedScriptValue::create(msg), "", "", 0, 0);
-    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, evt));
+    dispatchEvent(evt);
 }
 
 void WebSocket::didClose()
 {
     LOG(Network, "WebSocket %p didClose", this);
     m_state = CLOSED;
-    if (scriptExecutionContext())
-        scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, Event::create(eventNames().closeEvent, false, false)));
+    dispatchEvent(Event::create(eventNames().closeEvent, false, false));
 }
 
 EventTargetData* WebSocket::eventTargetData()
