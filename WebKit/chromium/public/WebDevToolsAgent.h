@@ -67,6 +67,10 @@ public:
 
     virtual void setRuntimeFeatureEnabled(const WebString& feature, bool enabled) = 0;
 
+    // Exposed for LayoutTestController.
+    virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;
+    virtual void setTimelineProfilingEnabled(bool enabled) = 0;
+
     // Asynchronously executes debugger command in the render thread.
     // |callerIdentifier| will be used for sending response.
     WEBKIT_API static void executeDebuggerCommand(
