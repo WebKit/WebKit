@@ -463,7 +463,8 @@ void initializeDates()
 {
 #ifndef NDEBUG
     static bool alreadyInitialized;
-    ASSERT(!alreadyInitialized++);
+    ASSERT(!alreadyInitialized);
+    alreadyInitialized = true;
 #endif
 
     equivalentYearForDST(2000); // Need to call once to initialize a static used in this function.

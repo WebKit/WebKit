@@ -1,3 +1,21 @@
+2009-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix three more things found by compiling with clang++.
+        
+        * runtime/Structure.h:
+        (JSC::StructureTransitionTable::reifySingleTransition):
+        Add the 'std' qualifier to the call to make_pair.
+
+        * wtf/DateMath.cpp:
+        (WTF::initializeDates):
+        Incrementing a bool is deprecated according to the C++ specification.
+        
+        * wtf/PtrAndFlags.h:
+        (WTF::PtrAndFlags::PtrAndFlags):
+        Name lookup should not be done in dependent bases, so explicitly qualify the call to set.
+
 2009-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
