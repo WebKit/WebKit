@@ -317,7 +317,7 @@ namespace JSC {
             if (LIKELY(v.isString()))
                 rope->initializeFiber(i, asString(v));
             else
-                rope->initializeFiber(i, v.toString(callFrame).rep());
+                rope->initializeFiber(i, v.toString(callFrame));
         }
 
         JSGlobalData* globalData = &callFrame->globalData();

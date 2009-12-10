@@ -95,12 +95,14 @@ namespace JSC {
             }
 
             ~Rope();
+            void destructNonRecursive();
 
-            void initializeFiber(unsigned index, UString::Rep* string)
+            void initializeFiber(unsigned index, const UString& string)
             {
-                string->ref();
-                m_fibers[index] = Fiber(string);
-                m_stringLength += string->len;
+                UString::Rep* rep = string.rep();
+                rep->ref();
+                m_fibers[index] = Fiber(rep);
+                m_stringLength += rep->len;
             }
             void initializeFiber(unsigned index, Rope* rope)
             {
@@ -113,7 +115,7 @@ namespace JSC {
                 if (jsString->isRope())
                     initializeFiber(index, jsString->rope());
                 else
-                    initializeFiber(index, jsString->string().rep());
+                    initializeFiber(index, jsString->string());
             }
 
             unsigned ropeLength() { return m_ropeLength; }

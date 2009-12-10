@@ -31,16 +31,39 @@
 
 namespace JSC {
 
+void JSString::Rope::destructNonRecursive()
+{
+    Vector<Rope*, 32> workQueue;
+    Rope* rope = this;
+
+    while (true) {
+        unsigned length = rope->ropeLength();
+        for (unsigned i = 0; i < length; ++i) {
+            Fiber& fiber = rope->fibers(i);
+            if (fiber.isString())
+                fiber.string()->deref();
+            else {
+                Rope* nextRope = fiber.rope();
+                if (nextRope->hasOneRef())
+                    workQueue.append(nextRope);
+                else
+                    nextRope->deref();
+            }
+        }
+        if (rope != this)
+            fastFree(rope);
+
+        if (workQueue.isEmpty())
+            return;
+
+        rope = workQueue.last();
+        workQueue.removeLast();
+    }
+}
+
 JSString::Rope::~Rope()
 {
-    for (unsigned i = 0; i < m_ropeLength; ++i) {
-        Fiber& fiber = m_fibers[i];
-        if (fiber.isRope())
-            fiber.rope()->deref();
-        else
-            fiber.string()->deref();
-        fiber = Fiber(reinterpret_cast<UString::Rep*>(0xfeedbeee));
-    }
+    destructNonRecursive();
 }
 
 #define ROPE_COPY_CHARS_INLINE_CUTOFF 20
