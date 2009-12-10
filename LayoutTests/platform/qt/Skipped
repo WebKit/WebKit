@@ -5170,6 +5170,8 @@ http/tests/misc/bubble-drag-events.html
 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
 http/tests/uri/css-href.php
 printing/compositing-layer-printing.html
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
 svg/custom/radial-gradient-with-outstanding-focalPoint.svg
 
 # CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.

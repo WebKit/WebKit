@@ -1,3 +1,10 @@
+2009-12-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Skip two tests on gtk/qt that generate new results.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2009-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
