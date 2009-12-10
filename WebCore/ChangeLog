@@ -1,3 +1,35 @@
+2009-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Crash in XMLTokenizer::popCurrentNode if window.close() is called during parsing
+        https://bugs.webkit.org/show_bug.cgi?id=31576
+
+        Add a RefCounted wrapper object around xmlParserCtxtPtr so we can
+        maintain it's lifetime more effectively.
+
+        Test: fast/parser/xhtml-close-while-parsing.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::popCurrentNode):
+        * dom/XMLTokenizer.h:
+        (WebCore::XMLParserContext::context):
+        (WebCore::XMLParserContext::XMLParserContext):
+        (WebCore::XMLTokenizer::context):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLParserContext::createStringParser):
+        (WebCore::XMLParserContext::createMemoryParser):
+        (WebCore::XMLParserContext::~XMLParserContext):
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        (WebCore::XMLTokenizer::doWrite):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::doEnd):
+        (WebCore::XMLTokenizer::lineNumber):
+        (WebCore::XMLTokenizer::columnNumber):
+        (WebCore::XMLTokenizer::stopParsing):
+        (WebCore::parseXMLDocumentFragment):
+        (WebCore::parseAttributes):
+
 2009-12-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

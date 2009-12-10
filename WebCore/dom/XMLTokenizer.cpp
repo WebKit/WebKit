@@ -91,7 +91,8 @@ void XMLTokenizer::pushCurrentNode(Node* n)
 
 void XMLTokenizer::popCurrentNode()
 {
-    ASSERT(m_currentNode);
+    if (!m_currentNode)
+        return;
     ASSERT(m_currentNodeStack.size());
 
     if (m_currentNode != m_doc)

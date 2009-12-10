@@ -52,6 +52,23 @@ namespace WebCore {
     class PendingCallbacks;
     class ScriptElement;
 
+#if !USE(QXMLSTREAM)
+    class XMLParserContext : public RefCounted<XMLParserContext> {
+    public:
+        static PassRefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void*, const char*);
+        static PassRefPtr<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void*);
+        ~XMLParserContext();
+        xmlParserCtxtPtr context() const { return m_context; }
+
+    private:
+        XMLParserContext(xmlParserCtxtPtr context)
+            : m_context(context)
+        {
+        }
+        xmlParserCtxtPtr m_context;
+    };
+#endif
+
     class XMLTokenizer : public Tokenizer, public CachedResourceClient {
     public:
         XMLTokenizer(Document*, FrameView* = 0);
@@ -146,7 +163,8 @@ public:
         QXmlStreamReader m_stream;
         bool m_wroteText;
 #else
-        xmlParserCtxtPtr m_context;
+        xmlParserCtxtPtr context() const { return m_context ? m_context->context() : 0; };
+        RefPtr<XMLParserContext> m_context;
         OwnPtr<PendingCallbacks> m_pendingCallbacks;
         Vector<xmlChar> m_bufferedText;
 #endif
