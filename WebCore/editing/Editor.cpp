@@ -832,7 +832,7 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
                 TriState nodeState = triStateOfStyleInComputedStyle(style, nodeStyle.get(), !node->isTextNode());
                 if (node == m_frame->selection()->start().node())
                     state = nodeState;
-                else if (state != nodeState) {
+                else if (state != nodeState && node->isTextNode()) {
                     state = MixedTriState;
                     break;
                 }

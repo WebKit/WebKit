@@ -17,13 +17,13 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents, depe
         testFailed("one " + toggleCommand + " command converted " + initialContents + " to " + testContainer.innerHTML + ", expected " + expectedContents);
 }
 
-debug('PLATFORM-DEPENDNET TESTS');
+debug('PLATFORM-DEPENDENT TESTS');
 testSingleToggle("bold", "<u><b>hello</b> world</u>");
 testSingleToggle("bold", "<b>hello </b>world");
 testSingleToggle("bold", "<u><b>hello </b></u>world");
 testSingleToggle("italic", "<i>hello</i> <img>");
 testSingleToggle("italic", "<s><b>hello<i> world</i></b></s>");
-debug('PLATFORM-INDEPENDNET TESTS');
+debug('PLATFORM-INDEPENDENT TESTS');
 testSingleToggle("bold", "<u><span id='test'><b>hello</b></span><b>world</b></u>", '<u><span id="test">hello</span>world</u>');
 testSingleToggle("bold", "<span id='test' style='font-weight:normal;'><b>hello</b></span>", '<span id="test">hello</span>');
 testSingleToggle("bold", "<div><b>hello</b><br><br><b>world</b></div>", "<div>hello<br><br>world</div>");

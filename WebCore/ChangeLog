@@ -1,3 +1,19 @@
+2009-12-10  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(4.0.4-42a12): With 2 highlighted lines of text in gmail/hotmail selecting Bold selects other 2 edit buttons automatically.
+        <rdar://problem/7442065>
+        https://bugs.webkit.org/show_bug.cgi?id=32285
+
+        When examining the styles of the nodes after the first in a range selection, we take into
+        cosideration differences in style of txt nodes only.
+        
+        Test: editing/execCommand/queryCommandState-02.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionHasStyle):
+
 2009-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
