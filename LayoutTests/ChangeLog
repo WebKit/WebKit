@@ -1,3 +1,16 @@
+2009-12-10  Patrik Persson  <patrik.j.persson@ericsson.com>
+
+        Reviewed by Adam Barth.
+
+        Test case to verify that sandboxing 'about:blank' does not make
+        the containing frame sandboxed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21288#c28
+
+        * fast/frames/resources/sandboxed-iframe-about-blank.html: Added.
+        * fast/frames/sandboxed-iframe-about-blank-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-about-blank.html: Added.
+
 2009-12-10  Eric Z. Ayers  <zundel@google.com>
 
         Reviewed by Pavel Feldman.

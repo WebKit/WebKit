@@ -1,0 +1,36 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+window.onload = function() { 
+    if (self.containing_frame.document.getElementById('plugin').destroyStream)
+        testPassed("containing frame was able to instantiate plugin");
+    else
+        testFailed("containing frame was unable to instantiate plugin");
+
+    isSuccessfullyParsed();
+} 
+
+</script>
+</head>
+<body>
+    <iframe name="containing_frame"
+        src="resources/sandboxed-iframe-about-blank.html">
+    </iframe>
+
+    <p id="description"></p>
+
+    <div id="console"></div>
+
+    <script>
+    description("This test verifies that sandboxing 'about:blank' does not make the containing frame sandboxed.");
+    var successfullyParsed = true;
+    </script>
+</body>
+</html>
