@@ -137,8 +137,11 @@ class EnsureBuildersAreGreenStep(AbstractStep):
     def run(self):
         if not self._options.check_builders:
             return
-        if not self._tool.buildbot.core_builders_are_green():
-            error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (self._tool.buildbot.buildbot_host))
+        red_builders_names = self._tool.buildbot.red_core_builders_names()
+        if not red_builders_names:
+            return
+        red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
+        error("Builders [%s] are red, please do not commit.\nSee http://%s.\nPass --ignore-builders to bypass this check." % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
 
 
 class BuildStep(AbstractStep):
