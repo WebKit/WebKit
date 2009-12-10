@@ -1,3 +1,15 @@
+2009-12-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] editing/selection/shrink-selection-after-shift-pagedown.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=31103
+
+        Give focus to the webviews when we create them, since some tests expect this.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main):
+
 2009-12-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
