@@ -1,3 +1,16 @@
+2009-12-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Adds an Android-specific implementation of initializeMaximumHTTPConnectionCountPerHost.
+        https://bugs.webkit.org/show_bug.cgi?id=31810
+
+        * platform/network/ResourceRequestBase.cpp: Modified. Disable default implementation
+            of initializeMaximumHTTPConnectionCountPerHost for Android.
+        * platform/network/android: Added.
+        * platform/network/android/ResourceRequestAndroid.cpp: Added.
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Android-specific implementation.
+
 2009-12-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
