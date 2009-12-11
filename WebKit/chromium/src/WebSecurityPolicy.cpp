@@ -66,4 +66,9 @@ void WebSecurityPolicy::resetOriginAccessWhiteLists()
     SecurityOrigin::resetOriginAccessWhiteLists();
 }
 
+bool WebSecurityPolicy::shouldHideReferrer(const WebURL& url, const WebString& referrer)
+{
+    return SecurityOrigin::shouldHideReferrer(url, referrer);
+}
+
 } // namespace WebKit

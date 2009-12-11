@@ -1,3 +1,15 @@
+2009-12-11  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose shouldHideReferrer() in WebSecurityPolicy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32398
+
+        * public/WebSecurityPolicy.h: Add shouldHideReferrer().
+        * src/WebSecurityPolicy.cpp:
+        (WebKit:: WebSecurityPolicy::shouldHideReferrer): Added.
+
 2009-12-11  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Fisher.
