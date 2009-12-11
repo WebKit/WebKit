@@ -1,3 +1,13 @@
+2009-12-11  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Tickmarks in the scrollbar are not cleared for non-main frames
+        https://bugs.webkit.org/show_bug.cgi?id=32385
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::stopFinding):
+
 2009-12-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

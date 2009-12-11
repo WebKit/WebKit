@@ -1212,8 +1212,7 @@ void WebFrameImpl::stopFinding(bool clearSelection)
     cancelPendingScopingEffort();
 
     // Remove all markers for matches found and turn off the highlighting.
-    if (!parent())
-        frame()->document()->removeMarkers(DocumentMarker::TextMatch);
+    frame()->document()->removeMarkers(DocumentMarker::TextMatch);
     frame()->setMarkedTextMatchesAreHighlighted(false);
 
     // Let the frame know that we don't want tickmarks or highlighting anymore.
