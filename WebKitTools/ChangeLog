@@ -1,3 +1,16 @@
+2009-12-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [check-webkit-style] False positive for tst_QWebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=32436
+
+        Add an exception for function names that start with "tst_".  These are
+        used by the Qt unit testing framework.
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

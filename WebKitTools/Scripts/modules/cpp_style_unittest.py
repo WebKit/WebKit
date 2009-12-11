@@ -3703,6 +3703,9 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('void this_op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
         self.assert_lint('void this_op_code(int var1, int var2)', 'this_op_code' + name_error_message)
 
+        # There is an exception for some unit tests that begin with "tst_".
+        self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
+
         # const_iterator is allowed as well.
         self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')
 
