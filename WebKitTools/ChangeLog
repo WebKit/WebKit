@@ -1,5 +1,14 @@
 2009-12-10  Eric Seidel  <eric@webkit.org>
 
+        No review, just updating unit tests to match recent checkins.
+
+        * Scripts/modules/mock_bugzillatool.py:
+         - Add missing red_core_builders_names method causing exception.
+        * Scripts/modules/workqueue_unittest.py:
+         - processutils is dead, use executive.py instead.
+
+2009-12-10  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Move run_command onto Executive to make code which uses run_command testable

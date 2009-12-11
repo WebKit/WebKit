@@ -105,6 +105,8 @@ class MockBuildBot(Mock):
             "is_green": True
         }]
 
+    def red_core_builders_names(self):
+        return []
 
 class MockSCM(Mock):
     def __init__(self):

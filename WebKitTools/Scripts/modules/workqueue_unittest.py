@@ -32,7 +32,7 @@ import shutil
 import tempfile
 import unittest
 
-from modules.processutils import ScriptError
+from modules.executive import ScriptError
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class LoggingDelegate(WorkQueueDelegate):
