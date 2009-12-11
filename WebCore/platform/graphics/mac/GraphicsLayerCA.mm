@@ -643,7 +643,7 @@ void GraphicsLayerCA::setContentsRect(const IntRect& rect)
     noteLayerPropertyChanged(ContentsRectChanged);
 }
 
-bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double beginTime)
+bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
     if (forceSoftwareAnimation() || !anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
@@ -657,9 +657,9 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
 
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyWebkitTransform)
-        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, keyframesName, beginTime, boxSize);
+        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, keyframesName, timeOffset, boxSize);
     else
-        createdAnimations = createAnimationFromKeyframes(valueList, anim, keyframesName, beginTime);
+        createdAnimations = createAnimationFromKeyframes(valueList, anim, keyframesName, timeOffset);
 
     if (createdAnimations)
         noteLayerPropertyChanged(AnimationChanged);
@@ -681,22 +681,23 @@ void GraphicsLayerCA::removeAnimationsForKeyframes(const String& animationName)
     if (!animationIsRunning(animationName))
         return;
 
-    m_keyframeAnimationsToProcess.add(animationName, Remove);
+    m_keyframeAnimationsToProcess.add(animationName, AnimationProcessingAction(Remove));
     noteLayerPropertyChanged(AnimationChanged);
 }
 
-void GraphicsLayerCA::pauseAnimation(const String& keyframesName)
+void GraphicsLayerCA::pauseAnimation(const String& keyframesName, double timeOffset)
 {
     if (!animationIsRunning(keyframesName))
         return;
 
     AnimationsToProcessMap::iterator it = m_keyframeAnimationsToProcess.find(keyframesName);
     if (it != m_keyframeAnimationsToProcess.end()) {
+        AnimationProcessingAction& processingInfo = it->second;
         // If an animation is scheduled to be removed, don't change the remove to a pause.
-        if (it->second != Remove)
-            it->second = Pause;
+        if (processingInfo.action != Remove)
+            processingInfo.action = Pause;
     } else
-        m_keyframeAnimationsToProcess.add(keyframesName, Pause);
+        m_keyframeAnimationsToProcess.add(keyframesName, AnimationProcessingAction(Pause, timeOffset));
 
     noteLayerPropertyChanged(AnimationChanged);
 }
@@ -1182,21 +1183,21 @@ void GraphicsLayerCA::updateLayerAnimations()
             if (animationIt == m_runningKeyframeAnimations.end())
                 continue;
 
-            AnimationProcessingAction action = it->second;
+            const AnimationProcessingAction& processingInfo = it->second;
             const Vector<AnimationPair>& animations = animationIt->second;
             for (size_t i = 0; i < animations.size(); ++i) {
                 const AnimationPair& currPair = animations[i];
-                switch (action) {
+                switch (processingInfo.action) {
                     case Remove:
                         removeAnimationFromLayer(static_cast<AnimatedPropertyID>(currPair.first), currPair.second);
                         break;
                     case Pause:
-                        pauseAnimationOnLayer(static_cast<AnimatedPropertyID>(currPair.first), currPair.second);
+                        pauseAnimationOnLayer(static_cast<AnimatedPropertyID>(currPair.first), currPair.second, processingInfo.timeOffset);
                         break;
                 }
             }
 
-            if (action == Remove)
+            if (processingInfo.action == Remove)
                 m_runningKeyframeAnimations.remove(currKeyframeName);
         }
     
@@ -1207,7 +1208,7 @@ void GraphicsLayerCA::updateLayerAnimations()
     if ((numAnimations = m_uncomittedAnimations.size())) {
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerAnimation& pendingAnimation = m_uncomittedAnimations[i];
-            setAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_index, pendingAnimation.m_beginTime);
+            setAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_index, pendingAnimation.m_timeOffset);
             
             if (!pendingAnimation.m_keyframesName.isEmpty()) {
                 // If this is a keyframe anim, we have to remember the association of keyframes name to property/index pairs,
@@ -1229,14 +1230,11 @@ void GraphicsLayerCA::updateLayerAnimations()
     }
 }
 
-void GraphicsLayerCA::setAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, int index, double beginTime)
+void GraphicsLayerCA::setAnimationOnLayer(CAPropertyAnimation* caAnim, AnimatedPropertyID property, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
-    if (beginTime) {
-        NSTimeInterval time = [layer convertTime:currentTimeToMediaTime(beginTime) fromLayer:nil];
-        [caAnim setBeginTime:time];
-    }
+    [caAnim setTimeOffset:timeOffset];
     
     String animationName = animationIdentifier(property, index);
     
@@ -1290,7 +1288,7 @@ static void copyAnimationProperties(CAPropertyAnimation* from, CAPropertyAnimati
 #endif
 }
 
-void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, int index)
+void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, int index, double timeOffset)
 {
     PlatformLayer* layer = animatedLayer(property);
 
@@ -1319,9 +1317,10 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, int ind
         pausedAnim = newAnim;
     }
 
-    double t = [layer convertTime:currentTimeToMediaTime(currentTime()) fromLayer:nil];
+    // pausedAnim has the beginTime of caAnim already.
     [pausedAnim setSpeed:0];
-    [pausedAnim setTimeOffset:t - [caAnim beginTime]];
+    [pausedAnim setTimeOffset:timeOffset];
+    
     [layer addAnimation:pausedAnim forKey:animationName];  // This will replace the running animation.
 }
 
@@ -1370,7 +1369,7 @@ void GraphicsLayerCA::repaintLayerDirtyRects()
     m_dirtyRects.clear();
 }
 
-bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double beginTime)
+bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double timeOffset)
 {
     ASSERT(valueList.property() != AnimatedPropertyWebkitTransform);
 
@@ -1396,14 +1395,14 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     if (!valuesOK)
         return false;
 
-    m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, beginTime));
+    m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, timeOffset));
     
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
 }
 
-bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double beginTime, const IntSize& boxSize)
+bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& keyframesName, double timeOffset, const IntSize& boxSize)
 {
     ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
 
@@ -1450,7 +1449,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
         if (!validMatrices)
             break;
     
-        m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, beginTime));
+        m_uncomittedAnimations.append(LayerAnimation(caAnimation, keyframesName, valueList.property(), animationIndex, timeOffset));
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;

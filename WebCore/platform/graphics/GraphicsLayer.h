@@ -260,10 +260,10 @@ public:
     
     // Return true if the animation is handled by the compositing system. If this returns
     // false, the animation will be run by AnimationController.
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*beginTime*/) { return false; }
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*timeOffset*/) { return false; }
     virtual void removeAnimationsForProperty(AnimatedPropertyID) { }
     virtual void removeAnimationsForKeyframes(const String& /* keyframesName */) { }
-    virtual void pauseAnimation(const String& /* keyframesName */) { }
+    virtual void pauseAnimation(const String& /* keyframesName */, double /*timeOffset*/) { }
     
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();

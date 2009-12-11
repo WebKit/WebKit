@@ -1,3 +1,77 @@
+2009-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Accelerated transitions broken when mixed with paused animations
+        https://bugs.webkit.org/show_bug.cgi?id=32387
+
+        Synchronization of a mixture of accelerated and software animations occurs via
+        a callback from GraphicsLayerCA, which ends up in
+        AnimationControllerPrivate::receivedStartTimeResponse(). The time passed in is
+        the exact time at which the accelerated animations started, so is used as the
+        start time for all animations and transitions which are marked as waiting.
+
+        The bug was that the callback called when re-starting animations that were
+        paused sent back an old time value, but this was used to start normal
+        transitions. Therefore the transition would start with a stale start time, and
+        thus end prematurely.
+
+        The fix is to change the way that GraphicsLayerCA handles paused animations.
+        Rather than setting the beginTime of the animation, it uses a beginTime of 0
+        and a timeOffset that gets passed down. Thus the callbacks always come with
+        beginTime for 'now'.
+
+        Also clarify the role of AnimationBase::endAnimation() by splitting it into
+        pauseAnimation() and endAnimation(), and pass down timeOffsets, rather than
+        beginTimes when starting and pausing.
+
+        Manual test only, because the bug requires a non-trivial combination of
+        animation pausing and transitions which take time, and the bug only shows in
+        pixel results.
+        
+        * manual-tests/animation/transitions-and-paused-animations.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::startAnimation):
+        (WebCore::AnimationBase::pauseAnimation):
+        (WebCore::AnimationBase::endAnimation):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::~KeyframeAnimation):
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::addAnimation):
+        (WebCore::GraphicsLayer::pauseAnimation):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::LayerAnimation::LayerAnimation):
+        (WebCore::GraphicsLayerCA::AnimationProcessingAction::AnimationProcessingAction):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::removeAnimationsForKeyframes):
+        (WebCore::GraphicsLayerCA::pauseAnimation):
+        (WebCore::GraphicsLayerCA::updateLayerAnimations):
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::pauseAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        (WebCore::RenderLayerBacking::animationPaused):
+        * rendering/RenderLayerBacking.h:
+
 2009-12-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

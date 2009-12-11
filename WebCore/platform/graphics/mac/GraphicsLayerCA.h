@@ -98,10 +98,10 @@ public:
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
 
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double beginTime);
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double timeOffset);
     virtual void removeAnimationsForProperty(AnimatedPropertyID);
     virtual void removeAnimationsForKeyframes(const String& keyframesName);
-    virtual void pauseAnimation(const String& keyframesName);
+    virtual void pauseAnimation(const String& keyframesName, double timeOffset);
     
     virtual void setContentsToImage(Image*);
     virtual void setContentsToVideo(PlatformLayer*);
@@ -132,8 +132,8 @@ private:
     WebLayer* layerForSuperlayer() const;
     CALayer* animatedLayer(AnimatedPropertyID property) const;
 
-    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double beginTime);
-    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double beginTime, const IntSize& boxSize);
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double timeOffset);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double timeOffset, const IntSize& boxSize);
 
     // Return autoreleased animation (use RetainPtr?)
     CABasicAnimation* createBasicAnimation(const Animation*, AnimatedPropertyID, bool additive);
@@ -187,9 +187,9 @@ private:
 
     void updateLayerAnimations();
 
-    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, int index, double beginTime);
+    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, int index, double timeOffset);
     bool removeAnimationFromLayer(AnimatedPropertyID, int index);
-    void pauseAnimationOnLayer(AnimatedPropertyID, int index);
+    void pauseAnimationOnLayer(AnimatedPropertyID, int index, double timeOffset);
 
     enum LayerChange {
         NoChange = 0,
@@ -244,19 +244,19 @@ private:
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
     struct LayerAnimation {
-        LayerAnimation(CAPropertyAnimation* caAnim, const String& keyframesName, AnimatedPropertyID property, int index, double beginTime)
+        LayerAnimation(CAPropertyAnimation* caAnim, const String& keyframesName, AnimatedPropertyID property, int index, double timeOffset)
         : m_animation(caAnim)
         , m_keyframesName(keyframesName)
         , m_property(property)
         , m_index(index)
-        , m_beginTime(beginTime)
+        , m_timeOffset(timeOffset)
         { }
 
         RetainPtr<CAPropertyAnimation*> m_animation;
         String m_keyframesName;
         AnimatedPropertyID m_property;
         int m_index;
-        double m_beginTime;
+        double m_timeOffset;
     };
     
     Vector<LayerAnimation> m_uncomittedAnimations;
@@ -267,8 +267,16 @@ private:
 
     HashSet<AnimatedProperty> m_transitionPropertiesToRemove;
     
-    enum { Remove, Pause };
-    typedef int AnimationProcessingAction;
+    enum Action { Remove, Pause };
+    struct AnimationProcessingAction {
+        AnimationProcessingAction(Action action = Remove, double timeOffset = 0)
+            : action(action)
+            , timeOffset(timeOffset)
+        {
+        }
+        Action action;
+        double timeOffset;      // only used for pause
+    };
     typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
     AnimationsToProcessMap m_keyframeAnimationsToProcess;
 

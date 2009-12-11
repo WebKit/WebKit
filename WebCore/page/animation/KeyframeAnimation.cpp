@@ -59,7 +59,7 @@ KeyframeAnimation::~KeyframeAnimation()
 {
     // Make sure to tell the renderer that we are ending. This will make sure any accelerated animations are removed.
     if (!postActive())
-        endAnimation(true);
+        endAnimation();
 }
 
 void KeyframeAnimation::getKeyframeAnimationInterval(const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
@@ -192,13 +192,13 @@ bool KeyframeAnimation::hasAnimationForProperty(int property) const
     return false;
 }
 
-bool KeyframeAnimation::startAnimation(double beginTime)
+bool KeyframeAnimation::startAnimation(double timeOffset)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->hasLayer()) {
         RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
         if (layer->isComposited())
-            return layer->backing()->startAnimation(beginTime, m_animation.get(), m_keyframes);
+            return layer->backing()->startAnimation(timeOffset, m_animation.get(), m_keyframes);
     }
 #else
     UNUSED_PARAM(beginTime);
@@ -206,26 +206,38 @@ bool KeyframeAnimation::startAnimation(double beginTime)
     return false;
 }
 
-void KeyframeAnimation::endAnimation(bool reset)
+void KeyframeAnimation::pauseAnimation(double timeOffset)
 {
-    if (m_object) {
+    if (!m_object)
+        return;
+
 #if USE(ACCELERATED_COMPOSITING)
-        if (m_object->hasLayer()) {
-            RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-            if (layer->isComposited()) {
-                if (reset)
-                    layer->backing()->animationFinished(m_keyframes.animationName());
-                else
-                    layer->backing()->animationPaused(m_keyframes.animationName());
-            }
-        }
-#else
-        UNUSED_PARAM(reset);
-#endif
-        // Restore the original (unanimated) style
-        if (!paused())
-            setNeedsStyleRecalc(m_object->node());
+    if (m_object->hasLayer()) {
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
+        if (layer->isComposited())
+            layer->backing()->animationPaused(timeOffset, m_keyframes.animationName());
     }
+#endif
+    // Restore the original (unanimated) style
+    if (!paused())
+        setNeedsStyleRecalc(m_object->node());
+}
+
+void KeyframeAnimation::endAnimation()
+{
+    if (!m_object)
+        return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_object->hasLayer()) {
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
+        if (layer->isComposited())
+            layer->backing()->animationFinished(m_keyframes.animationName());
+    }
+#endif
+    // Restore the original (unanimated) style
+    if (!paused())
+        setNeedsStyleRecalc(m_object->node());
 }
 
 bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listenerType) const
@@ -246,7 +258,7 @@ void KeyframeAnimation::onAnimationIteration(double elapsedTime)
 void KeyframeAnimation::onAnimationEnd(double elapsedTime)
 {
     sendAnimationEvent(eventNames().webkitAnimationEndEvent, elapsedTime);
-    endAnimation(true);
+    endAnimation();
 }
 
 bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)
