@@ -127,9 +127,6 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
         case '"':
             append(buffer, "%22");
             break;
-        case '%':
-            append(buffer, "%25");
-            break;
         default:
             append(buffer, c);
         }
