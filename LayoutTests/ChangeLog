@@ -1,3 +1,14 @@
+2009-12-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Log WebSocket error to Web Inspector console.
+        https://bugs.webkit.org/show_bug.cgi?id=32165
+
+        * websocket/tests/handshake-error-expected.txt:
+        * websocket/tests/handshake-fail-by-cross-origin-expected.txt:
+        * websocket/tests/handshake-fail-by-sub-protocol-mismatch-expected.txt:
+
 2009-12-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

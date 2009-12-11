@@ -1,3 +1,18 @@
+2009-12-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Log WebSocket error to Web Inspector console.
+        https://bugs.webkit.org/show_bug.cgi?id=32165
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+
 2009-12-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

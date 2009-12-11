@@ -118,7 +118,7 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
     ASSERT(handle == m_handle);
     const CString& handshakeMessage = m_handshake.clientHandshakeMessage();
     if (!handle->send(handshakeMessage.data(), handshakeMessage.length())) {
-        LOG(Network, "Error in sending handshake message.");
+        m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Error sending handshake message.", 0, m_handshake.clientOrigin());
         handle->close();
     }
 }
@@ -246,7 +246,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, int len)
         m_bufferSize += len;
         return true;
     }
-    LOG(Network, "Too long WebSocket frame %d", m_bufferSize + len);
+    m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("WebSocket frame (at %d bytes) is too long.", m_bufferSize + len), 0, m_handshake.clientOrigin());
     return false;
 }
 
