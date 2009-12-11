@@ -1,3 +1,16 @@
+2009-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Incorrect caching of prototype lookup with dictionary base
+        https://bugs.webkit.org/show_bug.cgi?id=32402
+
+        Adding test for prototype caching through a dictionary
+
+        * fast/js/dictionary-prototype-caching-expected.txt:
+        * fast/js/script-tests/dictionary-prototype-caching.js:
+        (testFunction):
+
 2009-12-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

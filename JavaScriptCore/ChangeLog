@@ -1,3 +1,16 @@
+2009-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Incorrect caching of prototype lookup with dictionary base
+        https://bugs.webkit.org/show_bug.cgi?id=32402
+
+        Make sure we don't add cached prototype lookup to the proto_list
+        lookup chain if the top level object is a dictionary.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+
 2009-12-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

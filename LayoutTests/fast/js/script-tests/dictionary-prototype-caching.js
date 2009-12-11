@@ -54,4 +54,21 @@ for (var i in proto)
 
 shouldBe("protoKeys", "[1,2,3]");
 
+function testFunction(o) {
+    return o.test;
+}
+
+var proto = { test: true };
+var subclass1 = { __proto__: proto };
+var subclass2 = { __proto__: proto };
+for (var i = 0; i < 500; i++)
+    subclass2["a"+i]="a"+i;
+
+testFunction(subclass1);
+shouldBeTrue("testFunction(subclass1)");
+shouldBeTrue("testFunction(subclass2)");
+proto.test = false
+subclass2.test = true;
+shouldBeTrue("testFunction(subclass2)");
+
 successfullyParsed = true;

@@ -7,6 +7,9 @@ PASS protoTest(o) is 'PASS'
 PASS protoTest(o) is undefined.
 PASS protoKeys is [1,2,3]
 PASS protoKeys is [1,2,3]
+PASS testFunction(subclass1) is true
+PASS testFunction(subclass2) is true
+PASS testFunction(subclass2) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
