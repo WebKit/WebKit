@@ -1,3 +1,15 @@
+2009-12-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a problem that JSC::gregorianDateTimeToMS() returns a negative
+        value for a huge year value.
+        https://bugs.webkit.org/show_bug.cgi?id=32304
+
+        * fast/js/date-daysfrom1970-overflow-expected.txt: Added.
+        * fast/js/date-daysfrom1970-overflow.html: Added.
+        * fast/js/script-tests/date-daysfrom1970-overflow.js: Added.
+
 2009-12-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Darin Adler.

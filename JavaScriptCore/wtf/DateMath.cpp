@@ -120,6 +120,10 @@ static const double secondsPerYear = 24.0 * 60.0 * 60.0 * 365.0;
 static const double usecPerSec = 1000000.0;
 
 static const double maxUnixTime = 2145859200.0; // 12/31/2037
+// ECMAScript asks not to support for a date of which total
+// millisecond value is larger than the following value.
+// See 15.9.1.14 of ECMA-262 5th edition.
+static const double maxECMAScriptTime = 8.64E15;
 
 // Day of year for the first day of each month, where index 0 is January, and day 0 is January 1.
 // First for non-leap years, then for leap years.
@@ -306,7 +310,7 @@ static inline double timeToMS(double hour, double min, double sec, double ms)
     return (((hour * minutesPerHour + min) * secondsPerMinute + sec) * msPerSecond + ms);
 }
 
-static int dateToDayInYear(int year, int month, int day)
+static double dateToDaysFrom1970(int year, int month, int day)
 {
     year += month / 12;
 
@@ -316,7 +320,8 @@ static int dateToDayInYear(int year, int month, int day)
         --year;
     }
 
-    int yearday = static_cast<int>(floor(daysFrom1970ToYear(year)));
+    double yearday = floor(daysFrom1970ToYear(year));
+    ASSERT((year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0));
     int monthday = monthToDayInYear(month, isLeapYear(year));
 
     return yearday + monthday + day - 1;
@@ -452,7 +457,7 @@ static double calculateDSTOffset(double ms, double utcOffset)
         int dayInYearLocal = dayInYear(ms, year);
         int dayInMonth = dayInMonthFromDayInYear(dayInYearLocal, leapYear);
         int month = monthFromDayInYear(dayInYearLocal, leapYear);
-        int day = dateToDayInYear(equivalentYear, month, dayInMonth);
+        double day = dateToDaysFrom1970(equivalentYear, month, dayInMonth);
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 
@@ -841,7 +846,7 @@ double timeClip(double t)
 {
     if (!isfinite(t))
         return NaN;
-    if (fabs(t) > 8.64E15)
+    if (fabs(t) > maxECMAScriptTime)
         return NaN;
     return trunc(t);
 }
@@ -927,7 +932,7 @@ double getUTCOffset(ExecState* exec)
 
 double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
-    int day = dateToDayInYear(t.year + 1900, t.month, t.monthDay);
+    double day = dateToDaysFrom1970(t.year + 1900, t.month, t.monthDay);
     double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
