@@ -217,6 +217,8 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
         if (layer->isComposited())
             layer->backing()->animationPaused(timeOffset, m_keyframes.animationName());
     }
+#else
+    UNUSED_PARAM(timeOffset);
 #endif
     // Restore the original (unanimated) style
     if (!paused())
