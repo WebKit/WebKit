@@ -39,4 +39,4 @@ class CommandsTest(unittest.TestCase):
         command.execute(options, args, tool)
         (stdout_string, stderr_string) = capture.restore_output()
         self.assertEqual(stdout_string, expected_stdout)
-        self.assertEqual(expected_stderr, expected_stderr)
+        self.assertEqual(stderr_string, expected_stderr)

@@ -39,4 +39,5 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(ObsoleteAttachments(), [42])
 
     def test_post_diff(self):
-        self.assert_execute_outputs(PostDiff(), [42])
+        expected_stderr = "Obsoleting 2 old patches on bug 42\n"
+        self.assert_execute_outputs(PostDiff(), [42], expected_stderr=expected_stderr)

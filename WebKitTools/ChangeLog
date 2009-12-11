@@ -1,3 +1,18 @@
+2009-12-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        CommandsTest.assert_execute_outputs doesn't check stderr
+        https://bugs.webkit.org/show_bug.cgi?id=32352
+
+        Fix assert_execute_outputs to check stderr
+        and then fix all the unit tests which needed to
+        pass stderr output.
+
+        * Scripts/modules/commands/commandtest.py:
+        * Scripts/modules/commands/download_unittest.py:
+        * Scripts/modules/commands/upload_unittest.py:
+
 2009-12-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
