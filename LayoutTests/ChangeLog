@@ -1,3 +1,15 @@
+2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] TouchEvent related tests have platform dependent results until all platform implement it.
+        Original expected files copied.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Copied from LayoutTests/fast/dom/Window/window-properties-expected.txt.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: Copied from LayoutTests/fast/dom/prototype-inheritance-expected.txt.
+        * platform/qt/fast/dom/prototype-inheritance.html: Copied from LayoutTests/fast/dom/prototype-inheritance.html.
+        * platform/qt/fast/js/global-constructors-expected.txt: Copied from LayoutTests/fast/js/global-constructors-expected.txt.
+
 2009-12-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Skip the touch tests on Windows (somehow that hunk got lost).
