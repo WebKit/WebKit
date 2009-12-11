@@ -102,6 +102,10 @@ HistoryItem::~HistoryItem()
     ASSERT(!m_cachedPage);
     ASSERT(!m_document);
     iconDatabase()->releaseIconForPageURL(m_urlString);
+#if PLATFORM(ANDROID)
+    if (m_bridge)
+        m_bridge->detachHistoryItem();
+#endif
 }
 
 inline HistoryItem::HistoryItem(const HistoryItem& item)

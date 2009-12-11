@@ -1,3 +1,20 @@
+2009-12-11  Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        [Android] Add detachHistoryItem() to AndroidWebHistoryBridge. And the constructor takes
+        HistoryItem* now. As AndroidWebHistoryBridge holds a dumb pointer of HistoryItem and
+        HistoryItem holds a RefPtr of AndroidWebHistoryBridge, the dumb pointer needs to be cleared
+        when HistoryItem is deleted to avoid potential crash.
+        https://bugs.webkit.org/show_bug.cgi?id=32251
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::~HistoryItem):
+        * history/android/AndroidWebHistoryBridge.h:
+        (WebCore::AndroidWebHistoryBridge::AndroidWebHistoryBridge):
+        (WebCore::AndroidWebHistoryBridge::detachHistoryItem):
+
+
 2009-12-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Pavel Feldman.
