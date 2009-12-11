@@ -668,14 +668,14 @@
 				RelativePath="..\..\runtime\DateInstanceCache.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\..\wtf\DateMath.cpp"
-                                >
-                        </File>
-                        <File
-                                RelativePath="..\..\wtf\DateMath.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\..\wtf\DateMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\DateMath.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\runtime\DatePrototype.cpp"
 				>
@@ -1549,10 +1549,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecompiler\NodesCodegen.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecompiler\Label.h"
 				>
 			</File>
@@ -1578,6 +1574,10 @@
 			</File>
 			<File
 				RelativePath="..\..\parser\Nodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecompiler\NodesCodegen.cpp"
 				>
 			</File>
 			<File

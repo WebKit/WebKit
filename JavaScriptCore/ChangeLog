@@ -1,5 +1,21 @@
 2009-12-11  Adam Roben  <aroben@apple.com>
 
+        Move QuartzCorePresent.h to include/private
+
+        This fixes other projects that use wtf/Platform.h
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Let VS do its thang.
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Write
+        QuartzCorePresent.h to $(WebKitOutputDir)/include/private.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops:
+        Added $(WebKitOutputDir)/include/private to the include path.
+
+2009-12-11  Adam Roben  <aroben@apple.com>
+
         Fix clean builds and everything rebuilding on every build
 
         Reviewed by Sam Weinig.

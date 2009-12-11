@@ -2,7 +2,7 @@
 
 # Determine if we have QuartzCore so we can turn on
 QUARTZCORE_H_PATH=$(cygpath -u "${WEBKITLIBRARIESDIR}/include/QuartzCore/QuartzCore.h")
-QUARTZCOREPRESENT_H_PATH=$(cygpath -u "${WEBKITOUTPUTDIR}/include/JavaScriptCore/QuartzCorePresent.h")
+QUARTZCOREPRESENT_H_PATH=$(cygpath -u "${WEBKITOUTPUTDIR}/include/private/QuartzCorePresent.h")
 if test \( ! -f "${QUARTZCOREPRESENT_H_PATH}" \) -o \( -f "${QUARTZCORE_H_PATH}" -a \( "${QUARTZCORE_H_PATH}" -nt "${QUARTZCOREPRESENT_H_PATH}" \) \)
 then
     mkdir -p "$(dirname "${QUARTZCOREPRESENT_H_PATH}")"
