@@ -28,6 +28,7 @@
 
 #include <runtime/ArrayPrototype.h>
 #include <runtime/Error.h>
+#include <runtime/PropertyNameArray.h>
 #include "JSDOMBinding.h"
 
 using namespace WebCore;
@@ -54,6 +55,15 @@ JSValue RuntimeArray::indexGetter(ExecState* exec, const Identifier&, const Prop
 {
     RuntimeArray* thisObj = static_cast<RuntimeArray*>(asObject(slot.slotBase()));
     return thisObj->getConcreteArray()->valueAt(exec, slot.index());
+}
+
+void RuntimeArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    unsigned length = getLength();
+    for (unsigned i = 0; i < length; ++i)
+        propertyNames.add(Identifier::from(exec, i));
+
+    JSObject::getOwnPropertyNames(exec, propertyNames);
 }
 
 bool RuntimeArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -58,6 +58,7 @@ static void* runJavaScriptThread(void* arg)
     if (0
             || aSelector == @selector(classNameOf:)
             || aSelector == @selector(objectOfClass:)
+            || aSelector == @selector(arrayOfString)
             || aSelector == @selector(identityIsEqual::)
             || aSelector == @selector(longLongRoundTrip:)
             || aSelector == @selector(unsignedLongLongRoundTrip:)
@@ -77,6 +78,8 @@ static void* runJavaScriptThread(void* arg)
         return @"className";
     if (aSelector == @selector(objectOfClass:))
         return @"objectOfClass";
+    if (aSelector == @selector(arrayOfString))
+        return @"arrayOfString";
     if (aSelector == @selector(identityIsEqual::))
         return @"identityIsEqual";
     if (aSelector == @selector(longLongRoundTrip:))
@@ -120,6 +123,16 @@ static void* runJavaScriptThread(void* arg)
         return [NSArray array];
 
     return nil;
+}
+
+- (NSArray *)arrayOfString
+{
+    NSString *strings[3];
+    strings[0] = @"one";
+    strings[1] = @"two";
+    strings[2] = @"three";
+    NSArray *array = [NSArray arrayWithObjects:strings count:3];
+    return array;
 }
 
 - (BOOL)identityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b

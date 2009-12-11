@@ -34,7 +34,8 @@ namespace JSC {
 class RuntimeArray : public JSObject {
 public:
     RuntimeArray(ExecState*, Bindings::Array*);
-    
+
+    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState *, const Identifier&, PropertyDescriptor&);

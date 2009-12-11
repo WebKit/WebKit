@@ -1,3 +1,15 @@
+2009-12-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        The values of RuntimeArray are not enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=29005
+
+        The indices of RuntimeArray should be enumerated like for a regular array.
+
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+
 2009-12-11  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Antti Koivisto.
