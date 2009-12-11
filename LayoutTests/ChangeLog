@@ -1,3 +1,9 @@
+2009-12-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fixed typo in test result.
+
+        * platform/gtk/editing/execCommand/toggle-compound-styles-expected.txt:
+
 2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
