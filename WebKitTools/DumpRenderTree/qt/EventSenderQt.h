@@ -40,6 +40,10 @@
 #include <qwebpage.h>
 #include <qwebframe.h>
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+#include <QTouchEvent>
+#endif
+
 class EventSender : public QObject {
     Q_OBJECT
 public:
@@ -54,11 +58,24 @@ public slots:
     void clearKillRing() {}
     void contextClick();
     void scheduleAsynchronousClick();
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    void addTouchPoint(int x, int y);
+    void updateTouchPoint(int index, int x, int y);
+    void touchStart();
+    void touchMove();
+    void touchEnd();
+    void clearTouchPoints();
+    void releaseTouchPoint(int index);
+#endif
 
 private:
+    void sendTouchEvent(QEvent::Type);
     QPoint m_mousePos;
     QWebPage* m_page;
     int m_timeLeap;
     QWebFrame* frameUnderMouse() const;
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QList<QTouchEvent::TouchPoint> m_touchPoints;
+#endif
 };
 #endif //  EventSenderQt_h

@@ -1,3 +1,23 @@
+2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        Added support for creating synthetic touch events with EventSender
+        in Qt's DumpRenderTree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32114
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint):
+        (EventSender::updateTouchPoint):
+        (EventSender::touchStart):
+        (EventSender::touchMove):
+        (EventSender::touchEnd):
+        (EventSender::clearTouchPoints):
+        (EventSender::releaseTouchPoint):
+        (EventSender::sendTouchEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2009-12-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Darin Adler.
