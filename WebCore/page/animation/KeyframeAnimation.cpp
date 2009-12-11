@@ -201,7 +201,7 @@ bool KeyframeAnimation::startAnimation(double timeOffset)
             return layer->backing()->startAnimation(timeOffset, m_animation.get(), m_keyframes);
     }
 #else
-    UNUSED_PARAM(beginTime);
+    UNUSED_PARAM(timeOffset);
 #endif
     return false;
 }
