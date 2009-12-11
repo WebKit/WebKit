@@ -74,6 +74,11 @@
 #include "SVGUseElement.h"
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#include "PlatformTouchEvent.h"
+#include "TouchEvent.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2538,5 +2543,85 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setL
         m_lastScrollbarUnderMouse = setLast ? scrollbar : 0;
     }
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
+{
+    Document* doc = m_frame->document();
+    if (!doc)
+        return false;
+
+    if (!doc->hasListenerType(Document::TOUCH_LISTENER))
+        return false;
+
+    RefPtr<TouchList> touches = TouchList::create();
+    RefPtr<TouchList> changedTouches = TouchList::create();
+    RefPtr<TouchList> targetTouches = TouchList::create();
+
+    const Vector<PlatformTouchPoint>& points = event.touchPoints();
+    for (int i = 0; i < points.size(); ++i) {
+        const PlatformTouchPoint& point = points[i];
+
+        IntPoint framePoint = documentPointForWindowPoint(m_frame, point.pos());
+        HitTestResult result = hitTestResultAtPoint(framePoint, /*allowShadowContent*/ false);
+
+        Node* target = result.innerNode();
+        // Touch events should not go to text nodes
+        if (target && target->isTextNode())
+            target = target->parentNode();
+
+        RefPtr<Touch> touch = Touch::create(m_frame, target, point.id(),
+                                            point.screenPos().x(), point.screenPos().y(),
+                                            framePoint.x(), framePoint.y());
+
+        if (event.type() == TouchStart && !i) {
+            m_touchEventTarget = target;
+            m_firstTouchScreenPos = point.screenPos();
+            m_firstTouchPagePos = framePoint;
+        }
+
+        if (point.state() != PlatformTouchPoint::TouchReleased) {
+            touches->append(touch);
+
+            if (m_touchEventTarget == target)
+               targetTouches->append(touch);
+        }
+
+        if (point.state() != PlatformTouchPoint::TouchStationary)
+            changedTouches->append(touch);
+    }
+
+    AtomicString* eventName = 0;
+    switch (event.type()) {
+    case TouchStart:
+        eventName = &eventNames().touchstartEvent;
+        break;
+    case TouchMove:
+        eventName = &eventNames().touchmoveEvent;
+        break;
+    case TouchEnd:
+        eventName = &eventNames().touchendEvent;
+        break;
+    }
+
+    if (!m_touchEventTarget)
+        return false;
+
+    RefPtr<TouchEvent> ev = TouchEvent::create(touches.get(), targetTouches.get(), changedTouches.get(),
+                                               *eventName, m_touchEventTarget->document()->defaultView(),
+                                               m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
+                                               m_firstTouchPagePos.x(), m_firstTouchPagePos.y());
+
+    ExceptionCode ec = 0;
+    m_touchEventTarget->dispatchEvent(ev.get(), ec);
+
+    if (event.type() == TouchEnd)
+        m_touchEventTarget = 0;
+
+    m_previousTouchEvent = ev;
+
+    return ev->defaultPrevented();
+}
+#endif
 
 }

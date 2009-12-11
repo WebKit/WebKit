@@ -1,3 +1,18 @@
+2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        Basic cross-platform implementation of mapping platform touch events
+        to JavaScript touch events.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32114
+
+        Test: fast/events/basic-touch-events.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/EventHandler.h:
+
 2009-12-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.
