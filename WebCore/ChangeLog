@@ -1,3 +1,28 @@
+2009-12-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes <http://webkit.org/b/32303>.
+        Middle-mouse button not firing mousedown DOM event when autoscroll happens.
+        
+        This fix moves the pan scrolling code into Node.cpp, as part of the default event handler.
+        We get two wins out of this:
+            1) Mousedown DOM events are now fired before pan scrolling.
+            2) Calling event.preventDefault() on a middle mouse button will now prevent pan scrolling.
+        
+        Added tests to show that middle mousedown DOM events are fired when panscrolling happens, and
+        that when event.preventDefault is called, pan scrolling doesn't happen.
+
+        Tests: platform/win/fast/events/panScroll-event-fired.html
+               platform/win/fast/events/panScroll-preventDefault.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler): Moved pan scrolling starting code to here.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::startPanScrolling): Function to initialize scrolling variables and start timer.
+        (WebCore::EventHandler::handleMousePressEvent): From here.
+        * page/EventHandler.h:
+
 2009-12-11  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.

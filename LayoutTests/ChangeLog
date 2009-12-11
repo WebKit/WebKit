@@ -1,3 +1,18 @@
+2009-12-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes <http://webkit.org/b/32303>.
+        Middle-mouse button not firing mousedown DOM event when autoscroll happens.
+        
+        Added tests to show that middle mousedown DOM events are fired when panscrolling happens, and
+        that when event.preventDefault is called, pan scrolling doesn't happen.
+
+        * platform/win/fast/events/panScroll-event-fired-expected.txt: Added.
+        * platform/win/fast/events/panScroll-event-fired.html: Added.
+        * platform/win/fast/events/panScroll-preventDefault-expected.txt: Added.
+        * platform/win/fast/events/panScroll-preventDefault.html: Added.
+
 2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][LayoutTestController] Output of document.write() is vanished by waitUntilDone()/notifyDone()
