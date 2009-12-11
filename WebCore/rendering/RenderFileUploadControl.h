@@ -49,6 +49,7 @@ public:
     String fileTextValue() const;
     
     bool allowsMultipleFiles();
+    String acceptTypes();
 
 private:
     virtual const char* renderName() const { return "RenderFileUploadControl"; }

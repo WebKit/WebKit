@@ -1,3 +1,23 @@
+2009-12-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add acceptTypes() method to FileChooser.
+        https://bugs.webkit.org/show_bug.cgi?id=32429
+
+        This method returns an 'accept' attribute value of the
+        corresponding INPUT element. A ChromeClient::runOpenPanel()
+        implementation can refer it through a FileChooser instance to
+        support type-restricted file selecting.
+
+        This makes no user-visible changes for now.
+
+        * platform/FileChooser.h:
+        (WebCore::FileChooser::acceptTypes):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::acceptTypes):
+        * rendering/RenderFileUploadControl.h:
+
 2009-12-11  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.
