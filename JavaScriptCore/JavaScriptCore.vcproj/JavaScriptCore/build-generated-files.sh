@@ -3,9 +3,9 @@
 # Determine if we have QuartzCore so we can turn on
 if [ -f ${WEBKITLIBRARIESDIR}/include/QuartzCore/QuartzCore.h ]
 then
-	echo "#define QUARTZCORE_PRESENT 1" > ${WEBKITOUTPUTDIR}/Include/QuartzCorePresent.h
+	echo "#define QUARTZCORE_PRESENT 1" > ${WEBKITOUTPUTDIR}/Include/JavaScriptCore/QuartzCorePresent.h
 else
-	echo "#define QUARTZCORE_PRESENT 0" > ${WEBKITOUTPUTDIR}/Include/QuartzCorePresent.h
+	echo "#define QUARTZCORE_PRESENT 0" > ${WEBKITOUTPUTDIR}/Include/JavaScriptCore/QuartzCorePresent.h
 fi
 
 NUMCPUS=`../../../WebKitTools/Scripts/num-cpus`
