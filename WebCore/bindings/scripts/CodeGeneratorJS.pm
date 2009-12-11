@@ -658,9 +658,6 @@ sub GenerateHeader
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
 
-    # Custom getPropertyAttributes function
-    push(@headerContent, "    virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
-
     # Custom defineGetter function
     push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
 

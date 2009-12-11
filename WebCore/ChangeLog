@@ -1,3 +1,19 @@
+2009-12-10  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove getPropertyAttributes() from JavaScript bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=31933
+
+        The functionality is provided by getOwnPropertyDescriptor().
+
+        * WebCore.order:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.idl:
+
 2009-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

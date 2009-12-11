@@ -31,7 +31,6 @@ module window {
         CustomDefineSetter,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
-        CustomGetPropertyAttributes,
         CustomGetPropertyNames,
         CustomLookupGetter,
         CustomLookupSetter,

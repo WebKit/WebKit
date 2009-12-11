@@ -43,7 +43,7 @@ namespace JSC {
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&);
-        virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes);
         virtual JSValue lookupGetter(ExecState*, const Identifier& propertyName);

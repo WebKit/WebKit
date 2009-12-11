@@ -406,26 +406,10 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)
 
 bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
 {
-    unsigned attributes;
-    if (!getPropertyAttributes(exec, propertyName, attributes))
+    PropertyDescriptor descriptor;
+    if (!const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor))
         return false;
-    return !(attributes & DontEnum);
-}
-
-bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
-{
-    JSCell* specificValue;
-    if (m_structure->get(propertyName, attributes, specificValue) != WTF::notFound)
-        return true;
-    
-    // Look in the static hashtable of properties
-    const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
-    if (entry) {
-        attributes = entry->attributes();
-        return true;
-    }
-    
-    return false;
+    return descriptor.enumerable();
 }
 
 bool JSObject::getPropertySpecificValue(ExecState*, const Identifier& propertyName, JSCell*& specificValue) const

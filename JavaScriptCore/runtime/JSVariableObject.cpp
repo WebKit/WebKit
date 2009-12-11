@@ -53,16 +53,6 @@ void JSVariableObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& p
     JSObject::getOwnPropertyNames(exec, propertyNames);
 }
 
-bool JSVariableObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
-{
-    SymbolTableEntry entry = symbolTable().get(propertyName.ustring().rep());
-    if (!entry.isNull()) {
-        attributes = entry.getAttributes() | DontDelete;
-        return true;
-    }
-    return JSObject::getPropertyAttributes(exec, propertyName, attributes);
-}
-
 bool JSVariableObject::isVariableObject() const
 {
     return true;

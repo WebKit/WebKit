@@ -155,8 +155,6 @@ EXPORTS
     ?getPrimitiveNumber@JSCell@JSC@@UAE_NPAVExecState@2@AANAAVJSValue@2@@Z
     ?getPrimitiveNumber@JSObject@JSC@@UAE_NPAVExecState@2@AANAAVJSValue@2@@Z
     ?getPrimitiveNumber@JSString@JSC@@EAE_NPAVExecState@2@AANAAVJSValue@2@@Z
-    ?getPropertyAttributes@JSObject@JSC@@UBE_NPAVExecState@2@ABVIdentifier@2@AAI@Z
-    ?getPropertyAttributes@JSVariableObject@JSC@@UBE_NPAVExecState@2@ABVIdentifier@2@AAI@Z
     ?getPropertyDescriptor@JSObject@JSC@@QAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z

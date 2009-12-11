@@ -434,14 +434,6 @@ void JSDOMWindow::getOwnPropertyNames(ExecState* exec, PropertyNameArray& proper
     Base::getOwnPropertyNames(exec, propertyNames);
 }
 
-bool JSDOMWindow::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
-{
-    // Only allow getting property attributes properties by frames in the same origin.
-    if (!allowsAccessFrom(exec))
-        return false;
-    return Base::getPropertyAttributes(exec, propertyName, attributes);
-}
-
 void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
     // Only allow defining getters by frames in the same origin.
