@@ -1,3 +1,17 @@
+2009-12-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Delay load DLLs for accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=31856
+        
+        If the DLLs (d3d9 and QuartzCore). are not present it
+        turns off accelerated compositing and avoids calling 
+        any of the functions in the DLLs.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Pass more information about a plug-in to the PluginHalterDelegate

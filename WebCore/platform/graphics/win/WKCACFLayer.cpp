@@ -30,12 +30,15 @@
 #include "WKCACFLayer.h"
 
 #include "WKCACFContextFlusher.h"
+#include "WKCACFLayerRenderer.h"
 
 #include <stdio.h>
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARender.h>
+#include <QuartzCoreInterface/QuartzCoreInterface.h>
 
 #pragma comment(lib, "QuartzCore")
+#pragma comment(lib, "QuartzCoreInterface")
 
 namespace WebCore {
 
@@ -47,11 +50,135 @@ static void displayInContext(CACFLayerRef layer, CGContextRef context)
     WKCACFLayer::layer(layer)->display(context);
 }
 
+#define STATIC_CACF_STRING(name) \
+    static CFStringRef name() \
+    { \
+        static CFStringRef name = wkqcCFStringRef(wkqc##name); \
+        return name; \
+    }
+
+STATIC_CACF_STRING(kCACFLayer)
+STATIC_CACF_STRING(kCACFTransformLayer)
+STATIC_CACF_STRING(kCACFGravityCenter)
+STATIC_CACF_STRING(kCACFGravityTop)
+STATIC_CACF_STRING(kCACFGravityBottom)
+STATIC_CACF_STRING(kCACFGravityLeft)
+STATIC_CACF_STRING(kCACFGravityRight)
+STATIC_CACF_STRING(kCACFGravityTopLeft)
+STATIC_CACF_STRING(kCACFGravityTopRight)
+STATIC_CACF_STRING(kCACFGravityBottomLeft)
+STATIC_CACF_STRING(kCACFGravityBottomRight)
+STATIC_CACF_STRING(kCACFGravityResize)
+STATIC_CACF_STRING(kCACFGravityResizeAspect)
+STATIC_CACF_STRING(kCACFGravityResizeAspectFill)
+STATIC_CACF_STRING(kCACFFilterLinear)
+STATIC_CACF_STRING(kCACFFilterNearest)
+STATIC_CACF_STRING(kCACFFilterTrilinear)
+STATIC_CACF_STRING(kCACFFilterLanczos)
+
+static CFStringRef toCACFLayerType(WKCACFLayer::LayerType type)
+{
+    switch (type) {
+    case WKCACFLayer::Layer: return kCACFLayer();
+    case WKCACFLayer::TransformLayer: return kCACFTransformLayer();
+    default: return 0;
+    }
+}
+
+static CFStringRef toCACFContentsGravityType(WKCACFLayer::ContentsGravityType type)
+{
+    switch (type) {
+    case WKCACFLayer::Center: return kCACFGravityCenter();
+    case WKCACFLayer::Top: return kCACFGravityTop();
+    case WKCACFLayer::Bottom: return kCACFGravityBottom();
+    case WKCACFLayer::Left: return kCACFGravityLeft();
+    case WKCACFLayer::Right: return kCACFGravityRight();
+    case WKCACFLayer::TopLeft: return kCACFGravityTopLeft();
+    case WKCACFLayer::TopRight: return kCACFGravityTopRight();
+    case WKCACFLayer::BottomLeft: return kCACFGravityBottomLeft();
+    case WKCACFLayer::BottomRight: return kCACFGravityBottomRight();
+    case WKCACFLayer::Resize: return kCACFGravityResize();
+    case WKCACFLayer::ResizeAspect: return kCACFGravityResizeAspect();
+    case WKCACFLayer::ResizeAspectFill: return kCACFGravityResizeAspectFill();
+    default: return 0;
+    }
+}
+
+static WKCACFLayer::ContentsGravityType fromCACFContentsGravityType(CFStringRef string)
+{
+    if (CFEqual(string, kCACFGravityTop()))
+        return WKCACFLayer::Top;
+
+    if (CFEqual(string, kCACFGravityBottom()))
+        return WKCACFLayer::Bottom;
+
+    if (CFEqual(string, kCACFGravityLeft()))
+        return WKCACFLayer::Left;
+
+    if (CFEqual(string, kCACFGravityRight()))
+        return WKCACFLayer::Right;
+
+    if (CFEqual(string, kCACFGravityTopLeft()))
+        return WKCACFLayer::TopLeft;
+
+    if (CFEqual(string, kCACFGravityTopRight()))
+        return WKCACFLayer::TopRight;
+
+    if (CFEqual(string, kCACFGravityBottomLeft()))
+        return WKCACFLayer::BottomLeft;
+
+    if (CFEqual(string, kCACFGravityBottomRight()))
+        return WKCACFLayer::BottomRight;
+
+    if (CFEqual(string, kCACFGravityResize()))
+        return WKCACFLayer::Resize;
+
+    if (CFEqual(string, kCACFGravityResizeAspect()))
+        return WKCACFLayer::ResizeAspect;
+
+    if (CFEqual(string, kCACFGravityResizeAspectFill()))
+        return WKCACFLayer::ResizeAspectFill;
+
+    return WKCACFLayer::Center;
+}
+
+static CFStringRef toCACFFilterType(WKCACFLayer::FilterType type)
+{
+    switch (type) {
+    case WKCACFLayer::Linear: return kCACFFilterLinear();
+    case WKCACFLayer::Nearest: return kCACFFilterNearest();
+    case WKCACFLayer::Trilinear: return kCACFFilterTrilinear();
+    case WKCACFLayer::Lanczos: return kCACFFilterLanczos();
+    default: return 0;
+    }
+}
+
+static WKCACFLayer::FilterType fromCACFFilterType(CFStringRef string)
+{
+    if (CFEqual(string, kCACFFilterNearest()))
+        return WKCACFLayer::Nearest;
+
+    if (CFEqual(string, kCACFFilterTrilinear()))
+        return WKCACFLayer::Trilinear;
+
+    if (CFEqual(string, kCACFFilterLanczos()))
+        return WKCACFLayer::Lanczos;
+
+    return WKCACFLayer::Linear;
+}
+
+PassRefPtr<WKCACFLayer> WKCACFLayer::create(LayerType type, GraphicsLayerCACF* owner)
+{
+    if (!WKCACFLayerRenderer::acceleratedCompositingAvailable())
+        return 0;
+    return adoptRef(new WKCACFLayer(type, owner));
+}
+
 // FIXME: It might be good to have a way of ensuring that all WKCACFLayers eventually
 // get destroyed in debug builds. A static counter could accomplish this pretty easily.
 
-WKCACFLayer::WKCACFLayer(CFStringRef className, GraphicsLayerCACF* owner)
-    : m_layer(AdoptCF, CACFLayerCreate(className))
+WKCACFLayer::WKCACFLayer(LayerType type, GraphicsLayerCACF* owner)
+    : m_layer(AdoptCF, CACFLayerCreate(toCACFLayerType(type)))
     , m_needsDisplayOnBoundsChange(false)
     , m_owner(owner)
 {
@@ -289,6 +416,39 @@ void WKCACFLayer::setFrame(const CGRect& rect)
 
     if (m_needsDisplayOnBoundsChange)
         setNeedsDisplay();
+}
+
+void WKCACFLayer::setContentsGravity(ContentsGravityType type)
+{
+    CACFLayerSetContentsGravity(layer(), toCACFContentsGravityType(type));
+    setNeedsCommit();
+}
+
+WKCACFLayer::ContentsGravityType WKCACFLayer::contentsGravity() const
+{
+    return fromCACFContentsGravityType(CACFLayerGetContentsGravity(layer()));
+}
+
+void WKCACFLayer::setMagnificationFilter(FilterType type)
+{
+    CACFLayerSetMagnificationFilter(layer(), toCACFFilterType(type));
+    setNeedsCommit();
+}
+
+WKCACFLayer::FilterType WKCACFLayer::magnificationFilter() const
+{
+    return fromCACFFilterType(CACFLayerGetMagnificationFilter(layer()));
+}
+
+void WKCACFLayer::setMinificationFilter(FilterType type)
+{
+    CACFLayerSetMinificationFilter(layer(), toCACFFilterType(type));
+    setNeedsCommit();
+}
+
+WKCACFLayer::FilterType WKCACFLayer::minificationFilter() const
+{
+    return fromCACFFilterType(CACFLayerGetMinificationFilter(layer()));
 }
 
 WKCACFLayer* WKCACFLayer::rootLayer() const

@@ -1,3 +1,40 @@
+<<<<<<< .mine
+2009-12-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Delay load DLLs for accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=31856
+        
+        Change calls that use the data export symbols from
+        QuartzCore to use the functions in QuartzCoreInterface.
+        This allows QuartzCore to be delay loaded.
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::GraphicsLayerCACF):
+        (WebCore::GraphicsLayerCACF::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerCACF::updateContentsImage):
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::toCACFLayerType):
+        (WebCore::toCACFContentsGravityType):
+        (WebCore::fromCACFContentsGravityType):
+        (WebCore::toCACFFilterType):
+        (WebCore::fromCACFFilterType):
+        (WebCore::WKCACFLayer::create):
+        (WebCore::WKCACFLayer::WKCACFLayer):
+        (WebCore::WKCACFLayer::setContentsGravity):
+        (WebCore::WKCACFLayer::contentsGravity):
+        (WebCore::WKCACFLayer::setMagnificationFilter):
+        (WebCore::WKCACFLayer::magnificationFilter):
+        (WebCore::WKCACFLayer::setMinificationFilter):
+        (WebCore::WKCACFLayer::minificationFilter):
+        * platform/graphics/win/WKCACFLayer.h:
+        (WebCore::WKCACFLayer::):
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+
+=======
 2009-12-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Fisher.
@@ -11,6 +48,7 @@
         * platform/network/android/ResourceRequestAndroid.cpp: Added.
         (WebCore::initializeMaximumHTTPConnectionCountPerHost): Android-specific implementation.
 
+>>>>>>> .r52005
 2009-12-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

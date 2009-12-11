@@ -36,6 +36,7 @@
 #include "PlatformString.h"
 #include "SystemTime.h"
 #include "WKCACFLayer.h"
+#include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 
@@ -123,7 +124,7 @@ GraphicsLayerCACF::GraphicsLayerCACF(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
 {
-    m_layer = WKCACFLayer::create(kCACFLayer, this);
+    m_layer = WKCACFLayer::create(WKCACFLayer::Layer, this);
     
     updateDebugIndicators();
 }
@@ -536,7 +537,7 @@ void GraphicsLayerCACF::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
         // Create the transform layer.
-        m_transformLayer = WKCACFLayer::create(kCACFTransformLayer, this);
+        m_transformLayer = WKCACFLayer::create(WKCACFLayer::TransformLayer, this);
 
 #ifndef NDEBUG
         m_transformLayer->setName(String().format("Transform Layer CATransformLayer(%p) GraphicsLayer(%p)", m_transformLayer.get(), this));
@@ -552,7 +553,7 @@ void GraphicsLayerCACF::updateLayerPreserves3D()
         m_layer->setPosition(point);
 
         m_layer->setAnchorPoint(CGPointMake(0.5f, 0.5f));
-        m_layer->setTransform(CATransform3DIdentity);
+        m_layer->setTransform(wkqcCATransform3DIdentity());
         
         // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         m_layer->setOpacity(1);
@@ -609,7 +610,7 @@ void GraphicsLayerCACF::updateContentsImage()
 {
     if (m_pendingContentsImage) {
         if (!m_contentsLayer.get()) {
-            RefPtr<WKCACFLayer> imageLayer = WKCACFLayer::create(kCACFLayer, this);
+            RefPtr<WKCACFLayer> imageLayer = WKCACFLayer::create(WKCACFLayer::Layer, this);
 #ifndef NDEBUG
             imageLayer->setName("Image Layer");
 #endif
@@ -620,7 +621,7 @@ void GraphicsLayerCACF::updateContentsImage()
 
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
-        m_contentsLayer->setMinificationFilter(kCACFFilterTrilinear);
+        m_contentsLayer->setMinificationFilter(WKCACFLayer::Trilinear);
         m_contentsLayer->setContents(m_pendingContentsImage.get());
         m_pendingContentsImage = 0;
         

@@ -50,7 +50,12 @@ class WKCACFTimingFunction;
 
 class WKCACFLayer : public RefCounted<WKCACFLayer> {
 public:
-    static PassRefPtr<WKCACFLayer> create(CFStringRef className, GraphicsLayerCACF* owner = 0) { return adoptRef(new WKCACFLayer(className, owner)); }
+    enum LayerType { Layer, TransformLayer };
+    enum FilterType { Linear, Nearest, Trilinear, Lanczos };
+    enum ContentsGravityType { Center, Top, Bottom, Left, Right, TopLeft, TopRight, 
+                               BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
+
+    static PassRefPtr<WKCACFLayer> create(LayerType, GraphicsLayerCACF* owner = 0);
     static WKCACFLayer* layer(CACFLayerRef layer) { return static_cast<WKCACFLayer*>(CACFLayerGetUserData(layer)); }
 
     ~WKCACFLayer();
@@ -142,8 +147,8 @@ public:
     void setContentsRect(const CGRect& contentsRect) { CACFLayerSetContentsRect(layer(), contentsRect); setNeedsCommit(); }
     CGRect contentsRect() const { return CACFLayerGetContentsRect(layer()); }
 
-    void setContentsGravity(CFStringRef str) { CACFLayerSetContentsGravity(layer(), str); setNeedsCommit(); }
-    CFStringRef contentsGravity() const { return CACFLayerGetContentsGravity(layer()); }
+    void setContentsGravity(ContentsGravityType);
+    ContentsGravityType contentsGravity() const;
         
     void setDoubleSided(bool b) { CACFLayerSetDoubleSided(layer(), b); setNeedsCommit(); }
     bool doubleSided() const { return CACFLayerIsDoubleSided(layer()); }
@@ -163,11 +168,11 @@ public:
     void setMasksToBounds(bool b) { CACFLayerSetMasksToBounds(layer(), b); }
     bool masksToBounds() const { return CACFLayerGetMasksToBounds(layer()); }
 
-    void setMagnificationFilter(const String& string) { CACFLayerSetMagnificationFilter(layer(), RetainPtr<CFStringRef>(AdoptCF, string.createCFString()).get()); }
-    String magnificationFilter() const { return CACFLayerGetMagnificationFilter(layer()); }
+    void setMagnificationFilter(FilterType);
+    FilterType magnificationFilter() const;
 
-    void setMinificationFilter(const String& string) { CACFLayerSetMinificationFilter(layer(), RetainPtr<CFStringRef>(AdoptCF, string.createCFString()).get()); }
-    String minificationFilter() const { return CACFLayerGetMinificationFilter(layer()); }
+    void setMinificationFilter(FilterType);
+    FilterType minificationFilter() const;
 
     void setMinificationFilterBias(float bias) { CACFLayerSetMinificationFilterBias(layer(), bias); }
     float minificationFilterBias() const { return CACFLayerGetMinificationFilterBias(layer()); }
@@ -218,9 +223,9 @@ public:
     void setGeometryFlipped(bool flipped) { CACFLayerSetGeometryFlipped(layer(), flipped); setNeedsCommit(); }
     bool geometryFlipped() const { return CACFLayerIsGeometryFlipped(layer()); }
 
-    WKCACFLayer(CFStringRef className, GraphicsLayerCACF* owner);
-
 private:
+    WKCACFLayer(LayerType, GraphicsLayerCACF* owner);
+
     void setNeedsCommit();
     CACFLayerRef layer() const { return m_layer.get(); }
     size_t numSublayers() const

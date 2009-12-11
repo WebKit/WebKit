@@ -915,8 +915,15 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+/* FIXME: Defining ENABLE_3D_RENDERING here isn't really right, but it's always used with
+   with WTF_USE_ACCELERATED_COMPOSITING, and it allows the feature to be turned on and
+   off in one place. */
 #if PLATFORM(WIN)
-#define WTF_USE_ACCELERATED_COMPOSITING 0
+#include "QuartzCorePresent.h"
+#if QUARTZCORE_PRESENT
+#define WTF_USE_ACCELERATED_COMPOSITING 1
+#define ENABLE_3D_RENDERING 1
+#endif
 #endif
 
 #if COMPILER(GCC)

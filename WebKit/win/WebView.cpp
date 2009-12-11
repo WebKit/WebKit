@@ -4504,6 +4504,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setPluginAllowedRunTime(runTime);
 
+#if USE(ACCELERATED_COMPOSITING)
+    settings->setAcceleratedCompositingEnabled(WKCACFLayerRenderer::acceleratedCompositingAvailable());
+#endif
+
 #if ENABLE(3D_CANVAS)
     settings->setExperimentalWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)

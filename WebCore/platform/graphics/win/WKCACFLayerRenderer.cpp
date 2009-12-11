@@ -34,6 +34,7 @@
 #include <CoreGraphics/CGSRegion.h>
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARenderOGL.h>
+#include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <d3d9.h>
@@ -225,11 +226,11 @@ void WKCACFLayerRenderer::createRenderer()
     windowsForContexts().set(m_context.get(), this);
 
     m_renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
-    m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
+    m_renderer = CARenderOGLNew(wkqcCARenderOGLCallbacks(wkqckCARenderDX9Callbacks), m_d3dDevice.get(), 0);
 
     // Create the root hierarchy
-    m_rootLayer = WKCACFLayer::create(kCACFLayer);
-    m_scrollLayer = WKCACFLayer::create(kCACFLayer);
+    m_rootLayer = WKCACFLayer::create(WKCACFLayer::Layer);
+    m_scrollLayer = WKCACFLayer::create(WKCACFLayer::Layer);
 
     m_rootLayer->addSublayer(m_scrollLayer);
     m_scrollLayer->setMasksToBounds(true);
