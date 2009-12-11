@@ -2833,17 +2833,11 @@ void Node::defaultEventHandler(Event* event)
         if (mouseEvent->button() == MiddleButton && !this->isLink()) {
             RenderObject* renderer = this->renderer();
 
-            while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())) {
-                // FIXME: If we start in a frame that can't scroll, we don't want to jump out of it to start scrolling:
-                // <https://bugs.webkit.org/show_bug.cgi?id=32399>.
-                if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
-                    renderer = renderer->document()->ownerElement()->renderer();
-                else
-                    renderer = renderer->parent();
-            }
+            while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
+                renderer = renderer->parent();
 
             if (renderer) {
-                if (Frame* frame = renderer->document()->frame())
+                if (Frame* frame = document()->frame())
                     frame->eventHandler()->startPanScrolling(renderer);
             }
         }

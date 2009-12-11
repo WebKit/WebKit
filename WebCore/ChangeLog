@@ -1,5 +1,24 @@
 2009-12-11  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Fixes <http://webkit.org/b/32399>.
+        Pan Scrolling Jumps out of frames if the initial location is in a frame that can't be scrolled.
+        
+        When we initially figure out the layer that we should begin scrolling, don't try to jump out
+        of frames/iFrames to look at the owner document. We don't want to jump out of frames, so we
+        don't need that logic anymore.
+        
+        Added a test to make sure that we don't pan scroll if we start to scroll in an empty
+        iFrame that has a scrollable owner document.
+
+        Test: platform/win/fast/events/panScroll-no-iframe-jump.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+
+2009-12-11  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Adam Roben.
 
         Fixes <http://webkit.org/b/32303>.
