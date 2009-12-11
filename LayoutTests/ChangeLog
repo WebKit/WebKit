@@ -1,3 +1,14 @@
+2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] TouchEvent related tests have platform dependent results until all platform implement it.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: TouchEvent related output added.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: TouchEvent related output added.
+        * platform/qt/fast/dom/prototype-inheritance.html: Removed. (added by mistake previously)
+        * platform/qt/fast/js/global-constructors-expected.txt: TouchEvent related output added.
+
 2009-12-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fixed typo in test result.
