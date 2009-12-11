@@ -1,5 +1,11 @@
 2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed. Skip a timeouter flakey test.
+
+        * platform/qt/Skipped: fast/frames/sandboxed-iframe-storage.html added.
+
+2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] TouchEvent related tests have platform dependent results until all platform implement it.

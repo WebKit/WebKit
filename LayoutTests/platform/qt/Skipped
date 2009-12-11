@@ -130,6 +130,7 @@ animations/transform-origin-vs-functions.html
 animations/change-one-anim.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-scripting.html
+fast/frames/sandboxed-iframe-storage.html
 http/tests/cookies/simple-cookies-max-age.html
 http/tests/xmlhttprequest/workers/close.html
 http/tests/xmlhttprequest/workers/shared-worker-close.html
