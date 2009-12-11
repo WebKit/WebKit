@@ -1,3 +1,11 @@
+2009-12-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip test that is failing because script is not executed after the
+        view it is on is destroyed.
+        See https://bugs.webkit.org/show_bug.cgi?id=32441
+
+        * platform/gtk/Skipped:
+
 2009-12-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
