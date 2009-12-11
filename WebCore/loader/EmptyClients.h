@@ -167,7 +167,7 @@ public:
 #endif
 };
 
-class EmptyFrameLoaderClient : public FrameLoaderClient {
+class EmptyFrameLoaderClient : public FrameLoaderClient, public Noncopyable {
 public:
     virtual ~EmptyFrameLoaderClient() {  }
     virtual void frameLoaderDestroyed() { }
