@@ -1,3 +1,9 @@
+2009-12-11  Adam Roben  <aroben@apple.com>
+
+        Windows build fix for systems with spaces in their paths
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Quote some paths.
+
 2009-12-11  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
