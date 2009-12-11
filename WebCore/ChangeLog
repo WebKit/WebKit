@@ -1,4 +1,3 @@
-<<<<<<< .mine
 2009-12-11  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
@@ -34,7 +33,6 @@
         (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable):
         (WebCore::WKCACFLayerRenderer::createRenderer):
 
-=======
 2009-12-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Fisher.
@@ -48,7 +46,6 @@
         * platform/network/android/ResourceRequestAndroid.cpp: Added.
         (WebCore::initializeMaximumHTTPConnectionCountPerHost): Android-specific implementation.
 
->>>>>>> .r52005
 2009-12-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
