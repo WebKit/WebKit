@@ -1,5 +1,21 @@
 2009-12-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Negative values for animation-delay are ignored (treated as zero)
+        https://bugs.webkit.org/show_bug.cgi?id=26150
+        
+        When we get the m_startTime for an animation or transition, subtract any negative
+        delay so the animation/transition behaves like it started in the past, per spec.
+
+        Tests: animations/negative-delay.html
+               transitions/negative-delay.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
+2009-12-11  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Accelerated transitions broken when mixed with paused animations

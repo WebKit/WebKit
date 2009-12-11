@@ -956,7 +956,12 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 updateStateMachine(AnimationStateInputStartTimeSet, beginAnimationUpdateTime());
             }
             else {
-                bool started = startAnimation(0);
+                double timeOffset = 0;
+                // If the value for 'animation-delay' is negative then the animation appears to have started in the past.
+                if (m_animation->delay() < 0)
+                    timeOffset = -m_animation->delay();
+                bool started = startAnimation(timeOffset);
+
                 m_compAnim->animationController()->addToStartTimeResponseWaitList(this, started);
                 m_fallbackAnimating = !started;
             }
@@ -967,8 +972,12 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             if (input == AnimationStateInputStartTimeSet) {
                 ASSERT(param >= 0);
                 // We have a start time, set it, unless the startTime is already set
-                if (m_startTime <= 0)
+                if (m_startTime <= 0) {
                     m_startTime = param;
+                    // If the value for 'animation-delay' is negative then the animation appears to have started in the past.
+                    if (m_animation->delay() < 0)
+                        m_startTime += m_animation->delay();
+                }
 
                 // Decide whether to go into looping or ending state
                 goIntoEndingOrLoopingState();
