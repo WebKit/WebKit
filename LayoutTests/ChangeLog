@@ -1,3 +1,9 @@
+2009-12-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Skip the touch tests on Windows (somehow that hunk got lost).
+
+        * platform/win/Skipped:
+
 2009-12-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
