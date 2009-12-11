@@ -1,3 +1,10 @@
+2009-12-10  Mike Belshe  <mike@belshe.com>
+
+        Unreviewed, build fix for chromium.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendRequest):
+
 2009-12-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

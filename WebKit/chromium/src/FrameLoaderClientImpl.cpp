@@ -265,7 +265,7 @@ void FrameLoaderClientImpl::dispatchWillSendRequest(
     if (loader) {
         // We want to distinguish between a request for a document to be loaded into
         // the main frame, a sub-frame, or the sub-objects in that document.
-        setTargetTypeFromLoader(request, loader));
+        setTargetTypeFromLoader(request, loader);
 
         // Avoid repeating a form submission when navigating back or forward.
         if (loader == loader->frameLoader()->provisionalDocumentLoader()
