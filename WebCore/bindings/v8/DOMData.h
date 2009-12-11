@@ -50,7 +50,7 @@ namespace WebCore {
         virtual DOMDataStore& getStore() = 0;
 
         template<typename T>
-        static void handleWeakObject(DOMDataStore::DOMWrapperMapType, v8::Handle<v8::Object>, T* domObject);
+        static void handleWeakObject(DOMDataStore::DOMWrapperMapType, v8::Persistent<v8::Object>, T* domObject);
 
         void forgetDelayedObject(void* object) { m_delayedObjectMap.take(object); }
 
@@ -71,6 +71,17 @@ namespace WebCore {
         void ensureDeref(V8ClassIndex::V8WrapperType type, void* domObject);
         static void derefObject(V8ClassIndex::V8WrapperType type, void* domObject);
 
+        template<typename T>
+        class WrapperMapObjectRemover : public WeakReferenceMap<T, v8::Object>::Visitor {
+        public:
+            virtual void visitDOMWrapper(T* domObject, v8::Persistent<v8::Object> v8Object)
+            {
+                V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(v8Object);
+                derefObject(type, domObject);
+                v8Object.Dispose();
+            }
+        };
+
         // Stores all the DOM objects that are delayed to be processed when the
         // owning thread gains control.
         DelayedObjectMap m_delayedObjectMap;
@@ -84,7 +95,7 @@ namespace WebCore {
     };
 
     template<typename T>
-    void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Handle<v8::Object> v8Object, T* domObject)
+    void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Persistent<v8::Object> v8Object, T* domObject)
     {
         ASSERT(WTF::isMainThread());
         DOMDataList& list = DOMDataStore::allStores();
@@ -93,10 +104,7 @@ namespace WebCore {
 
             DOMDataStore::InternalDOMWrapperMap<T>* domMap = static_cast<DOMDataStore::InternalDOMWrapperMap<T>*>(store->getDOMWrapperMap(mapType));
 
-            v8::Handle<v8::Object> wrapper = domMap->get(domObject);
-            if (*wrapper == *v8Object) {
-                // Clear the JS reference.
-                domMap->forgetOnly(domObject);
+            if (domMap->removeIfPresent(domObject, v8Object)) {
                 ASSERT(store->domData()->owningThread() == WTF::currentThread());
                 store->domData()->derefObject(V8DOMWrapper::domWrapperType(v8Object), domObject);
             }
@@ -106,19 +114,9 @@ namespace WebCore {
     template<typename T>
     void DOMData::removeObjectsFromWrapperMap(DOMWrapperMap<T>& domMap)
     {
-        for (typename WTF::HashMap<T*, v8::Object*>::iterator iter(domMap.impl().begin()); iter != domMap.impl().end(); ++iter) {
-            T* domObject = static_cast<T*>(iter->first);
-            v8::Persistent<v8::Object> v8Object(iter->second);
-
-            V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(v8::Handle<v8::Object>::Cast(v8Object));
-
-            // Deref the DOM object.
-            derefObject(type, domObject);
-
-            // Clear the JS wrapper.
-            v8Object.Dispose();
-        }
-        domMap.impl().clear();
+        WrapperMapObjectRemover<T> remover;
+        domMap.visit(&remover);
+        domMap.clear();
     }
 
 } // namespace WebCore

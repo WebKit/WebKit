@@ -145,9 +145,7 @@ void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        HashMap<Node*, v8::Object*>& map = store->domNodeMap().impl();
-        for (HashMap<Node*, v8::Object*>::iterator it = map.begin(); it != map.end(); ++it)
-            visitor->visitDOMWrapper(it->first, v8::Persistent<v8::Object>(it->second));
+        store->domNodeMap().visit(visitor);
     }
 }
 
@@ -162,9 +160,7 @@ void visitDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        HashMap<void*, v8::Object*> & map = store->domObjectMap().impl();
-        for (HashMap<void*, v8::Object*>::iterator it = map.begin(); it != map.end(); ++it)
-            visitor->visitDOMWrapper(it->first, v8::Persistent<v8::Object>(it->second));
+        store->domObjectMap().visit(visitor);
     }
 }
 
@@ -179,9 +175,7 @@ void visitActiveDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        HashMap<void*, v8::Object*>& map = store->activeDomObjectMap().impl();
-        for (HashMap<void*, v8::Object*>::iterator it = map.begin(); it != map.end(); ++it)
-            visitor->visitDOMWrapper(it->first, v8::Persistent<v8::Object>(it->second));
+        store->activeDomObjectMap().visit(visitor);
     }
 }
 
@@ -198,9 +192,7 @@ void visitDOMSVGElementInstancesInCurrentThread(DOMWrapperMap<SVGElementInstance
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        HashMap<SVGElementInstance*, v8::Object*> & map = store->domSvgElementInstanceMap().impl();
-        for (HashMap<SVGElementInstance*, v8::Object*>::iterator it = map.begin(); it != map.end(); ++it)
-            visitor->visitDOMWrapper(it->first, v8::Persistent<v8::Object>(it->second));
+        store->domSvgElementInstanceMap().visit(visitor);
     }
 }
 
@@ -215,9 +207,7 @@ void visitSVGObjectsInCurrentThread(DOMWrapperMap<void>::Visitor* visitor)
         if (!store->domData()->owningThread() == WTF::currentThread())
             continue;
 
-        HashMap<void*, v8::Object*>& map = store->domSvgObjectWithContextMap().impl();
-        for (HashMap<void*, v8::Object*>::iterator it = map.begin(); it != map.end(); ++it)
-            visitor->visitDOMWrapper(it->first, v8::Persistent<v8::Object>(it->second));
+        store->domSvgObjectWithContextMap().visit(visitor);
     }
 }
 

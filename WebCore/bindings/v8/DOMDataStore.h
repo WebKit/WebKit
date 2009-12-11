@@ -82,8 +82,6 @@ namespace WebCore {
                 forgetDelayedObject(m_domData, object);
             }
 
-            void forgetOnly(KeyType* object) { DOMWrapperMap<KeyType>::forget(object); }
-
         private:
             DOMData* m_domData;
         };

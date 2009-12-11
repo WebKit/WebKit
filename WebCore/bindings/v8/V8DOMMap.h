@@ -81,9 +81,35 @@ namespace WebCore {
             handle.Clear();
         }
 
+        bool removeIfPresent(KeyType* key, v8::Persistent<v8::Data> value)
+        {
+            typename HashMap<KeyType*, ValueType*>::iterator it = m_map.find(key);
+            if (it == m_map.end() || it->second != *value)
+                return false;
+
+            m_map.remove(it);
+            value.Dispose();
+            return true;
+        }
+
+        void clear()
+        {
+            m_map.clear();
+        }
+
         bool contains(KeyType* obj) { return m_map.contains(obj); }
 
-        HashMap<KeyType*, ValueType*>& impl() { return m_map; }
+        class Visitor {
+        public:
+            virtual void visitDOMWrapper(KeyType*, v8::Persistent<ValueType>) = 0;
+        };
+
+        virtual void visit(Visitor* visitor)
+        {
+            typename HashMap<KeyType*, ValueType*>::iterator it = m_map.begin();
+            for (; it != m_map.end(); ++it)
+                visitor->visitDOMWrapper(it->first, v8::Persistent<ValueType>(it->second));
+        }
 
     protected:
         HashMap<KeyType*, ValueType*> m_map;
@@ -93,11 +119,6 @@ namespace WebCore {
     template <class KeyType> class DOMWrapperMap : public WeakReferenceMap<KeyType, v8::Object> {
     public:
         DOMWrapperMap(v8::WeakReferenceCallback callback) : WeakReferenceMap<KeyType, v8::Object>(callback) { }
-
-        class Visitor {
-        public:
-          virtual void visitDOMWrapper(KeyType* key, v8::Persistent<v8::Object> object) = 0;
-        };
     };
 
     // An opaque class that represents a set of DOM wrappers.

@@ -1,4 +1,37 @@
 2009-12-11  anton muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] refactor WeakReferenceMap.
+        Move common bits of functionality to reduce duplication.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32389
+
+        Should be covered by buildbots.
+
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::WrapperMapObjectRemover::visitDOMWrapper):
+        (WebCore::DOMData::handleWeakObject):
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::weakDOMObjectCallback):
+        (WebCore::DOMDataStore::weakActiveDOMObjectCallback):
+        (WebCore::DOMDataStore::weakNodeCallback):
+        (WebCore::DOMDataStore::weakSVGElementInstanceCallback):
+        (WebCore::DOMDataStore::weakSVGObjectWithContextCallback):
+        * bindings/v8/DOMDataStore.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::visitDOMNodesInCurrentThread):
+        (WebCore::visitDOMObjectsInCurrentThread):
+        (WebCore::visitActiveDOMObjectsInCurrentThread):
+        (WebCore::visitDOMSVGElementInstancesInCurrentThread):
+        (WebCore::visitSVGObjectsInCurrentThread):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::removeIfPresent):
+        (WebCore::WeakReferenceMap::clear):
+        (WebCore::WeakReferenceMap::visit):
+
+2009-12-11  anton muhin  <antonm@chromium.org>
         Reviewed by Adam Barth.
 
         [v8] in Debug builds create an additional handle scope
