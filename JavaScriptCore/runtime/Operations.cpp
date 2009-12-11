@@ -54,12 +54,13 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     JSValue p1 = v1.toPrimitive(callFrame);
     JSValue p2 = v2.toPrimitive(callFrame);
 
-    if (p1.isString() || p2.isString()) {
-        RefPtr<UString::Rep> value = concatenate(p1.toString(callFrame).rep(), p2.toString(callFrame).rep());
-        if (!value)
-            return throwOutOfMemoryError(callFrame);
-        return jsString(callFrame, value.release());
+    if (p1.isString()) {
+        return p2.isString()
+            ? jsString(callFrame, asString(p1), asString(p2))
+            : jsString(callFrame, asString(p1), p2.toString(callFrame));
     }
+    if (p2.isString())
+        return jsString(callFrame, p1.toString(callFrame), asString(p2));
 
     return jsNumber(callFrame, p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }
