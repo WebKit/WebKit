@@ -1,3 +1,10 @@
+2009-12-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip two tests that require infrastructure our DRT doesn't have,
+        or functionality our port does not implement.
+
+        * platform/gtk/Skipped:
+
 2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Skip a timeouter flakey test.

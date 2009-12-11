@@ -5503,6 +5503,7 @@ http/tests/security/isolatedWorld/click-event.html
 http/tests/security/isolatedWorld/document-open.html
 http/tests/security/isolatedWorld/document-properties.html
 http/tests/security/isolatedWorld/document-prototype.html
+http/tests/security/isolatedWorld/events.html
 http/tests/security/isolatedWorld/global-variables.html
 http/tests/security/isolatedWorld/image-properties.html
 http/tests/security/isolatedWorld/image-prototype.html
@@ -5721,6 +5722,7 @@ editing/selection/5825350-2.html
 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
 fast/loader/stateobjects/document-destroyed-navigate-back.html
 http/tests/loading/state-object-security-exception.html
+http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 
 # Fails because of new behaviour enforced by libsoup
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
