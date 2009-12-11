@@ -142,7 +142,7 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
 
     UString input = args.isEmpty() ? regExpConstructor->input() : args.at(0).toString(exec);
     if (input.isNull()) {
-        throwError(exec, GeneralError, "No input to " + toString(exec) + ".");
+        throwError(exec, GeneralError, makeString("No input to ", toString(exec), "."));
         return false;
     }
 

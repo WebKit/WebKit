@@ -62,49 +62,41 @@ double parseDate(ExecState* exec, const UString &date)
     return value;
 }
 
-UString formatDate(const GregorianDateTime &t)
+void formatDate(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%s %s %02d %04d",
+    snprintf(buffer, DateConversionBufferSize, "%s %s %02d %04d",
         weekdayName[(t.weekDay + 6) % 7],
         monthName[t.month], t.monthDay, t.year + 1900);
-    return buffer;
 }
 
-UString formatDateUTCVariant(const GregorianDateTime &t)
+void formatDateUTCVariant(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%s, %02d %s %04d",
+    snprintf(buffer, DateConversionBufferSize, "%s, %02d %s %04d",
         weekdayName[(t.weekDay + 6) % 7],
         t.monthDay, monthName[t.month], t.year + 1900);
-    return buffer;
 }
 
-UString formatTime(const GregorianDateTime &t)
+void formatTime(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
-    char buffer[100];
     int offset = abs(gmtoffset(t));
     char timeZoneName[70];
     struct tm gtm = t;
     strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
 
     if (timeZoneName[0]) {
-        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
+        snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT%c%02d%02d (%s)",
             t.hour, t.minute, t.second,
             gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
     } else {
-        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
+        snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT%c%02d%02d",
             t.hour, t.minute, t.second,
             gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
     }
-    return UString(buffer);
 }
 
-UString formatTimeUTC(const GregorianDateTime &t)
+void formatTimeUTC(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
-    return UString(buffer);
+    snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
 }
 
 } // namespace JSC

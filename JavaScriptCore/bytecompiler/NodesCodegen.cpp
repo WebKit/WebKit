@@ -78,10 +78,7 @@ static void substitute(UString& string, const UString& substring)
 {
     int position = string.find("%s");
     ASSERT(position != -1);
-    UString newString = string.substr(0, position);
-    newString.append(substring);
-    newString.append(string.substr(position + 2));
-    string = newString;
+    string = makeString(string.substr(0, position), substring, string.substr(position + 2));
 }
 
 RegisterID* ThrowableExpressionData::emitThrowError(BytecodeGenerator& generator, ErrorType type, const char* message)

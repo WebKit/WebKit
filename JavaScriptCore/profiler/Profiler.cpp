@@ -148,7 +148,7 @@ CallIdentifier Profiler::createCallIdentifier(ExecState* exec, JSValue functionV
     }
     if (asObject(functionValue)->inherits(&InternalFunction::info))
         return CallIdentifier(static_cast<InternalFunction*>(asObject(functionValue))->name(exec), defaultSourceURL, defaultLineNumber);
-    return CallIdentifier("(" + asObject(functionValue)->className() + " object)", defaultSourceURL, defaultLineNumber);
+    return CallIdentifier(makeString("(", asObject(functionValue)->className(), " object)"), defaultSourceURL, defaultLineNumber);
 }
 
 CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSFunction* function)

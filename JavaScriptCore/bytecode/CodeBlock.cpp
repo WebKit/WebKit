@@ -51,7 +51,7 @@ static UString escapeQuotes(const UString& str)
     UString result = str;
     int pos = 0;
     while ((pos = result.find('\"', pos)) >= 0) {
-        result = result.substr(0, pos) + "\"\\\"\"" + result.substr(pos + 1);
+        result = makeString(result.substr(0, pos), "\"\\\"\"", result.substr(pos + 1));
         pos += 4;
     }
     return result;
@@ -62,23 +62,20 @@ static UString valueToSourceString(ExecState* exec, JSValue val)
     if (!val)
         return "0";
 
-    if (val.isString()) {
-        UString result("\"");
-        result += escapeQuotes(val.toString(exec)) + "\"";
-        return result;
-    } 
+    if (val.isString())
+        return makeString("\"", escapeQuotes(val.toString(exec)), "\"");
 
     return val.toString(exec);
 }
 
 static CString constantName(ExecState* exec, int k, JSValue value)
 {
-    return (valueToSourceString(exec, value) + "(@k" + UString::from(k - FirstConstantRegisterIndex) + ")").UTF8String();
+    return makeString(valueToSourceString(exec, value), "(@k", UString::from(k - FirstConstantRegisterIndex), ")").UTF8String();
 }
 
 static CString idName(int id0, const Identifier& ident)
 {
-    return (ident.ustring() + "(@id" + UString::from(id0) +")").UTF8String();
+    return makeString(ident.ustring(), "(@id", UString::from(id0), ")").UTF8String();
 }
 
 CString CodeBlock::registerName(ExecState* exec, int r) const
@@ -89,25 +86,26 @@ CString CodeBlock::registerName(ExecState* exec, int r) const
     if (isConstantRegisterIndex(r))
         return constantName(exec, r, getConstant(r));
 
-    return (UString("r") + UString::from(r)).UTF8String();
+    return makeString("r", UString::from(r)).UTF8String();
 }
 
 static UString regexpToSourceString(RegExp* regExp)
 {
-    UString pattern = UString("/") + regExp->pattern() + "/";
+    char postfix[5] = { '/', 0, 0, 0, 0 };
+    int index = 1;
     if (regExp->global())
-        pattern += "g";
+        postfix[index++] = 'g';
     if (regExp->ignoreCase())
-        pattern += "i";
+        postfix[index++] = 'i';
     if (regExp->multiline())
-        pattern += "m";
+        postfix[index] = 'm';
 
-    return pattern;
+    return makeString("/", regExp->pattern(), postfix);
 }
 
 static CString regexpName(int re, RegExp* regexp)
 {
-    return (regexpToSourceString(regexp) + "(@re" + UString::from(re) + ")").UTF8String();
+    return makeString(regexpToSourceString(regexp), "(@re", UString::from(re), ")").UTF8String();
 }
 
 static UString pointerToSourceString(void* p)

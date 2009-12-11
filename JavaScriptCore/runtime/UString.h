@@ -537,6 +537,276 @@ namespace JSC {
     };
 
     void initializeUString();
+
+    template<typename StringType>
+    class StringTypeAdapter {
+    };
+
+    template<>
+    class StringTypeAdapter<char*>
+    {
+    public:
+        StringTypeAdapter<char*>(char* buffer)
+            : m_buffer((unsigned char*)buffer)
+            , m_length(strlen(buffer))
+        {
+        }
+
+        unsigned length() { return m_length; }
+
+        void writeTo(UChar* destination)
+        {
+            for (unsigned i = 0; i < m_length; ++i)
+                destination[i] = m_buffer[i];
+        }
+
+    private:
+        const unsigned char* m_buffer;
+        unsigned m_length;
+    };
+
+    template<>
+    class StringTypeAdapter<const char*>
+    {
+    public:
+        StringTypeAdapter<const char*>(const char* buffer)
+            : m_buffer((unsigned char*)buffer)
+            , m_length(strlen(buffer))
+        {
+        }
+
+        unsigned length() { return m_length; }
+
+        void writeTo(UChar* destination)
+        {
+            for (unsigned i = 0; i < m_length; ++i)
+                destination[i] = m_buffer[i];
+        }
+
+    private:
+        const unsigned char* m_buffer;
+        unsigned m_length;
+    };
+
+    template<>
+    class StringTypeAdapter<UString>
+    {
+    public:
+        StringTypeAdapter<UString>(UString& string)
+            : m_data(string.data())
+            , m_length(string.size())
+        {
+        }
+
+        unsigned length() { return m_length; }
+
+        void writeTo(UChar* destination)
+        {
+            for (unsigned i = 0; i < m_length; ++i)
+                destination[i] = m_data[i];
+        }
+
+    private:
+        const UChar* m_data;
+        unsigned m_length;
+    };
+
+    template<typename StringType1, typename StringType2>
+    UString makeString(StringType1 string1, StringType2 string2)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+        StringTypeAdapter<StringType4> adapter4(string4);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+        StringTypeAdapter<StringType4> adapter4(string4);
+        StringTypeAdapter<StringType5> adapter5(string5);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+        StringTypeAdapter<StringType4> adapter4(string4);
+        StringTypeAdapter<StringType5> adapter5(string5);
+        StringTypeAdapter<StringType6> adapter6(string6);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+        StringTypeAdapter<StringType4> adapter4(string4);
+        StringTypeAdapter<StringType5> adapter5(string5);
+        StringTypeAdapter<StringType6> adapter6(string6);
+        StringTypeAdapter<StringType7> adapter7(string7);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length() + adapter7.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+        result += adapter6.length();
+        adapter7.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
+    template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
+    UString makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8)
+    {
+        StringTypeAdapter<StringType1> adapter1(string1);
+        StringTypeAdapter<StringType2> adapter2(string2);
+        StringTypeAdapter<StringType3> adapter3(string3);
+        StringTypeAdapter<StringType4> adapter4(string4);
+        StringTypeAdapter<StringType5> adapter5(string5);
+        StringTypeAdapter<StringType6> adapter6(string6);
+        StringTypeAdapter<StringType7> adapter7(string7);
+        StringTypeAdapter<StringType8> adapter8(string8);
+
+        UChar* buffer;
+        unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length() + adapter7.length() + adapter8.length();
+        if (!tryFastMalloc(length * sizeof(UChar)).getValue(buffer))
+            return UString();
+
+        UChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+        result += adapter6.length();
+        adapter7.writeTo(result);
+        result += adapter7.length();
+        adapter8.writeTo(result);
+
+        return UString(buffer, length, false);
+    }
+
 } // namespace JSC
 
 namespace WTF {
