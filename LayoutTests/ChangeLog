@@ -1,3 +1,16 @@
+2009-12-11  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: fast/workers/dedicated-worker-lifecycle.html failing intermittently on leopard bot
+        https://bugs.webkit.org/show_bug.cgi?id=29344
+
+        dedicated-worker-lifecycle.html relies on a Worker object getting GC'd, which is never guaranteed (due to conservative GC)
+        but is especially unreliable on Leopard, so disabling on that platform.
+
+        * platform/mac-leopard/Skipped:
+        disabled dedicated-worker-lifecycle.html.
+
 2009-12-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

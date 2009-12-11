@@ -30,3 +30,6 @@ accessibility/aria-list-and-listitem.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
+
+# This test relies on a JS object getting GC'd, which seems to be less reliable on Leopard.
+fast/workers/dedicated-worker-lifecycle.html
