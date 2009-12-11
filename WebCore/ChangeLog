@@ -1,5 +1,52 @@
 2009-12-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Support reflections on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=31885
+        
+        First part of supporting composited reflections on compositing layers.
+        
+        Rename the m_transformLayer member variable to m_structuralLayer, since it
+        will get used both for transform layers (for preserve-3d) and to hold a flattening
+        layer related to reflections, both of which have similar requirements, and are
+        mutually exclusive.
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        primaryLayer(), hostLayerForSublayers() and layerForSuperlayer() all now return
+        a CALayer, since m_structuralLayer isn't always a WebLayer.
+        
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::commitLayerChanges):
+        updateLayerPreserves3D() renamed to updateStructuralLayer()
+        
+        (WebCore::GraphicsLayerCA::updateLayerNames):
+        New "update" method for updating layer names.
+        
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        m_transformLayer -> m_structuralLayer. Also minor refactor to only
+        allocate newSublayers in one place.
+        
+        (WebCore::GraphicsLayerCA::updateLayerSize):
+        (WebCore::GraphicsLayerCA::removeAnimationFromLayer):
+        (WebCore::GraphicsLayerCA::hostLayerForSublayers):
+        (WebCore::GraphicsLayerCA::layerForSuperlayer):
+        m_transformLayer -> m_structuralLayer
+        
+        (WebCore::GraphicsLayerCA::updateStructuralLayer):
+        Call ensureStructuralLayer() which handles any deltas to the
+        structural layer type.
+        
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        Handle changes to the structural layer requirements
+        
+        (WebCore::GraphicsLayerCA::structuralLayerPurpose):
+        Return an enum describing the purpose of the structural layer; for now
+        this only returns NoStructuralLayer or StructuralLayerForPreserves3D, but
+        will in future also have a value related to reflections.
+
+2009-12-11  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix for platforms where ACCELERATED_COMPOSITING is not defined.
 
         * page/animation/KeyframeAnimation.cpp:

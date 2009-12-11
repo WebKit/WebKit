@@ -30,16 +30,15 @@
 
 #include "GraphicsLayer.h"
 #include "StringHash.h"
+#include "WebLayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 
 @class CABasicAnimation;
 @class CAKeyframeAnimation;
-@class CALayer;
 @class CAMediaTimingFunction;
 @class CAPropertyAnimation;
 @class WebAnimationDelegate;
-@class WebLayer;
 
 namespace WebCore {
 
@@ -127,9 +126,9 @@ protected:
 private:
     void updateOpacityOnLayer();
 
-    WebLayer* primaryLayer() const { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
-    WebLayer* hostLayerForSublayers() const;
-    WebLayer* layerForSuperlayer() const;
+    CALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
+    CALayer* hostLayerForSublayers() const;
+    CALayer* layerForSuperlayer() const;
     CALayer* animatedLayer(AnimatedPropertyID property) const;
 
     bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double timeOffset);
@@ -163,6 +162,7 @@ private:
     CALayer* contentsLayer() const { return m_contentsLayer.get(); }
     
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
+    void updateLayerNames();
     void updateSublayerList();
     void updateLayerPosition();
     void updateLayerSize();
@@ -172,7 +172,7 @@ private:
     void updateMasksToBounds();
     void updateContentsOpaque();
     void updateBackfaceVisibility();
-    void updateLayerPreserves3D();
+    void updateStructuralLayer();
     void updateLayerDrawsContent();
     void updateLayerBackgroundColor();
 
@@ -186,6 +186,14 @@ private:
     void updateMaskLayer();
 
     void updateLayerAnimations();
+    
+    enum StructuralLayerPurpose {
+        NoStructuralLayer = 0,
+        StructuralLayerForPreserves3D,
+        StructuralLayerForReplicaFlattening
+    };
+    void ensureStructuralLayer(StructuralLayerPurpose);
+    StructuralLayerPurpose structuralLayerPurpose() const;
 
     void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, int index, double timeOffset);
     bool removeAnimationFromLayer(AnimatedPropertyID, int index);
@@ -223,10 +231,10 @@ private:
 
     void repaintLayerDirtyRects();
 
-    RetainPtr<WebLayer> m_layer;
-    RetainPtr<WebLayer> m_transformLayer;
-    RetainPtr<CALayer> m_contentsLayer;
-    
+    RetainPtr<WebLayer> m_layer;            // The main layer
+    RetainPtr<CALayer> m_structuralLayer;   // A layer used for structual reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
+    RetainPtr<CALayer> m_contentsLayer;     // A layer used for inner content, like image and video
+
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
         ContentsLayerForImage,
