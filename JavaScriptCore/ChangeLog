@@ -1,5 +1,12 @@
 2009-12-11  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Added
+        $(WebKitOutputDir)/include/private to the include path.
+
+2009-12-11  Adam Roben  <aroben@apple.com>
+
         Move QuartzCorePresent.h to include/private
 
         This fixes other projects that use wtf/Platform.h
