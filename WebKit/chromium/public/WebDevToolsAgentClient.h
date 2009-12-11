@@ -39,12 +39,6 @@ struct WebDevToolsMessageData;
 
 class WebDevToolsAgentClient {
 public:
-    // TODO(32320): remove this method from API.
-    virtual void sendMessageToFrontend(const WebString& className,
-                                       const WebString& methodName,
-                                       const WebString& param1,
-                                       const WebString& param2,
-                                       const WebString& param3) {}
     virtual void sendMessageToFrontend(const WebDevToolsMessageData&) { }
 
     // Invalidates widget which leads to the repaint.
@@ -56,12 +50,6 @@ public:
     // Notifies host upon runtime feature being enabled/disabled.
     virtual void runtimeFeatureStateChanged(const WebString& feature, bool enabled) { }
 
-    // TODO(32320): remove this method from API.
-    WEBKIT_API static void sendMessageToFrontendOnIOThread(const WebString& className,
-                                                           const WebString& methodName,
-                                                           const WebString& param1,
-                                                           const WebString& param2,
-                                                           const WebString& param3);
     WEBKIT_API static void sendMessageToFrontendOnIOThread(const WebDevToolsMessageData&);
 
 protected:

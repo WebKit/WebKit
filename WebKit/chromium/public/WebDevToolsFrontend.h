@@ -50,11 +50,6 @@ public:
 
     virtual ~WebDevToolsFrontend() {}
 
-    virtual void dispatchMessageFromAgent(const WebString& className,
-                                          const WebString& methodName,
-                                          const WebString& param1,
-                                          const WebString& param2,
-                                          const WebString& param3) = 0;
     virtual void dispatchMessageFromAgent(const WebDevToolsMessageData&) = 0;
 };
 

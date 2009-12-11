@@ -1,3 +1,16 @@
+2009-12-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Remove obsolete message handling methods from WebDevTools* interfaces
+
+        https://bugs.webkit.org/show_bug.cgi?id=32320
+
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * public/WebDevToolsFrontend.h:
+        * public/WebDevToolsFrontendClient.h:
+
 2009-12-10  Mike Belshe  <mike@belshe.com>
 
         Unreviewed, build fix for chromium.
