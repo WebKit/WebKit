@@ -1033,19 +1033,34 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
 
     JSValue v1 = stackFrame.args[0].jsValue();
     JSValue v2 = stackFrame.args[1].jsValue();
+
+    double left;
+    double right = 0.0;
+
+    bool rightIsNumber = v2.getNumber(right);
+    if (rightIsNumber && v1.getNumber(left))
+        return JSValue::encode(jsNumber(stackFrame.globalData, left + right));
+    
     CallFrame* callFrame = stackFrame.callFrame;
 
-    if (v1.isString()) {
-        JSValue result = v2.isString()
-            ? jsString(callFrame, asString(v1), asString(v2))
-            : jsString(callFrame, asString(v1), v2.toString(callFrame));
+    bool leftIsString = v1.isString();
+    if (leftIsString && v2.isString()) {
+        JSValue result = jsString(callFrame, asString(v1), asString(v2));
         CHECK_FOR_EXCEPTION_AT_END();
         return JSValue::encode(result);
     }
 
-    double left = 0.0, right;
-    if (v1.getNumber(left) && v2.getNumber(right))
-        return JSValue::encode(jsNumber(stackFrame.globalData, left + right));
+    if (rightIsNumber & leftIsString) {
+        RefPtr<UString::Rep> value = v2.isInt32() ?
+            concatenate(asString(v1)->value(callFrame).rep(), v2.asInt32()) :
+            concatenate(asString(v1)->value(callFrame).rep(), right);
+
+        if (UNLIKELY(!value)) {
+            throwOutOfMemoryError(callFrame);
+            VM_THROW_EXCEPTION();
+        }
+        return JSValue::encode(jsString(stackFrame.globalData, value.release()));
+    }
 
     // All other cases are pretty uncommon
     JSValue result = jsAddSlowCase(callFrame, v1, v2);

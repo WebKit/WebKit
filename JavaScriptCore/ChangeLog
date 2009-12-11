@@ -1,3 +1,19 @@
+2009-12-10  Adam Barth  <abarth@webkit.org>
+
+        No review, rolling out r51975.
+        http://trac.webkit.org/changeset/51975
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSString.h:
+        (JSC::JSString::JSString):
+        (JSC::JSString::appendStringInConstruct):
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsAdd):
+
 2009-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

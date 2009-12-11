@@ -203,32 +203,6 @@ namespace JSC {
             appendStringInConstruct(index, s2);
             ASSERT(ropeLength == index);
         }
-        // This constructor constructs a new string by concatenating s1 & s2.
-        // This should only be called with ropeLength <= 3.
-        JSString(JSGlobalData* globalData, unsigned ropeLength, JSString* s1, const UString& u2)
-            : JSCell(globalData->stringStructure.get())
-            , m_stringLength(s1->length() + u2.size())
-            , m_ropeLength(ropeLength)
-        {
-            ASSERT(ropeLength <= s_maxInternalRopeLength);
-            unsigned index = 0;
-            appendStringInConstruct(index, s1);
-            appendStringInConstruct(index, u2);
-            ASSERT(ropeLength == index);
-        }
-        // This constructor constructs a new string by concatenating s1 & s2.
-        // This should only be called with ropeLength <= 3.
-        JSString(JSGlobalData* globalData, unsigned ropeLength, const UString& u1, JSString* s2)
-            : JSCell(globalData->stringStructure.get())
-            , m_stringLength(u1.size() + s2->length())
-            , m_ropeLength(ropeLength)
-        {
-            ASSERT(ropeLength <= s_maxInternalRopeLength);
-            unsigned index = 0;
-            appendStringInConstruct(index, u1);
-            appendStringInConstruct(index, s2);
-            ASSERT(ropeLength == index);
-        }
         // This constructor constructs a new string by concatenating v1, v2 & v3.
         // This should only be called with ropeLength <= 3 ... which since every
         // value must require a ropeLength of at least one implies that the length
@@ -284,18 +258,13 @@ namespace JSC {
 
         void resolveRope(ExecState*) const;
 
-        void appendStringInConstruct(unsigned& index, const UString& string)
-        {
-            m_fibers[index++] = Rope::Fiber(string.rep()->ref());
-        }
-
         void appendStringInConstruct(unsigned& index, JSString* jsString)
         {
             if (jsString->isRope()) {
                 for (unsigned i = 0; i < jsString->m_ropeLength; ++i)
                     m_fibers[index++] = jsString->m_fibers[i].ref();
             } else
-                appendStringInConstruct(index, jsString->string());
+                m_fibers[index++] = Rope::Fiber(jsString->string().rep()->ref());
         }
 
         void appendValueInConstructAndIncrementLength(ExecState* exec, unsigned& index, JSValue v)
@@ -342,8 +311,6 @@ namespace JSC {
         unsigned ropeLength() { return m_ropeLength ? m_ropeLength : 1; }
 
         friend JSValue jsString(ExecState* exec, JSString* s1, JSString* s2);
-        friend JSValue jsString(ExecState* exec, const UString& u1, JSString* s2);
-        friend JSValue jsString(ExecState* exec, JSString* s1, const UString& u2);
         friend JSValue jsString(ExecState* exec, Register* strings, unsigned count);
     };
 
