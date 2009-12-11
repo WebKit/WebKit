@@ -1,3 +1,24 @@
+2009-12-11  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Added basic layout test for DOM touch events.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32114
+
+        * fast/events/basic-touch-events-expected.txt: Added.
+        * fast/events/basic-touch-events.html: Added.
+        * fast/events/script-tests/basic-touch-events.js: Added.
+        (appendEventLog):
+        (verifyTouchEvent):
+        (verifyTouchPoint):
+        (singleTouchSequence):
+        (multiTouchSequence):
+        (touchTargets):
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2009-12-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Pavel Feldman.
