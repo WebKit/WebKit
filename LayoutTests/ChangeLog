@@ -1,3 +1,10 @@
+2009-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][LayoutTestController] Output of document.write() is vanished by waitUntilDone()/notifyDone()
+        https://bugs.webkit.org/show_bug.cgi?id=32437
+
+        * platform/qt/Skipped: http/tests/misc/percent-sign-in-form-field-name.html added until bug fixed.
+
 2009-12-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip two tests that require infrastructure our DRT doesn't have,
