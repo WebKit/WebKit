@@ -1,5 +1,14 @@
 2009-12-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix, no review.
+
+        Build fix for platforms where ACCELERATED_COMPOSITING is not defined.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::startAnimation):
+
+2009-12-11  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Negative values for animation-delay are ignored (treated as zero)

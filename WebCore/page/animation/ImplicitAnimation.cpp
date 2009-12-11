@@ -115,7 +115,7 @@ bool ImplicitAnimation::startAnimation(double timeOffset)
             return layer->backing()->startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
     }
 #else
-    UNUSED_PARAM(beginTime);
+    UNUSED_PARAM(timeOffset);
 #endif
     return false;
 }
