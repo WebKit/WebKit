@@ -1,3 +1,17 @@
+2009-12-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] ImageDecoderQt: Fix retrieval of image file extensions
+
+        QImageReader only allows retrieving the format() before actually reading the image.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32428
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::internalDecodeSize):
+
 2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

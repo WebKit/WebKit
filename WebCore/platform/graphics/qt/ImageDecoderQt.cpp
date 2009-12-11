@@ -81,6 +81,9 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     m_buffer->setData(imageData);
     m_buffer->open(QBuffer::ReadOnly);
     m_reader = new QImageReader(m_buffer, m_format);
+
+    // QImageReader only allows retrieving the format before reading the image
+    m_format = m_reader->format();
 }
 
 bool ImageDecoderQt::isSizeAvailable()
@@ -158,7 +161,6 @@ void ImageDecoderQt::internalDecodeSize()
     if (size.isEmpty())
         return failRead();
 
-    m_format = m_reader->format();
     setSize(size.width(), size.height());
 }
 
