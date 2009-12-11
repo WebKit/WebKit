@@ -322,6 +322,11 @@ namespace WebCore {
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationend, webkitAnimationEnd);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkittransitionend, webkitTransitionEnd);
 
+#if ENABLE(TOUCH_EVENTS)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
+#endif
         void captureEvents();
         void releaseEvents();
 

@@ -146,6 +146,10 @@ namespace WebCore {
     \
     macro(orientationchange) \
     \
+    macro(touchstart) \
+    macro(touchmove) \
+    macro(touchend) \
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames : public Noncopyable {

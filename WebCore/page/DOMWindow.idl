@@ -289,6 +289,11 @@ module window {
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
         attribute EventListener onorientationchange;
 #endif
+ #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        attribute [DontEnum] EventListener ontouchstart;
+        attribute [DontEnum] EventListener ontouchmove;
+        attribute [DontEnum] EventListener ontouchend;
+ #endif
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
@@ -564,6 +569,10 @@ module window {
         attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
         attribute SVGFETurbulenceElementConstructor SVGFETurbulenceElement;
 #endif
+#endif
+
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        attribute TouchEventConstructor TouchEvent;
 #endif
 
 #endif // defined(LANGUAGE_JAVASCRIPT)

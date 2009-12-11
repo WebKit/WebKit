@@ -199,6 +199,9 @@ onstorage
 onsuspend
 onsubmit
 ontimeupdate
+ontouchstart
+ontouchmove
+ontouchend
 onunload
 onvolumechange
 onwaiting

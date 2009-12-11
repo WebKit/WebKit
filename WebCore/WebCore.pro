@@ -181,6 +181,9 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 
 DEFINES += WTF_CHANGES=1
 
+# Enable touch event support with Qt 4.6
+!lessThan(QT_MINOR_VERSION, 6): DEFINES += ENABLE_TOUCH_EVENTS=1
+
 # Used to compute defaults for the build-webkit script
 CONFIG(compute_defaults) {
     message($$DEFINES)
@@ -367,6 +370,9 @@ IDL_BINDINGS += \
     dom/Range.idl \
     dom/Text.idl \
     dom/TextEvent.idl \
+    dom/Touch.idl \
+    dom/TouchEvent.idl \
+    dom/TouchList.idl \
     dom/TreeWalker.idl \
     dom/UIEvent.idl \
     dom/WebKitAnimationEvent.idl \
@@ -921,6 +927,9 @@ SOURCES += \
     dom/TagNodeList.cpp \
     dom/Text.cpp \
     dom/TextEvent.cpp \
+    dom/Touch.cpp \
+    dom/TouchEvent.cpp \
+    dom/TouchList.cpp \
     dom/Traversal.cpp \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
@@ -1605,6 +1614,9 @@ HEADERS += \
     dom/TagNodeList.h \
     dom/TextEvent.h \
     dom/Text.h \
+    dom/Touch.h \
+    dom/TouchEvent.h \
+    dom/TouchList.h \
     dom/TransformSource.h \
     dom/Traversal.h \
     dom/TreeWalker.h \
@@ -1949,6 +1961,8 @@ HEADERS += \
     platform/network/ResourceHandle.h \
     platform/network/ResourceRequestBase.h \
     platform/network/ResourceResponseBase.h \
+    platform/PlatformTouchEvent.h \
+    platform/PlatformTouchPoint.h \
     platform/qt/ClipboardQt.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QWebPopup.h \
@@ -2407,6 +2421,8 @@ SOURCES += \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
+    platform/qt/PlatformTouchEventQt.cpp \
+    platform/qt/PlatformTouchPointQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
@@ -2553,6 +2569,10 @@ contains(DEFINES, ENABLE_DATAGRID=1) {
 
 contains(DEFINES, ENABLE_EVENTSOURCE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_EVENTSOURCE=1
+}
+
+contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_TOUCH_EVENTS=1
 }
 
 contains(DEFINES, ENABLE_SQLITE=1) {

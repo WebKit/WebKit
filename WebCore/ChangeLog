@@ -1,3 +1,89 @@
+2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        Added interfaces for touch event support in JavaScript.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32114
+
+        The Touch, TouchEvent and TouchList interfaces come straight from
+        Android's copy of WebKit (eclaire branch).
+
+        The PlatformTouchEvent and PlatformTouchPoint code was written by
+        us.
+
+        No new tests added, we are just adding interfaces
+        with this patch.
+
+        * WebCore.pro:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        (WebCore::Document::):
+        * dom/Document.idl:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/Event.cpp:
+        (WebCore::Event::isTouchEvent):
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * dom/Touch.cpp: Added.
+        (WebCore::contentsX):
+        (WebCore::contentsY):
+        (WebCore::Touch::Touch):
+        (WebCore::Touch::updateLocation):
+        * dom/Touch.h: Added.
+        (WebCore::Touch::create):
+        (WebCore::Touch::frame):
+        (WebCore::Touch::target):
+        (WebCore::Touch::identifier):
+        (WebCore::Touch::clientX):
+        (WebCore::Touch::clientY):
+        (WebCore::Touch::screenX):
+        (WebCore::Touch::screenY):
+        (WebCore::Touch::pageX):
+        (WebCore::Touch::pageY):
+        * dom/Touch.idl: Added.
+        * dom/TouchEvent.cpp: Added.
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::initTouchEvent):
+        * dom/TouchEvent.h: Added.
+        (WebCore::TouchEvent::create):
+        (WebCore::TouchEvent::touches):
+        (WebCore::TouchEvent::targetTouches):
+        (WebCore::TouchEvent::changedTouches):
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::isTouchEvent):
+        * dom/TouchEvent.idl: Added.
+        * dom/TouchList.cpp: Added.
+        (WebCore::TouchList::item):
+        * dom/TouchList.h: Added.
+        (WebCore::TouchList::create):
+        (WebCore::TouchList::length):
+        (WebCore::TouchList::append):
+        (WebCore::TouchList::TouchList):
+        * dom/TouchList.idl: Added.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * platform/PlatformTouchEvent.h: Added.
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        (WebCore::PlatformTouchEvent::touchPoints):
+        * platform/PlatformTouchPoint.h: Added.
+        (WebCore::PlatformTouchPoint::):
+        (WebCore::PlatformTouchPoint::id):
+        (WebCore::PlatformTouchPoint::state):
+        (WebCore::PlatformTouchPoint::screenPos):
+        (WebCore::PlatformTouchPoint::pos):
+        * platform/qt/PlatformTouchEventQt.cpp: Added.
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/qt/PlatformTouchPointQt.cpp: Added.
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+
 2009-12-11  Grace Kloba  <klobag@gmail.com>
 
         Reviewed by Darin Adler.

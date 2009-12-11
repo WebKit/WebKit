@@ -2977,6 +2977,10 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(TRANSITIONEND_LISTENER);
     else if (eventType == eventNames().beforeloadEvent)
         addListenerType(BEFORELOAD_LISTENER);
+    else if (eventType == eventNames().touchstartEvent
+             || eventType == eventNames().touchmoveEvent
+             || eventType == eventNames().touchendEvent)
+        addListenerType(TOUCH_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

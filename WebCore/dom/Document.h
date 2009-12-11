@@ -252,6 +252,11 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(reset);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(search);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(selectstart);
+#if ENABLE(TOUCH_EVENTS)
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
+#endif
 
     DocumentType* doctype() const { return m_docType.get(); }
 
@@ -620,7 +625,8 @@ public:
         ANIMATIONSTART_LISTENER              = 0x200,
         ANIMATIONITERATION_LISTENER          = 0x400,
         TRANSITIONEND_LISTENER               = 0x800,
-        BEFORELOAD_LISTENER                  = 0x1000
+        BEFORELOAD_LISTENER                  = 0x1000,
+        TOUCH_LISTENER                       = 0x2000
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
