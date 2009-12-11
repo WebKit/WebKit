@@ -1,3 +1,22 @@
+2009-12-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for 3 classes in WebCore's svg and loader directory
+        https://bugs.webkit.org/show_bug.cgi?id=32106
+
+        Inherits the following classes from Noncopyable because these are instantiated 
+        by 'new' and no need to be copyable:
+
+        class/struct name            - instantiated at: WebCore/'location'
+
+        class EmptyContextMenuClient - instantiated at: svg/graphics/SVGImage.cpp:232
+        class EmptyDragClient        - instantiated at: svg/graphics/SVGImage.cpp:237
+        class SVGImageChromeClient   - instantiated at: svg/graphics/SVGImage.cpp:243
+
+        * svg/graphics/SVGImage.cpp:
+        * loader/EmptyClients.h:
+
 2009-12-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Darin Adler.

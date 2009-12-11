@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-class SVGImageChromeClient : public EmptyChromeClient {
+class SVGImageChromeClient : public EmptyChromeClient, public Noncopyable {
 public:
     SVGImageChromeClient(SVGImage* image)
         : m_image(image)
