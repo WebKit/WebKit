@@ -1,11 +1,13 @@
 #!/usr/bin/bash
 
 # Determine if we have QuartzCore so we can turn on
-if [ -f "${WEBKITLIBRARIESDIR}/include/QuartzCore/QuartzCore.h" ]
+QUARTZCORE_H_PATH=$(cygpath -u "${WEBKITLIBRARIESDIR}/include/QuartzCore/QuartzCore.h")
+QUARTZCOREPRESENT_H_PATH=$(cygpath -u "${WEBKITOUTPUTDIR}/include/JavaScriptCore/QuartzCorePresent.h")
+if test \( ! -f "${QUARTZCOREPRESENT_H_PATH}" \) -o \( -f "${QUARTZCORE_H_PATH}" -a \( "${QUARTZCORE_H_PATH}" -nt "${QUARTZCOREPRESENT_H_PATH}" \) \)
 then
-	echo "#define QUARTZCORE_PRESENT 1" > "${WEBKITOUTPUTDIR}/Include/JavaScriptCore/QuartzCorePresent.h"
-else
-	echo "#define QUARTZCORE_PRESENT 0" > "${WEBKITOUTPUTDIR}/Include/JavaScriptCore/QuartzCorePresent.h"
+    mkdir -p "$(dirname "${QUARTZCOREPRESENT_H_PATH}")"
+    test ! -f "${QUARTZCORE_H_PATH}"
+    echo "#define QUARTZCORE_PRESENT $?" > "${QUARTZCOREPRESENT_H_PATH}"
 fi
 
 NUMCPUS=`../../../WebKitTools/Scripts/num-cpus`

@@ -1,5 +1,16 @@
 2009-12-11  Adam Roben  <aroben@apple.com>
 
+        Fix clean builds and everything rebuilding on every build
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Don't
+        write out QuartzCorePresent.h if it exists but is older than
+        QuartzCore.h. Also, create the directory we write QuartzCorePresent.h
+        into first.
+
+2009-12-11  Adam Roben  <aroben@apple.com>
+
         Windows build fix for systems with spaces in their paths
 
         * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Quote some paths.
