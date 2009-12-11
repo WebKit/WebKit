@@ -28,24 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContextMenuSelectionHandler_h
-#define ContextMenuSelectionHandler_h
+#ifndef ContextMenuProvider_h
+#define ContextMenuProvider_h
 
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class ContextMenuItem;
+class ContextMenu;
+class ContextMenuItem;
 
-    class ContextMenuSelectionHandler : public RefCounted<ContextMenuSelectionHandler> {
-    public:
-        ContextMenuSelectionHandler() { }
-        virtual ~ContextMenuSelectionHandler() { };
+class ContextMenuProvider : public RefCounted<ContextMenuProvider> {
+public:
+    virtual ~ContextMenuProvider() { };
 
-        virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
-        virtual void contextMenuCleared() = 0;
-    };
+    virtual void populateContextMenu(ContextMenu*) = 0;
+    virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
+    virtual void contextMenuCleared() = 0;
+};
 
 }
 
-#endif // ContextMenuSelectionHandler_h
+#endif // ContextMenuProvider_h

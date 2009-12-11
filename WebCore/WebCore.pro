@@ -1852,7 +1852,7 @@ HEADERS += \
     page/Chrome.h \
     page/Console.h \
     page/ContextMenuController.h \
-    page/ContextMenuSelectionHandler.h \
+    page/ContextMenuProvider.h \
     page/Coordinates.h \
     page/DOMSelection.h \
     page/DOMTimer.h \

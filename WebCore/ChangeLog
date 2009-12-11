@@ -1,3 +1,41 @@
+2009-12-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Do not use ContextMenuItem as value type in custom
+        context menu implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32411
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::~InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        (WebCore::InspectorFrontendHost::contextMenuCleared):
+        * inspector/InspectorFrontendHost.h:
+        (WebCore::InspectorFrontendHost::MenuProvider::create):
+        (WebCore::InspectorFrontendHost::MenuProvider::~MenuProvider):
+        (WebCore::InspectorFrontendHost::MenuProvider::disconnect):
+        (WebCore::InspectorFrontendHost::MenuProvider::populateContextMenu):
+        (WebCore::InspectorFrontendHost::MenuProvider::contextMenuCleared):
+        (WebCore::InspectorFrontendHost::MenuProvider::MenuProvider):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController):
+        (WebCore::ContextMenuController::clearContextMenu):
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/ContextMenuController.h:
+        * page/ContextMenuProvider.h: Added.
+        (WebCore::ContextMenuProvider::~ContextMenuProvider):
+        * page/ContextMenuSelectionHandler.h: Removed.
+
 2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

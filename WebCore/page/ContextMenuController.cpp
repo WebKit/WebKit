@@ -31,7 +31,7 @@
 #include "Chrome.h"
 #include "ContextMenu.h"
 #include "ContextMenuClient.h"
-#include "ContextMenuSelectionHandler.h"
+#include "ContextMenuProvider.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -67,7 +67,6 @@ ContextMenuController::ContextMenuController(Page* page, ContextMenuClient* clie
     : m_page(page)
     , m_client(client)
     , m_contextMenu(0)
-    , m_selectionHandler(0)
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
@@ -81,9 +80,9 @@ ContextMenuController::~ContextMenuController()
 void ContextMenuController::clearContextMenu()
 {
     m_contextMenu.set(0);
-    if (m_selectionHandler)
-        m_selectionHandler->contextMenuCleared();
-    m_selectionHandler = 0;
+    if (m_menuProvider)
+        m_menuProvider->contextMenuCleared();
+    m_menuProvider = 0;
 }
 
 void ContextMenuController::handleContextMenuEvent(Event* event)
@@ -95,19 +94,17 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     showContextMenu(event);
 }
 
-void ContextMenuController::showContextMenu(Event* event, Vector<ContextMenuItem>& items, PassRefPtr<ContextMenuSelectionHandler> selectionHandler)
+void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenuProvider> menuProvider)
 {
-    m_selectionHandler = selectionHandler;
+    m_menuProvider = menuProvider;
 
     m_contextMenu.set(createContextMenu(event));
     if (!m_contextMenu) {
         clearContextMenu();
         return;
     }
-    for (size_t i = 0; i < items.size(); ++i) {
-        ContextMenuItem& item = items[i];
-        m_contextMenu->appendItem(item);
-    }
+
+    m_menuProvider->populateContextMenu(m_contextMenu.get());
     showContextMenu(event);
 }
 
@@ -156,8 +153,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     }
 
     if (item->action() >= ContextMenuItemBaseCustomTag) {
-        ASSERT(m_selectionHandler);
-        m_selectionHandler->contextMenuItemSelected(item);
+        ASSERT(m_menuProvider);
+        m_menuProvider->contextMenuItemSelected(item);
         return;
     }
 

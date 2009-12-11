@@ -20527,7 +20527,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\ContextMenuSelectionHandler.h"
+				RelativePath="..\page\ContextMenuProvider.h"
 				>
 			</File>
 			<File

@@ -101,17 +101,17 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* execState, const Arg
     Event* event = toEvent(args.at(0));
 
     JSArray* array = asArray(args.at(1));
-    Vector<ContextMenuItem> items;
+    Vector<ContextMenuItem*> items;
 
     for (size_t i = 0; i < array->length(); ++i) {
         JSObject* item = asObject(array->getIndex(i));
         JSValue label = item->get(execState, Identifier(execState, "label"));
         JSValue id = item->get(execState, Identifier(execState, "id"));
         if (label.isUndefined() || id.isUndefined())
-            items.append(ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
+            items.append(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
         else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(execState));
-            items.append(ContextMenuItem(ActionType, typedId, label.toString(execState)));
+            items.append(new ContextMenuItem(ActionType, typedId, label.toString(execState)));
         }
     }
 

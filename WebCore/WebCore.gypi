@@ -1759,7 +1759,7 @@
             'page/ContextMenuClient.h',
             'page/ContextMenuController.cpp',
             'page/ContextMenuController.h',
-            'page/ContextMenuSelectionHandler.h',
+            'page/ContextMenuProvider.h',
             'page/DOMSelection.cpp',
             'page/DOMSelection.h',
             'page/DOMTimer.cpp',
