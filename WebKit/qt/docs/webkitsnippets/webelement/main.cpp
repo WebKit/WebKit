@@ -53,8 +53,8 @@ static void findAll()
     */
 
 //! [FindAll intro]
-    QList<QWebElement> allSpans = document.findAll("span");
-    QList<QWebElement> introSpans = document.findAll("p.intro span");
+    QWebElementCollection allSpans = document.findAll("span");
+    QWebElementCollection introSpans = document.findAll("p.intro span");
 //! [FindAll intro] //! [FindAll]
 }
 

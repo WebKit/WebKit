@@ -1,3 +1,14 @@
+2009-12-11  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Updated QWebElement documentation
+        
+        findAll() returns a QWebElementCollection, not QList<QWebElement>.
+
+        * docs/webkitsnippets/webelement/main.cpp:
+        (findAll):
+
 2009-12-11  Simon Hausmann  <hausmann@webkit.org>, Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.
