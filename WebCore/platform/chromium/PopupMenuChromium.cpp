@@ -1234,7 +1234,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 void PopupMenu::hide()
 {
     if (p.popup)
-        p.popup->hidePopup();
+        p.popup->hide();
 }
 
 void PopupMenu::updateFromElement()

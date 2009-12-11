@@ -1,3 +1,29 @@
+2009-12-11  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Changed PopupMenuChromium to keep the value selected from
+        keyboard when popup is closed.
+
+        The problem is Chromium does not fire the onchange event
+        when the popup is closed if an item is selected via
+        keyboard by typing the first char of the item. This makes
+        chromium popup not having consistent behaviours and also
+        behaves differently from other major browsers.
+        Calling popup->hide() instead of popup->hidePopup() in
+        PopupMenu fixes the issues as it does extra step to check
+        whethere there is a keyboard selection changed when closing
+        the popup.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32403
+    
+        TEST: add a manual test as the current layout test shell
+        does not support sending keyboard events to popup list.
+
+        * manual-tests/chromium/select-close-popup-value-change.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupMenu::hide):
+
 2009-12-11  anton muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
