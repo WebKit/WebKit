@@ -23,6 +23,11 @@
 #define IDR_SEARCH_CANCEL_PRESSED       19
 #define IDR_SEARCH_MAGNIFIER            20
 #define IDR_SEARCH_MAGNIFIER_RESULTS    21
+#define IDR_FS_VIDEO_AUDIO_VOLUME_HIGH  22
+#define IDR_FS_VIDEO_AUDIO_VOLUME_LOW   23
+#define IDR_FS_VIDEO_EXIT_FULLSCREEN    24
+#define IDR_FS_VIDEO_PAUSE              25
+#define IDR_FS_VIDEO_PLAY               26
 #define IDC_STATIC                      -1
 
 #define BUILD_NUMBER                    1

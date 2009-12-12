@@ -722,14 +722,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebScriptWorld.h"
-				>
-			</File>
-                        <File
-				RelativePath="..\WebSerializedJSValue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\WebKitStatistics.h"
 				>
 			</File>
@@ -802,11 +794,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptWorld.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebScrollBar.h"
 				>
 			</File>
 			<File
 				RelativePath="..\WebSecurityOrigin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebSerializedJSValue.h"
 				>
 			</File>
 			<File
@@ -1102,14 +1102,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebScriptWorld.cpp"
-				>
-			</File>
-                        <File
-				RelativePath="..\WebSerializedJSValue.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebKitStatistics.cpp"
 				>
 			</File>
@@ -1146,11 +1138,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptWorld.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebScrollBar.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\WebSecurityOrigin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebSerializedJSValue.cpp"
 				>
 			</File>
 			<File
@@ -1245,6 +1245,26 @@
 		<Filter
 			Name="Resources"
 			>
+			<File
+				RelativePath=".\fsVideoAudioVolumeHigh.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoAudioVolumeLow.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoExitFullscreen.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoPause.png"
+				>
+			</File>
+			<File
+				RelativePath=".\fsVideoPlay.png"
+				>
+			</File>
 			<File
 				RelativePath=".\missingImage.png"
 				>
