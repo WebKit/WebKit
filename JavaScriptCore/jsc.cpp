@@ -194,7 +194,7 @@ JSValue JSC_HOST_CALL functionDebug(ExecState* exec, JSObject*, JSValue, const A
 JSValue JSC_HOST_CALL functionGC(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
     JSLock lock(SilenceAssertionsOnly);
-    exec->heap()->collect();
+    exec->heap()->collectAllGarbage();
     return jsUndefined();
 }
 

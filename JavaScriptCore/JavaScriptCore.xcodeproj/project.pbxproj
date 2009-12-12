@@ -167,6 +167,7 @@
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
+		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (); }; };
@@ -636,6 +637,7 @@
 		14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSContextRef.h; sourceTree = "<group>"; };
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
+		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* RegisterFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterFile.h; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
@@ -1602,6 +1604,7 @@
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
+				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				A7C2216810C745E000F97913 /* JSZombie.h */,
 				A7C2216B10C7469C00F97913 /* JSZombie.cpp */,
 			);
@@ -2010,6 +2013,7 @@
 				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				142D3939103E4560007DCB52 /* NumericStrings.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
+				14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */,
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,

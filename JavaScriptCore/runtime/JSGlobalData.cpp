@@ -126,6 +126,7 @@ JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     , propertyNameIteratorStructure(JSPropertyNameIterator::createStructure(jsNull()))
     , getterSetterStructure(GetterSetter::createStructure(jsNull()))
     , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
+    , dummyMarkableCellStructure(JSCell::createDummyStructure())
 #if USE(JSVALUE32)
     , numberStructure(JSNumberCell::createStructure(jsNull()))
 #endif

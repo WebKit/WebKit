@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "JSInspectedObjectWrapper.h"
+#include <runtime/Protect.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace JSC;

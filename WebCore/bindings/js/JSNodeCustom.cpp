@@ -144,7 +144,7 @@ void JSNode::markChildren(MarkStack& markStack)
     // mark any other nodes.
     if (node->inDocument()) {
         if (Document* doc = node->ownerDocument())
-            markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), doc);
+            markDOMNodeWrapper(markStack, doc, doc);
         return;
     }
 
@@ -154,7 +154,7 @@ void JSNode::markChildren(MarkStack& markStack)
     Node* outermostNodeWithWrapper = node;
     for (Node* current = m_impl.get(); current; current = current->parentNode()) {
         root = current;
-        if (hasCachedDOMNodeWrapper(current->document(), current))
+        if (hasCachedDOMNodeWrapperUnchecked(current->document(), current))
             outermostNodeWithWrapper = current;
     }
 

@@ -35,6 +35,7 @@
 #include "DocumentMarker.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <runtime/WeakGCMap.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -829,7 +830,7 @@ public:
     virtual void scriptImported(unsigned long, const String&);
     virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
 
-    typedef HashMap<WebCore::Node*, JSNode*> JSWrapperCache;
+    typedef JSC::WeakGCMap<WebCore::Node*, JSNode*> JSWrapperCache;
     typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
     JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
     JSWrapperCache* getWrapperCache(DOMWrapperWorld* world)

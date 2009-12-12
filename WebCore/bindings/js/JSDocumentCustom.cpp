@@ -96,18 +96,18 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     if (!document)
         return jsNull();
 
-    DOMObject* wrapper = getCachedDOMObjectWrapper(exec, document);
+    DOMObject* wrapper = getCachedDOMNodeWrapper(exec, document, document);
     if (wrapper)
         return wrapper;
 
     if (document->isHTMLDocument())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLDocument, document);
+        wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, HTMLDocument, document);
 #if ENABLE(SVG)
     else if (document->isSVGDocument())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGDocument, document);
+        wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, SVGDocument, document);
 #endif
     else
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, Document, document);
+        wrapper = CREATE_DOM_NODE_WRAPPER(exec, globalObject, Document, document);
 
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.

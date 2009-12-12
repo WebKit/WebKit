@@ -27,7 +27,7 @@ provider JavaScriptCore
 {
     probe gc__begin();
     probe gc__marked();
-    probe gc__end(int, int);
+    probe gc__end();
     
     probe profile__will_execute(int, char*, char*, int);
     probe profile__did_execute(int, char*, char*, int);
