@@ -1,3 +1,9 @@
+2009-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: Removed an incorrect #ifdef.
+
+        * bindings/js/GCController.cpp:
+
 2009-12-11  Eric Roman  <eroman@chromium.org>
 
         Unreviewed build fix.
