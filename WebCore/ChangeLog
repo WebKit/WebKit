@@ -1,3 +1,11 @@
+2009-12-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Make PlatformWheelEvent.h private instead of project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
