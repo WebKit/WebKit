@@ -1,3 +1,20 @@
+2009-12-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update WebGL tests to released versions
+        https://bugs.webkit.org/show_bug.cgi?id=32457
+
+        * fast/canvas/webgl/resources/utils3d.js:
+        (initWebGL.gl.console.window.console.log):
+        (initWebGL):
+        (loadShader):
+        (makeBox):
+        (makeSphere):
+        (processLoadObj):
+        (doLoadObj):
+        (doLoadImageTexture):
+
 2009-12-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

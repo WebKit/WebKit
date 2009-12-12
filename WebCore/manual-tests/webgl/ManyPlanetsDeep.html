@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Canvas3d example</title>
+    <title>Many Planets Deep</title>
     <script src="resources/CanvasMatrix.js"> </script>
     <script src="resources/utils3d.js"> </script>
     
@@ -113,18 +113,18 @@
             mvMatrix.rotate(angle, 0,1,0);
             mvMatrix.rotate(30, 1,0,0);
             mvMatrix.translate(x,y,z);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             // construct the normal matrix from the model-view matrix
             var normalMatrix = new CanvasMatrix4(mvMatrix);
             normalMatrix.invert();
             normalMatrix.transpose();
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsWebGLFloatArray());
             
             // construct the model-view * projection matrix
             var mvpMatrix = new CanvasMatrix4(mvMatrix);
             mvpMatrix.multRight(ctx.perspectiveMatrix);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvpMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvpMatrix.getAsWebGLFloatArray());
 
             ctx.bindTexture(ctx.TEXTURE_2D, texture);
             ctx.drawElements(ctx.TRIANGLES, ctx.sphere.numIndices, ctx.UNSIGNED_SHORT, 0);
@@ -168,6 +168,13 @@
 
         function start()
         {
+            var c = document.getElementById("example");
+            var w = Math.floor(window.innerWidth * 0.9);
+            var h = Math.floor(window.innerHeight * 0.9);
+
+            c.width = w;
+            c.height = h;
+
             var ctx = init();
             currentAngles = [ ];
             incAngles = [ ];
@@ -188,8 +195,6 @@
     <style type="text/css">
         canvas {
             border: 2px solid black;
-            width:90%;
-            height:90%;
         }
     </style>
   </head>

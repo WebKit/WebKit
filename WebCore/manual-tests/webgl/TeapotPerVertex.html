@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Canvas3d example</title>
+    <title>Teapot (per-vertex)</title>
     <script src="resources/CanvasMatrix.js"> </script>
     <script src="resources/utils3d.js"> </script>
     <script id="vshader" type="x-shader/x-vertex">
@@ -256,16 +256,16 @@
             mvMatrix.makeIdentity();
             mvMatrix.rotate(currentAngle, 0, 1, 0);
             mvMatrix.rotate(10, 1,0,0);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             // construct the normal matrix from the model-view matrix
             normalMatrix.load(mvMatrix);
             normalMatrix.invert();
             normalMatrix.transpose();
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsWebGLFloatArray());
             
             mvMatrix.multRight(ctx.perspectiveMatrix);
-            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsWebGLFloatArray());
 
             ctx.drawElements(ctx.TRIANGLES, obj.numIndices, ctx.UNSIGNED_SHORT, 0);
             
@@ -280,6 +280,13 @@
         
         function start()
         {
+            var c = document.getElementById("example");
+            var w = Math.floor(window.innerWidth * 0.9);
+            var h = Math.floor(window.innerHeight * 0.9);
+
+            c.width = w;
+            c.height = h;
+
             var ctx = init();
             currentAngle = 0;
             incAngle = 0.2;
@@ -291,8 +298,6 @@
     <style type="text/css">
         canvas {
             border: 2px solid black;
-            width:90%;
-            height:90%;
         }
     </style>
   </head>

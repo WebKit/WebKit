@@ -139,7 +139,7 @@ CanvasMatrix4.prototype.getAsArray = function()
     ];
 }
 
-CanvasMatrix4.prototype.getAsCanvasFloatArray = function()
+CanvasMatrix4.prototype.getAsWebGLFloatArray = function()
 {
     return new WebGLFloatArray(this.getAsArray());
 }

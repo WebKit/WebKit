@@ -1,3 +1,27 @@
+2009-12-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update WebGL tests to released versions
+        https://bugs.webkit.org/show_bug.cgi?id=32457
+
+        * manual-tests/webgl/Earth.html:
+        * manual-tests/webgl/ManyPlanetsDeep.html:
+        * manual-tests/webgl/SpinningBox.html:
+        * manual-tests/webgl/TeapotPerPixel.html:
+        * manual-tests/webgl/TeapotPerVertex.html:
+        * manual-tests/webgl/resources/CanvasMatrix.js:
+        (CanvasMatrix4.prototype.getAsWebGLFloatArray):
+        * manual-tests/webgl/resources/utils3d.js:
+        (initWebGL.gl.console.window.console.log):
+        (initWebGL):
+        (loadShader):
+        (makeBox):
+        (makeSphere):
+        (processLoadObj):
+        (doLoadObj):
+        (doLoadImageTexture):
+
 2009-12-12  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Dirk Schulze.
