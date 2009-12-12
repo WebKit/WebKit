@@ -1,5 +1,13 @@
 2009-12-12  Christian Dywan  <christian@twotoasts.de>
 
+        Reviewed by Dirk Schulze.
+
+        Remove the include to SVGFEDisplacementMap.h, it's not needed at all.
+
+        * platform/graphics/filters/FEComponentTransfer.h:
+
+2009-12-12  Christian Dywan  <christian@twotoasts.de>
+
         Rubber-stamped by Maciej Stachowiak.
 
         Only include SVGFEDisplacementMap.h if SVG is enabled.
