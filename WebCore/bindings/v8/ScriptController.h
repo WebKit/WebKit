@@ -148,6 +148,7 @@ namespace WebCore {
 
         void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
         bool processingUserGesture() const;
+        bool anyPageIsProcessingUserGesture() const;
 
         void setPaused(bool paused) { m_paused = paused; }
         bool isPaused() const { return m_paused; }
