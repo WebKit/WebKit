@@ -1,3 +1,11 @@
+2009-12-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix for Qt versions < 4.6.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+
 2009-12-11  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Tor Arne Vestbø.

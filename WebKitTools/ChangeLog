@@ -1,3 +1,19 @@
+2009-12-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix for Qt versions < 4.6. 
+        Guard every slot individually with #ifdef.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint):
+        (EventSender::updateTouchPoint):
+        (EventSender::touchStart):
+        (EventSender::touchMove):
+        (EventSender::touchEnd):
+        (EventSender::clearTouchPoints):
+        (EventSender::releaseTouchPoint):
+        (EventSender::sendTouchEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2009-12-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

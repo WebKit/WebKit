@@ -58,7 +58,6 @@ public slots:
     void clearKillRing() {}
     void contextClick();
     void scheduleAsynchronousClick();
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     void addTouchPoint(int x, int y);
     void updateTouchPoint(int index, int x, int y);
     void touchStart();
@@ -66,7 +65,6 @@ public slots:
     void touchEnd();
     void clearTouchPoints();
     void releaseTouchPoint(int index);
-#endif
 
 private:
     void sendTouchEvent(QEvent::Type);
