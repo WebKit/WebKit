@@ -5182,3 +5182,8 @@ fast/loader/input-element-page-cache-crash.html
 # [Qt][LayoutTestController] Output of document.write() is vanished by waitUntilDone()/notifyDone()
 # https://bugs.webkit.org/show_bug.cgi?id=32437
 http/tests/misc/percent-sign-in-form-field-name.html
+
+# Missing forward entries when dumping back/forward list.
+# https://bugs.webkit.org/show_bug.cgi?id=32470
+http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
+http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
