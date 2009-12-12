@@ -1,3 +1,11 @@
+2009-12-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Put -umbrella linker flag into a variable so that it can be overridden.
+
+        * Configurations/WebCore.xcconfig:
+
 2009-12-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
