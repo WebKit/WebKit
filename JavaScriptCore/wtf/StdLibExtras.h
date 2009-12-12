@@ -70,7 +70,7 @@ namespace WTF {
     }
 
     // Returns a count of the number of bits set in 'bits'.
-    inline size_t bitCount(uint32_t bits)
+    inline size_t bitCount(unsigned bits)
     {
         bits = bits - ((bits >> 1) & 0x55555555);
         bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);

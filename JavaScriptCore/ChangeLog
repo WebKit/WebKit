@@ -1,5 +1,12 @@
 2009-12-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Use unsigned instead of uint32_t to avoid dependencies.
+
+        * wtf/StdLibExtras.h:
+        (WTF::bitCount):
+
+2009-12-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Changed GC from mark-sweep to mark-allocate.
