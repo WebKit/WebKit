@@ -1,5 +1,11 @@
 2009-12-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Export some new symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2009-12-11  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: Removed some old exports.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
