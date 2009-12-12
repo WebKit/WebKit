@@ -259,8 +259,6 @@ namespace WebCore {
         void selectionLayoutChanged();
         void notifyRendererOfSelectionChange(bool userTriggered);
 
-        void invalidateSelection();
-
         void setCaretVisible(bool = true);
         void paintCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
         void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;

@@ -556,12 +556,6 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
         toRenderTextControl(renderer)->selectionChanged(userTriggered);
 }
 
-void Frame::invalidateSelection()
-{
-    selection()->setNeedsLayout();
-    selectionLayoutChanged();
-}
-
 void Frame::setCaretVisible(bool flag)
 {
     if (m_caretVisible == flag)

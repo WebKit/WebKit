@@ -1,3 +1,30 @@
+2009-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Small refactoring to get rid of some extra unneeded selection-related work
+        in RenderLayer::scrollToOffset and separate caret and range selection
+        logic in FrameView::layout. This may be useful later when changing how
+        the range selection logic works to fix layout reentrancy problems.
+
+        * page/Frame.cpp: Removed invalidateSelection.
+        * page/Frame.h: Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Call SelectionController::setNeedsLayout
+        and Frame::selectionLayoutChanged instead of calling
+        Frame::invalidateSelection, which was just a function that called
+        both of those others.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset): Call
+        SelectionController::setNeedsLayout instead of calling
+        Frame::invalidateSelection. This call site only needs the caret-related
+        work in that first function, not the other work formerly done by
+        Frame::invalidateSelection. The caret works outside the normal
+        painting and rendering system, and the range selection highlight is
+        more or less inside it and doesn't need special handling when scrolling.
+
 2009-12-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

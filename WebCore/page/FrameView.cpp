@@ -671,7 +671,8 @@ void FrameView::layout(bool allowSubtree)
         root->view()->popLayoutState();
     m_layoutRoot = 0;
 
-    m_frame->invalidateSelection();
+    m_frame->selection()->setNeedsLayout();
+    m_frame->selectionLayoutChanged();
    
     m_layoutSchedulingEnabled = true;
 
