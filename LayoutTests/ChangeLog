@@ -1,3 +1,17 @@
+2009-12-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+       <rdar://problem/7453726> Pull shared UI code into WebKit
+
+       Update media tests for small change in timeline slider thumb position
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2009-12-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Missing forward entries when dumping back/forward list

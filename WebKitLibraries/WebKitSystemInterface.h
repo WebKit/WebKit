@@ -228,6 +228,7 @@ typedef enum {
     WKMediaControllerFlagDisabled = 1 << 0,
     WKMediaControllerFlagPressed = 1 << 1,
     WKMediaControllerFlagDrawEndCaps = 1 << 3,
+    WKMediaControllerFlagFocused = 1 << 4
 } WKMediaControllerThemeState;
 
 BOOL WKMediaControllerThemeAvailable(int themeStyle);
