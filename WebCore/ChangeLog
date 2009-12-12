@@ -1,3 +1,13 @@
+2009-12-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Change bindings to catch up with http://trac.webkit.org/changeset/52033.
+
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Added retrieval of calling frame and passing
+          to the submit method.
+
 2009-12-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

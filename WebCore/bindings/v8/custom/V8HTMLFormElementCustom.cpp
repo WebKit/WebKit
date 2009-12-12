@@ -83,7 +83,11 @@ NAMED_PROPERTY_GETTER(HTMLFormElement)
 CALLBACK_FUNC_DECL(HTMLFormElementSubmit) {
     INC_STATS("DOM.HTMLFormElement.submit()");
     HTMLFormElement* form = V8DOMWrapper::convertDOMWrapperToNative<HTMLFormElement>(args.Holder());
-    form->submit(0, false, false);
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!frame)
+        return v8::Undefined();
+
+    form->submit(frame);
     return v8::Undefined();
 }
 
