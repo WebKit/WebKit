@@ -1,3 +1,23 @@
+2009-12-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Cairo][Qt] Alpha blending in SVG filters is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=32427
+
+        This patch is a follow-up to:
+        http://trac.webkit.org/changeset/51950
+        It fixes the alpha blending for Cairo and Qt on SVG Filters.
+
+        Covered by: * LayoutTests/svg/filters/feGaussianBlur.svg
+                    * LayoutTests/svg/filters/feComposite.svg
+                     and others.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+
 2009-12-11  Eric Roman  <eroman@chromium.org>
 
         Unreviewed build fix.
