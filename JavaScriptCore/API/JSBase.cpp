@@ -99,7 +99,7 @@ void JSGarbageCollect(JSContextRef ctx)
     JSLock lock(globalData.isSharedInstance ? LockForReal : SilenceAssertionsOnly);
 
     if (!globalData.heap.isBusy())
-        globalData.heap.collectAllGarbage();
+        globalData.heap.collect();
 
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when

@@ -339,9 +339,7 @@ void JSCollect()
     initializeThreading();
 
     JSLock lock(LockForReal);
-    Heap* heap = getThreadGlobalExecState()->heap();
-    if (!heap->isBusy())
-        heap->collectAllGarbage();
+    getThreadGlobalExecState()->heap()->collect();
 }
 
 /*

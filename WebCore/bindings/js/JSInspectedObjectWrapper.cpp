@@ -30,7 +30,6 @@
 
 #include "JSInspectorCallbackWrapper.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/WeakGCMap.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace JSC;
@@ -39,7 +38,7 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSInspectedObjectWrapper);
 
-typedef WeakGCMap<JSObject*, JSInspectedObjectWrapper*> WrapperMap;
+typedef HashMap<JSObject*, JSInspectedObjectWrapper*> WrapperMap;
 typedef HashMap<JSGlobalObject*, WrapperMap*> GlobalObjectWrapperMap;
 
 static GlobalObjectWrapperMap& wrappers()
@@ -82,17 +81,17 @@ JSInspectedObjectWrapper::JSInspectedObjectWrapper(ExecState* unwrappedExec, JSO
         wrappers().set(unwrappedGlobalObject(), wrapperMap);
     }
 
-    pair<WrapperMap::iterator, bool> result = wrapperMap->set(unwrappedObject, this);
-    ASSERT(result.second);
-    UNUSED_PARAM(result);
+    ASSERT(!wrapperMap->contains(unwrappedObject));
+    wrapperMap->set(unwrappedObject, this);
 }
 
 JSInspectedObjectWrapper::~JSInspectedObjectWrapper()
 {
+    ASSERT(wrappers().contains(unwrappedGlobalObject()));
     WrapperMap* wrapperMap = wrappers().get(unwrappedGlobalObject());
-    ASSERT(wrapperMap);
 
-    wrapperMap->uncheckedRemove(unwrappedObject(), this);
+    ASSERT(wrapperMap->contains(unwrappedObject()));
+    wrapperMap->remove(unwrappedObject());
 
     if (wrapperMap->isEmpty()) {
         wrappers().remove(unwrappedGlobalObject());

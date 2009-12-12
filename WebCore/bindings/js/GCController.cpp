@@ -40,12 +40,16 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if USE(PTHREADS)
+
 static void* collect(void*)
 {
     JSLock lock(SilenceAssertionsOnly);
-    JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
+    JSDOMWindow::commonJSGlobalData()->heap.collect();
     return 0;
 }
+
+#endif
 
 GCController& gcController()
 {
@@ -66,12 +70,14 @@ void GCController::garbageCollectSoon()
 
 void GCController::gcTimerFired(Timer<GCController>*)
 {
-    collect(0);
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow::commonJSGlobalData()->heap.collect();
 }
 
 void GCController::garbageCollectNow()
 {
-    collect(0);
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow::commonJSGlobalData()->heap.collect();
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
