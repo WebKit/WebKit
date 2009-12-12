@@ -49,17 +49,28 @@
 namespace WTF {
 
 static WTFMainThreadCaller* staticMainThreadCaller = nil;
+#if USE(WEB_THREAD)
+static NSThread* webThread = nil;
+#endif
 
 void initializeMainThreadPlatform()
 {
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+
+#if USE(WEB_THREAD)
+    webThread = [[NSThread currentThread] retain];
+#endif
 }
 
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
+#if USE(WEB_THREAD)
+    [staticMainThreadCaller performSelector:@selector(call) onThread:webThread withObject:nil waitUntilDone:NO];
+#else
     [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+#endif
 }
 
 } // namespace WTF

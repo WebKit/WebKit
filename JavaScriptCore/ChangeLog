@@ -1,3 +1,16 @@
+2009-12-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Allow WTFs concept of the main thread to differ from pthreads when necessary.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2009-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: Export some new symbols.
