@@ -61,10 +61,21 @@ void CSSImportRule::setCSSStyleSheet(const String& url, const String& charset, c
 
     CSSStyleSheet* parent = parentStyleSheet();
     bool strict = !parent || parent->useStrictParsing();
-    String sheetText = sheet->sheetText(strict);
+    bool enforceMIMEType = strict;
+    bool needsSiteSpecificQuirks = parent && parent->doc() && parent->doc()->settings() && parent->doc()->settings()->needsSiteSpecificQuirks();
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    if (enforceMIMEType && needsSiteSpecificQuirks) {
+        // Covers both http and https, with or without "www."
+        if (url.contains("mcafee.com/japan/", false))
+            enforceMIMEType = false;
+    }
+#endif
+
+    String sheetText = sheet->sheetText(enforceMIMEType);
     m_styleSheet->parseString(sheetText, strict);
 
-    if (strict && parent && parent->doc() && parent->doc()->settings() && parent->doc()->settings()->needsSiteSpecificQuirks()) {
+    if (strict && needsSiteSpecificQuirks) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
         DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));

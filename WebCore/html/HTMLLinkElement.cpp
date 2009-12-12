@@ -259,16 +259,25 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
 
     bool strictParsing = !document()->inCompatMode();
     bool enforceMIMEType = strictParsing;
+    bool needsSiteSpecificQuirks = document()->page() && document()->page()->settings()->needsSiteSpecificQuirks();
 
     // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
     // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>
     if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInStrictMode())
         enforceMIMEType = false;
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    if (enforceMIMEType && needsSiteSpecificQuirks) {
+        // Covers both http and https, with or without "www."
+        if (url.contains("mcafee.com/japan/", false))
+            enforceMIMEType = false;
+    }
+#endif
+
     String sheetText = sheet->sheetText(enforceMIMEType);
     m_sheet->parseString(sheetText, strictParsing);
 
-    if (strictParsing && document()->settings() && document()->settings()->needsSiteSpecificQuirks()) {
+    if (strictParsing && needsSiteSpecificQuirks) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
         DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));

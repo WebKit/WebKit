@@ -1,3 +1,16 @@
+2009-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32445
+        REGRESSION: http://www.mcafee.com/japan/ displays unstyled
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        Add a quirk for mcafee.com/japan (http or https, with or without www).
+
 2009-12-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
