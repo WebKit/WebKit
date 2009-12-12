@@ -1,3 +1,18 @@
+2009-12-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7342725> and https://webkit.org/b/32383
+        Selecting article text at sfgate.com results in spurious back/forward entries
+
+        * http/tests/navigation/dynamic-iframe-dynamic-form-back-entry-expected.txt: Added.
+        * http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html: Added.
+        * http/tests/navigation/parsed-iframe-dynamic-form-back-entry-expected.txt: Added.
+        * http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html: Added.
+        * http/tests/navigation/resources/notify-done.html: Added.
+
+        * http/tests/navigation/onload-navigation-iframe-timeout-expected.txt: Updated.
+
 2009-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

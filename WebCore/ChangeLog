@@ -1,3 +1,42 @@
+2009-12-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7342725> and https://webkit.org/b/32383
+        Selecting article text at sfgate.com results in spurious back/forward entries
+
+        If an iframe had a form and that form is submitted by javascript, IE and Opera don't add back/forward entries.
+        
+        In the case where the frame was added dynamically via createElement(), Firefox would like to add a back entry
+        but has a bug that prevents this.
+
+        Therefore by a bizarre coincidence, WebKit is the loner and the only engine affected by sfgate.com's technique.
+
+        This patch changes us to willfully match IE and Opera and fixes sfgate.com in the process.
+
+        Tests: http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
+               http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
+
+        Capture whether the form was submitted by javascript:
+        * loader/FormState.cpp:
+        (WebCore::FormState::FormState):
+        (WebCore::FormState::create):
+        * loader/FormState.h:
+        (WebCore::FormState::formSubmissionTrigger):
+
+        When deciding the value of the lockBackForwardList variable, take formSubmissionTrigger() into account:
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+
+        Rearrange the public HTMLFormElement::submit() method to be called only from DOM or JS bindings,
+        and figure out the rest of the parameters for an internal submit() call including the formSubmissionTrigger:
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::submit):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+
 2009-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

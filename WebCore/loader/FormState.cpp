@@ -34,16 +34,17 @@
 
 namespace WebCore {
 
-inline FormState::FormState(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame)
+inline FormState::FormState(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame, FormSubmissionTrigger formSubmissionTrigger)
     : m_form(form)
     , m_sourceFrame(sourceFrame)
+    , m_formSubmissionTrigger(formSubmissionTrigger)
 {
     m_textFieldValues.swap(textFieldValuesToAdopt);
 }
 
-PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame)
+PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Frame> sourceFrame, FormSubmissionTrigger formSubmissionTrigger)
 {
-    return adoptRef(new FormState(form, textFieldValuesToAdopt, sourceFrame));
+    return adoptRef(new FormState(form, textFieldValuesToAdopt, sourceFrame, formSubmissionTrigger));
 }
 
 }

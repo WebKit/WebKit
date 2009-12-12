@@ -39,6 +39,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>
 
@@ -218,7 +219,13 @@ void RedirectScheduler::scheduleFormSubmission(const FrameLoadRequest& frameRequ
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = !m_frame->loader()->committedFirstRealDocumentLoad();
 
-    schedule(new ScheduledRedirection(frameRequest, lockHistory, mustLockBackForwardList(m_frame), event, formState, duringLoad));
+    // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
+    // to match IE and Opera.
+    // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
+
+    bool lockBackForwardList = mustLockBackForwardList(m_frame) || (formState->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent());
+
+    schedule(new ScheduledRedirection(frameRequest, lockHistory, lockBackForwardList, event, formState, duringLoad));
 }
 
 void RedirectScheduler::scheduleRefresh(bool wasUserGesture)
