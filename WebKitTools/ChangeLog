@@ -1,3 +1,11 @@
+2009-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, fixing previous comment.
+
+        Remove accidental change to sunspider-compare-results
+
+        * Scripts/sunspider-compare-results:
+
 2009-12-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed build fix for Qt versions < 4.6. 
