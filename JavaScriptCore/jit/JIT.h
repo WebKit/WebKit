@@ -954,6 +954,46 @@ namespace JSC {
 #endif
 #endif
     } JIT_CLASS_ALIGNMENT;
+
+    inline void JIT::emit_op_loop(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jmp(currentInstruction);
+    }
+
+    inline void JIT::emit_op_loop_if_true(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jtrue(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jtrue(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_false(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jfalse(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_false(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jfalse(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_less(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jless(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jless(currentInstruction, iter);
+    }
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -1,3 +1,20 @@
+2009-12-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Unify codegen for forward and backward variants of branches
+        https://bugs.webkit.org/show_bug.cgi?id=32463
+
+        * jit/JIT.h:
+        (JSC::JIT::emit_op_loop): Implemented in terms of forward variant.
+        (JSC::JIT::emit_op_loop_if_true): ditto
+        (JSC::JIT::emitSlow_op_loop_if_true): ditto
+        (JSC::JIT::emit_op_loop_if_false): ditto
+        (JSC::JIT::emitSlow_op_loop_if_false): ditto
+        (JSC::JIT::emit_op_loop_if_less): ditto
+        (JSC::JIT::emitSlow_op_loop_if_less): ditto
+        * jit/JITOpcodes.cpp:
+
 2009-12-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
