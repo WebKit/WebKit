@@ -1,3 +1,13 @@
+2009-12-11  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        https://webkit.org/b/22851 - Remove defunct FIXME.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): This flag was removed completely
+          from the HTMLFrameOwnerElement chain of classes.
+
 2009-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
