@@ -442,6 +442,7 @@ void ChromeClient::scrollbarsModeDidChange() const
 
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
+#if GTK_CHECK_VERSION(2,12,0)
     // If a tooltip must be displayed it will be, afterwards, when
     // setToolTip is called; this is just a work-around to make sure
     // it updates its location correctly; see
@@ -455,6 +456,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
     else
         gdkDisplay = gdk_display_get_default();
     gtk_tooltip_trigger_tooltip_query(gdkDisplay);
+#endif
 
     // check if the element is a link...
     bool isLink = hit.isLiveLink();

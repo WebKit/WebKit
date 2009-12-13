@@ -1,3 +1,15 @@
+2009-12-13  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=31014
+        [Gtk] Build fails with gtk+-2.10 (no tested with older releases)
+
+        Guard GTK+ 2.12 specific tooltip code with #ifdef.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+
 2009-12-11  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Eric Seidel.
