@@ -1,3 +1,15 @@
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use JSON.parse instead of eval for Web-hosted SunSpider results processing
+        https://bugs.webkit.org/show_bug.cgi?id=32490
+
+        * hosted/json2.js: Added. Incorporated from json.org
+        * resources/driver-TEMPLATE.html: Fix an HTML validation bug I noticed.
+        * resources/results-TEMPLATE.html: Use JSON.parse instead of eval to process
+        results.
+
 2009-12-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

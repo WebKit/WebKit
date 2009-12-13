@@ -27,7 +27,7 @@
 -->
 
 <title>SunSpider JavaScript Benchmark Results</title>
-<link rel="stylesheet" href="../sunspider.css"></link>
+<link rel="stylesheet" href="../sunspider.css">
 </head>
 
 <body>
@@ -47,12 +47,12 @@
 <pre id="console">
 </pre>
 
-
+<script src="../json2.js"></script>
 <script>
 var selfUrlInput = document.getElementById("selfUrl");
 selfUrlInput.value = location;
 
-var output = pivot(eval("(" + decodeURI(location.search.substring(1)) + ")"));
+var output = pivot(JSON.parse(decodeURI(location.search.substring(1))));
 
 function pivot(input) {
     var output = [];
@@ -83,7 +83,7 @@ var output2 = output;
 function compare(other)
 {
     document.getElementById("console").innerHTML = "";
-    var output1 = pivot(eval("(" + decodeURI(other.split("?")[1]) + ")"));
+    var output1 = pivot(JSON.parse(decodeURI(other.split("?")[1])));
     sunspiderCompareResults(output1, output2);
 }
 </script>
