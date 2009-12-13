@@ -980,7 +980,7 @@ void ScrollView::platformRemoveChild(Widget*)
 
 #if !PLATFORM(MAC) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 
-void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
+void ScrollView::platformSetScrollbarsSuppressed(bool)
 {
 }
 

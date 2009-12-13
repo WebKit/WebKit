@@ -33,11 +33,12 @@
 #include "DragController.h"
 #include "EventNames.h"
 #include "FocusController.h"
-#include "FrameLoader.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -703,7 +704,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     return false;
 }
 
-bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
+bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 {
     notImplemented();
     return false;

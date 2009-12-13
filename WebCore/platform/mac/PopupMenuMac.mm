@@ -99,6 +99,8 @@ void PopupMenu::populate()
     [[m_popup.get() menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
+#if !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate();
@@ -178,6 +180,14 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
     [event release];
 }
+
+#else
+
+void PopupMenu::show(const IntRect&, FrameView*, int)
+{
+}
+
+#endif
 
 void PopupMenu::hide()
 {

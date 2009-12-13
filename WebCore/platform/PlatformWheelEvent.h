@@ -68,6 +68,20 @@ namespace WebCore {
     
     class PlatformWheelEvent {
     public:
+        PlatformWheelEvent()
+            : m_deltaX(0)
+            , m_deltaY(0)
+            , m_wheelTicksX(0)
+            , m_wheelTicksY(0)
+            , m_granularity(ScrollByPixelWheelEvent)
+            , m_isAccepted(false)
+            , m_shiftKey(false)
+            , m_ctrlKey(false)
+            , m_altKey(false)
+            , m_metaKey(false)
+        {
+        }
+
         const IntPoint& pos() const { return m_position; } // PlatformWindow coordinates.
         const IntPoint& globalPos() const { return m_globalPosition; } // Screen coordinates.
 

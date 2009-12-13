@@ -114,8 +114,13 @@ namespace WebCore {
         PlatformMouseEvent(GdkEventMotion*);
 #endif
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(MAC)
+#if defined(__OBJC__)
         PlatformMouseEvent(NSEvent *, NSView *windowView);
+#endif
+        PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton button, MouseEventType eventType,
+                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp,
+                           unsigned modifierFlags, int eventNumber);
         int eventNumber() const { return m_eventNumber; }
 #endif
 

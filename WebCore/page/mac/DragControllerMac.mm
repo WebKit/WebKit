@@ -49,6 +49,11 @@ DragOperation DragController::dragOperation(DragData*)
     return DragOperationNone;
 } 
 
+bool DragController::isCopyKeyDown()
+{
+    return false;
+}
+
 #else
 
 bool DragController::isCopyKeyDown()

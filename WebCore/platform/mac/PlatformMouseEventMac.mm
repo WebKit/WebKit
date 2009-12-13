@@ -158,4 +158,22 @@ PlatformMouseEvent::PlatformMouseEvent(NSEvent* event, NSView *windowView)
 {
 }
 
+PlatformMouseEvent::PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton button, MouseEventType eventType,
+                   int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp,
+                   unsigned modifierFlags, int eventNumber)
+    : m_position(IntPoint(x, y))
+    , m_globalPosition(IntPoint(globalX, globalY))
+    , m_button(button)
+    , m_eventType(eventType)
+    , m_clickCount(clickCount)
+    , m_shiftKey(shiftKey)
+    , m_ctrlKey(ctrlKey)
+    , m_altKey(altKey)
+    , m_metaKey(metaKey)
+    , m_timestamp(timestamp)
+    , m_modifierFlags(modifierFlags)
+    , m_eventNumber(eventNumber)
+{
+}
+
 }

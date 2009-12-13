@@ -2,6 +2,34 @@
 
         Rubber-stamped by Dan Bernstein.
 
+        Fix the EXPERIMENTAL_SINGLE_VIEW_MODE build.
+
+        * Configurations/WebCore.xcconfig:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clearDragState):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventActivatedView):
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * platform/mac/WidgetMac.mm:
+
+2009-12-12  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
         Fix the !ENABLE(VIDEO) build.
 
         * rendering/RenderLayerCompositor.cpp:

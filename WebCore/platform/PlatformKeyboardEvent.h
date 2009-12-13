@@ -130,6 +130,7 @@ namespace WebCore {
         static bool currentCapsLockState();
 
 #if PLATFORM(MAC)
+        PlatformKeyboardEvent();
         PlatformKeyboardEvent(NSEvent*);
         NSEvent* macEvent() const { return m_macEvent.get(); }
 #endif
