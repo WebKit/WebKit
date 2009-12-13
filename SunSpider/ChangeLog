@@ -1,5 +1,13 @@
 2009-12-13  Maciej Stachowiak  <mjs@apple.com>
 
+        Fixing commit error...
+        
+        I accidentally committed my last patch in a form that broke Web-hosted SunSpider. Fixing.
+
+        * resources/driver-TEMPLATE.html:
+
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
 
         Use JSON.parse instead of eval for Web-hosted SunSpider results processing
