@@ -550,6 +550,7 @@ private slots:
     void enumerate();
     void objectDeleted();
     void typeConversion();
+    void arrayObjectEnumerable();
     void symmetricUrl();
     void progressSignal();
     void urlChange();
@@ -2068,6 +2069,31 @@ void tst_QWebFrame::typeConversion()
     evalJS("myObject.mySignalWithDateTimeArg.disconnect(checkDate); delete checkDate;");
 
     // ### RegExps
+}
+
+class StringListTestObject : public QObject {
+    Q_OBJECT
+public Q_SLOTS:
+    QVariant stringList()
+    {
+        return QStringList() << "Q" << "t";
+    };
+};
+
+void tst_QWebFrame::arrayObjectEnumerable()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    QObject* qobject = new StringListTestObject();
+    frame->addToJavaScriptWindowObject("test", qobject, QScriptEngine::ScriptOwnership);
+
+    const QString script("var stringArray = test.stringList();"
+                         "var result = '';"
+                         "for (var i in stringArray) {"
+                         "    result += stringArray[i];"
+                         "}"
+                         "result;");
+    QCOMPARE(frame->evaluateJavaScript(script).toString(), QString::fromLatin1("Qt"));
 }
 
 void tst_QWebFrame::symmetricUrl()

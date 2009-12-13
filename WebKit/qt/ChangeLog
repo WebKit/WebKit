@@ -1,3 +1,12 @@
+2009-12-13  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add a test in Qt for https://bugs.webkit.org/show_bug.cgi?id=29005
+        https://bugs.webkit.org/show_bug.cgi?id=29008
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-12-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.
