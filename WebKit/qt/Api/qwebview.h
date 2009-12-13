@@ -49,12 +49,7 @@ class QWEBKIT_EXPORT QWebView : public QWidget {
     Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier DESIGNABLE false)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
 
-// FIXME: temporary work around for elftran issue that it couldn't find the QPainter::staticMetaObject
-// symbol from Qt lib; it should be reverted after the right symbol is exported.  
-// See bug: http://qt.nokia.com/developer/task-tracker/index_html?method=entry&id=258893
-#if defined(Q_QDOC) || !defined(Q_OS_SYMBIAN)
     Q_PROPERTY(QPainter::RenderHints renderHints READ renderHints WRITE setRenderHints)
-#endif
     Q_FLAGS(QPainter::RenderHints)
 public:
     explicit QWebView(QWidget* parent = 0);

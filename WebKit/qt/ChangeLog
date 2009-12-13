@@ -1,3 +1,16 @@
+2009-12-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Re-enable QWebView::renderHints property for Qt for Symbian
+
+        https://bugs.webkit.org/show_bug.cgi?id=28273
+
+        The bug in Qt's moc that triggered a linking error when declaring this
+        property has been fixed and we can remove the workaround.
+
+        * Api/qwebview.h:
+
 2009-12-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed build fix for Qt versions < 4.6.
