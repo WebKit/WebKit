@@ -33,7 +33,7 @@ my @tests = ();
 my @categories = ();
 my %uniqueCategories = ();
 
-open TESTLIST, "<./tests/LIST";
+open TESTLIST, "<./tests/sunspider-0.9/LIST";
 while (<TESTLIST>) {
     chomp;
     next unless $_;
@@ -50,7 +50,7 @@ close TESTLIST;
 for my $test (@tests) {
     my $name = "${test}";
 
-    open SCRIPT, "<tests/${test}.js";
+    open SCRIPT, "<tests/sunspider-0.9/${test}.js";
     my $script = do { local $/; <SCRIPT> };
     close SCRIPT;
 

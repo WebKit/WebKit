@@ -23,34 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-var results = new Array();
+var loops = 15
+var nx = 120
+var nz = 120
 
-var time = 0;
-var times = [];
-times.length = tests.length;
-
-for (var j = 0; j < tests.length; j++) {
-    var testName = "tests/" + suiteName + "/" + tests[j] + ".js";
-    var startTime = new Date;
-    if (testName.indexOf('parse-only') >= 0)
-        checkSyntax(testName);
-    else
-        load(testName);
-    times[j] = new Date() - startTime;
-    gc();
-}
-
-function recordResults(tests, times)
-{
-    var output = "{\n";
-
-    for (j = 0; j < tests.length; j++) {
-        output += '    "' + tests[j] + '": ' + times[j] + ',\n'; 
+function morph(a, f) {
+    var PI2nx = Math.PI * 8/nx
+    var sin = Math.sin
+    var f30 = -(50 * sin(f*Math.PI*2))
+    
+    for (var i = 0; i < nz; ++i) {
+        for (var j = 0; j < nx; ++j) {
+            a[3*(i*nx+j)+1]    = sin((j-1) * PI2nx ) * -f30
+        }
     }
-    output = output.substring(0, output.length - 2) + "\n";
-
-    output += "}";
-    print(output);
 }
 
-recordResults(tests, times);
+    
+var a = Array()
+for (var i=0; i < nx*nz*3; ++i) 
+    a[i] = 0
+
+for (var i = 0; i < loops; ++i) {
+    morph(a, i/loops)
+}
+
+testOutput = 0;
+for (var i = 0; i < nx; i++)
+    testOutput += a[3*(i*nx+i)+1];
+a = null;

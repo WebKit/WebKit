@@ -1,3 +1,71 @@
+2009-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Give command-line sunspider the ability to handle multiple suites and versions
+        https://bugs.webkit.org/show_bug.cgi?id=32477
+        
+        Each suite/version's set of tests are now in a separate subdirectory of tests/, with a file named LIST
+        enumerating the tests. Current suites are:
+        
+        sunspider-0.9 - riginal SunSpider content 
+        sunspider-0.9.1 - SunSpider suite with a few tests fixed (and a few more to come)
+        ubench - "ubench" microbenchmark suite
+        v8-v4 - version 4 of the v8 benchmark
+        parse-only - some parser tests
+        
+        Sunspider can now be run with the --suite= parameter to select a
+        suite. The default is --suite=sunspider-0.9.
+
+        * .: Modified property svn:ignore to ignore new results directories.
+        * make-hosted: Generate based on sunspider-0.9 suite.
+        * resources/TEMPLATE.html: Fix an HTML compliance problem.
+        * resources/sunspider-standalone-driver.js: Become aware of suite names.
+        * sunspider: Modified to handle multiple suites as described above.
+        * sunspider-compare-results: ditto
+        * tests/LIST: Moved to tests/sunspider-0.9/ and tests/sunspider-0.9.1/
+        * tests/LIST-PARSE-ONLY: Moved to parse-only/LIST
+        * tests/LIST-UBENCH: Removed.
+        * tests/LIST-V8: Removed.
+        * tests/3d-cube.js: Moved to tests/sunspider-0.9 and tests/sunspider-0.9.1
+        * tests/3d-morph.js: ditto
+        * tests/3d-raytrace.js: ditto
+        * tests/access-binary-trees.js: ditto
+        * tests/access-fannkuch.js: ditto
+        * tests/access-nbody.js: ditto
+        * tests/access-nsieve.js: ditto
+        * tests/bitops-3bit-bits-in-byte.js: ditto
+        * tests/bitops-bits-in-byte.js: ditto
+        * tests/bitops-bitwise-and.js: ditto
+        * tests/bitops-nsieve-bits.js: ditto
+        * tests/controlflow-recursive.js: ditto
+        * tests/crypto-aes.js: ditto
+        * tests/crypto-md5.js: ditto
+        * tests/crypto-sha1.js: ditto
+        * tests/date-format-tofte.js: ditto
+        * tests/date-format-xparb.js: ditto
+        * tests/math-cordic.js: ditto
+        * tests/math-partial-sums.js: ditto
+        * tests/math-spectral-norm.js: ditto
+        * tests/regexp-dna.js: ditto
+        * tests/string-base64.js: ditto
+        * tests/string-fasta.js: ditto
+        * tests/string-tagcloud.js: ditto
+        * tests/string-unpack-code.js: ditto
+        * tests/string-validate-input.js: ditto
+        * tests/sunspider-0.9/: Added
+        * tests/sunspider-0.9/*.js: Moved from one level up
+        * tests/sunspider-0.9.1: Added.
+        * tests/sunspider-0.9.1/*.js: Moved from one level up.
+        * tests/v8-crypto.js: Moved to v8-v4/ directory.
+        * tests/v8-deltablue.js: ditto
+        * tests/v8-earley-boyer.js: ditto
+        * tests/v8-raytrace.js: ditto
+        * tests/v8-regexp.js: ditto
+        * tests/v8-richards.js: ditto
+        * tests/v8-splay.js: ditto
+        * tests/v8-v4: Added.
+
 2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

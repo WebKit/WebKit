@@ -23,34 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-var results = new Array();
-
-var time = 0;
-var times = [];
-times.length = tests.length;
-
-for (var j = 0; j < tests.length; j++) {
-    var testName = "tests/" + suiteName + "/" + tests[j] + ".js";
-    var startTime = new Date;
-    if (testName.indexOf('parse-only') >= 0)
-        checkSyntax(testName);
-    else
-        load(testName);
-    times[j] = new Date() - startTime;
-    gc();
-}
-
-function recordResults(tests, times)
-{
-    var output = "{\n";
-
-    for (j = 0; j < tests.length; j++) {
-        output += '    "' + tests[j] + '": ' + times[j] + ',\n'; 
-    }
-    output = output.substring(0, output.length - 2) + "\n";
-
-    output += "}";
-    print(output);
-}
-
-recordResults(tests, times);
+bitwiseAndValue = 4294967296;
+for (var i = 0; i < 600000; i++)
+    bitwiseAndValue = bitwiseAndValue & i;
