@@ -1,3 +1,16 @@
+2009-12-12  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix the !ENABLE(DATABASE) build.
+
+        * storage/SQLTransactionClient.cpp:
+        * storage/SQLTransactionClient.h:
+        * storage/SQLTransactionCoordinator.cpp:
+        * storage/SQLTransactionCoordinator.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
 2009-12-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

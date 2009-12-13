@@ -31,6 +31,8 @@
 #ifndef SQLTransactionClient_h
 #define SQLTransactionClient_h
 
+#if ENABLE(DATABASE)
+
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -46,5 +48,7 @@ namespace WebCore {
         bool didExceedQuota(SQLTransaction*);
     };
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // SQLTransactionClient_h

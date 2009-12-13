@@ -31,6 +31,8 @@
 #ifndef SQLTransactionCoordinator_h
 #define SQLTransactionCoordinator_h
 
+#if ENABLE(DATABASE)
+
 #include "CString.h"
 #include "StringHash.h"
 #include <wtf/Deque.h>
@@ -61,5 +63,7 @@ namespace WebCore {
         void processPendingTransactions(CoordinationInfo& info);
     };
 }
+
+#endif // ENABLE(DATABASE)
 
 #endif // SQLTransactionCoordinator_h
