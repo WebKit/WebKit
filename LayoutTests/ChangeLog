@@ -1,3 +1,31 @@
+2009-12-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6293979> Adopt shared control drawing for <video> controls on Leopard and Windows
+
+        Regenerate layout and pixel test results for the new UI.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/media/controls-after-reload-expected.txt:
+        * platform/mac-leopard/media/controls-drag-timebar-expected.txt:
+        * platform/mac-leopard/media/controls-strict-expected.txt:
+        * platform/mac-leopard/media/controls-styling-expected.txt:
+        * platform/mac-leopard/media/video-controls-rendering-expected.checksum:
+        * platform/mac-leopard/media/video-controls-rendering-expected.png:
+        * platform/mac-leopard/media/video-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/video-display-toggle-expected.checksum:
+        * platform/mac-leopard/media/video-display-toggle-expected.png:
+        * platform/mac-leopard/media/video-display-toggle-expected.txt:
+        * platform/mac-leopard/media/video-no-audio-expected.txt:
+        * platform/mac-leopard/media/video-zoom-controls-expected.checksum:
+        * platform/mac-leopard/media/video-zoom-controls-expected.png:
+        * platform/mac-leopard/media/video-zoom-controls-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/video-zoom-expected.checksum:
+        * platform/mac/media/video-zoom-expected.png:
+
 2009-12-12  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
