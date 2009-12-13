@@ -2,6 +2,32 @@
 
         Reviewed by Oliver Hunt.
 
+        Errors in WebGL[T]Array set() and get() methods
+        https://bugs.webkit.org/show_bug.cgi?id=32456
+
+        Test: fast/canvas/webgl/bug-32456.html
+
+        * bindings/js/JSWebGLFloatArrayCustom.cpp:
+        (WebCore::JSWebGLFloatArray::set):
+        * bindings/js/JSWebGLIntArrayCustom.cpp:
+        (WebCore::JSWebGLIntArray::set):
+        * bindings/js/JSWebGLShortArrayCustom.cpp:
+        (WebCore::JSWebGLShortArray::set):
+        * bindings/js/JSWebGLUnsignedByteArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedByteArray::set):
+        * bindings/js/JSWebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedIntArray::set):
+        * bindings/js/JSWebGLUnsignedShortArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedShortArray::set):
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        (WebCore::setWebGLArray):
+        * html/canvas/WebGLFloatArray.idl:
+        * html/canvas/WebGLUnsignedIntArray.idl:
+
+2009-12-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
         Update WebGL tests to released versions
         https://bugs.webkit.org/show_bug.cgi?id=32457
 

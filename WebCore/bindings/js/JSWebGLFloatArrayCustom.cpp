@@ -52,9 +52,9 @@ JSC::JSValue JSWebGLFloatArray::set(JSC::ExecState* exec, JSC::ArgList const& ar
         return throwError(exec, SyntaxError);
 
     if (args.size() == 2 && args.at(0).isInt32()) {
-        // void set(in unsigned long index, in long value);
+        // void set(in unsigned long index, in float value);
         unsigned index = args.at(0).toUInt32(exec);
-        impl()->set(index, static_cast<signed char>(args.at(1).toInt32(exec)));
+        impl()->set(index, static_cast<float>(args.at(1).toNumber(exec)));
         return jsUndefined();
     }
 

@@ -194,7 +194,7 @@ v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args,
     CPlusPlusArrayType* array = V8DOMWrapper::convertToNativeObject<CPlusPlusArrayType>(wrapperType, args.Holder());
 
     if (args.Length() == 2 && args[0]->IsInt32()) {
-        // void set(in unsigned long index, in long value);
+        // void set(in unsigned long index, in {long|float} value);
         uint32_t index = toInt32(args[0]);
         array->set(index, args[1]->NumberValue());
         return v8::Undefined();

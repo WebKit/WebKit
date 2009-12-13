@@ -33,7 +33,7 @@ module html {
         GenerateCustomConstructor,
         CustomToJS
     ] WebGLUnsignedIntArray : WebGLArray {
-        long get(in unsigned long index);
+        unsigned long get(in unsigned long index);
         // void set(in unsigned long index, in long value);
         // void set(in WebGLUnsignedIntArray array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);

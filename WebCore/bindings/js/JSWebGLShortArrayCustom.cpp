@@ -54,7 +54,7 @@ JSC::JSValue JSWebGLShortArray::set(JSC::ExecState* exec, JSC::ArgList const& ar
     if (args.size() == 2 && args.at(0).isInt32()) {
         // void set(in unsigned long index, in long value);
         unsigned index = args.at(0).toUInt32(exec);
-        impl()->set(index, static_cast<signed char>(args.at(1).toInt32(exec)));
+        impl()->set(index, static_cast<signed short>(args.at(1).toInt32(exec)));
         return jsUndefined();
     }
 

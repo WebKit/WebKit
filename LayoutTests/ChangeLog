@@ -2,6 +2,19 @@
 
         Reviewed by Oliver Hunt.
 
+        Errors in WebGL[T]Array set() and get() methods
+        https://bugs.webkit.org/show_bug.cgi?id=32456
+
+        Test: fast/canvas/webgl/bug-32456.html
+
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/bug-32456-expected.txt: Added.
+        * fast/canvas/webgl/bug-32456.html: Added.
+
+2009-12-12  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
         Update WebGL tests to released versions
         https://bugs.webkit.org/show_bug.cgi?id=32457
 

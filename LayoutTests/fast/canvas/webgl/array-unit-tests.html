@@ -335,6 +335,11 @@ function testBoundaryConditions(type, name, lowValue, expectedLowValue, highValu
     assertEq('Element 0', expectedLowValue, array[0]);
     array[0] = highValue;
     assertEq('Element 0', expectedHighValue, array[0]);
+    // Test the get and set methods with these values
+    array.set(0, lowValue);
+    assertEq('Element 0 set / get', expectedLowValue, array.get(0));
+    array.set(0, highValue);
+    assertEq('Element 0 set / get', expectedHighValue, array.get(0));
     pass();
   } catch (e) {
     fail(e);
