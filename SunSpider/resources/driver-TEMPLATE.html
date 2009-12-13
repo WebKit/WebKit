@@ -27,12 +27,13 @@
 -->
 
 <title>SunSpider JavaScript Benchmark (In Progress...)</title>
-<link rel="stylesheet" href="sunspider.css"></link>
+<link rel="stylesheet" href="../sunspider.css"></link>
 </head>
 
 <body onload="next()">
 
 <h2><span id="logo">&#x2600;</span>SunSpider JavaScript Benchmark <small>(In Progress...)</small></h2>
+<h4>Version: @SUITE@</h4>
 
 <script src="sunspider-test-prefix.js"></script>
 <script>
@@ -84,7 +85,7 @@ function finish()
     outputString = outputString.substring(0, outputString.length - 1);
     outputString += "}";
 
-    location = "sunspider-results.html?" + encodeURI(outputString);
+    location = "results.html?" + encodeURI(outputString);
 }
 
 </script>

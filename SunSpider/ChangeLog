@@ -2,6 +2,24 @@
 
         Reviewed by Oliver Hunt.
 
+        Enable Web-hosted version of SunSpider to handle multiple versions
+        https://bugs.webkit.org/show_bug.cgi?id=32478
+
+        * make-hosted: Now generate the hosted version to be able to run both the
+        0.9 and the 0.9.1 test suites.
+        * hosted: Modified property svn:ignore.
+        * hosted/sunspider-driver.html: Removed.
+        * hosted/sunspider-results.html: Removed.
+        * hosted/sunspider.html:
+        * hosted/versions.html: Added.
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html: Copied from hosted/sunspider-driver.html.
+        * resources/driver-TEMPLATE.html: Copied from hosted/sunspider-results.html.
+
+2009-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Give command-line sunspider the ability to handle multiple suites and versions
         https://bugs.webkit.org/show_bug.cgi?id=32477
         

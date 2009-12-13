@@ -29,49 +29,79 @@ open TEMPLATE, "<resources/TEMPLATE.html";
 my $template = do { local $/; <TEMPLATE> };
 close TEMPLATE;
 
+open DRIVER_TEMPLATE, "<resources/driver-TEMPLATE.html";
+my $driverTemplate = do { local $/; <DRIVER_TEMPLATE> };
+close DRIVER_TEMPLATE;
+
+open RESULTS_TEMPLATE, "<resources/results-TEMPLATE.html";
+my $resultsTemplate = do { local $/; <RESULTS_TEMPLATE> };
+close RESULTS_TEMPLATE;
+
 my @tests = ();
 my @categories = ();
 my %uniqueCategories = ();
 
-open TESTLIST, "<./tests/sunspider-0.9/LIST";
-while (<TESTLIST>) {
-    chomp;
-    next unless $_;
-    push @tests, $_;
-    my $category = $_;
-    $category =~ s/-.*//;
-    if (!$uniqueCategories{$category}) {
-        push @categories, $category;
-        $uniqueCategories{$category} = $category;
+my @suites = ("sunspider-0.9", "sunspider-0.9.1");
+
+foreach my $suite (@suites) {
+
+    mkdir "hosted/${suite}";
+
+    open TESTLIST, "<./tests/${suite}/LIST";
+    while (<TESTLIST>) {
+	chomp;
+	next unless $_;
+	push @tests, $_;
+	my $category = $_;
+	$category =~ s/-.*//;
+	if (!$uniqueCategories{$category}) {
+	    push @categories, $category;
+	    $uniqueCategories{$category} = $category;
+	}
     }
-}
-close TESTLIST;
+    close TESTLIST;
 
-for my $test (@tests) {
-    my $name = "${test}";
+    for my $test (@tests) {
+	my $name = "${test}";
 
-    open SCRIPT, "<tests/sunspider-0.9/${test}.js";
-    my $script = do { local $/; <SCRIPT> };
-    close SCRIPT;
+	open SCRIPT, "<tests/${suite}/${test}.js";
+	my $script = do { local $/; <SCRIPT> };
+	close SCRIPT;
 
-    my $output = $template;
-    $output =~ s/\@NAME\@/${name}/g;
-    $output =~ s/\@SCRIPT\@/${script}/g;
+	my $output = $template;
+	$output =~ s/\@NAME\@/${name}/g;
+	$output =~ s/\@SCRIPT\@/${script}/g;
 
-    open OUTPUT, ">hosted/${test}.html";
+	open OUTPUT, ">hosted/${suite}/${test}.html";
+	print OUTPUT $output;
+	close OUTPUT;
+    }
+
+    my $output = $driverTemplate;
+    $output =~ s/\@SUITE\@/${suite}/g;
+
+    open OUTPUT, ">hosted/${suite}/driver.html";
     print OUTPUT $output;
     close OUTPUT;
+
+    $output = $resultsTemplate;
+    $output =~ s/\@SUITE\@/${suite}/g;
+
+    open OUTPUT, ">hosted/${suite}/results.html";
+    print OUTPUT $output;
+    close OUTPUT;
+
+
+    my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
+    $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
+
+    open PREFIX, ">hosted/${suite}/sunspider-test-prefix.js";
+    print PREFIX $prefix;
+    close PREFIX;
+
+    
 }
-
-
-my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
-$prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
-
-open PREFIX, ">hosted/sunspider-test-prefix.js";
-print PREFIX $prefix;
-close PREFIX;
 
 system("cp resources/sunspider-analyze-results.js hosted");
 system("cp resources/sunspider-compare-results.js hosted");
-
 print "hosted/sunspider.html is ready to use.\n";
