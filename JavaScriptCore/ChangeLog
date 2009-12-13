@@ -1,3 +1,17 @@
+2009-12-08  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add code to allow toggling ATSUI/Core Text rendering at runtime in ComplexTextController.
+        https://bugs.webkit.org/show_bug.cgi?id=31802
+
+        The goal here is to allow for a zero runtime hit for ports that decide to select
+        the API at compile time.
+        When both USE(ATSUI) and USE(CORE_TEXT) are true, the API is toggled
+        at runtime.  Core Text is used for OS Versions >= 10.6.
+
+        * wtf/Platform.h: #define USE_CORE_TEXT and USE_ATSUI on Chrome/Mac.
+
 2009-12-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

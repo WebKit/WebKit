@@ -45,7 +45,7 @@ OSStatus ComplexTextController::ComplexTextRun::overrideLayoutOperation(ATSULayo
     ComplexTextRun* complexTextRun = reinterpret_cast<ComplexTextRun*>(refCon);
     OSStatus status;
     ItemCount count;
-    ATSLayoutRecord *layoutRecords;
+    ATSLayoutRecord* layoutRecords;
 
     status = ATSUDirectGetLayoutDataArrayPtrFromLineRef(atsuLineRef, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, true, reinterpret_cast<void**>(&layoutRecords), &count);
     if (status != noErr) {
@@ -66,7 +66,7 @@ OSStatus ComplexTextController::ComplexTextRun::overrideLayoutOperation(ATSULayo
     complexTextRun->m_glyphCount = count;
     complexTextRun->m_glyphsVector.reserveCapacity(count);
     complexTextRun->m_advancesVector.reserveCapacity(count);
-    complexTextRun->m_indices.reserveCapacity(count);
+    complexTextRun->m_atsuiIndices.reserveCapacity(count);
 
     bool atBeginning = true;
     CGFloat lastX = 0;
@@ -77,7 +77,7 @@ OSStatus ComplexTextController::ComplexTextRun::overrideLayoutOperation(ATSULayo
             continue;
         }
         complexTextRun->m_glyphsVector.uncheckedAppend(layoutRecords[j].glyphID);
-        complexTextRun->m_indices.uncheckedAppend(layoutRecords[j].originalOffset / 2 + indexOffset);
+        complexTextRun->m_atsuiIndices.uncheckedAppend(layoutRecords[j].originalOffset / 2 + indexOffset);
         CGFloat x = FixedToFloat(layoutRecords[j].realPos);
         if (!atBeginning)
             complexTextRun->m_advancesVector.uncheckedAppend(CGSizeMake(x - lastX, 0));
@@ -219,33 +219,29 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(ATSUTextLayout atsuTextLay
     status = ATSUDisposeTextLayout(atsuTextLayout);
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_fontData(fontData)
-    , m_characters(characters)
-    , m_stringLocation(stringLocation)
-    , m_stringLength(stringLength)
+void ComplexTextController::ComplexTextRun::createTextRunFromFontDataATSUI(bool ltr)
 {
-    m_indices.reserveCapacity(stringLength);
+    m_atsuiIndices.reserveCapacity(m_stringLength);
     unsigned r = 0;
-    while (r < stringLength) {
-        m_indices.uncheckedAppend(r);
-        if (U_IS_SURROGATE(characters[r])) {
-            ASSERT(r + 1 < stringLength);
-            ASSERT(U_IS_SURROGATE_LEAD(characters[r]));
-            ASSERT(U_IS_TRAIL(characters[r + 1]));
+    while (r < m_stringLength) {
+        m_atsuiIndices.uncheckedAppend(r);
+        if (U_IS_SURROGATE(m_characters[r])) {
+            ASSERT(r + 1 < m_stringLength);
+            ASSERT(U_IS_SURROGATE_LEAD(m_characters[r]));
+            ASSERT(U_IS_TRAIL(m_characters[r + 1]));
             r += 2;
         } else
             r++;
     }
-    m_glyphCount = m_indices.size();
+    m_glyphCount = m_atsuiIndices.size();
     if (!ltr) {
         for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
-            std::swap(m_indices[r], m_indices[end]);
+            std::swap(m_atsuiIndices[r], m_atsuiIndices[end]);
     }
 
     m_glyphsVector.fill(0, m_glyphCount);
     m_glyphs = m_glyphsVector.data();
-    m_advancesVector.fill(CGSizeMake(fontData->widthForGlyph(0), 0), m_glyphCount);
+    m_advancesVector.fill(CGSizeMake(m_fontData->widthForGlyph(0), 0), m_glyphCount);
     m_advances = m_advancesVector.data();
 }
 
@@ -311,7 +307,7 @@ static void initializeATSUStyle(const SimpleFontData* fontData, TextRenderingMod
     fontData->m_ATSUStyleInitialized = true;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
+void ComplexTextController::collectComplexTextRunsForCharactersATSUI(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
     if (!fontData) {
         // Create a run of missing glyphs from the primary font.

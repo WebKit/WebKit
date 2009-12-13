@@ -29,35 +29,44 @@
 
 #include "Font.h"
 
+#if defined(BUILDING_ON_LEOPARD)
+// The following symbols are SPI in 10.5.
+extern "C" {
+void CTRunGetAdvances(CTRunRef run, CFRange range, CGSize buffer[]);
+const CGSize* CTRunGetAdvancesPtr(CTRunRef run);
+extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
+}
+#endif
+
 namespace WebCore {
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
-    : m_CTRun(ctRun)
+    : m_coreTextRun(ctRun)
     , m_fontData(fontData)
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
 {
-    m_glyphCount = CTRunGetGlyphCount(m_CTRun.get());
-    m_indices = CTRunGetStringIndicesPtr(m_CTRun.get());
-    if (!m_indices) {
-        m_indicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
-        CFDataIncreaseLength(m_indicesData.get(), m_glyphCount * sizeof(CFIndex));
-        m_indices = reinterpret_cast<const CFIndex*>(CFDataGetMutableBytePtr(m_indicesData.get()));
-        CTRunGetStringIndices(m_CTRun.get(), CFRangeMake(0, 0), const_cast<CFIndex*>(m_indices));
+    m_glyphCount = CTRunGetGlyphCount(m_coreTextRun.get());
+    m_coreTextIndices = CTRunGetStringIndicesPtr(m_coreTextRun.get());
+    if (!m_coreTextIndices) {
+        m_coreTextIndicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
+        CFDataIncreaseLength(m_coreTextIndicesData.get(), m_glyphCount * sizeof(CFIndex));
+        m_coreTextIndices = reinterpret_cast<const CFIndex*>(CFDataGetMutableBytePtr(m_coreTextIndicesData.get()));
+        CTRunGetStringIndices(m_coreTextRun.get(), CFRangeMake(0, 0), const_cast<CFIndex*>(m_coreTextIndices));
     }
 
-    m_glyphs = CTRunGetGlyphsPtr(m_CTRun.get());
+    m_glyphs = CTRunGetGlyphsPtr(m_coreTextRun.get());
     if (!m_glyphs) {
         m_glyphsVector.grow(m_glyphCount);
-        CTRunGetGlyphs(m_CTRun.get(), CFRangeMake(0, 0), m_glyphsVector.data());
+        CTRunGetGlyphs(m_coreTextRun.get(), CFRangeMake(0, 0), m_glyphsVector.data());
         m_glyphs = m_glyphsVector.data();
     }
 
-    m_advances = CTRunGetAdvancesPtr(m_CTRun.get());
+    m_advances = CTRunGetAdvancesPtr(m_coreTextRun.get());
     if (!m_advances) {
         m_advancesVector.grow(m_glyphCount);
-        CTRunGetAdvances(m_CTRun.get(), CFRangeMake(0, 0), m_advancesVector.data());
+        CTRunGetAdvances(m_coreTextRun.get(), CFRangeMake(0, 0), m_advancesVector.data());
         m_advances = m_advancesVector.data();
     }
 
@@ -65,20 +74,16 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_fontData(fontData)
-    , m_characters(characters)
-    , m_stringLocation(stringLocation)
-    , m_stringLength(stringLength)
+void ComplexTextController::ComplexTextRun::createTextRunFromFontDataCoreText(bool ltr)
 {
     Vector<CFIndex, 16> indices;
     unsigned r = 0;
-    while (r < stringLength) {
+    while (r < m_stringLength) {
         indices.append(r);
-        if (U_IS_SURROGATE(characters[r])) {
-            ASSERT(r + 1 < stringLength);
-            ASSERT(U_IS_SURROGATE_LEAD(characters[r]));
-            ASSERT(U_IS_TRAIL(characters[r + 1]));
+        if (U_IS_SURROGATE(m_characters[r])) {
+            ASSERT(r + 1 < m_stringLength);
+            ASSERT(U_IS_SURROGATE_LEAD(m_characters[r]));
+            ASSERT(U_IS_TRAIL(m_characters[r + 1]));
             r += 2;
         } else
             r++;
@@ -88,9 +93,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
         for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
             std::swap(indices[r], indices[end]);
     }
-    m_indicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
-    CFDataAppendBytes(m_indicesData.get(), reinterpret_cast<const UInt8*>(indices.data()), m_glyphCount * sizeof(CFIndex));
-    m_indices = reinterpret_cast<const CFIndex*>(CFDataGetBytePtr(m_indicesData.get()));
+    m_coreTextIndicesData.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, m_glyphCount * sizeof(CFIndex)));
+    CFDataAppendBytes(m_coreTextIndicesData.get(), reinterpret_cast<const UInt8*>(indices.data()), m_glyphCount * sizeof(CFIndex));
+    m_coreTextIndices = reinterpret_cast<const CFIndex*>(CFDataGetBytePtr(m_coreTextIndicesData.get()));
 
     // Synthesize a run of missing glyphs.
     m_glyphsVector.fill(0, m_glyphCount);
@@ -99,7 +104,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     m_advances = m_advancesVector.data();
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
+void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
     if (!fontData) {
         // Create a run of missing glyphs from the primary font.

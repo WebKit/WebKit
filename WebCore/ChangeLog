@@ -1,3 +1,35 @@
+2009-12-08  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add code to allow toggling ATSUI/Core Text rendering at runtime in ComplexTextController.
+        https://bugs.webkit.org/show_bug.cgi?id=31802
+
+        The goal here is to allow for a zero runtime hit for ports that decide to select
+        the API at compile time.
+        When both USE(ATSUI) and USE(CORE_TEXT) are true, the API is toggled
+        at runtime.  Core Text is used for OS Versions >= 10.6.
+
+        No test since this is already covered by existing pixel tests.
+
+        * platform/graphics/SimpleFontData.h:  Change #ifdef to define getNSFont() on Chrome/Mac .
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::shouldUseATSUIAPI): Cache decision about which API to use.
+        (WebCore::ComplexTextController::ComplexTextRun::indexAt):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Stub function to call through
+        to ATSUI/Core text variants.
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): The actual work for object construction
+        is delegate to createTextRunFromFontDataATSUI/createTextRunFromFontDataCoreText.
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::overrideLayoutOperation): Small style fix.
+        (WebCore::ComplexTextController::ComplexTextRun::createTextRunFromFontDataATSUI):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersATSUI):
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::ComplexTextRun::createTextRunFromFontDataCoreText):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+
 2009-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         No review, rolling out r52059 until I can generate new Tiger

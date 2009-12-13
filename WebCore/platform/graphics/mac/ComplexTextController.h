@@ -39,6 +39,11 @@ class Font;
 class SimpleFontData;
 class TextRun;
 
+// ComplexTextController is responsible for rendering and measuring glyphs for
+// complex scripts on OS X.
+// The underlying API can be selected at compile time based on USE(ATSUI) and
+// USE(CORE_TEXT).  If both are defined then the Core Text APIs are used for
+// OS Versions >= 10.6, ATSUI is used otherwise.
 class ComplexTextController {
 public:
     ComplexTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0);
@@ -65,7 +70,8 @@ private:
         {
             return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength));
         }
-#elif USE(ATSUI)
+#endif
+#if USE(ATSUI)
         static PassRefPtr<ComplexTextRun> create(ATSUTextLayout atsuTextLayout, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr, bool directionalOverride)
         {
             return adoptRef(new ComplexTextRun(atsuTextLayout, fontData, characters, stringLocation, stringLength, ltr, directionalOverride));
@@ -81,15 +87,18 @@ private:
         const UChar* characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_stringLength; }
-        CFIndex indexAt(size_t i) const { return m_indices[i]; }
+        ALWAYS_INLINE CFIndex indexAt(size_t i) const;
         const CGGlyph* glyphs() const { return m_glyphs; }
         const CGSize* advances() const { return m_advances; }
 
     private:
 #if USE(CORE_TEXT)
         ComplexTextRun(CTRunRef, const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength);
-#elif USE(ATSUI)
+        void createTextRunFromFontDataCoreText(bool ltr);
+#endif
+#if USE(ATSUI)
         ComplexTextRun(ATSUTextLayout, const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr, bool directionalOverride);
+        void createTextRunFromFontDataATSUI(bool ltr);
 #endif
         ComplexTextRun(const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
 
@@ -101,7 +110,7 @@ private:
 #endif
 
 #if USE(CORE_TEXT)
-        RetainPtr<CTRunRef> m_CTRun;
+        RetainPtr<CTRunRef> m_coreTextRun;
 #endif
         unsigned m_glyphCount;
         const SimpleFontData* m_fontData;
@@ -109,10 +118,11 @@ private:
         unsigned m_stringLocation;
         size_t m_stringLength;
 #if USE(CORE_TEXT)
-        RetainPtr<CFMutableDataRef> m_indicesData;
-        const CFIndex* m_indices;
-#elif USE(ATSUI)
-        Vector<CFIndex, 64> m_indices;
+        RetainPtr<CFMutableDataRef> m_coreTextIndicesData;
+        const CFIndex* m_coreTextIndices;
+#endif
+#if USE(ATSUI)
+        Vector<CFIndex, 64> m_atsuiIndices;
 #endif
         Vector<CGGlyph, 64> m_glyphsVector;
         const CGGlyph* m_glyphs;
@@ -125,7 +135,12 @@ private:
     };
 
     void collectComplexTextRuns();
+
+    // collectComplexTextRunsForCharacters() is a stub function that calls through to the ATSUI or Core Text variants based
+    // on the API in use.
     void collectComplexTextRunsForCharacters(const UChar*, unsigned length, unsigned stringLocation, const SimpleFontData*);
+    void collectComplexTextRunsForCharactersATSUI(const UChar*, unsigned length, unsigned stringLocation, const SimpleFontData*);
+    void collectComplexTextRunsForCharactersCoreText(const UChar*, unsigned length, unsigned stringLocation, const SimpleFontData*);
     void adjustGlyphsAndAdvances();
 
     const Font& m_font;
