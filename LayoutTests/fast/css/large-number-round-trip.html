@@ -25,11 +25,11 @@
   var testValue = "90010000px";
   box.style.left = testValue;
 
-  var leftValue = window.getComputedStyle(box).left;
+  var leftValue = window.getComputedStyle(box, null).left;
 
   box.style.left = "0px";
   box.style.left = leftValue;
-  var newLeftValue = window.getComputedStyle(box).left;
+  var newLeftValue = window.getComputedStyle(box, null).left;
 
   var results = document.getElementById('results');
   var result;

@@ -1,3 +1,13 @@
+2009-12-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reverting changes from http://trac.webkit.org/changeset/49585 to fix:
+        <rdar://problem/7382815> REGRESSION (4.0.4-TOT): Home photo slider is too narrow at http://www.ziprealty.com/
+        https://bugs.webkit.org/show_bug.cgi?id=32078
+
+        * css/CSSPrimitiveValue.cpp: (WebCore::CSSPrimitiveValue::cssText):
+
 2009-12-08  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
