@@ -1434,10 +1434,13 @@ static int mediaControllerTheme()
 
     controllerTheme = MediaControllerThemeClassic;
 
+    if (!wkMediaControllerThemeAvailable(MediaControllerThemeQuickTime))
+        return controllerTheme;
+
     Boolean validKey;
     Boolean useQTMediaUIPref = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
 
-#if !defined(BUILDING_ON_TIGER)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     if (validKey && !useQTMediaUIPref)
         return controllerTheme;
 #else

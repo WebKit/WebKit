@@ -1,3 +1,11 @@
+2009-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        No review, rolling out r52059 until I can generate new Tiger
+        test results.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::mediaControllerTheme):
+
 2009-12-12  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
