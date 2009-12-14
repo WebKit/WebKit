@@ -35,6 +35,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "StringBuilder.h"
+#include "StringExtras.h"
 #include "dtoa.h"
 #include <stdio.h>
 #include <stdlib.h>
