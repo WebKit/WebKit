@@ -1,5 +1,22 @@
 2009-12-13  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        SunSpider/tests/string-base64.js does not compute a valid base64 encoded string
+        https://bugs.webkit.org/show_bug.cgi?id=16806
+
+        Based on a patch by Eric Seidel.
+        
+        Fix the base64 computation to actually compute correct results. The impact on runtime of
+        the test is pretty small, but noticeable for some browsers. But at least it's not
+        doing a wrong and meaningless computation any more.
+        
+        * tests/sunspider-0.9.1/string-base64.js:
+        ():
+        (base64ToString):
+
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
         Fixing commit error...
         
         I accidentally committed my last patch in a form that broke Web-hosted SunSpider. Fixing.

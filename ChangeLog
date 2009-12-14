@@ -1,3 +1,12 @@
+2009-12-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        string-base64 test does not compute a valid base64 string
+        http://bugs.webkit.org/show_bug.cgi?id=16806
+
+        * tests/string-base64.js: change str[i] to str.charCodeAt(i)
+
 2009-12-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
