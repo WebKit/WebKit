@@ -1,3 +1,16 @@
+2009-12-14  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the QWebPage inputMethods() autotest after r51758
+        to compare the Qt::ImFont property's family against an explicitly
+        previously configured family.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32491
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2009-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
