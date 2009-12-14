@@ -1,3 +1,11 @@
+2009-12-14  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * WebKit.vcproj/WebKit.vcproj: Added $(DXSDK_DIR)\Lib\x86 to the
+        libpath for all non-Cairo configurations (it was missing from most of
+        them).
+
 2009-12-11  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Jon Honeycutt.
