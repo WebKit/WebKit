@@ -1,3 +1,15 @@
+2009-12-14  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Extend basic touch event test with a simple keyboard modifier test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32482
+
+        * fast/events/basic-touch-events-expected.txt:
+        * fast/events/script-tests/basic-touch-events.js:
+        (singleTouchSequence):
+
 2009-12-14  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.

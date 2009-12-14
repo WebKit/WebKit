@@ -1,3 +1,17 @@
+2009-12-14  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Add support for keyboard modifiers to Qt DRT's EventSender for touch events
+
+        https://bugs.webkit.org/show_bug.cgi?id=32482
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::setTouchModifier):
+        (EventSender::clearTouchPoints):
+        (EventSender::sendTouchEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2009-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gavin Barraclaugh.

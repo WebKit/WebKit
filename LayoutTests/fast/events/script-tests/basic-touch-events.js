@@ -46,19 +46,31 @@ function singleTouchSequence()
     eventSender.touchStart();
 
     verifyTouchEvent("touchstart", 1, 1, 1);
+    shouldBe("lastEvent.shiftKey", "false");
     shouldBeEqualToString("lastEvent.touches[0].target.id", "touchtarget");
     verifyTouchPoint("touches", 0, 10, 10, 0);
 
     eventSender.updateTouchPoint(0, 20, 15);
+    eventSender.setTouchModifier("shift", true);
+    eventSender.setTouchModifier("alt", true);
     eventSender.touchMove();
 
     verifyTouchEvent("touchmove", 1, 1, 1);
     verifyTouchPoint("touches", 0, 20, 15, 0);
+    shouldBe("lastEvent.shiftKey", "true");
+    shouldBe("lastEvent.altKey", "true");
+    shouldBe("lastEvent.ctrlKey", "false");
+    shouldBe("lastEvent.metaKey", "false");
+
+    eventSender.setTouchModifier("shift", false);
+    eventSender.setTouchModifier("alt", false);
 
     eventSender.touchEnd();
 
     verifyTouchEvent("touchend", 0, 1, 0);
     verifyTouchPoint("changedTouches", 0, 20, 15, 0);
+    shouldBe("lastEvent.shiftKey", "false");
+    shouldBe("lastEvent.altKey", "false");
 }
 
 function multiTouchSequence()

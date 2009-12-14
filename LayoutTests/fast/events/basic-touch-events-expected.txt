@@ -4,6 +4,7 @@ PASS lastEvent.type is "touchstart"
 PASS lastEvent.touches.length is 1
 PASS lastEvent.changedTouches.length is 1
 PASS lastEvent.targetTouches.length is 1
+PASS lastEvent.shiftKey is false
 PASS lastEvent.touches[0].target.id is "touchtarget"
 PASS lastEvent.touches[0].pageX is 10
 PASS lastEvent.touches[0].pageY is 10
@@ -19,6 +20,10 @@ PASS lastEvent.touches[0].pageY is 15
 PASS lastEvent.touches[0].clientX is 20
 PASS lastEvent.touches[0].clientY is 15
 PASS lastEvent.touches[0].identifier is 0
+PASS lastEvent.shiftKey is true
+PASS lastEvent.altKey is true
+PASS lastEvent.ctrlKey is false
+PASS lastEvent.metaKey is false
 PASS lastEvent.type is "touchend"
 PASS lastEvent.touches.length is 0
 PASS lastEvent.changedTouches.length is 1
@@ -28,6 +33,8 @@ PASS lastEvent.changedTouches[0].pageY is 15
 PASS lastEvent.changedTouches[0].clientX is 20
 PASS lastEvent.changedTouches[0].clientY is 15
 PASS lastEvent.changedTouches[0].identifier is 0
+PASS lastEvent.shiftKey is false
+PASS lastEvent.altKey is false
 multi touch sequence
 PASS lastEvent.type is "touchstart"
 PASS lastEvent.touches.length is 1

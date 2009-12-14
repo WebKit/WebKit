@@ -1,3 +1,31 @@
+2009-12-14  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Add support for keyboard modifiers to TouchEvent
+
+        https://bugs.webkit.org/show_bug.cgi?id=32482
+
+        Similar to other ui events with keyboard state, get the alt, shift,
+        meta and ctrl modifiers straight from the platform event.
+
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::initTouchEvent):
+        * dom/TouchEvent.h:
+        (WebCore::TouchEvent::create):
+        * dom/TouchEvent.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        (WebCore::PlatformTouchEvent::shiftKey):
+        (WebCore::PlatformTouchEvent::ctrlKey):
+        (WebCore::PlatformTouchEvent::altKey):
+        (WebCore::PlatformTouchEvent::metaKey):
+        * platform/qt/PlatformTouchEventQt.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+
 2009-12-14  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

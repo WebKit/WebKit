@@ -37,6 +37,11 @@ PlatformTouchEvent::PlatformTouchEvent(QTouchEvent* event)
     const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
     for (int i = 0; i < points.count(); ++i)
         m_touchPoints.append(PlatformTouchPoint(points.at(i)));
+
+    m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
+    m_altKey = (event->modifiers() & Qt::AltModifier);
+    m_shiftKey = (event->modifiers() & Qt::ShiftModifier);
+    m_metaKey = (event->modifiers() & Qt::MetaModifier);
 }
 
 }

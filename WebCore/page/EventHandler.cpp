@@ -2599,7 +2599,9 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     RefPtr<TouchEvent> ev = TouchEvent::create(touches.get(), targetTouches.get(), changedTouches.get(),
                                                *eventName, m_touchEventTarget->document()->defaultView(),
                                                m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
-                                               m_firstTouchPagePos.x(), m_firstTouchPagePos.y());
+                                               m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
+                                               event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                               event.metaKey());
 
     ExceptionCode ec = 0;
     m_touchEventTarget->dispatchEvent(ev.get(), ec);

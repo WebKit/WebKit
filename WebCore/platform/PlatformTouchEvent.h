@@ -37,7 +37,13 @@ enum TouchEventType { TouchStart, TouchMove, TouchEnd };
 
 class PlatformTouchEvent {
 public:
-    PlatformTouchEvent() : m_type(TouchStart) {}
+    PlatformTouchEvent()
+        : m_type(TouchStart)
+        , m_ctrlKey(false)
+        , m_altKey(false)
+        , m_shiftKey(false)
+        , m_metaKey(false)
+    {}
 #if PLATFORM(QT)
     PlatformTouchEvent(QTouchEvent*);
 #endif
@@ -45,9 +51,18 @@ public:
     TouchEventType type() const { return m_type; }
     const Vector<PlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
+    bool ctrlKey() const { return m_ctrlKey; }
+    bool altKey() const { return m_altKey; }
+    bool shiftKey() const { return m_shiftKey; }
+    bool metaKey() const { return m_metaKey; }
+
 private:
     TouchEventType m_type;
     Vector<PlatformTouchPoint> m_touchPoints;
+    bool m_ctrlKey;
+    bool m_altKey;
+    bool m_shiftKey;
+    bool m_metaKey;
 };
 
 }

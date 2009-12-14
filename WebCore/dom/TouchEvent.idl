@@ -32,6 +32,10 @@ module events {
         readonly attribute TouchList touches;
         readonly attribute TouchList targetTouches;
         readonly attribute TouchList changedTouches;
+        readonly attribute boolean ctrlKey;
+        readonly attribute boolean shiftKey;
+        readonly attribute boolean altKey;
+        readonly attribute boolean metaKey;
 
         void initTouchEvent(in TouchList touches,
                             in TouchList targetTouches,
@@ -41,6 +45,10 @@ module events {
                             in long screenX, 
                             in long screenY, 
                             in long clientX, 
-                            in long clientY);
+                            in long clientY,
+                            in boolean ctrlKey,
+                            in boolean altKey,
+                            in boolean shiftKey,
+                            in boolean metaKey);
     };
 }

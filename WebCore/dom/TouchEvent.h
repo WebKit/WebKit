@@ -42,16 +42,19 @@ public:
     static PassRefPtr<TouchEvent> create(TouchList* touches, 
             TouchList* targetTouches, TouchList* changedTouches, 
             const AtomicString& type, PassRefPtr<AbstractView> view,
-            int screenX, int screenY, int pageX, int pageY)
+            int screenX, int screenY, int pageX, int pageY,
+            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     {
         return adoptRef(new TouchEvent(touches, targetTouches, changedTouches,
-                type, view, screenX, screenY, pageX, pageY));
+                type, view, screenX, screenY, pageX, pageY,
+                ctrlKey, altKey, shiftKey, metaKey));
     }
 
     void initTouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type, 
             PassRefPtr<AbstractView> view, int screenX, int screenY, 
-            int clientX, int clientY);
+            int clientX, int clientY,
+            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
     TouchList* touches() const { return m_touches.get(); }
     TouchList* targetTouches() const { return m_targetTouches.get(); }
@@ -62,7 +65,8 @@ private:
     TouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type,
             PassRefPtr<AbstractView>, int screenX, int screenY, int pageX,
-            int pageY);
+            int pageY,
+            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
     virtual bool isTouchEvent() const { return true; }
 

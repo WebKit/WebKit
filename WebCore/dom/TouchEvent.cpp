@@ -33,9 +33,10 @@ namespace WebCore {
 
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 
-        PassRefPtr<AbstractView> view, int screenX, int screenY, int pageX, int pageY)
+        PassRefPtr<AbstractView> view, int screenX, int screenY, int pageX, int pageY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     : MouseRelatedEvent(type, true, true, view, 0, screenX, screenY, pageX, pageY,
-                        false, false, false, false)
+                        ctrlKey, altKey, shiftKey, metaKey)
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)
@@ -44,7 +45,8 @@ TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
 
 void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 
-        PassRefPtr<AbstractView> view, int screenX, int screenY, int clientX, int clientY)
+        PassRefPtr<AbstractView> view, int screenX, int screenY, int clientX, int clientY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     if (dispatched())
         return;
@@ -53,6 +55,10 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
 
     m_screenX = screenX;
     m_screenY = screenY;
+    m_ctrlKey = ctrlKey;
+    m_altKey = altKey;
+    m_shiftKey = shiftKey;
+    m_metaKey = metaKey;
     initCoordinates(clientX, clientY);
 }
 

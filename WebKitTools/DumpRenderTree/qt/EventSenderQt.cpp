@@ -274,6 +274,26 @@ void EventSender::updateTouchPoint(int index, int x, int y)
 #endif
 }
 
+void EventSender::setTouchModifier(const QString &modifier, bool enable)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    Qt::KeyboardModifier mod = Qt::NoModifier;
+    if (!modifier.compare(QLatin1String("shift"), Qt::CaseInsensitive))
+        mod = Qt::ShiftModifier;
+    else if (!modifier.compare(QLatin1String("alt"), Qt::CaseInsensitive))
+        mod = Qt::AltModifier;
+    else if (!modifier.compare(QLatin1String("meta"), Qt::CaseInsensitive))
+        mod = Qt::MetaModifier;
+    else if (!modifier.compare(QLatin1String("ctrl"), Qt::CaseInsensitive))
+        mod = Qt::ControlModifier;
+
+    if (enable)
+        m_touchModifiers |= mod;
+    else
+        m_touchModifiers &= ~mod;
+#endif
+}
+
 void EventSender::touchStart()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
@@ -301,6 +321,7 @@ void EventSender::clearTouchPoints()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     m_touchPoints.clear();
+    m_touchModifiers = Qt::KeyboardModifiers();
 #endif
 }
 
@@ -317,7 +338,7 @@ void EventSender::releaseTouchPoint(int index)
 void EventSender::sendTouchEvent(QEvent::Type type)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QTouchEvent event(type);
+    QTouchEvent event(type, QTouchEvent::TouchScreen, m_touchModifiers);
     event.setTouchPoints(m_touchPoints);
     QApplication::sendEvent(m_page, &event);
     QList<QTouchEvent::TouchPoint>::Iterator it = m_touchPoints.begin();
