@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -38,8 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -74,7 +73,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -95,8 +94,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -131,7 +129,7 @@
 		<Configuration
 			Name="Debug_Internal|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -151,8 +149,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -207,8 +204,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -264,8 +260,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -300,7 +295,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_all.vsprops;.\WebCoreQuartzCore.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -320,8 +315,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DXSDK_DIR)\Include"
-				PreprocessorDefinitions="QUARTZCORE_DLL"
+				AdditionalIncludeDirectories=""
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -37222,6 +37216,58 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSInjectedScriptHostCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSInspectedObjectWrapper.cpp"
 					>
 					<FileConfiguration
@@ -37278,56 +37324,12 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSInjectedScriptHostCustom.cpp"
+					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.cpp"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSInspectorFrontendHostCustom.cpp"
@@ -37380,14 +37382,6 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
-					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSJavaScriptCallFrameCustom.cpp"

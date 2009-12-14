@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebCoreQuartzCore"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;"
+		PreprocessorDefinitions="QUARTZCORE_DLL"
+	/>
+</VisualStudioPropertySheet>

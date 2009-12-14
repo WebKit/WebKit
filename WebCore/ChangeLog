@@ -1,3 +1,16 @@
+2009-12-14  Adam Roben  <aroben@apple.com>
+
+        Move QuartzCore-related build settings into a vsprops file
+
+        Fixes <http://webkit.org/b/32518>
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.vcproj/WebCore.vcproj: Let VS reformat the files list, added
+        WebCoreQuartzCore.vsprops to the non-Cairo configurations, moved all
+        other QuartzCore-related build settings from here...
+        * WebCore.vcproj/WebCoreQuartzCore.vsprops: ...to here.
+
 2009-12-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antti Koivisto.
