@@ -57,7 +57,8 @@ public:
     virtual const AtomicString& formControlType() const;
     virtual const AtomicString& formControlName() const;
     virtual String value() const;
-    virtual void setValue(const String&);
+    virtual void setValue(const String&, bool sendChangeEvent = false);
+    virtual void setValueForUser(const String&);
     virtual void setValueFromRenderer(const String&);
 
     virtual bool saveFormControlState(String& value) const;

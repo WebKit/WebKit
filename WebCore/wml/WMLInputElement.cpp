@@ -132,7 +132,7 @@ String WMLInputElement::value() const
     return value;
 }
 
-void WMLInputElement::setValue(const String& value)
+void WMLInputElement::setValue(const String& value, bool sendChangeEvent)
 {
     setFormControlValueMatchesRenderer(false);
     m_data.setValue(constrainValue(value));
@@ -149,6 +149,13 @@ void WMLInputElement::setValue(const String& value)
         cacheSelection(max, max);
 
     InputElement::notifyFormStateChanged(this);
+}
+
+void WMLInputElement::setValueForUser(const String& value)
+{
+    /* InputElement class defines pure virtual function 'setValueForUser', which 
+       will be useful only in HTMLInputElement. Do nothing in 'WMLInputElement'.
+     */
 }
 
 void WMLInputElement::setValueFromRenderer(const String& value)
