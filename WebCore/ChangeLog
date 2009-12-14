@@ -1,3 +1,71 @@
+2009-12-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: [regression] inspector deletes nodes when editing css.
+
+        Now all the treeoutlines are focusable, sections and their titles
+        are also focusable. Change contains couple of drive-by fixes such as
+        canceling of the attribute edit nuking attr info and maintaining proper
+        selection while deleting nodes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32460
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.handleShortcut):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._promptKeyDown):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._keyDown):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView):
+        (WebInspector.DatabaseQueryView.prototype._promptKeyDown):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel.prototype.get defaultFocusedElement):
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._keyDown):
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._editingCancelled):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.get defaultFocusedElement):
+        * inspector/front-end/PropertiesSection.js:
+        (WebInspector.PropertiesSection):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsPanel.prototype.handleShortcut):
+        * inspector/front-end/SidebarPane.js:
+        (WebInspector.SidebarPane):
+        (WebInspector.SidebarPane.prototype.toggleExpanded):
+        (WebInspector.SidebarPane.prototype._onTitleKeyDown):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector.documentCanCopy):
+        (WebInspector.documentCopy):
+        (WebInspector._searchFieldManualFocus):
+        (WebInspector._searchKeyDown):
+        (WebInspector.startEditing.cleanUpAfterEditing):
+        (WebInspector.startEditing.keyDownEventListener):
+        (WebInspector.startEditing):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline):
+        (TreeOutline._removeChildAtIndex):
+        (TreeOutline.prototype._treeKeyDown):
+        (TreeElement.prototype.deselect):
+        * inspector/front-end/utilities.js:
+        ():
+
 2009-12-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

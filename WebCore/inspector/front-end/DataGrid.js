@@ -469,10 +469,11 @@ WebInspector.DataGrid.prototype = {
         this.children = [];
     },
 
-    handleKeyEvent: function(event)
+
+    _keyDown: function(event)
     {
         if (!this.selectedNode || event.shiftKey || event.metaKey || event.ctrlKey || this._editing)
-            return false;
+            return;
 
         var handled = false;
         var nextSelectedNode;
@@ -540,8 +541,6 @@ WebInspector.DataGrid.prototype = {
             event.preventDefault();
             event.stopPropagation();
         }
-
-        return handled;
     },
 
     expand: function()
@@ -570,11 +569,6 @@ WebInspector.DataGrid.prototype = {
         var node = this._dataTable.ownerDocument.elementFromPoint(x, y);
         var rowElement = node.enclosingNodeOrSelfWithNodeName("tr");
         return rowElement._dataGridNode;
-    },
-
-    _keyDown: function(event)
-    {
-        this.handleKeyEvent(event);
     },
 
     _clickInHeaderCell: function(event)

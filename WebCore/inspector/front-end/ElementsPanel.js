@@ -46,7 +46,7 @@ WebInspector.ElementsPanel = function()
     this.treeOutline.focusedNodeChanged = function(forceUpdate)
     {
         if (this.panel.visible && WebInspector.currentFocusElement !== document.getElementById("search"))
-            WebInspector.currentFocusElement = document.getElementById("main-panels");
+            WebInspector.currentFocusElement = this.element;
 
         this.panel.updateBreadcrumb(forceUpdate);
 
@@ -127,6 +127,11 @@ WebInspector.ElementsPanel.prototype = {
     get statusBarItems()
     {
         return [this.nodeSearchButton.element, this.crumbsElement];
+    },
+
+    get defaultFocusedElement()
+    {
+        return this.treeOutline.element;
     },
 
     updateStatusBarItems: function()
@@ -1024,7 +1029,7 @@ WebInspector.ElementsPanel.prototype = {
         eventListenersSidebarPane.needsUpdate = false;
     },
 
-    handleKeyEvent: function(event)
+    handleShortcut: function(event)
     {
         // Cmd/Control + Shift + C should be a shortcut to clicking the Node Search Button.
         // This shortcut matches Firebug.
@@ -1036,12 +1041,10 @@ WebInspector.ElementsPanel.prototype = {
 
             if (isNodeSearchKey) {
                 this._nodeSearchButtonClicked(event);
-                event.preventDefault();
+                event.handled = true;
                 return;
             }
         }
-        
-        this.treeOutline.handleKeyEvent(event);
     },
 
     handleCopyEvent: function(event)

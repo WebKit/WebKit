@@ -38,7 +38,7 @@ WebInspector.DatabaseQueryView = function(database)
     this.promptElement = document.createElement("div");
     this.promptElement.className = "database-query-prompt";
     this.promptElement.appendChild(document.createElement("br"));
-    this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
+    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.element.appendChild(this.promptElement);
 
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " ");
@@ -98,8 +98,6 @@ WebInspector.DatabaseQueryView.prototype = {
             this._enterKeyPressed(event);
             return;
         }
-
-        this.prompt.handleKeyEvent(event);
     },
 
     _selectStart: function(event)

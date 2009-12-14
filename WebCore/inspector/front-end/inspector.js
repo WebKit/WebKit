@@ -475,19 +475,10 @@ WebInspector.loaded = function()
     window.addEventListener("resize", this.windowResize.bind(this), true);
 
     document.addEventListener("focus", this.focusChanged.bind(this), true);
-    document.addEventListener("keydown", this.documentKeyDown.bind(this), true);
-    document.addEventListener("keyup", this.documentKeyUp.bind(this), true);
+    document.addEventListener("keydown", this.documentKeyDown.bind(this), false);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
     document.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
-
-    var mainPanelsElement = document.getElementById("main-panels");
-    mainPanelsElement.handleCopyEvent = this.mainCopy.bind(this);
-
-    // Focus the mainPanelsElement in a timeout so it happens after the initial focus,
-    // so it doesn't get reset to the first toolbar button. This initial focus happens
-    // on Mac when the window is made key and the WebHTMLView becomes the first responder.
-    setTimeout(function() { WebInspector.currentFocusElement = mainPanelsElement }, 0);
 
     var dockToggleButton = document.getElementById("dock-status-bar-item");
     dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);
@@ -509,7 +500,8 @@ WebInspector.loaded = function()
 
     var searchField = document.getElementById("search");
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
-    searchField.addEventListener("mousedown", this.searchFieldManualFocus.bind(this), false); // when the search field is manually selected
+    searchField.addEventListener("mousedown", this._searchFieldManualFocus.bind(this), false); // when the search field is manually selected
+    searchField.addEventListener("keydown", this._searchKeyDown.bind(this), true);
 
     toolbarElement.addEventListener("mousedown", this.toolbarDragStart, true);
     document.getElementById("close-button-left").addEventListener("click", this.close, true);
@@ -638,143 +630,108 @@ WebInspector.documentClick = function(event)
 
 WebInspector.documentKeyDown = function(event)
 {
-    if (this.currentFocusElement) {
-        if (this.currentFocusElement.handleKeyEvent)
-            this.currentFocusElement.handleKeyEvent(event);
-        else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "KeyDown"])
-            WebInspector[this.currentFocusElement.id + "KeyDown"](event);
-        if (event.handled)
+    if (this.currentPanel && this.currentPanel.handleShortcut) {
+        this.currentPanel.handleShortcut(event);
+        if (event.handled) {
+            event.preventDefault();
             return;
-    }
-
-    if (this.currentPanel && this.currentPanel.handleKeyEvent)
-        this.currentPanel.handleKeyEvent(event);
-
-    if (!event.handled) {
-        var isMac = WebInspector.isMac();
-
-        switch (event.keyIdentifier) {
-            case "U+001B": // Escape key
-                event.preventDefault();
-                if (this.drawer.fullPanel)
-                    return;
-
-                this.drawer.visible = !this.drawer.visible;
-                break;
-
-            case "U+0046": // F key
-                if (isMac)
-                    var isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
-                else
-                    var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
-
-                if (isFindKey) {
-                    var searchField = document.getElementById("search");
-                    searchField.focus();
-                    searchField.select();
-                    event.preventDefault();
-                }
-
-                break;
-
-            case "U+0047": // G key
-                if (isMac)
-                    var isFindAgainKey = event.metaKey && !event.ctrlKey && !event.altKey;
-                else
-                    var isFindAgainKey = event.ctrlKey && !event.metaKey && !event.altKey;
-
-                if (isFindAgainKey) {
-                    if (event.shiftKey) {
-                        if (this.currentPanel.jumpToPreviousSearchResult)
-                            this.currentPanel.jumpToPreviousSearchResult();
-                    } else if (this.currentPanel.jumpToNextSearchResult)
-                        this.currentPanel.jumpToNextSearchResult();
-                    event.preventDefault();
-                }
-
-                break;
-
-            // Windows and Mac have two different definitions of [, so accept both.
-            case "U+005B":
-            case "U+00DB": // [ key
-                if (isMac)
-                    var isRotateLeft = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
-                else
-                    var isRotateLeft = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-
-                if (isRotateLeft) {
-                    var index = this.panelOrder.indexOf(this.currentPanel);
-                    index = (index === 0) ? this.panelOrder.length - 1 : index - 1;
-                    this.panelOrder[index].toolbarItem.click();
-                    event.preventDefault();
-                }
-
-                break;
-
-            // Windows and Mac have two different definitions of ], so accept both.
-            case "U+005D":
-            case "U+00DD":  // ] key
-                if (isMac)
-                    var isRotateRight = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
-                else
-                    var isRotateRight = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-
-                if (isRotateRight) {
-                    var index = this.panelOrder.indexOf(this.currentPanel);
-                    index = (index + 1) % this.panelOrder.length;
-                    this.panelOrder[index].toolbarItem.click();
-                    event.preventDefault();
-                }
-
-                break;
         }
     }
-}
 
-WebInspector.documentKeyUp = function(event)
-{
-    if (this.currentFocusElement) {
-        if (this.currentFocusElement.handleKeyUpEvent)
-            this.currentFocusElement.handleKeyUpEvent(event);
-        if (event.handled)
-            return;
+    var isMac = WebInspector.isMac();
+
+    switch (event.keyIdentifier) {
+        case "U+001B": // Escape key
+            event.preventDefault();
+            if (this.drawer.fullPanel)
+                return;
+
+            this.drawer.visible = !this.drawer.visible;
+            break;
+
+        case "U+0046": // F key
+            if (isMac)
+                var isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+            else
+                var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
+
+            if (isFindKey) {
+                var searchField = document.getElementById("search");
+                searchField.focus();
+                searchField.select();
+                event.preventDefault();
+            }
+
+            break;
+
+        case "U+0047": // G key
+            if (isMac)
+                var isFindAgainKey = event.metaKey && !event.ctrlKey && !event.altKey;
+            else
+                var isFindAgainKey = event.ctrlKey && !event.metaKey && !event.altKey;
+
+            if (isFindAgainKey) {
+                if (event.shiftKey) {
+                    if (this.currentPanel.jumpToPreviousSearchResult)
+                        this.currentPanel.jumpToPreviousSearchResult();
+                } else if (this.currentPanel.jumpToNextSearchResult)
+                    this.currentPanel.jumpToNextSearchResult();
+                event.preventDefault();
+            }
+
+            break;
+
+        // Windows and Mac have two different definitions of [, so accept both.
+        case "U+005B":
+        case "U+00DB": // [ key
+            if (isMac)
+                var isRotateLeft = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
+            else
+                var isRotateLeft = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+
+            if (isRotateLeft) {
+                var index = this.panelOrder.indexOf(this.currentPanel);
+                index = (index === 0) ? this.panelOrder.length - 1 : index - 1;
+                this.panelOrder[index].toolbarItem.click();
+                event.preventDefault();
+            }
+
+            break;
+
+        // Windows and Mac have two different definitions of ], so accept both.
+        case "U+005D":
+        case "U+00DD":  // ] key
+            if (isMac)
+                var isRotateRight = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
+            else
+                var isRotateRight = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+
+            if (isRotateRight) {
+                var index = this.panelOrder.indexOf(this.currentPanel);
+                index = (index + 1) % this.panelOrder.length;
+                this.panelOrder[index].toolbarItem.click();
+                event.preventDefault();
+            }
+
+            break;
     }
-
-    if (this.currentPanel && this.currentPanel.handleKeyUpEvent)
-        this.currentPanel.handleKeyUpEvent(event);
 }
 
 WebInspector.documentCanCopy = function(event)
 {
-    if (!this.currentFocusElement)
-        return;
-    // Calling preventDefault() will say "we support copying, so enable the Copy menu".
-    if (this.currentFocusElement.handleCopyEvent)
-        event.preventDefault();
-    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Copy"])
-        event.preventDefault();
+    return this.currentPanel && this.currentPanel.handleCopyEvent;
 }
 
 WebInspector.documentCopy = function(event)
 {
-    if (!this.currentFocusElement)
-        return;
-    if (this.currentFocusElement.handleCopyEvent)
-        this.currentFocusElement.handleCopyEvent(event);
-    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Copy"])
-        WebInspector[this.currentFocusElement.id + "Copy"](event);
+    if (this.currentPanel && this.currentPanel.handleCopyEvent)
+        this.currentPanel.handleCopyEvent(event);
 }
 
 WebInspector.contextMenuEventFired = function(event)
 {
     if (event.handled || event.target.hasStyleClass("popup-glasspane"))
         event.preventDefault();
-}
-
-WebInspector.mainCopy = function(event)
-{
-    if (this.currentPanel && this.currentPanel.handleCopyEvent)
-        this.currentPanel.handleCopyEvent(event);
 }
 
 WebInspector.animateStyle = function(animations, duration, callback)
@@ -1536,30 +1493,29 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
-WebInspector.searchFieldManualFocus = function(event)
+WebInspector._searchFieldManualFocus = function(event)
 {
     this.currentFocusElement = event.target;
     this._previousFocusElement = event.target;
 }
 
-WebInspector.searchKeyDown = function(event)
+WebInspector._searchKeyDown = function(event)
 {
     // Escape Key will clear the field and clear the search results
     if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
+        // If focus belongs here and text is empty - nothing to do, return unhandled.
+        if (event.target.value === "" && this.currentFocusElement === this.previousFocusElement)
+            return;
         event.preventDefault();
+        event.stopPropagation();
         // When search was selected manually and is currently blank, we'd like Esc stay unhandled
         // and hit console drawer handler.
-        event.handled = !(this.previousFocusElement === event.target && event.target.value === "");
         event.target.value = "";
 
         this.performSearch(event);
         this.currentFocusElement = this.previousFocusElement;
         if (this.currentFocusElement === event.target)
             this.currentFocusElement.select();
-        return false;
-    } else if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Backspace ||
-               event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
-        event.handled = true;
         return false;
     }
 
@@ -1704,7 +1660,6 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     element.__editing = true;
 
     var oldText = getContent(element);
-    var oldHandleKeyEvent = element.handleKeyEvent;
     var moveDirection = "";
 
     element.addStyleClass("editing");
@@ -1732,8 +1687,8 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         this.scrollTop = 0;
         this.scrollLeft = 0;
 
-        this.handleKeyEvent = oldHandleKeyEvent;
         element.removeEventListener("blur", blurEventListener, false);
+        element.removeEventListener("keydown", keyDownEventListener, true);
 
         if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
             WebInspector.currentFocusElement = WebInspector.previousFocusElement;
@@ -1758,26 +1713,21 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
             committedCallback(this, getContent(this), oldText, context, moveDirection);
     }
 
-    element.handleKeyEvent = function(event) {
-        if (oldHandleKeyEvent)
-            oldHandleKeyEvent(event);
-        if (event.handled)
-            return;
-
+    function keyDownEventListener(event) {
         if (isEnterKey(event)) {
             editingCommitted.call(element);
             event.preventDefault();
             event.stopPropagation();
-            event.handled = true;
-        } else if (event.keyCode === 27) { // Escape key
+        } else if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Esc) {
             editingCancelled.call(element);
             event.preventDefault();
-            event.handled = true;
+            event.stopPropagation();
         } else if (event.keyIdentifier === "U+0009") // Tab key
             moveDirection = (event.shiftKey ? "backward" : "forward");
     }
 
     element.addEventListener("blur", blurEventListener, false);
+    element.addEventListener("keydown", keyDownEventListener, true);
 
     WebInspector.currentFocusElement = element;
 }

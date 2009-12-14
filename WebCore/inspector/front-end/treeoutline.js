@@ -40,6 +40,9 @@ function TreeOutline(listNode)
     this.expanded = true;
     this.selected = false;
     this.treeOutline = this;
+
+    this._childrenListNode.tabIndex = 0;
+    this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
 }
 
 TreeOutline._knownTreeElementNextIdentifier = 1;
@@ -141,7 +144,15 @@ TreeOutline._removeChildAtIndex = function(childIndex)
     var child = this.children[childIndex];
     this.children.splice(childIndex, 1);
 
-    child.deselect();
+    var parent = child.parent;
+    if (child.deselect()) {
+        if (child.previousSibling)
+            child.previousSibling.select();
+        else if (child.nextSibling)
+            child.nextSibling.select();
+        else
+            parent.select();
+    }
 
     if (child.previousSibling)
         child.previousSibling.nextSibling = child.nextSibling;
@@ -327,10 +338,13 @@ TreeOutline.prototype.treeElementFromPoint = function(x, y)
     return null;
 }
 
-TreeOutline.prototype.handleKeyEvent = function(event)
+TreeOutline.prototype._treeKeyDown = function(event)
 {
+    if (event.target !== this._childrenListNode)
+        return;
+
     if (!this.selectedTreeElement || event.shiftKey || event.metaKey || event.ctrlKey)
-        return false;
+        return;
 
     var handled = false;
     var nextSelectedElement;
@@ -386,8 +400,6 @@ TreeOutline.prototype.handleKeyEvent = function(event)
         event.preventDefault();
         event.stopPropagation();
     }
-
-    return handled;
 }
 
 TreeOutline.prototype.expand = function()
@@ -775,7 +787,7 @@ TreeElement.prototype.select = function(supressOnSelect)
 TreeElement.prototype.deselect = function(supressOnDeselect)
 {
     if (!this.treeOutline || this.treeOutline.selectedTreeElement !== this || !this.selected)
-        return;
+        return false;
 
     this.selected = false;
     this.treeOutline.selectedTreeElement = null;
@@ -784,6 +796,7 @@ TreeElement.prototype.deselect = function(supressOnDeselect)
 
     if (this.ondeselect && !supressOnDeselect)
         this.ondeselect(this);
+    return true;
 }
 
 TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate, info)

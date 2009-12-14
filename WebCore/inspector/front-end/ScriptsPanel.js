@@ -56,7 +56,6 @@ WebInspector.ScriptsPanel = function()
     this.filesSelectElement.className = "status-bar-item";
     this.filesSelectElement.id = "scripts-files";
     this.filesSelectElement.addEventListener("change", this._changeVisibleFile.bind(this), false);
-    this.filesSelectElement.handleKeyEvent = this.handleKeyEvent.bind(this);
     this.topStatusBar.appendChild(this.filesSelectElement);
 
     this.functionsSelectElement = document.createElement("select");
@@ -206,6 +205,11 @@ WebInspector.ScriptsPanel.prototype = {
     get statusBarItems()
     {
         return [this.enableToggleButton.element, this.pauseOnExceptionButton.element];
+    },
+
+    get defaultFocusedElement()
+    {
+        return this.filesSelectElement;
     },
 
     get paused()
@@ -515,17 +519,15 @@ WebInspector.ScriptsPanel.prototype = {
         this._showScriptOrResource((view.resource || view.script));
     },
 
-    handleKeyEvent: function(event)
+    handleShortcut: function(event)
     {
         var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
         var handler = this._shortcuts[shortcut];
         if (handler) {
             handler(event);
-            event.preventDefault();
             event.handled = true;
-        } else {
-            this.sidebarPanes.callstack.handleKeyEvent(event);
-        }
+        } else
+            this.sidebarPanes.callstack.handleShortcut(event);
     },
 
     scriptViewForScript: function(script)

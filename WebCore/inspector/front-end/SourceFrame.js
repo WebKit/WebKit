@@ -203,7 +203,6 @@ WebInspector.SourceFrame.prototype = {
         this.element.contentDocument.addEventListener("contextmenu", this._documentContextMenu.bind(this), true);
         this.element.contentDocument.addEventListener("mousedown", this._documentMouseDown.bind(this), true);
         this.element.contentDocument.addEventListener("keydown", this._documentKeyDown.bind(this), true);
-        this.element.contentDocument.addEventListener("keyup", WebInspector.documentKeyUp.bind(WebInspector), true);
         this.element.contentDocument.addEventListener("webkitAnimationEnd", this._highlightLineEnds.bind(this), false);
 
         // Register 'eval' shortcut.

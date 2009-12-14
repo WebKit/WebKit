@@ -45,7 +45,7 @@ WebInspector.ConsoleView = function(drawer)
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
 
     this.promptElement = document.getElementById("console-prompt");
-    this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
+    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
 
     this.topGroup = new WebInspector.ConsoleGroup(null, 0);
@@ -407,13 +407,6 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        if (isFnKey(event)) {
-            if (WebInspector.currentPanel && WebInspector.currentPanel.handleKeyEvent) {
-                WebInspector.currentPanel.handleKeyEvent(event);
-                return;
-            }
-        }
-
         var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
         var handler = this._shortcuts[shortcut];
         if (handler) {
@@ -423,8 +416,6 @@ WebInspector.ConsoleView.prototype = {
                 return;
             }
         }
-
-        this.prompt.handleKeyEvent(event);
     },
 
     evalInInspectedWindow: function(expression, objectGroup, callback)

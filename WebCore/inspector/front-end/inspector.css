@@ -1047,7 +1047,7 @@ body.drawer-visible #drawer {
     background-color: rgb(212, 212, 212);
 }
 
-:focus .outline-disclosure li.selected .selection {
+.outline-disclosure ol:focus li.selected .selection {
     background-color: rgb(56, 121, 217);
 }
 
@@ -1075,11 +1075,11 @@ body.drawer-visible #drawer {
     text-indent: -2px
 }
 
-:focus .outline-disclosure li.selected {
+.outline-disclosure ol:focus li.selected {
     color: white;
 }
 
-:focus .outline-disclosure li.selected * {
+.outline-disclosure ol:focus li.selected * {
     color: inherit;
 }
 
@@ -1104,7 +1104,7 @@ body.drawer-visible #drawer {
     content: url(Images/treeRightTriangleBlack.png);
 }
 
-:focus .outline-disclosure li.parent.selected::before {
+.outline-disclosure ol:focus li.parent.selected::before {
     content: url(Images/treeRightTriangleWhite.png);
 }
 
@@ -1112,7 +1112,7 @@ body.drawer-visible #drawer {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
-:focus .outline-disclosure li.parent.expanded.selected::before {
+.outline-disclosure ol:focus li.parent.expanded.selected::before {
     content: url(Images/treeDownTriangleWhite.png);
 }
 

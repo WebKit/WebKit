@@ -33,7 +33,9 @@ WebInspector.SidebarPane = function(title)
 
     this.titleElement = document.createElement("div");
     this.titleElement.className = "title";
+    this.titleElement.tabIndex = 0;
     this.titleElement.addEventListener("click", this.toggleExpanded.bind(this), false);
+    this.titleElement.addEventListener("keydown", this._onTitleKeyDown.bind(this), false);
 
     this.bodyElement = document.createElement("div");
     this.bodyElement.className = "body";
@@ -119,6 +121,12 @@ WebInspector.SidebarPane.prototype = {
     toggleExpanded: function()
     {
         this.expanded = !this.expanded;
+    },
+
+    _onTitleKeyDown: function(event)
+    {
+        if (isEnterKey(event) || event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Space)
+            this.toggleExpanded();
     }
 }
 

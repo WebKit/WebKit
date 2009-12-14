@@ -43,6 +43,7 @@ WebInspector.ElementsTreeOutline = function() {
     this.focusedDOMNode = null;
 
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+    this.element.addEventListener("keydown", this._keyDown.bind(this), true);
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
@@ -191,8 +192,11 @@ WebInspector.ElementsTreeOutline.prototype = {
         return element;
     },
     
-    handleKeyEvent: function(event)
+    _keyDown: function(event)
     {
+        if (event.target !== this.treeOutline.element)
+            return;
+
         var selectedElement = this.selectedTreeElement;
         if (!selectedElement)
             return;
@@ -201,12 +205,13 @@ WebInspector.ElementsTreeOutline.prototype = {
                 event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
             selectedElement.remove();
             event.preventDefault();
+            event.stopPropagation();
             return;
         }
 
         // On Enter or Return start editing the first attribute
         // or create a new attribute on the selected element.
-        if (event.keyIdentifier === "Enter") {
+        if (isEnterKey(event)) {
             if (this._editing)
                 return;
 
@@ -214,10 +219,9 @@ WebInspector.ElementsTreeOutline.prototype = {
 
             // prevent a newline from being immediately inserted
             event.preventDefault();
+            event.stopPropagation();
             return;
         }
-
-        TreeOutline.prototype.handleKeyEvent.call(this, event);
     },
 
     _onmousedown: function(event)
@@ -829,14 +833,16 @@ WebInspector.ElementsTreeElement.prototype = {
 
         textNode.nodeValue = newText;
 
-        // No need to call _updateTitle here, it will be called after the nodeValue is committed.
+        // Need to restore attributes / node structure.
+        this._updateTitle();
     },
 
     _editingCancelled: function(element, context)
     {
         delete this._editing;
 
-        // No need to call _updateTitle here, the editing code will revert to the original text.
+        // Need to restore attributes structure.
+        this._updateTitle();
     },
 
     _updateTitle: function()

@@ -33,6 +33,7 @@ WebInspector.TextPrompt = function(element, completions, stopCharacters)
     this.completionStopCharacters = stopCharacters;
     this.history = [];
     this.historyOffset = 0;
+    this.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
 }
 
 WebInspector.TextPrompt.prototype = {
@@ -53,7 +54,7 @@ WebInspector.TextPrompt.prototype = {
         this.moveCaretToEndOfPrompt();
     },
 
-    handleKeyEvent: function(event)
+    _onKeyDown: function(event)
     {
         function defaultAction()
         {
