@@ -18,8 +18,8 @@
 */
 
 
+#include <../util.h>
 #include <QtTest/QtTest>
-
 #include <qwebpage.h>
 #include <qwidget.h>
 #include <qwebview.h>
@@ -27,29 +27,6 @@
 #include <qwebelement.h>
 //TESTED_CLASS=
 //TESTED_FILES=
-
-/**
- * Starts an event loop that runs until the given signal is received.
- Optionally the event loop
- * can return earlier on a timeout.
- *
- * \return \p true if the requested signal was received
- *         \p false on timeout
- */
-static bool waitForSignal(QObject* obj, const char* signal, int timeout = 0)
-{
-    QEventLoop loop;
-    QObject::connect(obj, signal, &loop, SLOT(quit()));
-    QTimer timer;
-    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    if (timeout > 0) {
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.setSingleShot(true);
-        timer.start(timeout);
-    }
-    loop.exec();
-    return timeoutSpy.isEmpty();
-}
 
 class tst_QWebElement : public QObject
 {
@@ -576,9 +553,8 @@ void tst_QWebElement::style()
     "</body>";
 
     // in few seconds, the CSS should be completey loaded
-    QSignalSpy spy(m_page, SIGNAL(loadFinished(bool)));
     m_mainFrame->setHtml(html6);
-    QTest::qWait(200);
+    waitForSignal(m_page, SIGNAL(loadFinished(bool)), 200);
 
     p = m_mainFrame->documentElement().findAll("p").at(0);
     QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
@@ -596,7 +572,7 @@ void tst_QWebElement::style()
 
     // in few seconds, the style should be completey loaded
     m_mainFrame->setHtml(html7);
-    QTest::qWait(200);
+    waitForSignal(m_page, SIGNAL(loadFinished(bool)), 200);
 
     p = m_mainFrame->documentElement().findAll("p").at(0);
     QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("black"));
