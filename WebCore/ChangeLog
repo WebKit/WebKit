@@ -1,3 +1,17 @@
+2009-12-14  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        Add FloatQuad::isRectilinear() to check whether it can be represented as FloatRect.
+        https://bugs.webkit.org/show_bug.cgi?id=30442
+
+        This enables optimizations for distinguishing between
+        arbitrary FloatQuads and rectilinear ones.
+
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::FloatQuad::isRectilinear):
+        * platform/graphics/FloatQuad.h:
+
 2009-12-14  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

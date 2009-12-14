@@ -74,6 +74,12 @@ public:
     // "slanted" empty quads.
     bool isEmpty() const { return boundingBox().isEmpty(); }
 
+    // Tests whether this quad can be losslessly represented by a FloatRect,
+    // that is, if two edges are parallel to the x-axis and the other two
+    // are parallel to the y-axis. If this method returns true, the
+    // corresponding FloatRect can be retrieved with boundingBox().
+    bool isRectilinear() const;
+
     // Tests whether the given point is inside, or on an edge or corner of this quad.
     bool containsPoint(const FloatPoint&) const;
 

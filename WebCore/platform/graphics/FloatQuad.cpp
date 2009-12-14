@@ -85,6 +85,12 @@ FloatRect FloatQuad::boundingBox() const
     return FloatRect(left, top, right - left, bottom - top);
 }
 
+bool FloatQuad::isRectilinear() const
+{
+    return (m_p1.x() == m_p2.x() && m_p2.y() == m_p3.y() && m_p3.x() == m_p4.x() && m_p4.y() == m_p1.y())
+        || (m_p1.y() == m_p2.y() && m_p2.x() == m_p3.x() && m_p3.y() == m_p4.y() && m_p4.x() == m_p1.x());
+}
+
 bool FloatQuad::containsPoint(const FloatPoint& p) const
 {
     return isPointInTriangle(p, m_p1, m_p2, m_p3) || isPointInTriangle(p, m_p1, m_p3, m_p4);
