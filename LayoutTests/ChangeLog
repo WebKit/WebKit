@@ -1,3 +1,21 @@
+2009-12-14  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        access-control-basic-denied-preflight-cache.html fails manual testing.
+        
+        LayoutTests/http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+        fails manual testing. It passes the automatic layout tests in Qt due to a bug with
+        notifyDone (see https://bugs.webkit.org/show_bug.cgi?id=32437).
+        
+        Performing the test manually in QtLauncher shows that an exception is received.
+        
+        Add access-control-basic-denied-preflight-cache.html to the Qt skipped list.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32521
+
+        * platform/qt/Skipped:
+
 2009-12-14  Eric Carlson  <eric.carlson@apple.com>
 
         Not reviewed, build fix.

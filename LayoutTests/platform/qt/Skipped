@@ -5187,3 +5187,10 @@ http/tests/misc/percent-sign-in-form-field-name.html
 # https://bugs.webkit.org/show_bug.cgi?id=32470
 http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
 http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
+
+# This test actually fails in manual testing.
+# It only passed automatic testing due to a bug in Qt's DRT, filed
+# under https://bugs.webkit.org/show_bug.cgi?id=32437.
+# The bug with this test is tracked under https://bugs.webkit.org/show_bug.cgi?id=32521
+http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+
