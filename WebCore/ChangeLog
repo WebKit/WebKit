@@ -1,3 +1,20 @@
+2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] QtWebKit should use QImageReader::setQuality(49)
+        https://bugs.webkit.org/show_bug.cgi?id=30740
+
+        Using QImageReader::setQuality(49) will influence the JPEG
+        decoder of Qt to use the JDCT_IFAST routines for decompressing. This
+        is showing a 5% improvement in a reduction that decodes all images
+        used during the page loading test. The libjpeg documentation mentions
+        that the IFAST routine is not as accurate as other routines but in
+        our tests we couldn't see a difference.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+
 2009-11-11  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Oliver Hunt.

@@ -82,6 +82,9 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     m_buffer->open(QBuffer::ReadOnly);
     m_reader = new QImageReader(m_buffer, m_format);
 
+    // This will force the JPEG decoder to use JDCT_IFAST
+    m_reader->setQuality(49);
+
     // QImageReader only allows retrieving the format before reading the image
     m_format = m_reader->format();
 }
