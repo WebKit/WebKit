@@ -39,6 +39,8 @@
 #include "HTMLNames.h"
 #include "HTMLFrameElementBase.h"
 #include "Location.h"
+#include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8Proxy.h"
 
 #if ENABLE(SVG)
@@ -51,7 +53,7 @@ bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase* frame, String val
 {
     if (protocolIs(deprecatedParseURL(value), "javascript")) {
         Node* contentDoc = frame->contentDocument();
-        if (contentDoc && !V8Proxy::checkNodeSecurity(contentDoc))
+        if (contentDoc && !V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), contentDoc))
             return false;
     }
     return true;
@@ -97,7 +99,7 @@ INDEXED_ACCESS_CHECK(History)
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
     History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
-    return V8Proxy::canAccessFrame(history->frame(), false);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
 }
 
 NAMED_ACCESS_CHECK(History)
@@ -105,7 +107,7 @@ NAMED_ACCESS_CHECK(History)
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
     History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
-    return V8Proxy::canAccessFrame(history->frame(), false);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
 }
 
 #undef INDEXED_ACCESS_CHECK

@@ -32,6 +32,7 @@
 #define V8Binding_h
 
 #include "AtomicString.h"
+#include "BindingSecurity.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
@@ -43,6 +44,10 @@ namespace WebCore {
     
     class EventListener;
     class EventTarget;
+
+    // Instantiate binding template classes for V8.
+    class V8Binding {};
+    typedef BindingSecurity<V8Binding> V8BindingSecurity;
     
     // A helper function extract native object pointer from a DOM wrapper
     // and cast to the specified type.

@@ -106,6 +106,7 @@
       '../',
       '../accessibility',
       '../accessibility/chromium',
+      '../bindings',
       '../bindings/v8',
       '../bindings/v8/custom',
       '../bridge',

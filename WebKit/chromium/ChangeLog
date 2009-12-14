@@ -1,3 +1,13 @@
+2009-12-13  Charles Reis  <creis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Refactor some security code out of V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=32326
+
+        * src/WebBindings.cpp:
+        (WebKit::getDragDataImpl):
+
 2009-12-11  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

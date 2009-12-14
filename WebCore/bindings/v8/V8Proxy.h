@@ -139,6 +139,12 @@ namespace WebCore {
             GeneralError
         };
 
+        // When to report errors.
+        enum DelayReporting {
+            ReportLater,
+            ReportNow
+        };
+
         explicit V8Proxy(Frame*);
 
         ~V8Proxy();
@@ -301,13 +307,6 @@ namespace WebCore {
         // is disabled and it returns true.
         static bool handleOutOfMemory();
 
-        // Check if the active execution context can access the target frame.
-        static bool canAccessFrame(Frame*, bool reportError);
-
-        // Check if it is safe to access the given node from the
-        // current security context.
-        static bool checkNodeSecurity(Node*);
-
         static v8::Handle<v8::Value> checkNewLegal(const v8::Arguments&);
 
         static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine);
@@ -365,6 +364,9 @@ namespace WebCore {
 
         void initContextIfNeeded();
         void updateDocumentWrapper(v8::Handle<v8::Value> wrapper);
+        
+        // Report an unsafe attempt to access the given frame on the console.
+        static void reportUnsafeAccessTo(Frame* target, DelayReporting delay);
 
     private:
         void setSecurityToken();
@@ -388,8 +390,6 @@ namespace WebCore {
 
         // Returns false when we're out of memory in V8.
         bool setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
-
-        static bool canAccessPrivate(DOMWindow*);
 
         static const char* rangeExceptionName(int exceptionCode);
         static const char* eventExceptionName(int exceptionCode);

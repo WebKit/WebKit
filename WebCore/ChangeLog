@@ -1,3 +1,60 @@
+2009-12-13  Charles Reis  <creis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Refactor some security code out of V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=32326
+
+        No new tests. There should be no functionality changes in this patch,
+        since it is only refactoring code.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/BindingSecurity.h: Added.
+        (WebCore::BindingSecurity::BindingSecurity):
+        (WebCore::::canAccessWindow):
+        (WebCore::::canAccessFrame):
+        (WebCore::::checkNodeSecurity):
+        * bindings/BindingSecurityBase.cpp: Added.
+        (WebCore::BindingSecurityBase::getDOMWindow):
+        (WebCore::BindingSecurityBase::getFrame):
+        (WebCore::BindingSecurityBase::canAccessWindow):
+        * bindings/BindingSecurityBase.h: Added.
+        * bindings/GenericBinding.h: Added.
+        (WebCore::):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::isSafeScript):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8BindingState.cpp: Added.
+        (WebCore::::Only):
+        (WebCore::::getActiveWindow):
+        (WebCore::::immediatelyReportUnsafeAccessTo):
+        * bindings/v8/V8BindingState.h: Added.
+        (WebCore::):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        (WebCore::reportUnsafeJavaScriptAccess):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::):
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        (WebCore::allowSettingFrameSrcToJavascriptUrl):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        (WebCore::NAMED_ACCESS_CHECK):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::V8Custom::ClearTimeoutImpl):
+        (WebCore::NAMED_ACCESS_CHECK):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        (WebCore::NAMED_ACCESS_CHECK):
+
 2009-11-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

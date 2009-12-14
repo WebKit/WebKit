@@ -50,6 +50,7 @@
 #include "ScriptState.h"
 #include "Settings.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
 #include "Widget.h"
@@ -84,7 +85,7 @@ Frame* ScriptController::retrieveFrameForCurrentContext()
 
 bool ScriptController::isSafeScript(Frame* target)
 {
-    return V8Proxy::canAccessFrame(target, true);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, true);
 }
 
 void ScriptController::gcProtectJSWrapper(void* domObject)
