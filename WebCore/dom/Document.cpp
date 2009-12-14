@@ -1724,7 +1724,8 @@ void Document::implicitClose()
     if (f)
         f->animation()->resumeAnimations(this);
 
-    ImageLoader::dispatchPendingEvents();
+    ImageLoader::dispatchPendingBeforeLoadEvents();
+    ImageLoader::dispatchPendingLoadEvents();
     dispatchWindowLoadEvent();
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, false), this);
     if (m_pendingStateObject)

@@ -231,9 +231,13 @@ void ImageLoader::dispatchPendingLoadEvent()
     dispatchLoadEvent();
 }
 
-void ImageLoader::dispatchPendingEvents()
+void ImageLoader::dispatchPendingBeforeLoadEvents()
 {
     beforeLoadEventSender().dispatchPendingEvents();
+}
+
+void ImageLoader::dispatchPendingLoadEvents()
+{
     loadEventSender().dispatchPendingEvents();
 }
 

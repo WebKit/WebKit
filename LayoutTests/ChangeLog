@@ -1,3 +1,13 @@
+2009-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31660
+        REGRESSION (r49394): Image load event fires before the document fragment is attached.
+
+        * fast/images/image-load-event-in-fragment-expected.txt: Added.
+        * fast/images/image-load-event-in-fragment.html: Added.
+
 2009-12-14  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.

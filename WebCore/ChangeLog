@@ -1,3 +1,32 @@
+2009-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31660
+        REGRESSION (r49394): Image load event fires before the document fragment is attached.
+
+        Test: fast/images/image-load-event-in-fragment.html
+
+        We cannot fire load events immediately after parsing a fragment - an element inserted via
+        innerHTML or equivalent should be reachable via getElementById() by the time its load event
+        fires.
+
+        * dom/Document.cpp: (WebCore::Document::implicitClose): Call dispatchPendingBeforeLoadEvents()
+        and dispatchPendingLoadEvents() individually. I'm not sure why these calls are here, just
+        preserving existing behavior.
+
+        * dom/XMLTokenizer.cpp: (WebCore::XMLTokenizer::write):
+        * html/HTMLTokenizer.cpp: (WebCore::HTMLTokenizer::write):
+        Load events for elements that have just been parsed cannot be dispatched yet, we should give
+        the elements a chance to be inserted into a document first. There is no compatibility baggage
+        for beforeload, so it seems OK to dispatch it right away.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvents):
+        (WebCore::ImageLoader::dispatchPendingLoadEvents):
+        * loader/ImageLoader.h:
+        Separated dispatchPendingEvents() into individual functions for each event kind.
+
 2009-12-14  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Simon Fraser.

@@ -56,7 +56,8 @@ public:
     bool haveFiredBeforeLoadEvent() const { return m_firedBeforeLoad; }
     bool haveFiredLoadEvent() const { return m_firedLoad; }
 
-    static void dispatchPendingEvents();
+    static void dispatchPendingBeforeLoadEvents();
+    static void dispatchPendingLoadEvents();
 
 protected:
     virtual void notifyFinished(CachedResource*);
