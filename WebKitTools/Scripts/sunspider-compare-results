@@ -42,6 +42,7 @@ my $showHelp = 0;
 my $suite = "";
 my $ubench = 0;
 my $v8 = 0;
+my $parseonly = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;

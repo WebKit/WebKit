@@ -1,3 +1,11 @@
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Gavin Barraclaugh.
+
+        Fix minor problem in sunspider-compare-results which left it broken.
+
+        * Scripts/sunspider-compare-results: Declare $parseonly
+
 2009-12-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
