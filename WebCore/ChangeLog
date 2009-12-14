@@ -1,3 +1,22 @@
+2009-12-03  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Connect QNetworkReply via direct connections.
+        https://bugs.webkit.org/show_bug.cgi?id=32113
+
+        In the past we have switched from auto connections to queued
+        connections to get some more stability. The problem with the
+        Queued connections is latency. Even when running simple loading
+        tests the time it takes to runs highly varies and by using
+        direct connections these tests produce a stable result.
+
+        We will have to look out for crashes coming from within the
+        QNetworkAccessManager due this patch and address them then.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
 2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Simon Hausmann.
