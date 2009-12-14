@@ -423,6 +423,44 @@ if (count == 0)
 <li>In Objective-C, instance variables are initialized to zero automatically. Don't add explicit initializations to nil or NO in an init method.</li>
 </ol>
 
+<h3>Floating point literals</h3>
+<ol>
+<li>Unless required in order to force floating point math, do not append
+<code>.0</code>, <code>.f</code> and <code>.0f</code> to floating point
+literals.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+const double duration = 60;
+
+void setDiameter(float diameter)
+{
+    radius = diameter / 2;
+}
+
+setDiameter(10);
+
+const int framesPerSecond = 12;
+double frameDuration = 1.0 / framesPerSecond;
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+const double duration = 60.0;
+
+void setDiameter(float diameter)
+{
+    radius = diameter / 2.f;
+}
+
+setDiameter(10.f);
+
+const int framesPerSecond = 12;
+double frameDuration = 1 / framesPerSecond; // integer division
+</pre>
+</li>
+</ol>
+
 <h3>Names</h3>
 <ol>
 <li>Use CamelCase. Capitalize the first letter, including all letters in an acronym, in a class, struct, protocol, or namespace name. Lower-case the first letter, including all letters in an acronym, in a variable or function name.
