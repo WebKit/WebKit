@@ -724,3 +724,7 @@ websocket/tests/sub-protocol-with-space.html
 
 # This test requires touch support
 fast/events/basic-touch-events.html
+
+# XSS auditor tests intermittently time out <http://webkit.org/b/32528>
+http/tests/security/xss-DENIED-getSVGDocument-iframe.html
+http/tests/security/xss-DENIED-getSVGDocument-object.html
