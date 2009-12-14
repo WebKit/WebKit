@@ -54,7 +54,8 @@ LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
 
 void LayoutTestController::reset()
 {
-    m_isLoading = true;
+    m_hasDumped = false;
+    m_loadFinished = false;
     m_textDump = false;
     m_dumpBackForwardList = false;
     m_dumpChildrenAsText = false;
@@ -78,7 +79,7 @@ void LayoutTestController::processWork()
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
     if (WorkQueue::shared()->processWork() && !shouldWaitUntilDone()) {
         emit done();
-        m_isLoading = false;
+        m_hasDumped = true;
     }
 }
 
@@ -87,23 +88,20 @@ void LayoutTestController::maybeDump(bool success)
 {
     Q_ASSERT(sender() == m_topLoadingFrame->page());
 
+    m_loadFinished = true;
     // as the function is called on loadFinished, the test might
     // already have dumped and thus no longer be active, thus
     // bail out here.
-    if (!m_isLoading)
+    if (m_hasDumped)
         return;
 
-    m_topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
-
-    if (!shouldWaitUntilDone()) {
-        if (WorkQueue::shared()->count())
-            QTimer::singleShot(0, this, SLOT(processWork()));
-        else {
-            if (success)
-                emit done();
-            m_isLoading = false;
-        }
+    if (WorkQueue::shared()->count())
+        QTimer::singleShot(0, this, SLOT(processWork()));
+    else if (!shouldWaitUntilDone()) {
+        if (success)
+            emit done();
+        m_hasDumped = true;
     }
 }
 
@@ -132,11 +130,19 @@ void LayoutTestController::notifyDone()
         return;
 
     m_timeoutTimer.stop();
+    m_waitForDone = false;
+
+    // If the page has not finished loading (i.e. loadFinished() has not been emitted) then
+    // content created by the likes of document.write() JS methods will not be available yet.
+    // When the page has finished loading, maybeDump above will dump the results now that we have
+    // just set shouldWaitUntilDone to false.
+    if (!m_loadFinished)
+        return;
+
     emit done();
 
     // FIXME: investigate why always resetting these result in timeouts
-    m_isLoading = false;
-    m_waitForDone = false;
+    m_hasDumped = true;
     m_waitForPolicy = false;
 }
 
@@ -208,7 +214,7 @@ void LayoutTestController::queueNonLoadingScript(const QString& script)
 void LayoutTestController::provisionalLoad()
 {
     QWebFrame* frame = qobject_cast<QWebFrame*>(sender());
-    if (!m_topLoadingFrame && m_isLoading)
+    if (!m_topLoadingFrame && !m_hasDumped)
         m_topLoadingFrame = frame;
 }
 

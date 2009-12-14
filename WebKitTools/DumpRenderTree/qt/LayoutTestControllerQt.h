@@ -54,9 +54,6 @@ class LayoutTestController : public QObject {
 public:
     LayoutTestController(WebCore::DumpRenderTree* drt);
 
-    bool isLoading() const { return m_isLoading; }
-    void setLoading(bool loading) { m_isLoading = loading; }
-
     bool shouldDumpAsText() const { return m_textDump; }
     bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
@@ -115,6 +112,7 @@ public slots:
     void setPrivateBrowsingEnabled(bool enable);
     void setPopupBlockingEnabled(bool enable);
     void setPOSIXLocale(const QString& locale);
+    void resetLoadFinished() { m_loadFinished = false; }
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);
@@ -137,7 +135,7 @@ private slots:
     void processWork();
 
 private:
-    bool m_isLoading;
+    bool m_hasDumped;
     bool m_textDump;
     bool m_dumpBackForwardList;
     bool m_dumpChildrenAsText;
@@ -148,6 +146,7 @@ private:
     bool m_dumpStatusCallbacks;
     bool m_waitForPolicy;
     bool m_handleErrorPages;
+    bool m_loadFinished;
 
     QBasicTimer m_timeoutTimer;
     QWebFrame* m_topLoadingFrame;

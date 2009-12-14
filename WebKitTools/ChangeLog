@@ -1,3 +1,39 @@
+2009-12-14  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix https://bugs.webkit.org/show_bug.cgi?id=32437
+        
+        Amend the behaviour of DRT::notifyDone to dump only when
+        the page has finished loading.
+        
+        This fix permits removal of the following tests from the Qt skipped list:
+        fast/forms/textarea-linewrap-dynamic.html
+        fast/forms/textarea-setvalue-submit.html
+        fast/forms/textarea-hard-linewrap-empty.html
+        fast/forms/submit-to-url-fragment.html
+        http/tests/misc/percent-sign-in-form-field-name.html
+        http/tests/security/escape-form-data-field-names.html
+        
+        However it also requires the following two to be added to the skipped list:
+        
+        http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
+        svg/custom/use-instanceRoot-as-event-target.xhtml
+        
+        It appears the behaviour of notifyDone was masking problems with these two
+        tests.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::processWork):
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::provisionalLoad):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::resetLoadFinished):
+
 2009-12-14  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

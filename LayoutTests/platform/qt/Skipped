@@ -4859,12 +4859,8 @@ fast/forms/option-mouseevents.html
 fast/forms/search-abs-pos-cancel-button.html
 fast/forms/slider-transformed.html
 fast/forms/slider-zoomed.html
-fast/forms/submit-to-url-fragment.html
 fast/forms/text-control-intrinsic-widths.html
-fast/forms/textarea-hard-linewrap-empty.html
-fast/forms/textarea-linewrap-dynamic.html
 fast/forms/textarea-metrics.html
-fast/forms/textarea-setvalue-submit.html
 fast/history/back-forward-is-asynchronous.html
 fast/history/window-open.html
 fast/loader/cancel-load-during-port-block-timer.html
@@ -4986,7 +4982,6 @@ http/tests/security/cross-frame-access-put.html
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-over-remote-content-iframe.html
-http/tests/security/escape-form-data-field-names.html
 http/tests/security/host-compare-case-insensitive.html
 http/tests/security/window-properties-clear-domain.html
 http/tests/security/window-properties-clear-port.html
@@ -5178,10 +5173,6 @@ svg/custom/radial-gradient-with-outstanding-focalPoint.svg
 # CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
 # This test introduced in r51877
 fast/loader/input-element-page-cache-crash.html
-
-# [Qt][LayoutTestController] Output of document.write() is vanished by waitUntilDone()/notifyDone()
-# https://bugs.webkit.org/show_bug.cgi?id=32437
-http/tests/misc/percent-sign-in-form-field-name.html
 
 # Missing forward entries when dumping back/forward list.
 # https://bugs.webkit.org/show_bug.cgi?id=32470

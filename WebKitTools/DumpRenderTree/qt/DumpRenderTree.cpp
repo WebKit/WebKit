@@ -332,6 +332,10 @@ DumpRenderTree::DumpRenderTree()
 
     connect(m_page, SIGNAL(loadFinished(bool)),
             m_controller, SLOT(maybeDump(bool)));
+    // We need to connect to loadStarted() because notifyDone should only
+    // dump results itself when the last page loaded in the test has finished loading.
+    connect(m_page, SIGNAL(loadStarted()),
+            m_controller, SLOT(resetLoadFinished()));
 
     connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),
             SLOT(titleChanged(const QString&)));
