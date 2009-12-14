@@ -1,3 +1,16 @@
+2009-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7341364> Crash at HTMLParser::popOneBlockCommon() after
+        handling misnested residual style tags
+
+        Test: fast/parser/residual-style-close-ref-clone.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Gave the
+        block stack a strong reference to the cloned residual style element. 
+
 2009-12-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig.
