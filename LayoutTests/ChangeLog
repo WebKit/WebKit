@@ -1,3 +1,13 @@
+2009-12-14  Kinuko Yasuda  <kinuko@chromium.com>
+
+        Reviewed by Darin Fisher.
+
+        Make changing-frame-hierarchy-in-onload.html less flaky and
+        platform-independent.
+        https://bugs.webkit.org/show_bug.cgi?id=32319
+
+        * http/tests/navigation/changing-frame-hierarchy-in-onload.html:
+
 2009-12-14  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.
