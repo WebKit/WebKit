@@ -1,5 +1,17 @@
 2009-12-14  Adam Roben  <aroben@apple.com>
 
+        Change IWebFramePrivate's vtable to be compatible with Safari 4.0.4
+
+        Reviewed by Steve Falkenburg.
+
+        Fixes <http://webkit.org/b/32433> REGRESSION (r51567): Right click on
+        a link element crashes WebKit nightly
+
+        * Interfaces/IWebFramePrivate.idl: Moved pauseSVGAnimation to the end
+        of the interface so the vtable that Safari 4.0.4 sees is unchanged.
+
+2009-12-14  Adam Roben  <aroben@apple.com>
+
         Build fix
 
         * WebKit.vcproj/WebKit.vcproj: Added $(DXSDK_DIR)\Lib\x86 to the
