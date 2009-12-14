@@ -264,6 +264,7 @@ private:
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool ariaIsHidden() const;
     bool isDescendantOfBarrenParent() const;
+    bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
 

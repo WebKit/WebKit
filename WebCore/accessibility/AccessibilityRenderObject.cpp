@@ -1399,6 +1399,28 @@ bool AccessibilityRenderObject::isDescendantOfBarrenParent() const
     return false;
 }
     
+bool AccessibilityRenderObject::isAllowedChildOfTree() const
+{
+    // Determine if this is in a tree. If so, we apply special behavior to make it work like an AXOutline.
+    AccessibilityObject* axObj = parentObject();
+    bool isInTree = false;
+    while (axObj) {
+        if (axObj->isTree()) {
+            isInTree = true;
+            break;
+        }
+        axObj = axObj->parentObject();
+    }
+    
+    // If the object is in a tree, only tree items should be exposed (and the children of tree items).
+    if (isInTree) {
+        AccessibilityRole role = roleValue();
+        if (role != TreeItemRole && role != StaticTextRole)
+            return false;
+    }
+    return true;
+}
+    
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
     // Is the platform interested in this object?
@@ -1424,6 +1446,10 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         return true;    
     
     if (roleValue() == IgnoredRole)
+        return true;
+    
+    // An ARIA tree can only have tree items and static text as children.
+    if (!isAllowedChildOfTree())
         return true;
     
     // ignore popup menu items because AppKit does

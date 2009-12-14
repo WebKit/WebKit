@@ -1,3 +1,13 @@
+2009-12-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        AX: there's an infinite loop going on for some webpages - facebook.com
+        https://bugs.webkit.org/show_bug.cgi?id=32501
+
+        * accessibility/hang-in-isignored-expected.txt: Added.
+        * accessibility/hang-in-isignored.html: Added.
+
 2009-12-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
