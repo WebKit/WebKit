@@ -131,7 +131,7 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 
     // Zero-height images can cause problems for some ports.  If we have an
     // empty image dimension, just bail.
-    if (size().isEmpty())
+    if (!isSizeAvailable() || size().isEmpty())
         return 0;
 
     // Return the buffer contents as a native image.  For some ports, the data
