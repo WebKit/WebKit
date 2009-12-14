@@ -1,3 +1,19 @@
+2009-12-14  Marco Martin  <notmart@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        In the Scrollbar painting of the Qt theme integration,
+        intersects any previous clip rects with the one needed to paint the scrollbar.
+        This fixes the painting in QGraphicsview, when the parent of the widget that 
+        paints the QWebPage has the QGraphicsItem::ItemClipsChildrenToShape set and
+        a piece of the scrollbar should be cipped away
+        https://bugs.webkit.org/show_bug.cgi?id=30366
+
+        No new tests.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+
 2009-12-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
