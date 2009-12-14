@@ -320,6 +320,8 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
+        m_redirected = true;
+
         QUrl newUrl = m_reply->url().resolved(redirection);
         ResourceRequest newRequest = m_resourceHandle->request();
         newRequest.setURL(newUrl);
@@ -334,7 +336,9 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
             newRequest.clearHTTPReferrer();
 
         client->willSendRequest(m_resourceHandle, newRequest, response);
-        m_redirected = true;
+        if (!m_resourceHandle) // network error did cancel the request
+            return;
+
         m_request = newRequest.toNetworkRequest(m_resourceHandle->getInternal()->m_frame);
         return;
     }
