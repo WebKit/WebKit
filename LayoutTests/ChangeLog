@@ -1,3 +1,11 @@
+2009-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Not reviewed, build fix.
+
+        Add missing newline at end of test result.
+
+        * platform/mac-tiger/media/video-no-audio-expected.txt:
+
 2009-12-14  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Adler.
