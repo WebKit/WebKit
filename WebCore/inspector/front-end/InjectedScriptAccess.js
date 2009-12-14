@@ -76,6 +76,7 @@ InjectedScriptAccess._installHandler("setPropertyValue");
 InjectedScriptAccess._installHandler("setStyleProperty");
 InjectedScriptAccess._installHandler("setStyleText");
 InjectedScriptAccess._installHandler("toggleStyleEnabled");
+InjectedScriptAccess._installHandler("evaluateOnSelf");
 
 // Some methods can't run synchronously even on the injected script side (such as DB transactions).
 // Mark them as asynchronous here.

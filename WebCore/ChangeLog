@@ -1,3 +1,14 @@
+2009-12-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Implement InjectedScript.evaluateOnSelf() that evaluates functions in the InjectedScript context.
+        https://bugs.webkit.org/show_bug.cgi?id=32517
+
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.evaluateOnSelf):
+        * inspector/front-end/InjectedScriptAccess.js:
+
 2009-12-14  Nayan Kumar K  <nayankk@gmail.com>
 
         Reviewed by Darin Adler.
