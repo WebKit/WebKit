@@ -1,3 +1,18 @@
+2009-12-14  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32347
+        Chromium: Context menu launched by menu key has funky behavior
+
+        Make the context menu's position depend on the selection only when an
+        editable field has focus. Also, don't send multiple context menu events
+        for a single keypress.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::sendContextMenuEvent):
+
 2009-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
