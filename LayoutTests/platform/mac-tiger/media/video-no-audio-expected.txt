@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 413x18
+          text run at (0,0) width 413: "Movie with no audio track. The volume button should not render."
+      RenderBlock (anonymous) at (0,34) size 784x480
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,42) size 640x480
+  RenderVideo {VIDEO} at (0,0) size 640x480
+layer at (8,42) size 640x480
+  RenderBlock (relative positioned) {DIV} at (0,0) size 640x480
+layer at (8,506) size 640x16
+  RenderFlexibleBox (positioned) {DIV} at (0,464) size 640x16
+    RenderButton {INPUT} at (0,0) size 16x16
+    RenderFlexibleBox {DIV} at (16,0) size 592x16
+      RenderSlider {INPUT} at (0,0) size 592x16
+        RenderBlock {DIV} at (2,1) size 13x14
+    RenderButton {INPUT} at (608,0) size 16x16
+    RenderButton {INPUT} at (624,0) size 16x16

@@ -1,3 +1,21 @@
+2009-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Not reviewed, build fix.
+
+        Update Tiger media test results after r52094.
+
+        * platform/mac-tiger/accessibility: Added.
+        * platform/mac-tiger/accessibility/media-element-expected.txt: Added.
+        * platform/mac-tiger/media/audio-controls-rendering-expected.txt: Added.
+        * platform/mac-tiger/media/controls-after-reload-expected.txt: Added.
+        * platform/mac-tiger/media/controls-drag-timebar-expected.txt: Added.
+        * platform/mac-tiger/media/controls-strict-expected.txt: Added.
+        * platform/mac-tiger/media/controls-styling-expected.txt: Added.
+        * platform/mac-tiger/media/video-controls-rendering-expected.txt: Added.
+        * platform/mac-tiger/media/video-display-toggle-expected.txt: Added.
+        * platform/mac-tiger/media/video-no-audio-expected.txt: Added.
+        * platform/mac-tiger/media/video-zoom-controls-expected.txt: Added.
+
 2009-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Adele Peterson.
