@@ -1,3 +1,39 @@
+2009-12-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32496
+        Switch remaining cases of string construction to use StringBuilder.
+        Builds strings using a vector rather than using string append / addition.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::paramString):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::indent):
+        * runtime/JSString.h:
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lexString):
+        * runtime/NumberPrototype.cpp:
+        (JSC::integerPartNoExp):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::substituteBackreferences):
+        (JSC::stringProtoFuncConcat):
+
 2009-12-08  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

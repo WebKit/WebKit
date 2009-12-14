@@ -543,8 +543,7 @@ namespace JSC {
     };
 
     template<>
-    class StringTypeAdapter<char*>
-    {
+    class StringTypeAdapter<char*> {
     public:
         StringTypeAdapter<char*>(char* buffer)
             : m_buffer((unsigned char*)buffer)
@@ -566,8 +565,7 @@ namespace JSC {
     };
 
     template<>
-    class StringTypeAdapter<const char*>
-    {
+    class StringTypeAdapter<const char*> {
     public:
         StringTypeAdapter<const char*>(const char* buffer)
             : m_buffer((unsigned char*)buffer)
@@ -589,8 +587,7 @@ namespace JSC {
     };
 
     template<>
-    class StringTypeAdapter<UString>
-    {
+    class StringTypeAdapter<UString> {
     public:
         StringTypeAdapter<UString>(UString& string)
             : m_data(string.data())

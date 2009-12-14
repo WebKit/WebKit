@@ -128,6 +128,43 @@ namespace JSC {
         return new (globalData) JSString(globalData, rope.release());
     }
 
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue, const ArgList& args)
+    {
+        unsigned ropeLength = 0;
+        if (LIKELY(thisValue.isString()))
+            ropeLength += asString(thisValue)->ropeLength();
+        else
+            ++ropeLength;
+        for (unsigned i = 0; i < args.size(); ++i) {
+            JSValue v = args.at(i);
+            if (LIKELY(v.isString()))
+                ropeLength += asString(v)->ropeLength();
+            else
+                ++ropeLength;
+        }
+
+        RefPtr<JSString::Rope> rope = JSString::Rope::createOrNull(ropeLength);
+        if (UNLIKELY(!rope))
+            return throwOutOfMemoryError(exec);
+
+        unsigned index = 0;
+        if (LIKELY(thisValue.isString()))
+            rope->append(index, asString(thisValue));
+        else
+            rope->append(index, thisValue.toString(exec));
+        for (unsigned i = 0; i < args.size(); ++i) {
+            JSValue v = args.at(i);
+            if (LIKELY(v.isString()))
+                rope->append(index, asString(v));
+            else
+                rope->append(index, v.toString(exec));
+        }
+        ASSERT(index == ropeLength);
+
+        JSGlobalData* globalData = &exec->globalData();
+        return new (globalData) JSString(globalData, rope.release());
+    }
+
     // ECMA 11.9.3
     inline bool JSValue::equal(ExecState* exec, JSValue v1, JSValue v2)
     {
