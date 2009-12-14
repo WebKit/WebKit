@@ -1,3 +1,18 @@
+2009-12-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Provide working printing support for WinCairo port.
+
+        * WebFrame.cpp:
+        (WebFrame::spoolPage): Conditionalize initialization of
+          PlatformGraphicsContext handling for CG vs. Cairo.
+        (scaleFactor): Add helper function.
+        (hdcFromContext): Add helper function.
+        (WebFrame::drawHeader): Correct Cairo variation.
+        (WebFrame::drawFooter): Correct Cairo variation.
+        (WebFrame::spoolPages): Correct Cairo variation.
+
 2009-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
