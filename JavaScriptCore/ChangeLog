@@ -1,3 +1,16 @@
+2009-12-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32524
+        REGRESSION(52084): fast/dom/prototypes.html failing two CSS tests
+
+        * wtf/StdLibExtras.h:
+        (WTF::bitCount): The original patch put the parentheses in the wrong
+        place, completely changing the calculation and making it almost always
+        wrong. Moved the parentheses around the '+' operation, like the original
+        compiler warning suggested.
+
 2009-12-14  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Unreviewed trivial buildfix.
