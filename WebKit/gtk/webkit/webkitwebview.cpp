@@ -207,6 +207,11 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     if (!handledEvent)
         return FALSE;
 
+    // If coreMenu is NULL, this means WebCore decided to not create
+    // the default context menu; this may still mean that the frame
+    // wants to consume the event - this happens when the page is
+    // handling the right-click for reasons other than a context menu,
+    // so we give it to it.
     ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
     if (!coreMenu) {
         Frame* frame = core(webView)->mainFrame();
@@ -215,6 +220,16 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 
         return FALSE;
     }
+
+    // If we reach here, it's because WebCore is going to show the
+    // default context menu. We check our setting to figure out
+    // whether we want it or not.
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    gboolean enableDefaultContextMenu;
+    g_object_get(settings, "enable-default-context-menu", &enableDefaultContextMenu, NULL);
+
+    if (!enableDefaultContextMenu)
+        return FALSE;
 
     GtkMenu* menu = GTK_MENU(coreMenu->platformDescription());
     if (!menu)
