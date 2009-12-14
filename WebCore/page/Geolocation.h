@@ -46,22 +46,28 @@ namespace WebCore {
 class Frame;
 class Geoposition;
 
-class Geolocation : public RefCounted<Geolocation>, public GeolocationServiceClient {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+class GeolocationPosition;
+class GeolocationError;
+#endif
+
+class Geolocation : public RefCounted<Geolocation>
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+    , public GeolocationServiceClient
+#endif
+{
 public:
     static PassRefPtr<Geolocation> create(Frame* frame) { return adoptRef(new Geolocation(frame)); }
 
-    virtual ~Geolocation() {}
+    virtual ~Geolocation();
 
     void disconnectFrame();
     
-    Geoposition* lastPosition() const { return m_service->lastPosition(); }
+    Geoposition* lastPosition();
 
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
-
-    void suspend();
-    void resume();
     
     void setIsAllowed(bool);
     bool isAllowed() const { return m_allowGeolocation == Yes; }
@@ -69,6 +75,11 @@ public:
     
     void setShouldClearCache(bool shouldClearCache) { m_shouldClearCache = shouldClearCache; }
     bool shouldClearCache() const { return m_shouldClearCache; }
+
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    void setPostion(GeolocationPosition*);
+    void setError(GeolocationError*);
+#endif
 
 private:
     Geolocation(Frame*);
@@ -118,14 +129,22 @@ private:
     void stopTimersForWatchers();
     void stopTimers();
     
+    void positionChanged(PassRefPtr<Geoposition>);
     void makeSuccessCallbacks();
     void handleError(PositionError*);
 
     void requestPermission();
 
+    bool startUpdating(PositionOptions*);
+    void stopUpdating();
+    void suspend();
+    void resume();
+
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
     // GeolocationServiceClient
     virtual void geolocationServicePositionChanged(GeolocationService*);
     virtual void geolocationServiceErrorOccurred(GeolocationService*);
+#endif
 
     PassRefPtr<GeoNotifier> startRequest(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
 
@@ -137,7 +156,11 @@ private:
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     Frame* m_frame;
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
     OwnPtr<GeolocationService> m_service;
+#endif
+    RefPtr<Geoposition> m_lastPosition;
+    RefPtr<Geoposition> m_currentPosition;
 
     enum {
         Unknown,

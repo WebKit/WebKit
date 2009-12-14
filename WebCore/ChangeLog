@@ -1,3 +1,82 @@
+2009-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=32499
+        Add client based Geolocation provider
+
+        Add first cut of a client based Geolocation provider. This is guarded by
+        ENABLE(CLIENT_BASED_GEOLOCATION) and is off by default for now. This adds a
+        GeolocationControllerClient interface that no-one currently implements,
+        but will in a subsequent patch.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/Geolocation.cpp:
+        (WebCore::createGeopositionFromGeolocationPosition):
+        (WebCore::createPositionErrorFromGeolocationError):
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::~Geolocation):
+        (WebCore::Geolocation::disconnectFrame):
+        (WebCore::Geolocation::lastPosition):
+        (WebCore::Geolocation::startRequest):
+        (WebCore::Geolocation::fatalErrorOccurred):
+        (WebCore::Geolocation::requestTimedOut):
+        (WebCore::Geolocation::clearWatch):
+        (WebCore::Geolocation::handleError):
+        (WebCore::Geolocation::positionChanged):
+        (WebCore::Geolocation::makeSuccessCallbacks):
+        (WebCore::Geolocation::errorOccurred):
+        (WebCore::Geolocation::geolocationServicePositionChanged):
+        (WebCore::Geolocation::geolocationServiceErrorOccurred):
+        (WebCore::Geolocation::startUpdating):
+        (WebCore::Geolocation::stopUpdating):
+        * page/Geolocation.h:
+        * page/GeolocationController.cpp: Added.
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::~GeolocationController):
+        (WebCore::GeolocationController::addObserver):
+        (WebCore::GeolocationController::removeObserver):
+        (WebCore::GeolocationController::positionChanged):
+        (WebCore::GeolocationController::errorOccurred):
+        (WebCore::GeolocationController::lastPosition):
+        * page/GeolocationController.h: Added.
+        * page/GeolocationControllerClient.h: Added.
+        (WebCore::GeolocationControllerClient::~GeolocationControllerClient):
+        * page/GeolocationError.h: Added.
+        (WebCore::GeolocationError::):
+        (WebCore::GeolocationError::create):
+        (WebCore::GeolocationError::code):
+        (WebCore::GeolocationError::message):
+        * page/GeolocationPosition.h: Added.
+        (WebCore::GeolocationPosition::create):
+        (WebCore::GeolocationPosition::timestamp):
+        (WebCore::GeolocationPosition::latitude):
+        (WebCore::GeolocationPosition::longitude):
+        (WebCore::GeolocationPosition::accuracy):
+        (WebCore::GeolocationPosition::altitude):
+        (WebCore::GeolocationPosition::altitudeAccuracy):
+        (WebCore::GeolocationPosition::heading):
+        (WebCore::GeolocationPosition::speed):
+        (WebCore::GeolocationPosition::canProvideAltitude):
+        (WebCore::GeolocationPosition::canProvideAltitudeAccuracy):
+        (WebCore::GeolocationPosition::canProvideHeading):
+        (WebCore::GeolocationPosition::canProvideSpeed):
+        (WebCore::GeolocationPosition::GeolocationPosition):
+        * page/Geoposition.h:
+        (WebCore::Geoposition::create):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::geolocationController):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2009-12-14  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Adler.

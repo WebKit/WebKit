@@ -1347,6 +1347,11 @@ webcore_sources += \
 	WebCore/page/FrameView.h \
 	WebCore/page/Geolocation.cpp \
 	WebCore/page/Geolocation.h \
+	WebCore/page/GeolocationController.cpp \
+	WebCore/page/GeolocationController.h \
+	WebCore/page/GeolocationControllerClient.h \
+	WebCore/page/GeolocationError.h \
+	WebCore/page/GeolocationPosition.h \
 	WebCore/page/Geoposition.h \
 	WebCore/page/HaltablePlugin.h \
 	WebCore/page/History.cpp \

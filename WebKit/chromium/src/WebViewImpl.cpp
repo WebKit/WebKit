@@ -229,6 +229,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
                         &m_editorClientImpl,
                         &m_dragClientImpl,
                         &m_inspectorClientImpl,
+                        0,
                         0));
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);

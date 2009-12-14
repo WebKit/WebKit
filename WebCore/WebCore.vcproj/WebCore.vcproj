@@ -20645,6 +20645,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\GeolocationController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationControllerClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Geoposition.h"
 				>
 			</File>

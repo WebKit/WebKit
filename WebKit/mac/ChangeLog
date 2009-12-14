@@ -1,3 +1,18 @@
+2009-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=32499
+        Add client based Geolocation provider
+
+        Add first cut of a client based Geolocation provider. This is guarded by
+        ENABLE(CLIENT_BASED_GEOLOCATION) and is off by default for now. This adds a
+        GeolocationControllerClient interface that no-one currently implements,
+        but will in a subsequent patch.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2009-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Mac build fix. Unreviewed.

@@ -77,6 +77,10 @@
 #include "WMLPageState.h"
 #endif
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#include "GeolocationController.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -101,7 +105,7 @@ static void networkStateChanged()
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
-Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient, InspectorClient* inspectorClient, PluginHalterClient* pluginHalterClient)
+Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient, InspectorClient* inspectorClient, PluginHalterClient* pluginHalterClient, GeolocationControllerClient* geolocationControllerClient)
     : m_chrome(new Chrome(this, chromeClient))
     , m_dragCaretController(new SelectionController(0, true))
 #if ENABLE(DRAG_SUPPORT)
@@ -113,6 +117,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 #endif
 #if ENABLE(INSPECTOR)
     , m_inspectorController(new InspectorController(this, inspectorClient))
+#endif
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    , m_geolocationController(new GeolocationController(this, geolocationControllerClient))
 #endif
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
@@ -148,6 +155,10 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 #if !ENABLE(INSPECTOR)
     UNUSED_PARAM(inspectorClient);
 #endif
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+    UNUSED_PARAM(geolocationControllerClient);
+#endif
+
     if (!allPages) {
         allPages = new HashSet<Page*>;
         

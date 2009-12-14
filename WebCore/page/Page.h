@@ -54,6 +54,8 @@ namespace WebCore {
     class EditorClient;
     class FocusController;
     class Frame;
+    class GeolocationController;
+    class GeolocationControllerClient;
     class HaltablePlugin;
     class InspectorClient;
     class InspectorController;
@@ -85,7 +87,7 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*, GeolocationControllerClient*);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
@@ -143,6 +145,9 @@ namespace WebCore {
 #endif
 #if ENABLE(INSPECTOR)
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
+#endif
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+        GeolocationController* geolocationController() const { return m_geolocationController.get(); }
 #endif
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
@@ -249,6 +254,9 @@ namespace WebCore {
 #endif
 #if ENABLE(INSPECTOR)
         OwnPtr<InspectorController> m_inspectorController;
+#endif
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+        OwnPtr<GeolocationController> m_geolocationController;
 #endif
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;

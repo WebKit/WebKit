@@ -1169,6 +1169,7 @@ SOURCES += \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/Geolocation.cpp \
+    page/GeolocationController.cpp \
     page/History.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \

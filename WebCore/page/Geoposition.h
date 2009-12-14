@@ -37,8 +37,11 @@ typedef int ExceptionCode;
 
 class Geoposition : public RefCounted<Geoposition> {
 public:
-    static PassRefPtr<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp) { return adoptRef(new Geoposition(coordinates, timestamp)); }
-    
+    static PassRefPtr<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
+    {
+        return adoptRef(new Geoposition(coordinates, timestamp));
+    }
+
     DOMTimeStamp timestamp() const { return m_timestamp; }
     Coordinates* coords() const { return m_coordinates.get(); }
     
