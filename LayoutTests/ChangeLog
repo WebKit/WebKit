@@ -1,3 +1,13 @@
+2009-12-14  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        media/video-played-collapse.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=31434
+
+        * platform/gtk/Skipped: Give this test another chance, we believe
+        the bug above has been fixed in a previous commit.
+
 2009-12-14  Adele Peterson  <adele@apple.com>
 
         RS by Maciej Stachowiak.

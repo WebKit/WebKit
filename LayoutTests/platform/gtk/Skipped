@@ -5686,9 +5686,6 @@ fast/repaint/inline-relative-positioned.html
 # See https://bugs.webkit.org/show_bug.cgi?id=31433
 plugins/document-open.html
 
-# See https://bugs.webkit.org/show_bug.cgi?id=31434
-media/video-played-collapse.html
-
 # See https://bugs.webkit.org/show_bug.cgi?id=31435
 fast/forms/input-radio-checked-tab.html
 fast/forms/tabs-with-modifiers.html
