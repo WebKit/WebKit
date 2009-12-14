@@ -1,3 +1,20 @@
+2009-12-14  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        Bug 32519 -  mouseEvent fires mutiple times in
+        LayoutTests/svg/custom/use-instanceRoot-as-event-target.xhtml
+        
+        Add test to Qt skipped list (was passing due to bug in DRT, see
+        https://bugs.webkit.org/show_bug.cgi?id=32437). Updated detail on bug
+        in gtk and win skipped lists.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32519
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-12-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dave Hyatt.

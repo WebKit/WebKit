@@ -500,7 +500,6 @@ svg/css/getComputedStyle-basic.xhtml
 svg/custom/path-bad-data.svg
 svg/custom/pattern-deep-referencing.svg
 svg/custom/preserve-aspect-ratio-syntax.svg
-svg/custom/use-instanceRoot-as-event-target.xhtml
 svg/custom/viewbox-syntax.svg
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 tables/mozilla/core/bloomberg.html
@@ -728,3 +727,8 @@ fast/events/basic-touch-events.html
 # XSS auditor tests intermittently time out <http://webkit.org/b/32528>
 http/tests/security/xss-DENIED-getSVGDocument-iframe.html
 http/tests/security/xss-DENIED-getSVGDocument-object.html
+
+# Bug 32519 -  mouseEvent fires mutiple times in
+#              LayoutTests/svg/custom/use-instanceRoot-as-event-target.xhtml
+# https://bugs.webkit.org/show_bug.cgi?id=32519
+svg/custom/use-instanceRoot-as-event-target.xhtml
