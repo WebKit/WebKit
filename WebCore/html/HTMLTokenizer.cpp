@@ -167,6 +167,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc, bool reportErrors)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
     , m_doc(doc)
     , m_parser(new HTMLParser(doc, reportErrors))
     , m_inWrite(false)
@@ -186,6 +187,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
     , m_doc(doc)
     , m_parser(0)
     , m_inWrite(false)
@@ -204,6 +206,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     , m_requestingScript(false)
     , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
     , m_doc(frag->document())
     , m_parser(new HTMLParser(frag))
     , m_inWrite(false)
@@ -232,6 +235,8 @@ void HTMLTokenizer::reset()
     m_scriptCodeSize = m_scriptCodeCapacity = m_scriptCodeResync = 0;
 
     m_timer.stop();
+    m_externalScriptsTimer.stop();
+
     m_state.setAllowYield(false);
     m_state.setForceSynchronous(false);
 
@@ -2007,6 +2012,11 @@ void HTMLTokenizer::executeScriptsWaitingForStylesheets()
 
 void HTMLTokenizer::notifyFinished(CachedResource*)
 {
+    executeExternalScriptsIfReady();
+}
+
+void HTMLTokenizer::executeExternalScriptsIfReady()
+{
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_doc->ownerElement())
         printf("script loaded at %d\n", m_doc->elapsedTime());
@@ -2021,7 +2031,12 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         return;
 
     bool finished = false;
+    
+    double startTime = currentTime();
     while (!finished && m_pendingScripts.first()->isLoaded()) {
+        if (!continueExecutingExternalScripts(startTime))
+            break;
+
         CachedScript* cs = m_pendingScripts.first().get();
         m_pendingScripts.removeFirst();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
@@ -2079,6 +2094,31 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
             // we might be deleted at this point, do not access any members.
         }
     }
+}
+
+void HTMLTokenizer::executeExternalScriptsTimerFired(Timer<HTMLTokenizer>*)
+{
+    if (m_doc->view() && m_doc->view()->layoutPending() && !m_doc->minimumLayoutDelay()) {
+        // Restart the timer and do layout first.
+        m_externalScriptsTimer.startOneShot(0);
+        return;
+    }
+
+    // Continue executing external scripts.
+    executeExternalScriptsIfReady();
+}
+
+bool HTMLTokenizer::continueExecutingExternalScripts(double startTime)
+{
+    if (m_externalScriptsTimer.isActive())
+        return false;
+
+    if (currentTime() - startTime > m_tokenizerTimeDelay) {
+        // Schedule the timer to keep processing as soon as possible.
+        m_externalScriptsTimer.startOneShot(0);
+        return false;
+    }
+    return true;
 }
 
 bool HTMLTokenizer::isWaitingForScripts() const

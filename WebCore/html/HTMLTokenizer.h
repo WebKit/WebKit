@@ -205,6 +205,10 @@ private:
     // from CachedResourceClient
     void notifyFinished(CachedResource*);
 
+    void executeExternalScriptsIfReady();
+    void executeExternalScriptsTimerFired(Timer<HTMLTokenizer>*);
+    bool continueExecutingExternalScripts(double startTime);
+
     // Internal buffers
     ///////////////////
     UChar* m_buffer;
@@ -400,6 +404,9 @@ private:
 
     // The timer for continued processing.
     Timer<HTMLTokenizer> m_timer;
+
+    // The timer for continued executing external scripts.
+    Timer<HTMLTokenizer> m_externalScriptsTimer;
 
 // This buffer can hold arbitrarily long user-defined attribute names, such as in EMBED tags.
 // So any fixed number might be too small, but rather than rewriting all usage of this buffer
