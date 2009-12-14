@@ -1,3 +1,22 @@
+2009-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GStreamer] Should emit {networkState,readyState,volume,time,size,rate,duration}Changed signals
+        https://bugs.webkit.org/show_bug.cgi?id=30377
+
+        Emit volumeChanged and durationChanged upon notification from
+        GStreamer.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateVolumeCallback):
+        (WebCore::notify_volume_idle_cb):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-12-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
