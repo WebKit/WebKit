@@ -1,3 +1,21 @@
+2009-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7458272> REGRESSION (r50470) Reproducible ASSERT in
+        RenderWidget::setWidgetGeometry()
+
+        Test: fast/forms/defer-updateFromElement.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::updateFromElementCallback): Added this post-attach callback
+        that invokes updateFromElement().
+        (WebCore::HTMLFormControlElement::recalcStyle): Instead of calling
+        updateFromElement(), enqueue a post-attach (in this case, post-style
+        recalc) callback to do it. updateFromElement() can cause the selection
+        to change, and in turn trigger synchronous layout, so it must not be
+        called during style recalc.
+
 2009-12-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,3 +1,13 @@
+2009-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7458272> REGRESSION (r50470) Reproducible ASSERT in
+        RenderWidget::setWidgetGeometry()
+
+        * fast/forms/defer-updateFromElement-expected.txt: Added.
+        * fast/forms/defer-updateFromElement.html: Added.
+
 2009-12-14  Eric Carlson  <eric.carlson@apple.com>
 
         Not reviewed, build fix.
