@@ -507,15 +507,15 @@ Document::~Document()
         m_styleSheets->documentDestroyed();
 }
 
+#if USE(JSC)
 Document::JSWrapperCache* Document::createWrapperCache(DOMWrapperWorld* world)
 {
     JSWrapperCache* wrapperCache = new JSWrapperCache();
     m_wrapperCacheMap.set(world, wrapperCache);
-#if USE(JSC)
     world->rememberDocument(this);
-#endif
     return wrapperCache;
 }
+#endif
 
 void Document::resetLinkColor()
 {
