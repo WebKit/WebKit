@@ -1,3 +1,65 @@
+2009-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Changed GC from mark-sweep to mark-allocate.
+
+        * ForwardingHeaders/runtime/WeakGCMap.h: Added.
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectNow): Updated for rename.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::removeWrappers):
+        (WebCore::hasCachedDOMObjectWrapperUnchecked):
+        (WebCore::hasCachedDOMObjectWrapper):
+        (WebCore::hasCachedDOMNodeWrapperUnchecked):
+        (WebCore::forgetDOMObject):
+        (WebCore::forgetDOMNode):
+        (WebCore::isObservableThroughDOM):
+        (WebCore::markDOMNodesForDocument):
+        (WebCore::markDOMObjectWrapper):
+        (WebCore::markDOMNodeWrapper):
+        * bindings/js/JSDOMBinding.h: Changed DOM wrapper maps to be WeakGCMaps.
+        Don't ASSERT that an item must be in the WeakGCMap when its destructor
+        runs, since it might have been overwritten in the map first.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): Changed Document from a DOM object wrapper to a DOM node
+        wrapper, to simplify some code.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::JSInspectedObjectWrapper):
+        (WebCore::JSInspectedObjectWrapper::~JSInspectedObjectWrapper):
+        * bindings/js/JSInspectorCallbackWrapper.cpp: Use a WeakGCMap for these
+        wrappers.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren): Updated for WeakGCMap and Document using
+        a DOM node wrapper instead of a DOM object wrapper.
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::wrapperMap):
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::lookupOrCreateWrapper):
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::forgetWrapper):
+        (WebCore::::~JSSVGDynamicPODTypeWrapper): Shined a small beam of sanity light
+        on this code. Use hashtable-based lookup in JSSVGPODTypeWrapper.h instead
+        of linear lookup through iteration, since that's what hashtables were
+        invented for. Make JSSVGPODTypeWrapper.h responsible for reomving itself
+        from the table, instead of its JS wrapper, to decouple these objects from
+        GC, and because these objects are refCounted, not solely owned by their
+        JS wrappers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.h: Adopted changes above.
+
+2009-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: Removed an incorrect #ifdef.
+
+        * bindings/js/GCController.cpp:
+
 2009-12-13  Charles Reis  <creis@chromium.org>
 
         Reviewed by Adam Barth.

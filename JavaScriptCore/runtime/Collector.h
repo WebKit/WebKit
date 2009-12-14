@@ -28,9 +28,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
-// This is supremely lame that we require pthreads to build on windows.
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>
 #endif
@@ -49,20 +49,19 @@ namespace JSC {
     enum OperationInProgress { NoOperation, Allocation, Collection };
     enum HeapType { PrimaryHeap, NumberHeap };
 
-    template <HeapType> class CollectorHeapIterator;
+    template <HeapType> class LiveObjectIterator;
 
     struct CollectorHeap {
+        size_t nextBlock;
+        size_t nextCell;
+
         CollectorBlock** blocks;
         size_t numBlocks;
         size_t usedBlocks;
-        size_t firstBlockWithPossibleSpace;
 
-        size_t numLiveObjects;
-        size_t numLiveObjectsAtLastCollect;
         size_t extraCost;
-#if ENABLE(JSC_ZOMBIES)
-        size_t numZombies;
-#endif
+        
+        bool didShrink;
 
         OperationInProgress operationInProgress;
     };
@@ -70,21 +69,21 @@ namespace JSC {
     class Heap : public Noncopyable {
     public:
         class Thread;
-        typedef CollectorHeapIterator<PrimaryHeap> iterator;
 
         void destroy();
 
         void* allocateNumber(size_t);
         void* allocate(size_t);
 
-        bool collect();
         bool isBusy(); // true if an allocation or collection is in progress
+        void collectAllGarbage();
 
-        static const size_t minExtraCostSize = 256;
+        static const size_t minExtraCost = 256;
+        static const size_t maxExtraCost = 1024 * 1024;
 
         void reportExtraMemoryCost(size_t cost);
 
-        size_t objectCount();
+        size_t objectCount() const;
         struct Statistics {
             size_t size;
             size_t free;
@@ -114,13 +113,14 @@ namespace JSC {
         JSGlobalData* globalData() const { return m_globalData; }
         static bool isNumber(JSCell*);
         
-        // Iterators for the object heap.
-        iterator primaryHeapBegin();
-        iterator primaryHeapEnd();
+        LiveObjectIterator<PrimaryHeap> primaryHeapBegin();
+        LiveObjectIterator<PrimaryHeap> primaryHeapEnd();
 
     private:
         template <HeapType heapType> void* heapAllocate(size_t);
-        template <HeapType heapType> size_t sweep();
+        void reset();
+        void collectRemainingGarbage();
+        template <HeapType heapType> void sweep();
         static CollectorBlock* cellBlock(const JSCell*);
         static size_t cellOffset(const JSCell*);
 
@@ -131,9 +131,20 @@ namespace JSC {
         template <HeapType heapType> NEVER_INLINE CollectorBlock* allocateBlock();
         template <HeapType heapType> NEVER_INLINE void freeBlock(size_t);
         NEVER_INLINE void freeBlock(CollectorBlock*);
-        void freeBlocks(CollectorHeap*);
+        template <HeapType heapType> void freeBlocks();
+        template <HeapType heapType> void resizeBlocks();
+        template <HeapType heapType> void growBlocks(size_t neededBlocks);
+        template <HeapType heapType> void shrinkBlocks(size_t neededBlocks);
+        template <HeapType heapType> void clearMarkBits();
+        template <HeapType heapType> void clearMarkBits(CollectorBlock*);
+        template <HeapType heapType> size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         void recordExtraCost(size_t);
+
+        template <HeapType heapType> void addToStatistics(Statistics&) const;
+        template <HeapType heapType> size_t objectCount() const;
+
+        void markRoots();
         void markProtectedObjects(MarkStack&);
         void markCurrentThreadConservatively(MarkStack&);
         void markCurrentThreadConservativelyInternal(MarkStack&);
@@ -189,44 +200,49 @@ namespace JSC {
     const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
     const size_t CELL_MASK = CELL_SIZE - 1;
     const size_t CELL_ALIGN_MASK = ~CELL_MASK;
-    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8 - 2 * (7 + 3 * 8)) / (CELL_SIZE * 8 + 2);
+    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*) - sizeof(HeapType)) * 8 * CELL_SIZE / (8 * CELL_SIZE + 1) / CELL_SIZE; // one bitmap byte can represent 8 cells.
+    
     const size_t SMALL_CELLS_PER_BLOCK = 2 * CELLS_PER_BLOCK;
     const size_t BITMAP_SIZE = (CELLS_PER_BLOCK + 7) / 8;
     const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
-  
+
     struct CollectorBitmap {
         uint32_t bits[BITMAP_WORDS];
         bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
         void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
         void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
         void clearAll() { memset(bits, 0, sizeof(bits)); }
+        size_t count(size_t startCell = 0)
+        {
+            size_t result = 0;
+            for ( ; (startCell & 0x1F) != 0; ++startCell) {
+                if (get(startCell))
+                    ++result;
+            }
+            for (size_t i = startCell >> 5; i < BITMAP_WORDS; ++i)
+                result += WTF::bitCount(bits[i]);
+            return result;
+        }
+        size_t isEmpty() // Much more efficient than testing count() == 0.
+        {
+            for (size_t i = 0; i < BITMAP_WORDS; ++i)
+                if (bits[i] != 0)
+                    return false;
+            return true;
+        }
     };
   
     struct CollectorCell {
-        union {
-            double memory[CELL_ARRAY_LENGTH];
-            struct {
-                void* zeroIfFree;
-                ptrdiff_t next;
-            } freeCell;
-        } u;
+        double memory[CELL_ARRAY_LENGTH];
     };
 
     struct SmallCollectorCell {
-        union {
-            double memory[CELL_ARRAY_LENGTH / 2];
-            struct {
-                void* zeroIfFree;
-                ptrdiff_t next;
-            } freeCell;
-        } u;
+        double memory[CELL_ARRAY_LENGTH / 2];
     };
 
     class CollectorBlock {
     public:
         CollectorCell cells[CELLS_PER_BLOCK];
-        uint32_t usedCells;
-        CollectorCell* freeList;
         CollectorBitmap marked;
         Heap* heap;
         HeapType type;
@@ -235,8 +251,6 @@ namespace JSC {
     class SmallCellCollectorBlock {
     public:
         SmallCollectorCell cells[SMALL_CELLS_PER_BLOCK];
-        uint32_t usedCells;
-        SmallCollectorCell* freeList;
         CollectorBitmap marked;
         Heap* heap;
         HeapType type;
@@ -287,8 +301,8 @@ namespace JSC {
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
     {
-        if (cost > minExtraCostSize) 
-            recordExtraCost(cost / (CELL_SIZE * 2)); 
+        if (cost > minExtraCost) 
+            recordExtraCost(cost);
     }
 
 } // namespace JSC

@@ -1,3 +1,13 @@
+2009-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Changed GC from mark-sweep to mark-allocate.
+        
+        * JavaScriptGlue.cpp:
+        (JSCollect): Updated for rename. Fixed a bug where JSGlue would not check
+        to avoid nested GC calls.
+
 2009-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Rubber-stamped by David Levin.

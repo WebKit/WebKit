@@ -380,8 +380,6 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
 
     unsigned vectorLength = m_vectorLength;
 
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
-
     if (newNumValuesInVector == storage->m_numValuesInVector + 1) {
         for (unsigned j = vectorLength; j < newVectorLength; ++j)
             storage->m_vector[j] = JSValue();
@@ -402,6 +400,8 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     m_storage = storage;
 
     checkConsistency();
+
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
 }
 
 bool JSArray::deleteProperty(ExecState* exec, const Identifier& propertyName)
@@ -492,13 +492,15 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     if (!tryFastRealloc(storage, storageSize(newVectorLength)).getValue(storage))
         return false;
 
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
     m_vectorLength = newVectorLength;
 
     for (unsigned i = vectorLength; i < newVectorLength; ++i)
         storage->m_vector[i] = JSValue();
 
     m_storage = storage;
+
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
+
     return true;
 }
 

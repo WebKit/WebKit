@@ -566,7 +566,7 @@ sub GenerateHeader
     }
 
     # Destructor
-    push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $eventTarget or $interfaceName eq "Document" or $interfaceName eq "DOMWindow");
+    push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $eventTarget or $interfaceName eq "DOMWindow");
 
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
@@ -1210,27 +1210,11 @@ sub GenerateImplementation
             if ($interfaceName eq "Node") {
                  push(@implContent, "    forgetDOMNode(this, impl(), impl()->document());\n");
             } else {
-                if ($podType) {
-                    my $animatedType = $implClassName;
-                    $animatedType =~ s/SVG/SVGAnimated/;
-
-                    # Special case for JSSVGNumber
-                    if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "float") {
-                        push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
-                    }
-                }
                 push(@implContent, "    forgetDOMObject(this, impl());\n");
             }
         }
 
         push(@implContent, "}\n\n");
-    }
-
-    # Document needs a special destructor because it's a special case for caching. It needs
-    # its own special handling rather than relying on the caching that Node normally does.
-    if ($interfaceName eq "Document") {
-        push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    forgetDOMObject(this, static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
     if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {

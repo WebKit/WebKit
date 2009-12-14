@@ -512,7 +512,7 @@ namespace JSC {
     // huge buffer.
     // FIXME: this should be size_t but that would cause warnings until we
     // fix UString sizes to be size_t instead of int
-    static const int minShareSize = Heap::minExtraCostSize / sizeof(UChar);
+    static const int minShareSize = Heap::minExtraCost / sizeof(UChar);
 
     inline size_t UString::cost() const
     {

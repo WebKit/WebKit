@@ -422,7 +422,7 @@ namespace JSC {
             if (c <= 0xFF)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return new (globalData) JSString(globalData, UString(UString::Rep::create(s.rep(), offset, length)));
+        return new (globalData) JSString(globalData, UString(UString::Rep::create(s.rep(), offset, length)), JSString::HasOtherOwner);
     }
 
     inline JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)

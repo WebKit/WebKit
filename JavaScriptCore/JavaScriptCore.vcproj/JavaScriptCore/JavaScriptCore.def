@@ -62,7 +62,7 @@ EXPORTS
     ?classInfo@JSCell@JSC@@UBEPBUClassInfo@2@XZ
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
-    ?collect@Heap@JSC@@QAE_NXZ
+    ?collectAllGarbage@Heap@JSC@@QAEXXZ
     ?computeHash@Rep@UString@JSC@@SAIPBDH@Z
     ?computeHash@Rep@UString@JSC@@SAIPB_WH@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
@@ -115,8 +115,8 @@ EXPORTS
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
-    ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
+    ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z
@@ -200,12 +200,10 @@ EXPORTS
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?nonInlineNaN@JSC@@YANXZ
-    ?objectCount@Heap@JSC@@QAEIXZ
+    ?objectCount@Heap@JSC@@QBEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
-    ?primaryHeapBegin@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
-    ?primaryHeapEnd@Heap@JSC@@QAE?AV?$CollectorHeapIterator@$0A@@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ

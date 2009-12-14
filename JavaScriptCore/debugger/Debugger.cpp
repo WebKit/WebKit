@@ -67,8 +67,9 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
     FunctionExecutableSet functionExecutables;
     SourceProviderMap sourceProviders;
 
-    Heap::iterator heapEnd = globalData->heap.primaryHeapEnd();
-    for (Heap::iterator it = globalData->heap.primaryHeapBegin(); it != heapEnd; ++it) {
+    LiveObjectIterator<PrimaryHeap> it = globalData->heap.primaryHeapBegin();
+    LiveObjectIterator<PrimaryHeap> heapEnd = globalData->heap.primaryHeapEnd();
+    for ( ; it != heapEnd; ++it) {
         if (!(*it)->inherits(&JSFunction::info))
             continue;
 

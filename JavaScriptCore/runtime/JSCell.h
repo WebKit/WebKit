@@ -47,10 +47,14 @@ namespace JSC {
 
     private:
         explicit JSCell(Structure*);
-        JSCell(); // Only used for initializing Collector blocks.
         virtual ~JSCell();
 
     public:
+        static PassRefPtr<Structure> createDummyStructure()
+        {
+            return Structure::create(jsNull(), TypeInfo(UnspecifiedType));
+        }
+
         // Querying the type.
 #if USE(JSVALUE32)
         bool isNumber() const;
@@ -119,11 +123,6 @@ namespace JSC {
 
     inline JSCell::JSCell(Structure* structure)
         : m_structure(structure)
-    {
-    }
-
-    // Only used for initializing Collector blocks.
-    inline JSCell::JSCell()
     {
     }
 
