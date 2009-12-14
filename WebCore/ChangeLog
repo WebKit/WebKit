@@ -1,3 +1,26 @@
+2009-12-14  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Darin Adler.
+
+        [Android] Android needs ResourceError, ResourceResponse and
+        ResourceRequest implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=32522
+
+        Add implementation of ResourceError, ResourceResponse and ResourceRequest.
+        No new tests needed, the existing tests should be sufficient.
+
+        * platform/network/android/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/android/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setUserGesture):
+        (WebCore::ResourceRequest::getUserGesture):
+        * platform/network/android/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2009-12-14  Sam Weinig  <sam@webkit.org>
 
         Fix the build.
