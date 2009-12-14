@@ -1127,6 +1127,37 @@ sub GenerateSingleBatchedAttribute
 END
 }
 
+sub GenerateImplementationIndexer
+{
+    my $dataNode = shift;
+    my $indexer = shift;
+    my $interfaceName = $dataNode->name;
+
+    if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
+        $implIncludes{"V8Collection.h"} = 1;
+        if (!$dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+            if ($indexer->type eq "DOMString") {
+                my $conversion = $indexer->extendedAttributes->{"ConvertNullStringTo"};
+                if ($conversion && $conversion eq "Null") {
+                    push(@implContent, <<END);
+  setCollectionStringOrNullIndexedGetter<${interfaceName}>(desc);
+END
+                } else {
+                    push(@implContent, <<END);
+  setCollectionStringIndexedGetter<${interfaceName}>(desc);
+END
+                }
+            } else {
+                my $indexerType = $indexer->type;
+                my $indexerClassIndex = uc($indexerType);
+                push(@implContent, <<END);
+  setCollectionIndexedGetter<${interfaceName}, ${indexerType}>(desc, V8ClassIndex::${indexerClassIndex});
+END
+            }
+        }
+    }
+}
+
 sub GenerateImplementation
 {
     my $object = shift;
@@ -1165,7 +1196,6 @@ sub GenerateImplementation
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;
-
     # Generate property accessors for attributes.
     for ($index = 0; $index < @{$dataNode->attributes}; $index++) {
         $attribute = @{$dataNode->attributes}[$index];
@@ -1216,6 +1246,7 @@ sub GenerateImplementation
         GenerateConstructorGetter($implClassName, $classIndex);
     }
 
+    my $indexer;
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
         # hack for addEventListener/RemoveEventListener
@@ -1224,6 +1255,10 @@ sub GenerateImplementation
                 $implIncludes{"V8CustomBinding.h"} = 1;
         } else {
             GenerateFunctionCallback($function, $dataNode, $classIndex, $implClassName);
+        }
+
+        if ($function->signature->name eq "item") {
+            $indexer = $function->signature;
         }
 
         # If the function does not need domain security check, we need to
@@ -1244,6 +1279,7 @@ sub GenerateImplementation
     my @enabledAtRuntime;
     my @normal;
     foreach my $attribute (@$attributes) {
+
         if ($interfaceName eq "DOMWindow" && $attribute->signature->extendedAttributes->{"V8DisallowShadowing"}) {
             push(@disallowsShadowing, $attribute);
         } elsif ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
@@ -1408,6 +1444,8 @@ END
 END
         push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     }
+
+    GenerateImplementationIndexer($dataNode, $indexer) if $indexer;
 
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;

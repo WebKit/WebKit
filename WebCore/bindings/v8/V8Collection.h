@@ -203,17 +203,6 @@ namespace WebCore {
         desc->InstanceTemplate()->SetNamedPropertyHandler(collectionNamedPropertyGetter<Collection, ItemType>, 0, 0, 0, 0, v8::Integer::New(V8ClassIndex::ToInt(type)));
     }
 
-
-    // Add named and indexed getters to the function template for a collection.
-    template<class Collection, class ItemType> static void setCollectionIndexedAndNamedGetters(v8::Handle<v8::FunctionTemplate> desc, V8ClassIndex::V8WrapperType type)
-    {
-        // If we interceptor before object, accessing 'length' can trigger a webkit assertion error (see fast/dom/HTMLDocument/document-special-properties.html).
-        desc->InstanceTemplate()->SetNamedPropertyHandler(collectionNamedPropertyGetter<Collection, ItemType>, 0, 0, 0, 0, v8::Integer::New(V8ClassIndex::ToInt(type)));
-        desc->InstanceTemplate()->SetIndexedPropertyHandler(collectionIndexedPropertyGetter<Collection, ItemType>, 0, 0, 0, collectionIndexedPropertyEnumerator<Collection>,
-                                                            v8::Integer::New(V8ClassIndex::ToInt(type)));
-    }
-
-
     // Add indexed getter returning a string or null to a function template for a collection.
     template<class Collection> static void setCollectionStringOrNullIndexedGetter(v8::Handle<v8::FunctionTemplate> desc)
     {
