@@ -1,3 +1,12 @@
+2009-12-14  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Unreviewed trivial buildfix.
+
+        Fix crosses initialization of usedPrimaryBlocks for JSValue32
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively):
+
 2009-12-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

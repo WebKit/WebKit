@@ -789,6 +789,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
     while (p != e) {
         char* x = *p++;
         if (isPossibleCell(x)) {
+            size_t usedPrimaryBlocks;
             uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
             xAsBits &= CELL_ALIGN_MASK;
 
@@ -810,7 +811,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 #endif
 
             // Mark the primary heap
-            size_t usedPrimaryBlocks = primaryHeap.usedBlocks;
+            usedPrimaryBlocks = primaryHeap.usedBlocks;
             for (size_t block = 0; block < usedPrimaryBlocks; block++) {
                 if (primaryBlocks[block] != blockAddr)
                     continue;
