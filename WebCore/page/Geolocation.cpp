@@ -37,7 +37,6 @@
 #include "GeolocationController.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
-#include "Geoposition.h"
 #include "PositionError.h"
 #endif
 
