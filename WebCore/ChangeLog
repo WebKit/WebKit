@@ -1,3 +1,35 @@
+2009-12-14  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Darin Adler.
+
+        [Android] Android needs ResourceHandle implementation
+        https://bugs.webkit.org/show_bug.cgi?id=32515
+
+        Adds implementation of ResourceHandle on Android.
+
+        No new tests needed, this is platform-specific code, so existing
+        tests are sufficient.
+
+        * platform/network/android/ResourceHandleAndroid.cpp: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::bufferedData):
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (WebCore::ResourceHandle::willLoadFromCache):
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::SyncLoader::SyncLoader):
+        (WebCore::SyncLoader::~SyncLoader):
+        (WebCore::SyncLoader::didReceiveResponse):
+        (WebCore::SyncLoader::didReceiveData):
+        (WebCore::SyncLoader::didFail):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/android/ResourceLoaderAndroid.h: Added.
+        (WebCore::ResourceLoaderAndroid::~ResourceLoaderAndroid):
+        (WebCore::ResourceLoaderAndroid::ResourceLoaderAndroid):
+
 2009-12-14  Marco Martin  <notmart@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
