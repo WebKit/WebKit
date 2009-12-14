@@ -74,7 +74,7 @@ namespace WTF {
     {
         bits = bits - ((bits >> 1) & 0x55555555);
         bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);
-        return ((bits + (bits >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+        return ((bits + ((bits >> 4) & 0xF0F0F0F)) * 0x1010101) >> 24;
     }
 
 } // namespace WTF
