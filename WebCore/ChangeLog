@@ -1,3 +1,14 @@
+2009-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6293979> Adopt shared control drawing for <video> controls on Leopard and Windows
+
+        Use MediaControllerThemeQuickTime on Leopard.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::mediaControllerTheme):
+
 2009-12-14  Adam Roben  <aroben@apple.com>
 
         Move QuartzCore-related build settings into a vsprops file

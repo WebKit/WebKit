@@ -8,8 +8,16 @@ State at 'load' event:
     role: AXRole: AXToolbar
 
 
+        description: AXDescription: back 30 seconds
+        role: AXRole: AXButton
+
+
         description: AXDescription: play
         role: AXRole: AXButton
+
+
+        description: AXDescription: elapsed time
+        role: AXRole: AXStaticText
 
 
         description: AXDescription: 
@@ -20,12 +28,8 @@ State at 'load' event:
             role: AXRole: AXValueIndicator
 
 
-        description: AXDescription: fast reverse
-        role: AXRole: AXButton
-
-
-        description: AXDescription: fast forward
-        role: AXRole: AXButton
+        description: AXDescription: remaining time
+        role: AXRole: AXStaticText
 
 
         description: AXDescription: mute

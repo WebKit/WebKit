@@ -1,3 +1,36 @@
+2009-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6293979> Adopt shared control drawing for <video> controls on Leopard and Windows
+
+        Regenerate layout and pixel test results for the new UI.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/accessibility/media-element-expected.txt:
+        * platform/mac-leopard/media/audio-controls-rendering-expected.checksum:
+        * platform/mac-leopard/media/audio-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/controls-after-reload-expected.checksum: Added.
+        * platform/mac-leopard/media/controls-after-reload-expected.png: Added.
+        * platform/mac-leopard/media/controls-after-reload-expected.txt:
+        * platform/mac-leopard/media/controls-drag-timebar-expected.txt:
+        * platform/mac-leopard/media/controls-strict-expected.checksum: Added.
+        * platform/mac-leopard/media/controls-strict-expected.png: Added.
+        * platform/mac-leopard/media/controls-strict-expected.txt:
+        * platform/mac-leopard/media/controls-strict-mode-expected.txt: Added.
+        * platform/mac-leopard/media/controls-styling-expected.checksum: Added.
+        * platform/mac-leopard/media/controls-styling-expected.png: Added.
+        * platform/mac-leopard/media/controls-styling-expected.txt:
+        * platform/mac-leopard/media/video-controls-rendering-expected.checksum:
+        * platform/mac-leopard/media/video-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/video-display-toggle-expected.checksum:
+        * platform/mac-leopard/media/video-display-toggle-expected.txt:
+        * platform/mac-leopard/media/video-no-audio-expected.checksum: Added.
+        * platform/mac-leopard/media/video-no-audio-expected.png: Added.
+        * platform/mac-leopard/media/video-no-audio-expected.txt:
+        * platform/mac-leopard/media/video-zoom-controls-expected.checksum:
+        * platform/mac-leopard/media/video-zoom-controls-expected.txt:
+
 2009-12-14  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Gustavo Noronha Silva.
