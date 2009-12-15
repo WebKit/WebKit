@@ -133,6 +133,9 @@ class MockSCM(Mock):
             return "Patch2"
         raise Exception("Bogus commit_id in commit_message_for_local_commit.")
 
+    def diff_for_revision(self, revision):
+        return "DiffForRevision%s\nhttp://bugs.webkit.org/show_bug.cgi?id=12345" % revision
+
     def modified_changelogs(self):
         # Ideally we'd return something more interesting here.
         # The problem is that LandDiff will try to actually read the path from disk!

@@ -33,6 +33,7 @@ from optparse import make_option
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import log, error
 from modules.webkitport import WebKitPort
+from modules.changelogs import ChangeLog
 
 
 class CommandOptions(object):
@@ -48,6 +49,7 @@ class CommandOptions(object):
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
     port = make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...).")
     reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
+    complete_rollout = make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Commit the revert and re-open the original bug.")
 
 
 class AbstractStep(object):
@@ -75,9 +77,48 @@ class AbstractStep(object):
         raise NotImplementedError, "subclasses must implement"
 
 
+# FIXME: Unify with StepSequence?  I'm not sure yet which is the better design.
+class MetaStep(AbstractStep):
+    substeps = [] # Override in subclasses
+    def __init__(self, tool, options):
+        AbstractStep.__init__(self, tool, options)
+        self._step_instances = []
+        for step_class in self.substeps:
+            self._step_instances.append(step_class(tool, options))
+
+    @staticmethod
+    def _collect_options_from_steps(steps):
+        collected_options = []
+        for step in steps:
+            collected_options = collected_options + step.options()
+        return collected_options
+
+    @classmethod
+    def options(cls):
+        return cls._collect_options_from_steps(cls.substeps)
+
+    def run(self, state):
+        for step in self._step_instances:
+             step.run(state)
+
+
 class PrepareChangelogStep(AbstractStep):
     def run(self, state):
         self._run_script("prepare-ChangeLog")
+
+
+class PrepareChangelogForRevertStep(AbstractStep):
+    def run(self, state):
+        # First, discard the ChangeLog changes from the rollout.
+        os.chdir(self._tool.scm().checkout_root)
+        changelog_paths = self._tool.scm().modified_changelogs()
+        self._tool.scm().revert_files(changelog_paths)
+
+        # Second, make new ChangeLog entries for this rollout.
+        # This could move to prepare-ChangeLog by adding a --revert= option.
+        self._run_script("prepare-ChangeLog")
+        for changelog_path in changelog_paths:
+            ChangeLog(changelog_path).update_for_revert(state["revision"])
 
 
 class CleanWorkingDirectoryStep(AbstractStep):
@@ -125,6 +166,11 @@ class ApplyPatchStep(AbstractStep):
     def run(self, state):
         log("Processing patch %s from bug %s." % (state["patch"]["id"], state["patch"]["bug_id"]))
         self._tool.scm().apply_patch(state["patch"], force=self._options.non_interactive)
+
+
+class RevertRevisionStep(AbstractStep):
+    def run(self, state):
+        self._tool.scm().apply_reverse_diff(state["revision"])
 
 
 class EnsureBuildersAreGreenStep(AbstractStep):
@@ -278,6 +324,36 @@ class CloseBugForLandDiffStep(AbstractStep):
         else:
             log(comment_text)
             log("No bug id provided.")
+
+
+class CompleteRollout(MetaStep):
+    substeps = [
+        BuildStep,
+        CommitStep,
+    ]
+
+    @classmethod
+    def options(cls):
+        collected_options = cls._collect_options_from_steps(cls.substeps)
+        collected_options.append(CommandOptions.complete_rollout)
+        return collected_options
+
+    def run(self, state):
+        bug_id = state["bug_id"]
+        # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
+        # Once we trust rollout we will remove this option.
+        if not self._options.complete_rollout:
+            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
+            return
+
+        MetaStep.run(self, state)
+
+        if not bug_id:
+            log(state["commit_text"])
+            log("No bugs were updated or re-opened to reflect this rollout.")
+            return
+        # FIXME: I'm not sure state["commit_text"] is quite right here.
+        self._tool.bugs.reopen_bug(bug_id, state["commit_text"])
 
 
 # FIXME: This class is a dinosaur and should be extinct soon.

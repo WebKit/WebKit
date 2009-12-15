@@ -44,6 +44,7 @@ class DownloadCommandsTest(CommandsTest):
         options.build = True
         options.test = True
         options.close_bug = True
+        options.complete_rollout = False
         return options
 
     def test_build(self):
@@ -83,3 +84,13 @@ class DownloadCommandsTest(CommandsTest):
     def test_land_patches(self):
         expected_stderr = "2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\nUpdating working directory\nProcessing patch 128 from bug 42.\nBuilding WebKit\n"
         self.assert_execute_outputs(LandPatches(), [42], options=self._default_options(), expected_stderr=expected_stderr)
+
+    def test_rollout(self):
+        expected_stderr = "Updating working directory\nRunning prepare-ChangeLog\n\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff 12345\" to commit the rollout.\n"
+        self.assert_execute_outputs(Rollout(), [852], options=self._default_options(), expected_stderr=expected_stderr)
+
+    def test_complete_rollout(self):
+        options = self._default_options()
+        options.complete_rollout = True
+        expected_stderr = "Will re-open bug 12345 after rollout.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
+        self.assert_execute_outputs(Rollout(), [852], options=options, expected_stderr=expected_stderr)

@@ -34,7 +34,7 @@ from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
 # FIXME: This list is rediculous.  We need to learn the ways of __all__.
-from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep
+from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -271,28 +271,18 @@ class LandPatches(AbstractPatchLandingCommand):
         return all_patches
 
 
-# FIXME: Requires unit test.
 class Rollout(Command):
     name = "rollout"
     show_in_main_help = True
     def __init__(self):
-        options = BuildSteps.cleaning_options()
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Commit the revert and re-open the original bug."))
-        Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=options)
-
-    @staticmethod
-    def _create_changelogs_for_revert(tool, revision):
-        # First, discard the ChangeLog changes from the rollout.
-        changelog_paths = tool.scm().modified_changelogs()
-        tool.scm().revert_files(changelog_paths)
-
-        # Second, make new ChangeLog entries for this rollout.
-        # This could move to prepare-ChangeLog by adding a --revert= option.
-        PrepareChangelogStep(tool, None).run({})
-        for changelog_path in changelog_paths:
-            ChangeLog(changelog_path).update_for_revert(revision)
+        self._sequence = StepSequence([
+            CleanWorkingDirectoryStep,
+            UpdateStep,
+            RevertRevisionStep,
+            PrepareChangelogForRevertStep,
+            CompleteRollout,
+        ])
+        Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=self._sequence.options())
 
     @staticmethod
     def _parse_bug_id_from_revision_diff(tool, revision):
@@ -316,17 +306,8 @@ class Rollout(Command):
             else:
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
-        CleanWorkingDirectoryStep(tool, options).run({})
-        UpdateStep(tool, options).run({})
-        tool.scm().apply_reverse_diff(revision)
-        self._create_changelogs_for_revert(tool, revision)
-
-        # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
-        # Once we trust rollout we will remove this option.
-        if not options.complete_rollout:
-            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
-        else:
-            # FIXME: This function does not exist!!
-            # comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
-            raise ScriptError("OOPS! This option is not implemented (yet).")
-            self._reopen_bug_after_rollout(tool, bug_id, comment_text)
+        state = {
+            "revision": revision,
+            "bug_id": bug_id,
+        }
+        self._sequence.run_and_handle_errors(tool, options, state)
