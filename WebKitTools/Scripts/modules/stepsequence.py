@@ -41,7 +41,7 @@ class StepSequenceErrorHandler():
 
 class StepSequence(object):
     def __init__(self, steps):
-        self._steps = steps
+        self._steps = steps or []
 
     def options(self):
         collected_options = [

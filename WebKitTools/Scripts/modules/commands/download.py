@@ -132,28 +132,19 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
     prepare_steps = None
     main_steps = None
 
-    @staticmethod
-    def _create_step_sequence(steps):
-        if not steps:
-            return None, []
-        step_sequence = StepSequence(steps)
-        return step_sequence, step_sequence.options()
-
     def __init__(self):
         options = []
-        self._prepare_sequence, prepare_options = self._create_step_sequence(self.prepare_steps)
-        self._main_sequence, main_options = self._create_step_sequence(self.main_steps)
-        options = sorted(set(prepare_options + main_options))
+        self._prepare_sequence = StepSequence(self.prepare_steps)
+        self._main_sequence = StepSequence(self.main_steps)
+        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()))
         AbstractPatchProcessingCommand.__init__(self, options)
 
     def _prepare_to_process(self, options, args, tool):
-        if self._prepare_sequence:
-            self._prepare_sequence.run_and_handle_errors(tool, options)
+        self._prepare_sequence.run_and_handle_errors(tool, options)
 
     def _process_patch(self, patch, options, args, tool):
-        if self._main_sequence:
-            state = { "patch" : patch }
-            self._main_sequence.run_and_handle_errors(tool, options, state)
+        state = { "patch" : patch }
+        self._main_sequence.run_and_handle_errors(tool, options, state)
 
 
 class ProcessAttachmentsMixin(object):
