@@ -1,3 +1,68 @@
+2009-12-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed the number heap, replacing it with a one-item free list for
+        numbers, taking advantage of the fact that two number cells fit inside
+        the space for one regular cell, and number cells don't require destruction.
+        
+        SunSpider says 1.6% faster in JSVALUE32 mode (the only mode that
+        heap-allocates numbers).
+        
+        SunSpider says 1.1% faster in JSVALUE32_64 mode. v8 says 0.8% faster
+        in JSVALUE32_64 mode. 10% speedup on bench-alloc-nonretained.js. 6%
+        speedup on bench-alloc-retained.js.
+        
+        There's a lot of formulaic change in this patch, but not much substance.
+
+        * JavaScriptCore.exp:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::freeBlockPtr):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::recordExtraCost):
+        (JSC::Heap::allocate):
+        (JSC::Heap::resizeBlocks):
+        (JSC::Heap::growBlocks):
+        (JSC::Heap::shrinkBlocks):
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::clearMarkBits):
+        (JSC::Heap::markedCells):
+        (JSC::Heap::sweep):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::addToStatistics):
+        (JSC::Heap::statistics):
+        (JSC::Heap::isBusy):
+        (JSC::Heap::reset):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::primaryHeapBegin):
+        (JSC::Heap::primaryHeapEnd):
+        * runtime/Collector.h:
+        (JSC::): Removed all code pertaining to the number heap, and changed all
+        heap template functions and classes to non-template functions and classes.
+
+        (JSC::Heap::allocateNumber): A new optimization to replace the number
+        heap: allocate half-sized number cells in pairs, returning the first
+        cell and caching the second cell for the next allocation.
+
+        * runtime/CollectorHeapIterator.h:
+        (JSC::LiveObjectIterator::LiveObjectIterator):
+        (JSC::LiveObjectIterator::operator++):
+        (JSC::DeadObjectIterator::DeadObjectIterator):
+        (JSC::DeadObjectIterator::operator++):
+        (JSC::ObjectIterator::ObjectIterator):
+        (JSC::ObjectIterator::operator++):
+        * runtime/JSCell.h:
+        (JSC::JSCell::isNumber): Removed all code pertaining to the number heap,
+        and changed all heap template functions and classes to non-template functions
+        and classes.
+
 2009-12-15  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

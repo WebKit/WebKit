@@ -169,13 +169,8 @@ Heap::Heap(JSGlobalData* globalData)
     }
 #endif // PLATFORM(SYMBIAN)
     
-    memset(&primaryHeap, 0, sizeof(CollectorHeap));
-    allocateBlock<PrimaryHeap>();
-
-    memset(&numberHeap, 0, sizeof(CollectorHeap));
-#if USE(JSVALUE32)
-    allocateBlock<NumberHeap>();
-#endif
+    memset(&m_heap, 0, sizeof(CollectorHeap));
+    allocateBlock();
 }
 
 Heap::~Heap()
@@ -198,8 +193,7 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
 
-    freeBlocks<PrimaryHeap>();
-    freeBlocks<NumberHeap>();
+    freeBlocks();
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_currentThreadRegistrar) {
@@ -218,7 +212,6 @@ void Heap::destroy()
     m_globalData = 0;
 }
 
-template <HeapType heapType>
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
 #if PLATFORM(DARWIN)
@@ -273,57 +266,47 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     CollectorBlock* block = reinterpret_cast<CollectorBlock*>(address);
     block->heap = this;
-    block->type = heapType;
-    clearMarkBits<heapType>(block);
+    clearMarkBits(block);
 
-    // heapAllocate assumes that it's safe to call a destructor on any cell in the primary heap.
-    if (heapType != NumberHeap) {
-        Structure* dummyMarkableCellStructure = m_globalData->dummyMarkableCellStructure.get();
-        for (size_t i = 0; i < HeapConstants<heapType>::cellsPerBlock; ++i)
-            new (block->cells + i) JSCell(dummyMarkableCellStructure);
-    }
+    Structure* dummyMarkableCellStructure = m_globalData->dummyMarkableCellStructure.get();
+    for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
+        new (block->cells + i) JSCell(dummyMarkableCellStructure);
     
     // Add block to blocks vector.
 
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-    size_t numBlocks = heap.numBlocks;
-    if (heap.usedBlocks == numBlocks) {
+    size_t numBlocks = m_heap.numBlocks;
+    if (m_heap.usedBlocks == numBlocks) {
         static const size_t maxNumBlocks = ULONG_MAX / sizeof(CollectorBlock*) / GROWTH_FACTOR;
         if (numBlocks > maxNumBlocks)
             CRASH();
         numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
-        heap.numBlocks = numBlocks;
-        heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, numBlocks * sizeof(CollectorBlock*)));
+        m_heap.numBlocks = numBlocks;
+        m_heap.blocks = static_cast<CollectorBlock**>(fastRealloc(m_heap.blocks, numBlocks * sizeof(CollectorBlock*)));
     }
-    heap.blocks[heap.usedBlocks++] = block;
+    m_heap.blocks[m_heap.usedBlocks++] = block;
 
     return block;
 }
 
-template <HeapType heapType>
 NEVER_INLINE void Heap::freeBlock(size_t block)
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
-    if (heapType != NumberHeap) {
-        ObjectIterator<heapType> it(heap, block);
-        ObjectIterator<heapType> end(heap, block + 1);
-        for ( ; it != end; ++it)
-            (*it)->~JSCell();
-    }
-    freeBlock(heap.blocks[block]);
+    ObjectIterator it(m_heap, block);
+    ObjectIterator end(m_heap, block + 1);
+    for ( ; it != end; ++it)
+        (*it)->~JSCell();
+    freeBlockPtr(m_heap.blocks[block]);
 
     // swap with the last block so we compact as we go
-    heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
-    heap.usedBlocks--;
+    m_heap.blocks[block] = m_heap.blocks[m_heap.usedBlocks - 1];
+    m_heap.usedBlocks--;
 
-    if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
-        heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-        heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock*)));
+    if (m_heap.numBlocks > MIN_ARRAY_SIZE && m_heap.usedBlocks < m_heap.numBlocks / LOW_WATER_FACTOR) {
+        m_heap.numBlocks = m_heap.numBlocks / GROWTH_FACTOR; 
+        m_heap.blocks = static_cast<CollectorBlock**>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(CollectorBlock*)));
     }
 }
 
-NEVER_INLINE void Heap::freeBlock(CollectorBlock* block)
+NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
 {
 #if PLATFORM(DARWIN)    
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
@@ -344,15 +327,12 @@ NEVER_INLINE void Heap::freeBlock(CollectorBlock* block)
 #endif
 }
 
-template <HeapType heapType>
 void Heap::freeBlocks()
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
-    while (heap.usedBlocks)
-        freeBlock<heapType>(0);
-    fastFree(heap.blocks);
-    memset(&heap, 0, sizeof(CollectorHeap));
+    while (m_heap.usedBlocks)
+        freeBlock(0);
+    fastFree(m_heap.blocks);
+    memset(&m_heap, 0, sizeof(CollectorHeap));
 }
 
 void Heap::recordExtraCost(size_t cost)
@@ -367,36 +347,32 @@ void Heap::recordExtraCost(size_t cost)
     // are either very short lived temporaries, or have extremely long lifetimes. So
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
-    // NOTE: we target the primaryHeap unconditionally as JSNumber doesn't modify cost 
 
-    if (primaryHeap.extraCost > maxExtraCost && primaryHeap.extraCost > primaryHeap.usedBlocks * BLOCK_SIZE / 2) {
+    if (m_heap.extraCost > maxExtraCost && m_heap.extraCost > m_heap.usedBlocks * BLOCK_SIZE / 2) {
         // If the last iteration through the heap deallocated blocks, we need
         // to clean up remaining garbage before marking. Otherwise, the conservative
         // marking mechanism might follow a pointer to unmapped memory.
-        if (primaryHeap.didShrink)
-            sweep<PrimaryHeap>();
+        if (m_heap.didShrink)
+            sweep();
         reset();
     }
-    primaryHeap.extraCost += cost;
+    m_heap.extraCost += cost;
 }
 
-template <HeapType heapType> ALWAYS_INLINE void* Heap::heapAllocate(size_t s)
+void* Heap::allocate(size_t s)
 {
-    typedef typename HeapConstants<heapType>::Block Block;
-    typedef typename HeapConstants<heapType>::Cell Cell;
+    typedef HeapConstants::Block Block;
+    typedef HeapConstants::Cell Cell;
     
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT_UNUSED(s, s <= HeapConstants<heapType>::cellSize);
+    ASSERT_UNUSED(s, s <= HeapConstants::cellSize);
 
-    ASSERT(heap.operationInProgress == NoOperation);
-    ASSERT(heapType == PrimaryHeap || heap.extraCost == 0);
+    ASSERT(m_heap.operationInProgress == NoOperation);
 
 #if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
-    ASSERT(heap.operationInProgress == NoOperation);
+    ASSERT(m_heap.operationInProgress == NoOperation);
 #endif
 
 allocate:
@@ -404,24 +380,24 @@ allocate:
     // Fast case: find the next garbage cell and recycle it.
 
     do {
-        ASSERT(heap.nextBlock < heap.usedBlocks);
-        Block* block = reinterpret_cast<Block*>(heap.blocks[heap.nextBlock]);
+        ASSERT(m_heap.nextBlock < m_heap.usedBlocks);
+        Block* block = reinterpret_cast<Block*>(m_heap.blocks[m_heap.nextBlock]);
         do {
-            ASSERT(heap.nextCell < HeapConstants<heapType>::cellsPerBlock);
-            if (!block->marked.get(heap.nextCell >> HeapConstants<heapType>::bitmapShift)) { // Always false for the last cell in the block
-                Cell* cell = block->cells + heap.nextCell;
-                if (heapType != NumberHeap) {
-                    heap.operationInProgress = Allocation;
-                    JSCell* imp = reinterpret_cast<JSCell*>(cell);
-                    imp->~JSCell();
-                    heap.operationInProgress = NoOperation;
-                }
-                ++heap.nextCell;
+            ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
+            if (!block->marked.get(m_heap.nextCell)) { // Always false for the last cell in the block
+                Cell* cell = block->cells + m_heap.nextCell;
+
+                m_heap.operationInProgress = Allocation;
+                JSCell* imp = reinterpret_cast<JSCell*>(cell);
+                imp->~JSCell();
+                m_heap.operationInProgress = NoOperation;
+
+                ++m_heap.nextCell;
                 return cell;
             }
-        } while (++heap.nextCell != HeapConstants<heapType>::cellsPerBlock);
-        heap.nextCell = 0;
-    } while (++heap.nextBlock != heap.usedBlocks);
+        } while (++m_heap.nextCell != HeapConstants::cellsPerBlock);
+        m_heap.nextCell = 0;
+    } while (++m_heap.nextBlock != m_heap.usedBlocks);
 
     // Slow case: reached the end of the heap. Mark live objects and start over.
 
@@ -429,66 +405,49 @@ allocate:
     goto allocate;
 }
 
-template <HeapType heapType>
 void Heap::resizeBlocks()
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
+    m_heap.didShrink = false;
 
-    heap.didShrink = false;
-
-    size_t usedCellCount = markedCells<heapType>();
+    size_t usedCellCount = markedCells();
     size_t minCellCount = usedCellCount + max(ALLOCATIONS_PER_COLLECTION, usedCellCount);
-    size_t minBlockCount = (minCellCount + HeapConstants<heapType>::cellsPerBlock - 1) / HeapConstants<heapType>::cellsPerBlock;
+    size_t minBlockCount = (minCellCount + HeapConstants::cellsPerBlock - 1) / HeapConstants::cellsPerBlock;
 
     size_t maxCellCount = 1.25f * minCellCount;
-    size_t maxBlockCount = (maxCellCount + HeapConstants<heapType>::cellsPerBlock - 1) / HeapConstants<heapType>::cellsPerBlock;
+    size_t maxBlockCount = (maxCellCount + HeapConstants::cellsPerBlock - 1) / HeapConstants::cellsPerBlock;
 
-    if (heap.usedBlocks < minBlockCount)
-        growBlocks<heapType>(minBlockCount);
-    else if (heap.usedBlocks > maxBlockCount)
-        shrinkBlocks<heapType>(maxBlockCount);
+    if (m_heap.usedBlocks < minBlockCount)
+        growBlocks(minBlockCount);
+    else if (m_heap.usedBlocks > maxBlockCount)
+        shrinkBlocks(maxBlockCount);
 }
 
-template <HeapType heapType> 
 void Heap::growBlocks(size_t neededBlocks)
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-    ASSERT(heap.usedBlocks < neededBlocks);
-    while (heap.usedBlocks < neededBlocks)
-        allocateBlock<heapType>();
+    ASSERT(m_heap.usedBlocks < neededBlocks);
+    while (m_heap.usedBlocks < neededBlocks)
+        allocateBlock();
 }
 
-template <HeapType heapType> 
 void Heap::shrinkBlocks(size_t neededBlocks)
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-    ASSERT(heap.usedBlocks > neededBlocks);
+    ASSERT(m_heap.usedBlocks > neededBlocks);
     
     // Clear the always-on last bit, so isEmpty() isn't fooled by it.
-    for (size_t i = 0; i < heap.usedBlocks; ++i)
-        heap.blocks[i]->marked.clear((HeapConstants<heapType>::cellsPerBlock - 1) >> HeapConstants<heapType>::bitmapShift);
+    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+        m_heap.blocks[i]->marked.clear(HeapConstants::cellsPerBlock - 1);
 
-    for (size_t i = 0; i != heap.usedBlocks && heap.usedBlocks != neededBlocks; ) {
-        if (heap.blocks[i]->marked.isEmpty()) {
-            freeBlock<heapType>(i);
-            heap.didShrink = true;
+    for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks != neededBlocks; ) {
+        if (m_heap.blocks[i]->marked.isEmpty()) {
+            freeBlock(i);
+            m_heap.didShrink = true;
         } else
             ++i;
     }
 
     // Reset the always-on last bit.
-    for (size_t i = 0; i < heap.usedBlocks; ++i)
-        heap.blocks[i]->marked.set((HeapConstants<heapType>::cellsPerBlock - 1) >> HeapConstants<heapType>::bitmapShift);
-}
-
-void* Heap::allocate(size_t s)
-{
-    return heapAllocate<PrimaryHeap>(s);
-}
-
-void* Heap::allocateNumber(size_t s)
-{
-    return heapAllocate<NumberHeap>(s);
+    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+        m_heap.blocks[i]->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
 #if PLATFORM(WINCE)
@@ -764,7 +723,7 @@ static inline bool isPossibleCell(void* p)
 {
     return isCellAligned(p) && p;
 }
-#endif
+#endif // USE(JSVALUE32)
 
 void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 {
@@ -781,15 +740,11 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
     char** p = static_cast<char**>(start);
     char** e = static_cast<char**>(end);
 
-    CollectorBlock** primaryBlocks = primaryHeap.blocks;
-#if USE(JSVALUE32)
-    CollectorBlock** numberBlocks = numberHeap.blocks;
-#endif
-
+    CollectorBlock** blocks = m_heap.blocks;
     while (p != e) {
         char* x = *p++;
         if (isPossibleCell(x)) {
-            size_t usedPrimaryBlocks;
+            size_t usedBlocks;
             uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
             xAsBits &= CELL_ALIGN_MASK;
 
@@ -799,29 +754,13 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
                 continue;
 
             CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
-#if USE(JSVALUE32)
-            // Mark the the number heap, we can mark these Cells directly to avoid the virtual call cost
-            size_t usedNumberBlocks = numberHeap.usedBlocks;
-            for (size_t block = 0; block < usedNumberBlocks; block++) {
-                if (numberBlocks[block] != blockAddr)
-                    continue;
-                Heap::markCell(reinterpret_cast<JSCell*>(xAsBits));
-                goto endMarkLoop;
-            }
-#endif
-
-            // Mark the primary heap
-            usedPrimaryBlocks = primaryHeap.usedBlocks;
-            for (size_t block = 0; block < usedPrimaryBlocks; block++) {
-                if (primaryBlocks[block] != blockAddr)
+            usedBlocks = m_heap.usedBlocks;
+            for (size_t block = 0; block < usedBlocks; block++) {
+                if (blocks[block] != blockAddr)
                     continue;
                 markStack.append(reinterpret_cast<JSCell*>(xAsBits));
                 markStack.drain();
             }
-#if USE(JSVALUE32)
-        endMarkLoop:
-            ;
-#endif
         }
     }
 }
@@ -1063,58 +1002,48 @@ void Heap::markProtectedObjects(MarkStack& markStack)
     }
 }
 
-template <HeapType heapType> 
 void Heap::clearMarkBits()
 {
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-    for (size_t i = 0; i < heap.usedBlocks; ++i)
-        clearMarkBits<heapType>(heap.blocks[i]);
+    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+        clearMarkBits(m_heap.blocks[i]);
 }
 
-template <HeapType heapType> 
 void Heap::clearMarkBits(CollectorBlock* block)
 {
-    // heapAllocate assumes that the last cell in every block is marked.
+    // allocate assumes that the last cell in every block is marked.
     block->marked.clearAll();
-    block->marked.set((HeapConstants<heapType>::cellsPerBlock - 1) >> HeapConstants<heapType>::bitmapShift);
+    block->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-template <HeapType heapType> 
 size_t Heap::markedCells(size_t startBlock, size_t startCell) const
 {
-    const CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-    ASSERT(startBlock <= heap.usedBlocks);
-    ASSERT(startCell < HeapConstants<heapType>::cellsPerBlock);
+    ASSERT(startBlock <= m_heap.usedBlocks);
+    ASSERT(startCell < HeapConstants::cellsPerBlock);
 
-    if (startBlock >= heap.usedBlocks)
+    if (startBlock >= m_heap.usedBlocks)
         return 0;
 
     size_t result = 0;
-    result += heap.blocks[startBlock]->marked.count(startCell);
-    for (size_t i = startBlock + 1; i < heap.usedBlocks; ++i)
-        result += heap.blocks[i]->marked.count();
+    result += m_heap.blocks[startBlock]->marked.count(startCell);
+    for (size_t i = startBlock + 1; i < m_heap.usedBlocks; ++i)
+        result += m_heap.blocks[i]->marked.count();
 
     return result;
 }
 
-template <HeapType heapType> 
 void Heap::sweep()
 {
-    ASSERT(heapType != NumberHeap); // The number heap does not contain meaningful destructors.
-
-    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
-    ASSERT(heap.operationInProgress == NoOperation);
-    if (heap.operationInProgress != NoOperation)
+    ASSERT(m_heap.operationInProgress == NoOperation);
+    if (m_heap.operationInProgress != NoOperation)
         CRASH();
-    heap.operationInProgress = Collection;
+    m_heap.operationInProgress = Collection;
     
 #if !ENABLE(JSC_ZOMBIES)
     Structure* dummyMarkableCellStructure = m_globalData->dummyMarkableCellStructure.get();
 #endif
 
-    DeadObjectIterator<heapType> it(heap, heap.nextBlock, heap.nextCell);
-    DeadObjectIterator<heapType> end(heap, heap.usedBlocks);
+    DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
+    DeadObjectIterator end(m_heap, m_heap.usedBlocks);
     for ( ; it != end; ++it) {
         JSCell* cell = *it;
 #if ENABLE(JSC_ZOMBIES)
@@ -1131,7 +1060,7 @@ void Heap::sweep()
 #endif
     }
 
-    heap.operationInProgress = NoOperation;
+    m_heap.operationInProgress = NoOperation;
 }
 
 void Heap::markRoots()
@@ -1143,18 +1072,16 @@ void Heap::markRoots()
     }
 #endif
 
-    ASSERT((primaryHeap.operationInProgress == NoOperation) & (numberHeap.operationInProgress == NoOperation));
-    if (!((primaryHeap.operationInProgress == NoOperation) & (numberHeap.operationInProgress == NoOperation)))
+    ASSERT(m_heap.operationInProgress == NoOperation);
+    if (m_heap.operationInProgress != NoOperation)
         CRASH();
 
-    primaryHeap.operationInProgress = Collection;
-    numberHeap.operationInProgress = Collection;
+    m_heap.operationInProgress = Collection;
 
     MarkStack& markStack = m_globalData->markStack;
 
     // Reset mark bits.
-    clearMarkBits<PrimaryHeap>();
-    clearMarkBits<NumberHeap>();
+    clearMarkBits();
 
     // Mark stack roots.
     markStackObjectsConservatively(markStack);
@@ -1177,40 +1104,27 @@ void Heap::markRoots()
     markStack.drain();
     markStack.compact();
 
-    primaryHeap.operationInProgress = NoOperation;
-    numberHeap.operationInProgress = NoOperation;
+    m_heap.operationInProgress = NoOperation;
 }
 
 size_t Heap::objectCount() const
 {
-    return objectCount<PrimaryHeap>() + objectCount<NumberHeap>();
+    return m_heap.nextBlock * HeapConstants::cellsPerBlock // allocated full blocks
+           + m_heap.nextCell // allocated cells in current block
+           + markedCells(m_heap.nextBlock, m_heap.nextCell) // marked cells in remainder of m_heap
+           - m_heap.usedBlocks; // 1 cell per block is a dummy sentinel
 }
 
-template <HeapType heapType> 
-size_t Heap::objectCount() const
-{
-    const CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
-    return heap.nextBlock * HeapConstants<heapType>::cellsPerBlock // allocated full blocks
-           + heap.nextCell // allocated cells in current block
-           + markedCells<heapType>(heap.nextBlock, heap.nextCell) // marked cells in remainder of heap
-           - heap.usedBlocks; // 1 cell per block is a dummy sentinel
-}
-
-template <HeapType heapType> 
 void Heap::addToStatistics(Heap::Statistics& statistics) const
 {
-    const CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
-
-    statistics.size += heap.usedBlocks * BLOCK_SIZE;
-    statistics.free += heap.usedBlocks * BLOCK_SIZE - (objectCount<heapType>() * HeapConstants<heapType>::cellSize);
+    statistics.size += m_heap.usedBlocks * BLOCK_SIZE;
+    statistics.free += m_heap.usedBlocks * BLOCK_SIZE - (objectCount() * HeapConstants::cellSize);
 }
 
 Heap::Statistics Heap::statistics() const
 {
     Statistics statistics = { 0, 0 };
-    addToStatistics<PrimaryHeap>(statistics);
-    addToStatistics<NumberHeap>(statistics);
+    addToStatistics(statistics);
     return statistics;
 }
 
@@ -1279,7 +1193,7 @@ HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()
 
 bool Heap::isBusy()
 {
-    return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
+    return m_heap.operationInProgress != NoOperation;
 }
 
 void Heap::reset()
@@ -1290,19 +1204,14 @@ void Heap::reset()
 
     JAVASCRIPTCORE_GC_MARKED();
 
-    primaryHeap.nextCell = 0;
-    primaryHeap.nextBlock = 0;
-    primaryHeap.extraCost = 0;
+    m_heap.nextCell = 0;
+    m_heap.nextBlock = 0;
+    m_heap.nextNumber = 0;
+    m_heap.extraCost = 0;
 #if ENABLE(JSC_ZOMBIES)
-    sweep<PrimaryHeap>();
+    sweep();
 #endif
-    resizeBlocks<PrimaryHeap>();
-
-#if USE(JSVALUE32)
-    numberHeap.nextCell = 0;
-    numberHeap.nextBlock = 0;
-    resizeBlocks<NumberHeap>();
-#endif
+    resizeBlocks();
 
     JAVASCRIPTCORE_GC_END();
 }
@@ -1314,36 +1223,31 @@ void Heap::collectAllGarbage()
     // If the last iteration through the heap deallocated blocks, we need
     // to clean up remaining garbage before marking. Otherwise, the conservative
     // marking mechanism might follow a pointer to unmapped memory.
-    if (primaryHeap.didShrink)
-        sweep<PrimaryHeap>();
+    if (m_heap.didShrink)
+        sweep();
 
     markRoots();
 
     JAVASCRIPTCORE_GC_MARKED();
 
-    primaryHeap.nextCell = 0;
-    primaryHeap.nextBlock = 0;
-    primaryHeap.extraCost = 0;
-    sweep<PrimaryHeap>();
-    resizeBlocks<PrimaryHeap>();
-
-#if USE(JSVALUE32)
-    numberHeap.nextCell = 0;
-    numberHeap.nextBlock = 0;
-    resizeBlocks<NumberHeap>();
-#endif
+    m_heap.nextCell = 0;
+    m_heap.nextBlock = 0;
+    m_heap.nextNumber = 0;
+    m_heap.extraCost = 0;
+    sweep();
+    resizeBlocks();
 
     JAVASCRIPTCORE_GC_END();
 }
 
-LiveObjectIterator<PrimaryHeap> Heap::primaryHeapBegin()
+LiveObjectIterator Heap::primaryHeapBegin()
 {
-    return LiveObjectIterator<PrimaryHeap>(primaryHeap, 0);
+    return LiveObjectIterator(m_heap, 0);
 }
 
-LiveObjectIterator<PrimaryHeap> Heap::primaryHeapEnd()
+LiveObjectIterator Heap::primaryHeapEnd()
 {
-    return LiveObjectIterator<PrimaryHeap>(primaryHeap, primaryHeap.usedBlocks);
+    return LiveObjectIterator(m_heap, m_heap.usedBlocks);
 }
 
 } // namespace JSC

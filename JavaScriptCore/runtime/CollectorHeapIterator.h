@@ -45,25 +45,22 @@ namespace JSC {
         size_t m_cell;
     };
 
-    template <HeapType heapType>
     class LiveObjectIterator : public CollectorHeapIterator {
     public:
         LiveObjectIterator(CollectorHeap&, size_t startBlock, size_t startCell = 0);
-        LiveObjectIterator<heapType>& operator++();
+        LiveObjectIterator& operator++();
     };
 
-    template <HeapType heapType>
     class DeadObjectIterator : public CollectorHeapIterator {
     public:
         DeadObjectIterator(CollectorHeap&, size_t startBlock, size_t startCell = 0);
-        DeadObjectIterator<heapType>& operator++();
+        DeadObjectIterator& operator++();
     };
 
-    template <HeapType heapType>
     class ObjectIterator : public CollectorHeapIterator {
     public:
         ObjectIterator(CollectorHeap&, size_t startBlock, size_t startCell = 0);
-        ObjectIterator<heapType>& operator++();
+        ObjectIterator& operator++();
     };
 
     inline CollectorHeapIterator::CollectorHeapIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
@@ -92,55 +89,49 @@ namespace JSC {
         }
     }
 
-    template <HeapType heapType>
-    inline LiveObjectIterator<heapType>::LiveObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
+    inline LiveObjectIterator::LiveObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
         : CollectorHeapIterator(heap, startBlock, startCell - 1)
     {
         ++(*this);
     }
 
-    template <HeapType heapType>
-    inline LiveObjectIterator<heapType>& LiveObjectIterator<heapType>::operator++()
+    inline LiveObjectIterator& LiveObjectIterator::operator++()
     {
         if (m_block < m_heap.nextBlock || m_cell < m_heap.nextCell) {
-            advance(HeapConstants<heapType>::cellsPerBlock);
+            advance(HeapConstants::cellsPerBlock);
             return *this;
         }
 
         do {
-            advance(HeapConstants<heapType>::cellsPerBlock);
+            advance(HeapConstants::cellsPerBlock);
         } while (m_block < m_heap.usedBlocks && !m_heap.blocks[m_block]->marked.get(m_cell));
         return *this;
     }
 
-    template <HeapType heapType>
-    inline DeadObjectIterator<heapType>::DeadObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
+    inline DeadObjectIterator::DeadObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
         : CollectorHeapIterator(heap, startBlock, startCell - 1)
     {
         ++(*this);
     }
 
-    template <HeapType heapType>
-    inline DeadObjectIterator<heapType>& DeadObjectIterator<heapType>::operator++()
+    inline DeadObjectIterator& DeadObjectIterator::operator++()
     {
         do {
-            advance(HeapConstants<heapType>::cellsPerBlock);
+            advance(HeapConstants::cellsPerBlock);
             ASSERT(m_block > m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell >= m_heap.nextCell));
         } while (m_block < m_heap.usedBlocks && m_heap.blocks[m_block]->marked.get(m_cell));
         return *this;
     }
 
-    template <HeapType heapType>
-    inline ObjectIterator<heapType>::ObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
+    inline ObjectIterator::ObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
         : CollectorHeapIterator(heap, startBlock, startCell - 1)
     {
         ++(*this);
     }
 
-    template <HeapType heapType>
-    inline ObjectIterator<heapType>& ObjectIterator<heapType>::operator++()
+    inline ObjectIterator& ObjectIterator::operator++()
     {
-        advance(HeapConstants<heapType>::cellsPerBlock);
+        advance(HeapConstants::cellsPerBlock);
         return *this;
     }
 

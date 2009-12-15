@@ -133,7 +133,7 @@ namespace JSC {
 #if USE(JSVALUE32)
     inline bool JSCell::isNumber() const
     {
-        return Heap::isNumber(const_cast<JSCell*>(this));
+        return m_structure->typeInfo().type() == NumberType;
     }
 #endif
 
