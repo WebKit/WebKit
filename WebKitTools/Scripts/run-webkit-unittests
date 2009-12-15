@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from modules.bugzilla_unittest import *
@@ -42,9 +43,14 @@ from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *
 from modules.logging_unittest import *
 from modules.multicommandtool_unittest import *
-from modules.scm_unittest import *
 from modules.webkitport_unittest import *
 from modules.workqueue_unittest import *
 
 if __name__ == "__main__":
+    # FIXME: This is a hack, but I'm tired of commenting out the test.
+    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
+    if len(sys.argv) > 1 and sys.argv[1] == "--all":
+        sys.argv.remove("--all")
+        from modules.scm_unittest import *
+
     unittest.main()

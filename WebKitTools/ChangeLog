@@ -1,3 +1,16 @@
+2009-12-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        scm_unittest.py is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=31818
+
+        Now we don't run the SCM unit tests unless we get the --all flag on the
+        command line.  Eric and I were commenting out this test because it was
+        too painful to run.
+
+        * Scripts/run-webkit-unittests:
+
 2009-12-14  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Fix failing unittest.
