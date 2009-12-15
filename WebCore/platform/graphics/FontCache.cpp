@@ -53,7 +53,7 @@ FontCache::FontCache()
 {
 }
 
-struct FontPlatformDataCacheKey {
+struct FontPlatformDataCacheKey : FastAllocBase {
     FontPlatformDataCacheKey(const AtomicString& family = AtomicString(), unsigned size = 0, unsigned weight = 0, bool italic = false,
                              bool isPrinterFont = false, FontRenderingMode renderingMode = NormalRenderingMode)
         : m_family(family)
