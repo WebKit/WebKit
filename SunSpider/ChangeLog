@@ -1,5 +1,16 @@
 2009-12-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric Seidel.
+
+        Make sunspider-0.9.1 the default content set (both command-line and hosted)
+        https://bugs.webkit.org/show_bug.cgi?id=32537
+
+        * hosted/sunspider.html: Change default suite link.
+        * sunspider: Change default suite.
+        * sunspider-compare-results: Likewise.
+
+2009-12-14  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
 
         in-browser SunSpider suffers excessive penalty under power management
