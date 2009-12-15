@@ -106,6 +106,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleTabList,
     WebAccessibilityRoleTabPanel,
     WebAccessibilityRoleTreeRole,
+    WebAccessibilityRoleTreeGrid,
     WebAccessibilityRoleTreeItemRole,
     WebAccessibilityRoleDirectory,
 
