@@ -1,3 +1,20 @@
+2009-12-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool / commit-queue should add results links to bugs when more results are available on the status bot
+        https://bugs.webkit.org/show_bug.cgi?id=32546
+
+        You can see an example of this working in:
+        https://bugs.webkit.org/show_bug.cgi?id=32585#c3
+
+        * QueueStatusServer/queue_status.py:
+         - Output the id of the newly created status.
+        * Scripts/modules/commands/queues.py:
+         - Tweak the commit-queue logging to include a full status link.
+        * Scripts/modules/statusbot.py:
+         - update_status should return the newly created status id.
+
 2009-12-15  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

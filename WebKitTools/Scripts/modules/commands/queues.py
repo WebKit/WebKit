@@ -145,11 +145,18 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
 
     # StepSequenceErrorHandler methods
 
+    @staticmethod
+    def _error_message_for_bug(tool, status_id, script_error):
+        if not script_error.output:
+            return script_error.message_with_output()
+        results_link = tool.status_bot.results_url_for_status(status_id)
+        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
         patch = state["patch"]
-        tool.status_bot.update_status(cls.name, "patch %s failed: %s" % (patch['id'], script_error.message), patch, StringIO(script_error.output))
-        tool.bugs.reject_patch_from_commit_queue(patch["id"], script_error.message_with_output())
+        status_id = tool.status_bot.update_status(cls.name, "patch %s failed: %s" % (patch['id'], script_error.message), patch, StringIO(script_error.output))
+        tool.bugs.reject_patch_from_commit_queue(patch["id"], cls._error_message_for_bug(tool, status_id, script_error))
 
 
 class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):

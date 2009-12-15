@@ -147,7 +147,7 @@ class UpdateStatus(webapp.RequestHandler):
         results_file = self.request.get("results_file")
         queue_status.results_file = db.Blob(str(results_file))
         queue_status.put()
-        self.redirect('/')
+        self.response.out.write(queue_status.key().id())
 
 
 class ShowResults(webapp.RequestHandler):
