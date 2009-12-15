@@ -283,7 +283,14 @@ bool ChromeClientQt::runJavaScriptPrompt(Frame* f, const String& message, const 
     QString x = result;
     FrameLoaderClientQt *fl = static_cast<FrameLoaderClientQt*>(f->loader()->client());
     bool rc = m_webPage->javaScriptPrompt(fl->webFrame(), (QString)message, (QString)defaultValue, &x);
-    result = x;
+
+    // Fix up a quirk in the QInputDialog class. If no input happened the string should be empty
+    // but it is null. See https://bugs.webkit.org/show_bug.cgi?id=30914.
+    if (rc && result.isNull())
+        result = String("");
+    else
+        result = x;
+
     return rc;
 }
 

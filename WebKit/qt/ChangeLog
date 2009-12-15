@@ -1,3 +1,28 @@
+2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix JavaScript prompt behavior for empty/null strings.
+        https://bugs.webkit.org/show_bug.cgi?id=30914
+
+        The patch is based on the work done by Gupta Manish.
+
+        In the default implementation of the JavaScript prompt
+        we are using a QInputDialog to get the text and this has
+        one quirk with regard to not entering any text.
+
+        In other WebKit ports and in Firefox an empty string is
+        returned but in the Qt case it is a null string.
+
+        Change the API documentation in QWebPage to mention we want to
+        have a non null string but do the fixup in the ChromeClientQt
+        to support existing code.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptPrompt): Change API documentation
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runJavaScriptPrompt): Fixup null QString
+
 2009-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
