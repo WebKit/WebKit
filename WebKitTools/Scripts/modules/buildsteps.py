@@ -211,6 +211,18 @@ class EnsureBuildersAreGreenStep(AbstractStep):
         error("Builders [%s] are red, please do not commit.\nSee http://%s.\nPass --ignore-builders to bypass this check." % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
 
 
+class EnsureLocalCommitIfNeeded(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.local_commit,
+        ]
+
+    def run(self, state):
+        if self._options.local_commit and not self._tool.scm().supports_local_commits():
+            error("--local-commit passed, but %s does not support local commits" % self._tool.scm.display_name())
+
+
 class UpdateChangelogsWithReviewerStep(AbstractStep):
     @classmethod
     def options(cls):

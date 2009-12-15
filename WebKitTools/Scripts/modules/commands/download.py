@@ -34,7 +34,7 @@ from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
 # FIXME: This list is rediculous.  We need to learn the ways of __all__.
-from modules.buildsteps import CommandOptions, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, CleanWorkingDirectoryWithLocalCommitsStep, UpdateStep, ApplyPatchStep, ApplyPatchWithLocalCommitStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
+from modules.buildsteps import CommandOptions, EnsureBuildersAreGreenStep, EnsureLocalCommitIfNeeded, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, CleanWorkingDirectoryWithLocalCommitsStep, UpdateStep, ApplyPatchStep, ApplyPatchWithLocalCommitStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -44,55 +44,69 @@ from modules.multicommandtool import Command
 from modules.stepsequence import StepSequence
 
 
-class Build(Command):
+# FIXME: Move this to a more general location.
+class AbstractDeclarativeCommmand(Command):
+    help_text = None
+    argument_names = None
+    def __init__(self, options):
+        Command.__init__(self, self.help_text, self.argument_names, options)
+
+
+class AbstractSequencedCommmand(AbstractDeclarativeCommmand):
+    steps = None
+    def __init__(self):
+        self._sequence = StepSequence(self.steps)
+        AbstractDeclarativeCommmand.__init__(self, self._sequence.options())
+
+    def _prepare_state(self, options, args, tool):
+        return None
+
+    def execute(self, options, args, tool):
+        self._sequence.run_and_handle_errors(tool, options, self._prepare_state(options, args, tool))
+
+
+class Build(AbstractSequencedCommmand):
     name = "build"
+    help_text = "Update working copy and build"
+    argument_names = ""
     show_in_main_help = False
-    def __init__(self):
-        self._sequence = StepSequence([
-            CleanWorkingDirectoryStep,
-            UpdateStep,
-            BuildStep
-        ])
-        Command.__init__(self, "Update working copy and build", "", self._sequence.options())
-
-    def execute(self, options, args, tool):
-        self._sequence.run_and_handle_errors(tool, options)
+    steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        BuildStep,
+    ]
 
 
-class LandDiff(Command):
+class LandDiff(AbstractSequencedCommmand):
     name = "land-diff"
+    help_text = "Land the current working directory diff and updates the associated bug if any"
+    argument_names = "[BUGID]"
     show_in_main_help = True
-    def __init__(self):
-        self._sequence = StepSequence([
-            EnsureBuildersAreGreenStep,
-            UpdateChangelogsWithReviewerStep,
-            EnsureBuildersAreGreenStep,
-            BuildStep,
-            RunTestsStep,
-            CommitStep,
-            CloseBugForLandDiffStep,
-        ])
-        Command.__init__(self, "Land the current working directory diff and updates the associated bug if any", "[BUGID]", options=self._sequence.options())
+    steps = [
+        EnsureBuildersAreGreenStep,
+        UpdateChangelogsWithReviewerStep,
+        EnsureBuildersAreGreenStep,
+        BuildStep,
+        RunTestsStep,
+        CommitStep,
+        CloseBugForLandDiffStep,
+    ]
 
-    def execute(self, options, args, tool):
-        bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
-        fake_patch = {
-            "id": None,
-            "bug_id": bug_id,
+    def _prepare_state(self, options, args, tool):
+        return {
+            "patch": {
+                "id": None,
+                "bug_id": (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
+            }
         }
-        state = {"patch": fake_patch}
-        self._sequence.run_and_handle_errors(tool, options, state)
 
 
-class AbstractPatchProcessingCommand(Command):
-    def __init__(self, help_text, args_description, options):
-        Command.__init__(self, help_text, args_description, options=options)
-
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        raise NotImplementedError, "subclasses must implement"
-
-    def _prepare_to_process(self, options, args, tool):
-        raise NotImplementedError, "subclasses must implement"
+class AbstractPatchProcessingCommand(AbstractDeclarativeCommmand):
+    # Subclasses must implement the methods below.  We don't declare them here
+    # because we want to be able to implement them with mix-ins.
+    #
+    # def _fetch_list_of_patches_to_process(self, options, args, tool):
+    # def _prepare_to_process(self, options, args, tool):
 
     @staticmethod
     def _collect_patches_by_bug(patches):
@@ -125,12 +139,12 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
         step_sequence = StepSequence(steps)
         return step_sequence, step_sequence.options()
 
-    def __init__(self, help_text, args_description):
+    def __init__(self):
         options = []
         self._prepare_sequence, prepare_options = self._create_step_sequence(self.prepare_steps)
         self._main_sequence, main_options = self._create_step_sequence(self.main_steps)
         options = sorted(set(prepare_options + main_options))
-        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
+        AbstractPatchProcessingCommand.__init__(self, options)
 
     def _prepare_to_process(self, options, args, tool):
         if self._prepare_sequence:
@@ -142,69 +156,12 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
             self._main_sequence.run_and_handle_errors(tool, options, state)
 
 
-class CheckStyle(AbstractPatchSequencingCommand):
-    name = "check-style"
-    show_in_main_help = False
-    main_steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        ApplyPatchStep,
-        CheckStyleStep,
-    ]
-    def __init__(self):
-        AbstractPatchSequencingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]")
-
+class ProcessAttachmentsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
 
-class BuildAttachment(AbstractPatchSequencingCommand):
-    name = "build-attachment"
-    show_in_main_help = False
-    main_steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        ApplyPatchStep,
-        BuildStep,
-    ]
-    def __init__(self):
-        AbstractPatchSequencingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]")
-
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
-
-
-class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
-    prepare_steps = [
-        CleanWorkingDirectoryWithLocalCommitsStep,
-        UpdateStep,
-    ]
-    main_steps = [
-        ApplyPatchWithLocalCommitStep,
-    ]
-
-    def _prepare_to_process(self, options, args, tool):
-        if options.local_commit and not tool.scm().supports_local_commits():
-            error("--local-commit passed, but %s does not support local commits" % scm.display_name())
-        AbstractPatchSequencingCommand._prepare_to_process(self, options, args, tool)
-
-
-class ApplyAttachment(AbstractPatchApplyingCommand):
-    name = "apply-attachment"
-    show_in_main_help = True
-    def __init__(self):
-        AbstractPatchApplyingCommand.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID [ATTACHMENT_IDS]")
-
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
-
-
-class ApplyPatches(AbstractPatchApplyingCommand):
-    name = "apply-patches"
-    show_in_main_help = True
-    def __init__(self):
-        AbstractPatchApplyingCommand.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID [BUGIDS]")
-
+class ProcessBugsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
@@ -212,6 +169,57 @@ class ApplyPatches(AbstractPatchApplyingCommand):
             log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
             all_patches += patches
         return all_patches
+
+
+class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
+    name = "check-style"
+    help_text = "Run check-webkit-style on the specified attachments"
+    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
+    show_in_main_help = False
+    main_steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        ApplyPatchStep,
+        CheckStyleStep,
+    ]
+
+
+class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
+    name = "build-attachment"
+    help_text = "Apply and build patches from bugzilla"
+    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
+    show_in_main_help = False
+    main_steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        ApplyPatchStep,
+        BuildStep,
+    ]
+
+
+class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
+    prepare_steps = [
+        EnsureLocalCommitIfNeeded,
+        CleanWorkingDirectoryWithLocalCommitsStep,
+        UpdateStep,
+    ]
+    main_steps = [
+        ApplyPatchWithLocalCommitStep,
+    ]
+
+
+class ApplyAttachment(AbstractPatchApplyingCommand, ProcessAttachmentsMixin):
+    name = "apply-attachment"
+    help_text = "Apply an attachment to the local working directory"
+    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
+    show_in_main_help = True
+
+
+class ApplyPatches(AbstractPatchApplyingCommand, ProcessBugsMixin):
+    name = "apply-patches"
+    help_text = "Apply reviewed patches from provided bugs to the local working directory"
+    argument_names = "BUGID [BUGIDS]"
+    show_in_main_help = True
 
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
@@ -231,31 +239,21 @@ class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
     ]
 
 
-class LandAttachment(AbstractPatchLandingCommand):
+class LandAttachment(AbstractPatchLandingCommand, ProcessAttachmentsMixin):
     name = "land-attachment"
+    help_text = "Land patches from bugzilla, optionally building and testing them first"
+    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     show_in_main_help = True
-    def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, "Land patches from bugzilla, optionally building and testing them first", "ATTACHMENT_ID [ATTACHMENT_IDS]")
-
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
 
-class LandPatches(AbstractPatchLandingCommand):
+class LandPatches(AbstractPatchLandingCommand, ProcessBugsMixin):
     name = "land-patches"
+    help_text = "Land all patches on the given bugs, optionally building and testing them first"
+    argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
-    def __init__(self):
-        AbstractPatchLandingCommand.__init__(self, "Land all patches on the given bugs, optionally building and testing them first", "BUGID [BUGIDS]")
-
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        all_patches = []
-        for bug_id in args:
-            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-            log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
-            all_patches += patches
-        return all_patches
 
 
+# FIXME: Make Rollout more declarative.
 class Rollout(Command):
     name = "rollout"
     show_in_main_help = True
