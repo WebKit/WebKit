@@ -560,7 +560,7 @@ static void mult(BigInt& aRef, const BigInt& bRef)
     aRef = c;
 }
 
-struct P5Node {
+struct P5Node : Noncopyable {
     BigInt val;
     P5Node* next;
 };
