@@ -34,7 +34,7 @@ class JSCell;
 
 // A HashMap whose get() function returns emptyValue() for cells awaiting destruction.
 template<typename KeyType, typename MappedType>
-class WeakGCMap {
+class WeakGCMap : public FastAllocBase {
     /*
     Invariants:
         * A value enters the WeakGCMap marked. (Guaranteed by set().)

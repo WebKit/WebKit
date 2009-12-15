@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        Allow custom memory allocation control for WeakGCMap class
+        https://bugs.webkit.org/show_bug.cgi?id=32547
+
+        Inherits WeakGCMap from FastAllocBase because it is instantiated by
+        'new' at: WebCore/dom/Document.cpp:512.
+
+        * runtime/WeakGCMap.h:
+
+2009-12-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for dtoa's P5Node struct
         https://bugs.webkit.org/show_bug.cgi?id=32544
 
