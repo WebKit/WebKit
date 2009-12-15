@@ -1,3 +1,26 @@
+2009-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7470452> Safari/Chromium crashes on complicated @font-face rule
+        https://bugs.webkit.org/show_bug.cgi?id=32257
+
+        Test: fast/css/font-face-unused-source-loaded.html
+
+        The loading of a font resource caused a CSSFontFace that had the resource in one of its
+        sources, but wasn’t using it (due to using an earlier source) to invalidate its
+        CSSSegmentedFontFaces. This caused FontData for the active source (the one that did not just
+        finish loading) to be deleted, but that went unnoticed by Font::operator==(), since the
+        corresponding FontFallbackLists were not in the loading state. The fix is for CSSFontFace to
+        ignore loads from unused sources.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded): Bail out if the loaded source is not the active source.
+        (WebCore::CSSFontFace::getFontData): Set m_activeSource to the source that supplied the
+            FontData.
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::CSSFontFace): Initialize m_activeSource.
+
 2009-12-15  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

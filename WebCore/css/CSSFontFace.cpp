@@ -77,8 +77,11 @@ void CSSFontFace::addSource(CSSFontFaceSource* source)
     source->setFontFace(this);
 }
 
-void CSSFontFace::fontLoaded(CSSFontFaceSource*)
+void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
 {
+    if (source != m_activeSource)
+        return;
+
     // FIXME: Can we assert that m_segmentedFontFaces is not empty? That may
     // require stopping in-progress font loading when the last
     // CSSSegmentedFontFace is removed.
@@ -97,17 +100,22 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource*)
 
 SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
 {
+    m_activeSource = 0;
     if (!isValid())
         return 0;
-        
+
     ASSERT(!m_segmentedFontFaces.isEmpty());
     CSSFontSelector* fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
 
-    SimpleFontData* result = 0;
-    unsigned size = m_sources.size();
-    for (unsigned i = 0; i < size && !result; i++)
-        result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector);
-    return result;
+    size_t size = m_sources.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (SimpleFontData* result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
+            m_activeSource = m_sources[i];
+            return result;
+        }
+    }
+
+    return 0;
 }
 
 }

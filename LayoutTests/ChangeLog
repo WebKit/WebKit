@@ -1,3 +1,13 @@
+2009-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7470452> Safari/Chromium crashes on complicated @font-face rule
+        https://bugs.webkit.org/show_bug.cgi?id=32257
+
+        * fast/css/font-face-unused-source-loaded-expected.txt: Added.
+        * fast/css/font-face-unused-source-loaded.html: Added.
+
 2009-12-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
