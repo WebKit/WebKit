@@ -1,3 +1,15 @@
+2009-12-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move Credential handling out into a separate module
+        https://bugs.webkit.org/show_bug.cgi?id=32531
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/credentials.py: Added.
+        * Scripts/modules/credentials_unittest.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-12-14  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Address reviewer comments from an earlier patch.  I didn't
