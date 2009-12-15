@@ -1158,6 +1158,22 @@ END
     }
 }
 
+sub GenerateImplementationNamedPropertyGetter
+{
+    my $dataNode = shift;
+    my $namedPropertyGetter = shift;
+    my $interfaceName = $dataNode->name;
+
+    if ($dataNode->extendedAttributes->{"HasNameGetter"} && !$namedPropertyGetter->extendedAttributes->{"Custom"}) {
+        $implIncludes{"V8Collection.h"} = 1;
+        my $type = $namedPropertyGetter->type;
+        my $classIndex = uc($type);
+        push(@implContent, <<END);
+  setCollectionNamedGetter<${interfaceName}, ${type}>(desc, V8ClassIndex::${classIndex});
+END
+    }
+}
+
 sub GenerateImplementation
 {
     my $object = shift;
@@ -1247,6 +1263,7 @@ sub GenerateImplementation
     }
 
     my $indexer;
+    my $namedPropertyGetter;
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
         # hack for addEventListener/RemoveEventListener
@@ -1259,6 +1276,10 @@ sub GenerateImplementation
 
         if ($function->signature->name eq "item") {
             $indexer = $function->signature;
+        }
+
+        if ($function->signature->name eq "namedItem") {
+            $namedPropertyGetter = $function->signature;
         }
 
         # If the function does not need domain security check, we need to
@@ -1446,6 +1467,7 @@ END
     }
 
     GenerateImplementationIndexer($dataNode, $indexer) if $indexer;
+    GenerateImplementationNamedPropertyGetter($dataNode, $namedPropertyGetter) if $namedPropertyGetter;
 
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;

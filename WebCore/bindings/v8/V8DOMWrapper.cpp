@@ -347,9 +347,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         instanceTemplate->SetInternalFieldCount(V8Custom::kStyleSheetInternalFieldCount);
         break;
     }
-    case V8ClassIndex::MIMETYPEARRAY:
-        setCollectionNamedGetter<MimeTypeArray, MimeType>(descriptor, V8ClassIndex::MIMETYPE);
-        break;
     case V8ClassIndex::NAMEDNODEMAP: {
         // We add an extra internal field to hold a reference to the owner node.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
@@ -367,12 +364,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
 #endif
     case V8ClassIndex::NODELIST:
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(NodeList));
-        break;
-    case V8ClassIndex::PLUGIN:
-        setCollectionNamedGetter<Plugin, MimeType>(descriptor, V8ClassIndex::MIMETYPE);
-        break;
-    case V8ClassIndex::PLUGINARRAY:
-        setCollectionNamedGetter<PluginArray, Plugin>(descriptor, V8ClassIndex::PLUGIN);
         break;
     case V8ClassIndex::STYLESHEETLIST:
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(StyleSheetList));

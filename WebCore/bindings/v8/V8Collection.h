@@ -65,7 +65,7 @@ namespace WebCore {
         V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(object);
         ASSERT(wrapperType != V8ClassIndex::NODE);
         Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, object);
-        String propertyName = toWebCoreString(name);
+        AtomicString propertyName = toAtomicWebCoreStringWithNullCheck(name);
         return getV8Object<ItemType>(collection->namedItem(propertyName), implementationType);
     }
 
