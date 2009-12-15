@@ -45,10 +45,7 @@ class WorkQueueDelegate:
     def queue_log_path(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def work_logs_directory(self):
-        raise NotImplementedError, "subclasses must implement"
-
-    def status_host(self):
+    def work_item_log_path(self, work_item):
         raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
@@ -90,7 +87,6 @@ class WorkQueue:
 
     def run(self):
         self._begin_logging()
-        self.status_bot = StatusBot(host=self._delegate.status_host())
 
         self._delegate.begin_work_queue()
         while (self._delegate.should_continue_work_queue()):
@@ -98,13 +94,11 @@ class WorkQueue:
             try:
                 work_item = self._delegate.next_work_item()
                 if not work_item:
-                    self._update_status_and_sleep("Empty queue.")
+                    self._sleep("No work item.")
                     continue
-                (safe_to_proceed, waiting_message, patch) = self._delegate.should_proceed_with_work_item(work_item)
-                if not safe_to_proceed:
-                    self._update_status_and_sleep(waiting_message)
+                if not self._delegate.should_proceed_with_work_item(work_item):
+                    self._sleep("Not proceeding with work item.")
                     continue
-                self.status_bot.update_status(self._name, waiting_message, patch)
             except KeyboardInterrupt, e:
                 log("\nUser terminated queue.")
                 return 1
@@ -115,7 +109,7 @@ class WorkQueue:
                 continue
 
             # FIXME: Work logs should not depend on bug_id specificaly.
-            self._open_work_log(patch["bug_id"])
+            self._open_work_log(work_item)
             try:
                 self._delegate.process_work_item(work_item)
             except ScriptError, e:
@@ -132,9 +126,9 @@ class WorkQueue:
         self._queue_log = self._output_tee.add_log(self._delegate.queue_log_path())
         self._work_log = None
 
-    def _open_work_log(self, bug_id):
-        work_log_path = os.path.join(self._delegate.work_logs_directory(), "%s.log" % bug_id)
-        self._work_log = self._output_tee.add_log(work_log_path)
+    def _open_work_log(self, work_item):
+        work_item_log_path = self._delegate.work_item_log_path(work_item)
+        self._work_log = self._output_tee.add_log(work_item_log_path)
 
     def _ensure_work_log_closed(self):
         # If we still have a bug log open, close it.
@@ -151,9 +145,3 @@ class WorkQueue:
     def _sleep(cls, message):
         log(cls._sleep_message(message))
         time.sleep(cls.seconds_to_sleep)
-
-    def _update_status_and_sleep(self, message):
-        status_message = self._sleep_message(message)
-        self.status_bot.update_status(self._name, status_message)
-        log(status_message)
-        time.sleep(self.seconds_to_sleep)

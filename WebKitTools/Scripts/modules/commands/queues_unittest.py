@@ -55,12 +55,15 @@ class AbstractQueueTest(CommandsTest):
         self._assert_log_progress_output(["1","2","3"], "3 patches in test-queue [1, 2, 3]\n")
         self._assert_log_progress_output([1], "1 patch in test-queue [1]\n")
 
-    def _assert_run_bugzilla_tool_output(self, run_args, tool_output):
+    def _assert_run_bugzilla_tool(self, run_args):
         queue = TestQueue()
-        queue.bind_to_tool(MockBugzillaTool())
-        # MockBugzillaTool.path() is "echo"
-        self._assert_output(queue.run_bugzilla_tool, [run_args], expected_stdout=tool_output)
+        tool = MockBugzillaTool()
+        queue.bind_to_tool(tool)
+
+        queue.run_bugzilla_tool(run_args)
+        expected_run_args = ["echo", "--status-host=example.com"] + map(str, run_args)
+        tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
     def test_run_bugzilla_tool(self):
-        self._assert_run_bugzilla_tool_output([1], "")
-        self._assert_run_bugzilla_tool_output(["one", 2], "")
+        self._assert_run_bugzilla_tool([1])
+        self._assert_run_bugzilla_tool(["one", 2])

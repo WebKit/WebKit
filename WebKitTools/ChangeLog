@@ -1,3 +1,27 @@
+2009-12-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        queue sub-commands need --status-host so they can report status
+        https://bugs.webkit.org/show_bug.cgi?id=32313
+
+        Make --status-bot a global option and make
+        run_bugzilla_tool pass --status-bot to sub-commands.
+
+        * Scripts/bugzilla-tool:
+         - Rename _status to status_bot and make it non-lazy.
+        * Scripts/modules/commands/queues.py:
+         - Move status updates out of WorkQueue and into individual queues.
+        * Scripts/modules/commands/queues_unittest.py:
+         - Test that --status-host is passed to bugzilla-tool when run as subcommand.
+        * Scripts/modules/mock_bugzillatool.py:
+         - Add a MockStatusBot
+        * Scripts/modules/workqueue.py:
+         - Remove status_host and work_work_logs_directory callbacks.
+         - Add new work_item_log_path callback so that WorkQueue doesn't need to know about patches!
+        * Scripts/modules/workqueue_unittest.py:
+         - Update unit tests to reflect new callbacks.
+
 2009-12-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

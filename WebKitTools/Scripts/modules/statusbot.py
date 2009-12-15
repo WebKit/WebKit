@@ -28,6 +28,8 @@
 #
 # WebKit's Python module for interacting with the Commit Queue status page.
 
+from modules.logging import log
+
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
 from .BeautifulSoup import BeautifulSoup
@@ -65,6 +67,7 @@ class StatusBot:
         if not self.statusbot_host:
             return
 
+        log(status)
         update_status_url = "%s/update-status" % self.statusbot_server_url
         self.browser.open(update_status_url)
         self.browser.select_form(name="update_status")

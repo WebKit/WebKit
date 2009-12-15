@@ -142,12 +142,18 @@ class MockSCM(Mock):
         return []
 
 
+class MockStatusBot(object):
+    def __init__(self):
+        self.statusbot_host = "example.com"
+
+
 class MockBugzillaTool():
     def __init__(self):
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = Mock()
         self._scm = MockSCM()
+        self.status_bot = MockStatusBot()
 
     def scm(self):
         return self._scm

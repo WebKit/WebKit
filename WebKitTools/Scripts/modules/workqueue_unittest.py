@@ -43,12 +43,11 @@ class LoggingDelegate(WorkQueueDelegate):
 
     expected_callbacks = [
         'queue_log_path',
-        'status_host',
         'begin_work_queue',
         'should_continue_work_queue',
         'next_work_item',
         'should_proceed_with_work_item',
-        'work_logs_directory',
+        'work_item_log_path',
         'process_work_item',
         'should_continue_work_queue'
     ]
@@ -60,13 +59,9 @@ class LoggingDelegate(WorkQueueDelegate):
         self.record("queue_log_path")
         return os.path.join(self._test.temp_dir, "queue_log_path")
 
-    def work_logs_directory(self):
-        self.record("work_logs_directory")
-        return os.path.join(self._test.temp_dir, "work_log_path")
-
-    def status_host(self):
-        self.record("status_host")
-        return None
+    def work_item_log_path(self, work_item):
+        self.record("work_item_log_path")
+        return os.path.join(self._test.temp_dir, "work_log_path", "%s.log" % work_item)
 
     def begin_work_queue(self):
         self.record("begin_work_queue")
@@ -111,8 +106,7 @@ class NotSafeToProceedDelegate(LoggingDelegate):
     def should_proceed_with_work_item(self, work_item):
         self.record("should_proceed_with_work_item")
         self._test.assertEquals(work_item, "work_item")
-        fake_patch = { 'bug_id' : 42 }
-        return (False, "waiting_message", fake_patch)
+        return False
 
 
 class FastWorkQueue(WorkQueue):
@@ -122,7 +116,7 @@ class FastWorkQueue(WorkQueue):
     # No sleep for the wicked.
     seconds_to_sleep = 0
 
-    def _update_status_and_sleep(self, message):
+    def _sleep(self, message):
         pass
 
 
@@ -132,8 +126,8 @@ class WorkQueueTest(unittest.TestCase):
         work_queue = WorkQueue("trivial-queue", delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
-        self.assertTrue(os.path.exists(delegate.queue_log_path()))
-        self.assertTrue(os.path.exists(os.path.join(delegate.work_logs_directory(), "42.log")))
+        self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
+        self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "work_log_path", "work_item.log")))
 
     def test_unexpected_error(self):
         delegate = ThrowErrorDelegate(self, 3)
