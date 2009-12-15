@@ -53,7 +53,7 @@ using namespace HTMLNames;
 // We provide the IE clipboard types (URL and Text), and the clipboard types specified in the WHATWG Web Applications 1.0 draft
 // see http://www.whatwg.org/specs/web-apps/current-work/ Section 6.3.5.3
 
-enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardDataTypeText };
+enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardDataTypeText, ClipboardDataTypeDownloadURL };
 
 static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
 {
@@ -64,6 +64,8 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
         return ClipboardDataTypeText;
     if (cleanType == "url" || cleanType == "text/uri-list")
         return ClipboardDataTypeURL;
+    if (cleanType == "downloadurl")
+        return ClipboardDataTypeDownloadURL;
 
     return ClipboardDataTypeNone;
 }
@@ -157,6 +159,14 @@ bool ClipboardChromium::setData(const String& type, const String& data)
         return true;
     }
     
+    if (winType == ClipboardDataTypeDownloadURL) {
+        KURL url = KURL(ParsedURLString, data);
+        if (url.isValid()) {
+            m_dataObject->downloadURL = url;
+            return true;
+        }
+    }
+
     return false;
 }
 

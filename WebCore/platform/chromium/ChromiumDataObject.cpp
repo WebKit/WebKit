@@ -37,6 +37,7 @@ void ChromiumDataObject::clear()
 {
     url = KURL();
     urlTitle = "";
+    downloadURL = KURL();
     fileExtension = "";
     filenames.clear();
     plainText = "";
@@ -50,6 +51,7 @@ void ChromiumDataObject::clear()
 bool ChromiumDataObject::hasData() const
 {
     return !url.isEmpty()
+        || !downloadURL.isEmpty()
         || !fileExtension.isEmpty()
         || !filenames.isEmpty()
         || !plainText.isEmpty()
@@ -60,6 +62,7 @@ bool ChromiumDataObject::hasData() const
 ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
     : url(other.url)
     , urlTitle(other.urlTitle)
+    , downloadURL(other.downloadURL)
     , fileExtension(other.fileExtension)
     , filenames(other.filenames)
     , plainText(other.plainText)
