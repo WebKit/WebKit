@@ -65,7 +65,7 @@ namespace WebCore {
         ResourceFinishTimelineRecordType = 14,
     };
 
-    class InspectorTimelineAgent {
+    class InspectorTimelineAgent : public Noncopyable {
     public:
         InspectorTimelineAgent(InspectorFrontend* frontend);
         ~InspectorTimelineAgent();

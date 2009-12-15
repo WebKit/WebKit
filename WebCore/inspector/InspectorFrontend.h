@@ -54,7 +54,7 @@ namespace WebCore {
     class ScriptString;
     class Storage;
 
-    class InspectorFrontend {
+    class InspectorFrontend : public Noncopyable {
     public:
         InspectorFrontend(InspectorController* inspectorController, ScriptState*, ScriptObject webInspector);
         ~InspectorFrontend();
