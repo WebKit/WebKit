@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] Kill WebKitApplyingScripts
+        https://bugs.webkit.org/show_bug.cgi?id=32467
+
+        Ah!  I've been wanting to do this for a long time.  This patch brings
+        the applying commands into the patch processing fold.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/commands/download_unittest.py:
+        * Scripts/modules/mock_bugzillatool.py:
+
+2009-12-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] Convert rollout to StepSequence
         https://bugs.webkit.org/show_bug.cgi?id=32406
 

@@ -44,6 +44,7 @@ class CommandOptions(object):
     non_interactive = make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible.")
     parent_command = make_option("--parent-command", action="store", dest="parent_command", default=None, help="(Internal) The command that spawned this instance.")
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
+    local_commit = make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch")
     build = make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test.")
     test = make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests.")
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
@@ -141,6 +142,12 @@ class CleanWorkingDirectoryStep(AbstractStep):
             self._tool.scm().ensure_clean_working_directory(force_clean=self._options.force_clean)
 
 
+class CleanWorkingDirectoryWithLocalCommitsStep(CleanWorkingDirectoryStep):
+    def __init__(self, tool, options):
+        # FIXME: This a bit of a hack.  Consider doing this more cleanly.
+        CleanWorkingDirectoryStep.__init__(self, tool, options, allow_local_commits=True)
+
+
 class UpdateStep(AbstractStep):
     @classmethod
     def options(cls):
@@ -171,6 +178,20 @@ class ApplyPatchStep(AbstractStep):
 class RevertRevisionStep(AbstractStep):
     def run(self, state):
         self._tool.scm().apply_reverse_diff(state["revision"])
+
+
+class ApplyPatchWithLocalCommitStep(ApplyPatchStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.local_commit,
+        ] + ApplyPatchStep.options()
+    
+    def run(self, state):
+        ApplyPatchStep.run(self, state)
+        if self._options.local_commit:
+            commit_message = self._tool.scm().commit_message_for_this_commit()
+            self._tool.scm().commit_locally_with_message(commit_message.message() or state["patch"]["name"])
 
 
 class EnsureBuildersAreGreenStep(AbstractStep):
@@ -354,35 +375,3 @@ class CompleteRollout(MetaStep):
             return
         # FIXME: I'm not sure state["commit_text"] is quite right here.
         self._tool.bugs.reopen_bug(bug_id, state["commit_text"])
-
-
-# FIXME: This class is a dinosaur and should be extinct soon.
-class BuildSteps:
-    # FIXME: The options should really live on each "Step" object.
-    @staticmethod
-    def cleaning_options():
-        return [
-            CommandOptions.force_clean,
-            CommandOptions.clean,
-        ]
-
-    # FIXME: These distinctions are bogus.  We need a better model for handling options.
-    @staticmethod
-    def build_options():
-        return [
-            CommandOptions.check_builders,
-            CommandOptions.quiet,
-            CommandOptions.non_interactive,
-            CommandOptions.parent_command,
-            CommandOptions.port,
-        ]
-
-    @staticmethod
-    def land_options():
-        return [
-            CommandOptions.update,
-            CommandOptions.build,
-            CommandOptions.test,
-            CommandOptions.close_bug,
-        ]
-

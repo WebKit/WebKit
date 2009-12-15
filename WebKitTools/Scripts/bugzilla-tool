@@ -34,7 +34,6 @@ import os
 
 from modules.bugzilla import Bugzilla
 from modules.buildbot import BuildBot
-from modules.buildsteps import BuildSteps
 from modules.commands.download import *
 from modules.commands.early_warning_system import *
 from modules.commands.queries import *
@@ -55,7 +54,6 @@ class BugzillaTool(MultiCommandTool):
         self.executive = Executive()
         self._scm = None
         self._status = None
-        self.steps = BuildSteps()
 
     def dry_run_callback(self, option, opt, value, parser):
         self.scm().dryrun = True

@@ -34,7 +34,7 @@ from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
 # FIXME: This list is rediculous.  We need to learn the ways of __all__.
-from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
+from modules.buildsteps import CommandOptions, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, CleanWorkingDirectoryWithLocalCommitsStep, UpdateStep, ApplyPatchStep, ApplyPatchWithLocalCommitStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -57,65 +57,6 @@ class Build(Command):
 
     def execute(self, options, args, tool):
         self._sequence.run_and_handle_errors(tool, options)
-
-
-class ApplyAttachment(Command):
-    name = "apply-attachment"
-    show_in_main_help = True
-    def __init__(self):
-        options = WebKitApplyingScripts.apply_options()
-        options += BuildSteps.cleaning_options()
-        Command.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID", options=options)
-
-    def execute(self, options, args, tool):
-        WebKitApplyingScripts.setup_for_patch_apply(tool, options)
-        attachment_id = args[0]
-        attachment = tool.bugs.fetch_attachment(attachment_id)
-        WebKitApplyingScripts.apply_patches_with_options(tool.scm(), [attachment], options)
-
-
-class ApplyPatches(Command):
-    name = "apply-patches"
-    show_in_main_help = True
-    def __init__(self):
-        options = WebKitApplyingScripts.apply_options()
-        options += BuildSteps.cleaning_options()
-        Command.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID", options=options)
-
-    def execute(self, options, args, tool):
-        WebKitApplyingScripts.setup_for_patch_apply(tool, options)
-        bug_id = args[0]
-        patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-        WebKitApplyingScripts.apply_patches_with_options(tool.scm(), patches, options)
-
-
-class WebKitApplyingScripts:
-    @staticmethod
-    def apply_options():
-        return [
-            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
-            make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch"),
-            CommandOptions.port,
-        ]
-
-    @staticmethod
-    def setup_for_patch_apply(tool, options):
-        clean_step = CleanWorkingDirectoryStep(tool, options, allow_local_commits=True)
-        clean_step.run({})
-        update_step = UpdateStep(tool, options)
-        update_step.run({})
-
-    @staticmethod
-    def apply_patches_with_options(scm, patches, options):
-        if options.local_commit and not scm.supports_local_commits():
-            error("--local-commit passed, but %s does not support local commits" % scm.display_name())
-
-        for patch in patches:
-            log("Applying attachment %s from bug %s" % (patch["id"], patch["bug_id"]))
-            scm.apply_patch(patch)
-            if options.local_commit:
-                commit_message = scm.commit_message_for_this_commit()
-                scm.commit_locally_with_message(commit_message.message() or patch["name"])
 
 
 class LandDiff(Command):
@@ -219,6 +160,54 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     def _process_patch(self, patch, options, args, tool):
         state = {"patch": patch}
         self._sequence.run_and_handle_errors(tool, options, state)
+
+
+class AbstractPatchApplyingCommand(AbstractPatchProcessingCommand):
+    def __init__(self, help_text, args_description):
+        self._prepare_sequence = StepSequence([
+            CleanWorkingDirectoryWithLocalCommitsStep,
+            UpdateStep,
+        ])
+        self._main_sequence  = StepSequence([
+            ApplyPatchWithLocalCommitStep,
+        ])
+        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()))
+        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
+
+    def _prepare_to_process(self, options, args, tool):
+        if options.local_commit and not tool.scm().supports_local_commits():
+            error("--local-commit passed, but %s does not support local commits" % scm.display_name())
+        self._prepare_sequence.run_and_handle_errors(tool, options)
+
+    # FIXME: Add a base class to share this code.
+    def _process_patch(self, patch, options, args, tool):
+        state = {"patch": patch}
+        self._main_sequence.run_and_handle_errors(tool, options, state)
+
+
+class ApplyAttachment(AbstractPatchApplyingCommand):
+    name = "apply-attachment"
+    show_in_main_help = True
+    def __init__(self):
+        AbstractPatchApplyingCommand.__init__(self, "Apply an attachment to the local working directory", "ATTACHMENT_ID [ATTACHMENT_IDS]")
+
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
+        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
+
+
+class ApplyPatches(AbstractPatchApplyingCommand):
+    name = "apply-patches"
+    show_in_main_help = True
+    def __init__(self):
+        AbstractPatchApplyingCommand.__init__(self, "Apply reviewed patches from provided bugs to the local working directory", "BUGID [BUGIDS]")
+
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
+        all_patches = []
+        for bug_id in args:
+            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+            log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
+            all_patches += patches
+        return all_patches
 
 
 class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):

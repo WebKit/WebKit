@@ -55,14 +55,14 @@ class DownloadCommandsTest(CommandsTest):
         options = self._default_options()
         options.update = True
         options.local_commit = True
-        expected_stderr = "Updating working directory\nApplying attachment 197 from bug 42\n"
+        expected_stderr = "Updating working directory\nProcessing 1 patch from 1 bug.\nProcessing patch 197 from bug 42.\n"
         self.assert_execute_outputs(ApplyAttachment(), [197], options=options, expected_stderr=expected_stderr)
 
     def test_apply_patches(self):
         options = self._default_options()
         options.update = True
         options.local_commit = True
-        expected_stderr = "Updating working directory\nApplying attachment 197 from bug 42\nApplying attachment 128 from bug 42\n"
+        expected_stderr = "Updating working directory\n2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nProcessing patch 197 from bug 42.\nProcessing patch 128 from bug 42.\n"
         self.assert_execute_outputs(ApplyPatches(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_diff(self):
