@@ -1,3 +1,19 @@
+2009-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Followup for direct signals and slots connections in QNetworkReplyHandler
+        https://bugs.webkit.org/show_bug.cgi?id=32113
+
+        For Qt versions prior to 4.6.1 we will need to use QueuedConnection
+        for the signal and slot connection to avoid running into a bug in.
+
+        Add a comment that we want to remove one signal to forward
+        queued items when moving our minimum requirements.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
 2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.
