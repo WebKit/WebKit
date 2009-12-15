@@ -335,15 +335,8 @@ WebInspector.ElementsTreeElement.prototype = {
             if (x) {
                 this.updateSelection();
                 this.listItemElement.addStyleClass("hovered");
-                if (this._canAddAttributes)
-                    this._pendingToggleNewAttribute = setTimeout(this.toggleNewAttributeButton.bind(this, true), 500);
             } else {
                 this.listItemElement.removeStyleClass("hovered");
-                if (this._pendingToggleNewAttribute) {
-                    clearTimeout(this._pendingToggleNewAttribute);
-                    delete this._pendingToggleNewAttribute;
-                }
-                this.toggleNewAttributeButton(false);
             }
         }
     },
@@ -366,30 +359,6 @@ WebInspector.ElementsTreeElement.prototype = {
         }
         var objectProxy = new WebInspector.ObjectProxy(node.id);
         WebInspector.ObjectProxy.getPropertiesAsync(objectProxy, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], createTooltipThenCallback);
-    },
-
-    toggleNewAttributeButton: function(visible)
-    {
-        function removeAddAttributeSpan()
-        {
-            if (this._addAttributeElement && this._addAttributeElement.parentNode)
-                this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
-            delete this._addAttributeElement;
-
-            this.updateSelection();
-        }
-
-        if (!this._addAttributeElement && visible && !this._editing) {
-            var span = document.createElement("span");
-            span.className = "add-attribute webkit-html-attribute-name";
-            span.textContent = " ?=\"\"";
-            span.addEventListener("dblclick", removeAddAttributeSpan.bind(this), false);
-            this._addAttributeElement = span;
-
-            var tag = this.listItemElement.getElementsByClassName("webkit-html-tag")[0];
-            this._insertInLastAttributePosition(tag, span);
-        } else if (!visible && this._addAttributeElement)
-            removeAddAttributeSpan.call(this);
     },
 
     updateSelection: function()
@@ -650,7 +619,6 @@ WebInspector.ElementsTreeElement.prototype = {
         var listItem = this._listItemNode;
 
         if (this._canAddAttributes) {
-            this.toggleNewAttributeButton(false);
             var attribute = listItem.getElementsByClassName("webkit-html-attribute")[0];
             if (attribute)
                 return this._startEditingAttribute(attribute, attribute.getElementsByClassName("webkit-html-attribute-value")[0]);
