@@ -41,6 +41,10 @@ public:
     static PassRefPtr<AccessibilityARIAGridRow> create(RenderObject*);
     virtual ~AccessibilityARIAGridRow();
     
+    virtual bool isARIATreeGridRow() const;
+    void disclosedRows(AccessibilityChildrenVector&);
+    AccessibilityObject* disclosedByRow() const;
+    
     virtual AccessibilityObject* headerObject();
     virtual AccessibilityObject* parentTable() const;    
 }; 

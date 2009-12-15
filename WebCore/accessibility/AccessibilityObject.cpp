@@ -912,6 +912,7 @@ static ARIARoleMap* createARIARoleMap()
         { "toolbar", ToolbarRole },
         { "tooltip", UserInterfaceTooltipRole },
         { "tree", TreeRole },
+        { "treegrid", TreeGridRole },
         { "treeitem", TreeItemRole }
     };
     ARIARoleMap* roleMap = new ARIARoleMap;
