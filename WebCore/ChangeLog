@@ -1,3 +1,38 @@
+2009-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebCore part of <rdar://problem/7173515> Use LOGFONT support in Core
+        Graphics when available
+
+        When using a version of Core Graphics with LOGFONT support, this fixes
+        <rdar://problem/5764844> First-time launch is painfully slow due to font
+        plist creation
+        and <rdar://problem/6576281> 12px synthetic-italics Tahoma text is less
+        readable in Safari than in Firefox/IE due to poorly-spaced letters
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): No longer call drawGDIGlyphs for stroked
+        text.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): Added a synthesizeItalic parameter. When set
+        to true, if italics are desired but the best match lacks italics,
+        creates and returns a synthetic italics font.
+        (WebCore::FontCache::createFontPlatformData): Ask to synthesize italics
+        if needed.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Updated an
+        assertion, and changed to create the CGFont from the LOGFONT.
+        (WebCore::createFontCustomPlatformData): Changed cgFont to be a
+        RetainPtr. Do not create a CGFont from the font data if it can be
+        created from the LOGFONT in fontPlatformData().
+        * platform/graphics/win/FontDatabase.cpp:
+        (WebCore::populateFontDatabase): Avoid font database work if fonts are
+        not going to be looked up by name.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit): Create the CGFont from
+        a LOGFONT based on the HFONT.
+
 2009-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

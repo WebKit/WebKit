@@ -58,6 +58,7 @@ void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
 void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
+bool wkCanCreateCGFontWithLOGFONT();
 void wkSetFontPlatformInfo(CGFontRef, LOGFONT*, void(*)(void*));
 void wkSetUpFontCache(size_t s);
 void wkAddFontsInDirectory(CFStringRef);
@@ -87,7 +88,7 @@ void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void wkSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-CFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef);
+CFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef protectionSpace);
 
 CFStringRef wkCFNetworkErrorGetLocalizedDescription(CFIndex errorCode);
 

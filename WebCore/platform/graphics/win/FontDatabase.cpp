@@ -188,6 +188,9 @@ void populateFontDatabase()
         return;
     initialized = true;
 
+    if (wkCanCreateCGFontWithLOGFONT())
+        return;
+
     RetainPtr<CFPropertyListRef> propertyList = readFontPlist();
     RetainPtr<CFArrayRef> lastFilenamesFromRegistry;
     if (propertyList && CFGetTypeID(propertyList.get()) == CFDictionaryGetTypeID()) {
