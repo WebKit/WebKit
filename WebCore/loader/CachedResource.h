@@ -24,6 +24,7 @@
 #define CachedResource_h
 
 #include "CachePolicy.h"
+#include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
@@ -75,8 +76,8 @@ public:
     CachedResource(const String& url, Type);
     virtual ~CachedResource();
     
-    virtual void load(DocLoader* docLoader)  { load(docLoader, false, false, true); }
-    void load(DocLoader*, bool incremental, bool skipCanLoadCheck, bool sendResourceLoadCallbacks);
+    virtual void load(DocLoader* docLoader)  { load(docLoader, false, DoSecurityCheck, true); }
+    void load(DocLoader*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }

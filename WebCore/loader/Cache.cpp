@@ -31,6 +31,7 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "FrameLoader.h"
+#include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "Image.h"
 #include "ResourceHandle.h"
@@ -164,7 +165,7 @@ CachedCSSStyleSheet* Cache::requestUserCSSStyleSheet(DocLoader* docLoader, const
         // FIXME: CachedResource should just use normal refcounting instead.
         userSheet->setInCache(true);
         // Don't load incrementally, skip load checks, don't send resource load callbacks.
-        userSheet->load(docLoader, false, true, false);
+        userSheet->load(docLoader, false, SkipSecurityCheck, false);
         if (!disabled())
             m_resources.set(url, userSheet);
         else

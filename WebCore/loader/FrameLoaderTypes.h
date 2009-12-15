@@ -102,6 +102,11 @@ namespace WebCore {
         SandboxScripts = 1 << 4,
         SandboxAll = -1 // Mask with all bits set to 1.
     };
+    
+    enum SecurityCheckPolicy {
+        SkipSecurityCheck,
+        DoSecurityCheck
+    };
 
     typedef int SandboxFlags;
 }

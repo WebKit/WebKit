@@ -103,10 +103,10 @@ CachedResource::~CachedResource()
         m_docLoader->removeCachedResource(this);
 }
     
-void CachedResource::load(DocLoader* docLoader, bool incremental, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
+void CachedResource::load(DocLoader* docLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
-    cache()->loader()->load(docLoader, this, incremental, skipCanLoadCheck, sendResourceLoadCallbacks);
+    cache()->loader()->load(docLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
     m_loading = true;
 }
 

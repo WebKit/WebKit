@@ -1,3 +1,40 @@
+2009-12-15  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Rename skipCanLoadCheck to skipSecurityCheck in a bunch of places in WebCore/loader.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32529
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestUserCSSStyleSheet):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::load):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/FrameLoaderTypes.h:
+        (WebCore::):
+        * loader/Request.cpp:
+        (WebCore::Request::Request):
+        * loader/Request.h:
+        (WebCore::Request::shouldDoSecurityCheck):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::Host::servePendingRequests):
+        * loader/loader.h:
+
 2009-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
