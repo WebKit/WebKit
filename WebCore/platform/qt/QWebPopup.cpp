@@ -20,12 +20,15 @@
  */
 #include "config.h"
 #include "QWebPopup.h"
+#include "HostWindow.h"
 #include "PopupMenuStyle.h"
+#include "QWebPageClient.h"
 
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QInputContext>
 #include <QMouseEvent>
+#include <QStandardItemModel>
 
 namespace WebCore {
 
@@ -41,11 +44,42 @@ QWebPopup::QWebPopup(PopupMenuClient* client)
 }
 
 
-void QWebPopup::exec()
+void QWebPopup::show(const QRect& geometry, int selectedIndex)
 {
+    populate();
+    setCurrentIndex(selectedIndex);
+
+    QWidget* parent = 0;
+    if (m_client->hostWindow() && m_client->hostWindow()->platformPageClient())
+       parent = m_client->hostWindow()->platformPageClient()->ownerWidget();
+
+    setParent(parent);
+    setGeometry(QRect(geometry.left(), geometry.top(), geometry.width(), sizeHint().height()));
+
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
     QCoreApplication::sendEvent(this, &event);
+}
+
+void QWebPopup::populate()
+{
+    clear();
+    Q_ASSERT(m_client);
+
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(QComboBox::model());
+    Q_ASSERT(model);
+
+    int size = m_client->listSize();
+    for (int i = 0; i < size; i++) {
+        if (m_client->itemIsSeparator(i))
+            insertSeparator(i);
+        else {
+            insertItem(i, m_client->itemText(i));
+
+            if (model && !m_client->itemIsEnabled(i))
+                model->item(i)->setEnabled(false);
+        }
+    }
 }
 
 void QWebPopup::showPopup()

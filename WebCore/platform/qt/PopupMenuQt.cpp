@@ -26,21 +26,9 @@
 #include "config.h"
 #include "PopupMenu.h"
 
-#include "Frame.h"
 #include "FrameView.h"
-#include "HostWindow.h"
 #include "PopupMenuClient.h"
-#include "QWebPageClient.h"
 #include "QWebPopup.h"
-
-#include <QAction>
-#include <QDebug>
-#include <QListWidget>
-#include <QListWidgetItem>
-#include <QMenu>
-#include <QPoint>
-#include <QStandardItemModel>
-#include <QWidgetAction>
 
 namespace WebCore {
 
@@ -55,52 +43,16 @@ PopupMenu::~PopupMenu()
     delete m_popup;
 }
 
-void PopupMenu::clear()
-{
-    m_popup->clear();
-}
-
-void PopupMenu::populate(const IntRect&)
-{
-    clear();
-    Q_ASSERT(client());
-
-    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_popup->model());
-    Q_ASSERT(model);
-
-    int size = client()->listSize();
-    for (int i = 0; i < size; i++) {
-        if (client()->itemIsSeparator(i))
-            m_popup->insertSeparator(i);
-        else {
-            m_popup->insertItem(i, client()->itemText(i));
-
-            if (model && !client()->itemIsEnabled(i))
-                model->item(i)->setEnabled(false);
-
-            if (client()->itemIsSelected(i))
-                m_popup->setCurrentIndex(i);
-        }
-    }
-}
-
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
-    QWebPageClient* client = v->hostWindow()->platformPageClient();
-    populate(r);
     QRect rect = r;
     rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
-    rect.setHeight(m_popup->sizeHint().height());
-
-    m_popup->setParent(client->ownerWidget());
-    m_popup->setGeometry(rect);
-    m_popup->setCurrentIndex(index);
-    m_popup->exec();
+    m_popup->show(rect, index);
 }
 
 void PopupMenu::hide()
 {
-    m_popup->hidePopup();
+    m_popup->hide();
 }
 
 void PopupMenu::updateFromElement()

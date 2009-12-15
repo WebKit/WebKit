@@ -1,3 +1,21 @@
+2009-12-15  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moving list populate methods from PopupMenuQt to QWebPopup.
+        
+        In preparation to future implementation of a delegation API for the combobox.
+
+        * platform/PopupMenu.h:
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::show):
+        (WebCore::QWebPopup::populate):
+        * platform/qt/QWebPopup.h:
+        (WebCore::QWebPopup::hide):
+
 2009-12-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

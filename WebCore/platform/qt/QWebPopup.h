@@ -27,21 +27,25 @@
 
 namespace WebCore {
 
-class QWebPopup : public QComboBox {
+class QWebPopup : private QComboBox {
     Q_OBJECT
 public:
     QWebPopup(PopupMenuClient* client);
 
-    void exec();
-
-    virtual void showPopup();
-    virtual void hidePopup();
+    void show(const QRect& geometry, int selectedIndex);
+    void hide() { hidePopup(); }
 
 private slots:
     void activeChanged(int);
+
 private:
     PopupMenuClient* m_client;
     bool m_popupVisible;
+
+    void populate();
+
+    virtual void showPopup();
+    virtual void hidePopup();
 };
 
 }
