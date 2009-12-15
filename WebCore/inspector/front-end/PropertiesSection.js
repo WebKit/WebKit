@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,22 +29,7 @@
 
 WebInspector.PropertiesSection = function(title, subtitle)
 {
-    this.element = document.createElement("div");
-    this.element.className = "section";
-
-    this.headerElement = document.createElement("div");
-    this.headerElement.className = "header";
-
-    this.titleElement = document.createElement("div");
-    this.titleElement.className = "title";
-
-    this.subtitleElement = document.createElement("div");
-    this.subtitleElement.className = "subtitle";
-
-    this.headerElement.appendChild(this.subtitleElement);
-    this.headerElement.appendChild(this.titleElement);
-
-    this.headerElement.addEventListener("click", this.toggleExpanded.bind(this), false);
+    WebInspector.Section.call(this, title, subtitle);
 
     this.propertiesElement = document.createElement("ol");
     this.propertiesElement.className = "properties";
@@ -51,96 +37,7 @@ WebInspector.PropertiesSection = function(title, subtitle)
     this.propertiesTreeOutline = new TreeOutline(this.propertiesElement);
     this.propertiesTreeOutline.section = this;
 
-    this.element.appendChild(this.headerElement);
     this.element.appendChild(this.propertiesElement);
-
-    this.title = title;
-    this.subtitle = subtitle;
-    this._expanded = false;
 }
 
-WebInspector.PropertiesSection.prototype = {
-    get title()
-    {
-        return this._title;
-    },
-
-    set title(x)
-    {
-        if (this._title === x)
-            return;
-        this._title = x;
-
-        if (x instanceof Node) {
-            this.titleElement.removeChildren();
-            this.titleElement.appendChild(x);
-        } else
-          this.titleElement.textContent = x;
-    },
-
-    get subtitle()
-    {
-        return this._subtitle;
-    },
-
-    set subtitle(x)
-    {
-        if (this._subtitle === x)
-            return;
-        this._subtitle = x;
-        this.subtitleElement.innerHTML = x;
-    },
-
-    get expanded()
-    {
-        return this._expanded;
-    },
-
-    set expanded(x)
-    {
-        if (x)
-            this.expand();
-        else
-            this.collapse();
-    },
-
-    get populated()
-    {
-        return this._populated;
-    },
-
-    set populated(x)
-    {
-        this._populated = x;
-        if (!x && this.onpopulate && this._expanded) {
-            this.onpopulate(this);
-            this._populated = true;
-        }
-    },
-
-    expand: function()
-    {
-        if (this._expanded)
-            return;
-        this._expanded = true;
-        this.element.addStyleClass("expanded");
-
-        if (!this._populated && this.onpopulate) {
-            this.onpopulate(this);
-            this._populated = true;
-        }
-    },
-
-    collapse: function()
-    {
-        if (!this._expanded)
-            return;
-        this._expanded = false;
-        this.element.removeStyleClass("expanded");
-    },
-
-    toggleExpanded: function()
-    {
-        this.expanded = !this.expanded;
-    }
-}
+WebInspector.PropertiesSection.prototype.__proto__ = WebInspector.Section.prototype;

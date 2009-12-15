@@ -1,3 +1,30 @@
+2009-12-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Extract WebInspector.Section from WebInspector.PropertiesSection.
+        https://bugs.webkit.org/show_bug.cgi?id=32523
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/PropertiesSection.js:
+        (WebInspector.PropertiesSection):
+        * inspector/front-end/Section.js: Added.
+        (WebInspector.Section):
+        (WebInspector.Section.prototype.get title):
+        (WebInspector.Section.prototype.set title):
+        (WebInspector.Section.prototype.get subtitle):
+        (WebInspector.Section.prototype.set subtitle):
+        (WebInspector.Section.prototype.get expanded):
+        (WebInspector.Section.prototype.set expanded):
+        (WebInspector.Section.prototype.get populated):
+        (WebInspector.Section.prototype.set populated):
+        (WebInspector.Section.prototype.expand):
+        (WebInspector.Section.prototype.collapse):
+        (WebInspector.Section.prototype.toggleExpanded):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2009-12-15  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52140.

@@ -3700,6 +3700,7 @@
             'inspector/front-end/Script.js',
             'inspector/front-end/ScriptsPanel.js',
             'inspector/front-end/ScriptView.js',
+            'inspector/front-end/Section.js',
             'inspector/front-end/SidebarPane.js',
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SourceFrame.js',

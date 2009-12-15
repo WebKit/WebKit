@@ -42620,6 +42620,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Section.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SidebarPane.js"
 					>
 				</File>
