@@ -29,9 +29,9 @@
 #include "config.h"
 #include "LayoutTestControllerQt.h"
 
-#include "DumpRenderTree.h"
+#include "DumpRenderTreeQt.h"
 #include "WorkQueue.h"
-#include "WorkQueueItem.h"
+#include "WorkQueueItemQt.h"
 #include <QDir>
 
 extern void qt_dump_editing_callbacks(bool b);

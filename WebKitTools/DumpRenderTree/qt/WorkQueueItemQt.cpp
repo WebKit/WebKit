@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "WorkQueueItem.h"
+#include "WorkQueueItemQt.h"
 
 QWebFrame* findFrameNamed(const QString& frameName, QWebFrame* frame)
 {

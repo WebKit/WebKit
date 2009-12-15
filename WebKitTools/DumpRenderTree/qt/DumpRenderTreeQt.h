@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DUMPRENDERTREE_H
-#define DUMPRENDERTREE_H
+#ifndef DumpRenderTreeQt_h
+#define DumpRenderTreeQt_h
 
 #include <QList>
 #include <QNetworkAccessManager>

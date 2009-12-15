@@ -31,11 +31,11 @@
 
 #include "config.h"
 
-#include "DumpRenderTree.h"
+#include "DumpRenderTreeQt.h"
 #include "EventSenderQt.h"
+#include "GCControllerQt.h"
 #include "LayoutTestControllerQt.h"
 #include "TextInputControllerQt.h"
-#include "jsobjects.h"
 #include "testplugin.h"
 #include "WorkQueue.h"
 

@@ -24,22 +24,22 @@ QT = core gui network
 macx: QT += xml
 
 HEADERS = $$BASEDIR/WorkQueue.h \
-    WorkQueueItem.h \
-    DumpRenderTree.h \
+    DumpRenderTreeQt.h \
     EventSenderQt.h \
     TextInputControllerQt.h \
+    WorkQueueItemQt.h \
     LayoutTestControllerQt.h \
-    jsobjects.h \
+    GCControllerQt.h \
     testplugin.h
 SOURCES = $$BASEDIR/WorkQueue.cpp \
-    DumpRenderTree.cpp \
+    DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
     WorkQueueItemQt.cpp \
     LayoutTestControllerQt.cpp \
-    main.cpp \
-    jsobjects.cpp \
-    testplugin.cpp
+    GCControllerQt.cpp \
+    testplugin.cpp \
+    main.cpp
 
 unix:!mac {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

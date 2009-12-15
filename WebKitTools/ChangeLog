@@ -1,3 +1,25 @@
+2009-12-15  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Rename Qt DRT components to match other ports' naming convention and to be more understandable.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp: Removed.
+        * DumpRenderTree/qt/DumpRenderTree.h: Removed.
+        * DumpRenderTree/qt/DumpRenderTree.pro: Updated.
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp: Copied from WebKitTools/DumpRenderTree/qt/DumpRenderTree.cpp.
+        * DumpRenderTree/qt/DumpRenderTreeQt.h: Copied from WebKitTools/DumpRenderTree/qt/DumpRenderTree.h.
+        * DumpRenderTree/qt/GCControllerQt.cpp: Copied from WebKitTools/DumpRenderTree/qt/jsobjects.cpp.
+        (GCController::GCController):
+        * DumpRenderTree/qt/GCControllerQt.h: Copied from WebKitTools/DumpRenderTree/qt/jsobjects.h.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        * DumpRenderTree/qt/WorkQueueItem.h: Removed.
+        * DumpRenderTree/qt/WorkQueueItemQt.cpp: Updated includes.
+        * DumpRenderTree/qt/WorkQueueItemQt.h: Copied from WebKitTools/DumpRenderTree/qt/WorkQueueItem.h.
+        * DumpRenderTree/qt/jsobjects.cpp: Removed.
+        * DumpRenderTree/qt/jsobjects.h: Removed.
+        * DumpRenderTree/qt/main.cpp: Updated includes.
+
 2009-12-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
