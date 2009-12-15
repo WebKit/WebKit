@@ -32,6 +32,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #import "AXObjectCache.h"
+#import "AccessibilityARIAGridRow.h"
 #import "AccessibilityListBox.h"
 #import "AccessibilityList.h"
 #import "AccessibilityRenderObject.h"
@@ -599,6 +600,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->supportsARIADropping())
         [additional addObject:NSAccessibilityDropEffectsAttribute];
 
+    if (m_object->isDataTable() && static_cast<AccessibilityTable*>(m_object)->supportsSelectedRows())
+        [additional addObject:NSAccessibilitySelectedRowsAttribute];        
+    
     return additional;
 }
 
@@ -863,7 +867,6 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     }
     if (outlineRowAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:tableRowAttrs];
-        [tempArray addObject:NSAccessibilityIndexAttribute];
         [tempArray addObject:NSAccessibilityDisclosingAttribute];
         [tempArray addObject:NSAccessibilityDisclosedByRowAttribute];
         [tempArray addObject:NSAccessibilityDisclosureLevelAttribute];
@@ -888,12 +891,17 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     else if (m_object->isDataTable())
         objectAttributes = tableAttrs;
-    else if (m_object->isTableRow())
-        objectAttributes = tableRowAttrs;
     else if (m_object->isTableColumn())
         objectAttributes = tableColAttrs;
     else if (m_object->isTableCell())
         objectAttributes = tableCellAttrs;
+    else if (m_object->isTableRow()) {
+        // An ARIA table row can be collapsed and expanded, so it needs the extra attributes.
+        if (m_object->isARIATreeGridRow())
+            objectAttributes = outlineRowAttrs;
+        else
+            objectAttributes = tableRowAttrs;
+    }
     
     else if (m_object->isTree())
         objectAttributes = outlineAttrs;
@@ -1568,9 +1576,14 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return convertToNSArray(static_cast<AccessibilityTable*>(m_object)->columns());
         }
         
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
+            m_object->selectedChildren(selectedChildrenCopy);
+            return convertToNSArray(selectedChildrenCopy);
+        }
+        
         // HTML tables don't support these
         if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute] || 
-            [attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute] ||
             [attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
             return nil;
         
@@ -1598,11 +1611,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             static_cast<AccessibilityTable*>(m_object)->cells(cells);
             return convertToNSArray(cells);
         }        
-    }
-    
-    if (m_object->isTableRow()) {
-        if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-            return [NSNumber numberWithInt:static_cast<AccessibilityTableRow*>(m_object)->rowIndex()];
     }
     
     if (m_object->isTableColumn()) {
@@ -1652,8 +1660,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [NSArray array];
     }
 
-    if (m_object->isTreeItem()) {
-        if ([attributeName isEqualToString:NSAccessibilityIndexAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityIndexAttribute]) {
+        if (m_object->isTreeItem()) {
             AccessibilityObject* parent = m_object->parentObject();
             for (; parent && !parent->isTree(); parent = parent->parentObject())
             { }
@@ -1671,16 +1679,28 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             
             return nil;
         }
-        
-        // The rows that are considered inside this row. 
-        if ([attributeName isEqualToString:NSAccessibilityDisclosedRowsAttribute]) {
+        if (m_object->isTableRow()) {
+            if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
+                return [NSNumber numberWithInt:static_cast<AccessibilityTableRow*>(m_object)->rowIndex()];
+        }
+    }    
+    
+    // The rows that are considered inside this row. 
+    if ([attributeName isEqualToString:NSAccessibilityDisclosedRowsAttribute]) {
+        if (m_object->isTreeItem()) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             m_object->ariaTreeItemDisclosedRows(rowsCopy);
             return convertToNSArray(rowsCopy);    
+        } else if (m_object->isARIATreeGridRow()) {
+            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
+            static_cast<AccessibilityARIAGridRow*>(m_object)->disclosedRows(rowsCopy);
+            return convertToNSArray(rowsCopy);    
         }
-
-        // The row that contains this row. It should be the same as the first parent that is a treeitem.
-        if ([attributeName isEqualToString:NSAccessibilityDisclosedByRowAttribute]) {
+    }
+    
+    // The row that contains this row. It should be the same as the first parent that is a treeitem.
+    if ([attributeName isEqualToString:NSAccessibilityDisclosedByRowAttribute]) {
+        if (m_object->isTreeItem()) {
             AccessibilityObject* parent = m_object->parentObject();
             while (parent) {
                 if (parent->isTreeItem())
@@ -1691,12 +1711,18 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 parent = parent->parentObject();
             }
             return nil;
+        } else if (m_object->isARIATreeGridRow()) {
+            AccessibilityObject* row = static_cast<AccessibilityARIAGridRow*>(m_object)->disclosedByRow();
+            if (!row)
+                return nil;
+            return row->wrapper();
         }
-        if ([attributeName isEqualToString:NSAccessibilityDisclosureLevelAttribute])
-            return [NSNumber numberWithInt:m_object->hierarchicalLevel()];
-        if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute])
-            return [NSNumber numberWithBool:m_object->isExpanded()];
     }
+
+    if ([attributeName isEqualToString:NSAccessibilityDisclosureLevelAttribute])
+        return [NSNumber numberWithInt:m_object->hierarchicalLevel()];
+    if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute])
+        return [NSNumber numberWithBool:m_object->isExpanded()];
     
     if ((m_object->isListBox() || m_object->isList()) && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
@@ -2153,7 +2179,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     else if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector selectedRows;
         convertToVector(array, selectedRows);
-        if (m_object->isTree())
+        if (m_object->isTree() || m_object->isDataTable())
             m_object->setSelectedRows(selectedRows);
     } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         m_object->setARIAGrabbed([number boolValue]);
