@@ -1,3 +1,16 @@
+2009-12-15  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52140.
+        http://trac.webkit.org/changeset/52140
+        https://bugs.webkit.org/show_bug.cgi?id=31299
+
+        The commit broke the Leopard bots and unfortunately
+        Chris wasn't around to fix them, so I'm rolling the change
+        out after 3 hours so that the bots can roll green again. :)
+
+        * platform/mac/accessibility/aria-treegrid-expected.txt: Removed.
+        * platform/mac/accessibility/aria-treegrid.html: Removed.
+
 2009-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

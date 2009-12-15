@@ -148,7 +148,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
             newObj = AccessibilityList::create(renderer);
         
         // aria tables
-        else if (nodeIsAriaType(node, "grid") || nodeIsAriaType(node, "treegrid"))
+        else if (nodeIsAriaType(node, "grid"))
             newObj = AccessibilityARIAGrid::create(renderer);
         else if (nodeIsAriaType(node, "row"))
             newObj = AccessibilityARIAGridRow::create(renderer);

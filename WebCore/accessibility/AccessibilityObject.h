@@ -165,7 +165,6 @@ enum AccessibilityRole {
     TabListRole,
     TabPanelRole,
     TreeRole,
-    TreeGridRole,
     TreeItemRole,
     DirectoryRole,
     
@@ -280,7 +279,6 @@ public:
     virtual bool isTableCell() const { return false; }
     virtual bool isFieldset() const { return false; }
     virtual bool isGroup() const { return false; }
-    virtual bool isARIATreeGridRow() const { return false; }
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
