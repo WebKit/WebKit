@@ -1,5 +1,11 @@
 2009-12-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the windows build: don't export this inlined function.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2009-12-15  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Beth Dakin.
 
         Inlined JSCell's operator new.
