@@ -1,3 +1,17 @@
+2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Remove dead code from FontPlatformDataQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=32540
+
+        In r51758 the code that used familyNames was removed
+        and we should remove the creation of the familyNames
+        as well.
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2009-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
