@@ -39,6 +39,8 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     this._dataTable.addEventListener("mousedown", this._mouseDownInDataTable.bind(this), true);
     this._dataTable.addEventListener("click", this._clickInDataTable.bind(this), true);
     
+    this._dataTable.addEventListener("contextmenu", this._contextMenuInDataTable.bind(this), true);
+    
     // FIXME: Add a createCallback which is different from editCallback and has different
     // behavior when creating a new node.
     if (editCallback) {
@@ -614,6 +616,30 @@ WebInspector.DataGrid.prototype = {
                 gridNode.select();
         } else
             gridNode.select();
+    },
+    
+    _contextMenuInDataTable: function(event)
+    {
+        var gridNode = this.dataGridNodeFromNode(event.target);
+        if (!gridNode || !gridNode.selectable)
+            return;
+        
+        if (gridNode.isEventWithinDisclosureTriangle(event))
+            return;
+      
+        var contextMenu = new WebInspector.ContextMenu();
+        
+        // FIXME: Use the column names for Editing, instead of just "Edit".
+        if (this.dataGrid._editCallback) {
+            if (gridNode === this.creationNode)
+                contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
+            else
+                contextMenu.appendItem(WebInspector.UIString("Edit"), this._startEditing.bind(this, event.target));
+        }
+        if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
+            contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
+        
+        contextMenu.show(event);
     },
 
     _clickInDataTable: function(event)

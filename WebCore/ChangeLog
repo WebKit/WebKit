@@ -1,3 +1,19 @@
+2009-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Part of <http://webkit.org/b/32568>.
+        New Web Inspector: The Context Menu should be used in more places.
+        
+        Add support for context menu entries for editing and deleting elements
+        in the datagrid. This gives support to deleting cookies, and editing and
+        deleting session storage and local storage.
+
+        * English.lproj/localizedStrings.js: Added "Edit" and "Add New" entries (delete was already there)
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid): Added context menu listener.
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+
 2009-12-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
