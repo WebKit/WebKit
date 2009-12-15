@@ -114,75 +114,79 @@ class AbstractPatchProcessingCommand(Command):
             self._process_patch(patch, options, args, tool)
 
 
-class CheckStyle(AbstractPatchProcessingCommand):
+class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
+    prepare_steps = None
+    main_steps = None
+
+    @staticmethod
+    def _create_step_sequence(steps):
+        if not steps:
+            return None, []
+        step_sequence = StepSequence(steps)
+        return step_sequence, step_sequence.options()
+
+    def __init__(self, help_text, args_description):
+        options = []
+        self._prepare_sequence, prepare_options = self._create_step_sequence(self.prepare_steps)
+        self._main_sequence, main_options = self._create_step_sequence(self.main_steps)
+        options = sorted(set(prepare_options + main_options))
+        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
+
+    def _prepare_to_process(self, options, args, tool):
+        if self._prepare_sequence:
+            self._prepare_sequence.run_and_handle_errors(tool, options)
+
+    def _process_patch(self, patch, options, args, tool):
+        if self._main_sequence:
+            state = {"patch": patch}
+            self._main_sequence.run_and_handle_errors(tool, options, state)
+
+
+class CheckStyle(AbstractPatchSequencingCommand):
     name = "check-style"
     show_in_main_help = False
+    main_steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        ApplyPatchStep,
+        CheckStyleStep,
+    ]
     def __init__(self):
-        self._sequence = StepSequence([
-            CleanWorkingDirectoryStep,
-            UpdateStep,
-            ApplyPatchStep,
-            CheckStyleStep,
-        ])
-        AbstractPatchProcessingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]", self._sequence.options())
+        AbstractPatchSequencingCommand.__init__(self, "Run check-webkit-style on the specified attachments", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
-    def _prepare_to_process(self, options, args, tool):
-        pass
 
-    # FIXME: Add a base class to share this code.
-    def _process_patch(self, patch, options, args, tool):
-        state = {"patch": patch}
-        self._sequence.run_and_handle_errors(tool, options, state)
-
-
-class BuildAttachment(AbstractPatchProcessingCommand):
+class BuildAttachment(AbstractPatchSequencingCommand):
     name = "build-attachment"
     show_in_main_help = False
+    main_steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        ApplyPatchStep,
+        BuildStep,
+    ]
     def __init__(self):
-        self._sequence = StepSequence([
-            CleanWorkingDirectoryStep,
-            UpdateStep,
-            ApplyPatchStep,
-            BuildStep,
-        ])
-        AbstractPatchProcessingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]", self._sequence.options())
+        AbstractPatchSequencingCommand.__init__(self, "Apply and build patches from bugzilla", "ATTACHMENT_ID [ATTACHMENT_IDS]")
 
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
 
-    def _prepare_to_process(self, options, args, tool):
-        pass
 
-    # FIXME: Add a base class to share this code.
-    def _process_patch(self, patch, options, args, tool):
-        state = {"patch": patch}
-        self._sequence.run_and_handle_errors(tool, options, state)
-
-
-class AbstractPatchApplyingCommand(AbstractPatchProcessingCommand):
-    def __init__(self, help_text, args_description):
-        self._prepare_sequence = StepSequence([
-            CleanWorkingDirectoryWithLocalCommitsStep,
-            UpdateStep,
-        ])
-        self._main_sequence  = StepSequence([
-            ApplyPatchWithLocalCommitStep,
-        ])
-        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()))
-        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
+class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
+    prepare_steps = [
+        CleanWorkingDirectoryWithLocalCommitsStep,
+        UpdateStep,
+    ]
+    main_steps = [
+        ApplyPatchWithLocalCommitStep,
+    ]
 
     def _prepare_to_process(self, options, args, tool):
         if options.local_commit and not tool.scm().supports_local_commits():
             error("--local-commit passed, but %s does not support local commits" % scm.display_name())
-        self._prepare_sequence.run_and_handle_errors(tool, options)
-
-    # FIXME: Add a base class to share this code.
-    def _process_patch(self, patch, options, args, tool):
-        state = {"patch": patch}
-        self._main_sequence.run_and_handle_errors(tool, options, state)
+        AbstractPatchSequencingCommand._prepare_to_process(self, options, args, tool)
 
 
 class ApplyAttachment(AbstractPatchApplyingCommand):
@@ -210,29 +214,21 @@ class ApplyPatches(AbstractPatchApplyingCommand):
         return all_patches
 
 
-class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
-    def __init__(self, help_text, args_description):
-        self._sequence = StepSequence([
-            CleanWorkingDirectoryStep,
-            UpdateStep,
-            ApplyPatchStep,
-            EnsureBuildersAreGreenStep,
-            BuildStep,
-            RunTestsStep,
-            CommitStep,
-            ClosePatchStep,
-            CloseBugStep,
-        ])
-        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, self._sequence.options())
-
-    def _prepare_to_process(self, options, args, tool):
-        # Check the tree status first so we can fail early.
-        EnsureBuildersAreGreenStep(tool, options).run({})
-
-    # FIXME: Add a base class to share this code.
-    def _process_patch(self, patch, options, args, tool):
-        state = {"patch": patch}
-        self._sequence.run_and_handle_errors(tool, options, state)
+class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
+    prepare_steps = [
+        EnsureBuildersAreGreenStep,
+    ]
+    main_steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        ApplyPatchStep,
+        EnsureBuildersAreGreenStep,
+        BuildStep,
+        RunTestsStep,
+        CommitStep,
+        ClosePatchStep,
+        CloseBugStep,
+    ]
 
 
 class LandAttachment(AbstractPatchLandingCommand):
