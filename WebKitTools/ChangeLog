@@ -2,6 +2,20 @@
 
         Reviewed by Adam Barth.
 
+        bugzilla-tool/commit-queue needs to upload failure logs when patches are rejected
+        https://bugs.webkit.org/show_bug.cgi?id=28286
+
+        * QueueStatusServer/index.html:
+         - Show [results] links if a results log was uploaded.
+        * QueueStatusServer/queue_status.py:
+         - Empty file uploads appear as u"" and Blob does not handle unicode, so convert to str().
+        * Scripts/modules/commands/queues.py:
+         - Post to the status bot when a patch fails and include the failure log as a results file.
+
+2009-12-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         queue sub-commands need --status-host so they can report status
         https://bugs.webkit.org/show_bug.cgi?id=32313
 

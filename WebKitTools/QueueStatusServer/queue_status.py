@@ -145,7 +145,7 @@ class UpdateStatus(webapp.RequestHandler):
         queue_status.active_patch_id = self._int_from_request('patch_id')
         queue_status.message = self.request.get('status')
         results_file = self.request.get("results_file")
-        queue_status.results_file = db.Blob(results_file)
+        queue_status.results_file = db.Blob(str(results_file))
         queue_status.put()
         self.redirect('/')
 

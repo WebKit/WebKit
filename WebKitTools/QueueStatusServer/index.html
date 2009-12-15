@@ -19,6 +19,11 @@
         <tr>
             <td class='status_date'>{{ recent_status.date|timesince }} ago</td>
             <td class="recent_status">{{ recent_status.message|force_escape|urlize|webkit_linkify|safe }}</td>
+            <td class="results_link">
+            {% if recent_status.results_file %}
+                [<a href="/results/{{ recent_status.key.id }}">results</a>]
+            {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
