@@ -61,6 +61,7 @@ foreach my $suite (@suites) {
     }
     close TESTLIST;
 
+    my @testContents = ();
     for my $test (@tests) {
 	my $name = "${test}";
 
@@ -71,10 +72,11 @@ foreach my $suite (@suites) {
 	my $output = $template;
 	$output =~ s/\@NAME\@/${name}/g;
 	$output =~ s/\@SCRIPT\@/${script}/g;
-
-	open OUTPUT, ">hosted/${suite}/${test}.html";
-	print OUTPUT $output;
-	close OUTPUT;
+	$output =~ s/\\/\\\\/g;
+	$output =~ s/"/\\"/g;
+	$output =~ s/\n/\\n\\\n/g;
+	$output = $output;
+	push @testContents, $output;
     }
 
     my $output = $driverTemplate;
@@ -91,7 +93,6 @@ foreach my $suite (@suites) {
     print OUTPUT $output;
     close OUTPUT;
 
-
     my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
     $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
@@ -99,7 +100,11 @@ foreach my $suite (@suites) {
     print PREFIX $prefix;
     close PREFIX;
 
-    
+    my $contents = "var testContents = [ " . join(", ", map { '"' . $_ . '"' } @testContents) . " ];\n";
+
+    open CONTENTS, ">hosted/${suite}/sunspider-test-contents.js";
+    print CONTENTS $contents;
+    close CONTENTS;    
 }
 
 system("cp resources/sunspider-analyze-results.js hosted");

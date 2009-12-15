@@ -33,8 +33,13 @@
 <h3>@NAME@</h3>
 <div id="console">
 </div>
-<script src="../sunspider-record-result.js"></script>
 <script>
+function record(time) {
+    document.getElementById("console").innerHTML = time + "ms";
+    if (window.parent) {
+        parent.recordResult(time);
+    }
+}
 
 var _sunSpiderStartDate = new Date();
 

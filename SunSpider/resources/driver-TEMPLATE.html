@@ -30,16 +30,17 @@
 <link rel="stylesheet" href="../sunspider.css">
 </head>
 
-<body onload="next()">
+<body onload="start()">
 
 <h2><span id="logo">&#x2600;</span>SunSpider JavaScript Benchmark <small>(In Progress...)</small></h2>
 <h4>Version: @SUITE@</h4>
 
 <script src="sunspider-test-prefix.js"></script>
+<script src="sunspider-test-contents.js"></script>
 <script>
 var testIndex = -1;
-var currentRepeat = 0;
-var repeatCount = 5;
+var currentRepeat = -1;
+var repeatCount = 10;
 
 var output = [];
 output.length = repeatCount;
@@ -47,19 +48,31 @@ for (var i = 0; i < output.length; i++) {
     output[i] = {};
 }
 
-function next() 
+function start() 
 {
     window.setTimeout(reallyNext, 500);
 }
 
+function next() 
+{
+    window.setTimeout(reallyNext, 10);
+}
+
 function reallyNext() 
 {
+    document.getElementById("frameparent").innerHTML = "";
+    document.getElementById("frameparent").innerHTML = "<iframe id='testframe'>";
+    var testFrame = document.getElementById("testframe");
     testIndex++;
     if (testIndex < tests.length) {
-        document.getElementById("testframe").src = tests[testIndex] + ".html";
+        testFrame.contentDocument.open();
+        testFrame.contentDocument.write(testContents[testIndex]);
+        testFrame.contentDocument.close;
     } else if (++currentRepeat < repeatCount) { 
         testIndex = 0;
-        document.getElementById("testframe").src = tests[testIndex] + ".html";
+        testFrame.contentDocument.open();
+        testFrame.contentDocument.write(testContents[testIndex]);
+        testFrame.contentDocument.close;
     } else {
         finish();
     }
@@ -67,7 +80,8 @@ function reallyNext()
 
 function recordResult(time)
 {
-    output[currentRepeat][tests[testIndex]] = time;
+    if (currentRepeat >= 0) // negative repeats are warmups
+        output[currentRepeat][tests[testIndex]] = time;
     next();
 }
 
@@ -90,8 +104,8 @@ function finish()
 
 </script>
 
-<iframe id="testframe">
-</iframe>
+<div id="frameparent">
+</div>
 
 </body>
 </html>
