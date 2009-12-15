@@ -16,6 +16,8 @@ PASS context.bindBuffer(context.ARRAY_BUFFER, 0) is undefined.
 PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) is undefined.
 PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) is undefined.
 PASS context.bindTexture(context.TEXTURE_2D, 0) is undefined.
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0) threw exception GL error 1282 in framebufferRenderbuffer.
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0) threw exception GL error 1282 in framebufferTexture2D.
 PASS context.getProgramParameter(undefined, 0) threw exception GL error 1282 in getProgramParameter.
 PASS context.getProgramInfoLog(undefined, 0) threw exception GL error 1282 in getProgramInfoLog.
 PASS context.getShaderParameter(undefined, 0) threw exception GL error 1282 in getShaderParameter.

@@ -1,3 +1,15 @@
+2009-12-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Don't allow default framebuffer to be mutated
+        https://bugs.webkit.org/show_bug.cgi?id=32391
+
+        * fast/canvas/webgl/error-reporting-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/script-tests/error-reporting.js:
+        * fast/canvas/webgl/script-tests/null-object-behaviour.js:
+
 2009-12-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

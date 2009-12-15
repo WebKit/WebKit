@@ -710,6 +710,13 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }       
+    // Don't allow the default framebuffer to be mutated; all current
+    // implementations use an FBO internally in place of the default
+    // FBO.
+    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
     cleanupAfterGraphicsCall(false);
 }
@@ -718,6 +725,13 @@ void WebGLRenderingContext::framebufferTexture2D(unsigned long target, unsigned 
 {
     UNUSED_PARAM(ec);
     if (texture && texture->context() != this) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+    // Don't allow the default framebuffer to be mutated; all current
+    // implementations use an FBO internally in place of the default
+    // FBO.
+    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }

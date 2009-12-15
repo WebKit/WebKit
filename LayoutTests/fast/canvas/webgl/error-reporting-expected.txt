@@ -17,6 +17,15 @@ PASS context.getError() is context.NO_ERROR
 PASS context.getActiveUniform(program, 50) is null
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.NO_ERROR
+Testing attempts to manipulate the default framebuffer
+PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) is undefined.
+PASS context.getError() is context.NO_ERROR
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0) is undefined.
+PASS context.getError() is context.INVALID_OPERATION
+PASS context.getError() is context.NO_ERROR
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0) is undefined.
+PASS context.getError() is context.INVALID_OPERATION
+PASS context.getError() is context.NO_ERROR
 PASS successfullyParsed is true
 
 TEST COMPLETE

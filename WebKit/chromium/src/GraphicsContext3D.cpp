@@ -116,6 +116,8 @@ public:
     void activeTexture(unsigned long texture);
     void bindBuffer(unsigned long target,
                     WebGLBuffer* buffer);
+    void bindFramebuffer(unsigned long target,
+                         WebGLFramebuffer* framebuffer);
     void bindTexture(unsigned long target,
                      WebGLTexture* texture);
     void bufferDataImpl(unsigned long target, int size, const void* data, unsigned long usage);
@@ -133,6 +135,9 @@ private:
     unsigned int m_fbo;
     unsigned int m_depthBuffer;
     unsigned int m_cachedWidth, m_cachedHeight;
+
+    // For tracking which FBO is bound
+    unsigned int m_boundFBO;
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     unsigned char* m_scanline;
@@ -234,6 +239,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_texture(0)
     , m_fbo(0)
     , m_depthBuffer(0)
+    , m_boundFBO(0)
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     , m_scanline(0)
 #endif
@@ -594,6 +600,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
     glBindTexture(target, 0);
 
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    m_boundFBO = m_fbo;
     glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer);
     glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
     glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
@@ -681,6 +688,9 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
     unsigned char* pixels = 0;
+    bool mustRestoreFBO = (m_boundFBO != m_fbo);
+    if (mustRestoreFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 #if PLATFORM(SKIA)
     const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
     const SkBitmap* readbackBitmap = 0;
@@ -729,6 +739,9 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
 #else
 #error Must port to your platform
 #endif
+
+    if (mustRestoreFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     if (pixels)
@@ -786,6 +799,17 @@ void GraphicsContext3DInternal::bindBuffer(unsigned long target,
     if (target == GL_ARRAY_BUFFER)
         m_boundArrayBuffer = bufID;
     glBindBuffer(target, bufID);
+}
+
+void GraphicsContext3DInternal::bindFramebuffer(unsigned long target,
+                                                WebGLFramebuffer* framebuffer)
+{
+    makeContextCurrent();
+    GLuint id = EXTRACT(framebuffer);
+    if (!id)
+        id = m_fbo;
+    glBindFramebufferEXT(target, id);
+    m_boundFBO = id;
 }
 
 // If we didn't have to hack GL_TEXTURE_WRAP_R for cube maps,
@@ -1190,7 +1214,10 @@ void GraphicsContext3D::bindBuffer(unsigned long target,
     m_internal->bindBuffer(target, buffer);
 }
 
-GL_SAME_METHOD_2_X2(BindFramebufferEXT, bindFramebuffer, unsigned long, WebGLFramebuffer*)
+void GraphicsContext3D::bindFramebuffer(unsigned long target, WebGLFramebuffer* framebuffer)
+{
+    m_internal->bindFramebuffer(target, framebuffer);
+}
 
 GL_SAME_METHOD_2_X2(BindRenderbufferEXT, bindRenderbuffer, unsigned long, WebGLRenderbuffer*)
 

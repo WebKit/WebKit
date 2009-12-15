@@ -36,20 +36,18 @@ shouldBe("context.getError()", "context.INVALID_VALUE");
 // Error state should be clear by this point
 shouldBe("context.getError()", "context.NO_ERROR");
 
-// FIXME: the following tests don't work properly yet
-// https://bugs.webkit.org/show_bug.cgi?id=32391
-// debug("Testing attempts to manipulate the default framebuffer");
-// shouldBeUndefined("context.bindFramebuffer(context.FRAMEBUFFER, 0)");
-// shouldBe("context.getError()", "context.NO_ERROR");
-// shouldBeUndefined("context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0)");
-// // Synthetic OpenGL error
-// shouldBe("context.getError()", "context.INVALID_OPERATION");
-// // Error state should be clear by this point
-// shouldBe("context.getError()", "context.NO_ERROR");
-// shouldBeUndefined("context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0)");
-// // Synthetic OpenGL error
-// shouldBe("context.getError()", "context.INVALID_OPERATION");
-// // Error state should be clear by this point
-// shouldBe("context.getError()", "context.NO_ERROR");
+debug("Testing attempts to manipulate the default framebuffer");
+shouldBeUndefined("context.bindFramebuffer(context.FRAMEBUFFER, 0)");
+shouldBe("context.getError()", "context.NO_ERROR");
+shouldBeUndefined("context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, 0)");
+// Synthetic OpenGL error
+shouldBe("context.getError()", "context.INVALID_OPERATION");
+// Error state should be clear by this point
+shouldBe("context.getError()", "context.NO_ERROR");
+shouldBeUndefined("context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, 0, 0)");
+// Synthetic OpenGL error
+shouldBe("context.getError()", "context.INVALID_OPERATION");
+// Error state should be clear by this point
+shouldBe("context.getError()", "context.NO_ERROR");
 
 successfullyParsed = true;
