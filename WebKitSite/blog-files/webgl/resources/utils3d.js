@@ -1,27 +1,33 @@
-// The WebGL spec was recently updated to replace the Canvas prefix on types with the WebGL prefix.
-// For compatibility reasons we set up aliases to from the WebGL prefixed typename to the
-// Canvas prefixed name for the benefit of older builds of WebKit and Mozilla
-if (!("WebGLFloatArray" in window))
-    WebGLFloatArray = window.CanvasFloatArray;
-if (!("WebGLByteArray" in window))
-    WebGLByteArray = window.CanvasByteArray;
-if (!("WebGLIntArray" in window))
-    WebGLIntArray = window.CanvasIntArray;
-if (!("WebGLShortArray" in window))
-    WebGLShortArray = window.CanvasShortArray;
-if (!("WebGLUnsignedByteArray" in window))
-    WebGLUnsignedByteArray = window.CanvasUnsignedByteArray;
-if (!("WebGLUnsignedIntArray" in window))
-    WebGLUnsignedIntArray = window.CanvasUnsignedIntArray;
-if (!("WebGLUnsignedShortArray" in window))
-    WebGLUnsignedShortArray = window.CanvasUnsignedShortArray;
-
+/*
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
 
 //
 // initWebGL
 //
 // Initialize the Canvas element with the passed name as a WebGL object and return the
-// CanvasRenderingContext3D. 
+// WebGLRenderingContext. 
 //
 // Load shaders with the passed names and create a program with them. Return this program 
 // in the 'program' property of the returned context.
@@ -32,18 +38,21 @@ if (!("WebGLUnsignedShortArray" in window))
 // Set the clear color to the passed array (4 values) and set the clear depth to the passed value.
 // Enable depth testing and blending with a blend func of (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
 //
+// A console function is added to the context: console(string). This can be replaced
+// by the caller. By default, it maps to the window.console() function on WebKit and to
+// an empty function on other browsers.
+//
 function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth)
 {
     var canvas = document.getElementById(canvasName);
-    var gl;
-    
-    try {gl = canvas.getContext("webkit-3d") } catch(e) { }
-    if (!gl)
-        try {gl = canvas.getContext("moz-webgl") } catch(e) { }
+    var gl = canvas.getContext("experimental-webgl");
     if (!gl) {
         alert("No WebGL context found");
         return null;
     }
+    
+    // Add a console
+    gl.console = ("console" in window) ? window.console : { log: function() { } };
 
     // create our shaders
     var vertexShader = loadShader(gl, vshader);
@@ -70,11 +79,11 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
     gl.linkProgram(gl.program);
 
     // Check the link status
-    var linked = gl.getProgrami(gl.program, gl.LINK_STATUS);
+    var linked = gl.getProgramParameter(gl.program, gl.LINK_STATUS);
     if (!linked) {
         // something went wrong with the link
         var error = gl.getProgramInfoLog (gl.program);
-        console.log("Error in program linking:"+error);
+        gl.console.log("Error in program linking:"+error);
 
         gl.deleteProgram(gl.program);
         gl.deleteProgram(fragmentShader);
@@ -99,13 +108,13 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
 // loadShader
 //
 // 'shaderId' is the id of a <script> element containing the shader source string.
-// Load this shader and return the CanvasShader object corresponding to it.
+// Load this shader and return the WebGLShader object corresponding to it.
 //
 function loadShader(ctx, shaderId)
 {
     var shaderScript = document.getElementById(shaderId);
     if (!shaderScript) {
-        console.log("*** Error: shader script '"+shaderId+"' not found");
+        ctx.console.log("*** Error: shader script '"+shaderId+"' not found");
         return null;
     }
         
@@ -114,14 +123,14 @@ function loadShader(ctx, shaderId)
     else if (shaderScript.type == "x-shader/x-fragment")
         var shaderType = ctx.FRAGMENT_SHADER;
     else {
-        console.log("*** Error: shader script '"+shaderId+"' of undefined type '"+shaderScript.type+"'");       
+        ctx.console.log("*** Error: shader script '"+shaderId+"' of undefined type '"+shaderScript.type+"'");       
         return null;
     }
 
     // Create the shader object
     var shader = ctx.createShader(shaderType);
     if (shader == null) {
-        console.log("*** Error: unable to create shader '"+shaderId+"'");       
+        ctx.console.log("*** Error: unable to create shader '"+shaderId+"'");       
         return null;
     }
 
@@ -132,11 +141,11 @@ function loadShader(ctx, shaderId)
     ctx.compileShader(shader);
 
     // Check the compile status
-    var compiled = ctx.getShaderi(shader, ctx.COMPILE_STATUS);
+    var compiled = ctx.getShaderParameter(shader, ctx.COMPILE_STATUS);
     if (!compiled) {
         // Something went wrong during compilation; get the error
         var error = ctx.getShaderInfoLog(shader);
-        console.log("*** Error compiling shader '"+shaderId+"':"+error);
+        ctx.console.log("*** Error compiling shader '"+shaderId+"':"+error);
         ctx.deleteShader(shader);
         return null;
     }
@@ -150,10 +159,10 @@ function loadShader(ctx, shaderId)
 // Create a box with vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 // 
 function makeBox(ctx)
@@ -222,12 +231,12 @@ function makeBox(ctx)
     ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.vertexObject);
     ctx.bufferData(ctx.ARRAY_BUFFER, vertices, ctx.STATIC_DRAW);
     
-    ctx.bindBuffer(ctx.ARRAY_BUFFER, 0);
+    ctx.bindBuffer(ctx.ARRAY_BUFFER, null);
 
     retval.indexObject = ctx.createBuffer();
     ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, retval.indexObject);
     ctx.bufferData(ctx.ELEMENT_ARRAY_BUFFER, indices, ctx.STATIC_DRAW);
-    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, 0);
+    ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, null);
     
     retval.numIndices = indices.length;
 
@@ -241,10 +250,10 @@ function makeBox(ctx)
 // Sphere has vertices, normals and texCoords. Create VBOs for each as well as the index array.
 // Return an object with the following properties:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 // 
 function makeSphere(ctx, radius, lats, longs)
@@ -280,11 +289,10 @@ function makeSphere(ctx, radius, lats, longs)
         }
     }
     
-    longs += 1;
     for (var latNumber = 0; latNumber < lats; ++latNumber) {
         for (var longNumber = 0; longNumber < longs; ++longNumber) {
-            var first = (latNumber * longs) + (longNumber % longs);
-            var second = first + longs;
+            var first = (latNumber * (longs+1)) + longNumber;
+            var second = first + longs + 1;
             indexData.push(first);
             indexData.push(second);
             indexData.push(first+1);
@@ -324,10 +332,10 @@ function makeSphere(ctx, radius, lats, longs)
 // When the object load is complete, the 'loaded' property becomes true and the following 
 // properties are set:
 //
-//  normalObject        CanvasBuffer object for normals
-//  texCoordObject      CanvasBuffer object for texCoords
-//  vertexObject        CanvasBuffer object for vertices
-//  indexObject         CanvasBuffer object for indices
+//  normalObject        WebGLBuffer object for normals
+//  texCoordObject      WebGLBuffer object for texCoords
+//  vertexObject        WebGLBuffer object for vertices
+//  indexObject         WebGLBuffer object for indices
 //  numIndices          The number of indices in the indexObject
 //  
 function loadObj(ctx, url)
@@ -344,7 +352,7 @@ function loadObj(ctx, url)
 
 function processLoadObj(req) 
 {
-    console.log("req="+req)
+    req.obj.ctx.console.log("req="+req)
     // only if req shows "complete"
     if (req.readyState == 4) {
         doLoadObj(req.obj, req.responseText);
@@ -393,7 +401,7 @@ function doLoadObj(obj, text)
         else if (array[0] == "f") {
             // face
             if (array.length != 4) {
-                console.log("*** Error: face '"+line+"' not handled");
+                obj.ctx.console.log("*** Error: face '"+line+"' not handled");
                 continue;
             }
             
@@ -414,7 +422,7 @@ function doLoadObj(obj, text)
                         nor = parseInt(f[2]) - 1;
                     }
                     else {
-                        console.log("*** Error: did not understand face '"+array[i]+"'");
+                        obj.ctx.console.log("*** Error: did not understand face '"+array[i]+"'");
                         return null;
                     }
                     
@@ -486,7 +494,7 @@ function doLoadObj(obj, text)
 //
 // loadImageTexture
 //
-// Load the image at the passed url, place it in a new CanvasTexture object and return the CanvasTexture.
+// Load the image at the passed url, place it in a new WebGLTexture object and return the WebGLTexture.
 //
 function loadImageTexture(ctx, url)
 {
@@ -507,7 +515,7 @@ function doLoadImageTexture(ctx, image, texture)
     ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_S, ctx.CLAMP_TO_EDGE);
     ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_T, ctx.CLAMP_TO_EDGE);
     ctx.generateMipmap(ctx.TEXTURE_2D)
-    ctx.bindTexture(ctx.TEXTURE_2D, 0);
+    ctx.bindTexture(ctx.TEXTURE_2D, null);
 }
 
 //
@@ -555,4 +563,3 @@ Framerate.prototype.snapshot = function()
         this.renderTime = newTime;
     }
 }
-
