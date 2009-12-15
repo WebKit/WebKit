@@ -1,3 +1,14 @@
+2009-12-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        We have two mark-fixed commands
+        https://bugs.webkit.org/show_bug.cgi?id=32073
+
+        * Scripts/mark-bug-fixed: Removed.
+        * Scripts/modules/commands/upload.py:
+        * Scripts/modules/commands/upload_unittest.py:
+
 2009-12-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

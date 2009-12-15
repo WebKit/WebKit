@@ -29,12 +29,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import StringIO
 import sys
 
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
+from modules.comments import bug_comment_from_svn_revision
 from modules.grammar import pluralize
 from modules.logging import error, log
 from modules.multicommandtool import Command
@@ -156,14 +158,91 @@ class PostCommits(Command):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
-class MarkFixed(Command):
-    name = "mark-fixed"
-    show_in_main_help = False
+# FIXME: Requires unit test.  Blocking issue: too complex for now.
+class MarkBugFixed(Command):
+    name = "mark-bug-fixed"
+    show_in_main_help = True
     def __init__(self):
-        Command.__init__(self, "Mark the specified bug as fixed", "BUG_ID REASON")
+        options = [
+            make_option("--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
+            make_option("--comment", action="store", type="string", dest="comment", help="Text to include in bug comment."),
+            make_option("--open", action="store_true", default=False, dest="open_bug", help="Open bug in default web browser (Mac only)."),
+            make_option("--update-only", action="store_true", default=False, dest="update_only", help="Add comment to the bug, but do not close it."),
+        ]
+        Command.__init__(self, "Mark the specified bug as fixed", "[SVN_REVISION]", options=options)
+
+    def _fetch_commit_log(self, tool, svn_revision):
+        if not svn_revision:
+            return tool.scm().last_svn_commit_log()
+        return tool.scm().svn_commit_log(svn_revision)
+
+    def _determine_bug_id_and_svn_revision(self, tool, bug_id, svn_revision):
+        commit_log = self._fetch_commit_log(tool, svn_revision)
+
+        if not bug_id:
+            bug_id = parse_bug_id(commit_log)
+
+        if not svn_revision:
+            match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
+            if match:
+                svn_revision = match.group('svn_revision')
+
+        if not bug_id or not svn_revision:
+            not_found = []
+            if not bug_id:
+                not_found.append("bug id")
+            if not svn_revision:
+                not_found.append("svn revision")
+            error("Could not find %s on command-line or in %s."
+                  % (" or ".join(not_found), "r%s" % svn_revision if svn_revision else "last commit"))
+
+        return (bug_id, svn_revision)
+
+    def _open_bug_in_web_browser(self, tool, bug_id):
+        if sys.platform == "darwin":
+            tool.executive.run_command(["open", tool.bugs.short_bug_url_for_bug_id(bug_id)])
+            return
+        log("WARNING: --open is only supported on Mac OS X.")
+
+    def _prompt_user_for_correctness(self, bug_id, svn_revision):
+        answer = raw_input("Is this correct (y/N)? ")
+        if not re.match("^\s*y(es)?", answer, re.IGNORECASE):
+            exit(1)
 
     def execute(self, options, args, tool):
-        tool.bugs.close_bug_as_fixed(args[0], args[1])
+        bug_id = options.bug_id
+
+        svn_revision = args and args[0]
+        if svn_revision:
+            if re.match("^r[0-9]+$", svn_revision, re.IGNORECASE):
+                svn_revision = svn_revision[1:]
+            if not re.match("^[0-9]+$", svn_revision):
+                error("Invalid svn revision: '%s'" % svn_revision)
+
+        needs_prompt = False
+        if not bug_id or not svn_revision:
+            needs_prompt = True
+            (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(tool, bug_id, svn_revision)
+
+        log("Bug: <%s> %s" % (tool.bugs.short_bug_url_for_bug_id(bug_id), tool.bugs.fetch_title_from_bug(bug_id)))
+        log("Revision: %s" % svn_revision)
+
+        if options.open_bug:
+            self._open_bug_in_web_browser(tool, bug_id)
+
+        if needs_prompt:
+            self._prompt_user_for_correctness(bug_id, svn_revision)
+
+        bug_comment = bug_comment_from_svn_revision(svn_revision)
+        if options.comment:
+            bug_comment = "%s\n\n%s" % (options.comment, bug_comment)
+
+        if options.update_only:
+            log("Adding comment to Bug %s." % bug_id)
+            tool.bugs.post_comment_to_bug(bug_id, bug_comment)
+        else:
+            log("Adding comment to Bug %s and marking as Resolved/Fixed." % bug_id)
+            tool.bugs.close_bug_as_fixed(bug_id, bug_comment)
 
 
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
