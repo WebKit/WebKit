@@ -323,7 +323,6 @@ WebInspector.Resource.prototype = {
         this._finished = x;
 
         if (x) {
-            this._checkTips();
             this._checkWarnings();
             this.dispatchEventToListeners("finished");
         }
@@ -537,58 +536,6 @@ WebInspector.Resource.prototype = {
     set warnings(x)
     {
         this._warnings = x;
-    },
-
-    get tips()
-    {
-        if (!("_tips" in this))
-            this._tips = {};
-        return this._tips;
-    },
-
-    _addTip: function(tip)
-    {
-        if (tip.id in this.tips)
-            return;
-
-        this.tips[tip.id] = tip;
-
-        // FIXME: Re-enable this code once we have a scope bar in the Console.
-        // Otherwise, we flood the Console with too many tips.
-        /*
-        var msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-            WebInspector.ConsoleMessage.MessageType.Log, WebInspector.ConsoleMessage.MessageLevel.Tip, 
-            -1, this.url, null, 1, tip.message);
-        WebInspector.console.addMessage(msg);
-        */
-    },
-
-    _checkTips: function()
-    {
-        for (var tip in WebInspector.Tips)
-            this._checkTip(WebInspector.Tips[tip]);
-    },
-
-    _checkTip: function(tip)
-    {
-        var addTip = false;
-        switch (tip.id) {
-            case WebInspector.Tips.ResourceNotCompressed.id:
-                addTip = this._shouldCompress();
-                break;
-        }
-
-        if (addTip)
-            this._addTip(tip);
-    },
-
-    _shouldCompress: function()
-    {
-        return WebInspector.Resource.Type.isTextType(this.type)
-            && this.domain
-            && !("Content-Encoding" in this.responseHeaders)
-            && this.contentLength !== undefined
-            && this.contentLength >= 512;
     },
 
     _mimeTypeIsConsistentWithType: function()

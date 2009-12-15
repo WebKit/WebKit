@@ -1,3 +1,24 @@
+2009-12-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=18498>.
+        REGRESSION: Tips are not shown for resources anymore.
+        
+        As discussed in the bug, Tips are not coming back, and the feature
+        will be moved to the audits panel. This patch is to remove the Tips
+        code and the resources that it needed.
+
+        * WebCore.gypi: Removed tips files.
+        * inspector/front-end/Images/tipBalloon.png: Removed.
+        * inspector/front-end/Images/tipBalloonBottom.png: Removed.
+        * inspector/front-end/Images/tipIcon.png: Removed.
+        * inspector/front-end/Images/tipIconPressed.png: Removed.
+        * inspector/front-end/Resource.js: Removed tips code.
+        (WebInspector.Resource.prototype.set finished): 
+        * inspector/front-end/WebKit.qrc: Removed tips files.
+        * inspector/front-end/inspector.css: Removes tips style rules.
+        
 2009-12-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
