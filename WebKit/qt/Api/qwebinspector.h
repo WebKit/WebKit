@@ -43,6 +43,7 @@ protected:
     void resizeEvent(QResizeEvent* event);
     void showEvent(QShowEvent* event);
     void hideEvent(QHideEvent* event);
+    void closeEvent(QCloseEvent* event);
 
 private:
     QWebInspectorPrivate* d;
