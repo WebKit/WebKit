@@ -1,5 +1,21 @@
 2009-12-14  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Some Browser-hosted SunSpider files are not valid HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=32536
+        
+        Made various fixes to validate as HTML5 with no warnings (mainly removing bogus
+        close tags and adding a meta charset declaration).
+
+        * hosted/sunspider.html:
+        * hosted/versions.html:
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
+2009-12-14  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric Seidel.
 
         Make sunspider-0.9.1 the default content set (both command-line and hosted)
