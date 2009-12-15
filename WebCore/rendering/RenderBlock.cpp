@@ -3195,14 +3195,18 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     // to fit) and not all (we should be using nextFloatBottomBelow and looping).
     int result = clearSet ? max(0, bottom - yPos) : 0;
     if (!result && child->avoidsFloats()) {
-        int oldYPos = child->y();
-        int oldWidth = child->width();
-        child->setY(yPos);
-        child->calcWidth();
-        if (child->width() > lineWidth(yPos, false) && child->minPrefWidth() <= availableWidth())
-            result = max(0, floatBottom() - yPos);
-        child->setY(oldYPos);
-        child->setWidth(oldWidth);
+        int widthAtCurrentHeight = lineWidth(yPos, false);
+        int availableWidth = this->availableWidth();
+        if (widthAtCurrentHeight < availableWidth) {
+            int oldYPos = child->y();
+            int oldWidth = child->width();
+            child->setY(yPos);
+            child->calcWidth();
+            if (child->width() > widthAtCurrentHeight && child->minPrefWidth() <= availableWidth)
+                result = max(0, floatBottom() - yPos);
+            child->setY(oldYPos);
+            child->setWidth(oldWidth);
+        }
     }
     return result;
 }
