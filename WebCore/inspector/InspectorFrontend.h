@@ -67,7 +67,6 @@ namespace WebCore {
         void updateConsoleMessageRepeatCount(const int count);
         void clearConsoleMessages();
 
-        bool addResource(unsigned long identifier, const ScriptObject& resourceObj);
         bool updateResource(unsigned long identifier, const ScriptObject& resourceObj);
         void removeResource(unsigned long identifier);
 

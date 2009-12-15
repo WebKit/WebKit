@@ -962,17 +962,17 @@ WebInspector.showConsolePanel = function()
     this.currentPanel = this.panels.console;
 }
 
-WebInspector.addResource = function(identifier, payload)
+WebInspector._addResource = function(identifier, payload)
 {
     var resource = new WebInspector.Resource(
         payload.requestHeaders,
-        payload.requestURL,
+        payload.url,
         payload.documentURL,
         payload.host,
         payload.path,
         payload.lastPathComponent,
         identifier,
-        payload.isMainResource,
+        payload.mainResource,
         payload.cached,
         payload.requestMethod,
         payload.requestFormData);
@@ -988,6 +988,8 @@ WebInspector.addResource = function(identifier, payload)
     var match = payload.documentURL.match(/^(http[s]?|file):\/\/([\/]*[^\/]+)/i);
     if (match)
         this.addCookieDomain(match[1].toLowerCase() === "file" ? "" : match[2]);
+
+    return resource;
 }
 
 WebInspector.clearConsoleMessages = function()
@@ -1010,12 +1012,15 @@ WebInspector.selectDOMStorage = function(o)
 WebInspector.updateResource = function(identifier, payload)
 {
     var resource = this.resources[identifier];
-    if (!resource)
-        return;
+    if (!resource) {
+        resource = this._addResource(identifier, payload);
+        // Request info is already populated in constructor.
+        payload.didRequestChange = false;
+    }
 
     if (payload.didRequestChange) {
         resource.url = payload.url;
-        resource.domain = payload.domain;
+        resource.host = payload.domain;
         resource.path = payload.path;
         resource.lastPathComponent = payload.lastPathComponent;
         resource.requestHeaders = payload.requestHeaders;

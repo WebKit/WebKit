@@ -106,17 +106,6 @@ void InspectorFrontend::clearConsoleMessages()
     callSimpleFunction("clearConsoleMessages");
 }
 
-bool InspectorFrontend::addResource(unsigned long identifier, const ScriptObject& resourceObj)
-{
-    ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 
-    function.appendArgument("addResource");
-    function.appendArgument(identifier);
-    function.appendArgument(resourceObj);
-    bool hadException = false;
-    function.call(hadException);
-    return !hadException;
-}
-
 bool InspectorFrontend::updateResource(unsigned long identifier, const ScriptObject& resourceObj)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 

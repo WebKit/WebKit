@@ -77,7 +77,7 @@ namespace WebCore {
 
         ~InspectorResource();
 
-        void createScriptObject(InspectorFrontend* frontend);
+        PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const ResourceRequest&, const ResourceResponse& redirectResponse);
         void updateScriptObject(InspectorFrontend* frontend);
         void releaseScriptObject(InspectorFrontend* frontend, bool callRemoveResource);
 
@@ -118,7 +118,8 @@ namespace WebCore {
             TypeChange = 4,
             LengthChange = 8,
             CompletionChange = 16,
-            TimingChange = 32
+            TimingChange = 32,
+            RedirectsChange = 64
         };
 
         class Changes {
@@ -138,7 +139,7 @@ namespace WebCore {
                 m_change = static_cast<ChangeType>(static_cast<unsigned>(m_change) & ~static_cast<unsigned>(change));
             }
 
-            inline void setAll() { m_change = static_cast<ChangeType>(63); }
+            inline void setAll() { m_change = static_cast<ChangeType>(127); }
             inline void clearAll() { m_change = NoChange; }
 
         private:
@@ -159,7 +160,6 @@ namespace WebCore {
         HTTPHeaderMap m_responseHeaderFields;
         String m_mimeType;
         String m_suggestedFilename;
-        bool m_scriptObjectCreated;
         long long m_expectedContentLength;
         bool m_cached;
         bool m_finished;
@@ -176,6 +176,7 @@ namespace WebCore {
         bool m_isMainResource;
         String m_requestMethod;
         String m_requestFormData;
+        Vector<RefPtr<InspectorResource> > m_redirects;
     };
 
 } // namespace WebCore
