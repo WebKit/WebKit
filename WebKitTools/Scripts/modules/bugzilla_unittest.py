@@ -98,7 +98,7 @@ class BugzillaTest(unittest.TestCase):
         self.assertTrue(attachment)
 
         # Make sure we aren't parsing more or less than we expect
-        self.assertEquals(attachment.keys(), self._expected_example_attachment_parsing.keys())
+        self.assertEquals(sorted(attachment.keys()), sorted(self._expected_example_attachment_parsing.keys()))
 
         for key, expected_value in self._expected_example_attachment_parsing.items():
             self.assertEquals(attachment[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, attachment[key], expected_value)))
