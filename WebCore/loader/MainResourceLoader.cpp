@@ -38,6 +38,9 @@
 #include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
 #include "Page.h"
+#if PLATFORM(QT)
+#include "PluginDatabase.h"
+#endif
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
@@ -279,6 +282,29 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
     deref(); // balances ref in didReceiveResponse
 }
 
+#if PLATFORM(QT)
+void MainResourceLoader::substituteMIMETypeFromPluginDatabase(const ResourceResponse& r)
+{
+    if (!m_frame->settings()->arePluginsEnabled())
+        return;
+
+    String filename = r.url().lastPathComponent();
+    if (filename.endsWith("/"))
+        return;
+
+    int extensionPos = filename.reverseFind('.');
+    if (extensionPos == -1)
+        return;
+
+    String extension = filename.substring(extensionPos + 1);
+    String mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
+    if (!mimeType.isEmpty()) {
+        ResourceResponse* response = const_cast<ResourceResponse*>(&r);
+        response->setMimeType(mimeType);
+    }
+}
+#endif
+
 void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -299,6 +325,11 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // See <rdar://problem/6304600> for more details.
 #if !PLATFORM(CF)
     ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
+#endif
+
+#if PLATFORM(QT)
+    if (r.mimeType() == "application/octet-stream")
+        substituteMIMETypeFromPluginDatabase(r);
 #endif
 
     if (m_loadingMultipartContent) {

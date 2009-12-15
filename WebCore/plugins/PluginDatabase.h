@@ -83,6 +83,8 @@ namespace WebCore {
         static Vector<String> defaultPluginDirectories();
         Vector<String> pluginDirectories() const { return m_pluginDirectories; }
 
+        String MIMETypeForExtension(const String& extension) const;
+
     private:
         void getPluginPathsInDirectories(HashSet<String>&) const;
         void getDeletedPlugins(PluginSet&) const;
@@ -90,8 +92,6 @@ namespace WebCore {
         // Returns whether the plugin was actually added or not (it won't be added if it's a duplicate of an existing plugin).
         bool add(PassRefPtr<PluginPackage>);
         void remove(PluginPackage*);
-
-        String MIMETypeForExtension(const String& extension) const;
 
         Vector<String> m_pluginDirectories;
         HashSet<String> m_registeredMIMETypes;
