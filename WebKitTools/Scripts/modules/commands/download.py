@@ -94,9 +94,9 @@ class LandDiff(AbstractSequencedCommmand):
 
     def _prepare_state(self, options, args, tool):
         return {
-            "patch": {
-                "id": None,
-                "bug_id": (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
+            "patch" : {
+                "id" : None,
+                "bug_id" : (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
             }
         }
 
@@ -152,7 +152,7 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
 
     def _process_patch(self, patch, options, args, tool):
         if self._main_sequence:
-            state = {"patch": patch}
+            state = { "patch" : patch }
             self._main_sequence.run_and_handle_errors(tool, options, state)
 
 

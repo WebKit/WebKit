@@ -1,5 +1,13 @@
 2009-12-14  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Address reviewer comments from an earlier patch.  I didn't
+        do this earlier because I was worried about conflicts in dependent
+        patches.
+
+        * Scripts/modules/commands/download.py:
+
+2009-12-14  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Make download commands declarative
