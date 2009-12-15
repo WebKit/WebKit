@@ -161,6 +161,11 @@ namespace JSC {
         return globalData->heap.allocate(size);
     }
 
+    inline void* JSCell::operator new(size_t size, ExecState* exec)
+    {
+        return exec->heap()->allocate(size);
+    }
+
     // --- JSValue inlines ----------------------------
 
     inline bool JSValue::isString() const

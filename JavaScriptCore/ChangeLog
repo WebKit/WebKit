@@ -1,5 +1,18 @@
 2009-12-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Inlined JSCell's operator new.
+        
+        3.7% speedup on bench-allocate-nonretained.js.
+
+        * JavaScriptCore.exp:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::JSCell::operator new):
+
+2009-12-15  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Removed the number heap, replacing it with a one-item free list for

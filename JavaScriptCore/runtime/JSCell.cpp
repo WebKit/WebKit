@@ -76,11 +76,6 @@ extern const double Inf = NaNInf.doubles.Inf_Double;
  
 #endif // !(defined NAN && defined INFINITY)
 
-void* JSCell::operator new(size_t size, ExecState* exec)
-{
-    return exec->heap()->allocate(size);
-}
-
 bool JSCell::getUInt32(uint32_t&) const
 {
     return false;
