@@ -1,3 +1,19 @@
+2009-12-14  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Pressing backspace inside a table cell erases all empty rows below it.
+        <rdar://problem/5565461>
+        https://bugs.webkit.org/show_bug.cgi?id=32526
+
+        No deletion is performed when the caret selection is on an empty table cell.
+        
+        Test: editing/deleting/delete-empty-table.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Added check for empty table cells in
+        case of caret selection.
+
 2009-12-14  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Darin Adler.

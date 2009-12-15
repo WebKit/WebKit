@@ -1,3 +1,14 @@
+2009-12-14  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Pressing backspace inside a table cell erases all empty rows below it.
+        <rdar://problem/5565461>
+        https://bugs.webkit.org/show_bug.cgi?id=32526
+
+        * editing/deleting/delete-empty-table-expected.txt: Added.
+        * editing/deleting/delete-empty-table.html: Added.
+
 2009-12-14  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Brady Eidson.
