@@ -877,9 +877,7 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
     if (!isMainResource && !m_resourceTrackingEnabled)
         return;
 
-    RefPtr<InspectorResource> resource = InspectorResource::create(identifier, loader);
-
-    resource->updateRequest(request);
+    RefPtr<InspectorResource> resource = InspectorResource::create(identifier, loader, request.url());
 
     if (isMainResource) {
         m_mainResource = resource;
@@ -932,9 +930,13 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
         return;
 
     if (!redirectResponse.isNull()) {
+        resource->markResponseReceivedTime();
+        resource->endTiming();
+        resource->updateResponse(redirectResponse);
+
         // We always store last redirect by the original id key. Rest of the redirects are stored within the last one.
         unsigned long id = m_inspectedPage->progress()->createUniqueIdentifier();
-        RefPtr<InspectorResource> withRedirect = resource->appendRedirect(id, request, redirectResponse);
+        RefPtr<InspectorResource> withRedirect = resource->appendRedirect(id, request.url());
         removeResource(resource.get());
         addResource(withRedirect.get());
         if (isMainResource) {
@@ -945,6 +947,8 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
     }
 
     resource->startTiming();
+    resource->updateRequest(request);
+
     if (resource != m_mainResource && windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }

@@ -68,16 +68,16 @@ namespace WebCore {
             Other
         };
 
-        static PassRefPtr<InspectorResource> create(unsigned long identifier, DocumentLoader* loader)
+        static PassRefPtr<InspectorResource> create(unsigned long identifier, DocumentLoader* loader, const KURL& requestURL)
         {
-            return adoptRef(new InspectorResource(identifier, loader));
+            return adoptRef(new InspectorResource(identifier, loader, requestURL));
         }
 
         static PassRefPtr<InspectorResource> createCached(unsigned long identifier, DocumentLoader*, const CachedResource*);
 
         ~InspectorResource();
 
-        PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const ResourceRequest&, const ResourceResponse& redirectResponse);
+        PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const KURL& redirectURL);
         void updateScriptObject(InspectorFrontend* frontend);
         void releaseScriptObject(InspectorFrontend* frontend, bool callRemoveResource);
 
@@ -146,7 +146,7 @@ namespace WebCore {
             ChangeType m_change;
         };
 
-        InspectorResource(unsigned long identifier, DocumentLoader*);
+        InspectorResource(unsigned long identifier, DocumentLoader*, const KURL& requestURL);
         Type type() const;
 
         Type cachedResourceType() const;
