@@ -1,3 +1,20 @@
+2009-12-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Kill LandingSequence
+        https://bugs.webkit.org/show_bug.cgi?id=32464
+
+        Removes LandingSequence in favor of StepSequence.  This required
+        changing the Step API slightly to carry a general notion of state
+        instead of carrying patches specifically.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/landingsequence.py: Removed.
+        * Scripts/modules/stepsequence.py:
+
 2009-12-14  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.

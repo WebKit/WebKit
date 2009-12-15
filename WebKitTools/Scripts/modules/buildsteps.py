@@ -47,13 +47,13 @@ class CommandOptions(object):
     test = make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests.")
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
     port = make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...).")
+    reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
 
 
 class AbstractStep(object):
-    def __init__(self, tool, options, patch=None):
+    def __init__(self, tool, options):
         self._tool = tool
         self._options = options
-        self._patch = patch
         self._port = None
 
     def _run_script(self, script_name, quiet=False, port=WebKitPort):
@@ -71,18 +71,18 @@ class AbstractStep(object):
     def options(cls):
         return []
 
-    def run(self, tool):
+    def run(self, state):
         raise NotImplementedError, "subclasses must implement"
 
 
 class PrepareChangelogStep(AbstractStep):
-    def run(self):
+    def run(self, state):
         self._run_script("prepare-ChangeLog")
 
 
 class CleanWorkingDirectoryStep(AbstractStep):
-    def __init__(self, tool, options, patch=None, allow_local_commits=False):
-        AbstractStep.__init__(self, tool, options, patch)
+    def __init__(self, tool, options, allow_local_commits=False):
+        AbstractStep.__init__(self, tool, options)
         self._allow_local_commits = allow_local_commits
 
     @classmethod
@@ -92,7 +92,7 @@ class CleanWorkingDirectoryStep(AbstractStep):
             CommandOptions.clean,
         ]
 
-    def run(self):
+    def run(self, state):
         os.chdir(self._tool.scm().checkout_root)
         if not self._allow_local_commits:
             self._tool.scm().ensure_no_local_commits(self._options.force_clean)
@@ -108,7 +108,7 @@ class UpdateStep(AbstractStep):
             CommandOptions.port,
         ]
 
-    def run(self):
+    def run(self, state):
         if not self._options.update:
             return
         log("Updating working directory")
@@ -122,9 +122,9 @@ class ApplyPatchStep(AbstractStep):
             CommandOptions.non_interactive,
         ]
 
-    def run(self):
-        log("Processing patch %s from bug %s." % (self._patch["id"], self._patch["bug_id"]))
-        self._tool.scm().apply_patch(self._patch, force=self._options.non_interactive)
+    def run(self, state):
+        log("Processing patch %s from bug %s." % (state["patch"]["id"], state["patch"]["bug_id"]))
+        self._tool.scm().apply_patch(state["patch"], force=self._options.non_interactive)
 
 
 class EnsureBuildersAreGreenStep(AbstractStep):
@@ -134,7 +134,7 @@ class EnsureBuildersAreGreenStep(AbstractStep):
             CommandOptions.check_builders,
         ]
 
-    def run(self):
+    def run(self, state):
         if not self._options.check_builders:
             return
         red_builders_names = self._tool.buildbot.red_core_builders_names()
@@ -142,6 +142,41 @@ class EnsureBuildersAreGreenStep(AbstractStep):
             return
         red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
         error("Builders [%s] are red, please do not commit.\nSee http://%s.\nPass --ignore-builders to bypass this check." % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
+
+
+class UpdateChangelogsWithReviewerStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.reviewer,
+        ]
+
+    def guess_reviewer_from_bug(self, bug_id):
+        patches = self._tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        if len(patches) != 1:
+            log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
+            return None
+        patch = patches[0]
+        reviewer = patch["reviewer"]
+        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (reviewer, patch["id"], bug_id))
+        return reviewer
+
+    def run(self, state):
+        bug_id = state["patch"]["bug_id"]
+        reviewer = self._options.reviewer
+        if not reviewer:
+            if not bug_id:
+                log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
+                return
+            reviewer = self.guess_reviewer_from_bug(bug_id)
+
+        if not reviewer:
+            log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
+            return
+
+        os.chdir(self._tool.scm().checkout_root)
+        for changelog_path in self._tool.scm().modified_changelogs():
+            ChangeLog(changelog_path).set_reviewer(reviewer)
 
 
 class BuildStep(AbstractStep):
@@ -152,7 +187,7 @@ class BuildStep(AbstractStep):
             CommandOptions.quiet,
         ]
 
-    def run(self):
+    def run(self, state):
         if not self._options.build:
             return
         log("Building WebKit")
@@ -160,7 +195,7 @@ class BuildStep(AbstractStep):
 
 
 class CheckStyleStep(AbstractStep):
-    def run(self):
+    def run(self, state):
         self._run_script("check-webkit-style")
 
 
@@ -175,7 +210,7 @@ class RunTestsStep(AbstractStep):
             CommandOptions.port,
         ]
 
-    def run(self):
+    def run(self, state):
         if not self._options.build:
             return
         if not self._options.test:
@@ -190,15 +225,15 @@ class RunTestsStep(AbstractStep):
 
 
 class CommitStep(AbstractStep):
-    def run(self):
+    def run(self, state):
         commit_message = self._tool.scm().commit_message_for_this_commit()
-        return self._tool.scm().commit_with_message(commit_message.message())
+        state["commit_text"] =  self._tool.scm().commit_with_message(commit_message.message())
 
 
 class ClosePatchStep(AbstractStep):
-    def run(self, commit_log):
-        comment_text = bug_comment_from_commit_text(self._tool.scm(), commit_log)
-        self._tool.bugs.clear_attachment_flags(self._patch["id"], comment_text)
+    def run(self, state):
+        comment_text = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
+        self._tool.bugs.clear_attachment_flags(state["patch"]["id"], comment_text)
 
 
 class CloseBugStep(AbstractStep):
@@ -208,18 +243,41 @@ class CloseBugStep(AbstractStep):
             CommandOptions.close_bug,
         ]
 
-    def run(self):
+    def run(self, state):
         if not self._options.close_bug:
             return
         # Check to make sure there are no r? or r+ patches on the bug before closing.
         # Assume that r- patches are just previous patches someone forgot to obsolete.
-        patches = self._tool.bugs.fetch_patches_from_bug(self._patch["bug_id"])
+        patches = self._tool.bugs.fetch_patches_from_bug(state["patch"]["bug_id"])
         for patch in patches:
             review_flag = patch.get("review")
             if review_flag == "?" or review_flag == "+":
                 log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch["bug_id"], patch["id"], review_flag))
                 return
-        self._tool.bugs.close_bug_as_fixed(self._patch["bug_id"], "All reviewed patches have been landed.  Closing bug.")
+        self._tool.bugs.close_bug_as_fixed(state["patch"]["bug_id"], "All reviewed patches have been landed.  Closing bug.")
+
+
+class CloseBugForLandDiffStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.close_bug,
+        ]
+
+    def run(self, state):
+        comment_text = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
+        bug_id = state["patch"]["bug_id"]
+        if bug_id:
+            log("Updating bug %s" % bug_id)
+            if self._options.close_bug:
+                self._tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+            else:
+                # FIXME: We should a smart way to figure out if the patch is attached
+                # to the bug, and if so obsolete it.
+                self._tool.bugs.post_comment_to_bug(bug_id, comment_text)
+        else:
+            log(comment_text)
+            log("No bug id provided.")
 
 
 # FIXME: This class is a dinosaur and should be extinct soon.

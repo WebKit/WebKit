@@ -33,12 +33,12 @@ import os
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, PrepareChangelogStep
+# FIXME: This list is rediculous.  We need to learn the ways of __all__.
+from modules.buildsteps import CommandOptions, BuildSteps, EnsureBuildersAreGreenStep, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, UpdateStep, ApplyPatchStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
 from modules.grammar import pluralize
-from modules.landingsequence import LandingSequence
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.stepsequence import StepSequence
@@ -101,9 +101,9 @@ class WebKitApplyingScripts:
     @staticmethod
     def setup_for_patch_apply(tool, options):
         clean_step = CleanWorkingDirectoryStep(tool, options, allow_local_commits=True)
-        clean_step.run()
+        clean_step.run({})
         update_step = UpdateStep(tool, options)
-        update_step.run()
+        update_step.run({})
 
     @staticmethod
     def apply_patches_with_options(scm, patches, options):
@@ -118,80 +118,29 @@ class WebKitApplyingScripts:
                 scm.commit_locally_with_message(commit_message.message() or patch["name"])
 
 
-class LandDiffSequence(LandingSequence):
-    def run(self):
-        self.check_builders()
-        self.build()
-        self.test()
-        commit_log = self.commit()
-        self.close_bug(commit_log)
-
-    def close_bug(self, commit_log):
-        comment_test = bug_comment_from_commit_text(self._tool.scm(), commit_log)
-        bug_id = self._patch["bug_id"]
-        if bug_id:
-            log("Updating bug %s" % bug_id)
-            if self._options.close_bug:
-                self._tool.bugs.close_bug_as_fixed(bug_id, comment_test)
-            else:
-                # FIXME: We should a smart way to figure out if the patch is attached
-                # to the bug, and if so obsolete it.
-                self._tool.bugs.post_comment_to_bug(bug_id, comment_test)
-        else:
-            log(comment_test)
-            log("No bug id provided.")
-
-
 class LandDiff(Command):
     name = "land-diff"
     show_in_main_help = True
     def __init__(self):
-        options = [
-            make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
-        ]
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        Command.__init__(self, "Land the current working directory diff and updates the associated bug if any", "[BUGID]", options=options)
-
-    def guess_reviewer_from_bug(self, bugs, bug_id):
-        patches = bugs.fetch_reviewed_patches_from_bug(bug_id)
-        if len(patches) != 1:
-            log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
-            return None
-        patch = patches[0]
-        reviewer = patch["reviewer"]
-        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (reviewer, patch["id"], bug_id))
-        return reviewer
-
-    def update_changelogs_with_reviewer(self, reviewer, bug_id, tool):
-        if not reviewer:
-            if not bug_id:
-                log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
-                return
-            reviewer = self.guess_reviewer_from_bug(tool.bugs, bug_id)
-
-        if not reviewer:
-            log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
-            return
-
-        for changelog_path in tool.scm().modified_changelogs():
-            ChangeLog(changelog_path).set_reviewer(reviewer)
+        self._sequence = StepSequence([
+            EnsureBuildersAreGreenStep,
+            UpdateChangelogsWithReviewerStep,
+            EnsureBuildersAreGreenStep,
+            BuildStep,
+            RunTestsStep,
+            CommitStep,
+            CloseBugForLandDiffStep,
+        ])
+        Command.__init__(self, "Land the current working directory diff and updates the associated bug if any", "[BUGID]", options=self._sequence.options())
 
     def execute(self, options, args, tool):
         bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
-
-        EnsureBuildersAreGreenStep(tool, options).run()
-
-        os.chdir(tool.scm().checkout_root)
-        self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
-
         fake_patch = {
             "id": None,
-            "bug_id": bug_id
+            "bug_id": bug_id,
         }
-
-        sequence = LandDiffSequence(fake_patch, options, tool)
-        sequence.run()
+        state = {"patch": fake_patch}
+        self._sequence.run_and_handle_errors(tool, options, state)
 
 
 class AbstractPatchProcessingCommand(Command):
@@ -242,8 +191,10 @@ class CheckStyle(AbstractPatchProcessingCommand):
     def _prepare_to_process(self, options, args, tool):
         pass
 
+    # FIXME: Add a base class to share this code.
     def _process_patch(self, patch, options, args, tool):
-        self._sequence.run_and_handle_errors(tool, options, patch)
+        state = {"patch": patch}
+        self._sequence.run_and_handle_errors(tool, options, state)
 
 
 class BuildAttachment(AbstractPatchProcessingCommand):
@@ -264,24 +215,35 @@ class BuildAttachment(AbstractPatchProcessingCommand):
     def _prepare_to_process(self, options, args, tool):
         pass
 
+    # FIXME: Add a base class to share this code.
     def _process_patch(self, patch, options, args, tool):
-        self._sequence.run_and_handle_errors(tool, options, patch)
+        state = {"patch": patch}
+        self._sequence.run_and_handle_errors(tool, options, state)
 
 
 class AbstractPatchLandingCommand(AbstractPatchProcessingCommand):
     def __init__(self, help_text, args_description):
-        options = BuildSteps.cleaning_options()
-        options += BuildSteps.build_options()
-        options += BuildSteps.land_options()
-        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, options)
+        self._sequence = StepSequence([
+            CleanWorkingDirectoryStep,
+            UpdateStep,
+            ApplyPatchStep,
+            EnsureBuildersAreGreenStep,
+            BuildStep,
+            RunTestsStep,
+            CommitStep,
+            ClosePatchStep,
+            CloseBugStep,
+        ])
+        AbstractPatchProcessingCommand.__init__(self, help_text, args_description, self._sequence.options())
 
     def _prepare_to_process(self, options, args, tool):
         # Check the tree status first so we can fail early.
-        EnsureBuildersAreGreenStep(tool, options).run()
+        EnsureBuildersAreGreenStep(tool, options).run({})
 
+    # FIXME: Add a base class to share this code.
     def _process_patch(self, patch, options, args, tool):
-        sequence = LandingSequence(patch, options, tool)
-        sequence.run_and_handle_errors()
+        state = {"patch": patch}
+        self._sequence.run_and_handle_errors(tool, options, state)
 
 
 class LandAttachment(AbstractPatchLandingCommand):
@@ -328,7 +290,7 @@ class Rollout(Command):
 
         # Second, make new ChangeLog entries for this rollout.
         # This could move to prepare-ChangeLog by adding a --revert= option.
-        PrepareChangelogStep(tool, None).run()
+        PrepareChangelogStep(tool, None).run({})
         for changelog_path in changelog_paths:
             ChangeLog(changelog_path).update_for_revert(revision)
 
@@ -354,8 +316,8 @@ class Rollout(Command):
             else:
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
-        CleanWorkingDirectoryStep(tool, options).run()
-        UpdateStep(tool, options).run()
+        CleanWorkingDirectoryStep(tool, options).run({})
+        UpdateStep(tool, options).run({})
         tool.scm().apply_reverse_diff(revision)
         self._create_changelogs_for_revert(tool, revision)
 

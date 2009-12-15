@@ -35,11 +35,11 @@ from optparse import make_option
 
 from modules.executive import ScriptError
 from modules.grammar import pluralize
-from modules.landingsequence import LandingSequence, LandingSequenceErrorHandler
 from modules.logging import error, log
 from modules.multicommandtool import Command
 from modules.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.statusbot import StatusBot
+from modules.stepsequence import StepSequenceErrorHandler
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class AbstractQueue(Command, WorkQueueDelegate):
@@ -104,7 +104,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         return work_queue.run()
 
 
-class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
+class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     name = "commit-queue"
     def __init__(self):
         AbstractQueue.__init__(self)
@@ -136,14 +136,14 @@ class CommitQueue(AbstractQueue, LandingSequenceErrorHandler):
     def handle_unexpected_error(self, patch, message):
         self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
 
-    # LandingSequenceErrorHandler methods
+    # StepSequenceErrorHandler methods
 
     @classmethod
-    def handle_script_error(cls, tool, patch, script_error):
-        tool.bugs.reject_patch_from_commit_queue(patch["id"], script_error.message_with_output())
+    def handle_script_error(cls, tool, state, script_error):
+        tool.bugs.reject_patch_from_commit_queue(state["patch"]["id"], script_error.message_with_output())
 
 
-class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, LandingSequenceErrorHandler):
+class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
     def __init__(self, options=None):
         AbstractQueue.__init__(self, options)
 
@@ -179,10 +179,10 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Land
     def handle_unexpected_error(self, patch, message):
         log(message)
 
-    # LandingSequenceErrorHandler methods
+    # StepSequenceErrorHandler methods
 
     @classmethod
-    def handle_script_error(cls, tool, patch, script_error):
+    def handle_script_error(cls, tool, state, script_error):
         log(script_error.message_with_output())
 
 
@@ -205,12 +205,12 @@ class StyleQueue(AbstractReviewQueue):
             raise e
 
     @classmethod
-    def handle_script_error(cls, tool, patch, script_error):
+    def handle_script_error(cls, tool, state, script_error):
         command = script_error.script_args
         if type(command) is list:
             command = command[0]
         # FIXME: We shouldn't need to use a regexp here.  ScriptError should
         #        have a better API.
         if re.search("check-webkit-style", command):
-            message = "Attachment %s did not pass %s:\n\n%s" % (patch["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
-            tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
+            message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
+            tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)

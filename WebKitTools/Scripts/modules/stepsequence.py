@@ -33,6 +33,12 @@ from modules.scm import CheckoutNeedsUpdate
 from modules.workqueue import WorkQueue
 
 
+class StepSequenceErrorHandler():
+    @classmethod
+    def handle_script_error(cls, tool, patch, script_error):
+        raise NotImplementedError, "subclasses must implement"
+
+
 class StepSequence(object):
     def __init__(self, steps):
         self._steps = steps
@@ -48,13 +54,15 @@ class StepSequence(object):
         collected_options = sorted(set(collected_options))
         return collected_options
 
-    def _run(self, tool, options, patch):
+    def _run(self, tool, options, state):
         for step in self._steps:
-            step(tool, options, patch).run()
+            step(tool, options).run(state)
 
-    def run_and_handle_errors(self, tool, options, patch=None):
+    def run_and_handle_errors(self, tool, options, state=None):
+        if not state:
+            state = {}
         try:
-            self._run(tool, options, patch)
+            self._run(tool, options, state)
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
@@ -64,5 +72,5 @@ class StepSequence(object):
                 log(e.message_with_output())
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
-                command.handle_script_error(tool, patch, e)
+                command.handle_script_error(tool, state, e)
             WorkQueue.exit_after_handled_error(e)
