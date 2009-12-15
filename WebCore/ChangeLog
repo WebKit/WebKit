@@ -1,3 +1,21 @@
+2009-12-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for AnimationControllerPrivate and FillLayerPropertyWrapperGetter
+        https://bugs.webkit.org/show_bug.cgi?id=32549
+
+        Inherits AnimationControllerPrivate and FillLayerPropertyWrapperGetter
+        classes from Noncopyable because these are instantiated by 'new' and no need to be copyable:
+
+        class/struct name              - instantiated at: WebCore/'location'
+
+        AnimationControllerPrivate     - page/animation/AnimationController.cpp:439
+        FillLayerPropertyWrapperGetter - (its child class) page/animation/AnimationBase.cpp:464
+
+        * page/animation/AnimationBase.cpp:
+        * page/animation/AnimationControllerPrivate.h:
+
 2009-12-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
