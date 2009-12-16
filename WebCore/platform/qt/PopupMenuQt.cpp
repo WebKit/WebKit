@@ -36,7 +36,7 @@ namespace WebCore {
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
 {
-    m_popup = new QtFallbackWebPopup(client);
+    m_popup = QtAbstractWebPopup::create(client);
 }
 
 PopupMenu::~PopupMenu()

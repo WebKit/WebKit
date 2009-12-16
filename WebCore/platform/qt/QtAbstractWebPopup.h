@@ -20,10 +20,17 @@
 #ifndef QtAbstractWebPopup_h
 #define QtAbstractWebPopup_h
 
-#include "PopupMenuClient.h"
-#include <QComboBox>
+#include <QRect>
 
 namespace WebCore {
+
+class QtAbstractWebPopup;
+class PopupMenuClient;
+
+class QtAbstractWebPopupFactory {
+public:
+    virtual QtAbstractWebPopup* create(PopupMenuClient* client) = 0;
+};
 
 class QtAbstractWebPopup {
 public:
@@ -33,11 +40,15 @@ public:
     virtual void show(const QRect& geometry, int selectedIndex) = 0;
     virtual void hide() = 0;
 
+    static void setFactory(QtAbstractWebPopupFactory* factory);
+    static QtAbstractWebPopup* create(PopupMenuClient* client);
+
 protected:
     PopupMenuClient* client();
 
 private:
     PopupMenuClient* m_client;
+    static QtAbstractWebPopupFactory* m_factory;
 };
 
 }

@@ -21,6 +21,7 @@
 #include "QtFallbackWebPopup.h"
 
 #include "HostWindow.h"
+#include "PopupMenuClient.h"
 #include "QWebPageClient.h"
 #include <QAbstractItemView>
 #include <QApplication>
