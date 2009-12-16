@@ -91,27 +91,12 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
         gst_message_parse_buffering(message, &percent);
         LOG_VERBOSE(Media, "Buffering %d", percent);
         break;
-    case GST_MESSAGE_DURATION:
-        LOG_VERBOSE(Media, "Duration changed");
-        mp->durationChanged();
-        break;
     default:
         LOG_VERBOSE(Media, "Unhandled GStreamer message type: %s",
                     GST_MESSAGE_TYPE_NAME(message));
         break;
     }
     return true;
-}
-
-static gboolean notify_volume_idle_cb(MediaPlayer* mp)
-{
-    mp->volumeChanged();
-    return FALSE;
-}
-
-static void mediaPlayerPrivateVolumeCallback(GObject *element, GParamSpec *pspec, MediaPlayer* mp)
-{
-    g_idle_add((GSourceFunc) notify_volume_idle_cb, mp);
 }
 
 static float playbackPosition(GstElement* playbin)
@@ -678,14 +663,14 @@ void MediaPlayerPrivate::timeChanged()
     m_player->timeChanged();
 }
 
+void MediaPlayerPrivate::volumeChanged()
+{
+    m_player->volumeChanged();
+}
+
 void MediaPlayerPrivate::didEnd()
 {
     timeChanged();
-}
-
-void MediaPlayerPrivate::durationChanged()
-{
-    m_player->durationChanged();
 }
 
 void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
@@ -904,8 +889,6 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 
     g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(),
         "volume", static_cast<double>(m_player->volume()), NULL);
-
-    g_signal_connect(G_OBJECT(m_playBin), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeCallback), m_player);
 
     m_videoSink = webkit_video_sink_new();
 
