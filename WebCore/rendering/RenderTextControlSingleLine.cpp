@@ -461,8 +461,12 @@ void RenderTextControlSingleLine::updateFromElement()
         ExceptionCode ec = 0;
         innerTextElement()->setInnerText(static_cast<Element*>(node())->getAttribute(placeholderAttr), ec);
         ASSERT(!ec);
-    } else
-        setInnerTextValue(inputElement()->value());
+    } else {
+        if (!inputElement()->suggestedValue().isNull())
+            setInnerTextValue(inputElement()->suggestedValue());
+        else
+            setInnerTextValue(inputElement()->value());
+    }
 
     if (m_searchPopupIsVisible)
         m_searchPopup->updateFromElement();

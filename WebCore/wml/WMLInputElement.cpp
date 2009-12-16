@@ -123,6 +123,11 @@ const AtomicString& WMLInputElement::formControlName() const
     return m_data.name();
 }
 
+const String& WMLInputElement::suggestedValue() const
+{
+    return m_data.suggestedValue();
+}
+
 String WMLInputElement::value() const
 {
     String value = m_data.value();

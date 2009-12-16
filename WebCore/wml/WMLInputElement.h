@@ -56,6 +56,7 @@ public:
     virtual int size() const;
     virtual const AtomicString& formControlType() const;
     virtual const AtomicString& formControlName() const;
+    virtual const String& suggestedValue() const;
     virtual String value() const;
     virtual void setValue(const String&, bool sendChangeEvent = false);
     virtual void setValueForUser(const String&);

@@ -137,6 +137,9 @@ public:
     virtual const AtomicString& formControlType() const;
     void setType(const String&);
 
+    virtual const String& suggestedValue() const;
+    void setSuggestedValue(const String&);
+
     virtual String value() const;
     virtual void setValue(const String&, bool sendChangeEvent = false);
     virtual void setValueForUser(const String&);

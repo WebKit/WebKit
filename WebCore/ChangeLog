@@ -1,3 +1,33 @@
+2009-12-16  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32261
+        Added ability to separate the autocomplete suggestion previewing from
+        the actual accepting of the suggested value in HTMLInputElement.
+        This element (it's single line text incarnation) can now
+        be put in suggestion mode where renderer might display the suggested
+        value without making it automatically exposed to JavaScript.
+
+        No new tests. This new methods are not exposed yet. It's use will be
+        platform specific. PopupMenu and Chromium specific changes will be
+        separated based on Darin Adler's comments.
+
+        * dom/InputElement.h:
+        (WebCore::InputElementData::suggestedValue):
+        (WebCore::InputElementData::setSuggestedValue):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::suggestedValue):
+        (WebCore::HTMLInputElement::setSuggestedValue):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLInputElement.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::suggestedValue):
+        * wml/WMLInputElement.h:
+
 2009-12-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
