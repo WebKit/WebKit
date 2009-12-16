@@ -1,3 +1,9 @@
+2009-12-16  John Sullivan  <sullivan@apple.com>
+
+        Brought this file up to date, sans review.
+
+        * StringsNotToBeLocalized.txt:
+
 2009-11-30  Mark Rowe  <mrowe@apple.com>
 
         Use the correct path to Info.plist to avoid creating an empty file at the top of the WebKit directory.
