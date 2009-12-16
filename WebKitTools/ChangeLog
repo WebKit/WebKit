@@ -1,3 +1,13 @@
+2009-12-16  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Early warning system server should display output as UTF-8.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32625
+
+        * QueueStatusServer/queue_status.py:
+
 2009-12-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
