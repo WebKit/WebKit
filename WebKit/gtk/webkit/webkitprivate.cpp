@@ -280,6 +280,8 @@ void webkit_init()
     SoupSessionFeature* sniffer = static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL));
     soup_session_add_feature(session, sniffer);
     g_object_unref(sniffer);
+
+    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
 }
 
 void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)

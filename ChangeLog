@@ -1,3 +1,13 @@
+2009-12-16  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Content-Encoding support
+
+        https://bugs.webkit.org/show_bug.cgi?id=522772
+
+        * configure.ac: require libsoup 2.28.2 for SoupContentDecoder
+
 2009-12-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Gavin Barraclough.
