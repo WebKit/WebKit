@@ -54,10 +54,13 @@ WebInspector.ResourceView = function(resource)
     this.urlTreeElement.selectable = false;
     this.headersTreeOutline.appendChild(this.urlTreeElement);
 
-    this.httpInformationTreeElement = new TreeElement("", null, true);
-    this.httpInformationTreeElement.expanded = false;
-    this.httpInformationTreeElement.selectable = false;
-    this.headersTreeOutline.appendChild(this.httpInformationTreeElement);
+    this.requestMethodTreeElement = new TreeElement("", null, false);
+    this.requestMethodTreeElement.selectable = false;
+    this.headersTreeOutline.appendChild(this.requestMethodTreeElement);
+
+    this.statusCodeTreeElement = new TreeElement("", null, false);
+    this.statusCodeTreeElement.selectable = false;
+    this.headersTreeOutline.appendChild(this.statusCodeTreeElement);
      
     this.requestHeadersTreeElement = new TreeElement("", null, true);
     this.requestHeadersTreeElement.expanded = false;
@@ -133,23 +136,8 @@ WebInspector.ResourceView.prototype = {
 
     _refreshURL: function()
     {
-        var url = this.resource.url;
-        var statusCodeImage = "";
-        if (this.resource.statusCode) {
-            var statusImageSource = "";
-            
-            if (this.resource.statusCode < 300)
-                statusImageSource = "Images/successGreenDot.png";
-            else if (this.resource.statusCode < 400)
-                statusImageSource = "Images/warningOrangeDot.png";
-            else
-                statusImageSource = "Images/errorRedDot.png";
-        
-            statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "\">";
-        }
-
-        this.urlTreeElement.title = statusCodeImage + "<span class=\"resource-url\">" + url.escapeHTML() + "</span>";
-        this._refreshQueryString();
+        this.urlTreeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request URL") + ":</div>" +
+            "<div class=\"header-value\">" + this.resource.url.escapeHTML() + "</div>";
     },
 
     _refreshQueryString: function()
@@ -277,28 +265,27 @@ WebInspector.ResourceView.prototype = {
 
     _refreshHTTPInformation: function()
     {
-        const listElements = 2;
-
-        var headerElement = this.httpInformationTreeElement;
-        headerElement.removeChildren();
-        headerElement.hidden = !this.resource.statusCode;
+        var requestMethodElement = this.requestMethodTreeElement;
+        requestMethodElement.hidden = !this.resource.statusCode;
+        var statusCodeElement = this.statusCodeTreeElement;
+        statusCodeElement.hidden = !this.resource.statusCode;
+        var statusCodeImage = "";
 
         if (this.resource.statusCode) {
-            headerElement.title = WebInspector.UIString("HTTP Information") +  "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", listElements) + "</span>";
-        
-            var title = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>";
-            title += "<div class=\"header-value\">" + this.resource.requestMethod + "</div>"
-            
-            var headerTreeElement = new TreeElement(title, null, false);
-            headerTreeElement.selectable = false;
-            headerElement.appendChild(headerTreeElement);
-            
-            title = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>";
-            title += "<div class=\"header-value\">" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "</div>"
-            
-            headerTreeElement = new TreeElement(title, null, false);
-            headerTreeElement.selectable = false;
-            headerElement.appendChild(headerTreeElement);
+            var statusImageSource = "";
+            if (this.resource.statusCode < 300)
+                statusImageSource = "Images/successGreenDot.png";
+            else if (this.resource.statusCode < 400)
+                statusImageSource = "Images/warningOrangeDot.png";
+            else
+                statusImageSource = "Images/errorRedDot.png";
+            statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "\">";
+    
+            requestMethodElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
+                "<div class=\"header-value\">" + this.resource.requestMethod + "</div>";
+
+            statusCodeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
+                statusCodeImage + "<div class=\"header-value\">" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "</div>";
         }
     },
     

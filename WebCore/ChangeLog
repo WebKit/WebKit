@@ -1,3 +1,18 @@
+2009-12-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: beautify HTTP info section.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32583
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._refreshURL):
+        (WebInspector.ResourceView.prototype._refreshHTTPInformation):
+        * inspector/front-end/inspector.css:
+
 2009-12-13  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Adam Barth.
