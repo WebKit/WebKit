@@ -271,8 +271,10 @@ static void test_web_resource_sub_resource_loading()
     g_object_unref(main_resource);
 
     sub_resources = webkit_web_data_source_get_subresources(data_source);
+    // Expected resources: javascripts.js, favicon.ico
     g_assert(sub_resources);
-    g_assert(!sub_resources->next);
+    g_assert(sub_resources->next);
+    g_assert(!sub_resources->next->next);
 
     g_assert(WEBKIT_WEB_RESOURCE(sub_resources->data) == sub_resource);
     
