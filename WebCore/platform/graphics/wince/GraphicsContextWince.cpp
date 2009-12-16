@@ -1871,7 +1871,7 @@ void GraphicsContext::drawBitmap(SharedBitmap* bmp, const IntRect& dstRectIn, co
 }
 
 void GraphicsContext::drawBitmapPattern(SharedBitmap* bmp, const FloatRect& tileRectIn, const TransformationMatrix& patternTransform,
-                const FloatPoint& phase, CompositeOperator op, const FloatRect& destRectIn, const IntSize& origSourceSize)
+                CompositeOperator op, const FloatRect& destRectIn, const IntSize& origSourceSize)
 {
     if (!m_data->m_opacity)
         return;
@@ -1892,7 +1892,7 @@ void GraphicsContext::drawBitmapPattern(SharedBitmap* bmp, const FloatRect& tile
     TransformationMatrix transform = m_data->m_transform;
     transform.translate(moved.width(), moved.height());
 
-    bmp->drawPattern(dc, transform, tileRectIn, patternTransform, phase, op, destRectIn, origSourceSize);
+    bmp->drawPattern(dc, transform, tileRectIn, patternTransform, op, destRectIn, origSourceSize);
 
     if (!bmp->hasAlpha())
         transparentDC.fillAlphaChannel();

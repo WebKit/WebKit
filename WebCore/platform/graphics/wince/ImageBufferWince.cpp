@@ -43,7 +43,7 @@ public:
     virtual unsigned decodedSize() const { return 0; }
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
-                             const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
+                             CompositeOperator, const FloatRect& destRect);
 
     const ImageBufferData* m_data;
 };
@@ -56,9 +56,9 @@ void BufferedImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const 
 }
 
 void BufferedImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn, const TransformationMatrix& patternTransform,
-                             const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+                             CompositeOperator op, const FloatRect& destRect)
 {
-    m_data->m_bitmap->drawPattern(ctxt, tileRectIn, patternTransform, phase, op, destRect, size());
+    m_data->m_bitmap->drawPattern(ctxt, tileRectIn, patternTransform, op, destRect, size());
 }
 
 ImageBufferData::ImageBufferData(const IntSize& size)

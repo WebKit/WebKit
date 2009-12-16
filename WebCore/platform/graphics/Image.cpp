@@ -136,9 +136,12 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         return;
     }
 
-    TransformationMatrix patternTransform = TransformationMatrix().scaleNonUniform(scale.width(), scale.height());
+    TransformationMatrix patternTransform = TransformationMatrix();
+    patternTransform.translate(oneTileRect.x(), oneTileRect.y());
+    patternTransform.scaleNonUniform(scale.width(), scale.height());
+
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);    
-    drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), styleColorSpace, op, destRect);
+    drawPattern(ctxt, tileRect, patternTransform, styleColorSpace, op, destRect);
     
     startAnimation();
 }
@@ -158,7 +161,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         vRule = RepeatTile;
 
     FloatSize scale = calculatePatternScale(dstRect, srcRect, hRule, vRule);
-    TransformationMatrix patternTransform = TransformationMatrix().scaleNonUniform(scale.width(), scale.height());
 
     // We want to construct the phase such that the pattern is centered (when stretch is not
     // set for a particular rule).
@@ -168,9 +170,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         hPhase -= fmodf(dstRect.width(), scale.width() * srcRect.width()) / 2.0f;
     if (vRule == Image::RepeatTile)
         vPhase -= fmodf(dstRect.height(), scale.height() * srcRect.height()) / 2.0f;
-    FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
+    TransformationMatrix patternTransform = TransformationMatrix();
+    patternTransform.translate(dstRect.x() - hPhase, dstRect.y() - vPhase);
+    patternTransform.scaleNonUniform(scale.width(), scale.height());
     
-    drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);
+    drawPattern(ctxt, srcRect, patternTransform, styleColorSpace, op, dstRect);
 
     startAnimation();
 }

@@ -245,7 +245,7 @@ static void drawPatternCallback(void* info, CGContextRef context)
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+                        ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     if (!nativeImageForCurrentFrame())
         return;
@@ -267,8 +267,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     
     // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
     // the origin).
-    float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
-    float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
+    float adjustedX = - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
+    float adjustedY = destRect.height() + destRect.y() - tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) - scaledTileHeight;
 
     CGImageRef tileImage = nativeImageForCurrentFrame();
     float h = CGImageGetHeight(tileImage);
