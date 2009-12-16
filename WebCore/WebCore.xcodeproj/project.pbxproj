@@ -20471,7 +20471,6 @@
 			buildSettings = {
 				BUILD_VARIANTS = (
 					normal,
-					debug,
 				);
 			};
 			name = Production;

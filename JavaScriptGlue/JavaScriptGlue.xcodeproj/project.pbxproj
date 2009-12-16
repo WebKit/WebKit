@@ -539,7 +539,6 @@
 			buildSettings = {
 				BUILD_VARIANTS = (
 					normal,
-					debug,
 				);
 				SECTORDER_FLAGS = (
 					"-sectorder",

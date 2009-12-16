@@ -1,3 +1,9 @@
+2009-12-16  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Disable debug variants of WebKit frameworks.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2009-12-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam "r=me" Weinig.

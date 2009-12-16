@@ -1933,7 +1933,6 @@
 			buildSettings = {
 				BUILD_VARIANTS = (
 					normal,
-					debug,
 				);
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
