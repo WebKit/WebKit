@@ -1,3 +1,13 @@
+2009-12-15  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        update-webkit-chromium to auto-install gclient
+
+        https://bugs.webkit.org/show_bug.cgi?id=32587
+
+        * Scripts/update-webkit-chromium:
+
 2009-12-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
