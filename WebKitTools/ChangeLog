@@ -1,3 +1,42 @@
+2009-12-15  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Levin.
+
+        Code clean-up in check-webkit-style as described below.
+        The only functional changes are minor improvements to the
+        script's help output.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32487
+
+        * Scripts/check-webkit-style:
+          - Added the module docstring from cpp_style.py.
+          - Improved wording of the --help output and added some of the
+            default values as substitution strings.
+          - Called cpp_style.exit_with_usage instead of sys.stderr.write
+            in main function.
+          - Made changes caused by changes to cpp_style.py.
+
+        * Scripts/modules/cpp_style.py:
+          - Removed module docstring, as well as redundant _USAGE string
+            and main() function obsoleted by check-webkit-style.
+          - Moved specification of default script values from within a
+            function definition to global variables.
+          - Moved the default webkit filter rules to be near the other
+            global variables.
+          - Renamed "FILTER" global variables to "FILTER_RULES" to
+            establish unambiguous terminology.
+          - Renamed _ERROR_CATEGORIES to _STYLE_CATEGORIES.
+          - Changed _STYLE_CATEGORIES from a string to a list.
+          - Added default webkit filter rules to --filter= output.
+          - Renamed "print_" methods to "exit_with_" since they exist
+            and added a temporary display_help parameter.
+          - Added a temporary display_help parameter to parse_arguments.
+
+        * Scripts/modules/cpp_style_unittest.py:
+          - Made changes caused by changes to cpp_style.py.
+          - Lower-cased ErrorCollector's ERROR_CATEGORIES instance 
+            variables since they are not global.
+
 2009-12-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed fix for the style-queue.

@@ -45,12 +45,11 @@ import cpp_style
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
-# is in cpp_style._ERROR_CATEGORIES, to help keep that list up to date.
+# is in cpp_style._STYLE_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
-    # These are a global list, covering all categories seen ever.
-    _ERROR_CATEGORIES = [x.strip()    # get rid of leading whitespace
-                         for x in cpp_style._ERROR_CATEGORIES.split()]
-    _SEEN_ERROR_CATEGORIES = {}
+    _all_style_categories = cpp_style._STYLE_CATEGORIES
+    # This a list including all categories seen in any unit test.
+    _seen_style_categories = {}
 
     def __init__(self, assert_fn):
         """assert_fn: a function to call when we notice a problem."""
@@ -59,10 +58,10 @@ class ErrorCollector:
 
     def __call__(self, unused_filename, unused_linenum,
                  category, confidence, message):
-        self._assert_fn(category in self._ERROR_CATEGORIES,
+        self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
-                        ' which is not in _ERROR_CATEGORIES' % (message, category))
-        self._SEEN_ERROR_CATEGORIES[category] = 1
+                        ' which is not in _STYLE_CATEGORIES' % (message, category))
+        self._seen_style_categories[category] = 1
         if cpp_style._should_print_error(category, confidence):
             self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
 
@@ -76,16 +75,16 @@ class ErrorCollector:
         return self._errors
 
     def verify_all_categories_are_seen(self):
-        """Fails if there's a category in _ERROR_CATEGORIES - _SEEN_ERROR_CATEGORIES.
+        """Fails if there's a category in _all_style_categories - _seen_style_categories.
 
         This should only be called after all tests are run, so
-        _SEEN_ERROR_CATEGORIES has had a chance to fully populate.  Since
+        _seen_style_categories has had a chance to fully populate.  Since
         this isn't called from within the normal unittest framework, we
         can't use the normal unittest assert macros.  Instead we just exit
         when we see an error.  Good thing this test is always run last!
         """
-        for category in self._ERROR_CATEGORIES:
-            if category not in self._SEEN_ERROR_CATEGORIES:
+        for category in self._all_style_categories:
+            if category not in self._seen_style_categories:
                 import sys
                 sys.exit('FATAL ERROR: There are no tests for category "%s"' % category)
 
@@ -1567,14 +1566,16 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_parse_arguments(self):
         old_usage = cpp_style._USAGE
-        old_error_categories = cpp_style._ERROR_CATEGORIES
+        old_style_categories = cpp_style._STYLE_CATEGORIES
+        old_webkit_filter_rules = cpp_style._WEBKIT_FILTER_RULES
         old_output_format = cpp_style._cpp_style_state.output_format
         old_verbose_level = cpp_style._cpp_style_state.verbose_level
         old_filters = cpp_style._cpp_style_state.filters
         try:
             # Don't print usage during the tests, or filter categories
             cpp_style._USAGE = ''
-            cpp_style._ERROR_CATEGORIES = ''
+            cpp_style._STYLE_CATEGORIES = []
+            cpp_style._WEBKIT_FILTER_RULES = []
 
             self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--badopt'])
             self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--help'])
@@ -1632,7 +1633,8 @@ class CppStyleTest(CppStyleTestBase):
                               ['--footypo=bar', 'foo.cpp'], ['foo='])
         finally:
             cpp_style._USAGE = old_usage
-            cpp_style._ERROR_CATEGORIES = old_error_categories
+            cpp_style._STYLE_CATEGORIES = old_style_categories
+            cpp_style._WEBKIT_FILTER_RULES = old_webkit_filter_rules
             cpp_style._cpp_style_state.output_format = old_output_format
             cpp_style._cpp_style_state.verbose_level = old_verbose_level
             cpp_style._cpp_style_state.filters = old_filters
@@ -1651,9 +1653,9 @@ class CppStyleTest(CppStyleTestBase):
             cpp_style._cpp_style_state.filters = old_filters
 
     def test_default_filter(self):
-        default_filters = cpp_style._DEFAULT_FILTERS
+        default_filter_rules = cpp_style._DEFAULT_FILTER_RULES
         old_filters = cpp_style._cpp_style_state.filters
-        cpp_style._DEFAULT_FILTERS = [ '-whitespace' ]
+        cpp_style._DEFAULT_FILTER_RULES = [ '-whitespace' ]
         try:
             # Reset filters
             cpp_style._cpp_style_state.set_filters('')
@@ -1666,7 +1668,7 @@ class CppStyleTest(CppStyleTestBase):
             self.assert_lint(' weird opening space', '')
         finally:
             cpp_style._cpp_style_state.filters = old_filters
-            cpp_style._DEFAULT_FILTERS = default_filters
+            cpp_style._DEFAULT_FILTER_RULES = default_filter_rules
 
     def test_unnamed_namespaces_in_headers(self):
         self.assert_language_rules_check(

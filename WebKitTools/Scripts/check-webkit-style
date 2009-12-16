@@ -28,7 +28,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Script to run the linter for source code of WebKit."""
+"""Does WebKit-lint on C/C++ files.
+
+The goal of this script is to identify places in the code that *may*
+be in non-compliance with WebKit style.  It does not attempt to fix
+up these problems -- the point is to educate.  It does also not
+attempt to find all problems, or to ensure that everything it does
+find is legitimately a problem.
+
+In particular, we can get very confused by /* and // inside strings!
+We do a small hack, which is to ignore //'s with "'s after them on the
+same line, but it is far from perfect (in either direction).
+"""
 
 import codecs
 import os
@@ -40,54 +51,68 @@ from modules.diff_parser import DiffParser
 from modules.scm import detect_scm_system
 
 
-# Override the usage of the lint tool.
 cpp_style._USAGE = """
 Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
         [--filter=-x,+y,...] [file] ...
 
-  The style guidelines this tries to follow are those in
+  The style guidelines this tries to follow are here:
     http://webkit.org/coding/coding-style.html
 
-  Every problem is given a confidence score from 1-5, with 5 meaning we are
-  certain of the problem, and 1 meaning it could be a legitimate construct.
-  This will miss some errors, and is not a substitute for a code review.
+  Every style error is given a confidence score from 1-5, with 5 meaning
+  we are certain of the problem, and 1 meaning it could be a legitimate
+  construct.  This can miss some errors and does not substitute for
+  code review.
 
   To prevent specific lines from being linted, add a '// NOLINT' comment to the
   end of the line.
 
-  Linted extensions are .cpp, .c and .h.  Other file types will be ignored.
+  Linted extensions are .cpp, .c and .h.  Other file types are ignored.
 
-  The file parameter is optional and multiple files to scan be passed in.
-  Leaving out the file parameter will apply the check to the files changed
-  according to the scm system.
+  The file parameter is optional and accepts multiple files.  Leaving
+  out the file parameter applies the check to all files considered changed
+  by your source control management system.
 
   Flags:
 
     verbose=#
-      Specify a number 0-5 to restrict errors to certain verbosity levels.
+      A number 0-5 to restrict errors to certain verbosity levels.
+      Defaults to %(default_verbosity)s.
 
     git-commit=<SingleCommit>
       Checks the style of everything from the given commit to the local tree.
 
     output=vs7
-      By default, the output is formatted to ease emacs parsing.  Visual Studio
-      compatible output (vs7) may also be used.  Other formats are unsupported.
+      The output format, which may be one of
+        emacs : to ease emacs parsing
+        vs7   : compatible with Visual Studio
+      Defaults to "%(default_output_format)s". Other formats are unsupported.
 
     filter=-x,+y,...
-      Specify a comma-separated list of category-filters to apply: only
-      error messages whose category names pass the filters will be printed.
-      (Category names are printed with the message and look like
-      "[whitespace/indent]".)  Filters are evaluated left to right.
-      "-FOO" and "FOO" means "do not print categories that start with FOO".
-      "+FOO" means "do print categories that start with FOO".
+      A comma-separated list of boolean filter rules used to filter
+      which categories of style guidelines to check.  The script checks
+      a category if the category passes the filter rules, as follows.
+
+      Any webkit category starts out passing.  All filter rules are then
+      evaluated left to right, with later rules taking precedence.  For
+      example, the rule "+foo" passes any category that starts with "foo",
+      and "-foo" fails any such category.  The filter input "-whitespace,
+      +whitespace/braces" fails the category "whitespace/tab" and passes
+      "whitespace/braces".
 
       Examples: --filter=-whitespace,+whitespace/braces
-                --filter=whitespace,runtime/printf,+runtime/printf_format
+                --filter=-whitespace,-runtime/printf,+runtime/printf_format
                 --filter=-,+build/include_what_you_use
 
-      To see a list of all the categories used in %(program_name)s, pass no arg:
+      Category names appear in error messages in brackets, for example
+      [whitespace/indent].  To see a list of all categories available to
+      %(program_name)s, along with which are enabled by default, pass
+      the empty filter as follows:
          --filter=
-""" % {'program_name': os.path.basename(sys.argv[0])}
+""" % {
+    'program_name': os.path.basename(sys.argv[0]),
+    'default_verbosity': cpp_style._DEFAULT_VERBOSITY,
+    'default_output_format': cpp_style._DEFAULT_OUTPUT_FORMAT
+    }
 
 
 def process_patch(patch_string):
@@ -123,9 +148,10 @@ def process_patch(patch_string):
 
 
 def main():
-    cpp_style.use_webkit_styles()
+    cpp_style._DEFAULT_FILTER_RULES = cpp_style._WEBKIT_FILTER_RULES
 
-    (files, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="])
+    (files, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="],
+                                               display_help=True)
 
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
@@ -135,9 +161,9 @@ def main():
                                            'replace')
 
     if files and "--git-commit" in flags:
-        sys.stderr.write("ERROR: It is not possible to check files "
-                          "and a specific commit at the same time.\n" + cpp_style._USAGE)
-        sys.exit(1)
+        cpp_style.exit_with_usage('It is not possible to check files and a '
+                                  'specific commit at the same time.',
+                                  display_help=True)
 
     if files:
         for filename in files:
@@ -154,9 +180,10 @@ def main():
                 # start there (see git diff --help for information about how ... usually works).
                 commit = commit[:commit.find('..')]
                 print >> sys.stderr, "Warning: Ranges are not supported for --git-commit. Checking all changes since %s.\n" % commit
-            process_patch(scm.create_patch_since_local_commit(commit))
+            patch = scm.create_patch_since_local_commit(commit)
         else:
-            process_patch(scm.create_patch())
+            patch = scm.create_patch()
+        process_patch(patch)
 
     sys.stderr.write('Total errors found: %d\n' % cpp_style.error_count())
     sys.exit(cpp_style.error_count() > 0)
