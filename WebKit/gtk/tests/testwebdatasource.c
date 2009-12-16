@@ -55,34 +55,44 @@ static void test_webkit_web_data_source_get_initial_request()
     g_object_unref(view);
 }
 
-static void load_finished_unreachable_cb(WebKitWebView* view, WebKitWebFrame* frame, GMainLoop* loop)
+static void notify_load_status_unreachable_cb(WebKitWebView* view, GParamSpec* pspec, GMainLoop* loop)
 {
+    WebKitLoadStatus status = webkit_web_view_get_load_status (view);
+    WebKitWebFrame* frame = webkit_web_view_get_main_frame(view);
+
+    if (status != WEBKIT_LOAD_FINISHED)
+        return;
+
     if (waitTimer) {
         g_source_remove(waitTimer);
         waitTimer = 0;
     }
 
-    WebKitWebDataSource* datasource;
-    frame = webkit_web_view_get_main_frame(view);
-    datasource = webkit_web_frame_get_data_source(frame);
+    WebKitWebDataSource* datasource = webkit_web_frame_get_data_source(frame);
 
     g_assert_cmpstr("http://this.host.does.not.exist/doireallyexist.html", ==,
                     webkit_web_data_source_get_unreachable_uri(datasource));
 
-    if (g_main_loop_is_running(loop))
-        g_main_loop_quit(loop);
+    g_main_loop_quit(loop);
 }
 
-static void load_finished_cb(WebKitWebView* view, WebKitWebFrame* frame, GMainLoop* loop)
+static void notify_load_status_cb(WebKitWebView* view, GParamSpec* pspec, GMainLoop* loop)
 {
+    WebKitLoadStatus status = webkit_web_view_get_load_status (view);
+    WebKitWebFrame* frame = webkit_web_view_get_main_frame(view);
+    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(frame);
+
+    if (status == WEBKIT_LOAD_COMMITTED) {
+        g_assert(webkit_web_data_source_is_loading(dataSource));
+        return;
+    }
+    else if (status != WEBKIT_LOAD_FINISHED)
+        return;
+
     if (waitTimer) {
         g_source_remove(waitTimer);
         waitTimer = 0;
     }
-
-    WebKitWebDataSource* dataSource;
-    frame = webkit_web_view_get_main_frame(view);
-    dataSource = webkit_web_frame_get_data_source(frame);
 
     /* Test get_request */
     g_test_message("Testing webkit_web_data_source_get_request");
@@ -102,21 +112,13 @@ static void load_finished_cb(WebKitWebView* view, WebKitWebFrame* frame, GMainLo
 
     /* FIXME: Add test for get_encoding */
 
-    if (g_main_loop_is_running(loop))
-        g_main_loop_quit(loop);
-}
-
-static void load_committed_cb(WebKitWebView* view, WebKitWebFrame* frame)
-{
-    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(frame);
-    g_assert(webkit_web_data_source_is_loading(dataSource));
+    g_main_loop_quit(loop);
 }
 
 static gboolean wait_timer_fired(GMainLoop* loop)
 {
     waitTimer = 0;
-    if (g_main_loop_is_running(loop))
-        g_main_loop_quit(loop);
+    g_main_loop_quit(loop);
 
     return FALSE;
 }
@@ -129,8 +131,7 @@ static void test_webkit_web_data_source()
     view = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(view);
     loop = g_main_loop_new(NULL, TRUE);
-    g_signal_connect(view, "load-committed", G_CALLBACK(load_committed_cb), loop);
-    g_signal_connect(view, "load-finished", G_CALLBACK(load_finished_cb), loop);
+    g_signal_connect(view, "notify::load-status", G_CALLBACK(notify_load_status_cb), loop);
     webkit_web_view_load_uri(view, "http://webkit.org");
 
     if (!waitTimer)
@@ -148,7 +149,7 @@ static void test_webkit_web_data_source_unreachable_uri()
     view = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(view);
     loop = g_main_loop_new(NULL, TRUE);
-    g_signal_connect(view, "load-finished", G_CALLBACK(load_finished_unreachable_cb), loop);
+    g_signal_connect(view, "notify::load-status", G_CALLBACK(notify_load_status_unreachable_cb), loop);
     webkit_web_view_load_uri(view, "http://this.host.does.not.exist/doireallyexist.html");
 
     if (!waitTimer)

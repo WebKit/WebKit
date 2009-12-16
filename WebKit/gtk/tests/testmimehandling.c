@@ -87,10 +87,11 @@ server_callback(SoupServer *server, SoupMessage *msg,
     soup_message_body_complete(msg->response_body);
 }
 
-static gboolean idle_quit_loop_cb(gpointer data)
+static void idle_quit_loop_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    g_main_loop_quit(loop);
-    return FALSE;
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED ||
+        webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FAILED)
+        g_main_loop_quit(loop);
 }
 
 static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebKitWebFrame* frame,
@@ -138,7 +139,7 @@ static void test_mime_type(const char* name)
     loop = g_main_loop_new(NULL, TRUE);
 
     g_object_connect(G_OBJECT(view),
-                     "signal::load-finished", idle_quit_loop_cb, NULL,
+                     "signal::notify::load-status", idle_quit_loop_cb, NULL,
                      "signal::mime-type-policy-decision-requested", mime_type_policy_decision_requested_cb, g_strdup(name),
                      NULL);
 

@@ -13,6 +13,39 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        Deprecate the old loading signals load-started, load-committed,
+        load-finished, load-progress-changed and change unit tests to use
+        load-status instead.
+
+        * tests/testmimehandling.c:
+        (idle_quit_loop_cb):
+        (test_mime_type): use notify::load-status
+        * tests/testwebdatasource.c:
+        (notify_load_status_unreachable_cb):
+        (notify_load_status_cb):
+        (test_webkit_web_data_source):
+        (test_webkit_web_data_source_unreachable_uri): Remove uses of
+        g_main_loop_is_running. It's an error if the loop is wrongly terminated.
+        * tests/testwebresource.c:
+        (notify_load_status_cb):
+        (test_web_resource_loading):
+        (notify_load_status_sub_cb):
+        (test_web_resource_sub_resource_loading): use notify::load-status
+        * tests/testwebview.c:
+        (idle_quit_loop_cb):
+        (test_webkit_web_view_icon_uri):
+        * tests/testwindow.c:
+        (notify_load_status_cb):
+        (test_webkit_window_scrollbar_policy): use notify::load-status
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init): Deprecate old load signals.
+
+2009-12-16  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha Silva.
+
         Take into account favicon.ico in the webresource test.
 
         * tests/testwebresource.c:

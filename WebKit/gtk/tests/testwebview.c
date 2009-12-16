@@ -63,10 +63,11 @@ server_callback(SoupServer* server, SoupMessage* msg,
     soup_message_body_complete(msg->response_body);
 }
 
-static gboolean idle_quit_loop_cb(gpointer data)
+static void idle_quit_loop_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    g_main_loop_quit(loop);
-    return FALSE;
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED ||
+        webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FAILED)
+        g_main_loop_quit(loop);
 }
 
 static void icon_uri_changed_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
@@ -105,7 +106,7 @@ static void test_webkit_web_view_icon_uri()
     loop = g_main_loop_new(NULL, TRUE);
 
     g_object_connect(G_OBJECT(view),
-                     "signal::load-finished", idle_quit_loop_cb, NULL,
+                     "signal::notify::progress", idle_quit_loop_cb, NULL,
                      "signal::notify::icon-uri", icon_uri_changed_cb, &been_to_uri_changed,
                      "signal::icon-loaded", icon_loaded_cb, &been_to_icon_loaded,
                      NULL);

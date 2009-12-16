@@ -1578,6 +1578,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @frame: the frame going to do the load
      *
      * When a #WebKitWebFrame begins to load this signal is emitted.
+     *
+     * Deprecated: Use the "load-status" property instead.
      */
     webkit_web_view_signals[LOAD_STARTED] = g_signal_new("load-started",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1595,6 +1597,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @frame: the main frame that received the first data
      *
      * When a #WebKitWebFrame loaded the first data this signal is emitted.
+     *
+     * Deprecated: Use the "load-status" property instead.
      */
     webkit_web_view_signals[LOAD_COMMITTED] = g_signal_new("load-committed",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1611,6 +1615,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::load-progress-changed:
      * @web_view: the #WebKitWebView
      * @progress: the global progress
+     *
+     * Deprecated: Use the "progress" property instead.
      */
     webkit_web_view_signals[LOAD_PROGRESS_CHANGED] = g_signal_new("load-progress-changed",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1647,6 +1653,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_STRING,
             G_TYPE_POINTER);
 
+    /**
+     * WebKitWebView::load-finished:
+     * @web_view: the #WebKitWebView
+     * @frame: the #WebKitWebFrame
+     *
+     * Deprecated: Use the "load-status" property instead.
+     */
     webkit_web_view_signals[LOAD_FINISHED] = g_signal_new("load-finished",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
@@ -2388,6 +2401,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     * WebKitWebView:load-status:
     *
     * Determines the current status of the load.
+    *
+    * Connect to "notify::load-status" to monitor loading.
     *
     * Since: 1.1.7
     */

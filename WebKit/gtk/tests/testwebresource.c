@@ -163,14 +163,16 @@ static void resource_request_starting_cb(WebKitWebView* web_view, WebKitWebFrame
     }
 }
 
-static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+static void notify_load_status_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    gboolean* been_there = data;
-    *been_there = TRUE;
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED) {
+        gboolean* been_there = data;
+        *been_there = TRUE;
 
-    g_assert_cmpstr(webkit_web_view_get_uri(web_view), ==, "about:blank");
+        g_assert_cmpstr(webkit_web_view_get_uri(web_view), ==, "about:blank");
 
-    g_main_loop_quit(loop);
+        g_main_loop_quit(loop);
+    }
 }
 
 static void test_web_resource_loading()
@@ -189,8 +191,8 @@ static void test_web_resource_loading()
                      G_CALLBACK(resource_request_starting_cb),
                      &been_to_resource_request_starting);
 
-    g_signal_connect(web_view, "load-finished",
-                     G_CALLBACK(load_finished_cb),
+    g_signal_connect(web_view, "notify::load-status",
+                     G_CALLBACK(notify_load_status_cb),
                      &been_to_load_finished);
 
     webkit_web_view_load_uri(web_view, base_uri);
@@ -220,9 +222,10 @@ static void resource_request_starting_sub_cb(WebKitWebView* web_view, WebKitWebF
         sub_resource = g_object_ref(web_resource);
 }
 
-static void load_finished_sub_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+static void notify_load_status_sub_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    g_main_loop_quit(loop);
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED)
+        g_main_loop_quit(loop);
 }
 
 static gboolean idle_quit_loop_cb(gpointer data)
@@ -249,8 +252,8 @@ static void test_web_resource_sub_resource_loading()
                      G_CALLBACK(resource_request_starting_sub_cb),
                      NULL);
 
-    g_signal_connect(web_view, "load-finished",
-                     G_CALLBACK(load_finished_sub_cb),
+    g_signal_connect(web_view, "notify::load-status",
+                     G_CALLBACK(notify_load_status_sub_cb),
                      NULL);
 
     webkit_web_view_load_uri(web_view, uri);

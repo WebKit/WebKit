@@ -22,11 +22,13 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
-static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+static void notify_load_status_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    GMainLoop* loop = (GMainLoop*)data;
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED) {
+        GMainLoop* loop = (GMainLoop*)data;
 
-    g_main_loop_quit(loop);
+        g_main_loop_quit(loop);
+    }
 }
 
 static void test_webkit_window_scrollbar_policy(void)
@@ -47,8 +49,8 @@ static void test_webkit_window_scrollbar_policy(void)
     webView = webkit_web_view_new();
     g_object_ref_sink(webView);
 
-    g_signal_connect(webView, "load-finished",
-                     G_CALLBACK(load_finished_cb), loop);
+    g_signal_connect(webView, "notify::load-status",
+                     G_CALLBACK(notify_load_status_cb), loop);
 
     gtk_container_add(GTK_CONTAINER(scrolledWindow), webView);
 
