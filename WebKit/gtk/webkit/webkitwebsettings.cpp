@@ -1096,6 +1096,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "editing-behavior", priv->editing_behavior,
                  "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
                  "enable-dom-paste", priv->enable_dom_paste,
+                 "tab-key-cycles-through-elements", priv->tab_key_cycles_through_elements,
                  "enable-default-context-menu", priv->enable_default_context_menu,
                  NULL));
 
