@@ -172,7 +172,7 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         return self.tool.bugs.fetch_attachment_ids_from_review_queue()
 
     def status_server(self):
-        return self.tool.status()
+        return self.tool.status_bot
 
     # AbstractQueue methods
 

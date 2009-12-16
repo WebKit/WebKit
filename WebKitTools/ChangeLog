@@ -1,3 +1,10 @@
+2009-12-15  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed fix for the style-queue.  I suspect this is a recent
+        regression from Eric's change below.
+
+        * Scripts/modules/commands/queues.py:
+
 2009-12-15  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.
