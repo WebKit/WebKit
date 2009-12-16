@@ -1,3 +1,12 @@
+2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] http://trac.webkit.org/changeset/52194 fixed a side-effect
+        of DumpRenderTree. The previously wrong expected file updated.
+
+        * platform/qt/css2.1/t1505-c524-font-var-00-b-expected.txt: updated.
+
 2009-12-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping a new test, and a test that fails only on the release
