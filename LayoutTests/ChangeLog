@@ -1,3 +1,14 @@
+2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] fast/css/font-face-unused-source-loaded.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=32600
+
+        The crash caused by fast/css/font-face-multiple-families.html, added to skiplist until fix.
+
+        * platform/qt/Skipped: fast/css/font-face-multiple-families.html added.
+
 2009-12-13  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Adam Barth.
