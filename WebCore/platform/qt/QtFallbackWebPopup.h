@@ -1,6 +1,5 @@
 /*
- *
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,28 +17,26 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef QWebPopup_h
-#define QWebPopup_h
+#ifndef QtFallbackWebPopup_h
+#define QtFallbackWebPopup_h
 
+#include "QtAbstractWebPopup.h"
 #include <QComboBox>
-
-#include "PopupMenuClient.h"
 
 namespace WebCore {
 
-class QWebPopup : private QComboBox {
+class QtFallbackWebPopup : private QComboBox, public QtAbstractWebPopup {
     Q_OBJECT
 public:
-    QWebPopup(PopupMenuClient* client);
+    QtFallbackWebPopup(PopupMenuClient* client);
 
-    void show(const QRect& geometry, int selectedIndex);
-    void hide() { hidePopup(); }
+    virtual void show(const QRect& geometry, int selectedIndex);
+    virtual void hide() { hidePopup(); }
 
 private slots:
     void activeChanged(int);
 
 private:
-    PopupMenuClient* m_client;
     bool m_popupVisible;
 
     void populate();
@@ -50,4 +47,4 @@ private:
 
 }
 
-#endif
+#endif // QtFallbackWebPopup_h

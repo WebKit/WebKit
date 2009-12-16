@@ -1,6 +1,5 @@
 /*
- *
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,11 +18,10 @@
  *
  */
 #include "config.h"
-#include "QWebPopup.h"
-#include "HostWindow.h"
-#include "PopupMenuStyle.h"
-#include "QWebPageClient.h"
+#include "QtFallbackWebPopup.h"
 
+#include "HostWindow.h"
+#include "QWebPageClient.h"
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QInputContext>
@@ -32,26 +30,26 @@
 
 namespace WebCore {
 
-QWebPopup::QWebPopup(PopupMenuClient* client)
-    : m_client(client)
+// QtFallbackWebPopup
+
+QtFallbackWebPopup::QtFallbackWebPopup(PopupMenuClient* client)
+    : QtAbstractWebPopup(client)
     , m_popupVisible(false)
 {
-    Q_ASSERT(m_client);
-
-    setFont(m_client->menuStyle().font().font());
+    setFont(QtAbstractWebPopup::client()->menuStyle().font().font());
     connect(this, SIGNAL(activated(int)),
             SLOT(activeChanged(int)), Qt::QueuedConnection);
 }
 
 
-void QWebPopup::show(const QRect& geometry, int selectedIndex)
+void QtFallbackWebPopup::show(const QRect& geometry, int selectedIndex)
 {
     populate();
     setCurrentIndex(selectedIndex);
 
     QWidget* parent = 0;
-    if (m_client->hostWindow() && m_client->hostWindow()->platformPageClient())
-       parent = m_client->hostWindow()->platformPageClient()->ownerWidget();
+    if (client()->hostWindow() && client()->hostWindow()->platformPageClient())
+       parent = client()->hostWindow()->platformPageClient()->ownerWidget();
 
     setParent(parent);
     setGeometry(QRect(geometry.left(), geometry.top(), geometry.width(), sizeHint().height()));
@@ -61,34 +59,33 @@ void QWebPopup::show(const QRect& geometry, int selectedIndex)
     QCoreApplication::sendEvent(this, &event);
 }
 
-void QWebPopup::populate()
+void QtFallbackWebPopup::populate()
 {
     clear();
-    Q_ASSERT(m_client);
 
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(QComboBox::model());
     Q_ASSERT(model);
 
-    int size = m_client->listSize();
+    int size = client()->listSize();
     for (int i = 0; i < size; i++) {
-        if (m_client->itemIsSeparator(i))
+        if (client()->itemIsSeparator(i))
             insertSeparator(i);
         else {
-            insertItem(i, m_client->itemText(i));
+            insertItem(i, client()->itemText(i));
 
-            if (model && !m_client->itemIsEnabled(i))
+            if (model && !client()->itemIsEnabled(i))
                 model->item(i)->setEnabled(false);
         }
     }
 }
 
-void QWebPopup::showPopup()
+void QtFallbackWebPopup::showPopup()
 {
     QComboBox::showPopup();
     m_popupVisible = true;
 }
 
-void QWebPopup::hidePopup()
+void QtFallbackWebPopup::hidePopup()
 {
     QWidget* activeFocus = QApplication::focusWidget();
     if (activeFocus && activeFocus == view()
@@ -105,17 +102,15 @@ void QWebPopup::hidePopup()
         return;
 
     m_popupVisible = false;
-    m_client->popupDidHide();
+    client()->popupDidHide();
 }
 
-void QWebPopup::activeChanged(int index)
+void QtFallbackWebPopup::activeChanged(int index)
 {
     if (index < 0)
         return;
 
-    m_client->valueChanged(index);
+    client()->valueChanged(index);
 }
 
-} // namespace WebCore
-
-#include "moc_QWebPopup.cpp"
+}

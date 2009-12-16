@@ -1,3 +1,45 @@
+2009-12-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement combobox delegate for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=32550
+
+        Refactoring of class QWebPopup.
+
+        Class QWebPopup has been split in QtAbstractWebPopup and QtFallbackWebPopup.
+        Both new classes are now in corresponding files and files QWebPopup.* have been removed.
+
+        Custom combo popup classes will inherit from QtAbstractWebPopup. It is not the public API as it is
+        in WebCore and will not be visible by users of QtWebKit. It will be used in implementation of
+        public QtWebKit combobox popup delegation API.
+
+        Class QtFallbackWebPopup inherits from QtAbstractWebPopup and implements the currently used combobox popup.
+        It needs to be improved to provide standard features that are missing like style or indentation.
+
+        No behavior changes.
+
+        * WebCore.pro:
+        * platform/PopupMenu.h:
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/qt/QWebPopup.cpp: Removed.
+        * platform/qt/QWebPopup.h: Removed.
+        * platform/qt/QtAbstractWebPopup.cpp: Added.
+        (WebCore::QtAbstractWebPopup::QtAbstractWebPopup):
+        (WebCore::QtAbstractWebPopup::~QtAbstractWebPopup):
+        (WebCore::QtAbstractWebPopup::client):
+        * platform/qt/QtAbstractWebPopup.h: Added.
+        * platform/qt/QtFallbackWebPopup.cpp: Added.
+        (WebCore::QtFallbackWebPopup::QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::show):
+        (WebCore::QtFallbackWebPopup::populate):
+        (WebCore::QtFallbackWebPopup::showPopup):
+        (WebCore::QtFallbackWebPopup::hidePopup):
+        (WebCore::QtFallbackWebPopup::activeChanged):
+        * platform/qt/QtFallbackWebPopup.h: Added.
+        (WebCore::QtFallbackWebPopup::hide):
+
 2009-12-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
