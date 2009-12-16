@@ -137,7 +137,7 @@ WebInspector.ResourceView.prototype = {
     _refreshURL: function()
     {
         this.urlTreeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request URL") + ":</div>" +
-            "<div class=\"header-value\">" + this.resource.url.escapeHTML() + "</div>";
+            "<div class=\"header-value source-code\">" + this.resource.url.escapeHTML() + "</div>";
     },
 
     _refreshQueryString: function()
@@ -183,7 +183,7 @@ WebInspector.ResourceView.prototype = {
         this.requestPayloadTreeElement.removeChildren();
 
         var title = "<div class=\"header-name\">&nbsp;</div>";
-        title += "<div class=\"raw-form-data header-value\">" + formData.escapeHTML() + "</div>";
+        title += "<div class=\"raw-form-data header-value source-code\">" + formData.escapeHTML() + "</div>";
         var parmTreeElement = new TreeElement(title, null, false);
         parmTreeElement.selectable = false;
         this.requestPayloadTreeElement.appendChild(parmTreeElement);
@@ -226,7 +226,7 @@ WebInspector.ResourceView.prototype = {
                 valueEscaped += " <span class=\"error-message\">" + WebInspector.UIString("(unable to decode value)").escapeHTML() + "</span>";
 
             var title = "<div class=\"header-name\">" + key.escapeHTML() + ":</div>";
-            title += "<div class=\"header-value\">" + valueEscaped + "</div>";
+            title += "<div class=\"header-value source-code\">" + valueEscaped + "</div>";
 
             var parmTreeElement = new TreeElement(title, null, false);
             parmTreeElement.selectable = false;
@@ -282,10 +282,10 @@ WebInspector.ResourceView.prototype = {
             statusCodeImage = "<img class=\"resource-status-image\" src=\"" + statusImageSource + "\" title=\"" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "\">";
     
             requestMethodElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
-                "<div class=\"header-value\">" + this.resource.requestMethod + "</div>";
+                "<div class=\"header-value source-code\">" + this.resource.requestMethod + "</div>";
 
             statusCodeElement.title = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
-                statusCodeImage + "<div class=\"header-value\">" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "</div>";
+                statusCodeImage + "<div class=\"header-value source-code\">" + WebInspector.Resource.StatusTextForCode(this.resource.statusCode) + "</div>";
         }
     },
     
@@ -300,7 +300,7 @@ WebInspector.ResourceView.prototype = {
         var length = headers.length;
         for (var i = 0; i < length; ++i) {
             var title = "<div class=\"header-name\">" + headers[i].header.escapeHTML() + ":</div>";
-            title += "<div class=\"header-value\">" + headers[i].value.escapeHTML() + "</div>"
+            title += "<div class=\"header-value source-code\">" + headers[i].value.escapeHTML() + "</div>"
 
             var headerTreeElement = new TreeElement(title, null, false);
             headerTreeElement.selectable = false;

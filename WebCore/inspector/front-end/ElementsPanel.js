@@ -36,7 +36,7 @@ WebInspector.ElementsPanel = function()
 
     this.contentElement = document.createElement("div");
     this.contentElement.id = "elements-content";
-    this.contentElement.className = "outline-disclosure";
+    this.contentElement.className = "outline-disclosure source-code";
 
     this.treeOutline = new WebInspector.ElementsTreeOutline();
     this.treeOutline.panel = this;

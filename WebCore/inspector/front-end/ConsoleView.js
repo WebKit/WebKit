@@ -45,6 +45,7 @@ WebInspector.ConsoleView = function(drawer)
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
 
     this.promptElement = document.getElementById("console-prompt");
+    this.promptElement.className = "source-code";
     this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
 
@@ -482,7 +483,7 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var span = document.createElement("span");
-        span.addStyleClass("console-formatted-" + type);
+        span.className = "console-formatted-" + type + " source-code";
         formatter.call(this, output, span);
         return span;
     },
@@ -570,7 +571,7 @@ WebInspector.ConsoleMessage.prototype = {
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 var span = document.createElement("span");
-                span.addStyleClass("console-formatted-trace");
+                span.className = "console-formatted-trace source-code";
                 var stack = Array.prototype.slice.call(args);
                 var funcNames = stack.map(function(f) {
                     return f || WebInspector.UIString("(anonymous function)");
@@ -748,7 +749,7 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         var messageTextElement = document.createElement("span");
-        messageTextElement.className = "console-message-text";
+        messageTextElement.className = "console-message-text source-code";
         if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)
             messageTextElement.appendChild(document.createTextNode(WebInspector.UIString("Assertion failed: ")));
         messageTextElement.appendChild(this.formattedMessage);
@@ -895,7 +896,7 @@ WebInspector.ConsoleCommand.prototype = {
         element.className = "console-user-command";
 
         var commandTextElement = document.createElement("span");
-        commandTextElement.className = "console-message-text";
+        commandTextElement.className = "console-message-text source-code";
         commandTextElement.textContent = this.command;
         element.appendChild(commandTextElement);
 
