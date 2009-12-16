@@ -57,6 +57,12 @@ class ScriptError(Exception):
             return "%s\n%s" % (self, self.output)
         return str(self)
 
+    def command_name(self):
+        command_path = self.script_args
+        if type(command_path) is list:
+            command_path = command_path[0]
+        return os.path.basename(command_path)
+
 
 # FIXME: This should not be a global static.
 # New code should use Executive.run_command directly instead

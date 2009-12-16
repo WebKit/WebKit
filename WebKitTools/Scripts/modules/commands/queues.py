@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import re
 
 from datetime import datetime
 from optparse import make_option
@@ -222,11 +221,7 @@ class StyleQueue(AbstractReviewQueue):
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        command = script_error.script_args
-        if type(command) is list:
-            command = command[0]
-        # FIXME: We shouldn't need to use a regexp here.  ScriptError should
-        #        have a better API.
-        if re.search("check-webkit-style", command):
-            message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
-            tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
+        if not script_error.command_name() == "check-webkit-style":
+            return
+        message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
+        tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)

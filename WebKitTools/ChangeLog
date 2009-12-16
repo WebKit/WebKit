@@ -1,3 +1,18 @@
+2009-12-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Add error handling to the early warning system
+        https://bugs.webkit.org/show_bug.cgi?id=32594
+
+        This should be the last step in making the EWS operational.  When we
+        have a build error, we post the log to QueueStatusServer and add a link
+        to the bug.
+
+        * Scripts/modules/commands/early_warning_system.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/executive.py:
+
 2009-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
