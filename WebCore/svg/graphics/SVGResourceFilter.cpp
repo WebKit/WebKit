@@ -135,8 +135,8 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
         return;
 
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
+    sourceGraphicContext->translate(-clippedSourceRect.x(), -clippedSourceRect.y());
     sourceGraphicContext->scale(FloatSize(m_scaleX, m_scaleY));
-    sourceGraphicContext->translate(-targetRect.x(), -targetRect.y());
     sourceGraphicContext->clearRect(FloatRect(FloatPoint(), targetRect.size()));
     m_sourceGraphicBuffer.set(sourceGraphic.release());
     m_savedContext = context;

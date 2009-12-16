@@ -1,3 +1,21 @@
+2009-12-16  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        sourceGraphic wrong if positive x,y is >0 and objectBB is selected on Filter
+        https://bugs.webkit.org/show_bug.cgi?id=32575
+
+        On SVG Filters, the rest of the source graphic gets clipped to the filter
+        rest. This helps us to minimize the size of intermediate ImageBuffers. If
+        the position moves to the right or to the bottom, we have to adjust the
+        GraphicContext of this intermediate ImageBuffer.
+        This patch fixes the adjustment of the context, according to the clipping.
+
+        Test: svg/filters/filter-source-position.svg
+
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::prepareFilter):
+
 2009-12-16  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
