@@ -91,6 +91,7 @@ function recordResult(time)
 function finish()
 {
     var outputString = "{";
+    outputString += '"v": "@SUITE@", ';
     for (var test in output[0]) {
         outputString += '"' + test + '":[';
         for (var i = 0; i < output.length; i++) {

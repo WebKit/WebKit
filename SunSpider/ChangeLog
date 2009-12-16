@@ -1,3 +1,16 @@
+2009-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make SunSpider refuse to compare results across content versions
+        https://bugs.webkit.org/show_bug.cgi?id=32573
+        
+        The results URL now includes a version indicator, and compare mode
+        will refuse to compare between versions.
+
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
 2009-12-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

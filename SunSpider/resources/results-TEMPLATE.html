@@ -55,7 +55,10 @@
 var selfUrlInput = document.getElementById("selfUrl");
 selfUrlInput.value = location;
 
-var output = pivot(JSON.parse(decodeURI(location.search.substring(1))));
+var outputJSON = JSON.parse(decodeURI(location.search.substring(1)));
+var version = outputJSON["v"];
+delete outputJSON["v"];
+var output = pivot(outputJSON);
 
 function pivot(input) {
     var output = [];
@@ -82,12 +85,21 @@ function print(str) {
 
 <script>
 var output2 = output;
+var version2 = version;
 
 function compare(other)
 {
     document.getElementById("console").innerHTML = "";
-    var output1 = pivot(JSON.parse(decodeURI(other.split("?")[1])));
-    sunspiderCompareResults(output1, output2);
+
+    var output1JSON = JSON.parse(decodeURI(other.split("?")[1]));
+    var version1 = output1JSON["v"];
+    delete output1JSON["v"];
+    if (version1 != version2) {
+        print("ERROR: cannot compare version " + version1 + ' with version ' + version2);
+    } else {
+        var output1 = pivot(output1JSON);
+        sunspiderCompareResults(output1, output2);
+    }
 }
 </script>
 
