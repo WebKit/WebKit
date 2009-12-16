@@ -1,3 +1,22 @@
+2009-12-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Switch all indexers to be generated.
+        https://bugs.webkit.org/show_bug.cgi?id=32569
+
+        Covered by existing tests.
+
+        * WebCore.gypi: Remove V8FileListCustom.cpp and V8ClientRecListCustom.cpp,
+            as they are now generated.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate): Remove customization of ClientRectList,
+            FileList, and DataGridColumnList templates.
+        * bindings/v8/custom/V8ClientRectListCustom.cpp: Removed.
+        * bindings/v8/custom/V8CustomBinding.h: Remove custom indexer getter decls.
+        * bindings/v8/custom/V8DataGridColumnListCustom.cpp: Remove indexer getter definition.
+        * bindings/v8/custom/V8FileListCustom.cpp: Removed.
+
 2009-12-16  anton muhin  <antonm@chromium.org>
 
         Reviewed by Darin Adler.

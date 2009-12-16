@@ -563,15 +563,8 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::XSLTPROCESSOR:
         descriptor->SetCallHandler(USE_CALLBACK(XSLTProcessorConstructor));
         break;
-    case V8ClassIndex::CLIENTRECTLIST:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(ClientRectList));
-        break;
-    case V8ClassIndex::FILELIST:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(FileList));
-        break;
 #if ENABLE(DATAGRID)
     case V8ClassIndex::DATAGRIDCOLUMNLIST:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(DataGridColumnList));
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(DataGridColumnList));
         break;
 #endif

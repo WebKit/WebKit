@@ -40,16 +40,6 @@
 
 namespace WebCore {
 
-INDEXED_PROPERTY_GETTER(DataGridColumnList)
-{
-    INC_STATS("DataGridColumnList.IndexedPropertyGetter");
-    DataGridColumnList* imp = V8DOMWrapper::convertToNativeObject<DataGridColumnList>(V8ClassIndex::DATAGRIDCOLUMNLIST, info.Holder());
-    DataGridColumn* result = imp->item(index);
-    if (!result)
-        return notHandledByInterceptor();
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::DATAGRIDCOLUMN, result);
-}
-
 NAMED_PROPERTY_GETTER(DataGridColumnList)
 {
     INC_STATS("DataGridColumnList.NamedPropertyGetter");
