@@ -1,3 +1,10 @@
+2009-12-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping a new test, and a test that fails only on the release
+        bot, apparently because of rouding errors.
+
+        * platform/gtk/Skipped:
+
 2009-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
