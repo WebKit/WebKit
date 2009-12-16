@@ -289,9 +289,8 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(USE_CALLBACK(HTMLCollectionCallAsFunction));
         break;
     case V8ClassIndex::HTMLSELECTELEMENT:
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLSelectElementCollection));
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(nodeCollectionIndexedPropertyGetter<HTMLSelectElement>, USE_INDEXED_PROPERTY_SETTER(HTMLSelectElementCollection),
-            0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLSelectElement>, v8::Integer::New(V8ClassIndex::NODE));
+        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLSelectElement));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLSelectElement), USE_INDEXED_PROPERTY_SETTER(HTMLSelectElement), 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLSelectElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     case V8ClassIndex::HTMLDOCUMENT: {
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLDocument), 0, 0, USE_NAMED_PROPERTY_DELETER(HTMLDocument));

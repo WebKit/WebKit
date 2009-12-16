@@ -122,16 +122,6 @@ namespace WebCore {
         return getIndexedPropertyOfCollection<Collection, ItemType>(index, info.Holder(), info.Data());
     }
 
-    // A template of index interceptor of HTMLSelectElement and HTMLFormElement.
-    template<class Collection> static v8::Handle<v8::Value> nodeCollectionIndexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
-    {
-        ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
-        Collection* collection = V8DOMWrapper::convertDOMWrapperToNode<Collection>(info.Holder());
-        void* implementation = collection->item(index);
-        return getV8Object(implementation, info.Data());
-    }
-
     // Get an array containing the names of indexed properties of HTMLSelectElement and HTMLFormElement.
     template<class Collection> static v8::Handle<v8::Array> nodeCollectionIndexedPropertyEnumerator(const v8::AccessorInfo& info)
     {

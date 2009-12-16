@@ -710,7 +710,6 @@
             'bindings/v8/custom/V8HTMLOptionElementConstructor.h',
             'bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp',
             'bindings/v8/custom/V8HTMLPlugInElementCustom.cpp',
-            'bindings/v8/custom/V8HTMLSelectElementCollectionCustom.cpp',
             'bindings/v8/custom/V8HTMLSelectElementCustom.cpp',
             'bindings/v8/custom/V8HTMLSelectElementCustom.h',
             'bindings/v8/custom/V8InjectedScriptHostCustom.cpp',

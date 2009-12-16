@@ -1,3 +1,22 @@
+2009-12-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] There is no such thing as HTMLSelectElementCollection.
+        https://bugs.webkit.org/show_bug.cgi?id=32616
+
+        Refactoring, covered by existing tests.
+
+        * WebCore.gypi: Removed V8HTMLSelectElementCollectionCustom.cpp
+        * bindings/v8/V8Collection.h: Removed one-off template.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate): Renamed all references to HTMLSelectElementCollection
+            to HTMLSelectElement.
+        * bindings/v8/custom/V8CustomBinding.h: Renamed custom indexer decls.
+        * bindings/v8/custom/V8HTMLSelectElementCollectionCustom.cpp: Removed.
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp: Moved code as-is from
+            V8HTMLSelectElementCollectionCustom.cpp
+
 2009-12-16  Dan Winship  <danw@gnome.org>
 
         Reviewed by Gustavo Noronha Silva.
