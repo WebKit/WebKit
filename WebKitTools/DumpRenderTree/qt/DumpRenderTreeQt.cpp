@@ -442,6 +442,7 @@ void DumpRenderTree::open(const QUrl& aurl)
     QFocusEvent ev(QEvent::FocusIn);
     m_page->event(&ev);
 
+    QWebSettings::clearMemoryCaches();
     QFontDatabase::removeAllApplicationFonts();
 #if defined(Q_WS_X11)
     initializeFonts();

@@ -1,3 +1,11 @@
+2009-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Unskip fast/css/font-face-multiple-families.html.
+
+        * platform/qt/Skipped:
+
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

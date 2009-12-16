@@ -1,3 +1,21 @@
+2009-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix crash with tests that use custom font faces.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32600
+
+        In the DRT we call QApplication::removeAllApplicationFonts(), to make sure
+        that custom font faces between tests don't influence each other. Calling this
+        function in Qt however also invalidates all existing handles with QFontDatabase.
+
+        In order to make sure that WebCore also drops these handles we call QWebSettings::clearMemoryCaches(),
+        which implies a call to WebCore::FontCache::fontCache()->invalidate().
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2009-12-16  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
