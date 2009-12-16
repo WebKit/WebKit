@@ -1,5 +1,17 @@
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31332
+
+        [Qt] After http://trac.webkit.org/changeset/52192
+        there are a failing and a timeouter test.
+
+        * platform/qt/Skipped: http/tests/misc/drag-over-iframe-invalid-source-crash.html added until fix.
+        * platform/qt/fast/text/international/khmer-selection-expected.txt: update outdated expected.
+
+2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] http://trac.webkit.org/changeset/52194 fixed a side-effect

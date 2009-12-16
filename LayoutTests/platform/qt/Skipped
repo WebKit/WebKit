@@ -259,6 +259,8 @@ fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
+# caused by: http://trac.webkit.org/changeset/52192
+http/tests/misc/drag-over-iframe-invalid-source-crash.html
 
 # ------- broken backgroundOf(el)
 fast/forms/input-live-pseudo-selectors.html
