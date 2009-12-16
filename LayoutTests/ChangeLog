@@ -1,3 +1,14 @@
+2009-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        CrashTracer: [USER] 1 crash in Safari at com.apple.WebCore: WebCore::endsOfNodeAreVisuallyDistinctPositions + 115
+        <rdar://problem/7467108>
+        https://bugs.webkit.org/show_bug.cgi?id=32590
+
+        * editing/selection/button-right-click-expected.txt: Added.
+        * editing/selection/button-right-click.html: Added.
+
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

@@ -995,7 +995,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     RenderObject* renderer = node()->renderer();
           
     if (!renderer->isText()) {
-        if (renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
+        if (!renderer->isRenderButton() && renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
             bool lastPosition = caretOffset == lastOffsetInNode(node());
             Node* startNode = lastPosition ? node()->childNode(caretOffset - 1) : node()->childNode(caretOffset);
             while (startNode && (!startNode->renderer() || (startNode->isTextNode() && toRenderText(startNode->renderer())->isAllCollapsibleWhitespace())))
