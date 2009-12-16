@@ -1,3 +1,14 @@
+2009-12-16  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] webkit_web_navigation_action_get_button() documentation
+        https://bugs.webkit.org/show_bug.cgi?id=25555
+
+        Small documentation improvement for webkit_web_navigation_action_get_button.
+
+        * webkit/webkitwebnavigationaction.cpp:
+
 2009-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

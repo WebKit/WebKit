@@ -177,7 +177,9 @@ static void webkit_web_navigation_action_class_init(WebKitWebNavigationActionCla
     /**
      * WebKitWebNavigationAction:button:
      *
-     * The button used to click if the action was a mouse event.
+     * The DOM identifier for the mouse button used to click. DOM button values
+     * are 0, 1 and 2 for left, middle and right buttons. If the action was not
+     * initiated by a mouse click the value will be -1.
      *
      * Since: 1.0.3
      */
@@ -308,8 +310,9 @@ void webkit_web_navigation_action_set_original_uri(WebKitWebNavigationAction* na
  * webkit_web_navigation_action_get_button:
  * @navigationAction: a #WebKitWebNavigationAction
  *
- * Returns the mouse button used to click if the action was a mouse event.
- * Otherwise returns -1.
+ * Returns the DOM identifier for the mouse button used to click.
+ * DOM button values are 0, 1 and 2 for left, middle and right buttons.
+ * If the action was not initiated by a mouse click, returns -1.
  *
  * Return value: the mouse button used to click
  *
