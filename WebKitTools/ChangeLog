@@ -1,3 +1,15 @@
+2009-12-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Generalize commit-queue recent status page for all queues
+        https://bugs.webkit.org/show_bug.cgi?id=32633
+
+        * QueueStatusServer/index.html:
+         - Generalize to support other queues.
+        * QueueStatusServer/queue_status.py:
+         - Generalize MainPage to support other queues.
+
 2009-12-16  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Barth.
