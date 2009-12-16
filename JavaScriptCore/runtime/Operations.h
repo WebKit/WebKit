@@ -326,7 +326,7 @@ namespace JSC {
     ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         double left = 0.0, right;
-        if (v1.getNumber(left), v2.getNumber(right))
+        if (v1.getNumber(left) && v2.getNumber(right))
             return jsNumber(callFrame, left + right);
         
         if (v1.isString()) {

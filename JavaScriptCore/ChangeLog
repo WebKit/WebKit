@@ -1,5 +1,19 @@
 2009-12-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam "r=me" Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32498
+        <rdar://problem/7471495>
+        REGRESSION(r51978-r52039): AJAX "Mark This Forum Read" function no longer
+        works
+        
+        Fixed a tyop.
+
+        * runtime/Operations.h:
+        (JSC::jsAdd): Use the '&&' operator, not the ',' operator.
+
+2009-12-15  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the windows build: don't export this inlined function.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
