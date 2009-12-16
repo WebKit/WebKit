@@ -4,7 +4,7 @@
 
         [Gtk] Content-Encoding support
 
-        https://bugs.webkit.org/show_bug.cgi?id=522772
+        https://bugs.webkit.org/show_bug.cgi?id=25855
 
         * platform/network/soup/ResourceHandleSoup.cpp:
         (WebCore::startHttp): Don't force "Accept-Encoding: identity" any
