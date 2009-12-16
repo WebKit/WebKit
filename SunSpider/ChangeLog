@@ -1,5 +1,17 @@
 2009-12-15  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        Make SunSpider version more prominent in the title
+        https://bugs.webkit.org/show_bug.cgi?id=32574
+
+        * hosted/sunspider.html:
+        * hosted/versions.html:
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
+2009-12-15  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin Adler.
 
         Make SunSpider refuse to compare results across content versions
