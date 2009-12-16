@@ -31,10 +31,10 @@ namespace WebCore {
 
     class FEMerge : public FilterEffect {
     public:
-        static PassRefPtr<FEMerge> create(const Vector<FilterEffect*>&);
+        static PassRefPtr<FEMerge> create(const Vector<RefPtr<FilterEffect> >&);
 
-        const Vector<FilterEffect*>& mergeInputs() const;
-        void setMergeInputs(const Vector<FilterEffect*>& mergeInputs);
+        const Vector<RefPtr<FilterEffect> >& mergeInputs() const;
+        void setMergeInputs(const Vector<RefPtr<FilterEffect> >& mergeInputs);
 
         virtual FloatRect uniteChildEffectSubregions(Filter*);
         void apply(Filter*);
@@ -42,9 +42,9 @@ namespace WebCore {
         TextStream& externalRepresentation(TextStream& ts) const;
 
     private:
-        FEMerge(const Vector<FilterEffect*>&);
+        FEMerge(const Vector<RefPtr<FilterEffect> >&);
 
-        Vector<FilterEffect*> m_mergeInputs;
+        Vector<RefPtr<FilterEffect> > m_mergeInputs;
     };
 
 } // namespace WebCore

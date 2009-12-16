@@ -1,3 +1,29 @@
+2009-12-16  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        feMerge crahses if feMergeNodes attribute in is empty
+        https://bugs.webkit.org/show_bug.cgi?id=32489
+
+        SVGFEMergeElement only stored pointers to all effects of it's nodes
+        in a list. But it should store the RefPtr otherwise the effects get
+        dereferenced and WebKit crashes.
+        I also made a short clean-up in SVGFilterBuilder. No change in
+        functionality.
+
+        Test: I updated svg/custom/empty-merge.svg to cover this problem.
+
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build):
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::FEMerge):
+        (WebCore::FEMerge::create):
+        (WebCore::FEMerge::mergeInputs):
+        (WebCore::FEMerge::setMergeInputs):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::add):
+
 2009-12-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

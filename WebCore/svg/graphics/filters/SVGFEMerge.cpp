@@ -30,23 +30,23 @@
 
 namespace WebCore {
 
-FEMerge::FEMerge(const Vector<FilterEffect*>& mergeInputs) 
+FEMerge::FEMerge(const Vector<RefPtr<FilterEffect> >& mergeInputs) 
     : FilterEffect()
     , m_mergeInputs(mergeInputs)
 {
 }
 
-PassRefPtr<FEMerge> FEMerge::create(const Vector<FilterEffect*>& mergeInputs)
+PassRefPtr<FEMerge> FEMerge::create(const Vector<RefPtr<FilterEffect> >& mergeInputs)
 {
     return adoptRef(new FEMerge(mergeInputs));
 }
 
-const Vector<FilterEffect*>& FEMerge::mergeInputs() const
+const Vector<RefPtr<FilterEffect> >& FEMerge::mergeInputs() const
 {
     return m_mergeInputs;
 }
 
-void FEMerge::setMergeInputs(const Vector<FilterEffect*>& mergeInputs)
+void FEMerge::setMergeInputs(const Vector<RefPtr<FilterEffect> >& mergeInputs)
 {
     m_mergeInputs = mergeInputs;
 }

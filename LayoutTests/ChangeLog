@@ -1,5 +1,22 @@
 2009-12-16  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Nikolas Zimmermann.
+
+        feMerge crahses if feMergeNodes attribute in is empty
+        https://bugs.webkit.org/show_bug.cgi?id=32489
+
+        The previous test only checked if feMerge works on empty node
+        without a last effect. In this case we get a source image and 
+        everything works fine. This test also covers the case if there
+        is a last effect.
+
+        * platform/mac/svg/custom/empty-merge-expected.checksum:
+        * platform/mac/svg/custom/empty-merge-expected.png:
+        * platform/mac/svg/custom/empty-merge-expected.txt:
+        * svg/custom/empty-merge.svg:
+
+2009-12-16  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Darin Adler.
 
         sourceGraphic wrong if positive x,y is >0 and objectBB is selected on Filter

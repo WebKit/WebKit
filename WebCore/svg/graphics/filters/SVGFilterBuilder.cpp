@@ -42,14 +42,14 @@ SVGFilterBuilder::SVGFilterBuilder()
 void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
 {
     if (id.isEmpty()) {
-        m_lastEffect = effect.get();
+        m_lastEffect = effect;
         return;
     }
 
     if (m_builtinEffects.contains(id))
         return;
 
-    m_lastEffect = effect.get();
+    m_lastEffect = effect;
     m_namedEffects.set(id, m_lastEffect);
 }
 
