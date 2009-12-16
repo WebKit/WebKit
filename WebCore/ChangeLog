@@ -1,3 +1,16 @@
+2009-12-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=32621>.
+        Web Inspector: [REGRESSION (52095-52100)] Resources filter disappears when switching 
+        from / to resources panel.
+
+        Changed style in sidebar-resizer-vertical, because if the min-height was 100%, we start
+        to cover the scope bar.
+
+        * inspector/front-end/inspector.css:
+
 2009-12-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

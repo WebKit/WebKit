@@ -2850,7 +2850,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 .sidebar-resizer-vertical {
     position: absolute;
     top: 0;
-    min-height: 100%;
+    bottom: 0;
     width: 5px;
     z-index: 500;
     cursor: col-resize;
