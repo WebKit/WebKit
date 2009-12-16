@@ -1,5 +1,14 @@
 2009-12-15  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed fix for the style-queue.
+        Typo: _updates_status -> _update_status
+
+        We need to improve our testing infrastructure for the queues.
+
+        * Scripts/modules/commands/queues.py:
+
+2009-12-15  Adam Barth  <abarth@webkit.org>
+
         Unreviewed fix for the style-queue.  I suspect this is a recent
         regression from Eric's change below.
 

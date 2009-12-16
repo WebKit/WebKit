@@ -59,7 +59,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         except Exception, e:
             log("Failed to CC watchers: %s." % e)
 
-    def _updates_status(self, message, patch, results_file=None):
+    def _update_status(self, message, patch, results_file=None):
         self.tool.status_bot.update_status(self.name, message, patch, results_file)
 
     def queue_log_path(self):
@@ -121,7 +121,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def next_work_item(self):
         patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
         if not patches:
-            self._updates_status("Empty queue.", None)
+            self._update_status("Empty queue.", None)
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch['id'] for patch in patches])
@@ -131,9 +131,9 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
         if red_builders_names:
             red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
-            self._updates_status("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
+            self._update_status("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
             return False
-        self._updates_status("Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
+        self._update_status("Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
         return True
 
     def process_work_item(self, patch):
