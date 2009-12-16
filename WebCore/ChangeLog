@@ -1,3 +1,25 @@
+2009-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Right clicking in a table cell creates a selection that extends into the next cell.
+        <rdar://problem/5565465>
+        https://bugs.webkit.org/show_bug.cgi?id=32622
+        
+        Avoid extending the selection to the next cell if we start from an empty cell.
+
+        Test: editing/selection/empty-cell-right-click.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Replaced the code that check for empty table cell
+        with a call to the new function.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity): Extends the
+        selection only if we are not starting from an empty table cell.
+        * editing/htmlediting.cpp:
+        (WebCore::isEmptyTableCell): Added a function since this check is performed now in two places.
+        * editing/htmlediting.h: Added isEmptyTableCell declaration.
+
 2009-12-16  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

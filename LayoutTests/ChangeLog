@@ -1,3 +1,14 @@
+2009-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Right clicking in a table cell creates a selection that extends into the next cell.
+        <rdar://problem/5565465>
+        https://bugs.webkit.org/show_bug.cgi?id=32622
+
+        * editing/selection/empty-cell-right-click-expected.txt: Added.
+        * editing/selection/empty-cell-right-click.html: Added.
+
 2009-12-16  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

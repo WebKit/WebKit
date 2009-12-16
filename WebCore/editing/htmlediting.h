@@ -87,6 +87,7 @@ bool isTabSpanTextNode(const Node*);
 bool isMailBlockquote(const Node*);
 bool isTableElement(Node*);
 bool isTableCell(const Node*);
+bool isEmptyTableCell(const Node*);
 bool isTableStructureNode(const Node*);
 bool isListElement(Node*);
 bool isNodeRendered(const Node*);

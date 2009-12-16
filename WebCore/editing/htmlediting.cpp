@@ -851,6 +851,11 @@ bool isTableCell(const Node* node)
     return r->isTableCell();
 }
 
+bool isEmptyTableCell(const Node* node)
+{
+    return node && node->renderer() && (node->renderer()->isTableCell() || (node->renderer()->isBR() && node->parentNode()->renderer() && node->parentNode()->renderer()->isTableCell()));     
+}
+
 PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 {
     return new HTMLDivElement(divTag, document);

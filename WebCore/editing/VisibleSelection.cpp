@@ -301,7 +301,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity()
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);
             
-            if (isEndOfParagraph(originalEnd)) {
+            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.node())) {
                 // Select the paragraph break (the space from the end of a paragraph to the start of 
                 // the next one) to match TextEdit.
                 end = wordEnd.next();

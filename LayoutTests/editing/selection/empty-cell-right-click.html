@@ -1,0 +1,22 @@
+<html> 
+<head>
+<title>Right clicking on an empty cell should not extend the selection to the next cell.</title> 
+</head> 
+<body>
+<div contentEditable="true">
+<table border="1" cellspacing="0"><tr><td id="first" width="50" height="25pt"></td><td width="50" height="25pt"></td><td width="50" height="25pt"></td></tr></table>
+</div>
+</body>
+<script>
+if (window.layoutTestController) {   
+    window.layoutTestController.dumpEditingCallbacks();
+    var elem = document.getElementById("first");
+    x = elem.offsetLeft + elem.offsetWidth / 2;
+    y = elem.offsetTop + elem.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.contextClick();
+}
+</script>
+</html>
