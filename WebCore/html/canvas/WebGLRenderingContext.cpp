@@ -574,13 +574,84 @@ void WebGLRenderingContext::disableVertexAttribArray(unsigned long index, Except
     cleanupAfterGraphicsCall(false);
 }
 
-bool WebGLRenderingContext::validateIndexArray(unsigned long count, unsigned long type, long offset, long& numElements)
+bool WebGLRenderingContext::validateElementArraySize(unsigned long count, unsigned long type, long offset)
 {
-    long lastIndex = -1;
     if (!m_boundElementArrayBuffer)
         return false;
-        
+
     if (offset < 0)
+        return false;
+
+    unsigned long uoffset = static_cast<unsigned long>(offset);
+
+    if (type == GraphicsContext3D::UNSIGNED_SHORT) {
+        // For an unsigned short array, offset must be divisible by 2 for alignment reasons.
+        if (uoffset & 1)
+            return false;
+
+        // Make uoffset an element offset.
+        uoffset /= 2;
+
+        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / 2;
+        if (uoffset > n || count > n - uoffset)
+            return false;
+    } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
+        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
+        if (uoffset > n || count > n - uoffset)
+            return false;
+    }
+    return true;
+}
+
+bool WebGLRenderingContext::validateIndexArrayConservative(unsigned long type, long& numElementsRequired)
+{
+    // Performs conservative validation by caching a maximum index of
+    // the given type per element array buffer. If all of the bound
+    // array buffers have enough elements to satisfy that maximum
+    // index, skips the expensive per-draw-call iteration in
+    // validateIndexArrayPrecise.
+
+    long maxIndex = m_boundElementArrayBuffer->getCachedMaxIndex(type);
+    if (maxIndex < 0) {
+        // Compute the maximum index in the entire buffer for the given type of index.
+        switch (type) {
+        case GraphicsContext3D::UNSIGNED_BYTE: {
+            unsigned numElements = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
+            const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+            for (unsigned i = 0; i < numElements; i++)
+                maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            break;
+        }
+        case GraphicsContext3D::UNSIGNED_SHORT: {
+            unsigned numElements = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / sizeof(unsigned short);
+            const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+            for (unsigned i = 0; i < numElements; i++)
+                maxIndex = max(maxIndex, static_cast<long>(p[i]));
+            break;
+        }
+        default:
+            return false;
+        }
+        m_boundElementArrayBuffer->setCachedMaxIndex(type, maxIndex);
+    }
+
+    if (maxIndex >= 0) {
+        // The number of required elements is one more than the maximum
+        // index that will be accessed.
+        numElementsRequired = maxIndex + 1;
+        return true;
+    }
+
+    return false;
+}
+
+bool WebGLRenderingContext::validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired)
+{
+    // FIXME: "count" should need to be used in the computation below
+    UNUSED_PARAM(count);
+    long lastIndex = -1;
+
+    if (!m_boundElementArrayBuffer)
         return false;
         
     // The GL spec says that count must be "greater
@@ -588,17 +659,10 @@ bool WebGLRenderingContext::validateIndexArray(unsigned long count, unsigned lon
     unsigned long uoffset = static_cast<unsigned long>(offset);
     
     if (type == GraphicsContext3D::UNSIGNED_SHORT) {
-        // For an unsigned short array, offset must be divisible by 2 for alignment reasons.
-        if (uoffset & 1)
-            return false;
-        
         // Make uoffset an element offset.
         uoffset /= 2;
     
         unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / 2;
-        if (uoffset > n || count > n - uoffset)
-            return false;
-            
         const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
         while (n-- > 0) {
             if (*p > lastIndex)
@@ -607,9 +671,6 @@ bool WebGLRenderingContext::validateIndexArray(unsigned long count, unsigned lon
         }
     } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
         unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
-        if (uoffset > n || count > n - uoffset)
-            return false;
-            
         const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
         while (n-- > 0) {
             if (*p > lastIndex)
@@ -619,11 +680,11 @@ bool WebGLRenderingContext::validateIndexArray(unsigned long count, unsigned lon
     }    
         
     // Then set the last index in the index array and make sure it is valid.
-    numElements = lastIndex + 1;
-    return numElements > 0;
+    numElementsRequired = lastIndex + 1;
+    return numElementsRequired > 0;
 }
 
-bool WebGLRenderingContext::validateRenderingState(long numElements)
+bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
 {
     // Look in each enabled vertex attrib and find the smallest buffer size
     long smallestNumElements = LONG_MAX;
@@ -636,7 +697,7 @@ bool WebGLRenderingContext::validateRenderingState(long numElements)
     if (smallestNumElements == LONG_MAX)
         smallestNumElements = 0;
     
-    return numElements <= smallestNumElements;
+    return numElementsRequired <= smallestNumElements;
 }
 
 void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long count, ExceptionCode& ec)
@@ -658,10 +719,16 @@ void WebGLRenderingContext::drawElements(unsigned long mode, unsigned long count
     // Ensure we have a valid rendering state
     long numElements;
     
-    if (offset < 0 || !validateIndexArray(count, type, offset, numElements) || !validateRenderingState(numElements)) {
+    if (offset < 0 || !validateElementArraySize(count, type, offset)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+
+    if (!validateIndexArrayConservative(type, numElements) || !validateRenderingState(numElements))
+        if (!validateIndexArrayPrecise(count, type, offset, numElements) || !validateRenderingState(numElements)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return;
+        }
     
     m_context->drawElements(mode, count, type, offset);
     cleanupAfterGraphicsCall(true);

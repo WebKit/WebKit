@@ -47,14 +47,18 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     , m_elementArrayBufferByteLength(0)
     , m_arrayBufferByteLength(0)
     , m_elementArrayBufferCloned(false)
+    , m_nextAvailableCacheEntry(0)
 {
     setObject(context()->graphicsContext3D()->createBuffer());
+    clearCachedMaxIndices();
 }
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx, Platform3DObject obj)
     : CanvasObject(ctx)
+    , m_nextAvailableCacheEntry(0)
 {
     setObject(obj, false);
+    clearCachedMaxIndices();
 }
 
 void WebGLBuffer::_deleteObject(Platform3DObject object)
@@ -83,6 +87,7 @@ bool WebGLBuffer::associateBufferData(unsigned long target, WebGLArray* array)
         return false;
         
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        clearCachedMaxIndices();
         m_elementArrayBufferByteLength = array->byteLength();
         m_elementArrayBuffer = array->buffer();
         m_elementArrayBufferCloned = false;
@@ -103,6 +108,8 @@ bool WebGLBuffer::associateBufferSubData(unsigned long target, long offset, WebG
         return false;
         
     if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER) {
+        clearCachedMaxIndices();
+
         // We need to protect against integer overflow with these tests
         if (offset < 0)
             return false;
@@ -130,6 +137,33 @@ bool WebGLBuffer::associateBufferSubData(unsigned long target, long offset, WebG
 unsigned WebGLBuffer::byteLength(unsigned long target) const
 {
     return (target == GraphicsContext3D::ARRAY_BUFFER) ? m_arrayBufferByteLength : m_elementArrayBufferByteLength;
+}
+
+long WebGLBuffer::getCachedMaxIndex(unsigned long type)
+{
+    size_t numEntries = sizeof(m_maxIndexCache) / sizeof(MaxIndexCacheEntry);
+    for (size_t i = 0; i < numEntries; i++)
+        if (m_maxIndexCache[i].type == type)
+            return m_maxIndexCache[i].maxIndex;
+    return -1;
+}
+
+void WebGLBuffer::setCachedMaxIndex(unsigned long type, long value)
+{
+    int numEntries = sizeof(m_maxIndexCache) / sizeof(MaxIndexCacheEntry);
+    for (int i = 0; i < numEntries; i++)
+        if (m_maxIndexCache[i].type == type) {
+            m_maxIndexCache[i].maxIndex = value;
+            return;
+        }
+    m_maxIndexCache[m_nextAvailableCacheEntry].type = type;
+    m_maxIndexCache[m_nextAvailableCacheEntry].maxIndex = value;
+    m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % numEntries;
+}
+
+void WebGLBuffer::clearCachedMaxIndices()
+{
+    memset(m_maxIndexCache, 0, sizeof(m_maxIndexCache));
 }
 
 }

@@ -1,3 +1,36 @@
+2009-12-16  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Performance problems with index validation code for drawElements
+        https://bugs.webkit.org/show_bug.cgi?id=32466
+
+        Added a cache of the maximum index for each element type to
+        WebGLBuffer, querying it before iterating through the indices in
+        the client-side copy of the buffer's data. Hoisted checks of the
+        size of the element array itself into validateElementArraySize to
+        avoid duplicating code.
+
+        The performance improvement has been measured with manual tests.
+        Existing layout tests cover the index validation functionality
+        and continue to pass as before.
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        (WebCore::WebGLBuffer::associateBufferData):
+        (WebCore::WebGLBuffer::associateBufferSubData):
+        (WebCore::WebGLBuffer::getCachedMaxIndex):
+        (WebCore::WebGLBuffer::setCachedMaxIndex):
+        (WebCore::WebGLBuffer::clearCachedMaxIndices):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateElementArraySize):
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+        (WebCore::WebGLRenderingContext::drawElements):
+        * html/canvas/WebGLRenderingContext.h:
+
 2009-12-16  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by Darin Adler.

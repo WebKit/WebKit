@@ -301,7 +301,14 @@ class WebKitCSSMatrix;
                 markContextChanged();
         }
         
-        bool validateIndexArray(unsigned long count, unsigned long type, long offset, long& numElements);
+        // Basic validation of count and offset against number of elements in element array buffer
+        bool validateElementArraySize(unsigned long count, unsigned long type, long offset);
+
+        // Conservative but quick index validation
+        bool validateIndexArrayConservative(unsigned long type, long& numElementsRequired);
+
+        // Precise but slow index validation -- only done if conservative checks fail
+        bool validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired);
         bool validateRenderingState(long numElements);
 
         OwnPtr<GraphicsContext3D> m_context;
