@@ -54,13 +54,15 @@ public:
     RenderRubyAsInline(Node*);
     virtual ~RenderRubyAsInline();
 
-    virtual const char* renderName() const { return "RenderRuby (inline)"; }
-
-    virtual bool isRuby() const { return true; }
-
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
+
+private:
+    virtual bool isRuby() const { return true; }
+    virtual const char* renderName() const { return "RenderRuby (inline)"; }
+    virtual bool createsAnonymousWrapper() const { return true; }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { ASSERT_NOT_REACHED(); }
 };
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
@@ -69,13 +71,15 @@ public:
     RenderRubyAsBlock(Node*);
     virtual ~RenderRubyAsBlock();
 
-    virtual const char* renderName() const { return "RenderRuby (block)"; }
-
-    virtual bool isRuby() const { return true; }
-
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
+
+private:
+    virtual bool isRuby() const { return true; }
+    virtual const char* renderName() const { return "RenderRuby (block)"; }
+    virtual bool createsAnonymousWrapper() const { return true; }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

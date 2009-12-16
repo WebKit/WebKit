@@ -1,3 +1,17 @@
+2009-12-13  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix crash when encountering illegal HTML within a continuation inside <ruby>.
+        (https://bugs.webkit.org/show_bug.cgi?id=32316)
+
+        Avoid having the anonymous blocks utilized in the ruby renderers being
+        re-used as continuation blocks.
+        Avoid having ruby runs collected as "leftover blocks".
+
+        * fast/ruby/ruby-illegal-expected.txt: Added.
+        * fast/ruby/ruby-illegal.html: Added.
+
 2009-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

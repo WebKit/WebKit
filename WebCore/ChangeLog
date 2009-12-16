@@ -1,3 +1,31 @@
+2009-12-13  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix crash when encountering illegal HTML within a continuation inside <ruby>.
+        (https://bugs.webkit.org/show_bug.cgi?id=32316)
+
+        Avoid having the anonymous blocks utilized in the ruby renderers being
+        re-used as continuation blocks.
+        Avoid having ruby runs collected as "leftover blocks".
+
+        Test: fast/ruby/ruby-illegal.html
+
+        * rendering/RenderRuby.h:
+        (WebCore::RenderRubyAsInline::removeLeftoverAnonymousBlock): mustn't be called
+        (WebCore::RenderRubyAsInline::isRuby): made private
+        (WebCore::RenderRubyAsInline::renderName): made private
+        (WebCore::RenderRubyAsInline::createsAnonymousWrapper): return true
+        (WebCore::RenderRubyAsBlock::removeLeftoverAnonymousBlock): mustn't be called
+        (WebCore::RenderRubyAsBlock::isRuby): made private
+        (WebCore::RenderRubyAsBlock::renderName): made private
+        (WebCore::RenderRubyAsBlock::createsAnonymousWrapper): return true
+        * rendering/RenderRubyRun.h:
+        (WebCore::RenderRubyRun::removeLeftoverAnonymousBlock): avoid
+        (WebCore::RenderRubyRun::isRubyRun): made private
+        (WebCore::RenderRubyRun::renderName): made private
+        (WebCore::RenderRubyRun::createsAnonymousWrapper): return true
+
 2009-12-15  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.
