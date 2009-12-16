@@ -92,14 +92,20 @@ WebInspector.ConsoleView = function(drawer)
     this._shortcuts = {};
 
     var shortcut;
-    var handler = this.clearMessages.bind(this, true);
+    var clearConsoleHandler = this.clearMessages.bind(this, true);
 
     shortcut = WebInspector.KeyboardShortcut.makeKey("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
-    this._shortcuts[shortcut] = handler;
+    this._shortcuts[shortcut] = clearConsoleHandler;
     this._shortcuts[shortcut].isMacOnly = true;
     shortcut = WebInspector.KeyboardShortcut.makeKey("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-    this._shortcuts[shortcut] = handler;
+    this._shortcuts[shortcut] = clearConsoleHandler;
 
+    // Since the Context Menu for the Console View will always be the same, we can create it in
+    // the constructor.
+    this._contextMenu = new WebInspector.ContextMenu();
+    this._contextMenu.appendItem(WebInspector.UIString("Clear Console"), clearConsoleHandler);
+    this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+    
     this._customFormatters = {
         "object": this._formatobject,
         "array":  this._formatarray,
@@ -370,6 +376,17 @@ WebInspector.ConsoleView.prototype = {
     _clearButtonClicked: function()
     {
         this.clearMessages(true);
+    },
+    
+    _handleContextMenuEvent: function(event)
+    {
+        if (!window.getSelection().isCollapsed) {
+            // If there is a selection, we want to show our normal context menu
+            // (with Copy, etc.), and not Clear Console.
+            return;
+        }
+
+        this._contextMenu.show(event);
     },
 
     _messagesSelectStart: function(event)

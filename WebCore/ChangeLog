@@ -1,5 +1,21 @@
 2009-12-16  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Timothy Hatcher.
+
+        Part of <http://webkit.org/b/32568>.
+        Web Inspector: Context Menus should be used in more places.
+        
+        Add a context menu entry in the console to clear the console. This
+        is only shown when there is no user selection of text, because if
+        there is selection of the text, then we want to give the user the Copy +
+        Spell Check context menu that they are used to.
+
+        * English.lproj/localizedStrings.js: Added "Clear Console".
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+
+2009-12-16  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Pavel Feldman.
 
         Fixes <https://bugs.webkit.org/show_bug.cgi?id=32621>.
