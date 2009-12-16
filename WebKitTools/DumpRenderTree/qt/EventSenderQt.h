@@ -70,6 +70,7 @@ public slots:
 private:
     void sendTouchEvent(QEvent::Type);
     QPoint m_mousePos;
+    Qt::MouseButtons m_mouseButtons;
     QWebPage* m_page;
     int m_timeLeap;
     QWebFrame* frameUnderMouse() const;
