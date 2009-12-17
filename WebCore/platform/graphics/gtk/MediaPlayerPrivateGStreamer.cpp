@@ -711,7 +711,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     int width = 0, height = 0;
-    GstCaps *caps = gst_buffer_get_caps(m_buffer);
+    GstCaps* caps = gst_buffer_get_caps(m_buffer);
     GstVideoFormat format;
 
     if (!gst_video_format_parse_caps(caps, &format, &width, &height)) {
