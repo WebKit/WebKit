@@ -1164,14 +1164,31 @@ sub GenerateImplementationNamedPropertyGetter
     my $namedPropertyGetter = shift;
     my $interfaceName = $dataNode->name;
 
-    if ($dataNode->extendedAttributes->{"HasNameGetter"} && !$namedPropertyGetter->extendedAttributes->{"Custom"}) {
+    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $namedPropertyGetter;
+    if (!$hasGetter) {
+        return;
+    }
+
+    if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"}) {
         $implIncludes{"V8Collection.h"} = 1;
         my $type = $namedPropertyGetter->type;
         my $classIndex = uc($type);
         push(@implContent, <<END);
   setCollectionNamedGetter<${interfaceName}, ${type}>(desc, V8ClassIndex::${classIndex});
 END
+        return;
     }
+
+    my $hasSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
+    my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+    my $hasEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+
+    push(@implContent, "  desc->InstanceTemplate()->SetNamedPropertyHandler(V8Custom::v8${interfaceName}NamedPropertyGetter, ");
+    push(@implContent, $hasSetter ? "V8Custom::v8${interfaceName}NamedPropertySetter, " : "0, ");
+    push(@implContent, "0 ,"); # NamedPropertyQuery -- not being used at the moment.
+    push(@implContent, $hasDeleter ? "V8Custom::v8${interfaceName}NamedPropertyDeleter, " : "0, ");
+    push(@implContent, $hasEnumerator ? "V8Custom::v8${interfaceName}NamedPropertyEnumerator" : "0");
+    push(@implContent, ");\n");
 }
 
 sub GenerateImplementation
@@ -1467,7 +1484,7 @@ END
     }
 
     GenerateImplementationIndexer($dataNode, $indexer) if $indexer;
-    GenerateImplementationNamedPropertyGetter($dataNode, $namedPropertyGetter) if $namedPropertyGetter;
+    GenerateImplementationNamedPropertyGetter($dataNode, $namedPropertyGetter);
 
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;
