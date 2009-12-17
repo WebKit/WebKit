@@ -1,3 +1,14 @@
+2009-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Revised version of the test for:
+        <rdar://problem/5565465
+        https://bugs.webkit.org/show_bug.cgi?id=32622
+
+        * editing/selection/empty-cell-right-click-expected.txt:
+        * editing/selection/empty-cell-right-click.html:
+
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
