@@ -5455,6 +5455,7 @@ svg/filters/feMerge.svg
 svg/filters/feMerge-wrong-input.svg
 svg/filters/feOffset.svg
 svg/filters/feTile.svg
+svg/filters/filter-source-position.svg
 svg/filters/sourceAlpha.svg
 svg/filters/subRegion-in-userSpace.svg
 
@@ -5538,6 +5539,7 @@ editing/selection/find-in-text-control.html
 editing/selection/move-left-right.html
 
 # Missing DRT ability to override 'standard' preferences.
+editing/selection/doubleclick-beside-cr-span.html
 fast/dom/Window/timer-resume-on-navigation-back.html
 fast/harness/use-page-cache.html
 fast/loader/input-element-page-cache-crash.html

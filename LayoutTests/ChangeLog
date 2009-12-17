@@ -1,3 +1,10 @@
+2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping one test that needs overriding of standard preferences,
+        and a new one.
+
+        * platform/gtk/Skipped:
+
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Put test into skiplist because of missing layoutTestController.setSmartInsertDeleteEnabled().
