@@ -1,3 +1,23 @@
+2009-12-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed <rdar://problem/7355025> Interpreter::privateExecute macro generates
+        bloated code
+        
+        This patch cuts Interpreter stack use by about a third.
+
+        * bytecode/Opcode.h: Changed Opcode to const void* to work with the
+        const static initiliazation we want to do in Interpreter::privateExecute.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter): Moved hashtable initialization here to
+        avoid polluting Interpreter::privateExecute's stack, and changed it from a
+        series of add() calls to one add() call in a loop, to cut down on code size.
+
+        (JSC::Interpreter::privateExecute): Changed a series of label computations
+        to a copy of a compile-time constant array to cut down on code size.
+
 2009-12-16  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Disable debug variants of WebKit frameworks.

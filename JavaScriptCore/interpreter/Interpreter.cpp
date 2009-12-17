@@ -321,7 +321,13 @@ Interpreter::Interpreter()
     : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
 {
+#if HAVE(COMPUTED_GOTO)
     privateExecute(InitializeAndReturn, 0, 0, 0);
+
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
+#endif // HAVE(COMPUTED_GOTO)
+
 #if ENABLE(OPCODE_SAMPLING)
     enableSampler();
 #endif
@@ -1081,16 +1087,13 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 {
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function.
-    if (flag == InitializeAndReturn) {
+    if (UNLIKELY(flag == InitializeAndReturn)) {
         #if HAVE(COMPUTED_GOTO)
-            #define ADD_BYTECODE(id, length) m_opcodeTable[id] = &&id;
-                FOR_EACH_OPCODE_ID(ADD_BYTECODE);
-            #undef ADD_BYTECODE
-
-            #define ADD_OPCODE_ID(id, length) m_opcodeIDTable.add(&&id, id);
-                FOR_EACH_OPCODE_ID(ADD_OPCODE_ID);
-            #undef ADD_OPCODE_ID
-            ASSERT(m_opcodeIDTable.size() == numOpcodeIDs);
+            #define LIST_OPCODE_LABEL(id, length) &&id,
+                static Opcode labels[] = { FOR_EACH_OPCODE_ID(LIST_OPCODE_LABEL) };
+                for (size_t i = 0; i < sizeof(labels) / sizeof(Opcode); ++i)
+                    m_opcodeTable[i] = labels[i];
+            #undef LIST_OPCODE_LABEL
         #endif // HAVE(COMPUTED_GOTO)
         return JSValue();
     }

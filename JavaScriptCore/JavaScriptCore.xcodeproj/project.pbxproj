@@ -2566,9 +2566,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
-				BUILD_VARIANTS = (
-					normal,
-				);
+				BUILD_VARIANTS = normal;
 			};
 			name = Production;
 		};
