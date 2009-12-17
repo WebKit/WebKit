@@ -1,3 +1,16 @@
+2009-12-17  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Xan Lopez.
+
+        gtk: always use standard include paths, regardless of settings.
+        WebKit style is to wrap the body of a header in #if ENABLE(FOO),
+        so they're always safe to include whether the features are enabled or
+        not.
+
+        This fixes building with --disable-database and other flags.
+
+        * GNUmakefile.am:
+
 2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Build fixes for make distcheck.

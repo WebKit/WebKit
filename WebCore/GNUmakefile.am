@@ -43,10 +43,12 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/image-decoders/xbm \
 	-I$(srcdir)/WebCore/platform/mock \
 	-I$(srcdir)/WebCore/platform/network \
+	-I$(srcdir)/WebCore/platform/sql \
 	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
+	-I$(srcdir)/WebCore/storage \
 	-I$(srcdir)/WebCore/workers \
 	-I$(srcdir)/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js \
@@ -2181,9 +2183,7 @@ IDL_BINDINGS += \
 	WebCore/storage/SQLTransaction.idl
 
 webcore_cppflags += \
-	-DENABLE_DATABASE=1 \
-	-I$(top_srcdir)/WebCore/platform/sql \
-	-I$(top_srcdir)/WebCore/storage
+	-DENABLE_DATABASE=1
 
 webcore_sources += \
 	WebCore/bindings/js/JSCustomSQLStatementCallback.cpp \
@@ -2285,8 +2285,7 @@ IDL_BINDINGS += \
 	WebCore/storage/StorageEvent.idl
 
 webcore_cppflags += \
-	-DENABLE_DOM_STORAGE=1 \
-	-I$(top_srcdir)/WebCore/storage
+	-DENABLE_DOM_STORAGE=1
 
 webcore_sources += \
 	WebCore/bindings/js/JSStorageCustom.cpp \
