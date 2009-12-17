@@ -84,6 +84,13 @@ public:
         initializeFrom(other.size() ? &other[0] : 0, other.size());
     }
 
+    WebVector& operator=(const WebVector& other)
+    {
+        if (this != &other)
+            assign(other);
+        return *this;
+    }
+
     template <typename C>
     WebVector<T>& operator=(const C& other)
     {
