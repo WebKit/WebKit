@@ -48,6 +48,7 @@ class QtAbstractWebPopup;
 typedef struct _GtkMenu GtkMenu;
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkWidget GtkWidget;
+#include "GRefPtrGtk.h"
 #include <wtf/HashMap.h>
 #include <glib.h>
 #elif PLATFORM(WX)
@@ -173,7 +174,7 @@ private:
     bool m_showPopup;
 #elif PLATFORM(GTK)
     IntPoint m_menuPosition;
-    GtkMenu* m_popup;
+    GRefPtr<GtkMenu> m_popup;
     HashMap<GtkWidget*, int> m_indexMap;
     static void menuItemActivated(GtkMenuItem* item, PopupMenu*);
     static void menuUnmapped(GtkWidget*, PopupMenu*);

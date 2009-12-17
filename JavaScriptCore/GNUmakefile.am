@@ -291,6 +291,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/VectorTraits.h \
 	JavaScriptCore/wtf/gtk/GOwnPtr.cpp \
 	JavaScriptCore/wtf/gtk/GOwnPtr.h \
+	JavaScriptCore/wtf/gtk/GRefPtr.cpp \
+	JavaScriptCore/wtf/gtk/GRefPtr.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/unicode/Collator.h \

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Collabora Ltd.
+ *  Copyright (C) 2008 Collabora Ltd.
+ *  Copyright (C) 2009 Martin Robinson
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,44 +18,37 @@
  */
 
 #include "config.h"
-#include "GOwnPtr.h"
+#include "GRefPtrGtk.h"
 
 #include <glib.h>
+#include <gtk/gtk.h>
 
 namespace WTF {
 
-template <> void freeOwnedGPtr<GError>(GError* ptr)
+template <> GtkTargetList* refGPtr(GtkTargetList* ptr)
 {
     if (ptr)
-        g_error_free(ptr);
+        gtk_target_list_ref(ptr);
+    return ptr;
 }
 
-template <> void freeOwnedGPtr<GList>(GList* ptr)
-{
-    g_list_free(ptr);
-}
-
-template <> void freeOwnedGPtr<GCond>(GCond* ptr)
+template <> void derefGPtr(GtkTargetList* ptr)
 {
     if (ptr)
-        g_cond_free(ptr);
+        gtk_target_list_unref(ptr);
 }
 
-template <> void freeOwnedGPtr<GMutex>(GMutex* ptr)
+template <> GdkCursor* refGPtr(GdkCursor* ptr)
 {
     if (ptr)
-        g_mutex_free(ptr);
+        gdk_cursor_ref(ptr);
+    return ptr;
 }
 
-template <> void freeOwnedGPtr<GPatternSpec>(GPatternSpec* ptr)
+template <> void derefGPtr(GdkCursor* ptr)
 {
     if (ptr)
-        g_pattern_spec_free(ptr);
+        gdk_cursor_unref(ptr);
 }
 
-template <> void freeOwnedGPtr<GDir>(GDir* ptr)
-{
-    if (ptr)
-        g_dir_close(ptr);
 }
-} // namespace WTF

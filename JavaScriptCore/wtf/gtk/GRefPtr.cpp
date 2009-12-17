@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2009 Martin Robinson
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,44 +17,20 @@
  */
 
 #include "config.h"
-#include "GOwnPtr.h"
+#include "GRefPtr.h"
 
 #include <glib.h>
 
 namespace WTF {
 
-template <> void freeOwnedGPtr<GError>(GError* ptr)
+template <> GHashTable* refGPtr(GHashTable* ptr)
 {
-    if (ptr)
-        g_error_free(ptr);
+    g_hash_table_ref(ptr);
 }
 
-template <> void freeOwnedGPtr<GList>(GList* ptr)
+template <> void derefGPtr(GHashTable* ptr)
 {
-    g_list_free(ptr);
+    g_hash_table_unref(ptr);
 }
 
-template <> void freeOwnedGPtr<GCond>(GCond* ptr)
-{
-    if (ptr)
-        g_cond_free(ptr);
-}
-
-template <> void freeOwnedGPtr<GMutex>(GMutex* ptr)
-{
-    if (ptr)
-        g_mutex_free(ptr);
-}
-
-template <> void freeOwnedGPtr<GPatternSpec>(GPatternSpec* ptr)
-{
-    if (ptr)
-        g_pattern_spec_free(ptr);
-}
-
-template <> void freeOwnedGPtr<GDir>(GDir* ptr)
-{
-    if (ptr)
-        g_dir_close(ptr);
-}
 } // namespace WTF
