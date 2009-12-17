@@ -1,3 +1,33 @@
+2009-12-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility role of text nodes is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=32631
+        <rdar://problem/7369084>
+
+        Reviewed by Alice Liu.
+
+        Test: platform/win/accessibility/text-role.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        Add a new role to the enum.
+        (WebCore::AccessibilityObject::roleValueForMSAA):
+        Declare a function to return the accessibility role for MSAA; the base
+        implementation returns the old role value.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        Initialize m_roleForMSAA.
+        (WebCore::AccessibilityRenderObject::roleValueForMSAA):
+        If m_roleForMSAA has been set, return it. If the renderer is a
+        RenderText, set the role to EditableTextRole to match IE and Firefox.
+        Otherwise, set the role for MSAA to the old role value.
+
+        * accessibility/AccessibilityRenderObject.h:
+        Add a member to hold the role for MSAA, and declare an override of
+        roleValueForMSAA().
+
 2009-12-16  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52206.

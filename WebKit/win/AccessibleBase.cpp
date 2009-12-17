@@ -543,6 +543,7 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::TextFieldRole:
         case WebCore::TextAreaRole:
         case WebCore::ListMarkerRole:
+        case WebCore::EditableTextRole:
             return ROLE_SYSTEM_TEXT;
         case WebCore::StaticTextRole:
             return ROLE_SYSTEM_STATICTEXT;
@@ -572,7 +573,7 @@ static long MSAARole(AccessibilityRole role)
 
 long AccessibleBase::role() const
 {
-    return MSAARole(m_object->roleValue());
+    return MSAARole(m_object->roleValueForMSAA());
 }
 
 HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, AccessibilityObject*& childObj) const

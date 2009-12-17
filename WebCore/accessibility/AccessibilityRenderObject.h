@@ -248,6 +248,7 @@ public:
     virtual String stringRoleForMSAA() const;
     virtual String nameForMSAA() const;
     virtual String descriptionForMSAA() const;
+    virtual AccessibilityRole roleValueForMSAA() const;
 
 protected:
     RenderObject* m_renderer;
@@ -289,6 +290,8 @@ private:
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& name) const;
     
     void markChildrenDirty() const { m_childrenDirty = true; }
+
+    mutable AccessibilityRole m_roleForMSAA;
 };
     
 } // namespace WebCore

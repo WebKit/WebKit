@@ -168,6 +168,7 @@ enum AccessibilityRole {
     TreeGridRole,
     TreeItemRole,
     DirectoryRole,
+    EditableTextRole,
     
     // ARIA Grouping roles
     LandmarkApplicationRole,
@@ -489,7 +490,8 @@ public:
     virtual String stringRoleForMSAA() const { return String(); }
     virtual String nameForMSAA() const { return String(); }
     virtual String descriptionForMSAA() const { return String(); }
-    
+    virtual AccessibilityRole roleValueForMSAA() const { return m_role; }
+
     // Used by an ARIA tree to get all its rows.
     void ariaTreeRows(AccessibilityChildrenVector&);
     // Used by an ARIA tree item to get all of its direct rows that it can disclose.
