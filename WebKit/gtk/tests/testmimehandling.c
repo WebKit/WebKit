@@ -23,6 +23,7 @@
 #include <libsoup/soup.h>
 #include <string.h>
 #include <webkit/webkit.h>
+#include <unistd.h>
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
@@ -176,22 +177,20 @@ int main(int argc, char** argv)
 {
     SoupServer* server;
     SoupURI* soup_uri;
-    char* test_dir;
-    char* resources_dir;
 
     g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     /* Hopefully make test independent of the path it's called from. */
-    test_dir = g_path_get_dirname(argv[0]);
-    resources_dir = g_build_path(G_DIR_SEPARATOR_S, test_dir,
-                                 "..", "..", "..", "..",
-                                 "WebKit", "gtk", "tests", "resources",
-                                 NULL);
-    g_free(test_dir);
+    while (!g_file_test ("WebKit/gtk/tests/resources/test.html", G_FILE_TEST_EXISTS)) {
+        char path_name[PATH_MAX];
 
-    g_chdir(resources_dir);
-    g_free(resources_dir);
+        g_chdir("..");
+
+        g_assert(!g_str_equal(getcwd(path_name, PATH_MAX), "/"));
+    }
+
+    g_chdir("WebKit/gtk/tests/resources/");
 
     server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
     soup_server_run_async(server);
