@@ -3,7 +3,7 @@ description("Make sure handshake with URL with query components fails against se
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
-var url = "ws://127.0.0.1:8880/websocket/tests/no-query-support?";
+var url = "ws://127.0.0.1:8880/websocket/tests/no-query?";
 var handshake_success = false;
 var ws_location;
 

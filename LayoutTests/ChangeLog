@@ -1,3 +1,15 @@
+2009-12-16  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix LayoutTests/websocket/tests/url-with-query-for-no-query.html
+        https://bugs.webkit.org/show_bug.cgi?id=32606
+
+        It should test with /websocket/tests/no-query
+
+        * websocket/tests/script-tests/url-with-query-for-no-query.js:
+        * websocket/tests/url-with-query-for-no-query-expected.txt:
+
 2009-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] editing/selection/empty-cell-right-click.html introduced in r52220 failed.
