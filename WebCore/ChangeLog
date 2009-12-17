@@ -1,3 +1,23 @@
+2009-12-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for js bindings
+        https://bugs.webkit.org/show_bug.cgi?id=32655
+
+        Inherits the following classes from Noncopyable because these are instantiated 
+        by 'new' and no need to be copyable:
+
+        class name                  - instantiated at:  WebCore/'location'
+
+        class ScriptCachedFrameData - history/CachedFrame.cpp:117
+        class WebCoreJSClientData   - bindings/js/JSDOMWindowBase.cpp:162
+        class ScheduledAction       - bindings/js/ScheduledAction.cpp:58
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCachedFrameData.h:
+
 2009-12-17  Adam Roben  <aroben@apple.com>
 
         Chromium build fix

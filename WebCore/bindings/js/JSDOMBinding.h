@@ -182,7 +182,7 @@ namespace WebCore {
         HashMap<const JSC::HashTable*, JSC::HashTable> m_map;
     };
 
-    class WebCoreJSClientData : public JSC::JSGlobalData::ClientData {
+    class WebCoreJSClientData : public JSC::JSGlobalData::ClientData, public Noncopyable {
         friend class JSGlobalDataWorldIterator;
 
     public:
