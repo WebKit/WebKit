@@ -542,7 +542,8 @@ EXTRA_DIST += \
 	$(srcdir)/WebKit/gtk/docs/webkitgtk-sections.txt \
 	$(srcdir)/WebKit/gtk/docs/version.xml.in \
 	$(srcdir)/WebKit/gtk/po/* \
-	$(srcdir)/WebKit/gtk/resources/*
+	$(srcdir)/WebKit/gtk/resources/* \
+	$(srcdir)/WebKit/gtk/tests/resources/*
 
 # extra resource files
 resourcesdir = ${datadir}/webkit-1.0/resources

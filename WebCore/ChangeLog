@@ -1,3 +1,9 @@
+2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Build fixes for make distcheck.
+
+        * GNUmakefile.am:
+
 2009-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Gustavo Noronha Silva.

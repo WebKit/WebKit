@@ -434,7 +434,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
-	WebCore/bindings/js/JSPopStateEventCustom.h \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.cpp \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.h \
 	WebCore/bindings/js/JSStorageCustom.h \

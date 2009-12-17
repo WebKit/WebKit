@@ -195,6 +195,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSONObject.h \
 	JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
+	JavaScriptCore/runtime/JSZombie.h \
 	JavaScriptCore/runtime/LiteralParser.cpp \
 	JavaScriptCore/runtime/LiteralParser.h \
 	JavaScriptCore/runtime/MarkStack.cpp \
@@ -204,6 +205,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
+	JavaScriptCore/runtime/StringBuilder.h \
 	JavaScriptCore/runtime/Structure.cpp \
 	JavaScriptCore/runtime/Structure.h \
 	JavaScriptCore/runtime/StructureChain.cpp \
@@ -212,6 +214,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/TimeoutChecker.cpp \
 	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/JSTypeInfo.h \
+	JavaScriptCore/runtime/WeakGCMap.h \
 	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
 	JavaScriptCore/wrec/Escapes.h \
