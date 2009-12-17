@@ -34,6 +34,7 @@
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/objc-runtime.h>
+#import <wtf/UnusedParam.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieView)

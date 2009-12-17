@@ -1,3 +1,9 @@
+2009-12-17  Adam Roben  <aroben@apple.com>
+
+        Mac build fix
+
+        * WebView/WebVideoFullscreenController.mm: Added now-needed #import.
+
 2009-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
