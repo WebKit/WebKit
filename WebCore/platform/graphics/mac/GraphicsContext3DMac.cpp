@@ -48,9 +48,9 @@
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
 #include "WebKitCSSMatrix.h"
-
 #include <CoreGraphics/CGBitmapContext.h>
 #include <OpenGL/CGLRenderers.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

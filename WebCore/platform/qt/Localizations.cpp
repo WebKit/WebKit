@@ -32,6 +32,7 @@
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wtf/MathExtras.h>
 
 #include <QCoreApplication>
 #include <QLocale>

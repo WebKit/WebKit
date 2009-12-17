@@ -33,8 +33,9 @@
 #import "GraphicsLayer.h"
 #import <QuartzCore/QuartzCore.h>
 #import <OpenGL/OpenGL.h>
+#import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
-#include <wtf/FastMalloc.h>
+#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 
