@@ -1,3 +1,17 @@
+2009-12-17  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add support for mocking touch events with QtLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=32434
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::sendTouchEvent):
+        (MainWindow::eventFilter):
+        (MainWindow::setTouchMocking):
+        (MainWindow::setupUI):
+
 2009-12-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Kenneth Rohde Christiansen.

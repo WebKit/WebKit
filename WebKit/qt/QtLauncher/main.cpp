@@ -47,6 +47,7 @@
 #include <QVector>
 
 #include <cstdio>
+#include <qevent.h>
 #include <qwebelement.h>
 #include <qwebframe.h>
 #include <qwebinspector.h>
@@ -178,6 +179,12 @@ public:
         view = new WebView(splitter);
         WebPage* page = new WebPage(view);
         view->setPage(page);
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+        view->installEventFilter(this);
+        touchMocking = false;
+#endif
+
         connect(view, SIGNAL(loadFinished(bool)),
                 this, SLOT(loadFinished()));
         connect(view, SIGNAL(titleChanged(const QString&)),
@@ -218,6 +225,98 @@ public:
         zoomLevels << 100;
         zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
     }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    void sendTouchEvent()
+    {
+        if (touchPoints.isEmpty())
+            return;
+
+        QEvent::Type type = QEvent::TouchUpdate;
+        if (touchPoints.size() == 1) {
+            if (touchPoints[0].state() == Qt::TouchPointReleased)
+                type = QEvent::TouchEnd;
+            else if (touchPoints[0].state() == Qt::TouchPointPressed)
+                type = QEvent::TouchBegin;
+        }
+
+        QTouchEvent touchEv(type);
+        touchEv.setTouchPoints(touchPoints);
+        view->page()->event(&touchEv);
+
+        // After sending the event, remove all touchpoints that were released
+        if (touchPoints[0].state() == Qt::TouchPointReleased)
+            touchPoints.removeAt(0);
+        if (touchPoints.size() > 1 && touchPoints[1].state() == Qt::TouchPointReleased)
+            touchPoints.removeAt(1);        
+    }
+
+    bool eventFilter(QObject* obj, QEvent* event)
+    {
+        if (!touchMocking || obj != view)
+            return QObject::eventFilter(obj, event);
+
+        if (event->type() == QEvent::MouseButtonPress
+            || event->type() == QEvent::MouseButtonRelease
+            || event->type() == QEvent::MouseButtonDblClick
+            || event->type() == QEvent::MouseMove) {
+
+            QMouseEvent* ev = static_cast<QMouseEvent*>(event);
+            if (ev->type() == QEvent::MouseMove
+                && !(ev->buttons() & Qt::LeftButton))
+                return false;
+
+            QTouchEvent::TouchPoint touchPoint;
+            touchPoint.setState(Qt::TouchPointMoved);
+            if ((ev->type() == QEvent::MouseButtonPress
+                 || ev->type() == QEvent::MouseButtonDblClick))
+                touchPoint.setState(Qt::TouchPointPressed);
+            else if (ev->type() == QEvent::MouseButtonRelease)
+                touchPoint.setState(Qt::TouchPointReleased);
+
+            touchPoint.setId(0);
+            touchPoint.setScreenPos(ev->globalPos());
+            touchPoint.setPos(ev->pos());
+            touchPoint.setPressure(1);
+
+            // If the point already exists, update it. Otherwise create it.
+            if (touchPoints.size() > 0 && !touchPoints[0].id()) 
+                touchPoints[0] = touchPoint;
+            else if (touchPoints.size() > 1 && !touchPoints[1].id()) 
+                touchPoints[1] = touchPoint;
+            else 
+                touchPoints.append(touchPoint);
+
+            sendTouchEvent();
+        } else if (event->type() == QEvent::KeyPress
+            && static_cast<QKeyEvent*>(event)->key() == Qt::Key_F
+            && static_cast<QKeyEvent*>(event)->modifiers() == Qt::ControlModifier) {
+
+            // If the keyboard point is already pressed, release it.
+            // Otherwise create it and append to touchPoints.
+            if (touchPoints.size() > 0 && touchPoints[0].id() == 1) {
+                touchPoints[0].setState(Qt::TouchPointReleased);
+                sendTouchEvent();
+            } else if (touchPoints.size() > 1 && touchPoints[1].id() == 1) {
+                touchPoints[1].setState(Qt::TouchPointReleased);
+                sendTouchEvent();
+            } else {
+                QTouchEvent::TouchPoint touchPoint;
+                touchPoint.setState(Qt::TouchPointPressed);
+                touchPoint.setId(1);
+                touchPoint.setScreenPos(QCursor::pos());
+                touchPoint.setPos(view->mapFromGlobal(QCursor::pos()));
+                touchPoint.setPressure(1);            
+                touchPoints.append(touchPoint);
+                sendTouchEvent();
+
+                // After sending the event, change the touchpoint state to stationary
+                touchPoints.last().setState(Qt::TouchPointStationary);
+            }
+        }
+        return false;
+    }
+#endif // QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 
     QWebPage* webPage() const
     {
@@ -365,6 +464,13 @@ protected slots:
         }
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    void setTouchMocking(bool on)
+    {
+        touchMocking = on;
+    }
+#endif
+
 public slots:
 
     void newWindow(const QString &url = QString())
@@ -474,6 +580,11 @@ private:
         showInspectorAction->setShortcuts(QList<QKeySequence>() << QKeySequence(tr("F12")));
         showInspectorAction->connect(inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+        QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
+        touchMockAction->setCheckable(true);
+        touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
+#endif
     }
 
     QWebView* view;
@@ -485,6 +596,11 @@ private:
 
     QStringList urlList;
     QStringListModel urlModel;
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QList<QTouchEvent::TouchPoint> touchPoints;
+    bool touchMocking;
+#endif
 };
 
 bool WebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
