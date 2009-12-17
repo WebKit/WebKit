@@ -528,3 +528,9 @@ JSStringRef AccessibilityUIElement::documentURI()
 
     return JSStringCreateWithUTF8CString(atk_document_get_attribute_value(ATK_DOCUMENT(m_element), "URI"));
 }
+
+JSStringRef AccessibilityUIElement::url()
+{
+    // FIXME: implement
+    return JSStringCreateWithCharacters(0, 0);
+}

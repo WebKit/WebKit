@@ -721,3 +721,9 @@ JSStringRef AccessibilityUIElement::documentURI()
 {
     return JSStringCreateWithCharacters(0, 0);
 }
+
+JSStringRef AccessibilityUIElement::url()
+{
+    NSURL *url = [m_element accessibilityAttributeValue:NSAccessibilityURLAttribute];
+    return [[url absoluteString] createJSStringRef];    
+}

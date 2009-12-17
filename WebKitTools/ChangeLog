@@ -1,3 +1,21 @@
+2009-12-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        AX: DRT needs to support URL for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=32666
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getURLCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::url):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::url):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::url):
+
 2009-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed; added myself to committers
