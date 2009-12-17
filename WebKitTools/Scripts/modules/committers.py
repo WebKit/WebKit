@@ -116,6 +116,7 @@ committers_unable_to_review = [
     Committer("Ojan Vafai", "ojan@chromium.org"),
     Committer("Pam Greene", "pam@chromium.org"),
     Committer("Peter Kasting", ["pkasting@google.com", "pkasting@chromium.org"]),
+    Committer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org"]),
     Committer("Pierre d'Herbemont", ["pdherbemont@free.fr", "pdherbemont@apple.com"]),
     Committer("Pierre-Olivier Latour", "pol@apple.com"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
