@@ -44,6 +44,7 @@
 #include "StringHash.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
 
