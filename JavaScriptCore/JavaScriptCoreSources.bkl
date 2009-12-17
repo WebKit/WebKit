@@ -68,12 +68,10 @@ Source files for JSCore.
         parser/ParserArena.cpp
     </set>
     <set append="1" var="JSCORE_PROFILER_SOURCES">
-        profiler/HeavyProfile.cpp
         profiler/ProfileGenerator.cpp
         profiler/ProfileNode.cpp
         profiler/Profile.cpp
         profiler/Profiler.cpp
-        profiler/TreeProfile.cpp
     </set>
     <set append="1" var="JSCORE_RUNTIME_SOURCES">
         runtime/ArgList.cpp

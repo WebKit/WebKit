@@ -56,12 +56,10 @@ LOCAL_SRC_FILES := \
 	pcre/pcre_ucp_searchfuncs.cpp \
 	pcre/pcre_xclass.cpp \
 	\
-	profiler/HeavyProfile.cpp \
 	profiler/Profile.cpp \
 	profiler/ProfileGenerator.cpp \
 	profiler/ProfileNode.cpp \
 	profiler/Profiler.cpp \
-	profiler/TreeProfile.cpp \
 	\
 	runtime/ArgList.cpp \
 	runtime/Arguments.cpp \

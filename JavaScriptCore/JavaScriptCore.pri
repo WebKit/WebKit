@@ -126,12 +126,10 @@ SOURCES += \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \
     parser/Parser.cpp \
-    profiler/HeavyProfile.cpp \
     profiler/Profile.cpp \
     profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
     profiler/Profiler.cpp \
-    profiler/TreeProfile.cpp \
     runtime/ArgList.cpp \
     runtime/Arguments.cpp \
     runtime/ArrayConstructor.cpp \

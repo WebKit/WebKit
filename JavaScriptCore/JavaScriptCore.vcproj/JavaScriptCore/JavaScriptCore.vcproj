@@ -1489,14 +1489,6 @@
 			Name="Profiler"
 			>
 			<File
-				RelativePath="..\..\profiler\HeavyProfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\profiler\HeavyProfile.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\profiler\Profile.cpp"
 				>
 			</File>
@@ -1526,14 +1518,6 @@
 			</File>
 			<File
 				RelativePath="..\..\profiler\Profiler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\profiler\TreeProfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\profiler\TreeProfile.h"
 				>
 			</File>
 		</Filter>

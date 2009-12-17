@@ -161,8 +161,6 @@ javascriptcore_sources += \
 	JavaScriptCore/pcre/pcre_xclass.cpp \
 	JavaScriptCore/pcre/ucpinternal.h \
 	JavaScriptCore/profiler/CallIdentifier.h \
-	JavaScriptCore/profiler/HeavyProfile.cpp \
-	JavaScriptCore/profiler/HeavyProfile.h \
 	JavaScriptCore/profiler/Profile.cpp \
 	JavaScriptCore/profiler/Profile.h \
 	JavaScriptCore/profiler/ProfileGenerator.cpp \
@@ -171,8 +169,6 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/ProfileNode.h \
 	JavaScriptCore/profiler/Profiler.cpp \
 	JavaScriptCore/profiler/Profiler.h \
-	JavaScriptCore/profiler/TreeProfile.cpp \
-	JavaScriptCore/profiler/TreeProfile.h \
 	JavaScriptCore/interpreter/CachedCall.h \
 	JavaScriptCore/interpreter/CallFrame.cpp \
 	JavaScriptCore/interpreter/CallFrame.h \

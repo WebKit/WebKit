@@ -1,3 +1,27 @@
+2009-12-17  Adam Roben  <aroben@apple.com>
+
+        Remove HeavyProfile and TreeProfile completely
+
+        These were mostly removed in r42808, but the empty files were left in
+        place.
+
+        Fixes <http://webkit.org/b/32664>.
+
+        Reviewed by John Sullivan.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCoreSources.bkl:
+        Removed HeavyProfile/TreeProfile source files.
+
+        * profiler/HeavyProfile.cpp: Removed.
+        * profiler/HeavyProfile.h: Removed.
+        * profiler/TreeProfile.cpp: Removed.
+        * profiler/TreeProfile.h: Removed.
+
 2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.
