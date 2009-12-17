@@ -234,6 +234,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
     m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
+    m_page->setMemoryCacheClientCallsEnabled(false);
 }
 
 WebViewImpl::~WebViewImpl()

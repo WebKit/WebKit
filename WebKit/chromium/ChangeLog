@@ -1,3 +1,18 @@
+2009-12-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Disable memory cache client calls so that a new identifier isn't created
+        for the same resource on reload.
+
+        With the calls enabled, duplicate entries for cached resources are created
+        in the Web Inspector. Safari for Windows disables the calls near the point of the
+        Frame instance creation, and we just follow this for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=32618
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2009-12-17  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.
