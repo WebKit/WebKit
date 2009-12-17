@@ -1,3 +1,17 @@
+2009-12-17  Adam Roben  <aroben@apple.com>
+
+        Remove WebKit.sln's Debug_All and Debug_Internal configurations
+
+        These configurations aren't buildable by people outside of Apple, and
+        Apple doesn't use this solution file.
+
+        Fixes <http://webkit.org/b/31000> Windows WebKit Build Configuration
+        should default to Debug instead of Debug_all.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2009-12-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of text nodes is wrong
