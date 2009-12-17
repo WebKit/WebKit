@@ -1,3 +1,13 @@
+2009-12-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Switch to 11px as default for source-code in WebKit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32646
+
+        * inspector/front-end/inspector.css:
+
 2009-12-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

@@ -20469,9 +20469,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
-				BUILD_VARIANTS = (
-					normal,
-				);
+				BUILD_VARIANTS = normal;
 			};
 			name = Production;
 		};
