@@ -1,3 +1,14 @@
+2009-12-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed layout test fix.
+
+        WAI-ARIA: implement treegrid
+        https://bugs.webkit.org/show_bug.cgi?id=31299
+
+        The test for this patch shouldn't be run on Tiger.
+
+        * platform/mac-tiger/Skipped:
+
 2009-12-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
