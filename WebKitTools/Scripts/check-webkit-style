@@ -28,7 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Does WebKit-lint on C/C++ files.
+"""Does WebKit-lint on C/C++ or text files.
 
 The goal of this script is to identify places in the code that *may*
 be in non-compliance with WebKit style.  It does not attempt to fix
@@ -47,10 +47,11 @@ import os.path
 import sys
 
 import modules.cpp_style as cpp_style
-from modules.diff_parser import DiffParser
+import modules.style as style
 from modules.scm import detect_scm_system
 
 
+# FIXME: Avoid cpp_style dependency.
 cpp_style._USAGE = """
 Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
         [--filter=-x,+y,...] [file] ...
@@ -115,43 +116,11 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
     }
 
 
-def process_patch(patch_string):
-    """Does lint on a single patch.
-
-    Args:
-      patch_string: A string of a patch.
-    """
-    patch = DiffParser(patch_string.splitlines())
-    for filename, diff in patch.files.iteritems():
-        file_extension = os.path.splitext(filename)[1]
-
-        if file_extension in ['.cpp', '.c', '.h']:
-            line_numbers = set()
-
-            def error_for_patch(filename, line_number, category, confidence, message):
-                """Wrapper function of cpp_style.error for patches.
-
-                This function outputs errors only if the line number
-                corresponds to lines which are modified or added.
-                """
-                if not line_numbers:
-                    for line in diff.lines:
-                        # When deleted line is not set, it means that
-                        # the line is newly added.
-                        if not line[0]:
-                            line_numbers.add(line[1])
-
-                if line_number in line_numbers:
-                    cpp_style.error(filename, line_number, category, confidence, message)
-
-            cpp_style.process_file(filename, error=error_for_patch)
-
-
 def main():
-    cpp_style._DEFAULT_FILTER_RULES = cpp_style._WEBKIT_FILTER_RULES
+    style.use_webkit_styles()
 
-    (files, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="],
-                                               display_help=True)
+    (files, flags) = style.parse_arguments(sys.argv[1:], ["git-commit="],
+                                           display_help=True)
 
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
@@ -167,7 +136,7 @@ def main():
 
     if files:
         for filename in files:
-            cpp_style.process_file(filename)
+            style.process_file(filename)
 
     else:
         cwd = os.path.abspath('.')
@@ -183,10 +152,10 @@ def main():
             patch = scm.create_patch_since_local_commit(commit)
         else:
             patch = scm.create_patch()
-        process_patch(patch)
+        style.process_patch(patch)
 
-    sys.stderr.write('Total errors found: %d\n' % cpp_style.error_count())
-    sys.exit(cpp_style.error_count() > 0)
+    sys.stderr.write('Total errors found: %d\n' % style.error_count())
+    sys.exit(style.error_count() > 0)
 
 
 if __name__ == "__main__":

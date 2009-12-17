@@ -3717,6 +3717,20 @@ class WebKitStyleTest(CppStyleTestBase):
         pass
 
 
+    def test_can_handle(self):
+        """Tests for cpp_style.can_handle()."""
+        self.assert_(not cpp_style.can_handle(''))
+        self.assert_(cpp_style.can_handle('foo.h'))
+        self.assert_(not cpp_style.can_handle('foo.hpp'))
+        self.assert_(cpp_style.can_handle('foo.c'))
+        self.assert_(cpp_style.can_handle('foo.cpp'))
+        self.assert_(not cpp_style.can_handle('foo.cc'))
+        self.assert_(not cpp_style.can_handle('foo.cxx'))
+        self.assert_(not cpp_style.can_handle('foo.C'))
+        self.assert_(not cpp_style.can_handle('foo.mm'))
+        self.assert_(not cpp_style.can_handle('-'))
+
+
 def tearDown():
     """A global check to make sure all error-categories have been tested.
 

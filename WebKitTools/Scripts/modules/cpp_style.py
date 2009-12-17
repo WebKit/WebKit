@@ -3158,8 +3158,7 @@ def process_file(filename, error=error):
 
     # When reading from stdin, the extension is unknown, so no cpp_style tests
     # should rely on the extension.
-    if (filename != '-' and file_extension != 'h' and file_extension != 'cpp'
-        and file_extension != 'c'):
+    if (filename != '-' and not can_handle(filename)):
         sys.stderr.write('Ignoring %s; not a .cpp, .c or .h file\n' % filename)
     else:
         process_file_data(filename, file_extension, lines, error)
@@ -3261,3 +3260,12 @@ def parse_arguments(args, additional_flags=[], display_help=False):
     _set_filters(filters)
 
     return (filenames, additional_flag_values)
+
+
+def can_handle(filename):
+    """Checks if this module supports for the specified file type.
+
+    Args:
+      filename: A filename. It may contain directory names.
+     """
+    return os.path.splitext(filename)[1] in ('.h', '.cpp', '.c')
