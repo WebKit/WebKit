@@ -28,6 +28,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PlatformString.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;

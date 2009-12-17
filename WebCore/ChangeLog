@@ -1,3 +1,23 @@
+2009-12-17  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Adam Roben.
+
+        Don't include all JSC headers everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=32663
+
+        PlatformString.h included almost all of JSC via runtime/Identifier.h.
+        This patch gets rid of this include by forward-declaring the required
+        classes instead.
+        This reduces the build size of the object files on a Gtk debug build
+        by 10%. The resulting libwebkit.so gets 5% smaller.
+
+        No new tests as it's just a build improvement.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        include math.h here (it used to be pulled by JSC)
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+
 2009-12-17  Evan Martin  <evan@chromium.org>
 
         Reviewed by Xan Lopez.

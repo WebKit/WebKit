@@ -37,6 +37,8 @@
 #include <wtf/unicode/UTF8.h>
 
 #if USE(JSC)
+#include <runtime/Identifier.h>
+
 using JSC::Identifier;
 using JSC::UString;
 #endif
