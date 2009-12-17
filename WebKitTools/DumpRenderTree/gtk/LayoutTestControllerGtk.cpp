@@ -68,6 +68,7 @@ static gchar* copyWebSettingKey(gchar* preferenceKey)
         keyTable = g_hash_table_new(g_str_hash, g_str_equal);
         g_hash_table_insert(keyTable, g_strdup("WebKitJavaScriptEnabled"), g_strdup("enable-scripts"));
         g_hash_table_insert(keyTable, g_strdup("WebKitDefaultFontSize"), g_strdup("default-font-size"));
+        g_hash_table_insert(keyTable, g_strdup("WebKitEnableCaretBrowsing"), g_strdup("enable-caret-browsing"));
     }
 
     return g_strdup(static_cast<gchar*>(g_hash_table_lookup(keyTable, preferenceKey)));

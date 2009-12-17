@@ -1,3 +1,17 @@
+2009-12-17  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        Added the key WebKitEnableCaretBrowsing to the
+        layoutTestController.overridePreference in order to activate caret
+        browsing.
+        https://bugs.webkit.org/show_bug.cgi?id=32612
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Added the reset value of
+        the setting.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Inserted the new
+        key in the keytable.
+
 2009-12-17  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
