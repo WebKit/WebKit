@@ -39,14 +39,15 @@ typedef struct _GstBus GstBus;
 
 namespace WebCore {
 
-    class GraphicsContext;
-    class IntSize;
-    class IntRect;
-    class String;
+class GraphicsContext;
+class IntSize;
+class IntRect;
+class String;
 
-    gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
+gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
+void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data);
 
-    class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
         friend gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
         friend void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivate* playerPrivate);
 
@@ -74,6 +75,7 @@ namespace WebCore {
 
             void setRate(float);
             void setVolume(float);
+            void volumeChanged();
 
             int dataRate() const;
 
@@ -92,8 +94,8 @@ namespace WebCore {
             void loadStateChanged();
             void sizeChanged();
             void timeChanged();
-            void volumeChanged();
             void didEnd();
+            void durationChanged();
             void loadingFailed(MediaPlayer::NetworkState);
 
             void repaint();
@@ -138,6 +140,7 @@ namespace WebCore {
             bool m_paused;
             bool m_seeking;
             bool m_errorOccured;
+            guint m_volumeIdleId;
     };
 }
 

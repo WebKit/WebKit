@@ -91,12 +91,28 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
         gst_message_parse_buffering(message, &percent);
         LOG_VERBOSE(Media, "Buffering %d", percent);
         break;
+    case GST_MESSAGE_DURATION:
+        LOG_VERBOSE(Media, "Duration changed");
+        mp->durationChanged();
+        break;
     default:
         LOG_VERBOSE(Media, "Unhandled GStreamer message type: %s",
                     GST_MESSAGE_TYPE_NAME(message));
         break;
     }
     return true;
+}
+
+void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->volumeChanged();
+}
+
+gboolean notifyVolumeIdleCallback(MediaPlayer* mp)
+{
+    mp->volumeChanged();
+    return FALSE;
 }
 
 static float playbackPosition(GstElement* playbin)
@@ -146,7 +162,7 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 
 static bool gstInitialized = false;
 
-static bool do_gst_init()
+static bool doGstInit()
 {
     // FIXME: We should pass the arguments from the command line
     if (!gstInitialized) {
@@ -165,7 +181,7 @@ static bool do_gst_init()
 
 bool MediaPlayerPrivate::isAvailable()
 {
-    if (!do_gst_init())
+    if (!doGstInit())
         return false;
 
     GstElementFactory* factory = gst_element_factory_find("playbin2");
@@ -193,12 +209,18 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_paused(true)
     , m_seeking(false)
     , m_errorOccured(false)
+    , m_volumeIdleId(-1)
 {
-    do_gst_init();
+    doGstInit();
 }
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
+    if (m_volumeIdleId) {
+        g_source_remove(m_volumeIdleId);
+        m_volumeIdleId = -1;
+    }
+
     if (m_buffer)
         gst_buffer_unref(m_buffer);
     m_buffer = 0;
@@ -403,6 +425,16 @@ void MediaPlayerPrivate::setVolume(float volume)
 
     g_object_set(G_OBJECT(m_playBin), "volume", static_cast<double>(volume), NULL);
 }
+
+void MediaPlayerPrivate::volumeChanged()
+{
+    if (m_volumeIdleId) {
+        g_source_remove(m_volumeIdleId);
+        m_volumeIdleId = -1;
+    }
+    m_volumeIdleId = g_idle_add((GSourceFunc) notifyVolumeIdleCallback, m_player);
+}
+
 
 void MediaPlayerPrivate::setRate(float rate)
 {
@@ -663,14 +695,14 @@ void MediaPlayerPrivate::timeChanged()
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::volumeChanged()
-{
-    m_player->volumeChanged();
-}
-
 void MediaPlayerPrivate::didEnd()
 {
     timeChanged();
+}
+
+void MediaPlayerPrivate::durationChanged()
+{
+    m_player->durationChanged();
 }
 
 void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
@@ -751,7 +783,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 static HashSet<String> mimeTypeCache()
 {
 
-    do_gst_init();
+    doGstInit();
 
     static HashSet<String> cache;
     static bool typeListInitialized = false;
@@ -888,7 +920,9 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     gst_object_unref(bus);
 
     g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(),
-        "volume", static_cast<double>(m_player->volume()), NULL);
+                 NULL);
+
+    g_signal_connect(G_OBJECT(m_playBin), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
 
     m_videoSink = webkit_video_sink_new();
 

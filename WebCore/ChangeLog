@@ -1,3 +1,49 @@
+2009-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] Should emit {networkState,readyState,volume,time,size,rate,duration}Changed signals
+        https://bugs.webkit.org/show_bug.cgi?id=30377
+
+        Emit volumeChanged and durationChanged upon notification from
+        GStreamer.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateVolumeCallback):
+        (WebCore::notify_volume_idle_cb):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
+2009-12-16  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] segfault during volume notification
+        https://bugs.webkit.org/show_bug.cgi?id=32603
+
+        Emit volumeChanged and durationChanged upon notification from
+        GStreamer. Also don't reset the volume property on playbin, it is
+        not needed as it is 1.0 by default both on playbin and in the
+        MediaPlayer.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback):
+        (WebCore::notifyVolumeIdleCallback):
+        (WebCore::doGstInit):
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha.
