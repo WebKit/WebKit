@@ -1,5 +1,19 @@
 2009-12-17  Adam Roben  <aroben@apple.com>
 
+        Sync JavaScriptCore.vcproj with JavaScriptCore.xcodeproj and the
+        source tree
+
+        Fixes <http://webkit.org/b/32665>.
+
+        Reviewed by Ada Chan.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Moved
+        around files and filters so that the structure matches
+        JavaScriptCore.xcodeproj and the source tree. A few headers that were
+        previously omitted have been added, as well as JSZombie.{cpp,h}.
+
+2009-12-17  Adam Roben  <aroben@apple.com>
+
         Remove HeavyProfile and TreeProfile completely
 
         These were mostly removed in r42808, but the empty files were left in
