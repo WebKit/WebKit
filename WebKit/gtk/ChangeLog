@@ -1,3 +1,12 @@
+2009-12-17  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Xan Lopez.
+
+        Deprecate the title-changed signal of WebKitWebFrame.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+
 2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

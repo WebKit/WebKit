@@ -220,6 +220,15 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 1,
             G_TYPE_BOOLEAN);
 
+    /**
+     * WebKitWebFrame::title-changed:
+     * @frame: the object on which the signal is emitted
+     * @title: the new title
+     *
+     * When a #WebKitWebFrame changes the document title this signal is emitted.
+     *
+     * Deprecated: 1.1.18: Use "notify::title" instead.
+     */
     webkit_web_frame_signals[TITLE_CHANGED] = g_signal_new("title-changed",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
