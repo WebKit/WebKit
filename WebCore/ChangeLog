@@ -1,3 +1,20 @@
+2009-12-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] display FPS stats for video element
+        https://bugs.webkit.org/show_bug.cgi?id=32560
+
+        Display FPS statistics if WEBKIT_DEBUG environment variable
+        contains the Media log category. This feature requires a very
+        recent (>= 0.10.18) version of gst-plugins-bad.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2009-11-11  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

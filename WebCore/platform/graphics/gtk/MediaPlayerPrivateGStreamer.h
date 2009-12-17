@@ -125,6 +125,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             MediaPlayer* m_player;
             GstElement* m_playBin;
             GstElement* m_videoSink;
+            GstElement* m_fpsSink;
             GstElement* m_source;
             GstClockTime m_seekTime;
             bool m_changingRate;

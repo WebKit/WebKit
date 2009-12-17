@@ -196,6 +196,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_playBin(0)
     , m_videoSink(0)
+    , m_fpsSink(0)
     , m_source(0)
     , m_seekTime(0)
     , m_changingRate(false)
@@ -233,6 +234,11 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     if (m_videoSink) {
         g_object_unref(m_videoSink);
         m_videoSink = 0;
+    }
+
+    if (m_fpsSink) {
+        g_object_unref(m_fpsSink);
+        m_fpsSink = 0;
     }
 }
 
@@ -927,7 +933,21 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     m_videoSink = webkit_video_sink_new();
 
     g_object_ref_sink(m_videoSink);
-    g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+
+    WTFLogChannel* channel = getChannelFromName("Media");
+    if (channel->state == WTFLogChannelOn) {
+        m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
+        if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
+            g_object_set(G_OBJECT(m_fpsSink), "video-sink", m_videoSink, NULL);
+            g_object_ref_sink(m_fpsSink);
+            g_object_set(m_playBin, "video-sink", m_fpsSink, NULL);
+        } else {
+            m_fpsSink = 0;
+            g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+            LOG(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
+        }
+    } else
+        g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
 
     g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 }
