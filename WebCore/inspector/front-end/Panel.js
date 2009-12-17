@@ -363,6 +363,16 @@ WebInspector.Panel.prototype = {
     updateMainViewWidth: function(width)
     {
         // Should be implemented by ancestors.
+    },
+
+    canShowSourceLineForURL: function(url)
+    {
+        return false;
+    },
+
+    showSourceLineForURL: function(url, line)
+    {
+        return false;
     }
 }
 

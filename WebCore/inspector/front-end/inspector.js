@@ -600,13 +600,13 @@ WebInspector.documentClick = function(event)
     function followLink()
     {
         // FIXME: support webkit-html-external-link links here.
-        if (anchor.href in WebInspector.resourceURLMap) {
+        if (WebInspector.canShowSourceLineForURL(anchor.href, anchor.preferredPanel)) {
             if (anchor.hasStyleClass("webkit-html-external-link")) {
                 anchor.removeStyleClass("webkit-html-external-link");
                 anchor.addStyleClass("webkit-html-resource-link");
             }
 
-            WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
+            WebInspector.showSourceLineForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
         } else {
             var profileString = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
             if (profileString)
@@ -1409,24 +1409,27 @@ WebInspector.resourceForURL = function(url)
     return null;
 }
 
-WebInspector.showResourceForURL = function(url, line, preferredPanel)
+WebInspector._choosePanelToShowSourceLineForURL = function(url, preferredPanel)
 {
-    var resource = this.resourceForURL(url);
-    if (!resource)
-        return false;
+    preferredPanel = preferredPanel || "resources";
+    var panel = this.panels[preferredPanel];
+    if (panel && panel.canShowSourceLineForURL(url))
+        return panel;
+    panel = this.panels.resources;
+    return panel.canShowSourceLineForURL(url) ? panel : null;
+}
 
-    if (preferredPanel && preferredPanel in WebInspector.panels) {
-        var panel = this.panels[preferredPanel];
-        if (!("showResource" in panel))
-            panel = null;
-        else if ("canShowResource" in panel && !panel.canShowResource(resource))
-            panel = null;
-    }
+WebInspector.canShowSourceLineForURL = function(url, preferredPanel)
+{
+    return !!this._choosePanelToShowSourceLineForURL(url, preferredPanel);
+}
 
-    this.currentPanel = panel || this.panels.resources;
+WebInspector.showSourceLineForURL = function(url, line, preferredPanel)
+{
+    this.currentPanel = this._choosePanelToShowSourceLineForURL(url, preferredPanel);
     if (!this.currentPanel)
         return false;
-    this.currentPanel.showResource(resource, line);
+    this.currentPanel.showSourceLineForURL(url, line);
     return true;
 }
 

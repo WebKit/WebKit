@@ -1,3 +1,35 @@
+2009-12-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Advice links to source code in CPU profiler to open in debugger,
+        not in resources tab.
+
+        Also work around the case when resources are disabled, but scripts are present.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32610
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.updateMainViewWidth):
+        (WebInspector.Panel.prototype.canShowSourceLineForURL):
+        (WebInspector.Panel.prototype.showSourceLineForURL):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.createCell):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.canShowSourceLineForURL):
+        (WebInspector.ResourcesPanel.prototype.showSourceLineForURL):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.scriptForURL):
+        (WebInspector.ScriptsPanel.prototype.canShowSourceLineForURL):
+        (WebInspector.ScriptsPanel.prototype.showSourceLineForURL):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector._choosePanelToShowSourceLineForURL):
+        (WebInspector.canShowSourceLineForURL):
+        (WebInspector.showSourceLineForURL):
+
 2009-12-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

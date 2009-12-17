@@ -102,6 +102,7 @@ WebInspector.ProfileDataGridNode.prototype = {
             urlElement.className = "profile-node-file webkit-html-resource-link";
             urlElement.href = this.profileNode.url;
             urlElement.lineNumber = this.profileNode.lineNumber;
+            urlElement.preferredPanel = "scripts";
 
             if (this.profileNode.lineNumber > 0)
                 urlElement.textContent = fileName + ":" + this.profileNode.lineNumber;

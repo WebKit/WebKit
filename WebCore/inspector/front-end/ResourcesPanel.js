@@ -456,6 +456,16 @@ WebInspector.ResourcesPanel.prototype = {
             newView.show(oldView.element.parentNode);
     },
 
+    canShowSourceLineForURL: function(url)
+    {
+        return !!WebInspector.resourceForURL(url);
+    },
+
+    showSourceLineForURL: function(url, line)
+    {
+        this.showResource(WebInspector.resourceForURL(url), line);
+    },
+
     showResource: function(resource, line)
     {
         if (!resource)

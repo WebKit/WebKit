@@ -310,6 +310,11 @@ WebInspector.ScriptsPanel.prototype = {
         return this._sourceIDMap[id];
     },
 
+    scriptForURL: function(url)
+    {
+        return this._scriptsForURLsInFilesSelect[url];
+    },
+
     addBreakpoint: function(breakpoint)
     {
         this.sidebarPanes.breakpoints.addBreakpoint(breakpoint);
@@ -497,9 +502,19 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    canShowResource: function(resource)
+    canShowSourceLineForURL: function(url)
     {
-        return resource && resource.scripts.length && InspectorBackend.debuggerEnabled();
+        return InspectorBackend.debuggerEnabled() &&
+            !!(WebInspector.resourceForURL(url) || this.scriptForURL(url));
+    },
+
+    showSourceLineForURL: function(url, line)
+    {
+        var resource = WebInspector.resourceForURL(url);
+        if (resource)
+            this.showResource(resource, line);
+        else
+            this.showScript(this.scriptForURL(url), line);
     },
 
     showScript: function(script, line)
@@ -651,7 +666,7 @@ WebInspector.ScriptsPanel.prototype = {
 
             console.assert(option);
         } else {
-            var script = this._scriptsForURLsInFilesSelect[url];
+            var script = this.scriptForURL(url);
             if (script)
                option = script.filesSelectOption;
         }
