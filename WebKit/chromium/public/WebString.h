@@ -87,6 +87,18 @@ public:
     WEBKIT_API static WebString fromUTF8(const char* data, size_t length);
     WEBKIT_API static WebString fromUTF8(const char* data);
 
+    template <int N> WebString(const char (&data)[N])
+        : m_private(0)
+    {
+        assign(fromUTF8(data, N - 1));
+    }
+
+    template <int N> WebString& operator=(const char (&data)[N])
+    {
+        assign(fromUTF8(data, N - 1));
+        return *this;
+    }
+
 #if WEBKIT_IMPLEMENTATION
     WebString(const WebCore::String&);
     WebString& operator=(const WebCore::String&);
@@ -96,6 +108,7 @@ public:
     WebString& operator=(const WebCore::AtomicString&);
     operator WebCore::AtomicString() const;
 #else
+
     WebString(const string16& s) : m_private(0)
     {
         assign(s.data(), s.length());

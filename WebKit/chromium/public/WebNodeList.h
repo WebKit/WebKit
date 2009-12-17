@@ -28,42 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMUtilitiesPrivate_h
-#define DOMUtilitiesPrivate_h
+#ifndef WebNodeList_h
+#define WebNodeList_h
 
-namespace WebCore {
-class Element;
-class HTMLInputElement;
-class HTMLLinkElement;
-class HTMLMetaElement;
-class HTMLOptionElement;
-class Node;
-class QualifiedName;
-class String;
-}
+#include "WebCommon.h"
 
-// This file is an aggregate of useful WebCore operations.
+namespace WebCore { class NodeList; }
+#if WEBKIT_IMPLEMENTATION
+namespace WTF { template <typename T> class PassRefPtr; }
+#endif
+
 namespace WebKit {
+class WebNode;
 
-// If node is an HTML node with a tag name of name it is casted and returned.
-// If node is not an HTML node or the tag name is not name, 0 is returned.
-WebCore::HTMLInputElement* toHTMLInputElement(WebCore::Node*);
-WebCore::HTMLLinkElement* toHTMLLinkElement(WebCore::Node*);
-WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
-WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
+// Provides readonly access to some properties of a DOM node.
+class WebNodeList {
+public:
+    ~WebNodeList() { reset(); }
 
-// FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
-WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
+    WebNodeList() : m_private(0) { }
+    WebNodeList(const WebNodeList& n) : m_private(0) { assign(n); }
+    WebNodeList& operator=(const WebNodeList& n)
+    {
+        assign(n);
+        return *this;
+    }
 
-// For img, script, iframe, frame element, when attribute name is src,
-// for link, a, area element, when attribute name is href,
-// for form element, when attribute name is action,
-// for input, type=image, when attribute name is src,
-// for body, table, tr, td, when attribute name is background,
-// for blockquote, q, del, ins, when attribute name is cite,
-// we can consider the attribute value has legal link.
-bool elementHasLegalLinkAttribute(const WebCore::Element* element,
-                                  const WebCore::QualifiedName& attrName);
+    WEBKIT_API void reset();
+    WEBKIT_API void assign(const WebNodeList&);
+
+    WEBKIT_API unsigned length() const;
+    WEBKIT_API WebNode item(size_t) const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebNodeList(const WTF::PassRefPtr<WebCore::NodeList>&);
+#endif
+
+private:
+    void assign(WebCore::NodeList*);
+    WebCore::NodeList* m_private;
+};
 
 } // namespace WebKit
 

@@ -50,7 +50,11 @@ namespace WebKit {
         WebFormElement() : WebElement() { }
         WebFormElement(const WebFormElement& e) : WebElement(e) { }
 
-        WebElement& operator=(const WebFormElement& e) { WebElement::assign(e); return *this; }
+        WebFormElement& operator=(const WebFormElement& e)
+        {
+            WebElement::assign(e);
+            return *this;
+        }
         WEBKIT_API void assign(const WebFormElement& e) { WebElement::assign(e); }
 
 #if WEBKIT_IMPLEMENTATION

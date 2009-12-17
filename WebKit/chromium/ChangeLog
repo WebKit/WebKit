@@ -1,3 +1,123 @@
+2009-12-17  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added WebPageSerializer to WebKit API and enriched the WebNode hierarchy to support
+        downstream unit-testing of serialization.
+
+        WebPageSerializer was adapted from Chromium's dom_serializer, originally authored by Johnny Ding.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31737
+
+        * WebKit.gyp:
+        * public/WebDocument.h: Added.
+        (WebKit::WebDocument::WebDocument):
+        (WebKit::WebDocument::operator=):
+        (WebKit::WebDocument::assign):
+        * public/WebElement.h:
+        * public/WebFormElement.h:
+        (WebKit::WebFormElement::operator=):
+        * public/WebFrame.h:
+        * public/WebNode.h:
+        (WebKit::WebNode::):
+        (WebKit::WebNode::toConstElement):
+        * public/WebNodeCollection.h: Added.
+        (WebKit::WebNodeCollection::~WebNodeCollection):
+        (WebKit::WebNodeCollection::WebNodeCollection):
+        (WebKit::WebNodeCollection::operator=):
+        * public/WebNodeList.h: Added.
+        (WebKit::WebNodeList::~WebNodeList):
+        (WebKit::WebNodeList::WebNodeList):
+        (WebKit::WebNodeList::operator=):
+        * public/WebPageSerializer.h: Added.
+        * public/WebPageSerializerClient.h: Added.
+        (WebKit::WebPageSerializerClient::):
+        (WebKit::WebPageSerializerClient::WebPageSerializerClient):
+        (WebKit::WebPageSerializerClient::~WebPageSerializerClient):
+        * public/WebString.h:
+        * public/WebView.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/DOMUtilitiesPrivate.cpp:
+        (WebKit::elementHasLegalLinkAttribute):
+        * src/DOMUtilitiesPrivate.h:
+        * src/WebDocument.cpp: Added.
+        (WebKit::WebDocument::WebDocument):
+        (WebKit::WebDocument::operator=):
+        (WebKit::WebDocument::operator WTF::PassRefPtr<Document>):
+        (WebKit::WebDocument::frame):
+        (WebKit::WebDocument::isHTMLDocument):
+        (WebKit::WebDocument::baseURL):
+        (WebKit::WebDocument::body):
+        (WebKit::WebDocument::head):
+        (WebKit::WebDocument::all):
+        (WebKit::WebDocument::completeURL):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::hasTagName):
+        (WebKit::WebElement::hasAttribute):
+        (WebKit::WebElement::getAttribute):
+        * src/WebEntities.cpp: Added.
+        (WebKit::populateMap):
+        (WebKit::):
+        (WebKit::WebEntities::WebEntities):
+        (WebKit::WebEntities::entityNameByCode):
+        (WebKit::WebEntities::convertEntitiesInString):
+        * src/WebEntities.h: Added.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::fromFrameOwnerElement):
+        (WebKit::WebFrameImpl::encoding):
+        (WebKit::WebFrameImpl::document):
+        (WebKit::WebFrameImpl::fromFrameOwnerElement):
+        * src/WebFrameImpl.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::nodeType):
+        (WebKit::WebNode::nodeValue):
+        (WebKit::WebNode::document):
+        (WebKit::WebNode::firstChild):
+        (WebKit::WebNode::lastChild):
+        (WebKit::WebNode::previousSibling):
+        (WebKit::WebNode::nextSibling):
+        (WebKit::WebNode::hasChildNodes):
+        (WebKit::WebNode::childNodes):
+        (WebKit::WebNode::createMarkup):
+        (WebKit::WebNode::isTextNode):
+        (WebKit::WebNode::isElementNode):
+        * src/WebNodeCollection.cpp: Added.
+        (WebKit::WebNodeCollection::reset):
+        (WebKit::WebNodeCollection::assign):
+        (WebKit::WebNodeCollection::WebNodeCollection):
+        (WebKit::WebNodeCollection::length):
+        (WebKit::WebNodeCollection::nextItem):
+        (WebKit::WebNodeCollection::firstItem):
+        * src/WebNodeList.cpp: Added.
+        (WebKit::WebNodeList::reset):
+        (WebKit::WebNodeList::assign):
+        (WebKit::WebNodeList::WebNodeList):
+        (WebKit::WebNodeList::length):
+        (WebKit::WebNodeList::item):
+        * src/WebPageSerializer.cpp: Added.
+        (WebKit::WebPageSerializer::serialize):
+        (WebKit::WebPageSerializer::generateMetaCharsetDeclaration):
+        (WebKit::WebPageSerializer::generateMarkOfTheWebDeclaration):
+        (WebKit::WebPageSerializer::generateBaseTagDeclaration):
+        * src/WebPageSerializerImpl.cpp: Added.
+        (WebKit::WebPageSerializerImpl::SerializeDomParam::SerializeDomParam):
+        (WebKit::WebPageSerializerImpl::preActionBeforeSerializeOpenTag):
+        (WebKit::WebPageSerializerImpl::postActionAfterSerializeOpenTag):
+        (WebKit::WebPageSerializerImpl::preActionBeforeSerializeEndTag):
+        (WebKit::WebPageSerializerImpl::postActionAfterSerializeEndTag):
+        (WebKit::WebPageSerializerImpl::saveHTMLContentToBuffer):
+        (WebKit::WebPageSerializerImpl::openTagToString):
+        (WebKit::WebPageSerializerImpl::endTagToString):
+        (WebKit::WebPageSerializerImpl::buildContentForNode):
+        (WebKit::WebPageSerializerImpl::WebPageSerializerImpl):
+        (WebKit::WebPageSerializerImpl::collectTargetFrames):
+        (WebKit::WebPageSerializerImpl::serialize):
+        * src/WebPageSerializerImpl.h: Added.
+        * src/WebString.cpp:
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+        * src/WebViewImpl.cpp:
+
 2009-12-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by David Levin.

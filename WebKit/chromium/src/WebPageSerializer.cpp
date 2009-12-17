@@ -29,46 +29,53 @@
  */
 
 #include "config.h"
-#include "WebElement.h"
+#include "WebPageSerializer.h"
 
-#include "Element.h"
-#include <wtf/PassRefPtr.h>
+#include "KURL.h"
+#include "PlatformString.h"
+
+#include "WebFrame.h"
+#include "WebPageSerializerClient.h"
+#include "WebPageSerializerImpl.h"
+#include "WebString.h"
+#include "WebURL.h"
+#include "WebVector.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebElement::WebElement(const WTF::PassRefPtr<WebCore::Element>& elem)
-    : WebNode(elem.releaseRef())
+bool WebPageSerializer::serialize(WebFrame* frame,
+                                  bool recursive,
+                                  WebPageSerializerClient* client,
+                                  const WebVector<WebURL>& links,
+                                  const WebVector<WebString>& localPaths,
+                                  const WebString& localDirectoryName)
 {
+    WebPageSerializerImpl serializerImpl(
+        frame, recursive, client, links, localPaths, localDirectoryName);
+    return serializerImpl.serialize();
 }
 
-WebElement& WebElement::operator=(const WTF::PassRefPtr<WebCore::Element>& elem)
+WebString WebPageSerializer::generateMetaCharsetDeclaration(const WebString& charset)
 {
-    WebNode::assign(elem.releaseRef());
-    return *this;
+    return String::format("<META http-equiv=\"Content-Type\" content=\"text/html; charset=%s\">",
+                          charset.utf8().data());
 }
 
-WebElement::operator WTF::PassRefPtr<Element>() const
+WebString WebPageSerializer::generateMarkOfTheWebDeclaration(const WebURL& url)
 {
-    return PassRefPtr<Element>(static_cast<Element*>(m_private));
+    return String::format("\n<!-- saved from url=(%04d)%s -->\n",
+                          static_cast<int>(url.spec().length()),
+                          url.spec().data());
 }
 
-bool WebElement::hasTagName(const WebString& tagName) const
+WebString WebPageSerializer::generateBaseTagDeclaration(const WebString& baseTarget)
 {
-    return equalIgnoringCase(constUnwrap<Element>()->tagName(),
-                             tagName.operator WebCore::String());
+    String targetDeclaration;
+    if (!baseTarget.isEmpty())
+        targetDeclaration = String::format(" target=\"%s\"", baseTarget.utf8().data());
+    return String::format("<BASE href=\".\"%s>", targetDeclaration.utf8().data());
 }
 
-bool WebElement::hasAttribute(const WebString& attrName) const
-{
-    return constUnwrap<Element>()->hasAttribute(attrName);
-}
-
-WebString WebElement::getAttribute(const WebString& attrName) const
-{
-    return constUnwrap<Element>()->getAttribute(attrName);
-}
-
-} // namespace WebKit
-
+}  // namespace WebKit

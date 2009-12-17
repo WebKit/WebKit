@@ -47,6 +47,8 @@ namespace WebKit {
 
 class WebData;
 class WebDataSource;
+class WebDocument;
+class WebElement;
 class WebFormElement;
 class WebHistoryItem;
 class WebInputElement;
@@ -85,6 +87,10 @@ public:
     WEBKIT_API static WebFrame* frameForEnteredContext();
     WEBKIT_API static WebFrame* frameForCurrentContext();
 
+    // Returns the frame inside a given frame or iframe element. Returns 0 if
+    // the given element is not a frame, iframe or if the frame is empty.
+    WEBKIT_API static WebFrame* fromFrameOwnerElement(const WebElement&);
+
 
     // Basic properties ---------------------------------------------------
 
@@ -103,6 +109,8 @@ public:
     // the document loaded in this frame.
     virtual WebURL openSearchDescriptionURL() const = 0;
 
+    // Return the frame's encoding.
+    virtual WebString encoding() const = 0;
 
     // Geometry -----------------------------------------------------------
 
@@ -164,8 +172,9 @@ public:
 
     // Content ------------------------------------------------------------
 
-    virtual void forms(WebVector<WebFormElement>&) const = 0;
+    virtual WebDocument document() const = 0;
 
+    virtual void forms(WebVector<WebFormElement>&) const = 0;
 
     // Scripting ----------------------------------------------------------
 
@@ -444,6 +453,7 @@ public:
     // relative to the base URL of the frame's document.  This uses the
     // same algorithm that WebKit uses to resolve hyperlinks found in a
     // HTML document.
+    // Deprecated. Use document().completeURL() instead.
     virtual WebURL completeURL(const WebString&) const = 0;
 
     // Returns the contents of this frame as a string.  If the text is

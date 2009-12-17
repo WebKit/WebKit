@@ -35,9 +35,15 @@
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "Node.h"
+#include "NodeList.h"
 
+#include "WebDocument.h"
 #include "WebFrameImpl.h"
+#include "WebNodeList.h"
 #include "WebString.h"
+#include "WebVector.h"
+
+#include "markup.h"
 
 #include <wtf/PassRefPtr.h>
 
@@ -61,6 +67,11 @@ void WebNode::assign(const WebNode& other)
     assign(p);
 }
 
+WebNode::NodeType WebNode::nodeType() const
+{
+    return static_cast<NodeType>(m_private->nodeType());
+}
+
 WebNode WebNode::parentNode() const
 {
     return PassRefPtr<Node>(const_cast<Node*>(m_private->parentNode()));
@@ -71,18 +82,23 @@ WebString WebNode::nodeName() const
     return m_private->nodeName();
 }
 
-WebNode::WebNode(const WTF::PassRefPtr<WebCore::Node>& node)
+WebString WebNode::nodeValue() const
+{
+    return m_private->nodeValue();
+}
+
+WebNode::WebNode(const PassRefPtr<Node>& node)
     : m_private(static_cast<WebNodePrivate*>(node.releaseRef()))
 {
 }
 
-WebNode& WebNode::operator=(const WTF::PassRefPtr<WebCore::Node>& node)
+WebNode& WebNode::operator=(const PassRefPtr<Node>& node)
 {
     assign(static_cast<WebNodePrivate*>(node.releaseRef()));
     return *this;
 }
 
-WebNode::operator WTF::PassRefPtr<WebCore::Node>() const
+WebNode::operator PassRefPtr<Node>() const
 {
     return PassRefPtr<Node>(const_cast<WebNodePrivate*>(m_private));
 }
@@ -98,6 +114,56 @@ void WebNode::assign(WebNodePrivate* p)
 WebFrame* WebNode::frame() const
 {
     return WebFrameImpl::fromFrame(m_private->document()->frame());
+}
+
+WebDocument WebNode::document() const
+{
+    return WebDocument(m_private->document());
+}
+
+WebNode WebNode::firstChild() const
+{
+    return WebNode(m_private->firstChild());
+}
+
+WebNode WebNode::lastChild() const
+{
+    return WebNode(m_private->lastChild());
+}
+
+WebNode WebNode::previousSibling() const
+{
+    return WebNode(m_private->previousSibling());
+}
+
+WebNode WebNode::nextSibling() const
+{
+    return WebNode(m_private->nextSibling());
+}
+
+bool WebNode::hasChildNodes() const
+{
+    return m_private->hasChildNodes();
+}
+
+WebNodeList WebNode::childNodes()
+{
+    return WebNodeList(m_private->childNodes());
+}
+
+WebString WebNode::createMarkup() const
+{
+    return WebCore::createMarkup(m_private);
+}
+
+bool WebNode::isTextNode() const
+{
+    return m_private->isTextNode();
+}
+
+bool WebNode::isElementNode() const
+{
+    return m_private->isElementNode();
 }
 
 } // namespace WebKit

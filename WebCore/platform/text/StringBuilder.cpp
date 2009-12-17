@@ -95,4 +95,17 @@ String StringBuilder::toString() const
     return result;
 }
 
+void StringBuilder::clear()
+{
+    m_totalLength = UINT_MAX;
+    m_strings.clear();
+}
+
+unsigned StringBuilder::length() const
+{
+    if (m_totalLength == UINT_MAX)
+        return 0;
+    return m_totalLength;
+}
+
 }

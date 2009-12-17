@@ -40,7 +40,9 @@ namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {
+class WebDocument;
 class WebFrame;
+class WebNodeList;
 
 // Provides readonly access to some properties of a DOM node.
 class WebNode {
@@ -66,11 +68,46 @@ public:
     operator WTF::PassRefPtr<WebCore::Node>() const;
 #endif
 
+    enum NodeType {
+        ElementNode = 1,
+        AttributeNode,
+        TextNode,
+        CDataSectionNode,
+        EntityReferenceNode,
+        EntityNode,
+        ProcessingInstructionsNode,
+        CommentNode,
+        DocumentNode,
+        DocumentTypeNode,
+        DocumentFragmentNode,
+        NotationNode,
+        XPathNamespaceNode
+    };
+    WEBKIT_API NodeType nodeType() const;
     WEBKIT_API WebNode parentNode() const;
     WEBKIT_API WebString nodeName() const;
+    WEBKIT_API WebString nodeValue() const;
+    // Deprecated. Use document().frame() instead.
     WEBKIT_API WebFrame* frame() const;
+    WEBKIT_API WebDocument document() const;
+    WEBKIT_API WebNode firstChild() const;
+    WEBKIT_API WebNode lastChild() const;
+    WEBKIT_API WebNode previousSibling() const;
+    WEBKIT_API WebNode nextSibling() const;
+    WEBKIT_API bool hasChildNodes() const;
+    WEBKIT_API WebNodeList childNodes();
+    WEBKIT_API WebString createMarkup() const;
+    WEBKIT_API bool isTextNode() const;
+    WEBKIT_API bool isElementNode() const;
 
     template<typename T> T toElement()
+    {
+        T res;
+        res.m_private = m_private;
+        return res;
+    }
+
+    template<typename T> const T toConstElement() const
     {
         T res;
         res.m_private = m_private;

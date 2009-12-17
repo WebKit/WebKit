@@ -28,43 +28,77 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMUtilitiesPrivate_h
-#define DOMUtilitiesPrivate_h
+#include "config.h"
+#include "WebDocument.h"
 
-namespace WebCore {
-class Element;
-class HTMLInputElement;
-class HTMLLinkElement;
-class HTMLMetaElement;
-class HTMLOptionElement;
-class Node;
-class QualifiedName;
-class String;
-}
+#include "Document.h"
+#include "Element.h"
+#include "HTMLAllCollection.h"
+#include "HTMLBodyElement.h"
+#include "HTMLCollection.h"
+#include "HTMLElement.h"
+#include "HTMLHeadElement.h"
 
-// This file is an aggregate of useful WebCore operations.
+#include "WebElement.h"
+#include "WebFrameImpl.h"
+#include "WebNodeCollection.h"
+#include "WebURL.h"
+
+#include <wtf/PassRefPtr.h>
+
+using namespace WebCore;
+
 namespace WebKit {
 
-// If node is an HTML node with a tag name of name it is casted and returned.
-// If node is not an HTML node or the tag name is not name, 0 is returned.
-WebCore::HTMLInputElement* toHTMLInputElement(WebCore::Node*);
-WebCore::HTMLLinkElement* toHTMLLinkElement(WebCore::Node*);
-WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
-WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
+WebDocument::WebDocument(const PassRefPtr<Document>& elem)
+    : WebNode(elem.releaseRef())
+{
+}
 
-// FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
-WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
+WebDocument& WebDocument::operator=(const PassRefPtr<Document>& elem)
+{
+    WebNode::assign(elem.releaseRef());
+    return *this;
+}
 
-// For img, script, iframe, frame element, when attribute name is src,
-// for link, a, area element, when attribute name is href,
-// for form element, when attribute name is action,
-// for input, type=image, when attribute name is src,
-// for body, table, tr, td, when attribute name is background,
-// for blockquote, q, del, ins, when attribute name is cite,
-// we can consider the attribute value has legal link.
-bool elementHasLegalLinkAttribute(const WebCore::Element* element,
-                                  const WebCore::QualifiedName& attrName);
+WebDocument::operator PassRefPtr<Document>() const
+{
+    return PassRefPtr<Document>(static_cast<Document*>(m_private));
+}
+
+WebFrame* WebDocument::frame() const
+{
+    return WebFrameImpl::fromFrame(constUnwrap<Document>()->frame());
+}
+
+bool WebDocument::isHTMLDocument() const
+{  
+    return constUnwrap<Document>()->isHTMLDocument();
+}
+
+WebURL WebDocument::baseURL() const
+{
+    return constUnwrap<Document>()->baseURL();
+}
+
+WebElement WebDocument::body() const
+{
+    return WebElement(constUnwrap<Document>()->body());
+}
+
+WebElement WebDocument::head()
+{
+    return WebElement(unwrap<Document>()->head());
+}
+
+WebNodeCollection WebDocument::all()
+{
+    return WebNodeCollection(unwrap<Document>()->all());
+}
+
+WebURL WebDocument::completeURL(const WebString& partialURL) const
+{
+    return constUnwrap<Document>()->completeURL(partialURL);
+}
 
 } // namespace WebKit
-
-#endif

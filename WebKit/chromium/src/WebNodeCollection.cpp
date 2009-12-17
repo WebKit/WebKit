@@ -28,43 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMUtilitiesPrivate_h
-#define DOMUtilitiesPrivate_h
+#include "config.h"
+#include "WebNodeCollection.h"
 
-namespace WebCore {
-class Element;
-class HTMLInputElement;
-class HTMLLinkElement;
-class HTMLMetaElement;
-class HTMLOptionElement;
-class Node;
-class QualifiedName;
-class String;
-}
+#include "HTMLCollection.h"
+#include "Node.h"
+#include <wtf/PassRefPtr.h>
 
-// This file is an aggregate of useful WebCore operations.
+#include "WebNode.h"
+
+using namespace WebCore;
+
 namespace WebKit {
 
-// If node is an HTML node with a tag name of name it is casted and returned.
-// If node is not an HTML node or the tag name is not name, 0 is returned.
-WebCore::HTMLInputElement* toHTMLInputElement(WebCore::Node*);
-WebCore::HTMLLinkElement* toHTMLLinkElement(WebCore::Node*);
-WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
-WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
+void WebNodeCollection::reset()
+{
+    assign(0);
+}
 
-// FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
-WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
+void WebNodeCollection::assign(const WebNodeCollection& other)
+{
+    HTMLCollection* p = const_cast<HTMLCollection*>(other.m_private);
+    if (p)
+        p->ref();
+    assign(p);
+}
 
-// For img, script, iframe, frame element, when attribute name is src,
-// for link, a, area element, when attribute name is href,
-// for form element, when attribute name is action,
-// for input, type=image, when attribute name is src,
-// for body, table, tr, td, when attribute name is background,
-// for blockquote, q, del, ins, when attribute name is cite,
-// we can consider the attribute value has legal link.
-bool elementHasLegalLinkAttribute(const WebCore::Element* element,
-                                  const WebCore::QualifiedName& attrName);
+WebNodeCollection::WebNodeCollection(const PassRefPtr<HTMLCollection>& col)
+    : m_private(static_cast<HTMLCollection*>(col.releaseRef()))
+{
+}
+
+void WebNodeCollection::assign(HTMLCollection* p)
+{
+    // p is already ref'd for us by the caller
+    if (m_private)
+        m_private->deref();
+    m_private = p;
+}
+
+unsigned WebNodeCollection::length() const
+{
+    return m_private->length();
+}
+
+WebNode WebNodeCollection::nextItem() const
+{
+    return WebNode(m_private->nextItem());
+}
+
+WebNode WebNodeCollection::firstItem() const
+{
+    return WebNode(m_private->firstItem());
+}
 
 } // namespace WebKit
-
-#endif

@@ -1,3 +1,16 @@
+2009-12-17  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added WebPageSerializer to WebKit API.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31737
+
+        * platform/text/StringBuilder.cpp: Added methods to make StringBuilder even more useful for large scale string concatenation.
+        (WebCore::StringBuilder::clear):
+        (WebCore::StringBuilder::length):
+        * platform/text/StringBuilder.h:
+
 2009-12-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

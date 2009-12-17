@@ -28,42 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMUtilitiesPrivate_h
-#define DOMUtilitiesPrivate_h
+#ifndef WebDocument_h
+#define WebDocument_h
 
-namespace WebCore {
-class Element;
-class HTMLInputElement;
-class HTMLLinkElement;
-class HTMLMetaElement;
-class HTMLOptionElement;
-class Node;
-class QualifiedName;
-class String;
-}
+#include "WebNode.h"
 
-// This file is an aggregate of useful WebCore operations.
+#if WEBKIT_IMPLEMENTATION
+namespace WebCore { class Document; }
+namespace WTF { template <typename T> class PassRefPtr; }
+#endif
+
 namespace WebKit {
+class WebElement;
+class WebFrame;
+class WebNodeCollection;
+class WebString;
+class WebURL;
 
-// If node is an HTML node with a tag name of name it is casted and returned.
-// If node is not an HTML node or the tag name is not name, 0 is returned.
-WebCore::HTMLInputElement* toHTMLInputElement(WebCore::Node*);
-WebCore::HTMLLinkElement* toHTMLLinkElement(WebCore::Node*);
-WebCore::HTMLMetaElement* toHTMLMetaElement(WebCore::Node*);
-WebCore::HTMLOptionElement* toHTMLOptionElement(WebCore::Node*);
+// Provides readonly access to some properties of a DOM document.
+class WebDocument : public WebNode {
+public:
+    WebDocument() { }
+    WebDocument(const WebDocument& e) : WebNode(e) { }
 
-// FIXME: Deprecate. Use WebInputElement::nameForAutofill instead.
-WebCore::String nameOfInputElement(WebCore::HTMLInputElement*);
+    WebDocument& operator=(const WebDocument& e)
+    {
+        WebNode::assign(e);
+        return *this;
+    }
+    void assign(const WebDocument& e) { WebNode::assign(e); }
 
-// For img, script, iframe, frame element, when attribute name is src,
-// for link, a, area element, when attribute name is href,
-// for form element, when attribute name is action,
-// for input, type=image, when attribute name is src,
-// for body, table, tr, td, when attribute name is background,
-// for blockquote, q, del, ins, when attribute name is cite,
-// we can consider the attribute value has legal link.
-bool elementHasLegalLinkAttribute(const WebCore::Element* element,
-                                  const WebCore::QualifiedName& attrName);
+    // Returns the frame the document belongs to or 0 if the document is frameless.
+    WEBKIT_API WebFrame* frame() const;
+    WEBKIT_API bool isHTMLDocument() const;
+    WEBKIT_API WebURL baseURL() const;
+    WEBKIT_API WebElement body() const;
+    WEBKIT_API WebElement head();
+    WEBKIT_API WebNodeCollection all();
+    WEBKIT_API WebURL completeURL(const WebString&) const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebDocument(const WTF::PassRefPtr<WebCore::Document>&);
+    WebDocument& operator=(const WTF::PassRefPtr<WebCore::Document>&);
+    operator WTF::PassRefPtr<WebCore::Document>() const;
+#endif
+};
 
 } // namespace WebKit
 
