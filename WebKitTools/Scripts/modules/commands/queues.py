@@ -183,6 +183,7 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         patch_id = self._patches.next()
         if patch_id:
             return self.tool.bugs.fetch_attachment(patch_id)
+        self._update_status("Empty queue.")
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"

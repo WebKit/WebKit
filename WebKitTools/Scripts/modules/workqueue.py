@@ -90,8 +90,8 @@ class WorkQueue:
 
         self._delegate.begin_work_queue()
         while (self._delegate.should_continue_work_queue()):
-            self._ensure_work_log_closed()
             try:
+                self._ensure_work_log_closed()
                 work_item = self._delegate.next_work_item()
                 if not work_item:
                     self._sleep("No work item.")
@@ -99,6 +99,19 @@ class WorkQueue:
                 if not self._delegate.should_proceed_with_work_item(work_item):
                     self._sleep("Not proceeding with work item.")
                     continue
+
+                # FIXME: Work logs should not depend on bug_id specificaly.
+                #        This looks fixed, no?
+                self._open_work_log(work_item)
+                try:
+                    self._delegate.process_work_item(work_item)
+                except ScriptError, e:
+                    # Use a special exit code to indicate that the error was already
+                    # handled in the child process and we should just keep looping.
+                    if e.exit_code == self.handled_error_code:
+                        continue
+                    message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
+                    self._delegate.handle_unexpected_error(work_item, message)
             except KeyboardInterrupt, e:
                 log("\nUser terminated queue.")
                 return 1
@@ -106,19 +119,6 @@ class WorkQueue:
                 traceback.print_exc()
                 # Don't try tell the status bot, in case telling it causes an exception.
                 self._sleep("Exception while preparing queue: %s." % e)
-                continue
-
-            # FIXME: Work logs should not depend on bug_id specificaly.
-            self._open_work_log(work_item)
-            try:
-                self._delegate.process_work_item(work_item)
-            except ScriptError, e:
-                # Use a special exit code to indicate that the error was already
-                # handled in the child process and we should just keep looping.
-                if e.exit_code == self.handled_error_code:
-                    continue
-                message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
-                self._delegate.handle_unexpected_error(work_item, message)
         # Never reached.
         self._ensure_work_log_closed()
 
