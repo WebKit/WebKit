@@ -234,6 +234,9 @@ inspector/elements-panel-selection-on-refresh.html
 inspector/settings-set-get.html
 inspector/timeline-event-dispatch.html
 inspector/timeline-network-resource.html
+
+# Missing layoutTestController.setSmartInsertDeleteEnabled()
+editing/selection/doubleclick-beside-cr-span.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
