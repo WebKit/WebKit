@@ -22,7 +22,7 @@
 #define QualifiedName_h
 
 #include "AtomicString.h"
-#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
