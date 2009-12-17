@@ -1,5 +1,12 @@
 2009-12-17  Adam Roben  <aroben@apple.com>
 
+        Chromium build fix IV
+
+        * loader/CrossOriginPreflightResultCache.h: Added now-needed
+        #includes.
+
+2009-12-17  Adam Roben  <aroben@apple.com>
+
         Chromium build fix III
 
         * platform/graphics/Font.h: Added now-needed #include.
