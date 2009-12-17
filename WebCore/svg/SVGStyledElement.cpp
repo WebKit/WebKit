@@ -47,6 +47,13 @@ using namespace SVGNames;
 char SVGStyledElementIdentifier[] = "SVGStyledElement";
 static HashSet<const SVGStyledElement*>* gElementsWithInstanceUpdatesBlocked = 0;
 
+void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)
+{
+    int propertyId = cssPropertyID(attrName.localName());
+    ASSERT(propertyId > 0);
+    propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
+}
+
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
     , m_className(this, HTMLNames::classAttr)
@@ -71,13 +78,6 @@ bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
     return false;
 }
 
-static void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)
-{
-    int propertyId = cssPropertyID(attrName.localName());
-    ASSERT(propertyId > 0);
-    propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
-}
-
 int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
 {
     if (!attrName.namespaceURI().isNull())
@@ -92,13 +92,13 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, clipAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_pathAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_ruleAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, colorAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, SVGNames::colorAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolationAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolation_filtersAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_profileAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_renderingAttr); 
         mapAttributeToCSSProperty(propertyNameToIdMap, cursorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, directionAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, SVGNames::directionAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, displayAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, dominant_baselineAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, enable_backgroundAttr);

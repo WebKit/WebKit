@@ -46,40 +46,40 @@ SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bo
 const AtomicString& SVGStyleElement::type() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
-    const AtomicString& n = getAttribute(typeAttr);
+    const AtomicString& n = getAttribute(SVGNames::typeAttr);
     return n.isNull() ? defaultValue : n;
 }
 
 void SVGStyleElement::setType(const AtomicString& type, ExceptionCode& ec)
 {
-    setAttribute(typeAttr, type, ec);
+    setAttribute(SVGNames::typeAttr, type, ec);
 }
 
 const AtomicString& SVGStyleElement::media() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("all"));
-    const AtomicString& n = getAttribute(mediaAttr);
+    const AtomicString& n = getAttribute(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue : n;
 }
 
 void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode& ec)
 {
-    setAttribute(mediaAttr, media, ec);
+    setAttribute(SVGNames::mediaAttr, media, ec);
 }
 
 String SVGStyleElement::title() const
 {
-    return getAttribute(titleAttr);
+    return getAttribute(SVGNames::titleAttr);
 }
 
 void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)
 {
-    setAttribute(titleAttr, title, ec);
+    setAttribute(SVGNames::titleAttr, title, ec);
 }
 
 void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == titleAttr && m_sheet)
+    if (attr->name() == SVGNames::titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
     else {
         if (SVGLangSpace::parseMappedAttribute(attr))

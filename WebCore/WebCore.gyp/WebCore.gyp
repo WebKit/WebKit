@@ -647,8 +647,12 @@
         # of their enclosing directories and tags at the ends of their
         # filenames.
         ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
-        ['exclude', '(?<!Chromium)(SVGAllInOne|Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
+        # Exclude everything in svg/ directly but not in subdirectories.
+        # Everything in svg/*.cpp is included in svg/SVGAllInOne.cpp.
+        ['exclude', 'svg/[^/]+\\.cpp$'],
+        ['include', 'svg/SVGAllInOne\\.cpp$'],
 
         # JSC-only.
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],

@@ -31,6 +31,8 @@ namespace WebCore {
     extern char SVGStyledElementIdentifier[];
     class SVGResource;
 
+    void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName);
+
     class SVGStyledElement : public SVGElement,
                              public SVGStylable {
     public:

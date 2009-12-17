@@ -1,3 +1,39 @@
+2009-12-17  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix link failure on LTCG builds on Windows for chromium port.
+
+        Reenable SVGAllInOne.cpp. This required some fixups.
+
+        Namely, there was conflicts in constants between HTMLNames and
+        SVGNames, and conflicts between static functions names.
+
+        No new tests as functionality has not changed.
+
+        * WebCore.gyp/WebCore.gyp:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedIntoDocument):
+        (WebCore::SVGHKernElement::removedFromDocument):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type):
+        (WebCore::SVGStyleElement::setType):
+        (WebCore::SVGStyleElement::media):
+        (WebCore::SVGStyleElement::setMedia):
+        (WebCore::SVGStyleElement::title):
+        (WebCore::SVGStyleElement::setTitle):
+        (WebCore::SVGStyleElement::parseMappedAttribute):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::mapAttributeToCSSProperty):
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName):
+        * svg/SVGStyledElement.h:
+
 2009-12-17  Adam Roben  <aroben@apple.com>
 
         Chromium build fix VI

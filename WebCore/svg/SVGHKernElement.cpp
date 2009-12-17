@@ -48,7 +48,7 @@ SVGHKernElement::~SVGHKernElement()
 void SVGHKernElement::insertedIntoDocument()
 {
     Node* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(fontTag)) {
+    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
@@ -57,7 +57,7 @@ void SVGHKernElement::insertedIntoDocument()
 void SVGHKernElement::removedFromDocument()
 {
     Node* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(fontTag)) {
+    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
