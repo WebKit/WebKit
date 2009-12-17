@@ -1,5 +1,11 @@
 2009-12-17  Adam Roben  <aroben@apple.com>
 
+        Chromium build fix VI
+
+        * svg/animation/SMILTimeContainer.h: Added now-needed #include.
+
+2009-12-17  Adam Roben  <aroben@apple.com>
+
         Chromium build fix V
 
         * platform/KURLGoogle.cpp: Added now-needed #include.
