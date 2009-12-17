@@ -31,10 +31,6 @@
 #include <objc/objc.h>
 #endif
 
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
-
 #if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
 #endif

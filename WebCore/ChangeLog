@@ -1,3 +1,15 @@
+2009-12-17  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Adam Roben.
+
+        Don't include all JSC headers everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=32663
+
+        Remove HashMap HashSet and OwnPtr includes from PlatformString.h.
+        Reduces code size of Gtk build by another 5%.
+
+        * platform/text/PlatformString.h:
+
 2009-12-17  Adam Roben  <aroben@apple.com>
 
         Mac/Qt build fixes
