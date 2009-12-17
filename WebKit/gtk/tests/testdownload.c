@@ -26,6 +26,7 @@
 
 GMainLoop* loop;
 char* temporaryFilename = NULL;
+WebKitDownload* theDownload = NULL;
 
 static void
 test_webkit_download_create(void)
@@ -87,6 +88,7 @@ download_requested_cb(WebKitWebView* web_view,
                       WebKitDownload* download,
                       gboolean* beenThere)
 {
+    theDownload = download;
     *beenThere = TRUE;
     if (temporaryFilename) {
         gchar *uri = g_filename_to_uri(temporaryFilename, NULL, NULL);
@@ -101,8 +103,19 @@ download_requested_cb(WebKitWebView* web_view,
     return TRUE;
 }
 
+static gboolean
+set_filename(gchar* filename)
+{
+    gchar *uri = g_filename_to_uri(filename, NULL, NULL);
+    webkit_download_set_destination_uri(theDownload, uri);
+    g_free(uri);
+    temporaryFilename = filename;
+    webkit_download_start(theDownload);
+    return FALSE;
+}
+
 static void
-test_webkit_download_perform(void)
+test_webkit_download_perform(gboolean asynch)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
 
@@ -121,15 +134,22 @@ test_webkit_download_perform(void)
      * utilities file, because we have a very similar one in
      * testwebframe.c */
     GError *error = NULL;
-    int fd = g_file_open_tmp ("webkit-testwebdownload-XXXXXX",
-                              &temporaryFilename, &error);
+    gchar* filename;
+    int fd = g_file_open_tmp("webkit-testwebdownload-XXXXXX", &filename, &error);
     close(fd);
 
     if (error)
         g_critical("Failed to open a temporary file for writing: %s.", error->message);
 
-    if (g_unlink(temporaryFilename) == -1)
+    if (g_unlink(filename) == -1)
         g_critical("Failed to delete the temporary file: %s.", g_strerror(errno));
+
+    if (asynch)
+        g_idle_add((GSourceFunc)set_filename, filename);
+    else
+        temporaryFilename = filename;
+
+    theDownload = NULL;
 
     loop = g_main_loop_new(NULL, TRUE);
     webkit_web_view_load_uri(webView, "http://gnome.org/");
@@ -145,6 +165,18 @@ test_webkit_download_perform(void)
     g_object_unref(webView);
 }
 
+static void
+test_webkit_download_synch(void)
+{
+    test_webkit_download_perform(FALSE);
+}
+
+static void
+test_webkit_download_asynch(void)
+{
+    test_webkit_download_perform(TRUE);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -152,7 +184,8 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/download/create", test_webkit_download_create);
-    g_test_add_func("/webkit/download/perform", test_webkit_download_perform);
+    g_test_add_func("/webkit/download/synch", test_webkit_download_synch);
+    g_test_add_func("/webkit/download/asynch", test_webkit_download_asynch);
     return g_test_run ();
 }
 

@@ -1541,9 +1541,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @return: %TRUE if the download should be performed, %FALSE to cancel it.
      *
      * A new Download is being requested. By default, if the signal is
-     * not handled, the download is cancelled. Notice that while
-     * handling this signal you must set the target URI using
-     * webkit_download_set_target_uri().
+     * not handled, the download is cancelled. If you handle the download
+     * and call webkit_download_set_destination_uri(), it will be
+     * started for you. If you need to set the destination asynchronously
+     * you are responsible for starting or cancelling it yourself.
      *
      * If you intend to handle downloads yourself rather than using
      * the #WebKitDownload helper object you must handle this signal,
@@ -2695,7 +2696,10 @@ void webkit_web_view_request_download(WebKitWebView* webView, WebKitNetworkReque
         return;
     }
 
-    webkit_download_start(download);
+    /* Start the download now if it has a destination URI, otherwise it
+        may be handled asynchronously by the application. */
+    if (webkit_download_get_destination_uri(download))
+        webkit_download_start(download);
 }
 
 bool webkit_web_view_use_primary_for_paste(WebKitWebView* webView)

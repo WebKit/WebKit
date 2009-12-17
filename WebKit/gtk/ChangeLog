@@ -1,5 +1,24 @@
 2009-12-17  Christian Dywan  <christian@twotoasts.de>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Don't assume downloads are always synchronous
+        http://bugs.webkit.org/show_bug.cgi?id=32359
+
+        * tests/testdownload.c:
+        (download_requested_cb):
+        (set_filename):
+        (test_webkit_download_perform):
+        (test_webkit_download_synch):
+        (test_webkit_download_asynch):
+        (main): Test downloads synchronously and asynchronously.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        (webkit_web_view_request_download): Only try to start a requested
+        download if the destination URI is set and clarify the documentation.
+
+2009-12-17  Christian Dywan  <christian@twotoasts.de>
+
         Reviewed by Xan Lopez.
 
         Deprecate the title-changed signal of WebKitWebFrame.
