@@ -1,3 +1,30 @@
+2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Landing files I forgot to add =(.
+
+        * wtf/gtk/GRefPtr.h: Added.
+        (WTF::):
+        (WTF::GRefPtr::GRefPtr):
+        (WTF::GRefPtr::~GRefPtr):
+        (WTF::GRefPtr::clear):
+        (WTF::GRefPtr::get):
+        (WTF::GRefPtr::operator*):
+        (WTF::GRefPtr::operator->):
+        (WTF::GRefPtr::operator!):
+        (WTF::GRefPtr::operator UnspecifiedBoolType):
+        (WTF::GRefPtr::hashTableDeletedValue):
+        (WTF::::operator):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        (WTF::adoptGRef):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+
 2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha.
