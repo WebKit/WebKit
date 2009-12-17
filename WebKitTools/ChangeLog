@@ -1,5 +1,18 @@
 2009-12-16  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by David Levin.
+
+        bugzilla-tool should not require users to install mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=32635
+
+        Centralize our import logic.
+
+        * Scripts/modules/bugzilla.py: use webkit_mechanize
+        * Scripts/modules/statusbot.py: use webkit_mechanize
+        * Scripts/modules/webkit_mechanize.py: Added.
+
+2009-12-16  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Generalize commit-queue recent status page for all queues

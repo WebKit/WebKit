@@ -29,24 +29,11 @@
 # WebKit's Python module for interacting with the Commit Queue status page.
 
 from modules.logging import log
+from modules.webkit_mechanize import Browser
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
 from .BeautifulSoup import BeautifulSoup
-
-try:
-    from mechanize import Browser
-except ImportError, e:
-    print """
-mechanize is required.
-
-To install:
-sudo easy_install mechanize
-
-Or from the web:
-http://wwwsearch.sourceforge.net/mechanize/
-"""
-    exit(1)
 
 import urllib2
 

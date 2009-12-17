@@ -44,19 +44,7 @@ from modules.credentials import Credentials
 # so this import should always succeed.
 from .BeautifulSoup import BeautifulSoup, SoupStrainer
 
-try:
-    from mechanize import Browser
-except ImportError, e:
-    print """
-mechanize is required.
-
-To install:
-sudo easy_install mechanize
-
-Or from the web:
-http://wwwsearch.sourceforge.net/mechanize/
-"""
-    exit(1)
+from modules.webkit_mechanize import Browser
 
 def parse_bug_id(message):
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
