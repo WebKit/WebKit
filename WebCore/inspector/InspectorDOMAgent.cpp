@@ -39,6 +39,7 @@
 #include "CookieJar.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -521,6 +522,12 @@ ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeTo
         ScriptArray children = buildArrayForContainerChildren(node, depth, nodesMap);
         if (children.length() > 0)
             value.set("children", children);
+    }
+    if (node->nodeType() == Node::DOCUMENT_TYPE_NODE) {
+        DocumentType* docType = static_cast<DocumentType*>(node);
+        value.set("publicId", docType->publicId());
+        value.set("systemId", docType->systemId());
+        value.set("internalSubset", docType->internalSubset());
     }
     return value;
 }

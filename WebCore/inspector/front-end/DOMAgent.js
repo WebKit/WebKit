@@ -60,12 +60,16 @@ WebInspector.DOMNode = function(doc, payload) {
     this.style = null;
     this._matchedCSSRules = [];
 
-    if (this.nodeType == Node.ELEMENT_NODE) {
+    if (this.nodeType === Node.ELEMENT_NODE) {
         // HTML and BODY from internal iframes should not overwrite top-level ones.
         if (!this.ownerDocument.documentElement && this.nodeName === "HTML")
             this.ownerDocument.documentElement = this;
         if (!this.ownerDocument.body && this.nodeName === "BODY")
             this.ownerDocument.body = this;
+    } else if (this.nodeType === Node.DOCUMENT_TYPE_NODE) {
+        this.publicId = payload.publicId;
+        this.systemId = payload.systemId;
+        this.internalSubset = payload.internalSubset;
     }
 }
 
