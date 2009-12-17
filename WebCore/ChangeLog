@@ -1,3 +1,24 @@
+2009-12-16  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix flakiness in WebSocket handshake console message.
+        https://bugs.webkit.org/show_bug.cgi?id=32598
+
+        In chromium, LayoutTests/websocket/tests/handshake-error.html is
+        flaky, because it outputs the following console message several times:
+          CONSOLE MESSAGE: line 0: Unexpected response code:101
+        Update m_mode in WebSocketHandshake correctly: Once it finds
+        error in handshake message, set m_mode to Failed and don't try
+        reading handshake message again.  If handshake message is not yet
+        fully received, set m_mode to Incomplete, so next didReceiveData()
+        will try to check handshake message again.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+
 2009-12-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of text nodes is wrong

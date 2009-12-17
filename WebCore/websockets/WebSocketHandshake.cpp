@@ -220,14 +220,17 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
             return -1;
         }
         if (code.isEmpty()) {
+            m_mode = Failed;
             m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "No response code found: " + String(header, len), 0, clientOrigin());
             return len;
         }
         LOG(Network, "response code: %s", code.utf8().data());
         if (code == "401") {
+            m_mode = Failed;
             m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Authentication required, but not implemented yet.", 0, clientOrigin());
             return len;
         } else {
+            m_mode = Failed;
             m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Unexpected response code:" + code, 0, clientOrigin());
             return len;
         }
@@ -237,18 +240,24 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
 
     if (m_mode == Normal) {
         size_t headerSize = end - p;
-        if (headerSize < sizeof(webSocketUpgradeHeader) - 1)
+        if (headerSize < sizeof(webSocketUpgradeHeader) - 1) {
+            m_mode = Incomplete;
             return 0;
+        }
         if (memcmp(p, webSocketUpgradeHeader, sizeof(webSocketUpgradeHeader) - 1)) {
+            m_mode = Failed;
             m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Bad Upgrade header: " + String(p, end - p), 0, clientOrigin());
             return p - header + sizeof(webSocketUpgradeHeader) - 1;
         }
         p += sizeof(webSocketUpgradeHeader) - 1;
 
         headerSize = end - p;
-        if (headerSize < sizeof(webSocketConnectionHeader) - 1)
+        if (headerSize < sizeof(webSocketConnectionHeader) - 1) {
+            m_mode = Incomplete;
             return -1;
+        }
         if (memcmp(p, webSocketConnectionHeader, sizeof(webSocketConnectionHeader) - 1)) {
+            m_mode = Failed;
             m_context->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Bad Connection header: " + String(p, end - p), 0, clientOrigin());
             return p - header + sizeof(webSocketConnectionHeader) - 1;
         }
@@ -257,6 +266,7 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
 
     if (!strnstr(p, "\r\n\r\n", end - p)) {
         // Just hasn't been received fully yet.
+        m_mode = Incomplete;
         return -1;
     }
     HTTPHeaderMap headers;
