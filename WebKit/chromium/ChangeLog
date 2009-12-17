@@ -1,3 +1,15 @@
+2009-12-17  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52291.
+        http://trac.webkit.org/changeset/52291
+        https://bugs.webkit.org/show_bug.cgi?id=32618
+
+        Darin Fisher points out that this will likely break
+        the SSL security indicator in Chromium.  Rolling out for now.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2009-12-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Eric Seidel.
