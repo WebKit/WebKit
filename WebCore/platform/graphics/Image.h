@@ -150,6 +150,7 @@ public:
 
 #if PLATFORM(GTK)
     virtual GdkPixbuf* getGdkPixbuf() { return 0; }
+    static PassRefPtr<Image> loadPlatformThemeIcon(const char* name, int size);
 #endif
 
 protected:

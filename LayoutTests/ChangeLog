@@ -1,3 +1,22 @@
+2009-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Add controls for playing html5 video.
+        https://bugs.webkit.org/show_bug.cgi?id=26304
+
+        Unskip some of the media tests related to the controls
+        UI. Generated results for the new ones, it will likely be needed
+        again when we add new features in the controls UI.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/media/controls-after-reload-expected.txt: Added.
+        * platform/gtk/media/controls-drag-timebar-expected.txt: Added.
+        * platform/gtk/media/controls-strict-expected.txt: Added.
+        * platform/gtk/media/controls-styling-expected.txt: Added.
+        * platform/gtk/media/video-controls-rendering-expected.txt: Added.
+        * platform/gtk/media/video-controls-visible-audio-only-expected.txt: Copied from LayoutTests/platform/mac/media/video-controls-visible-audio-only-expected.txt.
+
 2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping one test that needs overriding of standard preferences,

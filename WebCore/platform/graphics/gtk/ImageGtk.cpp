@@ -44,29 +44,24 @@ template <> void freeOwnedGPtr<GtkIconInfo>(GtkIconInfo* info)
 
 namespace WebCore {
 
-static CString getIconFileNameOrFallback(const char* name, const char* fallback)
+static CString getThemeIconFileName(const char* name, int size)
 {
-    GOwnPtr<GtkIconInfo> info(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
-                                                         name, 16, GTK_ICON_LOOKUP_NO_SVG));
-    if (!info)
-        return String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, fallback).utf8();
+    GtkIconInfo* iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
+                                                       name, size, GTK_ICON_LOOKUP_NO_SVG);
+    if (!iconInfo)
+        iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
+                                              GTK_STOCK_MISSING_IMAGE, size,
+                                              GTK_ICON_LOOKUP_NO_SVG);
 
+    GOwnPtr<GtkIconInfo> info(iconInfo);
     return CString(gtk_icon_info_get_filename(info.get()));
 }
 
-static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(const char* name)
+static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(CString name)
 {
-    CString fileName;
-
-    // Find the path for the image
-    if (strcmp("missingImage", name) == 0)
-        fileName = getIconFileNameOrFallback(GTK_STOCK_MISSING_IMAGE, "missingImage");
-    else
-        fileName = String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, name).utf8();
-
     GOwnPtr<gchar> content;
     gsize length;
-    if (!g_file_get_contents(fileName.data(), &content.outPtr(), &length, 0))
+    if (!g_file_get_contents(name.data(), &content.outPtr(), &length, 0))
         return SharedBuffer::create();
 
     return SharedBuffer::create(content.get(), length);
@@ -80,12 +75,28 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-PassRefPtr<Image> Image::loadPlatformResource(const char* name)
+PassRefPtr<Image> loadImageFromFile(CString fileName)
 {
     RefPtr<BitmapImage> img = BitmapImage::create();
-    RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(name);
+    RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(fileName);
     img->setData(buffer.release(), true);
     return img.release();
+}
+
+PassRefPtr<Image> Image::loadPlatformResource(const char* name)
+{
+    CString fileName;
+    if (!strcmp("missingImage", name))
+        fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
+    if (fileName.isNull())
+        fileName = String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, name).utf8();
+
+    return loadImageFromFile(fileName);
+}
+
+PassRefPtr<Image> Image::loadPlatformThemeIcon(const char* name, int size)
+{
+    return loadImageFromFile(getThemeIconFileName(name, size));
 }
 
 static inline unsigned char* getCairoSurfacePixel(unsigned char* data, uint x, uint y, uint rowStride)

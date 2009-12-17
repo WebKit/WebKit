@@ -3613,13 +3613,10 @@ media/restore-from-page-cache.html
 media/video-source-error.html
 
 #   Tests timing out
-media/controls-drag-timebar.html
 media/unsupported-rtsp.html
 #   Tests generating new results
 media/audio-controls-rendering.html
 media/video-aspect-ratio.html
-media/video-controls-rendering.html
-media/video-controls-visible-audio-only.html
 media/video-display-toggle.html
 media/video-empty-source.html
 media/video-layer-crash.html
@@ -5437,9 +5434,6 @@ fast/text/international/khmer-selection.html
 fast/text/shadow-translucent-fill.html
 fast/text/text-letter-spacing.html
 media/audio-no-installed-engines.html
-media/controls-after-reload.html
-media/controls-strict.html
-media/controls-styling.html
 svg/batik/filters/feTile.svg
 svg/custom/createImageElement.svg
 svg/custom/createImageElement2.xhtml

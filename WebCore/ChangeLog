@@ -1,3 +1,47 @@
+2009-12-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Add controls for playing html5 video.
+        https://bugs.webkit.org/show_bug.cgi?id=26304
+
+        Media controls UI, first step. This patch was written by Zan
+        Dobersek. In addition I fixed the compilation errors and
+        re-enabled some of the media tests involving the controls UI.
+
+        * GNUmakefile.am:
+        * css/mediaControlsGtk.css: Added.
+        * platform/graphics/Image.h:
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getThemeIconFileName):
+        (WebCore::loadResourceSharedBuffer):
+        (WebCore::loadImageFromFile):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::loadPlatformThemeIcon):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::getMediaElementFromRenderObject):
+        (WebCore::getIconNameForTextDirection):
+        (WebCore::RenderThemeGtk::initMediaStyling):
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::~RenderThemeGtk):
+        (WebCore::supportsFocus):
+        (WebCore::RenderThemeGtk::baselinePosition):
+        (WebCore::paintMozWidget):
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::gtkContainer):
+        (WebCore::RenderThemeGtk::platformColorsDidChange):
+        (WebCore::RenderThemeGtk::extraMediaControlsStyleSheet):
+        (WebCore::paintMediaButton):
+        (WebCore::RenderThemeGtk::paintMediaFullscreenButton):
+        (WebCore::RenderThemeGtk::paintMediaMuteButton):
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekBackButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaSliderThumb):
+        * platform/gtk/RenderThemeGtk.h:
+
 2009-12-17  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
