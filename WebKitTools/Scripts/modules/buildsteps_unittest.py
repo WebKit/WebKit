@@ -28,10 +28,13 @@
 
 import unittest
 
-from modules.mock import Mock
+from modules.buildsteps import UpdateChangelogsWithReviewerStep
 from modules.mock_bugzillatool import MockBugzillaTool
 from modules.outputcapture import OutputCapture
 
-class CommandsTest(unittest.TestCase):
-    def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=Mock(), tool=MockBugzillaTool()):
-        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+class UpdateChangelogsWithReviewerStepTest(unittest.TestCase):
+    def test_guess_reviewer_from_bug(self):
+        capture = OutputCapture()
+        step = UpdateChangelogsWithReviewerStep(MockBugzillaTool(), [])
+        expected_stderr = "0 reviewed patches on bug 1, cannot infer reviewer.\n"
+        capture.assert_outputs(self, step._guess_reviewer_from_bug, [1], expected_stderr=expected_stderr)

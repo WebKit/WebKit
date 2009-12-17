@@ -39,16 +39,8 @@ class TestQueue(AbstractQueue):
 
 
 class AbstractQueueTest(CommandsTest):
-    def _assert_output(self, function, args, expected_stdout="", expected_stderr=""):
-        capture = OutputCapture()
-        capture.capture_output()
-        function(*args)
-        (stdout_string, stderr_string) = capture.restore_output()
-        self.assertEqual(stdout_string, expected_stdout)
-        self.assertEqual(stderr_string, expected_stderr)
-
     def _assert_log_progress_output(self, patch_ids, progress_output):
-        self._assert_output(TestQueue().log_progress, [patch_ids], expected_stderr=progress_output)
+        OutputCapture().assert_outputs(self, TestQueue().log_progress, [patch_ids], expected_stderr=progress_output)
 
     def test_log_progress(self):
         self._assert_log_progress_output([1,2,3], "3 patches in test-queue [1, 2, 3]\n")

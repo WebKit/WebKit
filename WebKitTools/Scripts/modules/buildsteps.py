@@ -31,6 +31,7 @@ import os
 from optparse import make_option
 
 from modules.comments import bug_comment_from_commit_text
+from modules.grammar import pluralize
 from modules.logging import log, error
 from modules.webkitport import WebKitPort
 from modules.changelogs import ChangeLog
@@ -230,7 +231,7 @@ class UpdateChangelogsWithReviewerStep(AbstractStep):
             CommandOptions.reviewer,
         ]
 
-    def guess_reviewer_from_bug(self, bug_id):
+    def _guess_reviewer_from_bug(self, bug_id):
         patches = self._tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
         if len(patches) != 1:
             log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
@@ -247,7 +248,7 @@ class UpdateChangelogsWithReviewerStep(AbstractStep):
             if not bug_id:
                 log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
                 return
-            reviewer = self.guess_reviewer_from_bug(bug_id)
+            reviewer = self._guess_reviewer_from_bug(bug_id)
 
         if not reviewer:
             log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)

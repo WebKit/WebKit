@@ -75,12 +75,8 @@ password: "SECRETSAUCE"
         executive_mock = Mock()
         credentials = Credentials("example.com", executive=executive_mock)
 
-        output = OutputCapture()
-        output.capture_output()
-        credentials._run_security_tool(username)
-        (stdout_output, stderr_output) = output.restore_output()
-        self.assertEqual(stdout_output, "")
-        self.assertEqual(stderr_output, "Reading Keychain for example.com account and password.  Click \"Allow\" to continue...\n")
+        expected_stderr = "Reading Keychain for example.com account and password.  Click \"Allow\" to continue...\n"
+        OutputCapture().assert_outputs(self, credentials._run_security_tool, [username], expected_stderr=expected_stderr)
 
         security_args = ["/usr/bin/security", "find-internet-password", "-g", "-s", "example.com"]
         if username:

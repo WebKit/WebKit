@@ -1,3 +1,33 @@
+2009-12-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        post-diff is failing with exception under guess_reviewer_from_bug
+        https://bugs.webkit.org/show_bug.cgi?id=32642
+
+        Also refactor output capturing code into
+        OutputCapture.assert_outputs to share more code between tests.
+
+        * Scripts/modules/buildsteps.py:
+         - Add the missing include.
+         - Give guess_reviewer_from_bug a private underscore.
+        * Scripts/modules/buildsteps_unittest.py: Added.
+         - Test to make sure _guess_reviewer_from_bug works as expected.
+        * Scripts/modules/commands/commandtest.py:
+         - Custom code is now obsoleted by OutputCapture.assert_outputs
+        * Scripts/modules/commands/queues_unittest.py:
+         - ditto
+        * Scripts/modules/credentials_unittest.py:
+         - ditto
+        * Scripts/modules/mock_bugzillatool.py:
+         - fetch_reviewed_patches_from_bug can never return None
+        * Scripts/modules/multicommandtool_unittest.py:
+         - Custom code is now obsoleted by OutputCapture.assert_outputs
+        * Scripts/modules/outputcapture.py:
+         - Add assert_outputs to share more code between tests.
+        * Scripts/run-webkit-unittests:
+         - Add buildsteps_unittest.py
+
 2009-12-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Added a default argument to _update_status so that callers

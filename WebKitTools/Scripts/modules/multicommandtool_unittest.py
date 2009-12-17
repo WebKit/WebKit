@@ -63,14 +63,9 @@ class CommandTest(unittest.TestCase):
 
     def test_required_arguments(self):
         two_required_arguments = TrivialCommand(argument_names="ARG1 ARG2 [ARG3]")
-        capture = OutputCapture()
-        capture.capture_output()
-        exit_code = two_required_arguments.check_arguments_and_execute(["foo"], TrivialTool())
-        (stdout_string, stderr_string) = capture.restore_output()
         expected_missing_args_error = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
+        exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [["foo"], TrivialTool()], expected_stderr=expected_missing_args_error)
         self.assertEqual(exit_code, 1)
-        self.assertEqual(stdout_string, "")
-        self.assertEqual(stderr_string, expected_missing_args_error)
 
 
 class TrivialTool(MultiCommandTool):
@@ -108,13 +103,9 @@ class MultiCommandToolTest(unittest.TestCase):
         self.assertEqual(tool.command_by_name("trivial").name, "trivial")
         self.assertEqual(tool.command_by_name("bar"), None)
 
-    def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr = "", exit_code=0):
-        capture = OutputCapture()
-        capture.capture_output()
-        exit_code = tool.main(main_args)
-        (stdout_string, stderr_string) = capture.restore_output()
-        self.assertEqual(stdout_string, expected_stdout)
-        self.assertEqual(expected_stderr, expected_stderr)
+    def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr = "", expected_exit_code=0):
+        exit_code = OutputCapture().assert_outputs(self, tool.main, [main_args], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        self.assertEqual(exit_code, expected_exit_code)
 
     def test_global_help(self):
         tool = TrivialTool(commands=[TrivialCommand(), UncommonCommand()])

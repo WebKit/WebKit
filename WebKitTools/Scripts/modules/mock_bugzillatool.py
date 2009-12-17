@@ -66,7 +66,7 @@ class MockBugzilla(Mock):
     def fetch_reviewed_patches_from_bug(self, bug_id):
         if bug_id == 42:
             return [self.patch1, self.patch2]
-        return None
+        return []
 
     def fetch_attachments_from_bug(self, bug_id):
         if bug_id == 42:
