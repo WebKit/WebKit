@@ -34,7 +34,7 @@
 #include <wtf/OwnPtr.h>
 
 #if USE(QXMLSTREAM)
-#include <QtXml/qxmlstream.h>
+#include <qxmlstream.h>
 #else
 #include <libxml/tree.h>
 #include <libxml/xmlstring.h>
