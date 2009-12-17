@@ -5191,3 +5191,7 @@ http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
 #              LayoutTests/svg/custom/use-instanceRoot-as-event-target.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=32519
 svg/custom/use-instanceRoot-as-event-target.xhtml
+
+# This test introduced in r52220
+# https://bugs.webkit.org/show_bug.cgi?id=32639
+editing/selection/empty-cell-right-click.html
