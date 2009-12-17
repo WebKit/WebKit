@@ -29,7 +29,7 @@
 
 import unittest
 
-from modules.webkitport import WebKitPort, MacPort, QtPort, ChromiumPort
+from modules.webkitport import WebKitPort, MacPort, GtkPort, QtPort, ChromiumPort
 
 class WebKitPortTest(unittest.TestCase):
     def test_mac_port(self):
@@ -37,6 +37,12 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(MacPort.flag(), "--port=mac")
         self.assertEquals(MacPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
         self.assertEquals(MacPort.build_webkit_command(), [WebKitPort.script_path("build-webkit")])
+
+    def test_gtk_port(self):
+        self.assertEquals(GtkPort.name(), "Gtk")
+        self.assertEquals(GtkPort.flag(), "--port=gtk")
+        self.assertEquals(GtkPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests"), "--gtk"])
+        self.assertEquals(GtkPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--gtk"])
 
     def test_qt_port(self):
         self.assertEquals(QtPort.name(), "Qt")

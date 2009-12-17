@@ -40,14 +40,14 @@ class WebKitPort():
 
     @staticmethod
     def port(port_name):
-        if port_name == "mac":
-            return MacPort
-        if port_name == "qt":
-            return QtPort
-        if port_name == "chromium":
-            return ChromiumPort
+        ports = {
+            "chromium": ChromiumPort,
+            "gtk": GtkPort,
+            "mac": MacPort,
+            "qt": QtPort,
+        }
         # FIXME: We should default to WinPort on Windows.
-        return MacPort
+        return ports.get(port_name, MacPort)
 
     @classmethod
     def name(cls):
@@ -78,6 +78,28 @@ class MacPort(WebKitPort):
     @classmethod
     def flag(cls):
         return "--port=mac"
+
+
+class GtkPort(WebKitPort):
+    @classmethod
+    def name(cls):
+        return "Gtk"
+
+    @classmethod
+    def flag(cls):
+        return "--port=gtk"
+
+    @classmethod
+    def build_webkit_command(cls):
+        command = WebKitPort.build_webkit_command()
+        command.append("--gtk")
+        return command
+
+    @classmethod
+    def run_webkit_tests_command(cls):
+        command = WebKitPort.run_webkit_tests_command()
+        command.append("--gtk")
+        return command
 
 
 class QtPort(WebKitPort):

@@ -72,6 +72,11 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
 
 
+class GtkEWS(AbstractEarlyWarningSystem):
+    name = "gtk-ews"
+    port_name = "gtk"
+
+
 class QtEWS(AbstractEarlyWarningSystem):
     name = "qt-ews"
     port_name = "qt"
