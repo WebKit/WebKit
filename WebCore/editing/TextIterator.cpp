@@ -705,6 +705,28 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
     return false;
 }
 
+static int collapsedSpaceLength(RenderText* renderer, int textEnd)
+{
+    const UChar* characters = renderer->text()->characters();
+    int length = renderer->text()->length();
+    for (int i = textEnd; i < length; ++i) {
+        if (!renderer->style()->isCollapsibleWhiteSpace(characters[i]))
+            return i - textEnd;
+    }
+
+    return length - textEnd;
+}
+
+static int maxOffsetIncludingCollapsedSpaces(Node* node)
+{
+    int offset = caretMaxOffset(node);
+
+    if (node->renderer() && node->renderer()->isText())
+        offset += collapsedSpaceLength(toRenderText(node->renderer()), offset);
+
+    return offset;
+}
+
 // Whether or not we should emit a character as we enter m_node (if it's a container) or as we hit it (if it's atomic).
 bool TextIterator::shouldRepresentNodeOffsetZero()
 {
@@ -1029,7 +1051,9 @@ void SimplifiedBackwardsTextIterator::advance()
         m_node = next;
         if (m_node)
             pushFullyClippedState(m_fullyClippedStack, m_node);
-        m_offset = m_node ? caretMaxOffset(m_node) : 0;
+        // For the purpose of word boundary detection,
+        // we should iterate all visible text and trailing (collapsed) whitespaces. 
+        m_offset = m_node ? maxOffsetIncludingCollapsedSpaces(m_node) : 0;
         m_handledNode = false;
         m_handledChildren = false;
         

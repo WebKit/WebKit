@@ -1,3 +1,19 @@
+2009-12-16  MORITA Hajime <morrita@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 28306: double-clicking a word inside <b> beside newline select two words
+        https://bugs.webkit.org/show_bug.cgi?id=28306
+
+        SimplifiedBackwardsTextIterator missed trailing whitespaces just
+        before folding line-break, which is used to detect word
+        boundaries. This fix checks strings on RenderText and expand text
+        range on SimplifiedBackwardsTextIterator to include trailing
+        whitespaces if availble.
+
+        * editing/selection/doubleclick-beside-cr-span-expected.txt: Added.
+        * editing/selection/doubleclick-beside-cr-span.html: Added.
+
 2009-12-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of text nodes is wrong
