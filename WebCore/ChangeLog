@@ -1,3 +1,15 @@
+2009-12-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixes HTMLInputElement::stepMismatch() to avoid ambiguous overload of pow().
+        https://bugs.webkit.org/show_bug.cgi?id=32675
+
+        Build fix only, no new tests.
+
+        * html/HTMLInputElement.cpp: Modified.
+        (WebCore::HTMLInputElement::stepMismatch): Cast first argument of pow to double to force 'double pow(double, int)'
+
 2009-12-17  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Eric Seidel.
