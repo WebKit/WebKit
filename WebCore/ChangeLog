@@ -1,3 +1,38 @@
+2009-12-16  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52206.
+        http://trac.webkit.org/changeset/52206
+        https://bugs.webkit.org/show_bug.cgi?id=31187
+
+        This broke pixel tests on Mac.  Presumably the code in
+        ImageCG is wrong here.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/haiku/ImageHaiku.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::drawBitmapPattern):
+        * platform/graphics/wince/ImageBufferWince.cpp:
+        (WebCore::):
+        (WebCore::BufferedImage::drawPattern):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        (WebCore::Image::drawPattern):
+
 2009-12-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

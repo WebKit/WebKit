@@ -171,11 +171,15 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 }
 
 void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        ColorSpace, CompositeOperator op, const FloatRect& destRect)
+                        const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     cairo_surface_t* image = nativeImageForCurrentFrame();
     if (!image) // If it's too early we won't have an image yet.
         return;
+
+    // Avoid NaN
+    if (!isfinite(phase.x()) || !isfinite(phase.y()))
+       return;
 
     cairo_t* cr = context->platformContext();
     context->save();
@@ -196,16 +200,12 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
     cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
 
-    cairo_matrix_t patternMatrix = cairo_matrix_t(patternTransform);
-    cairo_matrix_t phaseMatrix = {1, 0, 0, 1, tileRect.x() * patternTransform.a(), tileRect.y() * patternTransform.d()};
-    cairo_matrix_t combinedMatrix;
-    cairo_matrix_multiply(&combinedMatrix, &patternMatrix, &phaseMatrix);
-    cairo_matrix_invert(&combinedMatrix);
-    cairo_pattern_set_matrix(pattern, &combinedMatrix);
-    if (cairo_pattern_status(pattern)) {
-        cairo_pattern_destroy(pattern);
-        return;
-    }
+    cairo_matrix_t pattern_matrix = cairo_matrix_t(patternTransform);
+    cairo_matrix_t phase_matrix = {1, 0, 0, 1, phase.x() + tileRect.x() * patternTransform.a(), phase.y() + tileRect.y() * patternTransform.d()};
+    cairo_matrix_t combined;
+    cairo_matrix_multiply(&combined, &pattern_matrix, &phase_matrix);
+    cairo_matrix_invert(&combined);
+    cairo_pattern_set_matrix(pattern, &combined);
 
     context->setCompositeOperation(op);
     cairo_set_source(cr, pattern);

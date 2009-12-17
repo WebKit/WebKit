@@ -171,7 +171,7 @@ protected:
 
 #if PLATFORM(WX) || (PLATFORM(WINCE) && !PLATFORM(QT))
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
-                             ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 #endif
 
 #if PLATFORM(HAIKU)

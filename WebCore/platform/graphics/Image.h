@@ -170,7 +170,7 @@ protected:
     virtual Color solidColor() const { return Color(); }
     
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
-                             ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 
 private:
     RefPtr<SharedBuffer> m_data; // The encoded raw data for the image. 

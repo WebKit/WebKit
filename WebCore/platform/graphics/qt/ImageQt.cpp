@@ -94,7 +94,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
-                        ColorSpace, CompositeOperator op, const FloatRect& destRect)
+                        const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     QPixmap* framePixmap = nativeImageForCurrentFrame();
     if (!framePixmap) // If it's too early we won't have an image yet.
@@ -112,6 +112,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     QPainter* p = ctxt->platformContext();
     if (!pixmap.hasAlpha() && p->compositionMode() == QPainter::CompositionMode_SourceOver)
         p->setCompositionMode(QPainter::CompositionMode_Source);
+    p->setBrushOrigin(phase);
     p->fillRect(destRect, b);
     ctxt->restore();
 
