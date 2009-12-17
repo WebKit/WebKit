@@ -153,6 +153,10 @@ QWebView::QWebView(QWidget *parent)
     setAttribute(Qt::WA_InputMethodEnabled);
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    setAttribute(Qt::WA_AcceptTouchEvents);
+#endif
+
     setAcceptDrops(true);
 
     setMouseTracking(true);
@@ -639,6 +643,14 @@ bool QWebView::event(QEvent *e)
             // FIXME: Add a QEvent::CursorUnset or similar to Qt.
             if (cursor().shape() == Qt::ArrowCursor)
                 d->page->d->client->resetCursor();
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+        } else if (e->type() == QEvent::TouchBegin 
+                   || e->type() == QEvent::TouchEnd 
+                   || e->type() == QEvent::TouchUpdate) {
+            d->page->event(e);
+            if (e->isAccepted())
+                return true;
 #endif
         } else if (e->type() == QEvent::Leave)
             d->page->event(e);

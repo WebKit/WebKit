@@ -2,6 +2,20 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Add support for touch events in QWebView and QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=32432
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::QGraphicsWebView):
+        (QGraphicsWebView::sceneEvent):
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebView::event):
+
+2009-12-17  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Add support for mocking touch events with QtLauncher
         https://bugs.webkit.org/show_bug.cgi?id=32434
 
