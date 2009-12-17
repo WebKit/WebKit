@@ -1,3 +1,28 @@
+2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] WebKit GTK needs a wrapper for ref counted glib/gobject structs
+        https://bugs.webkit.org/show_bug.cgi?id=21599
+
+        Add GRefPtr support for GTK types to WebCore, as JSC does not link against
+        GTK+. Also convert PopupMenu::m_poup from a raw pointer to a GRefPtr.
+
+        No new tests as functionality has not changed.
+
+        * GNUmakefile.am:
+        * platform/PopupMenu.h:
+        * platform/gtk/GRefPtrGtk.cpp: Added.
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * platform/gtk/GRefPtrGtk.h: Added.
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::menuRemoveItem):
+
 2009-12-17  Evan Martin  <evan@chromium.org>
 
         Reviewed by Xan Lopez.

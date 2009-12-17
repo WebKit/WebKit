@@ -1,3 +1,15 @@
+2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] WebKit GTK needs a wrapper for ref counted glib/gobject structs
+        https://bugs.webkit.org/show_bug.cgi?id=21599
+
+        Convert a use of GOwnPtr for a reference counted type to GRefPtr.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createPlugin):
+
 2009-12-16  Dan Winship  <danw@gnome.org>
 
         Reviewed by Gustavo Noronha Silva.

@@ -35,16 +35,14 @@ namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
-    , m_popup(0)
 {
 }
 
 PopupMenu::~PopupMenu()
 {
     if (m_popup) {
-        g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        g_signal_handlers_disconnect_matched(m_popup.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
         hide();
-        g_object_unref(m_popup);
     }
 }
 
@@ -54,10 +52,9 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
 
     if (!m_popup) {
         m_popup = GTK_MENU(gtk_menu_new());
-        g_object_ref_sink(G_OBJECT(m_popup));
-        g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmapped), this);
+        g_signal_connect(m_popup.get(), "unmap", G_CALLBACK(menuUnmapped), this);
     } else
-        gtk_container_foreach(GTK_CONTAINER(m_popup), reinterpret_cast<GtkCallback>(menuRemoveItem), this);
+        gtk_container_foreach(GTK_CONTAINER(m_popup.get()), reinterpret_cast<GtkCallback>(menuRemoveItem), this);
 
     int x, y;
     gdk_window_get_origin(GTK_WIDGET(view->hostWindow()->platformPageClient())->window, &x, &y);
@@ -78,20 +75,20 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
 
         // FIXME: Apply the PopupMenuStyle from client()->itemStyle(i)
         gtk_widget_set_sensitive(item, client()->itemIsEnabled(i));
-        gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), item);
+        gtk_menu_shell_append(GTK_MENU_SHELL(m_popup.get()), item);
         gtk_widget_show(item);
     }
 
-    gtk_menu_set_active(m_popup, index);
+    gtk_menu_set_active(m_popup.get(), index);
 
 
     // The size calls are directly copied from gtkcombobox.c which is LGPL
     GtkRequisition requisition;
-    gtk_widget_set_size_request(GTK_WIDGET(m_popup), -1, -1);
-    gtk_widget_size_request(GTK_WIDGET(m_popup), &requisition);
-    gtk_widget_set_size_request(GTK_WIDGET(m_popup), MAX(rect.width(), requisition.width), -1);
+    gtk_widget_set_size_request(GTK_WIDGET(m_popup.get()), -1, -1);
+    gtk_widget_size_request(GTK_WIDGET(m_popup.get()), &requisition);
+    gtk_widget_set_size_request(GTK_WIDGET(m_popup.get()), std::max(rect.width(), requisition.width), -1);
 
-    GList* children = GTK_MENU_SHELL(m_popup)->children;
+    GList* children = GTK_MENU_SHELL(m_popup.get())->children;
     if (size)
         for (int i = 0; i < size; i++) {
             if (i > index)
@@ -103,18 +100,17 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
             m_menuPosition.setY(m_menuPosition.y() - itemRequisition.height);
 
             children = g_list_next(children);
-        }
-    else
-        // Center vertically the empty popup in the combo box area
-        m_menuPosition.setY(m_menuPosition.y() - rect.height() / 2);
+        } else
+            // Center vertically the empty popup in the combo box area
+            m_menuPosition.setY(m_menuPosition.y() - rect.height() / 2);
 
-    gtk_menu_popup(m_popup, NULL, NULL, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, gtk_get_current_event_time());
+    gtk_menu_popup(m_popup.get(), 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, gtk_get_current_event_time());
 }
 
 void PopupMenu::hide()
 {
     ASSERT(m_popup);
-    gtk_menu_popdown(m_popup);
+    gtk_menu_popdown(m_popup.get());
 }
 
 void PopupMenu::updateFromElement()
@@ -150,7 +146,7 @@ void PopupMenu::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pushI
 void PopupMenu::menuRemoveItem(GtkWidget* widget, PopupMenu* that)
 {
     ASSERT(that->m_popup);
-    gtk_container_remove(GTK_CONTAINER(that->m_popup), widget);
+    gtk_container_remove(GTK_CONTAINER(that->m_popup.get()), widget);
 }
 
 }

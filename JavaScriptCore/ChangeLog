@@ -1,3 +1,38 @@
+2009-12-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] WebKit GTK needs a wrapper for ref counted glib/gobject structs
+        https://bugs.webkit.org/show_bug.cgi?id=21599
+
+        Implement GRefPtr, a smart pointer for reference counted GObject types.
+
+        * GNUmakefile.am:
+        * wtf/gtk/GOwnPtr.cpp:
+        (WTF::GDir):
+        * wtf/gtk/GRefPtr.h: Added.
+        (WTF::):
+        (WTF::GRefPtr::GRefPtr):
+        (WTF::GRefPtr::~GRefPtr):
+        (WTF::GRefPtr::clear):
+        (WTF::GRefPtr::get):
+        (WTF::GRefPtr::operator*):
+        (WTF::GRefPtr::operator->):
+        (WTF::GRefPtr::operator!):
+        (WTF::GRefPtr::operator UnspecifiedBoolType):
+        (WTF::GRefPtr::hashTableDeletedValue):
+        (WTF::::operator):
+        (WTF::::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+        (WTF::adoptGRef):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+
 2009-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Build fixes for make distcheck.
