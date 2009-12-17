@@ -1,3 +1,13 @@
+2009-12-17  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Xan Lopez.
+
+        Always use all WebCore include paths in GtkWebKit.
+
+        With this patch, I can disable all optional features and still build.
+
+        * GNUmakefile.am:
+
 2009-12-17  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.

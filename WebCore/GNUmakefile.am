@@ -26,6 +26,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
 	-I$(srcdir)/WebCore/loader/icon \
+	-I$(srcdir)/WebCore/mathml \
 	-I$(srcdir)/WebCore/notifications \
 	-I$(srcdir)/WebCore/page \
 	-I$(srcdir)/WebCore/page/animation \
@@ -49,6 +50,12 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
 	-I$(srcdir)/WebCore/storage \
+	-I$(srcdir)/WebCore/svg \
+	-I$(srcdir)/WebCore/svg/animation \
+	-I$(srcdir)/WebCore/svg/graphics \
+	-I$(srcdir)/WebCore/svg/graphics/filters \
+	-I$(srcdir)/WebCore/websockets \
+	-I$(srcdir)/WebCore/wml \
 	-I$(srcdir)/WebCore/workers \
 	-I$(srcdir)/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js \
@@ -2581,8 +2588,7 @@ webcore_built_sources += \
 	DerivedSources/WMLNames.cpp
 
 webcore_cppflags += \
-	-DENABLE_WML=1 \
-	-I$(top_srcdir)/WebCore/wml
+	-DENABLE_WML=1
 
 webcore_sources += \
 	WebCore/wml/WMLAElement.cpp \
@@ -2686,7 +2692,6 @@ if ENABLE_MATHML
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_MATHML=1
 
 webcore_cppflags += \
-	-I$(srcdir)/WebCore/mathml \
 	-DENABLE_MATHML=1
 
 webcore_sources += \
@@ -2905,11 +2910,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGZoomEvent.idl
 
 webcore_cppflags += \
-	-DENABLE_SVG=1 \
-	-I$(top_srcdir)/WebCore/svg \
-	-I$(top_srcdir)/WebCore/svg/animation \
-	-I$(top_srcdir)/WebCore/svg/graphics \
-	-I$(top_srcdir)/WebCore/svg/graphics/filters
+	-DENABLE_SVG=1
 
 webcore_sources += \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
@@ -3375,8 +3376,7 @@ IDL_BINDINGS += \
 	WebCore/websockets/WebSocket.idl
 
 webcore_cppflags += \
-	-DENABLE_WEB_SOCKETS=1 \
-	-I$(srcdir)/WebCore/websockets
+	-DENABLE_WEB_SOCKETS=1
 
 webcore_sources += \
 	WebCore/bindings/js/JSWebSocketConstructor.cpp \
