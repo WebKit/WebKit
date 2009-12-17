@@ -29,6 +29,7 @@
 #include "FontDescription.h"
 #include "SimpleFontData.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(QT)
