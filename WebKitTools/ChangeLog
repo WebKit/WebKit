@@ -1,3 +1,10 @@
+2009-12-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Added a default argument to _update_status so that callers
+        don't have to explictly pass None when they don't have a patch object.
+
+        * Scripts/modules/commands/queues.py:
+
 2009-12-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.

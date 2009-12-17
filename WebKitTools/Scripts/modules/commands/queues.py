@@ -58,7 +58,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
         except Exception, e:
             log("Failed to CC watchers: %s." % e)
 
-    def _update_status(self, message, patch, results_file=None):
+    def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_bot.update_status(self.name, message, patch, results_file)
 
     def queue_log_path(self):
@@ -120,7 +120,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def next_work_item(self):
         patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
         if not patches:
-            self._update_status("Empty queue.", None)
+            self._update_status("Empty queue.")
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch['id'] for patch in patches])
