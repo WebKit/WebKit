@@ -35,6 +35,7 @@
 #include "runtime_root.h"
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
+#include <runtime/StringBuilder.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -296,7 +297,7 @@ JavaMethod::~JavaMethod()
 
 // JNI method signatures use '/' between components of a class name, but
 // we get '.' between components from the reflection API.
-static void appendClassName(UString& aString, const char* className)
+static void appendClassName(StringBuilder& builder, const char* className)
 {
     ASSERT(JSLock::lockCount() > 0);
     
@@ -309,9 +310,9 @@ static void appendClassName(UString& aString, const char* className)
         cp++;
     }
         
-    aString.append(result);
+    builder.append(result);
 
-    free (result);
+    free(result);
 }
 
 const char *JavaMethod::signature() const 
@@ -319,7 +320,8 @@ const char *JavaMethod::signature() const
     if (!_signature) {
         JSLock lock(SilenceAssertionsOnly);
 
-        UString signatureBuilder("(");
+        StringBuilder signatureBuilder;
+        signatureBuilder.append("(");
         for (int i = 0; i < _numParameters; i++) {
             JavaParameter* aParameter = parameterAt(i);
             JNIType _JNIType = aParameter->getJNIType();
@@ -346,7 +348,8 @@ const char *JavaMethod::signature() const
             }
         }
         
-        _signature = strdup(signatureBuilder.ascii());
+        UString signatureUString = signatureBuilder.release();
+        _signature = strdup(signatureUString.ascii());
     }
     
     return _signature;

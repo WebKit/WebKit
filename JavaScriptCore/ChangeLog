@@ -1,3 +1,14 @@
+2009-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32720
+
+        * JavaScriptCore.exp:
+            - Remove exports for UString::append
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Make StringBuilder a private header (was project).
+
 2009-12-18  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

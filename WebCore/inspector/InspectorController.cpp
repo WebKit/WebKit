@@ -101,6 +101,7 @@
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
 #include <runtime/JSLock.h>
+#include <runtime/StringBuilder.h>
 #include <runtime/UString.h>
 
 using namespace JSC;
@@ -1356,24 +1357,26 @@ void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<Profile>
 {
     RefPtr<Profile> profile = prpProfile;
 
-    UString message = "Profile \"webkit-profile://";
-    message += encodeWithURLEscapeSequences(CPUProfileType);
-    message += "/";
-    message += encodeWithURLEscapeSequences(profile->title());
-    message += "#";
-    message += UString::from(profile->uid());
-    message += "\" finished.";
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    JSC::StringBuilder message;
+    message.append("Profile \"webkit-profile://");
+    message.append((UString)encodeWithURLEscapeSequences(CPUProfileType));
+    message.append("/");
+    message.append((UString)encodeWithURLEscapeSequences(profile->title()));
+    message.append("#");
+    message.append(UString::from(profile->uid()));
+    message.append("\" finished.");
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message.release(), lineNumber, sourceURL);
 }
 
 void InspectorController::addStartProfilingMessageToConsole(const UString& title, unsigned lineNumber, const UString& sourceURL)
 {
-    UString message = "Profile \"webkit-profile://";
-    message += encodeWithURLEscapeSequences(CPUProfileType);
-    message += "/";
-    message += encodeWithURLEscapeSequences(title);
-    message += "#0\" started.";
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    JSC::StringBuilder message;
+    message.append("Profile \"webkit-profile://");
+    message.append(encodeWithURLEscapeSequences(CPUProfileType));
+    message.append("/");
+    message.append(encodeWithURLEscapeSequences(title));
+    message.append("#0\" started.");
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message.release(), lineNumber, sourceURL);
 }
 
 void InspectorController::getProfileHeaders(long callId)
@@ -1411,11 +1414,12 @@ UString InspectorController::getCurrentUserInitiatedProfileName(bool incrementPr
     if (incrementProfileNumber)
         m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;        
 
-    UString title = UserInitiatedProfileName;
-    title += ".";
-    title += UString::from(m_currentUserInitiatedProfileNumber);
+    JSC::StringBuilder title;
+    title.append(UserInitiatedProfileName);
+    title.append(".");
+    title.append(UString::from(m_currentUserInitiatedProfileNumber));
     
-    return title;
+    return title.release();
 }
 
 void InspectorController::startUserInitiatedProfilingSoon()
