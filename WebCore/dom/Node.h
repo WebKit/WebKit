@@ -201,6 +201,9 @@ public:
     // The node's parent for the purpose of event capture and bubbling.
     virtual ContainerNode* eventParentNode();
 
+    // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
+    Node* enclosingLinkEventParentOrSelf();
+
     // Node ancestors when concerned about event flow
     void eventAncestors(Vector<RefPtr<ContainerNode> > &ancestors);
 

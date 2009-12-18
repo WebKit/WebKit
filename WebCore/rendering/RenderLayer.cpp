@@ -2346,15 +2346,10 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
         }
     }
 
-    // Now determine if the result is inside an anchor; make sure an image map wins if
-    // it already set URLElement and only use the innermost.
+    // Now determine if the result is inside an anchor - if the urlElement isn't already set.
     Node* node = result.innerNode();
-    while (node) {
-        // for imagemaps, URLElement is the associated area element not the image itself
-        if (node->isLink() && !result.URLElement() && !node->hasTagName(imgTag))
-            result.setURLElement(static_cast<Element*>(node));
-        node = node->eventParentNode();
-    }
+    if (node && !result.URLElement())
+        result.setURLElement(static_cast<Element*>(node->enclosingLinkEventParentOrSelf()));
 
     // Next set up the correct :hover/:active state along the new chain.
     updateHoverActiveState(request, result);

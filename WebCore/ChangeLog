@@ -1,3 +1,28 @@
+2009-12-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes <http://webkit.org/b/32613>.
+        REGRESSION (r52008): Middle-clicking on a linked image starts a pan scroll,
+        but should follow the link instead.
+
+        The node itself isn't the only possible node that can be a link (that was the
+        original check), any of its ancestors could be links as well, we need to climb
+        up the tree to see. Created a new function (enclosingAnchorNode), that finds a
+        node's enclosing anchor element (if it exists), that we can share between RenderLayer
+        and Node, and also added tests that test pan scrolling behavior in image maps.
+
+        Tests: platform/win/fast/events/panScroll-image-no-scroll.html
+               platform/win/fast/events/panScroll-imageMap-href-no-scroll.html
+               platform/win/fast/events/panScroll-imageMap-noHref-scroll.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::enclosingAnchorNode):
+        (WebCore::Node::defaultEventHandler):
+        * dom/Node.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2009-12-18  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Xan Lopez.

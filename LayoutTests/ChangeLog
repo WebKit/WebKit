@@ -1,3 +1,21 @@
+2009-12-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Fixes <http://webkit.org/b/32613>.
+        REGRESSION (r52008): Middle-clicking on a linked image starts a pan scroll,
+        but should follow the link instead.
+
+        Added tests that test pan scrolling behavior when you middle click on images with
+        links, and if you click on parts on image maps that are links, and that aren't.
+
+        * platform/win/fast/events/panScroll-image-no-scroll-expected.txt: Added.
+        * platform/win/fast/events/panScroll-image-no-scroll.html: Added.
+        * platform/win/fast/events/panScroll-imageMap-href-no-scroll-expected.txt: Added.
+        * platform/win/fast/events/panScroll-imageMap-href-no-scroll.html: Added.
+        * platform/win/fast/events/panScroll-imageMap-noHref-scroll-expected.txt: Added.
+        * platform/win/fast/events/panScroll-imageMap-noHref-scroll.html: Added.
+
 2009-12-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

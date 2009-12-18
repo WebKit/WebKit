@@ -2288,6 +2288,19 @@ ContainerNode* Node::eventParentNode()
     return static_cast<ContainerNode*>(parent);
 }
 
+Node* Node::enclosingLinkEventParentOrSelf()
+{
+    for (Node* node = this; node; node = node->eventParentNode()) {
+        // For imagemaps, the enclosing link node is the associated area element not the image itself.
+        // So we don't let images be the enclosingLinkNode, even though isLink sometimes returns true
+        // for them.
+        if (node->isLink() && !node->hasTagName(imgTag))
+            return node;
+    }
+
+    return 0;
+}
+
 // --------
 
 ScriptExecutionContext* Node::scriptExecutionContext() const
@@ -2831,9 +2844,11 @@ void Node::defaultEventHandler(Event* event)
 #if ENABLE(PAN_SCROLLING)
     } else if (eventType == eventNames().mousedownEvent) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-        if (mouseEvent->button() == MiddleButton && !this->isLink()) {
-            RenderObject* renderer = this->renderer();
+        if (mouseEvent->button() == MiddleButton) {
+            if (enclosingLinkEventParentOrSelf())
+                return;
 
+            RenderObject* renderer = this->renderer();
             while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
                 renderer = renderer->parent();
 
