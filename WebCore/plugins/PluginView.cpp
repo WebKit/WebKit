@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PluginView.h"
 
+#include "Chrome.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"

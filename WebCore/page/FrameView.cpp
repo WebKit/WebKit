@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocLoader.h"
 #include "EventHandler.h"

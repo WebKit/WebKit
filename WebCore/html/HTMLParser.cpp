@@ -28,6 +28,7 @@
 #include "CharacterNames.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
 #include "Console.h"

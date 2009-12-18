@@ -22,6 +22,7 @@
 
 #include "AtomicString.h"
 #include "Base64.h"
+#include "Chrome.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"

@@ -29,6 +29,7 @@
 #include "RenderLayerCompositor.h"
 
 #include "AnimationController.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Frame.h"

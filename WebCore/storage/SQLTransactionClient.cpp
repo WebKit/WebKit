@@ -33,6 +33,7 @@
 
 #if ENABLE(DATABASE)
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Database.h"
 #include "DatabaseThread.h"

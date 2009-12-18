@@ -26,6 +26,7 @@
 #include "RenderBox.h"
 
 #include "CachedImage.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "FrameView.h"

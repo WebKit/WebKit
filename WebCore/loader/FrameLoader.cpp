@@ -36,6 +36,7 @@
 #include "ApplicationCacheHost.h"
 #include "Archive.h"
 #include "ArchiveFactory.h"
+#include "BackForwardList.h"
 #include "CString.h"
 #include "Cache.h"
 #include "CachedPage.h"

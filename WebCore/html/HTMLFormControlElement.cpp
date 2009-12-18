@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormControlElement.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"

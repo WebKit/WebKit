@@ -33,6 +33,7 @@
 #include "CString.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wtf/HashMap.h>
 
 #include <windows.h>
 #include <winbase.h>

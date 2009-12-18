@@ -22,6 +22,7 @@
 #include "InputElement.h"
 
 #include "BeforeTextInsertedEvent.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"

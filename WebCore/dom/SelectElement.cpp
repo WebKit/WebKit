@@ -22,6 +22,7 @@
 #include "SelectElement.h"
 
 #include "CharacterNames.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Element.h"
 #include "EventHandler.h"

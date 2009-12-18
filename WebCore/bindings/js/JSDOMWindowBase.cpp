@@ -24,6 +24,7 @@
 #include "JSDOMWindowBase.h"
 
 #include "CString.h"
+#include "Chrome.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"

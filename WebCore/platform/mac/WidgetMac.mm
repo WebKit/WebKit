@@ -31,6 +31,7 @@
 #endif
 
 #import "BlockExceptions.h"
+#import "Chrome.h"
 #import "Cursor.h"
 #import "Document.h"
 #import "Font.h"

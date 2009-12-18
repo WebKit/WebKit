@@ -37,6 +37,7 @@
 #include "DatabaseDetails.h"
 #include "SQLiteDatabase.h"
 #include "StringHash.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #endif // !PLATFORM(CHROMIUM)

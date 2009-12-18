@@ -1,3 +1,15 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Add #includes needed after WebCore clean-up
+
+        Rubber-stamped by Anders Carlsson.
+
+        Fixes <http://webkit.org/b/32718>.
+
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebView.mm:
+
 2009-12-17  Adam Roben  <aroben@apple.com>
 
         Mac build fix

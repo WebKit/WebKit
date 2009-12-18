@@ -38,14 +38,12 @@
 #include "WebMutableURLRequest.h"
 #include "WebResource.h"
 #include "WebURLResponse.h"
-
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/DocLoader.h>
 #include <WebCore/Document.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/KURL.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

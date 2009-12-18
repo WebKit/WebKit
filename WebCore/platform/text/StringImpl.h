@@ -23,19 +23,13 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
 #include <wtf/OwnFastMallocPtr.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/PtrAndFlags.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
-
-#if USE(JSC)
-#include <runtime/UString.h>
-#endif
 
 #if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
@@ -44,6 +38,10 @@ typedef const struct __CFString * CFStringRef;
 #ifdef __OBJC__
 @class NSString;
 #endif
+
+namespace JSC {
+class UString;
+}
 
 namespace WebCore {
 

@@ -29,18 +29,14 @@
 #define Frame_h
 
 #include "AnimationController.h"
-#include "Document.h"
 #include "DragImage.h"
-#include "EditAction.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "Range.h"
 #include "ScriptController.h"
 #include "ScrollBehavior.h"
 #include "SelectionController.h"
-#include "TextGranularity.h"
 #include "UserScriptTypes.h"
 
 #if PLATFORM(WIN)
@@ -64,22 +60,8 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
     class CSSMutableStyleDeclaration;
-    class Editor;
-    class EventHandler;
-    class FrameLoader;
-    class RedirectScheduler;
-    class FrameLoaderClient;
-    class FrameTree;
-    class FrameView;
-    class HTMLFrameOwnerElement;
     class HTMLTableCellElement;
     class RegularExpression;
-    class RenderPart;
-    class ScriptController;
-    class SelectionController;
-    class Settings;
-    class VisibleSelection;
-    class Widget;
 
     template <typename T> class Timer;
 

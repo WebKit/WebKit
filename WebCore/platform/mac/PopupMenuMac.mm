@@ -20,6 +20,7 @@
 #import "config.h"
 #import "PopupMenu.h"
 
+#import "Chrome.h"
 #import "ChromeClient.h"
 #import "EventHandler.h"
 #import "Frame.h"

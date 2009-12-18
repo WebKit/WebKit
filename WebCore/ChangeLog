@@ -1,3 +1,82 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Reduce #includes in a few high-use headers
+
+        Removed unnecessary #includes in these headers:
+          - Frame.h
+          - FrameWin.h
+          - Node.h
+          - Page.h
+          - StringImpl.h
+
+        The rest of the patch is all adding #includes to source files that now
+        require them.
+
+        Fixes <http://webkit.org/b/32718>.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * dom/Node.h:
+        * page/Frame.h:
+        * page/Page.h:
+        * page/win/FrameWin.h:
+        * platform/text/StringImpl.h:
+        Removed unnecessary #includes.
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * dom/Document.cpp:
+        * dom/InputElement.cpp:
+        * dom/Node.cpp:
+        * dom/SelectElement.cpp:
+        * editing/EditorCommand.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLParser.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        * inspector/InspectorController.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/HistoryController.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * page/Console.cpp:
+        * page/EventHandler.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * page/Navigator.cpp:
+        * page/PageGroup.cpp:
+        * page/Settings.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * platform/KURL.h:
+        * platform/ScrollbarThemeComposite.cpp:
+        * platform/cf/BinaryPropertyList.cpp:
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        * platform/mac/PopupMenuMac.mm:
+        * platform/mac/WidgetMac.mm:
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/text/StringImpl.cpp:
+        * platform/win/FileSystemWin.cpp:
+        * platform/win/PlatformScreenWin.cpp:
+        * platform/win/PopupMenuWin.cpp:
+        * platform/win/WidgetWin.cpp:
+        * plugins/PluginView.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RootInlineBox.cpp:
+        * storage/DatabaseTracker.cpp:
+        * storage/DatabaseTracker.h:
+        * storage/SQLTransactionClient.cpp:
+        * svg/graphics/SVGImage.cpp:
+        Added now-needed #includes.
+
 2009-12-18  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Darin Adler.

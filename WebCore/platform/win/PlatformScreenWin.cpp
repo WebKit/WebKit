@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "HostWindow.h"
 #include "IntRect.h"
 #include "FloatRect.h"
 #include "Frame.h"

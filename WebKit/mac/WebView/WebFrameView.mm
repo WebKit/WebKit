@@ -55,6 +55,7 @@
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
+#import <WebCore/BackForwardList.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>

@@ -30,6 +30,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HostWindow.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"

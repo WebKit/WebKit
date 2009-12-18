@@ -28,6 +28,7 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
+#include "Chrome.h"
 #include "CSSStyleSelector.h"
 #include "FloatQuad.h"
 #include "Frame.h"

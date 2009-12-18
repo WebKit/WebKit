@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollbarThemeComposite.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameView.h"

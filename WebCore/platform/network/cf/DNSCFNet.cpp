@@ -29,6 +29,7 @@
 
 #include "StringHash.h"
 #include "Timer.h"
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 

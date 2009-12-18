@@ -30,15 +30,14 @@
 #include "WebLocalizableStrings.h"
 #include "WebView.h"
 
-#pragma warning(push, 0)
 #include <WebCore/ContextMenu.h>
 #include <WebCore/Event.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/Page.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/NotImplemented.h>
-#pragma warning(pop)
 
 #include <tchar.h>
 

@@ -100,6 +100,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/BackForwardList.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>

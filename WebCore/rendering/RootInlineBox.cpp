@@ -21,6 +21,7 @@
 #include "RootInlineBox.h"
 
 #include "BidiResolver.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "EllipsisBox.h"

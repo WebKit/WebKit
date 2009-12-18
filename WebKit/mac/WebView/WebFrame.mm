@@ -56,6 +56,7 @@
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/AnimationController.h>
 #import <WebCore/CSSMutableStyleDeclaration.h>
+#import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocLoader.h>

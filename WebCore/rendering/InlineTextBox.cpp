@@ -23,6 +23,7 @@
 #include "config.h"
 #include "InlineTextBox.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Editor.h"

@@ -32,6 +32,7 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
+#include "Chrome.h"
 #include "FileList.h"
 #include "Frame.h"
 #include "FrameView.h"

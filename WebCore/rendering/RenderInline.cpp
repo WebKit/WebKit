@@ -23,6 +23,7 @@
 #include "config.h"
 #include "RenderInline.h"
 
+#include "Chrome.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"

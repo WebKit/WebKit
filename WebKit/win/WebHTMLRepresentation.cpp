@@ -30,11 +30,10 @@
 #include "WebKit.h"
 #include "WebFrame.h"
 #include "WebKitStatisticsPrivate.h"
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
+#include <WebCore/Frame.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/TextResourceDecoder.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

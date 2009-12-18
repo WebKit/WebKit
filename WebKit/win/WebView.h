@@ -30,7 +30,7 @@
 #include "WebKit.h"
 #include "WebFrame.h"
 #include "WebPreferences.h"
-
+#include <WebCore/DragActions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/Timer.h>
 #include <WebCore/WindowMessageListener.h>

@@ -36,6 +36,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CachedCSSStyleSheet.h"
+#include "Chrome.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"

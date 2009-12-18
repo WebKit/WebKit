@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"

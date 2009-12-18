@@ -37,6 +37,7 @@
 #include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 

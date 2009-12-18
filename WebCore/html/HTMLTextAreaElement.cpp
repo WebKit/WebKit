@@ -27,6 +27,7 @@
 #include "HTMLTextAreaElement.h"
 
 #include "BeforeTextInsertedEvent.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"

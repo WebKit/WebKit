@@ -32,6 +32,7 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "Chrome.h"
 #include "CreateLinkCommand.h"
 #include "DocumentFragment.h"
 #include "Editor.h"

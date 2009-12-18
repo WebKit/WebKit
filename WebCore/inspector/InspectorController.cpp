@@ -34,6 +34,7 @@
 
 #include "CString.h"
 #include "CachedResource.h"
+#include "Chrome.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "Cookie.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Widget.h"
 
+#include "Chrome.h"
 #include "Cursor.h"
 #include "Document.h"
 #include "Element.h"

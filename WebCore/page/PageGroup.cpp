@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageGroup.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"

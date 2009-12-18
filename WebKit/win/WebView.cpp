@@ -54,12 +54,16 @@
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
 #include "WindowsTouch.h"
-#pragma warning( push, 0 )
+#include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSValue.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
+#include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CookieStorageWin.h>
@@ -113,10 +117,6 @@
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/TypingCommand.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-#pragma warning(pop)
-#include <JavaScriptCore/InitializeThreading.h>
-#include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/JSValue.h>
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CGContext.h>

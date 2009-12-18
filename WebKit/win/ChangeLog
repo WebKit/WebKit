@@ -1,3 +1,17 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Add #includes needed after WebCore clean-up
+
+        Rubber-stamped by Anders Carlsson.
+
+        Fixes <http://webkit.org/b/32718>.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebDataSource.cpp:
+        * WebHTMLRepresentation.cpp:
+        * WebView.cpp:
+        * WebView.h:
+
 2009-12-17  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Adam Roben.

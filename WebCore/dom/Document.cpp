@@ -36,6 +36,7 @@
 #include "CSSValueKeywords.h"
 #include "CString.h"
 #include "CachedCSSStyleSheet.h"
+#include "Chrome.h"
 #include "Comment.h"
 #include "Console.h"
 #include "CookieJar.h"

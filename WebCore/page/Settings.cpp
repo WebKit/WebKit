@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "BackForwardList.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"

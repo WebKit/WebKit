@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "BlockExceptions.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClipboardMac.h"
 #include "DragController.h"
