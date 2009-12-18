@@ -242,7 +242,7 @@ public:
 
         QTouchEvent touchEv(type);
         touchEv.setTouchPoints(touchPoints);
-        QCoreApplication::sendEvent(view, &touchEv);
+        QCoreApplication::sendEvent(view->page(), &touchEv);
 
         // After sending the event, remove all touchpoints that were released
         if (touchPoints[0].state() == Qt::TouchPointReleased)

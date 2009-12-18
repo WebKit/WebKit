@@ -1,3 +1,15 @@
+2009-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix infinite recursion in touch mocking.
+
+        Don't send the fake touch events to the view, as that'll trigger the
+        event filter again.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::sendTouchEvent):
+
 2009-12-17  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
