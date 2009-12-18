@@ -1,3 +1,15 @@
+2009-12-17  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 32357: SVG test case crashes WebKit (invalid font URL)
+        https://bugs.webkit.org/show_bug.cgi?id=32357
+
+        Added check for NULL return value from DocLoader::requestFont()
+
+        * svg/text/text-font-uri-invalid-expected.txt: Added.
+        * svg/text/text-font-uri-invalid.svg: Added.
+
 2009-12-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.
