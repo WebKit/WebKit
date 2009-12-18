@@ -1,3 +1,16 @@
+2009-12-18  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Compile warning from line 29 of GRefPtr.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=32703
+
+        Fix memory leak and compiler warning in GRefPtr GHashTable template
+        specialization.
+
+        * wtf/gtk/GRefPtr.cpp:
+        (WTF::refGPtr):
+
 2009-12-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

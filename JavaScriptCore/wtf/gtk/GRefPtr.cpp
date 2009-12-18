@@ -25,7 +25,9 @@ namespace WTF {
 
 template <> GHashTable* refGPtr(GHashTable* ptr)
 {
-    g_hash_table_ref(ptr);
+    if (ptr)
+        g_hash_table_ref(ptr);
+    return ptr;
 }
 
 template <> void derefGPtr(GHashTable* ptr)
