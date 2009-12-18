@@ -1,3 +1,13 @@
+2009-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Clean up the qmake build system to distinguish between trunk builds and package builds
+
+        https://bugs.webkit.org/show_bug.cgi?id=32716
+
+        * pcre/pcre.pri: Use standalone_package instead of QTDIR_build
+
 2009-12-18  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

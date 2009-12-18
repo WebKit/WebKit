@@ -80,7 +80,7 @@ win32-msvc*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -
 # all the extra compilers to generate all the necessary files for the build using 'make generated_files'
 #
 defineTest(addExtraCompiler) {
-    CONFIG(QTDIR_build) {
+    CONFIG(standalone_package) {
         outputRule = $$eval($${1}.output)
         outVariable = $$eval($${1}.variable_out)
         !isEqual(outVariable,GENERATED_SOURCES):return(true)
@@ -128,7 +128,7 @@ defineTest(addExtraCompilerWithHeader) {
     export($${1}_header.depends)
     export($${1}_header.variable_out)
 
-    !CONFIG(QTDIR_build): QMAKE_EXTRA_COMPILERS += $${1}_header
+    !CONFIG(standalone_package): QMAKE_EXTRA_COMPILERS += $${1}_header
 
     export(QMAKE_EXTRA_COMPILERS)
     export(generated_files.depends)

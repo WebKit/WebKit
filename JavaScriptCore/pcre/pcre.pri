@@ -12,7 +12,7 @@ SOURCES += \
     pcre_ucp_searchfuncs.cpp \
     pcre_xclass.cpp
 
-!CONFIG(QTDIR_build) {
+!CONFIG(standalone_package) {
     defineTest(addExtraCompiler) {
         QMAKE_EXTRA_COMPILERS += $$1
         generated_files.depends += compiler_$${1}_make_all
