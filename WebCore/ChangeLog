@@ -1,3 +1,22 @@
+2009-12-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        marquee with display:inline causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=32374
+
+        Test: fast/inline/inline-marquee-crash.html
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::start):
+        (WebCore::HTMLMarqueeElement::stop):
+        (WebCore::HTMLMarqueeElement::suspend):
+        (WebCore::HTMLMarqueeElement::resume):
+        (WebCore::HTMLMarqueeElement::renderMarquee):
+        * html/HTMLMarqueeElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+
 2009-12-17  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.

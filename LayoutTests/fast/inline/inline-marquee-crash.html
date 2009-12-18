@@ -1,0 +1,16 @@
+<html>
+<head>
+<title>inline marquee causes crashes</title>
+<script>
+  if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+</script>
+</head>
+
+<body>
+  <div style="opacity: 0.9;">
+    <marquee style="opacity: 0.9; display: inline;">No crash means PASS</marquee>
+  </div>
+</body>
+
+</html>

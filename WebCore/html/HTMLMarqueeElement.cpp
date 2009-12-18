@@ -112,14 +112,14 @@ void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLMarqueeElement::start()
 {
-    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
-        renderBox()->layer()->marquee()->start();
+    if (RenderMarquee* marqueeRenderer = renderMarquee())
+        marqueeRenderer->start();
 }
 
 void HTMLMarqueeElement::stop()
 {
-    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
-        renderBox()->layer()->marquee()->stop();
+    if (RenderMarquee* marqueeRenderer = renderMarquee())
+        marqueeRenderer->stop();
 }
 
 bool HTMLMarqueeElement::canSuspend() const
@@ -129,14 +129,21 @@ bool HTMLMarqueeElement::canSuspend() const
 
 void HTMLMarqueeElement::suspend()
 {
-    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
-        renderBox()->layer()->marquee()->suspend();
+    if (RenderMarquee* marqueeRenderer = renderMarquee())
+        marqueeRenderer->suspend();
 }
-    
+
 void HTMLMarqueeElement::resume()
 {
-    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
-        renderBox()->layer()->marquee()->updateMarqueePosition();
+    if (RenderMarquee* marqueeRenderer = renderMarquee())
+        marqueeRenderer->updateMarqueePosition();
+}
+
+RenderMarquee* HTMLMarqueeElement::renderMarquee() const
+{
+    if (renderer() && renderer()->hasLayer())
+        return renderBoxModelObject()->layer()->marquee();
+    return 0;
 }
 
 } // namespace WebCore
