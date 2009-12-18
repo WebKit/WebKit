@@ -1,3 +1,12 @@
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update WebKitSystemInterface for <rdar://problem/7237059>.        
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         GTK build fix

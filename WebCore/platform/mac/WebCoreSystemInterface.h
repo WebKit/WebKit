@@ -48,6 +48,7 @@ typedef struct _NSRect NSRect;
 @class NSFont;
 @class NSImage;
 @class NSMenu;
+@class NSMutableArray;
 @class NSMutableURLRequest;
 @class NSString;
 @class NSTextFieldCell;
@@ -165,6 +166,10 @@ extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
 
 extern BOOL (*wkUseSharedMediaUI)();
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+extern NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
+#endif
 
 #ifdef __cplusplus
 }

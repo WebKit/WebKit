@@ -290,7 +290,11 @@ BOOL WKIsLatchingWheelEvent(NSEvent *);
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
 #endif
-    
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+NSMutableArray *WKNoteOpenPanelFiles(NSArray *paths);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

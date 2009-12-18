@@ -105,5 +105,9 @@ void InitWebCoreSystemInterface(void)
     INIT(SupportsMultipartXMixedReplace);
 #endif
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    INIT(NoteOpenPanelFiles);
+#endif
+
     didInit = true;
 }

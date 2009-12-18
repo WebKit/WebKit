@@ -106,3 +106,7 @@ void (*wkReleaseStyleGroup)(void* group);
 ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
+#endif
