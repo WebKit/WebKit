@@ -39,7 +39,16 @@ function setUpPage() {
      //   creates test document builder, may throw exception
      //
      builder = createConfiguredBuilder();
-       setImplementationAttribute("validating", true);
+
+     //
+     // WebKit modification:
+     //
+     // Remove the following line otherwise test case skipped.
+     //
+     //setImplementationAttribute("validating", true);
+     //
+     // End WebKit modification
+     //
 
       docsLoaded = 0;
       

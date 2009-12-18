@@ -234,7 +234,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
 
 void StyledElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == idAttr) {
+    if (attr->name() == idAttributeName()) {
         // unique id
         setHasID(!attr->isNull());
         if (namedAttrMap) {

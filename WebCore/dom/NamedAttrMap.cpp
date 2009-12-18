@@ -130,7 +130,7 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* arg, ExceptionCode& ec)
         return 0;
     }
 
-    if (a->name() == idAttr)
+    if (attr->isId())
         m_element->updateId(old ? old->value() : nullAtom, a->value());
 
     // ### slightly inefficient - resizes attribute array twice.
@@ -155,9 +155,9 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
         return 0;
     }
 
-    RefPtr<Node> r = a->createAttrIfNeeded(m_element);
+    RefPtr<Attr> r = a->createAttrIfNeeded(m_element);
 
-    if (name == idAttr)
+    if (r->isId())
         m_element->updateId(a->value(), nullAtom);
 
     removeAttribute(name);
@@ -242,8 +242,8 @@ void NamedNodeMap::setAttributes(const NamedNodeMap& other)
 
     // If assigning the map changes the id attribute, we need to call
     // updateId.
-    Attribute *oldId = getAttributeItem(idAttr);
-    Attribute *newId = other.getAttributeItem(idAttr);
+    Attribute* oldId = getAttributeItem(m_element->idAttributeName());
+    Attribute* newId = other.getAttributeItem(m_element->idAttributeName());
 
     if (oldId || newId)
         m_element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);

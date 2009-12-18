@@ -1,0 +1,29 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<div contenteditable="true">
+<ul class="needsDeletionUI"><li>1</li><li id="li">2</li></ul>
+
+<script>
+description('Test document.getElementById("WebKit-Editing-Delete-Button")');
+
+sel = window.getSelection();
+li = document.getElementById("li");
+sel.setPosition(li, 0);
+
+if (window.layoutTestController) {
+    deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
+    shouldBeNonNull('deleteButton');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

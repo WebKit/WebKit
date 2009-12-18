@@ -63,7 +63,7 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
-    } else if (attr->name() == idAttr) {
+    } else if (attr->name() == idAttributeName()) {
         const AtomicString& newId = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
@@ -118,7 +118,7 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
         if (!codeBase.isNull())
             args.set("codeBase", codeBase);
 
-        const AtomicString& name = getAttribute(document()->isHTMLDocument() ? nameAttr : idAttr);
+        const AtomicString& name = getAttribute(document()->isHTMLDocument() ? nameAttr : idAttributeName());
         if (!name.isNull())
             args.set("name", name);
         const AtomicString& archive = getAttribute(archiveAttr);

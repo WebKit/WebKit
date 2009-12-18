@@ -1,3 +1,37 @@
+2009-12-18  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        New test cases for isId support.
+        https://bugs.webkit.org/show_bug.cgi?id=5578
+
+        * dom/xhtml/level3/core/attrisid04-expected.txt:
+        * dom/xhtml/level3/core/attrisid04.js:
+        (setUpPage):
+        * dom/xhtml/level3/core/attrisid05-expected.txt:
+        * dom/xhtml/level3/core/attrisid05.js:
+        (setUpPage):
+        * fast/dom/Element/attrisid-extra01-expected.txt: Added.
+        * fast/dom/Element/attrisid-extra01.html: Added.
+        * fast/dom/Element/id-in-applet-expected.txt: Added.
+        * fast/dom/Element/id-in-applet.html: Added.
+        * fast/dom/Element/id-in-deletebutton-expected.txt: Added.
+        * fast/dom/Element/id-in-deletebutton.html: Added.
+        * fast/dom/Element/id-in-formcollection-expected.txt: Added.
+        * fast/dom/Element/id-in-formcollection.html: Added.
+        * fast/dom/Element/id-in-frame-expected.txt: Added.
+        * fast/dom/Element/id-in-frame.html: Added.
+        * fast/dom/Element/id-in-frameset-expected.txt: Added.
+        * fast/dom/Element/id-in-frameset.html: Added.
+        * fast/dom/Element/id-in-getelement01-expected.txt: Added.
+        * fast/dom/Element/id-in-getelement01.html: Added.
+        * fast/dom/Element/id-in-insert-hr-expected.txt: Added.
+        * fast/dom/Element/id-in-insert-hr.html: Added.
+        * fast/dom/Element/id-in-map-expected.txt: Added.
+        * fast/dom/Element/id-in-map.html: Added.
+        * fast/dom/Element/id-in-param-expected.txt: Added.
+        * fast/dom/Element/id-in-param.html: Added.
+
 2009-12-18  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Darin Adler.

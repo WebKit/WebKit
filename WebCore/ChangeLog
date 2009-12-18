@@ -1,3 +1,89 @@
+2009-12-18  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Implemented isId as specified by DOM Level 3. See detailed description below.
+        https://bugs.webkit.org/show_bug.cgi?id=5578
+
+        Added isId property and implementation:
+        Tests: dom/xhtml/level3/core/attrisid01-07.xhtml
+               fast/dom/Element/attrisid-extra01.html
+        * dom/Attr.cpp:
+        (WebCore::Attr::isId):
+        * dom/Attr.h:
+        * dom/Attr.idl:
+
+        Replaced instances of HTMLNames::idAttr with Element::idAttributeName()
+        for the reason that id attribute name could be customized to a different
+        string other than "id". A test case is associated to each code change.
+        * dom/Document.cpp:
+        (WebCore::Document::getElementById): Test: fast/dom/Element/id-in-getelement01.html
+        * dom/Element.cpp: Tests: dom/xhtml/level3/core/attrisid01-07.xhtml
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeMap):
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        (WebCore::Element::formatForDebugger):
+        (WebCore::Element::rareIDAttributeName):
+        * dom/Element.h: Added function idAttributeName().
+        (WebCore::Element::idAttributeName):
+        * dom/ElementRareData.h: Added member variable to store customized id name in ElementRareData.
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/NamedAttrMap.cpp: Tests: dom/xhtml/level3/core/attrisid01-07.xhtml
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::setAttributes):
+        * dom/Node.cpp: Removed ASSERT as it may not hold any more.
+        (WebCore::Node::querySelector):
+        * dom/SelectorNodeList.cpp: Removed ASSERT as it may not hold any more.
+        (WebCore::createSelectorNodeList):
+        * dom/StyledElement.cpp: Tests: dom/xhtml/level3/core/attrisid01-07.xhtml
+        (WebCore::StyledElement::parseMappedAttribute):
+        * editing/DeleteButtonController.cpp: Test: fast/dom/Element/id-in-deletebutton.html
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * editing/EditorCommand.cpp: Test: fast/dom/Element/id-in-insert-hr.html
+        (WebCore::executeInsertHorizontalRule):
+        * html/HTMLAppletElement.cpp: Test: fast/dom/Element/id-in-applet.html
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        (WebCore::HTMLAppletElement::createRenderer):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch): Test: fast/forms/select-namedItem.html
+        (WebCore::HTMLCollection::updateNameCache): Test: fast/dom/collection-namedItem-via-item.html
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::ensureColumn): Test: fast/dom/HTMLDataGridElement/DataGridColumns-dom.html
+        (WebCore::HTMLDataGridColElement::parseMappedAttribute): Test: fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormCollection.cpp: Test: fast/dom/Element/id-in-formcollection.html
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        (WebCore::HTMLFormCollection::nextNamedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFrameElementBase.cpp: Test: fast/dom/Element/id-in-frame.html
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL):
+        * html/HTMLImageElement.cpp: Test: fast/dom/Element/id-in-deletebutton.html
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLMapElement.cpp: Test: fast/dom/Element/id-in-map.html
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        * html/HTMLNameCollection.cpp: Test: fast/dom/Element/id-in-frameset.html
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLObjectElement.cpp: Test: fast/dom/HTMLDocument/object-by-name-or-id.html
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLParamElement.cpp: Test: fast/dom/Element/id-in-param.html
+        (WebCore::HTMLParamElement::parseMappedAttribute):
+        * loader/CachedFont.cpp: Test: svg/custom/acid3-test-77.html
+        (WebCore::CachedFont::getSVGFontById):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer): Debug-only code
+        * rendering/SVGRenderTreeAsText.cpp: Test: svg/text/text-gradient-positioning.svg
+        (WebCore::writeRenderResources):
+        * svg/SVGElement.cpp: Test: svg/custom/acid3-test-77.html
+        (WebCore::SVGElement::insertedIntoDocument):
+        * svg/SVGStyledElement.cpp: Test: svg/custom/js-update-image-and-display.svg
+        (WebCore::SVGStyledElement::isKnownAttribute):
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::parseMappedAttribute):
+
 2009-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

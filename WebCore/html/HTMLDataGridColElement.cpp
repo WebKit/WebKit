@@ -55,7 +55,7 @@ void HTMLDataGridColElement::ensureColumn()
 {
     if (m_column)
         return;
-    m_column = DataGridColumn::create(getAttribute(idAttr), label(), type(), primary(), sortable());
+    m_column = DataGridColumn::create(getAttribute(idAttributeName()), label(), type(), primary(), sortable());
 }
 
 void HTMLDataGridColElement::insertedIntoTree(bool deep)
@@ -162,8 +162,8 @@ void HTMLDataGridColElement::parseMappedAttribute(MappedAttribute* attr)
         column()->setSortable(sortable());
     else if (attr->name() == sortdirectionAttr)
         column()->setSortDirection(sortDirection());
-    else if (attr->name() == idAttr)
-        column()->setId(getAttribute(idAttr));
+    else if (attr->name() == idAttributeName())
+        column()->setId(getAttribute(idAttributeName()));
 }
 
 } // namespace WebCore

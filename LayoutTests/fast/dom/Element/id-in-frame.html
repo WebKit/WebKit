@@ -1,0 +1,23 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test using id in frame");
+    
+var parent = document.createElement('iframe');
+parent.id = 'theframe';
+document.body.appendChild(parent);
+
+shouldBeNonNull('document.getElementById("theframe")');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

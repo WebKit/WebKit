@@ -189,7 +189,7 @@ bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
     if (propId > 0)
         return true;
 
-    return (attrName == HTMLNames::idAttr || attrName == HTMLNames::styleAttr); 
+    return (attrName == idAttributeName() || attrName == HTMLNames::styleAttr); 
 }
 
 void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)

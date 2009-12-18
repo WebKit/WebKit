@@ -165,7 +165,7 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
         Node* node = list->item(i);
         ASSERT(node);
 
-        if (static_cast<Element*>(node)->getAttribute(HTMLNames::idAttr) != fontName)
+        if (static_cast<Element*>(node)->getAttribute(static_cast<Element*>(node)->idAttributeName()) != fontName)
             continue;
 
         ASSERT(node->hasTagName(SVGNames::fontTag));

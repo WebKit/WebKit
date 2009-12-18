@@ -38,7 +38,11 @@ module core {
         // DOM Level 2
 
         readonly attribute Element ownerElement;
-        
+
+        // DOM Level 3
+
+        readonly attribute boolean isId;
+
         // extensions
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute CSSStyleDeclaration style;

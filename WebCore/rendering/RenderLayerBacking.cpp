@@ -86,7 +86,7 @@ void RenderLayerBacking::createGraphicsLayer()
             m_graphicsLayer->setName("Document Node");
         else {
             if (renderer()->node()->isHTMLElement() && renderer()->node()->hasID())
-                m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->node())->getAttribute(idAttr));
+                m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->node())->getIDAttribute());
             else
                 m_graphicsLayer->setName(renderer()->renderName());
         }
