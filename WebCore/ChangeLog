@@ -1,3 +1,15 @@
+2009-12-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Index validation for drawElements examines too many indices
+        https://bugs.webkit.org/show_bug.cgi?id=32692
+
+        Test: fast/canvas/webgl/bug-32692.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

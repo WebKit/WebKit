@@ -1,0 +1,40 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32692">https://bugs.webkit.org/show_bug.cgi?id=32692</a> : <code>Index validation for drawElements examines too many indices</code>');
+
+var context = create3DDebugContext();
+var program = loadStandardProgram(context);
+
+context.useProgram(program);
+var vertexObject = context.createBuffer();
+context.enableVertexAttribArray(0);
+context.bindBuffer(context.ARRAY_BUFFER, vertexObject);
+// 4 vertices -> 2 triangles
+context.bufferData(context.ARRAY_BUFFER, new WebGLFloatArray([ 0,0,0, 0,1,0, 1,0,0, 1,1,0 ]), context.STATIC_DRAW);
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 0, 0);
+
+var indexObject = context.createBuffer();
+
+debug("Test out of range indices")
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexObject);
+context.bufferData(context.ELEMENT_ARRAY_BUFFER, new WebGLUnsignedShortArray([ 10000, 0, 1, 2, 3, 10000 ]), context.STATIC_DRAW);
+shouldBeUndefined("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 2)");
+shouldThrow("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 0)");
+shouldThrow("context.drawElements(context.TRIANGLE_STRIP, 4, context.UNSIGNED_SHORT, 4)");
+
+debug("")
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

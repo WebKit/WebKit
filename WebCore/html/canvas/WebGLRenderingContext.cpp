@@ -647,31 +647,25 @@ bool WebGLRenderingContext::validateIndexArrayConservative(unsigned long type, l
 
 bool WebGLRenderingContext::validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired)
 {
-    // FIXME: "count" should need to be used in the computation below
-    UNUSED_PARAM(count);
     long lastIndex = -1;
 
     if (!m_boundElementArrayBuffer)
         return false;
-        
-    // The GL spec says that count must be "greater
-    
+
     unsigned long uoffset = static_cast<unsigned long>(offset);
-    
+    unsigned long n = count;
+
     if (type == GraphicsContext3D::UNSIGNED_SHORT) {
         // Make uoffset an element offset.
         uoffset /= 2;
-    
-        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER) / 2;
-        const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+        const unsigned short* p = static_cast<const unsigned short*>(m_boundElementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
         while (n-- > 0) {
             if (*p > lastIndex)
                 lastIndex = *p;
             ++p;
         }
     } else if (type == GraphicsContext3D::UNSIGNED_BYTE) {
-        unsigned long n = m_boundElementArrayBuffer->byteLength(GraphicsContext3D::ELEMENT_ARRAY_BUFFER);
-        const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data());
+        const unsigned char* p = static_cast<const unsigned char*>(m_boundElementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
         while (n-- > 0) {
             if (*p > lastIndex)
                 lastIndex = *p;
