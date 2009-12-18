@@ -1,3 +1,15 @@
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Fix mac Geolocation build.
+
+        * DerivedSources.make:
+        * WebCore.ClientBasedGeolocation.exp: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Geolocation.h:
+        * page/GeolocationError.h:
+        (WebCore::GeolocationError::GeolocationError):
+        * page/GeolocationPosition.h:
+
 2009-12-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

@@ -77,7 +77,7 @@ public:
     bool shouldClearCache() const { return m_shouldClearCache; }
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    void setPostion(GeolocationPosition*);
+    void setPosition(GeolocationPosition*);
     void setError(GeolocationError*);
 #endif
 

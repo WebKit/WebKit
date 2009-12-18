@@ -30,6 +30,7 @@
 
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -47,7 +48,11 @@ public:
     const String& message() const { return m_message; }
 
 private:
-    GeolocationError(ErrorCode code, const String& message);
+    GeolocationError(ErrorCode code, const String& message)
+        : m_code(code)
+        , m_message(message)
+    {
+    }
 
     ErrorCode m_code;
     String m_message; 
