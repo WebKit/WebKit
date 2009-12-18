@@ -351,9 +351,10 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitShowDebugBordersPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitShowRepaintCounterPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         nil];
 
@@ -1181,6 +1182,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGLEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGLEnabledPreferenceKey];
+}
+
+- (BOOL)usesProxiedOpenPanel
+{
+    return [self _boolValueForKey:WebKitUsesProxiedOpenPanelPreferenceKey];
+}
+
+- (void)setUsesProxiedOpenPanel:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitUsesProxiedOpenPanelPreferenceKey];
 }
 
 - (unsigned)pluginAllowedRunTime

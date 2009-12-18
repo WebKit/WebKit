@@ -52,12 +52,12 @@ public:
     void didCreateWindow();
     
 private:
-    NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *);
+    NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *, bool useProxiedOpenPanel);
 
     NetscapePluginHostManager();
     ~NetscapePluginHostManager();
     
-    bool spawnPluginHost(WebNetscapePluginPackage *, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN);
+    bool spawnPluginHost(WebNetscapePluginPackage *, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN, bool useProxiedOpenPanel);
     
     bool initializeVendorPort();
     

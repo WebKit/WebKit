@@ -1,3 +1,21 @@
+2009-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a useProxiedOpenPanel WebPreference and tunnel it through to the plug-in host.
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPackage):
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences usesProxiedOpenPanel]):
+        (-[WebPreferences setUsesProxiedOpenPanel:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

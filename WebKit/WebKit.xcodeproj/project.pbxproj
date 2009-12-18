@@ -1931,9 +1931,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
-				BUILD_VARIANTS = (
-					normal,
-				);
+				BUILD_VARIANTS = normal;
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-lWebKitSystemInterface",
