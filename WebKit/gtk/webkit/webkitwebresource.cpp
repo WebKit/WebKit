@@ -245,13 +245,13 @@ void webkit_web_resource_init_with_core_resource(WebKitWebResource* webResource,
 /**
  * webkit_web_resource_new:
  * @data: the data to initialize the #WebKitWebResource
- * @length: the length of @data
+ * @size: the length of @data
  * @uri: the uri of the #WebKitWebResource
  * @mime_type: the MIME type of the #WebKitWebResource
- * @text_encoding_name: the text encoding name of the #WebKitWebResource
+ * @encoding: the text encoding name of the #WebKitWebResource
  * @frame_name: the frame name of the #WebKitWebResource
  *
- * Returns a new #WebKitWebResource. The @text_encoding_name can be %NULL. The
+ * Returns a new #WebKitWebResource. The @encoding can be %NULL. The
  * @frame_name argument can be used if the resource represents contents of an
  * entire HTML frame, otherwise pass %NULL.
  *

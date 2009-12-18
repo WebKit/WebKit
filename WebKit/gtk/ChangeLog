@@ -1,3 +1,11 @@
+2009-12-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix gtk-doc of webkit_web_resource_new.
+
+        * webkit/webkitwebresource.cpp:
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         GTK build fix
