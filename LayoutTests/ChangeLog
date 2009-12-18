@@ -1,3 +1,13 @@
+2009-12-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed. Unskip websocket tests
+
+        New pywebsocket (0.4.5) landed at WebKit r52296, so
+        sub-protocol-with-space.html should pass.
+
+        * platform/mac/Skipped: delete websocket/tests/sub-protocol-with-space.html
+        * platform/win/Skipped: delete websocket/tests/sub-protocol-with-space.html
+
 2009-12-17  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.

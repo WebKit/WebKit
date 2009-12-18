@@ -112,8 +112,5 @@ plugins/qt-qwidget-plugin.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
-# This test requires new pywebsocket
-websocket/tests/sub-protocol-with-space.html
-
 # This test requires touch support
 fast/events/basic-touch-events.html
