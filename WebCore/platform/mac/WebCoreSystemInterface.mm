@@ -109,4 +109,6 @@ BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
+#else
+void* wkNoteOpenPanelFiles;
 #endif

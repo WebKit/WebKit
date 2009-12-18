@@ -170,6 +170,8 @@ extern BOOL (*wkUseSharedMediaUI)();
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
+#else
+extern void* wkNoteOpenPanelFiles;
 #endif
 
 #ifdef __cplusplus

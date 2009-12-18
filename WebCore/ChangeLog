@@ -2,6 +2,16 @@
 
         Reviewed by Anders Carlsson.
 
+        Add export the new symbol in WebCoreSystemInterface.
+
+        * WebCore.base.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Forward declare NSMutableArray when not compiling for Objective-C.
 
         * platform/mac/WebCoreSystemInterface.h:
