@@ -1,5 +1,11 @@
 2009-12-18  Adam Roben  <aroben@apple.com>
 
+        GTK (and others?) build fix
+
+        * platform/text/StringImpl.h: Added #include.
+
+2009-12-18  Adam Roben  <aroben@apple.com>
+
         Reduce #includes in a few high-use headers
 
         Removed unnecessary #includes in these headers:

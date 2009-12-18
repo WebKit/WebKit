@@ -23,6 +23,7 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
+#include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
 #include <wtf/OwnFastMallocPtr.h>
