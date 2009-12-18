@@ -1,3 +1,12 @@
+2009-12-18  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Build fix, not reviewed.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::setTouchMocking): Leave setTouchMocking as an empty
+        function for Qt < 4.6 so that moc still creates a slot for that.
+        Otherwise, it would have generated a linker error.
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         Qt build fix

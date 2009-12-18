@@ -464,12 +464,12 @@ protected slots:
         }
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     void setTouchMocking(bool on)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         touchMocking = on;
-    }
 #endif
+    }
 
 public slots:
 
