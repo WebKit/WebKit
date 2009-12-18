@@ -467,12 +467,7 @@ static bool startHttp(ResourceHandle* handle)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-    ResourceRequest request(handle->request());
-    KURL url(request.url());
-    url.removeFragmentIdentifier();
-    request.setURL(url);
-
-    d->m_msg = request.toSoupMessage();
+    d->m_msg = d->m_request.toSoupMessage();
     if (!d->m_msg)
         return false;
 

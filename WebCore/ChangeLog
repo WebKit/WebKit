@@ -1,3 +1,18 @@
+2009-12-18  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove the fragment identifier from url before passing it to libsoup.
+
+        In newer releases libsoup emits a warning when it gets handed a
+        fragment.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::toSoupMessage):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp): Remove old code trying to work around this
+        issue.
+
 2009-12-18  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Darin Adler.
