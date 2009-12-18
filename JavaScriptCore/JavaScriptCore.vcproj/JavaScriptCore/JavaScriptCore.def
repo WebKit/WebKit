@@ -17,6 +17,7 @@ EXPORTS
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PB_WH@Z
+    ??0UString@JSC@@QAE@PA_WH_N@Z
     ??1CString@JSC@@QAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
