@@ -41,6 +41,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HostWindow.h"
 #include "Image.h"
 #include "JSDOMBinding.h"
 #include "KeyboardEvent.h"

@@ -1,3 +1,10 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Qt build fix
+
+        * Api/qwebpage.cpp:
+        Added #includes.
+
 2009-12-18  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

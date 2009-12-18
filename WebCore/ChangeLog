@@ -1,5 +1,14 @@
 2009-12-18  Adam Roben  <aroben@apple.com>
 
+        Qt build fix
+
+        * platform/qt/RenderThemeQt.cpp:
+        * plugins/qt/PluginDataQt.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        Added #includes.
+
+2009-12-18  Adam Roben  <aroben@apple.com>
+
         V8 build fix
 
         * bindings/v8/custom/V8DOMWindowCustom.cpp: Added #include.

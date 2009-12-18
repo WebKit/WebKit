@@ -24,6 +24,7 @@
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
+#include "Chrome.h"
 #include "ChromeClientQt.h"
 #include "Page.h"
 #include <qwebpage.h>
