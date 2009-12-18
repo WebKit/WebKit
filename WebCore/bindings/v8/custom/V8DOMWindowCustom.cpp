@@ -40,6 +40,7 @@
 #include "V8Utilities.h"
 
 #include "Base64.h"
+#include "Chrome.h"
 #include "ExceptionCode.h"
 #include "DOMTimer.h"
 #include "Frame.h"
