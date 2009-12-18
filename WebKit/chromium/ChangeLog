@@ -1,3 +1,12 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Chromium build fix
+
+        * src/ChromiumBridge.cpp:
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebViewImpl.cpp:
+        Added #includes.
+
 2009-12-17  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52291.

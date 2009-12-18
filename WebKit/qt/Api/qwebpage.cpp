@@ -33,6 +33,7 @@
 #include "qwebkitversion.h"
 
 #include "Chrome.h"
+#include "ContextMenuController.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameLoader.h"

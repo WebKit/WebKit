@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebPluginContainerImpl.h"
 
+#include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "WebCursorInfo.h"
 #include "WebDataSourceImpl.h"

@@ -33,6 +33,7 @@
 
 #include "AutocompletePopupMenuClient.h"
 #include "AXObjectCache.h"
+#include "Chrome.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"

@@ -2,6 +2,12 @@
 
         Qt build fix
 
+        * Api/qwebpage.cpp: Added #include.
+
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Qt build fix
+
         * Api/qwebpage.cpp:
         Added #includes.
 

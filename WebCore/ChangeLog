@@ -2,6 +2,12 @@
 
         Chromium build fix
 
+        * platform/chromium/PopupMenuChromium.cpp: Added #include.
+
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Chromium build fix
+
         * html/HTMLLinkElement.cpp: Added #include.
 
 2009-12-18  Adam Roben  <aroben@apple.com>

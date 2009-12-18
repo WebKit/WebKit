@@ -33,6 +33,7 @@
 
 #include <googleurl/src/url_util.h>
 
+#include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "WebClipboard.h"
 #include "WebCookie.h"

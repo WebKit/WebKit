@@ -32,6 +32,7 @@
 #include "PopupMenuChromium.h"
 
 #include "CharacterNames.h"
+#include "Chrome.h"
 #include "ChromeClientChromium.h"
 #include "Font.h"
 #include "FontSelector.h"
