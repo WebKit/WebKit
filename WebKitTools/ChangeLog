@@ -1,3 +1,18 @@
+2009-12-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update pywebsocket to 0.4.5 and make handshake checking stricter
+        https://bugs.webkit.org/show_bug.cgi?id=32249
+
+        * Scripts/run-webkit-tests:
+        * pywebsocket/mod_pywebsocket/handshake.py:
+        * pywebsocket/mod_pywebsocket/memorizingfile.py: Added.
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+        * pywebsocket/test/test_handshake.py:
+        * pywebsocket/test/test_memorizingfile.py: Added.
+
 2009-12-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

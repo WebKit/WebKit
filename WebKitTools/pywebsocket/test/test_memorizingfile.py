@@ -30,34 +30,43 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Set up script for mod_pywebsocket.
-"""
+"""Tests for memorizingfile module."""
 
 
-from distutils.core import setup
-import sys
+import StringIO
+import unittest
+
+import config  # This must be imported before mod_pywebsocket.
+from mod_pywebsocket import memorizingfile
 
 
-_PACKAGE_NAME = 'mod_pywebsocket'
+class UtilTest(unittest.TestCase):
+    def check(self, memorizing_file, num_read, expected_list):
+        for unused in range(num_read):
+            memorizing_file.readline()
+        actual_list = memorizing_file.get_memorized_lines()
+        self.assertEqual(len(expected_list), len(actual_list))
+        for expected, actual in zip(expected_list, actual_list):
+            self.assertEqual(expected, actual)
 
-if sys.version < '2.3':
-    print >>sys.stderr, '%s requires Python 2.3 or later.' % _PACKAGE_NAME
-    sys.exit(1)
+    def test_get_memorized_lines(self):
+        memorizing_file = memorizingfile.MemorizingFile(StringIO.StringIO(
+                'Hello\nWorld\nWelcome'))
+        self.check(memorizing_file, 3, ['Hello\n', 'World\n', 'Welcome'])
 
-setup(author='Yuzo Fujishima',
-      author_email='yuzo@chromium.org',
-      description='Web Socket extension for Apache HTTP Server.',
-      long_description=(
-              'mod_pywebsocket is an Apache HTTP Server extension for '
-              'Web Socket (http://tools.ietf.org/html/'
-              'draft-hixie-thewebsocketprotocol). '
-              'See mod_pywebsocket/__init__.py for more detail.'),
-      license='See COPYING',
-      name=_PACKAGE_NAME,
-      packages=[_PACKAGE_NAME],
-      url='http://code.google.com/p/pywebsocket/',
-      version='0.4.5',
-      )
+    def test_get_memorized_lines_limit_memorized_lines(self):
+        memorizing_file = memorizingfile.MemorizingFile(StringIO.StringIO(
+                'Hello\nWorld\nWelcome'), 2)
+        self.check(memorizing_file, 3, ['Hello\n', 'World\n'])
+
+    def test_get_memorized_lines_empty_file(self):
+        memorizing_file = memorizingfile.MemorizingFile(StringIO.StringIO(
+                ''))
+        self.check(memorizing_file, 10, [])
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 # vi:sts=4 sw=4 et

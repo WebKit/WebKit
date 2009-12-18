@@ -214,8 +214,139 @@ _BAD_REQUESTS = (
             'Connection':'Upgrade',
             'Host':'example.com',
             'Origin':'http://example.com',
-            'WebSocket-Protocol':'illegal protocol',
+            'WebSocket-Protocol':'illegal\x09protocol',
         }
+    ),
+)
+
+_STRICTLY_GOOD_REQUESTS = (
+    (
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # WebSocket-Protocol
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'WebSocket-Protocol: sample\r\n',
+        '\r\n',
+    ),
+    (  # WebSocket-Protocol and Cookie
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'WebSocket-Protocol: sample\r\n',
+        'Cookie: xyz\r\n'
+        '\r\n',
+    ),
+    (  # Cookie
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'Cookie: abc/xyz\r\n'
+        'Cookie2: $Version=1\r\n'
+        'Cookie: abc\r\n'
+        '\r\n',
+    ),
+)
+
+_NOT_STRICTLY_GOOD_REQUESTS = (
+    (  # Extra space after GET
+        'GET  /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # Resource name doesn't stat with '/'
+        'GET demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # No space after :
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade:WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # Lower case Upgrade header
+        'GET /demo HTTP/1.1\r\n',
+        'upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # Connection comes before Upgrade
+        'GET /demo HTTP/1.1\r\n',
+        'Connection: Upgrade\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    (  # Origin comes before Host
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Origin: http://example.com\r\n',
+        'Host: example.com\r\n',
+        '\r\n',
+    ),
+    (  # Host continued to the next line
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example\r\n',
+        ' .com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
+    ( # Cookie comes before WebSocket-Protocol
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'Cookie: xyz\r\n'
+        'WebSocket-Protocol: sample\r\n',
+        '\r\n',
+    ),
+    (  # Unknown header
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'Content-Type: text/html\r\n'
+        '\r\n',
+    ),
+    (  # Cookie with continuation lines
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'Cookie: xyz\r\n',
+        ' abc\r\n',
+        ' defg\r\n',
+        '\r\n',
     ),
 )
 
@@ -229,13 +360,37 @@ def _create_request(request_def):
             connection=conn)
 
 
+def _create_get_memorized_lines(lines):
+    def get_memorized_lines():
+        return lines
+    return get_memorized_lines
+
+
+def _create_requests_with_lines(request_lines_set):
+    requests = []
+    for lines in request_lines_set:
+        request = _create_request(_GOOD_REQUEST)
+        request.connection.get_memorized_lines = _create_get_memorized_lines(
+                lines)
+        requests.append(request)
+    return requests
+
+
 class HandshakerTest(unittest.TestCase):
     def test_validate_protocol(self):
         handshake._validate_protocol('sample')  # should succeed.
         handshake._validate_protocol('Sample')  # should succeed.
+        handshake._validate_protocol('sample\x20protocol')  # should succeed.
+        handshake._validate_protocol('sample\x7eprotocol')  # should succeed.
         self.assertRaises(handshake.HandshakeError,
                           handshake._validate_protocol,
-                          'sample protocol')
+                          '')
+        self.assertRaises(handshake.HandshakeError,
+                          handshake._validate_protocol,
+                          'sample\x19protocol')
+        self.assertRaises(handshake.HandshakeError,
+                          handshake._validate_protocol,
+                          'sample\x7fprotocol')
         self.assertRaises(handshake.HandshakeError,
                           handshake._validate_protocol,
                           # "Japan" in Japanese
@@ -307,6 +462,22 @@ class HandshakerTest(unittest.TestCase):
             handshaker = handshake.Handshaker(request,
                                               mock.MockDispatcher())
             self.assertRaises(handshake.HandshakeError, handshaker.do_handshake)
+
+    def test_strictly_good_requests(self):
+        for request in _create_requests_with_lines(_STRICTLY_GOOD_REQUESTS):
+            strict_handshaker = handshake.Handshaker(request,
+                                                     mock.MockDispatcher(),
+                                                     True)
+            strict_handshaker.do_handshake()
+
+    def test_not_strictly_good_requests(self):
+        for request in _create_requests_with_lines(_NOT_STRICTLY_GOOD_REQUESTS):
+            strict_handshaker = handshake.Handshaker(request,
+                                                     mock.MockDispatcher(),
+                                                     True)
+            self.assertRaises(handshake.HandshakeError,
+                              strict_handshaker.do_handshake)
+
 
 
 if __name__ == '__main__':

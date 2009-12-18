@@ -30,34 +30,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Set up script for mod_pywebsocket.
+"""Memorizing file.
+
+A memorizing file wraps a file and memorizes lines read by readline.
 """
 
 
-from distutils.core import setup
 import sys
 
 
-_PACKAGE_NAME = 'mod_pywebsocket'
+class MemorizingFile(object):
+    """MemorizingFile wraps a file and memorizes lines read by readline.
 
-if sys.version < '2.3':
-    print >>sys.stderr, '%s requires Python 2.3 or later.' % _PACKAGE_NAME
-    sys.exit(1)
+    Note that data read by other methods are not memorized. This behavior
+    is good enough for memorizing lines SimpleHTTPServer reads before
+    the control reaches WebSocketRequestHandler.
+    """
+    def __init__(self, file_, max_memorized_lines=sys.maxint):
+        """Construct an instance.
 
-setup(author='Yuzo Fujishima',
-      author_email='yuzo@chromium.org',
-      description='Web Socket extension for Apache HTTP Server.',
-      long_description=(
-              'mod_pywebsocket is an Apache HTTP Server extension for '
-              'Web Socket (http://tools.ietf.org/html/'
-              'draft-hixie-thewebsocketprotocol). '
-              'See mod_pywebsocket/__init__.py for more detail.'),
-      license='See COPYING',
-      name=_PACKAGE_NAME,
-      packages=[_PACKAGE_NAME],
-      url='http://code.google.com/p/pywebsocket/',
-      version='0.4.5',
-      )
+        Args:
+            file_: the file object to wrap.
+            max_memorized_lines: the maximum number of lines to memorize.
+                Only the first max_memorized_lines are memorized.
+                Default: sys.maxint. 
+        """
+        self._file = file_
+        self._memorized_lines = []
+        self._max_memorized_lines = max_memorized_lines
+
+    def __getattribute__(self, name):
+        if name in ('_file', '_memorized_lines', '_max_memorized_lines',
+                    'readline', 'get_memorized_lines'):
+            return object.__getattribute__(self, name)
+        return self._file.__getattribute__(name)
+
+    def readline(self):
+        """Override file.readline and memorize the line read."""
+
+        line = self._file.readline()
+        if line and len(self._memorized_lines) < self._max_memorized_lines:
+            self._memorized_lines.append(line)
+        return line
+
+    def get_memorized_lines(self):
+        """Get lines memorized so far."""
+        return self._memorized_lines
 
 
 # vi:sts=4 sw=4 et

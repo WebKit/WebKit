@@ -75,6 +75,7 @@ except ImportError:
 
 import dispatch
 import handshake
+import memorizingfile
 import util
 
 
@@ -88,6 +89,8 @@ _LOG_LEVELS = {
 _DEFAULT_LOG_MAX_BYTES = 1024 * 256
 _DEFAULT_LOG_BACKUP_COUNT = 5
 
+# 1024 is practically large enough to contain WebSocket handshake lines.
+_MAX_MEMORIZED_LINES = 1024
 
 def _print_warnings_if_any(dispatcher):
     warnings = dispatcher.source_warnings()
@@ -128,6 +131,10 @@ class _StandaloneConnection(object):
     def read(self, length):
         """Mimic mp_conn.read()."""
         return self._request_handler.rfile.read(length)
+
+    def get_memorized_lines(self):
+        """Get memorized lines."""
+        return self._request_handler.rfile.get_memorized_lines()
 
 
 class _StandaloneRequest(object):
@@ -198,7 +205,9 @@ class WebSocketRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         """Override SocketServer.StreamRequestHandler.setup."""
 
         self.connection = self.request
-        self.rfile = socket._fileobject(self.request, 'rb', self.rbufsize)
+        self.rfile = memorizingfile.MemorizingFile(
+                socket._fileobject(self.request, 'rb', self.rbufsize),
+                max_memorized_lines=_MAX_MEMORIZED_LINES)
         self.wfile = socket._fileobject(self.request, 'wb', self.wbufsize)
 
     def __init__(self, *args, **keywords):
@@ -206,8 +215,9 @@ class WebSocketRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 self, WebSocketRequestHandler.options.use_tls)
         self._dispatcher = WebSocketRequestHandler.options.dispatcher
         self._print_warnings_if_any()
-        self._handshaker = handshake.Handshaker(self._request,
-                                                self._dispatcher)
+        self._handshaker = handshake.Handshaker(
+                self._request, self._dispatcher,
+                WebSocketRequestHandler.options.strict)
         SimpleHTTPServer.SimpleHTTPRequestHandler.__init__(
                 self, *args, **keywords)
 
@@ -302,6 +312,8 @@ def _main():
     parser.add_option('--log_count', dest='log_count', type='int',
                       default=_DEFAULT_LOG_BACKUP_COUNT,
                       help='Log backup count')
+    parser.add_option('--strict', dest='strict', action='store_true',
+                      default=False, help='Strictly check handshake request')
     options = parser.parse_args()[0]
 
     os.chdir(options.document_root)

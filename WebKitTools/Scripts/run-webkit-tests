@@ -1455,6 +1455,7 @@ sub openWebSocketServerIfNeeded()
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
         "-l", "$logFile",
+        "--strict",
     );
     # wss is disabled until all platforms support pyOpenSSL.
     # my @argsSecure = (
