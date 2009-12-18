@@ -68,8 +68,6 @@ class AbstractSequencedCommmand(AbstractDeclarativeCommmand):
 class Build(AbstractSequencedCommmand):
     name = "build"
     help_text = "Update working copy and build"
-    argument_names = ""
-    show_in_main_help = False
     steps = [
         CleanWorkingDirectoryStep,
         UpdateStep,
@@ -166,7 +164,6 @@ class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "check-style"
     help_text = "Run check-webkit-style on the specified attachments"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    show_in_main_help = False
     main_steps = [
         CleanWorkingDirectoryStep,
         UpdateStep,
@@ -179,7 +176,6 @@ class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "build-attachment"
     help_text = "Apply and build patches from bugzilla"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    show_in_main_help = False
     main_steps = [
         CleanWorkingDirectoryStep,
         UpdateStep,

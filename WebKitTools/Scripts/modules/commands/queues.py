@@ -44,7 +44,6 @@ from modules.stepsequence import StepSequenceErrorHandler
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class AbstractQueue(Command, WorkQueueDelegate):
-    show_in_main_help = False
     watchers = "webkit-bot-watchers@googlegroups.com"
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [

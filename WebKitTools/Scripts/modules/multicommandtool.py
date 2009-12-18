@@ -40,7 +40,7 @@ from modules.logging import log
 
 class Command(object):
     name = None
-    # show_in_main_help = False # Subclasses must define show_in_main_help, we leave it out here to enforce that.
+    show_in_main_help = False
     def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
         self.help_text = help_text
         self.argument_names = argument_names
@@ -128,7 +128,6 @@ class HelpPrintingOptionParser(OptionParser):
 
 class HelpCommand(Command):
     name = "help"
-    show_in_main_help = False
 
     def __init__(self):
         options = [

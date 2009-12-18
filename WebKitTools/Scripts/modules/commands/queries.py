@@ -39,7 +39,6 @@ from modules.multicommandtool import Command
 
 class BugsToCommit(Command):
     name = "bugs-to-commit"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "List bugs in the commit-queue")
 
@@ -51,7 +50,6 @@ class BugsToCommit(Command):
 
 class PatchesToCommit(Command):
     name = "patches-to-commit"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "List patches in the commit-queue")
 
@@ -64,7 +62,6 @@ class PatchesToCommit(Command):
 
 class PatchesToCommitQueue(Command):
     name = "patches-to-commit-queue"
-    show_in_main_help = False
     def __init__(self):
         options = [
             make_option("--bugs", action="store_true", dest="bugs", help="Output bug links instead of patch links"),
@@ -99,7 +96,6 @@ class PatchesToCommitQueue(Command):
 
 class PatchesToReview(Command):
     name = "patches-to-review"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "List patches that are pending review")
 
@@ -112,7 +108,6 @@ class PatchesToReview(Command):
 
 class ReviewedPatches(Command):
     name = "reviewed-patches"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "List r+'d patches on a bug", "BUGID")
 

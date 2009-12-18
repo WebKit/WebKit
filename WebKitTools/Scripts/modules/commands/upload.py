@@ -44,7 +44,6 @@ from modules.multicommandtool import Command
 # FIXME: Requires unit test.
 class CommitMessageForCurrentDiff(Command):
     name = "commit-message"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "Print a commit message suitable for the uncommitted changes")
 
@@ -55,7 +54,6 @@ class CommitMessageForCurrentDiff(Command):
 
 class ObsoleteAttachments(Command):
     name = "obsolete-attachments"
-    show_in_main_help = False
     def __init__(self):
         Command.__init__(self, "Mark all attachments on a bug as obsolete", "BUGID")
 
