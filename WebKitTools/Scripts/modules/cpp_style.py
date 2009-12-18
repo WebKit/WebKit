@@ -69,7 +69,6 @@ _DEFAULT_OUTPUT_FORMAT = 'emacs'
 # the filter rules as specified by a --filter flag.
 _WEBKIT_FILTER_RULES = [
     '-build/endif_comment',
-    '-build/header_guard',
     '-build/include_what_you_use',  # <string> for std::string
     '-build/storage_class',  # const static
     '-legal/copyright',
@@ -87,7 +86,6 @@ _WEBKIT_FILTER_RULES = [
     '-runtime/threadsafe_fn',
     '-runtime/rtti',
     '-whitespace/blank_line',
-    '-whitespace/comments',
     '-whitespace/end_of_line',
     '-whitespace/labels',
     ]
@@ -874,8 +872,7 @@ def get_header_guard_cpp_variable(filename):
 
     """
 
-    fileinfo = FileInfo(filename)
-    return sub(r'[-./\s]', '_', fileinfo.repository_name()).upper() + '_'
+    return sub(r'[-.\s]', '_', os.path.basename(filename))
 
 
 def check_for_header_guard(filename, lines, error):
@@ -918,23 +915,14 @@ def check_for_header_guard(filename, lines, error):
               cppvar)
         return
 
-    # The guard should be PATH_FILE_H_, but we also allow PATH_FILE_H__
-    # for backward compatibility.
+    # The guard should be File_h.
     if ifndef != cppvar:
-        error_level = 0
-        if ifndef != cppvar + '_':
-            error_level = 5
-
-        error(filename, ifndef_line_number, 'build/header_guard', error_level,
+        error(filename, ifndef_line_number, 'build/header_guard', 5,
               '#ifndef header guard has wrong style, please use: %s' % cppvar)
 
-    if endif != ('#endif  // %s' % cppvar):
-        error_level = 0
-        if endif != ('#endif  // %s' % (cppvar + '_')):
-            error_level = 5
-
-        error(filename, endif_line_number, 'build/header_guard', error_level,
-              '#endif line should be "#endif  // %s"' % cppvar)
+    if endif != ('#endif // %s' % cppvar):
+        error(filename, endif_line_number, 'build/header_guard', 5,
+              '#endif line should be "#endif // %s"' % cppvar)
 
 
 def check_for_unicode_replacement_characters(filename, lines, error):
@@ -1524,14 +1512,14 @@ def check_spacing(filename, clean_lines, line_number, error):
         # Check if the // may be in quotes.  If so, ignore it
         # Comparisons made explicit for clarity -- pylint: disable-msg=C6403
         if (line.count('"', 0, comment_position) - line.count('\\"', 0, comment_position)) % 2 == 0:   # not in quotes
-            # Allow one space for new scopes, two spaces otherwise:
-            if (not match(r'^\s*{ //', line)
-                and ((comment_position >= 1
-                      and line[comment_position-1] not in string.whitespace)
+            # Allow one space before end of line comment.
+            if (not match(r'^\s*$', line[:comment_position])
+                and (comment_position >= 1
+                and ((line[comment_position - 1] not in string.whitespace)
                      or (comment_position >= 2
-                         and line[comment_position-2] not in string.whitespace))):
-                error(filename, line_number, 'whitespace/comments', 2,
-                      'At least two spaces is best between code and comments')
+                         and line[comment_position - 2] in string.whitespace)))):
+                error(filename, line_number, 'whitespace/comments', 5,
+                      'One space before end of line comments')
             # There should always be a space between the // and the comment
             commentend = comment_position + 2
             if commentend < len(line) and not line[commentend] == ' ':

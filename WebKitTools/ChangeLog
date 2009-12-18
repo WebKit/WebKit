@@ -1,3 +1,16 @@
+2009-12-18  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Check one space before end of line comments.
+        https://bugs.webkit.org/show_bug.cgi?id=32597
+        
+        Fix to check one space before end of line comments in whitespace and build/header_guard.
+        Also fix build/header_guard to use WebKit header guard defines.
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-12-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
