@@ -142,7 +142,6 @@ PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* definit
 
 OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
     : m_class(jsClass)
-    , cachedPrototype(0)
 {
     if (jsClass->m_staticValues) {
         staticValues = new OpaqueJSClassStaticValuesTable;
@@ -240,5 +239,5 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
                 jsClassData.cachedPrototype->setPrototype(prototype);
         }
     }
-    return jsClassData.cachedPrototype;
+    return jsClassData.cachedPrototype.get();
 }

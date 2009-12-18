@@ -1225,6 +1225,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\WeakGCPtr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\WeakRandom.h"
 				>
 			</File>

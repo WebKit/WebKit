@@ -1,3 +1,36 @@
+2009-12-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixed intermittent failure seen on Windows buildbot, and in other JSC
+        API clients.
+        
+        Added a WeakGCPtr class and changed OpaqueJSClass::cachedPrototype to
+        use it, to avoid vending a stale object as a prototype.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::prototype):
+        * API/JSClassRef.h: Use WeakGCPtr.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/WeakGCPtr.h: Added.
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::get):
+        (JSC::WeakGCPtr::clear):
+        (JSC::WeakGCPtr::operator*):
+        (JSC::WeakGCPtr::operator->):
+        (JSC::WeakGCPtr::operator!):
+        (JSC::WeakGCPtr::operator bool):
+        (JSC::WeakGCPtr::operator UnspecifiedBoolType):
+        (JSC::WeakGCPtr::assign):
+        (JSC::::operator):
+        (JSC::operator==):
+        (JSC::operator!=):
+        (JSC::static_pointer_cast):
+        (JSC::const_pointer_cast):
+        (JSC::getPtr): Added WeakGCPtr to the project.
+
 2009-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

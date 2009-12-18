@@ -31,6 +31,7 @@
 #include <runtime/JSObject.h>
 #include <runtime/Protect.h>
 #include <runtime/UString.h>
+#include <runtime/WeakGCPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -76,7 +77,7 @@ struct OpaqueJSClassContextData : Noncopyable {
 
     OpaqueJSClassStaticValuesTable* staticValues;
     OpaqueJSClassStaticFunctionsTable* staticFunctions;
-    JSC::JSObject* cachedPrototype;
+    JSC::WeakGCPtr<JSC::JSObject> cachedPrototype;
 };
 
 struct OpaqueJSClass : public ThreadSafeShared<OpaqueJSClass> {
