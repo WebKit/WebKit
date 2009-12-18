@@ -1,3 +1,49 @@
+2009-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add createNonCopying method to UString to make replace constructor passed bool,
+        to make behaviour more explicit.  Add createFromUTF8 to UString (wrapping method
+        on UString::Rep), since other cases of transliteration (e.g.  from ascii) are
+        performed in UString constructors.  Add/use setHash & size() accessors on Rep,
+        rather than accessing _hash/len directly.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::ustring):
+        * JavaScriptCore.exp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        (JSC::CStringTranslator::translate):
+        (JSC::UCharBufferTranslator::translate):
+        (JSC::Identifier::addSlowCase):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/JSString.h:
+        (JSC::JSString::Rope::Fiber::refAndGetLength):
+        (JSC::JSString::Rope::append):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::release):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        (JSC::UString::createNonCopying):
+        (JSC::UString::createFromUTF8):
+        * runtime/UString.h:
+        (JSC::UString::Rep::setHash):
+        (JSC::UString::~UString):
+        (JSC::makeString):
+
 2009-12-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich and Gavin Barraclough.

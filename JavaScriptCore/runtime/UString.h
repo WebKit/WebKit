@@ -117,6 +117,7 @@ namespace JSC {
 
             unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
             unsigned computedHash() const { ASSERT(_hash); return _hash; } // fast path for Identifiers
+            void setHash(unsigned hash) { ASSERT(hash == computeHash(data(), len)); _hash = hash; } // fast path for Identifiers
 
             static unsigned computeHash(const UChar*, int length);
             static unsigned computeHash(const char*, int length);
@@ -240,16 +241,10 @@ namespace JSC {
         // Constructor for non-null-terminated ASCII string.
         UString(const char*, int length);
         UString(const UChar*, int length);
-        UString(UChar*, int length, bool copy);
+        UString(const Vector<UChar>& buffer);
 
         UString(const UString& s)
             : m_rep(s.m_rep)
-        {
-        }
-
-        UString(const Vector<UChar>& buffer);
-
-        ~UString()
         {
         }
 
@@ -258,6 +253,13 @@ namespace JSC {
             : m_rep(PlacementNewAdopt)
         {
         }
+
+        ~UString()
+        {
+        }
+
+        static UString createNonCopying(UChar* c, int length);
+        static UString createFromUTF8(const char*);
 
         static UString from(int);
         static UString from(long long);
@@ -624,7 +626,7 @@ namespace JSC {
         result += adapter1.length();
         adapter2.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3>
@@ -646,7 +648,7 @@ namespace JSC {
         result += adapter2.length();
         adapter3.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
@@ -671,7 +673,7 @@ namespace JSC {
         result += adapter3.length();
         adapter4.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
@@ -699,7 +701,7 @@ namespace JSC {
         result += adapter4.length();
         adapter5.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
@@ -730,7 +732,7 @@ namespace JSC {
         result += adapter5.length();
         adapter6.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
@@ -764,7 +766,7 @@ namespace JSC {
         result += adapter6.length();
         adapter7.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
@@ -801,7 +803,7 @@ namespace JSC {
         result += adapter7.length();
         adapter8.writeTo(result);
 
-        return UString(buffer, length, false);
+        return UString::createNonCopying(buffer, length);
     }
 
 } // namespace JSC

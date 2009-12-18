@@ -610,22 +610,25 @@ UString::UString(const UChar* c, int length)
         m_rep = Rep::createCopying(c, length);
 }
 
-UString::UString(UChar* c, int length, bool copy)
-{
-    if (length == 0)
-        m_rep = &Rep::empty();
-    else if (copy)
-        m_rep = Rep::createCopying(c, length);
-    else
-        m_rep = Rep::create(c, length);
-}
-
 UString::UString(const Vector<UChar>& buffer)
 {
     if (!buffer.size())
         m_rep = &Rep::empty();
     else
         m_rep = Rep::createCopying(buffer.data(), buffer.size());
+}
+
+UString UString::createNonCopying(UChar* c, int length)
+{
+    if (length == 0)
+        return UString(&Rep::empty());
+    else
+        return Rep::create(c, length);
+}
+
+UString UString::createFromUTF8(const char* string)
+{
+    return Rep::createFromUTF8(string);
 }
 
 static ALWAYS_INLINE int newCapacityWithOverflowCheck(const int currentCapacity, const int extendLength, const bool plusOne = false)

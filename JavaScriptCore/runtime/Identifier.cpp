@@ -77,7 +77,7 @@ void deleteIdentifierTable(IdentifierTable* table)
 
 bool Identifier::equal(const UString::Rep* r, const char* s)
 {
-    int length = r->len;
+    int length = r->size();
     const UChar* d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i] != (unsigned char)s[i])
@@ -87,7 +87,7 @@ bool Identifier::equal(const UString::Rep* r, const char* s)
 
 bool Identifier::equal(const UString::Rep* r, const UChar* s, int length)
 {
-    if (r->len != length)
+    if (r->size() != length)
         return false;
     const UChar* d = r->data();
     for (int i = 0; i != length; ++i)
@@ -115,7 +115,7 @@ struct CStringTranslator {
             d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
         
         UString::Rep* r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
-        r->_hash = hash;
+        r->setHash(hash);
 
         location = r;
     }
@@ -180,7 +180,7 @@ struct UCharBufferTranslator {
             d[i] = buf.s[i];
         
         UString::Rep* r = UString::Rep::create(d, buf.length).releaseRef();
-        r->_hash = hash;
+        r->setHash(hash);
         
         location = r; 
     }
@@ -213,7 +213,7 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int le
 PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UString::Rep* r)
 {
     ASSERT(!r->identifierTable());
-    if (r->len == 1) {
+    if (r->size() == 1) {
         UChar c = r->data()[0];
         if (c <= 0xFF)
             r = globalData->smallStrings.singleCharacterStringRep(c);
@@ -224,7 +224,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UStri
                 return r;
             }
     }
-    if (!r->len) {
+    if (!r->size()) {
         UString::Rep::empty().hash();
         return &UString::Rep::empty();
     }

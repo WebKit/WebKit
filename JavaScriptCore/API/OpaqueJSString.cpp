@@ -42,7 +42,7 @@ PassRefPtr<OpaqueJSString> OpaqueJSString::create(const UString& ustring)
 UString OpaqueJSString::ustring() const
 {
     if (this && m_characters)
-        return UString(m_characters, m_length, true);
+        return UString(m_characters, m_length);
     return UString::null();
 }
 

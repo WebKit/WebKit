@@ -125,7 +125,7 @@ void JSString::resolveRope(ExecState* exec) const
             currentFiber = rope->fibers(ropeLengthMinusOne);
         } else {
             UString::Rep* string = currentFiber.string();
-            unsigned length = string->len;
+            unsigned length = string->size();
             position -= length;
             copyChars(position, string->data(), length);
 

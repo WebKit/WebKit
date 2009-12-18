@@ -64,14 +64,13 @@ public:
     void resize(size_t size) { buffer.resize(size); }
     size_t size() const { return buffer.size(); }
 
-    UChar operator[](size_t i) { return buffer.at(i); }
-    const UChar operator[](size_t i) const { return buffer.at(i); }
+    UChar operator[](size_t i) const { return buffer.at(i); }
 
     UString release()
     {
         buffer.shrinkToFit();
         size_t length = buffer.size();
-        return UString(buffer.releaseBuffer(), length, false);
+        return UString::createNonCopying(buffer.releaseBuffer(), length);
     }
 
 private:

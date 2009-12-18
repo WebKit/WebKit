@@ -35,7 +35,7 @@ static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec, const Ar
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         *p++ = static_cast<UChar>((*it).toUInt32(exec));
-    return jsString(exec, UString(buf, p - buf, false));
+    return jsString(exec, UString::createNonCopying(buf, p - buf));
 }
 
 static JSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec, JSObject*, JSValue, const ArgList& args)
