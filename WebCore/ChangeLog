@@ -1,3 +1,11 @@
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Forward declare NSMutableArray when not compiling for Objective-C.
+
+        * platform/mac/WebCoreSystemInterface.h:
+
 2009-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

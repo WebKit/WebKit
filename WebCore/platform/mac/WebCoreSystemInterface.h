@@ -67,6 +67,7 @@ typedef struct NSEvent NSEvent;
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
 typedef struct NSMenu NSMenu;
+typedef struct NSMutableArray NSMutableArray;
 typedef struct NSMutableURLRequest NSMutableURLRequest;
 typedef struct NSURLRequest NSURLRequest;
 typedef struct NSString NSString;
