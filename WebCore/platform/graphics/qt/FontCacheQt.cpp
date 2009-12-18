@@ -56,7 +56,7 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    const AtomicString fallbackFamily = QFont(fontDescription.family().family()).lastResortFont();
+    const AtomicString fallbackFamily = QFont(fontDescription.family().family()).lastResortFamily();
     return new FontPlatformData(fontDescription, fallbackFamily);
 }
 
