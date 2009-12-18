@@ -156,6 +156,7 @@ public:
     QRect scrollBarGeometry(Qt::Orientation orientation) const;
 
     void scroll(int, int);
+    bool scrollRecursively(int, int);
     QPoint scrollPosition() const;
     void setScrollPosition(const QPoint &pos);
 

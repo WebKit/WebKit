@@ -85,6 +85,8 @@ public:
     void renderRelativeCoords(WebCore::GraphicsContext*, QWebFrame::RenderLayer, const QRegion& clip);
     void renderContentsLayerAbsoluteCoords(WebCore::GraphicsContext*, const QRegion& clip);
 
+    bool scrollOverflow(int dx, int dy);
+
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
