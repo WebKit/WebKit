@@ -1,3 +1,30 @@
+2009-12-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich and Gavin Barraclough.
+        
+        Changed Register constructors to assignment operators, to streamline
+        moving values into registers. (In theory, there's no difference between
+        the two, since the constructor should just inline away, but there seems
+        to be a big difference in the addled mind of the GCC optimizer.)
+
+        In the interpreter, this is a 3.5% SunSpider speedup and a 1K-2K
+        reduction in stack usage per privateExecute stack frame.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::setCalleeArguments):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setScopeChain):
+        (JSC::ExecState::init):
+        (JSC::ExecState::setArgumentCount):
+        (JSC::ExecState::setCallee):
+        (JSC::ExecState::setCodeBlock): Added a little bit of casting so these
+        functions could use the new Register assignment operators.
+
+        * interpreter/Register.h:
+        (JSC::Register::withInt):
+        (JSC::Register::Register):
+        (JSC::Register::operator=): Swapped in assignment operators for constructors.
+
 2009-12-18  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
