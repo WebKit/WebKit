@@ -1,3 +1,16 @@
+2009-12-18  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r38898): Using the up arrow in a textarea gets "stuck"
+        at the beginning.
+        https://bugs.webkit.org/show_bug.cgi?id=31920
+
+        Added test showing the problem described in the bug.
+
+        * editing/selection/wrapped-line-caret-3.html:
+        * editing/selection/wrapped-line-caret-3-expected.txt:
+
 2009-12-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

@@ -338,7 +338,7 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(point.x());
-        return createVisiblePosition(offset + lastTextBox()->start(), DOWNSTREAM);
+        return createVisiblePosition(offset + lastTextBox()->start(), VP_UPSTREAM_IF_POSSIBLE);
     }
 
     InlineTextBox* lastBoxAbove = 0;

@@ -1,3 +1,20 @@
+2009-12-18  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r38898): Using the up arrow in a textarea gets "stuck"
+        at the beginning.
+        https://bugs.webkit.org/show_bug.cgi?id=31920
+
+        Moving up from a position after the end of the previous lines
+        should use UPSTREAM affinity to render the caret in the previous
+        line.
+
+        Test: editing/selection/wrapped-line-caret-3.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+
 2009-12-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
