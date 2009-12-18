@@ -48,13 +48,19 @@ static CString getThemeIconFileName(const char* name, int size)
 {
     GtkIconInfo* iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
                                                        name, size, GTK_ICON_LOOKUP_NO_SVG);
+    // Try to fallback on MISSING_IMAGE.
     if (!iconInfo)
         iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
                                               GTK_STOCK_MISSING_IMAGE, size,
                                               GTK_ICON_LOOKUP_NO_SVG);
+    if (iconInfo) {
+        GOwnPtr<GtkIconInfo> info(iconInfo);
+        return CString(gtk_icon_info_get_filename(info.get()));
+    }
 
-    GOwnPtr<GtkIconInfo> info(iconInfo);
-    return CString(gtk_icon_info_get_filename(info.get()));
+    // No icon was found, this can happen if not GTK theme is set. In
+    // that case an empty Image will be created.
+    return CString();
 }
 
 static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(CString name)
@@ -78,8 +84,10 @@ void BitmapImage::invalidatePlatformData()
 PassRefPtr<Image> loadImageFromFile(CString fileName)
 {
     RefPtr<BitmapImage> img = BitmapImage::create();
-    RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(fileName);
-    img->setData(buffer.release(), true);
+    if (!fileName.isNull()) {
+        RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(fileName);
+        img->setData(buffer.release(), true);
+    }
     return img.release();
 }
 

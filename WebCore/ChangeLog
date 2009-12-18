@@ -1,3 +1,16 @@
+2009-12-18  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] segfault during controls initialization if not GTK theme is present.
+        https://bugs.webkit.org/show_bug.cgi?id=32705
+
+        Create empty images for the controls if no GTK theme is set.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getThemeIconFileName):
+        (WebCore::loadImageFromFile):
+
 2009-12-18  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Darin Adler.
