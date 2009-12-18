@@ -1,3 +1,17 @@
+2009-12-18  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] GRefPtr does not take a reference when assigned a raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=32709
+
+        Ensure that when assigning a raw pointer to a GRefPtr, the reference
+        count is incremented. Also remove the GRefPtr conversion overload as
+        GRefPtr types have necessarily incompatible reference counting.
+
+        * wtf/gtk/GRefPtr.h:
+        (WTF::GRefPtr::operator=):
+
 2009-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

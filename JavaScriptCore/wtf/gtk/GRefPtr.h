@@ -91,21 +91,11 @@ template <typename T> inline GRefPtr<T>& GRefPtr<T>::operator=(const GRefPtr<T>&
     return *this;
 }
 
-template <typename T> template <typename U> inline GRefPtr<T>& GRefPtr<T>::operator=(const GRefPtr<U>& o)
-{
-    T* optr = o.get();
-    if (optr)
-        refGPtr(optr);
-    T* ptr = m_ptr;
-    m_ptr = optr;
-    if (ptr)
-        derefGPtr(ptr);
-    return *this;
-}
-
 template <typename T> inline GRefPtr<T>& GRefPtr<T>::operator=(T* optr)
 {
     T* ptr = m_ptr;
+    if (optr)
+        refGPtr(optr);
     m_ptr = optr;
     if (ptr)
         derefGPtr(ptr);
