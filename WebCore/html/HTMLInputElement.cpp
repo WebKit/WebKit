@@ -337,11 +337,11 @@ bool HTMLInputElement::stepMismatch() const
         // double's fractional part size is DBL_MAN_DIG-bit.  If the current
         // value is greater than step*2^DBL_MANT_DIG, the following fmod() makes
         // no sense.
-        if (doubleValue / pow(static_cast<double>(2), DBL_MANT_DIG) > step)
+        if (doubleValue / pow(2.0, DBL_MANT_DIG) > step)
             return false;
         double remainder = fmod(doubleValue, step);
         // Accepts errors in lower 7-bit.
-        double acceptableError = step / pow(static_cast<double>(2), DBL_MANT_DIG - 7);
+        double acceptableError = step / pow(2.0, DBL_MANT_DIG - 7);
         return acceptableError < remainder && remainder < (step - acceptableError);
     }
     // Non-RANGE types should be rejected by getAllowedValueStep().
