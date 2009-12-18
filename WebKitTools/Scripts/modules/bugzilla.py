@@ -31,7 +31,6 @@
 
 import re
 import subprocess
-import urllib2
 
 from datetime import datetime # used in timestamp()
 
@@ -117,7 +116,7 @@ class Bugzilla(object):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         log("Fetching: %s" % bug_url)
 
-        page = urllib2.urlopen(bug_url)
+        page = self.browser.open(bug_url)
         soup = BeautifulSoup(page)
 
         attachments = []
@@ -136,7 +135,7 @@ class Bugzilla(object):
     def bug_id_for_attachment_id(self, attachment_id):
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
         log("Fetching: %s" % attachment_url)
-        page = urllib2.urlopen(attachment_url)
+        page = self.browser.open(attachment_url)
         return self._parse_bug_id_from_attachment_page(page)
 
     # This should really return an Attachment object
@@ -158,7 +157,7 @@ class Bugzilla(object):
 
     def fetch_title_from_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
-        page = urllib2.urlopen(bug_url)
+        page = self.browser.open(bug_url)
         soup = BeautifulSoup(page)
         return soup.find('short_desc').string
 
@@ -232,7 +231,7 @@ class Bugzilla(object):
         return commit_queue_patches
 
     def _fetch_bug_ids_advanced_query(self, query):
-        page = urllib2.urlopen(query)
+        page = self.browser.open(query)
         soup = BeautifulSoup(page)
 
         bug_ids = []
@@ -250,7 +249,7 @@ class Bugzilla(object):
         return [int(digits.search(tag["href"]).group(0)) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
 
     def _fetch_attachment_ids_request_query(self, query):
-        return self._parse_attachment_ids_request_query(urllib2.urlopen(query))
+        return self._parse_attachment_ids_request_query(self.browser.open(query))
 
     def fetch_bug_ids_from_commit_queue(self):
         commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
