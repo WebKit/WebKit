@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
