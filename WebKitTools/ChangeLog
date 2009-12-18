@@ -1,3 +1,20 @@
+2009-12-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        [GTK] New events (pageshow and pagehide) tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=28823
+
+        Original patch by Jan Michael Alonzo.
+
+        Disable page cache for tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (copyWebSettingKey):
+        (LayoutTestController::overridePreference):
+
 2009-12-18  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.

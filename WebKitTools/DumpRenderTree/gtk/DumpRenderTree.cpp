@@ -334,6 +334,7 @@ static void resetDefaultsToConsistentValues()
                  "default-monospace-font-size", 13,
                  "minimum-font-size", 1,
                  "enable-caret-browsing", FALSE,
+                 "enable-page-cache", FALSE,
                  NULL);
 
     webkit_web_frame_clear_main_frame_name(mainFrame);
