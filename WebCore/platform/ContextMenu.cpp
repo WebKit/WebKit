@@ -276,7 +276,9 @@ void ContextMenu::populate()
     ContextMenuItem LookInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, 
         contextMenuItemTagLookUpInDictionary());
 #endif
+#if !PLATFORM(GTK)
     ContextMenuItem SearchWebItem(ActionType, ContextMenuItemTagSearchWeb, contextMenuItemTagSearchWeb());
+#endif
     ContextMenuItem CopyItem(ActionType, ContextMenuItemTagCopy, contextMenuItemTagCopy());
     ContextMenuItem BackItem(ActionType, ContextMenuItemTagGoBack, contextMenuItemTagGoBack());
     ContextMenuItem ForwardItem(ActionType, ContextMenuItemTagGoForward,  contextMenuItemTagGoForward());
@@ -341,8 +343,10 @@ void ContextMenu::populate()
 #if PLATFORM(MAC)
                     appendItem(SearchSpotlightItem);
 #endif
+#if !PLATFORM(GTK)
                     appendItem(SearchWebItem);
                     appendItem(*separatorItem());
+#endif
 #if PLATFORM(MAC)
                     appendItem(LookInDictionaryItem);
                     appendItem(*separatorItem());
@@ -445,8 +449,10 @@ void ContextMenu::populate()
 #if PLATFORM(MAC)
             appendItem(SearchSpotlightItem);
 #endif
+#if !PLATFORM(GTK)
             appendItem(SearchWebItem);
             appendItem(*separatorItem());
+#endif
      
 #if PLATFORM(MAC)
             appendItem(LookInDictionaryItem);

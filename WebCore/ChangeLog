@@ -1,3 +1,15 @@
+2009-12-18  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] context menu overriding API is very limited
+        https://bugs.webkit.org/show_bug.cgi?id=27546
+
+        Omit SearchWeb from the context menu in the GTK+ port.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
