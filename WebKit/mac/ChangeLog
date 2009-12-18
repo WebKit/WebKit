@@ -1,3 +1,11 @@
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix preference key name.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+
 2009-12-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
