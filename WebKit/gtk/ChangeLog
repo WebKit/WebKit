@@ -1,3 +1,9 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        GTK build fix
+
+        * webkit/webkitprivate.cpp: Added #include.
+
 2009-12-18  Kalle Vahlman  <kalle.vahlman@movial.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

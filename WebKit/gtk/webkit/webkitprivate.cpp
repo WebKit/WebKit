@@ -23,6 +23,7 @@
 #include "webkitsoupauthdialog.h"
 #include "webkitprivate.h"
 #include "ApplicationCacheStorage.h"
+#include "Chrome.h"
 #include "ChromeClientGtk.h"
 #include "Frame.h"
 #include "FrameLoader.h"
