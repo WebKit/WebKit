@@ -291,14 +291,6 @@ AC_ARG_ENABLE(optimizations,
               [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
 AC_MSG_RESULT([$enable_optimizations])
 
-# check whether to enable dashboard support
-AC_MSG_CHECKING([whether to enable Dashboard support])
-AC_ARG_ENABLE(dashboard_support,
-              AC_HELP_STRING([--enable-dashboard-support],
-                             [enable Dashboard support [default=yes]]),
-              [],[enable_dashboard_support="yes"])
-AC_MSG_RESULT([$enable_dashboard_support])
-
 # check whether to enable 3D transforms support
 AC_MSG_CHECKING([whether to enable support for 3D Transforms])
 AC_ARG_ENABLE(3D_transforms,
@@ -742,7 +734,6 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
-AM_CONDITIONAL([ENABLE_DASHBOARD_SUPPORT],[test "$enable_dashboard_support" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3D_transforms" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
@@ -803,7 +794,6 @@ Build configuration:
 Features:
  3D Transforms                                            : $enable_3D_transforms
  JIT compilation                                          : $enable_jit
- Dashboard support                                        : $enable_dashboard_support
  Filters support                                          : $enable_filters
  Geolocation support                                      : $enable_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger

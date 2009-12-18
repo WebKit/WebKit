@@ -1,3 +1,11 @@
+2009-12-18  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] RemoveDashboard support. It's useless.
+
+        * GNUmakefile.am:
+
 2009-12-18  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Xan Lopez.

@@ -2167,18 +2167,6 @@ webcore_sources += \
 endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 
 # ----
-# Dashboard Support
-# ----
-if ENABLE_DASHBOARD_SUPPORT
-
-webcore_cppflags += \
-	-DENABLE_DASHBOARD_SUPPORT=1
-
-WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/DashboardSupportCSSPropertyNames.in
-
-endif # END ENABLE_DASHBOARD_SUPPORT
-
-# ----
 # Database Support
 # ----
 if ENABLE_DATABASE
@@ -3583,7 +3571,6 @@ webcore_dist += \
 	WebCore/css/makevalues.pl \
 	WebCore/css/tokenizer.flex \
 	WebCore/css/CSSPropertyNames.in \
-	WebCore/css/DashboardSupportCSSPropertyNames.in \
 	WebCore/css/make-css-file-arrays.pl \
 	WebCore/css/SVGCSSValueKeywords.in \
 	WebCore/css/makegrammar.pl \
