@@ -123,6 +123,7 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
                                       pluginHostAppExecutablePath, @"pluginHostPath",
                                       [NSNumber numberWithInt:[package pluginHostArchitecture]], @"cpuType",
                                       localization.get(), @"localization",
+                                      [NSNumber numberWithBool:useProxiedOpenPanel], @"useProxiedOpenPanel",
                                       nil];
 
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];

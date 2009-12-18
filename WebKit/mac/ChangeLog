@@ -2,6 +2,15 @@
 
         Reviewed by Sam Weinig.
 
+        Pass preference to plug-in host.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
+2009-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add WKPCRunSyncOpenPanel implementation.
 
         * Plugins/Hosted/NetscapePluginHostProxy.mm:
