@@ -1,3 +1,11 @@
+2009-12-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add BUILDING_ON_SNOW_LEOPARD #define.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+
 2009-12-17  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Alexey Proskuryakov.

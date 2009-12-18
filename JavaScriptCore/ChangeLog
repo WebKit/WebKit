@@ -1,3 +1,11 @@
+2009-12-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add BUILDING_ON_SNOW_LEOPARD and TARGETING_SNOW_LEOPARD #defines.
+
+        * wtf/Platform.h:
+
 2009-12-17  Adam Roben  <aroben@apple.com>
 
         Sync JavaScriptCore.vcproj with JavaScriptCore.xcodeproj and the
