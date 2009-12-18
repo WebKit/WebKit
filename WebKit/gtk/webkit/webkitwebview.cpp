@@ -8,6 +8,7 @@
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2008, 2009 Collabora Ltd.
  *  Copyright (C) 2009 Igalia S.L.
+ *  Copyright (C) 2009 Movial Creative Technologies Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -2458,7 +2459,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
         enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableDOMPaste, tabKeyCyclesThroughElements,
-        enableSiteSpecificQuirks;
+        enableSiteSpecificQuirks, usePageCache;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -2490,6 +2491,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-dom-paste", &enableDOMPaste,
                  "tab-key-cycles-through-elements", &tabKeyCyclesThroughElements,
                  "enable-site-specific-quirks", &enableSiteSpecificQuirks,
+                 "enable-page-cache", &usePageCache,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2518,6 +2520,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setAllowUniversalAccessFromFileURLs(enableUniversalAccessFromFileURI);
     settings->setDOMPasteAllowed(enableDOMPaste);
     settings->setNeedsSiteSpecificQuirks(enableSiteSpecificQuirks);
+    settings->setUsesPageCache(usePageCache);
 
     Page* page = core(webView);
     if (page)
@@ -2616,6 +2619,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
             page->setTabKeyCyclesThroughElements(g_value_get_boolean(&value));
     } else if (name == g_intern_string("enable-site-specific-quirks"))
         settings->setNeedsSiteSpecificQuirks(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-page-cache"))
+        settings->setUsesPageCache(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);

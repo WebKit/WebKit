@@ -4,6 +4,8 @@
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  * Copyright (C) 2009 Jan Michael Alonzo
+ * Copyright (C) 2009 Movial Creative Technologies Inc.
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -100,6 +102,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean tab_key_cycles_through_elements;
     gboolean enable_default_context_menu;
     gboolean enable_site_specific_quirks;
+    gboolean enable_page_cache;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -143,7 +146,8 @@ enum {
     PROP_ENABLE_DOM_PASTE,
     PROP_TAB_KEY_CYCLES_THROUGH_ELEMENTS,
     PROP_ENABLE_DEFAULT_CONTEXT_MENU,
-    PROP_ENABLE_SITE_SPECIFIC_QUIRKS
+    PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
+    PROP_ENABLE_PAGE_CACHE
 };
 
 // Create a default user agent string
@@ -732,6 +736,29 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     FALSE,
                                     flags));
 
+    /**
+    * WebKitWebSettings:enable-page-cache:
+    *
+    * Enable or disable the page cache. Disabling the page cache is
+    * generally only useful for special circumstances like low-memory
+    * scenarios or special purpose applications like static HTML
+    * viewers. This setting only controls the Page Cache, this cache
+    * is different than the disk-based or memory-based traditional
+    * resource caches, its point is to make going back and forth
+    * between pages much faster. For details about the different types
+    * of caches and their purposes see:
+    * http://webkit.org/blog/427/webkit-page-cache-i-the-basics/
+    *
+    * Since: 1.1.18
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_PAGE_CACHE,
+                                    g_param_spec_boolean("enable-page-cache",
+                                                         _("Enable page cache"),
+                                                         _("Whether the page cache should be used"),
+                                                         TRUE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -937,6 +964,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
         priv->enable_site_specific_quirks = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_PAGE_CACHE:
+        priv->enable_page_cache = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1060,6 +1090,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
         g_value_set_boolean(value, priv->enable_site_specific_quirks);
         break;
+    case PROP_ENABLE_PAGE_CACHE:
+        g_value_set_boolean(value, priv->enable_page_cache);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1128,6 +1161,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "tab-key-cycles-through-elements", priv->tab_key_cycles_through_elements,
                  "enable-default-context-menu", priv->enable_default_context_menu,
                  "enable-site-specific-quirks", priv->enable_site_specific_quirks,
+                 "enable-page-cache", priv->enable_page_cache,
                  NULL));
 
     return copy;
