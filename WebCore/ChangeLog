@@ -1,3 +1,23 @@
+2009-12-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for inspector's classes
+        https://bugs.webkit.org/show_bug.cgi?id=32660                               
+
+        Inherits the following classes from Noncopyable because these are
+        instantiated by 'new' and no need to be copyable:                                           
+
+        class name                  - instantiated at:  WebCore/'location'
+
+        class JavaScriptDebugServer - inspector/JavaScriptDebugServer.cpp:72
+        class ConsoleMessage        - inspector/InspectorController.cpp:329 
+        class InspectorController   - page/Page.cpp:119
+
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorController.h:
+        * inspector/JavaScriptDebugServer.h:
+
 2009-12-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

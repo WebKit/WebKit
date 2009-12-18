@@ -89,7 +89,9 @@ class InspectorResource;
 
 class InspectorController
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-                          : JavaScriptDebugListener
+                          : JavaScriptDebugListener, public Noncopyable
+#else
+                          : public Noncopyable
 #endif
                                                     {
 public:
