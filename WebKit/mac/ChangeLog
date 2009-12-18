@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Add WKPCRunSyncOpenPanel implementation.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCRunSyncOpenPanel):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2009-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a useProxiedOpenPanel WebPreference and tunnel it through to the plug-in host.
 
         * Plugins/Hosted/NetscapePluginHostManager.h:

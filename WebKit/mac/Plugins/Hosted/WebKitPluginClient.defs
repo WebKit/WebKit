@@ -206,7 +206,7 @@ routine PCResolveURL(clientPort :mach_port_t;
                      url :data_t;
                      target :data_t;
                      out resolvedURL :data_t, dealloc);
-                      
+
 // Replies
 simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
@@ -224,9 +224,12 @@ simpleroutine PCBooleanReply(clientPort :mach_port_t;
                              pluginID :uint32_t;
                              requestID :uint32_t;
                              result :boolean_t);
-                           
+
 simpleroutine PCBooleanAndDataReply(clientPort :mach_port_t;
                                     pluginID :uint32_t;
                                     requestID :uint32_t;
                                     returnValue :boolean_t;
                                     result :data_t);  
+
+simpleroutine PCRunSyncOpenPanel(clientPort :mach_port_t;
+                                 panelData :data_t);
