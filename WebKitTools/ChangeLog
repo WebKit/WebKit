@@ -1,3 +1,16 @@
+2009-12-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add watches for EWS
+        https://bugs.webkit.org/show_bug.cgi?id=32767
+
+        dglazkov wanted to be added.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/commands/early_warning_system.py:
+        * Scripts/modules/commands/queues.py:
+
 2009-12-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

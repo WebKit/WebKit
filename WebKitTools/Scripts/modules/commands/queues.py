@@ -44,7 +44,9 @@ from modules.stepsequence import StepSequenceErrorHandler
 from modules.workqueue import WorkQueue, WorkQueueDelegate
 
 class AbstractQueue(Command, WorkQueueDelegate):
-    watchers = "webkit-bot-watchers@googlegroups.com"
+    watchers = [
+        "webkit-bot-watchers@googlegroups.com",
+    ]
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),

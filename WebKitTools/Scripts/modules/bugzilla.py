@@ -466,7 +466,7 @@ class Bugzilla(object):
             self.browser.set_value(comment_text, name='comment', nr=0)
         self.browser.submit()
 
-    def add_cc_to_bug(self, bug_id, email_address):
+    def add_cc_to_bug(self, bug_id, email_address_list):
         self.authenticate()
 
         log("Adding %s to the CC list for bug %s" % (email_address, bug_id))
@@ -475,7 +475,7 @@ class Bugzilla(object):
 
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
-        self.browser["newcc"] = email_address
+        self.browser["newcc"] = email_address_list.join(", ")
         self.browser.submit()
 
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
@@ -490,7 +490,7 @@ class Bugzilla(object):
         self.browser.select_form(name="changeform")
         self.browser["comment"] = comment_text
         if cc:
-            self.browser["newcc"] = cc
+            self.browser["newcc"] = cc.join(", ")
         self.browser.submit()
 
     def close_bug_as_fixed(self, bug_id, comment_text=None):
