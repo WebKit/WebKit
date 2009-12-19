@@ -158,7 +158,6 @@
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */; };
 		0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */; };
-		0C3F1F5C10C8871200D72CE1 /* WebGLUniformLocation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */; };
 		0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */; };
 		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
@@ -1027,7 +1026,6 @@
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
-		5174E20C10A1F49A00F95E6F /* PopStateEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */; };
 		5189F01810B3781300F3C739 /* JSPopStateEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F01710B3781300F3C739 /* JSPopStateEventCustom.cpp */; };
 		5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */; };
 		5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */; };
@@ -4194,7 +4192,6 @@
 		BC56CB2310D5AC8000A77C64 /* GeolocationControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1E10D5AC8000A77C64 /* GeolocationControllerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC56CB2410D5AC8000A77C64 /* GeolocationError.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1F10D5AC8000A77C64 /* GeolocationError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC56CB2510D5AC8000A77C64 /* GeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB2010D5AC8000A77C64 /* GeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC56CCE010D72BD800A77C64 /* WebCore.ClientBasedGeolocation.exp in Sources */ = {isa = PBXBuildFile; fileRef = BC56CCDF10D72BD800A77C64 /* WebCore.ClientBasedGeolocation.exp */; };
 		BC5823F50C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */; };
 		BC5825F30C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */; };
 		BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */; };
@@ -18368,8 +18365,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				5174E20C10A1F49A00F95E6F /* PopStateEvent.idl in Resources */,
-				0C3F1F5C10C8871200D72CE1 /* WebGLUniformLocation.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20426,7 +20421,6 @@
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 				BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */,
-				BC56CCE010D72BD800A77C64 /* WebCore.ClientBasedGeolocation.exp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

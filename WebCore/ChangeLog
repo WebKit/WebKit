@@ -1,3 +1,11 @@
+2009-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove WebCore.ClientBasedGeolocation.exp from Sources, and remove two IDL files from Resources.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Fix mac Geolocation build.
