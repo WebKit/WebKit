@@ -43,6 +43,7 @@
 
 @class NSError;
 @class WebFrame;
+@class WebGeolocationPosition;
 @class WebInspector;
 @class WebPreferences;
 @class WebScriptWorld;
@@ -571,6 +572,20 @@ Could be worth adding to the API.
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle;
 - (BOOL)_selectionIsCaret;
 - (BOOL)_selectionIsAll;
+@end
+
+@protocol WebGeolocationProvider <NSObject>
+- (void)registerWebView:(WebView *)webView;
+- (void)unregisterWebView:(WebView *)webView;
+- (WebGeolocationPosition *)lastPosition;
+@end
+
+@interface WebView (WebViewGeolocation)
+- (void)_setGeolocationProvider:(id<WebGeolocationProvider>)locationProvider;
+- (id<WebGeolocationProvider>)_geolocationProvider;
+
+- (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position;
+- (void)_geolocationDidFailWithError:(NSError *)error;
 @end
 
 @interface NSObject (WebFrameLoadDelegatePrivate)

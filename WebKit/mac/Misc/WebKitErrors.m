@@ -53,6 +53,10 @@ NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageU
 #define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING("Plug-in cancelled", "WebKitErrorPlugInCancelledConnection description")
 #define WebKitErrorDescriptionPlugInWillHandleLoad UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description")
 
+// Geolocations errors
+
+#define WebKitErrorDescriptionGeolocationLocationUnknown UI_STRING("The current location cannot be found.", "WebKitErrorGeolocationLocationUnknown description")
+
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);
 
@@ -161,6 +165,9 @@ static void registerErrors()
         WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
         WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
         WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
+
+        // Geolocation errors
+        WebKitErrorDescriptionGeolocationLocationUnknown,           [NSNumber numberWithInt: WebKitErrorGeolocationLocationUnknown],
         nil];
 
     [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];

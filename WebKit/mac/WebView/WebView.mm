@@ -56,6 +56,8 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameViewInternal.h"
+#import "WebGeolocationControllerClient.h"
+#import "WebGeolocationPositionInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
@@ -161,6 +163,11 @@
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
+#endif
+
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#import <WebCore/GeolocationController.h>
+#import <WebCore/GeolocationError.h>
 #endif
 
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
@@ -608,7 +615,7 @@ static bool runningTigerMail()
         didOneTimeInitialization = true;
     }
 
-    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self), new WebPluginHalterClient(self), 0);
+    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self), new WebPluginHalterClient(self), new WebGeolocationControllerClient(self));
 
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
 
@@ -5575,6 +5582,41 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 }
 
 #endif
+
+@end
+
+@implementation WebView (WebViewGeolocation)
+
+- (void)_setGeolocationProvider:(id<WebGeolocationProvider>)geolocationProvider
+{
+    if (_private)
+        _private->_geolocationProvider = geolocationProvider;
+}
+
+- (id<WebGeolocationProvider>)_geolocationProvider
+{
+    if (_private)
+        return _private->_geolocationProvider;
+    return nil;
+}
+
+- (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position;
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (_private && _private->page)
+        _private->page->geolocationController()->positionChanged(core(position));
+#endif
+}
+
+- (void)_geolocationDidFailWithError:(NSError *)error
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (_private && _private->page) {
+        RefPtr<GeolocationError> geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, [error localizedDescription]);
+        _private->page->geolocationController()->errorOccurred(geolocatioError.get());
+    }
+#endif
+}
 
 @end
 

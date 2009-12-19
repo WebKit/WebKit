@@ -43,6 +43,7 @@ namespace WebCore {
 @class WebPreferences;
 @class WebTextCompletionController;
 @protocol WebFormDelegate;
+@protocol WebGeolocationProvider;
 #if ENABLE(VIDEO)
 @class WebVideoFullscreenController;
 #endif
@@ -165,5 +166,7 @@ extern int pluginDatabaseClientCount;
 #if ENABLE(VIDEO)
     WebVideoFullscreenController *fullscreenController;
 #endif
+
+    id<WebGeolocationProvider> _geolocationProvider;
 }
 @end

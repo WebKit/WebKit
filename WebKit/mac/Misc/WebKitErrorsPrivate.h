@@ -41,6 +41,15 @@ enum {
     WebKitErrorCannotUseRestrictedPort =                        103,
 };
 
+/*!
+    @enum
+    @abstract Geolocation errors
+    @constant WebKitErrorGeolocationLocationUnknown
+*/
+enum {
+    WebKitErrorGeolocationLocationUnknown  =                    300,
+};
+
 @interface NSError (WebKitExtras)
 + (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL;
 + (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL;

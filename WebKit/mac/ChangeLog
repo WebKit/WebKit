@@ -1,3 +1,38 @@
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add Mac WebKit side of the client based geolocation provider.
+
+        * Misc/WebKitErrors.m:
+        (registerErrors): Add Geolocation errors.
+        * Misc/WebKitErrorsPrivate.h:
+        * WebCoreSupport/WebGeolocationControllerClient.h: Added.
+        (WebGeolocationControllerClient::webView):
+        * WebCoreSupport/WebGeolocationControllerClient.mm: Added.
+        (WebGeolocationControllerClient::WebGeolocationControllerClient):
+        (WebGeolocationControllerClient::startUpdating):
+        (WebGeolocationControllerClient::stopUpdating):
+        (WebGeolocationControllerClient::lastPosition):
+        Add implementation of the WebGeolocationControllerClient.
+
+        * WebView/WebGeolocationPosition.h: Added.
+        * WebView/WebGeolocationPosition.mm: Added.
+        (-[WebGeolocationPositionInternal initWithCoreGeolocationPosition:]):
+        (core):
+        (-[WebGeolocationPosition initWithTimestamp:latitude:longitude:accuracy:]):
+        * WebView/WebGeolocationPositionInternal.h: Added.
+        Add an Objective-C wrapper for GeolocationPosition.
+ 
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]): Set the GeolocationControllerClient.
+        (-[WebView _setGeolocationProvider:]): Set the GeolocationProvider
+        (-[WebView _geolocationProvider]): Return the GeolocationProvider.
+        (-[WebView _geolocationDidChangePosition:]): Notify WebCore that the position changed.
+        (-[WebView _geolocationDidFailWithError:]): Notify WebCore that an error occured.
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2009-12-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
