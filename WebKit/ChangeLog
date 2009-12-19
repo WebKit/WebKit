@@ -1,3 +1,9 @@
+2009-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Updated localizable strings after r52368
+
+        * English.lproj/Localizable.strings:
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
