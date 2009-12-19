@@ -517,9 +517,14 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.
     // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
     // look as nice. That may be solvable though.
+#if PLATFORM(CG)
+    bool canCreateCGFontWithLOGFONT = wkCanCreateCGFontWithLOGFONT();
+#else
+    bool canCreateCGFontWIthLOGFONT = true;
+#endif
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     HFONT hfont = createGDIFont(family, weight, fontDescription.italic(),
-                                fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI && wkCanCreateCGFontWithLOGFONT());
+                                fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI && canCreateCGFontWIthLOGFONT);
 
     if (!hfont)
         return 0;

@@ -1,3 +1,12 @@
+2009-12-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no review.
+
+        * page/win/FrameCairoWin.cpp: Add missing include.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData): Conditionalize
+          Safari-only call.
+
 2009-12-16  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dmitry Titov.
