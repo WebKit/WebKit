@@ -1,5 +1,17 @@
 2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        MSAA: Accessibility role of list items is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=32688
+
+        Reviewed by Adam Roben.
+
+        * platform/win/accessibility/list-item-role-expected.txt: Added.
+        * platform/win/accessibility/list-item-role.html: Added.
+        Verify that the list item role is "list item".
+
+2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
         MSAA: Accessibility role of list markers is wrong
 
         https://bugs.webkit.org/show_bug.cgi?id=32687

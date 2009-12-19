@@ -1,3 +1,24 @@
+2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility role of list items is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=32688
+
+        Reviewed by Adam Roben.
+
+        Test: platform/win/accessibility/list-item-role.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        Add a ListItemRole to the enum.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::msaaRoleForRenderer):
+        Return the role for the RenderObject, or UnknownRole if unknown.
+        (WebCore::AccessibilityRenderObject::roleValueForMSAA):
+        Call msaaRoleForRenderer() to get the role. If it is UnknownRole, fall
+        back to m_role.
+
 2009-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.
