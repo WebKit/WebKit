@@ -1,3 +1,18 @@
+2009-12-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add tests to check filter, mask, clip, opacity and marker ordering
+        https://bugs.webkit.org/show_bug.cgi?id=14010
+
+        Tests the right order of filter and clipper/masker aplied to a SVG
+        object.
+
+        * platform/mac/svg/filters/filter-clip-expected.checksum: Added.
+        * platform/mac/svg/filters/filter-clip-expected.png: Added.
+        * platform/mac/svg/filters/filter-clip-expected.txt: Added.
+        * svg/filters/filter-clip.svg: Added.
+
 2009-12-19  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Gustavo Noronha.

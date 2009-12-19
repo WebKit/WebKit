@@ -1,3 +1,21 @@
+2009-12-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add tests to check filter, mask, clip, opacity and marker ordering
+        https://bugs.webkit.org/show_bug.cgi?id=14010
+
+        The right ordering for applying effects on objects in SVG is filters,
+        clipper/masker and opacity. This patch fixes the order of filter and
+        clipper/masker. Opacity and marker need another test.
+        This change is according to the SVG Specification:
+        http://www.w3.org/TR/SVG11/render.html#Elements
+
+        Test: svg/filters/filter-clip.svg
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+
 2009-12-19  Evan Martin  <evan@chromium.org>
 
         Reviewed by Gustavo Noronha Silva.
