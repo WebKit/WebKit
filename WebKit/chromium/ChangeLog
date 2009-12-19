@@ -1,3 +1,26 @@
+2009-12-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Eliminate redundant data copy in GraphicsContext3D readback
+        https://bugs.webkit.org/show_bug.cgi?id=32763
+
+        Eliminated useless creation of a CGBitmapContext and from there a
+        CGImage. Now create CGImage directly from data. Also changed
+        readPixels parameters and CGImage alpha info to try to avoid byte
+        swapping, and disabled interpolation when drawing the GL content.
+        Some test cases run twice as fast with these changes, though more
+        work is needed to achieve desired performance.
+
+        No test case; performance optimization only. Ran WebGL demos from
+        Khronos site to verify changes.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+
 2009-12-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

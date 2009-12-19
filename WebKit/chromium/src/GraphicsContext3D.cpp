@@ -189,7 +189,6 @@ private:
     CGLPBufferObj m_pbuffer;
     CGLContextObj m_contextObj;
     unsigned char* m_renderOutput;
-    CGContextRef m_cgContext;
 #elif PLATFORM(LINUX)
     Display* m_display;
     GLXContext m_contextObj;
@@ -255,7 +254,6 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
     , m_pbuffer(0)
     , m_contextObj(0)
     , m_renderOutput(0)
-    , m_cgContext(0)
 #elif PLATFORM(LINUX)
     , m_display(0)
     , m_contextObj(0)
@@ -510,8 +508,6 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     CGLSetCurrentContext(0);
     CGLDestroyContext(m_contextObj);
     CGLDestroyPBuffer(m_pbuffer);
-    if (m_cgContext)
-        CGContextRelease(m_cgContext);
     if (m_renderOutput)
         delete[] m_renderOutput;
 #elif PLATFORM(LINUX)
@@ -630,20 +626,12 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 #if PLATFORM(CG)
     // Need to reallocate the client-side backing store.
     // FIXME: make this more efficient.
-    if (m_cgContext) {
-        CGContextRelease(m_cgContext);
-        m_cgContext = 0;
-    }
     if (m_renderOutput) {
         delete[] m_renderOutput;
         m_renderOutput = 0;
     }
     int rowBytes = width * 4;
     m_renderOutput = new unsigned char[height * rowBytes];
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    m_cgContext = CGBitmapContextCreate(m_renderOutput, width, height, 8, rowBytes,
-                                        colorSpace, kCGImageAlphaPremultipliedLast);
-    CGColorSpaceRelease(colorSpace);
 #endif  // PLATFORM(CG)
 }
 
@@ -731,10 +719,8 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
     glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 #elif PLATFORM(CG)
     if (m_renderOutput) {
-        ASSERT(CGBitmapContextGetWidth(m_cgContext) == m_cachedWidth);
-        ASSERT(CGBitmapContextGetHeight(m_cgContext) == m_cachedHeight);
         pixels = m_renderOutput;
-        glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
     }
 #else
 #error Must port to your platform
@@ -758,7 +744,20 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
     }
 #elif PLATFORM(CG)
     if (m_renderOutput) {
-        CGImageRef cgImage = CGBitmapContextCreateImage(m_cgContext);
+        int rowBytes = m_cachedWidth * 4;
+        CGDataProviderRef dataProvider = CGDataProviderCreateWithData(0, m_renderOutput, rowBytes * m_cachedHeight, 0);
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGImageRef cgImage = CGImageCreate(m_cachedWidth,
+                                           m_cachedHeight,
+                                           8,
+                                           32,
+                                           rowBytes,
+                                           colorSpace,
+                                           kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
+                                           dataProvider,
+                                           0,
+                                           false,
+                                           kCGRenderingIntentDefault);
         // CSS styling may cause the canvas's content to be resized on
         // the page. Go back to the Canvas to figure out the correct
         // width and height to draw.
@@ -769,9 +768,13 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
         // rendering results.
         CGContextSetBlendMode(imageBuffer->context()->platformContext(),
                               kCGBlendModeCopy);
+        CGContextSetInterpolationQuality(imageBuffer->context()->platformContext(),
+                                         kCGInterpolationNone);
         CGContextDrawImage(imageBuffer->context()->platformContext(),
                            rect, cgImage);
         CGImageRelease(cgImage);
+        CGColorSpaceRelease(colorSpace);
+        CGDataProviderRelease(dataProvider);
     }
 #else
 #error Must port to your platform
