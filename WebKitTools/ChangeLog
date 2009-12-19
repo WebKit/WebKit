@@ -1,3 +1,10 @@
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed fixes for me being terrible at python.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/run-webkit-unittests:
+
 2009-12-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

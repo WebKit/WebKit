@@ -44,9 +44,9 @@ from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *
 from modules.logging_unittest import *
 from modules.multicommandtool_unittest import *
+from modules.queueengine_unittest import *
 from modules.text_style_unittest import *
 from modules.webkitport_unittest import *
-from modules.workqueue_unittest import *
 
 if __name__ == "__main__":
     # FIXME: This is a hack, but I'm tired of commenting out the test.
