@@ -2652,7 +2652,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomPositionCallback.h \
 	WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
 	WebCore/bindings/js/JSCustomPositionErrorCallback.h \
-	WebCore/bindings/js/JSGeolocationCustom.cpp
+	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/page/Geolocation.cpp \
 	WebCore/page/Geolocation.h \
 	WebCore/page/GeolocationController.cpp \
