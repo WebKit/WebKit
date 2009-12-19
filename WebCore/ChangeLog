@@ -1,5 +1,11 @@
 2009-12-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed, fix typos in WebCore.xcodeproj.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2009-12-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Eric Seidel.
 
         SVGAngle / SVGPreserveAspectRatio should be POD types
