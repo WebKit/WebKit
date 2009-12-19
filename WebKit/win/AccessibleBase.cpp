@@ -542,9 +542,9 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_PAGETABLIST;
         case WebCore::TextFieldRole:
         case WebCore::TextAreaRole:
-        case WebCore::ListMarkerRole:
         case WebCore::EditableTextRole:
             return ROLE_SYSTEM_TEXT;
+        case WebCore::ListMarkerRole:
         case WebCore::StaticTextRole:
             return ROLE_SYSTEM_STATICTEXT;
         case WebCore::OutlineRole:

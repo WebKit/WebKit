@@ -1,3 +1,15 @@
+2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility role of list markers is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=32687
+
+        Reviewed by Adam Roben.
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+        Make the WebCore list marker role map to the MSAA static text role.
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         Add #includes needed after WebCore clean-up
