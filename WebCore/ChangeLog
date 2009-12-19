@@ -1,3 +1,19 @@
+2009-12-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Move some code related to database closing from the destructor to
+        the close() method. This would allow us to do things such as post
+        tasks to other threads when a database closes, which cannot be
+        done now, because we cannot increment the ref count to a database
+        object when we're in its destructor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32626
+
+        * storage/Database.cpp:
+        (WebCore::Database::~Database):
+        (WebCore::Database::close):
+
 2009-12-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(r52233): MSAA: Accessibility role of lists is wrong
