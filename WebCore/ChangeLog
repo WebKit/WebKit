@@ -1,3 +1,21 @@
+2009-12-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r52233): MSAA: Accessibility role of lists is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=32736
+
+        Reviewed by Adam Roben.
+
+        Test: platform/win/accessibility/list-role.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::roleValueForMSAA):
+        Return roleValue(), rather than m_role, as subclasses may override it.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::roleValueForMSAA):
+        Fallback to roleValue(), rather than m_role, as it may be overriden.
+
 2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of list items is wrong
