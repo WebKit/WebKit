@@ -9,3 +9,15 @@ build/
 JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 WebCore/WebCore.gyp/WebCore.xcodeproj
 WebKit/chromium/WebKit.xcodeproj
+
+# Though the GTK build builds in a subdirectory, autogen.sh still deposits
+# a few files into the source tree.
+/aclocal.m4
+/autom4te.cache
+/autotools
+/autotoolsconfig.h.in
+/configure
+/GNUmakefile.in
+/gtk-doc.make
+/INSTALL
+/README

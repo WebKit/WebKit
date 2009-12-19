@@ -1,3 +1,11 @@
+2009-12-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a couple of WebKitGtk files to .gitignore.
+
+        * .gitignore:
+
 2009-12-18  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Xan Lopez.
