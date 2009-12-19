@@ -126,7 +126,7 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
     m_masker->invalidate();
 }
 
-PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect) const
+PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect, IntRect& paintRect) const
 {    
     // Determine specified mask size
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
@@ -169,14 +169,15 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);
 
+    TransformationMatrix contextTransform;
+    contextTransform.translate(-maskContextLocation.x(), -maskContextLocation.y());
+    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        contextTransform.scaleNonUniform(targetRect.width(), targetRect.height());
+
     maskImageContext->save();
-    maskImageContext->translate(-maskContextLocation.x(), -maskContextLocation.y());
+    maskImageContext->concatCTM(contextTransform);
 
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        maskImageContext->save();
-        maskImageContext->scale(FloatSize(targetRect.width(), targetRect.height()));
-    }
-
+    FloatRect repaintRect;
     // Render subtree into ImageBuffer
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = 0;
@@ -191,10 +192,16 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
             continue;
 
         renderSubtreeToImage(maskImage.get(), item);
+        repaintRect.unite(item->repaintRectInLocalCoordinates());
     }
 
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        maskImageContext->restore();
+    if (contextTransform.isInvertible()) {
+        contextTransform.inverse();
+        repaintRect = contextTransform.mapRect(repaintRect);
+        repaintRect.intersect(FloatRect(FloatPoint(), maskDestRect.size()));
+        paintRect = enclosingIntRect(repaintRect);
+    } else
+        paintRect = enclosingIntRect(FloatRect(FloatPoint(), maskDestRect.size()));
 
     maskImageContext->restore();
     return maskImage.release();

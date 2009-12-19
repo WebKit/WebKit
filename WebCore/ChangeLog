@@ -2,6 +2,28 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Speed-up SVG Masking
+        https://bugs.webkit.org/show_bug.cgi?id=32738
+
+        This patch makes SVG Masking faster. At the moment we create a new ImageBuffer
+        and copy the complete pixel array. That is rather inefficient. This patch
+        uses the mask image directly.
+        It also bounds the direct pixel manipultation to the viewable area to minimize
+        the calculation of the mask.
+
+        No change in functionality. So no new test.
+
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGMaskElement.h:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/SVGResourceMasker.h:
+
+2009-12-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Add tests to check filter, mask, clip, opacity and marker ordering
         https://bugs.webkit.org/show_bug.cgi?id=14010
 

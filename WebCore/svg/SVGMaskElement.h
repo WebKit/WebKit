@@ -50,7 +50,7 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource();
 
-        PassOwnPtr<ImageBuffer> drawMaskerContent(const FloatRect& targetRect, FloatRect& maskRect) const;
+        PassOwnPtr<ImageBuffer> drawMaskerContent(const FloatRect& targetRect, FloatRect& maskRect, IntRect& paintRect) const;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGNames::maskTagString, SVGNames::maskUnitsAttrString, int, MaskUnits, maskUnits)
