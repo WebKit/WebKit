@@ -267,12 +267,9 @@ IDL_BINDINGS += \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/EventSource.idl \
-	WebCore/page/Geolocation.idl \
-	WebCore/page/Geoposition.idl \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
-	WebCore/page/PositionError.idl \
 	WebCore/page/Screen.idl \
 	WebCore/page/WebKitPoint.idl \
 	WebCore/page/WorkerNavigator.idl \
@@ -352,10 +349,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSClipboardCustom.cpp \
 	WebCore/bindings/js/JSConsoleCustom.cpp \
 	WebCore/bindings/js/JSCoordinatesCustom.cpp \
-	WebCore/bindings/js/JSCustomPositionCallback.cpp \
-	WebCore/bindings/js/JSCustomPositionCallback.h \
-	WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
-	WebCore/bindings/js/JSCustomPositionErrorCallback.h \
 	WebCore/bindings/js/JSCustomVoidCallback.cpp \
 	WebCore/bindings/js/JSCustomVoidCallback.h \
 	WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
@@ -383,7 +376,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSExceptionBase.cpp \
 	WebCore/bindings/js/JSExceptionBase.h \
-	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
@@ -1353,14 +1345,6 @@ webcore_sources += \
 	WebCore/page/FrameTree.h \
 	WebCore/page/FrameView.cpp \
 	WebCore/page/FrameView.h \
-	WebCore/page/Geolocation.cpp \
-	WebCore/page/Geolocation.h \
-	WebCore/page/GeolocationController.cpp \
-	WebCore/page/GeolocationController.h \
-	WebCore/page/GeolocationControllerClient.h \
-	WebCore/page/GeolocationError.h \
-	WebCore/page/GeolocationPosition.h \
-	WebCore/page/Geoposition.h \
 	WebCore/page/HaltablePlugin.h \
 	WebCore/page/History.cpp \
 	WebCore/page/History.h \
@@ -1383,10 +1367,6 @@ webcore_sources += \
 	WebCore/page/PluginHalter.cpp \
 	WebCore/page/PluginHalter.h \
 	WebCore/page/PluginHalterClient.h \
-	WebCore/page/PositionCallback.h \
-	WebCore/page/PositionError.h \
-	WebCore/page/PositionErrorCallback.h \
-	WebCore/page/PositionOptions.h \
 	WebCore/page/PrintContext.cpp \
 	WebCore/page/PrintContext.h \
 	WebCore/page/Screen.cpp \
@@ -1443,8 +1423,6 @@ webcore_sources += \
 	WebCore/platform/FileChooser.h \
 	WebCore/platform/FileSystem.h \
 	WebCore/platform/FloatConversion.h \
-	WebCore/platform/GeolocationService.cpp \
-	WebCore/platform/GeolocationService.h \
 	WebCore/platform/HostWindow.h \
 	WebCore/platform/KeyboardCodes.h \
 	WebCore/platform/KURL.cpp \
@@ -1462,8 +1440,6 @@ webcore_sources += \
 	WebCore/platform/Logging.h \
 	WebCore/platform/MIMETypeRegistry.cpp \
 	WebCore/platform/MIMETypeRegistry.h \
-	WebCore/platform/mock/GeolocationServiceMock.cpp \
-	WebCore/platform/mock/GeolocationServiceMock.h \
 	WebCore/platform/NotImplemented.h \
 	WebCore/platform/Pasteboard.h \
 	WebCore/platform/PlatformKeyboardEvent.h \
@@ -1819,8 +1795,6 @@ webcore_sources += \
 	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderSlider.h \
-	WebCore/rendering/RenderSVGModelObject.cpp \
-	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderTable.cpp \
 	WebCore/rendering/RenderTable.h \
 	WebCore/rendering/RenderTableCell.cpp \
@@ -2279,6 +2253,7 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE=1
 
 IDL_BINDINGS += \
 	WebCore/storage/Storage.idl \
+	WebCore/page/PositionError.idl \
 	WebCore/storage/StorageEvent.idl
 
 webcore_cppflags += \
@@ -2664,12 +2639,41 @@ endif # END ENABLE_FILTERS
 if ENABLE_GEOLOCATION
 
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
+
+IDL_BINDINGS += \
+	WebCore/page/Geolocation.idl \
+	WebCore/page/Geoposition.idl
+
 webcore_cppflags += \
 	-DENABLE_GEOLOCATION=1
+
+webcore_sources += \
+	WebCore/bindings/js/JSCustomPositionCallback.cpp \
+	WebCore/bindings/js/JSCustomPositionCallback.h \
+	WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
+	WebCore/bindings/js/JSCustomPositionErrorCallback.h \
+	WebCore/bindings/js/JSGeolocationCustom.cpp
+	WebCore/page/Geolocation.cpp \
+	WebCore/page/Geolocation.h \
+	WebCore/page/GeolocationController.cpp \
+	WebCore/page/GeolocationController.h \
+	WebCore/page/GeolocationControllerClient.h \
+	WebCore/page/GeolocationError.h \
+	WebCore/page/GeolocationPosition.h \
+	WebCore/page/Geoposition.h \
+	WebCore/page/PositionCallback.h \
+	WebCore/page/PositionError.h \
+	WebCore/page/PositionErrorCallback.h \
+	WebCore/page/PositionOptions.h \
+	WebCore/platform/GeolocationService.cpp \
+	WebCore/platform/GeolocationService.h \
+	WebCore/platform/mock/GeolocationServiceMock.cpp \
+	WebCore/platform/mock/GeolocationServiceMock.h
 
 webcoregtk_sources += \
 	WebCore/platform/gtk/GeolocationServiceGtk.cpp \
 	WebCore/platform/gtk/GeolocationServiceGtk.h
+
 endif # END ENABLE_GEOLOCATION
 
 # ----
@@ -2932,6 +2936,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGInline.h \
 	WebCore/rendering/RenderSVGInlineText.cpp \
 	WebCore/rendering/RenderSVGInlineText.h \
+	WebCore/rendering/RenderSVGModelObject.cpp \
+	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
 	WebCore/rendering/RenderSVGRoot.h \
 	WebCore/rendering/RenderSVGTSpan.cpp \

@@ -1,3 +1,12 @@
+2009-12-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Make --disable-geolocation and --disable-svg work, by conditionally
+        building the relevant files.
+
+        * GNUmakefile.am:
+
 2009-12-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Simon Fraser.
