@@ -33,9 +33,9 @@ import tempfile
 import unittest
 
 from modules.executive import ScriptError
-from modules.workqueue import WorkQueue, WorkQueueDelegate
+from modules.queueengine import QueueEngine, QueueEngineDelegate
 
-class LoggingDelegate(WorkQueueDelegate):
+class LoggingDelegate(QueueEngineDelegate):
     def __init__(self, test):
         self._test = test
         self._callbacks = []
@@ -109,9 +109,9 @@ class NotSafeToProceedDelegate(LoggingDelegate):
         return False
 
 
-class FastWorkQueue(WorkQueue):
+class FastQueueEngine(QueueEngine):
     def __init__(self, delegate):
-        WorkQueue.__init__(self, "fast-queue", delegate)
+        QueueEngine.__init__(self, "fast-queue", delegate)
 
     # No sleep for the wicked.
     seconds_to_sleep = 0
@@ -120,10 +120,10 @@ class FastWorkQueue(WorkQueue):
         pass
 
 
-class WorkQueueTest(unittest.TestCase):
+class QueueEngineTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
-        work_queue = WorkQueue("trivial-queue", delegate)
+        work_queue = QueueEngine("trivial-queue", delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
@@ -131,7 +131,7 @@ class WorkQueueTest(unittest.TestCase):
 
     def test_unexpected_error(self):
         delegate = ThrowErrorDelegate(self, 3)
-        work_queue = WorkQueue("error-queue", delegate)
+        work_queue = QueueEngine("error-queue", delegate)
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         work_item_index = expected_callbacks.index('process_work_item')
@@ -141,14 +141,14 @@ class WorkQueueTest(unittest.TestCase):
         self.assertEquals(delegate._callbacks, expected_callbacks)
 
     def test_handled_error(self):
-        delegate = ThrowErrorDelegate(self, WorkQueue.handled_error_code)
-        work_queue = WorkQueue("handled-error-queue", delegate)
+        delegate = ThrowErrorDelegate(self, QueueEngine.handled_error_code)
+        work_queue = QueueEngine("handled-error-queue", delegate)
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
 
     def test_not_safe_to_proceed(self):
         delegate = NotSafeToProceedDelegate(self)
-        work_queue = FastWorkQueue(delegate)
+        work_queue = FastQueueEngine(delegate)
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         next_work_item_index = expected_callbacks.index('next_work_item')

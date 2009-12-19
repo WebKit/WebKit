@@ -30,7 +30,7 @@ from modules.buildsteps import CommandOptions
 from modules.executive import ScriptError
 from modules.logging import log
 from modules.scm import CheckoutNeedsUpdate
-from modules.workqueue import WorkQueue
+from modules.queueengine import QueueEngine
 
 
 class StepSequenceErrorHandler():
@@ -66,11 +66,11 @@ class StepSequence(object):
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
             log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
-            WorkQueue.exit_after_handled_error(e)
+            QueueEngine.exit_after_handled_error(e)
         except ScriptError, e:
             if not options.quiet:
                 log(e.message_with_output())
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_script_error(tool, state, e)
-            WorkQueue.exit_after_handled_error(e)
+            QueueEngine.exit_after_handled_error(e)

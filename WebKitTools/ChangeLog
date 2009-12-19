@@ -1,5 +1,18 @@
 2009-12-18  Adam Barth  <abarth@webkit.org>
 
+        Rubber stamped by Eric Seidel.
+
+        Renamed WorkQueue to QueueEngine.  WorkQueue is not a queue.
+
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/queueengine.py: Added.
+        * Scripts/modules/queueengine_unittest.py: Added.
+        * Scripts/modules/stepsequence.py:
+        * Scripts/modules/workqueue.py: Removed.
+        * Scripts/modules/workqueue_unittest.py: Removed.
+
+2009-12-18  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add watches for EWS

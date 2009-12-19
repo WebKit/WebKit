@@ -41,9 +41,9 @@ from modules.multicommandtool import Command
 from modules.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.statusbot import StatusBot
 from modules.stepsequence import StepSequenceErrorHandler
-from modules.workqueue import WorkQueue, WorkQueueDelegate
+from modules.queueengine import QueueEngine, QueueEngineDelegate
 
-class AbstractQueue(Command, WorkQueueDelegate):
+class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
         "webkit-bot-watchers@googlegroups.com",
     ]
@@ -74,7 +74,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
             response = raw_input("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
-        log("Running WebKit %s. %s" % (self.name, datetime.now().strftime(WorkQueue.log_date_format)))
+        log("Running WebKit %s. %s" % (self.name, datetime.now().strftime(QueueEngine.log_date_format)))
 
     def should_continue_work_queue(self):
         return True
@@ -104,7 +104,7 @@ class AbstractQueue(Command, WorkQueueDelegate):
     def execute(self, options, args, tool):
         self.options = options
         self.tool = tool
-        work_queue = WorkQueue(self.name, self)
+        work_queue = QueueEngine(self.name, self)
         return work_queue.run()
 
 
