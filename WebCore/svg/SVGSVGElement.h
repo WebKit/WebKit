@@ -105,7 +105,7 @@ namespace WebCore {
 
         static float createSVGNumber();
         static SVGLength createSVGLength();
-        static PassRefPtr<SVGAngle> createSVGAngle();
+        static SVGAngle createSVGAngle();
         static FloatPoint createSVGPoint();
         static TransformationMatrix createSVGMatrix();
         static FloatRect createSVGRect();

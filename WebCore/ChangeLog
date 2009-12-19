@@ -1,3 +1,68 @@
+2009-12-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        SVGAngle / SVGPreserveAspectRatio should be POD types
+        https://bugs.webkit.org/show_bug.cgi?id=32758
+
+        Convert SVGAngle / SVGPreserveAspectRatio to be non-refcounted types, just
+        like it has been done for SVGMatrix / SVGLength before.
+
+        This patch prepares removing the special DOMObjectWithSVGContext hack.
+        No change in functionality, thus no new tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Add SVGNames.h to the 'Copy Generated Headers' phase, and set SVGAngle/SVGPreserveAspectRatio role to 'Private', so WebKit can access it.
+        * bindings/scripts/CodeGenerator.pm: Recognize SVGAngle / SVGPreserveAspectRatio as new POD-types (similar to SVGLength)
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto. 
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        * bindings/v8/V8Index.h: Ditto.
+        * rendering/RenderSVGImage.cpp: All following changes, modify SVGAngle/SVGPreserveAspectRatio access, as they are non-refcounted now.
+        (WebCore::RenderSVGImage::adjustRectsForAspectRatio):
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGImage.h:
+        * svg/SVGAngle.h:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * svg/SVGPreserveAspectRatio.idl:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::createSVGAngle):
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::setPreserveAspectRatioString):
+        (WebCore::SVGViewSpec::parseViewSpec):
+
 2009-12-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Chromium build fix, no review.

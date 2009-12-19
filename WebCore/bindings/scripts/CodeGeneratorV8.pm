@@ -1909,7 +1909,6 @@ sub IsRefPtrType
     return 1 if $type eq "XPathNSResolver";
     return 1 if $type eq "XPathResult";
 
-    return 1 if $type eq "SVGAngle";
     return 1 if $type eq "SVGElementInstance";
     return 1 if $type eq "SVGElementInstanceList";
     return 1 if $type =~ /^SVGPathSeg/;
@@ -1966,7 +1965,9 @@ sub GetNativeType
     return "TransformationMatrix" if $type eq "SVGMatrix";
     return "SVGTransform" if $type eq "SVGTransform";
     return "SVGLength" if $type eq "SVGLength";
+    return "SVGAngle" if $type eq "SVGAngle";
     return "double" if $type eq "SVGNumber";
+    return "SVGPreserveAspectRatio" if $type eq "SVGPreserveAspectRatio";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
     return "unsigned" if $type eq "unsigned int";
@@ -2024,7 +2025,7 @@ my %typeCanFailConversion = (
     "Range" => 0,
     "SQLResultSet" => 0,
     "Storage" => 0,
-    "SVGAngle" => 0,
+    "SVGAngle" => 1,
     "SVGElement" => 0,
     "SVGLength" => 1,
     "SVGMatrix" => 1,
@@ -2032,6 +2033,7 @@ my %typeCanFailConversion = (
     "SVGPaintType" => 0,
     "SVGPathSeg" => 0,
     "SVGPoint" => 1,
+    "SVGPreserveAspectRatio" => 1,
     "SVGRect" => 1,
     "SVGTransform" => 1,
     "VoidCallback" => 1,
@@ -2064,9 +2066,11 @@ sub BasicTypeCanFailConversion
     my $signature = shift;
     my $type = GetTypeFromSignature($signature);
 
+    return 1 if $type eq "SVGAngle";
     return 1 if $type eq "SVGLength";
     return 1 if $type eq "SVGMatrix";
     return 1 if $type eq "SVGPoint";
+    return 1 if $type eq "SVGPreserveAspectRatio";
     return 1 if $type eq "SVGRect";
     return 1 if $type eq "SVGTransform";
     return 0;
@@ -2236,8 +2240,10 @@ my %non_wrapper_types = (
     'boolean' => 1,
     'DOMString' => 1,
     'CompareHow' => 1,
+    'SVGAngle' => 1,
     'SVGRect' => 1,
     'SVGPoint' => 1,
+    'SVGPreserveAspectRatio' => 1,
     'SVGMatrix' => 1,
     'SVGTransform' => 1,
     'SVGLength' => 1,

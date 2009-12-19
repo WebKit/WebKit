@@ -37,16 +37,13 @@ namespace WebCore {
         virtual ~SVGFitToViewBox();
 
         bool parseViewBox(Document*, const UChar*& start, const UChar* end, float& x, float& y, float& w, float& h, bool validate = true);
-        static TransformationMatrix viewBoxToViewTransform(const FloatRect& viewBoxRect, SVGPreserveAspectRatio*, float viewWidth, float viewHeight);
+        static TransformationMatrix viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio&, float viewWidth, float viewHeight);
 
         bool parseMappedAttribute(Document*, MappedAttribute*);
         bool isKnownAttribute(const QualifiedName&);
 
-    protected:
-        virtual SVGAnimatedTypeValue<FloatRect>::DecoratedType viewBoxBaseValue() const = 0;
-        virtual void setViewBoxBaseValue(SVGAnimatedTypeValue<FloatRect>::DecoratedType type) = 0;
-
-        virtual SVGAnimatedTypeValue<SVGPreserveAspectRatio>::DecoratedType preserveAspectRatioBaseValue() const = 0;
+        virtual void setViewBoxBaseValue(SVGAnimatedTypeValue<FloatRect>::DecoratedType) = 0;
+        virtual void setPreserveAspectRatioBaseValue(SVGAnimatedTypeValue<SVGPreserveAspectRatio>::DecoratedType) = 0;
     };
 
 } // namespace WebCore

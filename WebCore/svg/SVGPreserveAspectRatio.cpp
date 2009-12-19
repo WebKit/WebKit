@@ -60,11 +60,12 @@ unsigned short SVGPreserveAspectRatio::meetOrSlice() const
     return m_meetOrSlice;
 }
 
-bool SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate)
+SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate, bool& result)
 {
-    SVGPreserveAspectRatioType align = SVG_PRESERVEASPECTRATIO_NONE;
-    SVGMeetOrSliceType meetOrSlice = SVG_MEETORSLICE_MEET;
-    bool ret = false;
+    SVGPreserveAspectRatio aspectRatio;
+    aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_NONE;
+    aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_MEET;
+    result = false;
 
     if (!skipOptionalSpaces(currParam, end))
         goto bail_out;
@@ -90,25 +91,25 @@ bool SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, c
             if (currParam[3] == 'n') {
                 if (currParam[6] == 'i') {
                     if (currParam[7] == 'n')
-                        align = SVG_PRESERVEASPECTRATIO_XMINYMIN;
+                        aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMINYMIN;
                     else if (currParam[7] == 'd')
-                        align = SVG_PRESERVEASPECTRATIO_XMINYMID;
+                        aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMINYMID;
                     else
                         goto bail_out;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                     align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
+                     aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
                 else
                      goto bail_out;
              } else if (currParam[3] == 'd') {
                 if (currParam[6] == 'i') {
                     if (currParam[7] == 'n')
-                        align = SVG_PRESERVEASPECTRATIO_XMIDYMIN;
+                        aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMIDYMIN;
                     else if (currParam[7] == 'd')
-                        align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
+                        aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
                     else
                         goto bail_out;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                    align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
+                    aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
                 else
                     goto bail_out;
             } else
@@ -116,13 +117,13 @@ bool SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, c
         } else if (currParam[2] == 'a' && currParam[3] == 'x') {
             if (currParam[6] == 'i') {
                 if (currParam[7] == 'n')
-                    align = SVG_PRESERVEASPECTRATIO_XMAXYMIN;
+                    aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMAXYMIN;
                 else if (currParam[7] == 'd')
-                    align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
+                    aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
                 else
                     goto bail_out;
             } else if (currParam[6] == 'a' && currParam[7] == 'x')
-                align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
+                aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
             else
                 goto bail_out;
         } else
@@ -141,31 +142,26 @@ bool SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, c
             if (!skipString(currParam, end, "slice"))
                 goto bail_out;
             skipOptionalSpaces(currParam, end);
-            if (align != SVG_PRESERVEASPECTRATIO_NONE)
-                meetOrSlice = SVG_MEETORSLICE_SLICE;    
+            if (aspectRatio.m_align != SVG_PRESERVEASPECTRATIO_NONE)
+                aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_SLICE;    
         }
     }
 
     if (end != currParam && validate) {
 bail_out:
         // FIXME: Should the two values be set to UNKNOWN instead?
-        align = SVG_PRESERVEASPECTRATIO_NONE;
-        meetOrSlice = SVG_MEETORSLICE_MEET;
+        aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_NONE;
+        aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_MEET;
     } else
-        ret = true;
+        result = true;
 
-    if (m_align == align && m_meetOrSlice == meetOrSlice)
-        return ret;
-
-    m_align = align;
-    m_meetOrSlice = meetOrSlice;
-    return ret;
+    return aspectRatio;
 }
 
 TransformationMatrix SVGPreserveAspectRatio::getCTM(double logicX, double logicY,
                                                double logicWidth, double logicHeight,
                                                double /*physX*/, double /*physY*/,
-                                               double physWidth, double physHeight)
+                                               double physWidth, double physHeight) const
 {
     TransformationMatrix temp;
 

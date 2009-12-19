@@ -33,7 +33,6 @@
 namespace WebCore {
 
     class Document;
-    class SVGAngle;
 
     extern char SVGOrientTypeAttrIdentifier[];
     extern char SVGOrientAngleAttrIdentifier[];
@@ -61,7 +60,7 @@ namespace WebCore {
         TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         void setOrientToAuto();
-        void setOrientToAngle(PassRefPtr<SVGAngle>);
+        void setOrientToAngle(const SVGAngle&);
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);

@@ -69,7 +69,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_height(this, SVGNames::heightAttr, LengthModeHeight, "100%") 
     , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
     , m_viewBox(this, SVGNames::viewBoxAttr)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
     , m_viewSpec(0)
@@ -374,9 +374,9 @@ SVGLength SVGSVGElement::createSVGLength()
     return SVGLength();
 }
 
-PassRefPtr<SVGAngle> SVGSVGElement::createSVGAngle()
+SVGAngle SVGSVGElement::createSVGAngle()
 {
-    return SVGAngle::create();
+    return SVGAngle();
 }
 
 FloatPoint SVGSVGElement::createSVGPoint()
@@ -531,13 +531,14 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
         currentView()->setViewBox(viewElement->viewBox());
     else
         currentView()->setViewBox(viewBox());
-    if (viewElement->hasAttribute(SVGNames::preserveAspectRatioAttr)) {
-        currentView()->preserveAspectRatio()->setAlign(viewElement->preserveAspectRatio()->align());
-        currentView()->preserveAspectRatio()->setMeetOrSlice(viewElement->preserveAspectRatio()->meetOrSlice());
-    } else {
-        currentView()->preserveAspectRatio()->setAlign(preserveAspectRatio()->align());
-        currentView()->preserveAspectRatio()->setMeetOrSlice(preserveAspectRatio()->meetOrSlice());
-    }
+
+    SVGPreserveAspectRatio aspectRatio;
+    if (viewElement->hasAttribute(SVGNames::preserveAspectRatioAttr))
+        aspectRatio = viewElement->preserveAspectRatioBaseValue();
+    else
+        aspectRatio = preserveAspectRatioBaseValue();
+    currentView()->setPreserveAspectRatioBaseValue(aspectRatio);
+
     if (viewElement->hasAttribute(SVGNames::zoomAndPanAttr))
         currentView()->setZoomAndPan(viewElement->zoomAndPan());
     renderer()->setNeedsLayout(true);

@@ -47,15 +47,15 @@ RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
 {
 }
 
-void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio* aspectRatio)
+void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, const SVGPreserveAspectRatio& aspectRatio)
 {
     float origDestWidth = destRect.width();
     float origDestHeight = destRect.height();
-    if (aspectRatio->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET) {
+    if (aspectRatio.meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET) {
         float widthToHeightMultiplier = srcRect.height() / srcRect.width();
         if (origDestHeight > (origDestWidth * widthToHeightMultiplier)) {
             destRect.setHeight(origDestWidth * widthToHeightMultiplier);
-            switch (aspectRatio->align()) {
+            switch (aspectRatio.align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
@@ -70,7 +70,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         }
         if (origDestWidth > (origDestHeight / widthToHeightMultiplier)) {
             destRect.setWidth(origDestHeight / widthToHeightMultiplier);
-            switch (aspectRatio->align()) {
+            switch (aspectRatio.align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
@@ -83,13 +83,13 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
                     break;
             }
         }
-    } else if (aspectRatio->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE) {
+    } else if (aspectRatio.meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE) {
         float widthToHeightMultiplier = srcRect.height() / srcRect.width();
         // if the destination height is less than the height of the image we'll be drawing
         if (origDestHeight < (origDestWidth * widthToHeightMultiplier)) {
             float destToSrcMultiplier = srcRect.width() / destRect.width();
             srcRect.setHeight(destRect.height() * destToSrcMultiplier);
-            switch (aspectRatio->align()) {
+            switch (aspectRatio.align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
@@ -106,7 +106,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         if (origDestWidth < (origDestHeight / widthToHeightMultiplier)) {
             float destToSrcMultiplier = srcRect.height() / destRect.height();
             srcRect.setWidth(destRect.width() * destToSrcMultiplier);
-            switch (aspectRatio->align()) {
+            switch (aspectRatio.align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
@@ -163,7 +163,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         FloatRect srcRect(0, 0, image()->width(), image()->height());
 
         SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
-        if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+        if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
             adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
         paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);

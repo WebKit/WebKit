@@ -29,14 +29,11 @@ namespace WebCore {
 
     class SVGStyledElement;
 
-    class SVGAngle : public RefCounted<SVGAngle> {
+    class SVGAngle {
     public:
-        static PassRefPtr<SVGAngle> create()
-        {
-            return adoptRef(new SVGAngle);
-        }
+        SVGAngle();
         virtual ~SVGAngle();
-        
+
         enum SVGAngleType {
             SVG_ANGLETYPE_UNKNOWN           = 0,
             SVG_ANGLETYPE_UNSPECIFIED       = 1,
@@ -63,8 +60,6 @@ namespace WebCore {
         const QualifiedName& associatedAttributeName() const { return SVGNames::orientAttr; }
 
     private:
-        SVGAngle();
-
         SVGAngleType m_unitType;
         float m_value;
         float m_valueInSpecifiedUnits;

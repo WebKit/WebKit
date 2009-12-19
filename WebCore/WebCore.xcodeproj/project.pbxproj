@@ -135,6 +135,7 @@
 		08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5150EF19A4000E4840F /* WMLImageElement.h */; };
 		08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */; };
 		08C4C51B0EF19A4000E4840F /* WMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5170EF19A4000E4840F /* WMLImageLoader.h */; };
+		08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 08C7A2C310DC7431002D368B /* SVGNames.h */; };
 		08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C925170FCC7C4A00480DEC /* FilterEffect.cpp */; };
 		08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C925180FCC7C4A00480DEC /* FilterEffect.h */; };
 		08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */; };
@@ -1144,7 +1145,6 @@
 		6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */; };
 		656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E709D1508D000E61D7 /* SVGElementFactory.h */; };
-		6565820009D1508D000E61D7 /* SVGNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		6565820209D1508D000E61D7 /* XLinkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581EB09D1508D000E61D7 /* XLinkNames.h */; };
 		656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.mm */; };
@@ -3323,7 +3323,7 @@
 		B22279730D00BF220071B782 /* SVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */; };
 		B22279740D00BF220071B782 /* SVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DE0D00BF1F0071B782 /* SVGAElement.h */; };
 		B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E00D00BF1F0071B782 /* SVGAngle.cpp */; };
-		B22279770D00BF220071B782 /* SVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E10D00BF1F0071B782 /* SVGAngle.h */; };
+		B22279770D00BF220071B782 /* SVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E10D00BF1F0071B782 /* SVGAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */; };
 		B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E40D00BF1F0071B782 /* SVGAnimateColorElement.h */; };
 		B22279840D00BF220071B782 /* SVGAnimatedPathData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277EE0D00BF1F0071B782 /* SVGAnimatedPathData.cpp */; };
@@ -3500,7 +3500,7 @@
 		B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278FD0D00BF210071B782 /* SVGPolylineElement.cpp */; };
 		B2227A940D00BF220071B782 /* SVGPolylineElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278FE0D00BF210071B782 /* SVGPolylineElement.h */; };
 		B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279000D00BF210071B782 /* SVGPreserveAspectRatio.cpp */; };
-		B2227A970D00BF220071B782 /* SVGPreserveAspectRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */; };
+		B2227A970D00BF220071B782 /* SVGPreserveAspectRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279030D00BF210071B782 /* SVGRadialGradientElement.cpp */; };
 		B2227A9A0D00BF220071B782 /* SVGRadialGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279040D00BF210071B782 /* SVGRadialGradientElement.h */; };
 		B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279070D00BF210071B782 /* SVGRectElement.cpp */; };
@@ -4824,6 +4824,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */,
 				1CCA732210ADD44A00FD440D /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */,
 				5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */,
 				8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in Copy Generated Headers */,
@@ -5336,6 +5337,7 @@
 		08C4C5150EF19A4000E4840F /* WMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageElement.h; sourceTree = "<group>"; };
 		08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageLoader.cpp; sourceTree = "<group>"; };
 		08C4C5170EF19A4000E4840F /* WMLImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageLoader.h; sourceTree = "<group>"; };
+		08C7A2C310DC7431002D368B /* SVGNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SVGNames.h; path = SVGNames.h; sourceTree = SOURCE_ROOT; };
 		08C925170FCC7C4A00480DEC /* FilterEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterEffect.cpp; path = filters/FilterEffect.cpp; sourceTree = "<group>"; };
 		08C925180FCC7C4A00480DEC /* FilterEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterEffect.h; path = filters/FilterEffect.h; sourceTree = "<group>"; };
 		08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTaskElement.cpp; sourceTree = "<group>"; };
@@ -10101,6 +10103,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				08C7A2C310DC7431002D368B /* SVGNames.h */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -17971,7 +17974,6 @@
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
 				B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */,
 				B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */,
-				6565820009D1508D000E61D7 /* SVGNames.h in Headers */,
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
 				B2227A540D00BF220071B782 /* SVGPaint.h in Headers */,
 				B25599A70D00D8BA00BB825C /* SVGPaintServer.h in Headers */,

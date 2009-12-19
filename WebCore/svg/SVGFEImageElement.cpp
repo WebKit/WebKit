@@ -40,7 +40,7 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
     , m_href(this, XLinkNames::hrefAttr)
     , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
@@ -55,11 +55,9 @@ SVGFEImageElement::~SVGFEImageElement()
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::preserveAspectRatioAttr) {
-        const UChar* c = value.characters();
-        const UChar* end = c + value.length();
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(c, end);
-    } else {
+    if (attr->name() == SVGNames::preserveAspectRatioAttr)
+        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
+    else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (!href().startsWith("#")) {
                 // FIXME: this code needs to special-case url fragments and later look them up using getElementById instead of loading them here
