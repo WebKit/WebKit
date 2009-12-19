@@ -1,3 +1,14 @@
+2009-12-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Chromium build fix
+        https://bugs.webkit.org/show_bug.cgi?id=32756
+
+        * public/WebAccessibilityRole.h:
+        (WebKit::):
+        * src/AssertMatchingEnums.cpp:
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         Chromium build fix
