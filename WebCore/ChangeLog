@@ -1,3 +1,11 @@
+2009-12-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no review.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData): Correct my typo
+          on the CG build.
+
 2009-12-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
