@@ -1,3 +1,17 @@
+2009-12-19  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore::Range::surroundContents NULL pointer crash.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31684
+
+        Test: fast/dom/Range/31684.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents):
+        throw exception when parentOfNewParent->parentNode() is NULL.
+
 2009-12-19  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha Silva.

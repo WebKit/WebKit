@@ -1417,7 +1417,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     // although this will fail below for another reason).
     if (parentOfNewParent->isCharacterDataNode())
         parentOfNewParent = parentOfNewParent->parentNode();
-    if (!parentOfNewParent->childTypeAllowed(newParent->nodeType())) {
+    if (!parentOfNewParent || !parentOfNewParent->childTypeAllowed(newParent->nodeType())) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }

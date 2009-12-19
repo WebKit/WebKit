@@ -1,3 +1,15 @@
+2009-12-19  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore::Range::surroundContents NULL pointer crash.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31684
+
+        * fast/dom/Range/31684-expected.txt: Added.
+        * fast/dom/Range/31684.html: Added.
+        * fast/dom/Range/script-tests/31684.js: Added.
+
 2009-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
