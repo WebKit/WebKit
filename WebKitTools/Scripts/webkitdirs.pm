@@ -63,6 +63,7 @@ my $isGtk;
 my $isWx;
 my @wxArgs;
 my $isChromium;
+my $isInspectorFrontend;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -237,6 +238,7 @@ sub argumentsForConfiguration()
     push(@args, '--gtk') if isGtk();
     push(@args, '--wx') if isWx();
     push(@args, '--chromium') if isChromium();
+    push(@args, '--inspector-frontend') if isInspectorFrontend();
     return @args;
 }
 
@@ -775,6 +777,18 @@ sub checkWebCoreWCSSSupport
     return $hasWCSS;
 }
 
+sub isInspectorFrontend()
+{
+    determineIsInspectorFrontend();
+    return $isInspectorFrontend;
+}
+
+sub determineIsInspectorFrontend()
+{
+    return if defined($isInspectorFrontend);
+    $isInspectorFrontend = checkForArgumentAndRemoveFromARGV("--inspector-frontend");
+}
+
 sub isQt()
 {
     determineIsQt();
@@ -1170,6 +1184,38 @@ sub setupCygwinEnv()
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
     print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
+}
+
+sub copyInspectorFrontendFiles
+{
+    my $productDir = productDir();
+    my $sourceInspectorPath = sourceDir() . "/WebCore/inspector/front-end/";
+    my $inspectorResourcesDirPath = $ENV{"WEBKITINSPECTORRESOURCESDIR"};
+
+    if (!defined($inspectorResourcesDirPath)) {
+        $inspectorResourcesDirPath = "";
+    }
+
+    if (isAppleMacWebKit()) {
+        $inspectorResourcesDirPath = $productDir . "/WebCore.framework/Resources/inspector";
+    } elsif (isAppleWinWebKit()) {
+        $inspectorResourcesDirPath = $productDir . "/WebKit.resources/inspector";
+    } elsif (isQt() || isGtk()) {
+        my $prefix = $ENV{"WebKitInstallationPrefix"};
+        $inspectorResourcesDirPath = (defined($prefix) ? $prefix : "/usr/share") . "/webkit-1.0/webinspector";
+    }
+
+    if (! -d $inspectorResourcesDirPath) {
+        print "*************************************************************\n";
+        print "Cannot find '$inspectorResourcesDirPath'.\n" if (defined($inspectorResourcesDirPath));
+        print "Make sure that you have built WebKit first.\n" if (! -d $productDir || defined($inspectorResourcesDirPath));
+        print "Optionally, set the environment variable 'WebKitInspectorResourcesDir'\n";
+        print "to point to the directory that contains the WebKit Inspector front-end\n";
+        print "files for the built WebCore framework.\n";
+        print "*************************************************************\n";
+        die;
+    }
+    return system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
 }
 
 sub buildXCodeProject($$@)

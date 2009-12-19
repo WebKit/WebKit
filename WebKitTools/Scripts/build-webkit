@@ -191,6 +191,7 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
+  --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
   --makeargs=<arguments>            Optional Makefile flags
 
@@ -310,6 +311,10 @@ if (isGtk()) {
 
 # Force re-link of existing libraries if different than expected
 removeLibraryDependingOnSVG("WebCore", $svgSupport);
+
+if (isInspectorFrontend()) {
+    exit exitStatus(copyInspectorFrontendFiles());
+}
 
 if (isWx()) {
     downloadWafIfNeeded();
