@@ -1,3 +1,13 @@
+2009-12-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Revert my attempt at making --disable-geolocation work; it is
+        more complicated than I anticipated.  (It passed on the build bots
+        because they build with --enable-geolocation.)
+
+        * GNUmakefile.am:
+
 2009-12-19  MORITA Hajime  <morrita@gmail.com>
 
         Reviewed by Darin Adler.
