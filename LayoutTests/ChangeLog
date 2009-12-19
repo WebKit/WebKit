@@ -1,3 +1,13 @@
+2009-12-19  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=28153
+        can't middle-button paste within a single window
+
+        * LayoutTests/platform/gtk/editing/pasteboard/middle-button-paste-expected.txt: Added
+        * LayoutTests/platform/gtk/editing/pasteboard/middle-button-paste.html: Adeed
+
 2009-12-19  MORITA Hajime  <morrita@gmail.com>
 
         Reviewed by Darin Adler.

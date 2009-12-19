@@ -185,29 +185,28 @@ void EditorClient::respondToChangedContents()
     notImplemented();
 }
 
-static void clipboard_get_contents_cb(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint info, gpointer data)
+void clipboard_get_contents_cb(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint info, gpointer data)
 {
-    WebKitWebView* webView = reinterpret_cast<WebKitWebView*>(data);
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    PassRefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
+    EditorClient* client = static_cast<EditorClient*>(data);
+
+    if (!client->m_range)
+        return;
 
     if (static_cast<gint>(info) == WEBKIT_WEB_VIEW_TARGET_INFO_HTML) {
-        String markup = createMarkup(selectedRange.get(), 0, AnnotateForInterchange);
+        String markup = createMarkup(client->m_range.get(), 0, AnnotateForInterchange);
         gtk_selection_data_set(selection_data, selection_data->target, 8,
                                reinterpret_cast<const guchar*>(markup.utf8().data()), markup.utf8().length());
     } else {
-        String text = selectedRange->text();
+        String text = client->m_range->text();
         gtk_selection_data_set_text(selection_data, text.utf8().data(), text.utf8().length());
     }
 }
 
-static void clipboard_clear_contents_cb(GtkClipboard* clipboard, gpointer data)
+void clipboard_clear_contents_cb(GtkClipboard* clipboard, gpointer data)
 {
-    WebKitWebView* webView = reinterpret_cast<WebKitWebView*>(data);
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    EditorClient* client = static_cast<EditorClient*>(data);
 
-    // Collapse the selection without clearing it
-    frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+    client->m_range = 0;
 }
 
 void EditorClient::respondToChangedSelection()
@@ -226,11 +225,11 @@ void EditorClient::respondToChangedSelection()
         GtkTargetList* targetList = webkit_web_view_get_copy_target_list(m_webView);
         gint targetCount;
         GtkTargetEntry* targets = gtk_target_table_new_from_list(targetList, &targetCount);
-        gtk_clipboard_set_with_owner(clipboard, targets, targetCount,
-                                     clipboard_get_contents_cb, clipboard_clear_contents_cb, G_OBJECT(m_webView));
+        gtk_clipboard_set_with_data(clipboard, targets, targetCount,
+                                    clipboard_get_contents_cb, clipboard_clear_contents_cb, this);
+        m_range = targetFrame->selection()->toNormalizedRange();
         gtk_target_table_free(targets, targetCount);
-    } else if (gtk_clipboard_get_owner(clipboard) == G_OBJECT(m_webView))
-        gtk_clipboard_clear(clipboard);
+    }
 
     if (!targetFrame->editor()->hasComposition())
         return;
@@ -551,6 +550,7 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
     , m_webView(webView)
+    , m_range(0)
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);
