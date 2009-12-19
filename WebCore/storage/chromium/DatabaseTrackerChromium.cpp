@@ -40,6 +40,7 @@
 #include "SecurityOrigin.h"
 #include "SQLiteFileSystem.h"
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

@@ -1,3 +1,9 @@
+2009-12-18  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Chromium build fix, no review.
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+
 2009-12-18  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no review.
