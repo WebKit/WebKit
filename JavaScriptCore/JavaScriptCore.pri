@@ -115,6 +115,9 @@ SOURCES += \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \
+    jit/ExecutableAllocatorPosix.cpp \
+    jit/ExecutableAllocatorSymbian.cpp \
+    jit/ExecutableAllocatorWin.cpp \
     jit/ExecutableAllocator.cpp \
     jit/JITArithmetic.cpp \
     jit/JITCall.cpp \
@@ -182,6 +185,9 @@ SOURCES += \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
+    runtime/MarkStackPosix.cpp \
+    runtime/MarkStackSymbian.cpp \
+    runtime/MarkStackWin.cpp \
     runtime/MarkStack.cpp \
     runtime/MathObject.cpp \
     runtime/NativeErrorConstructor.cpp \
@@ -218,8 +224,10 @@ SOURCES += \
     wtf/HashTable.cpp \
     wtf/MainThread.cpp \
     wtf/qt/MainThreadQt.cpp \
+    wtf/qt/ThreadingQt.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
+    wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
     wtf/unicode/CollatorDefault.cpp \
@@ -229,28 +237,8 @@ SOURCES += \
     yarr/RegexInterpreter.cpp \
     yarr/RegexJIT.cpp
 
-symbian {
-    SOURCES += jit/ExecutableAllocatorSymbian.cpp \
-              runtime/MarkStackSymbian.cpp
-} else {
-    win32-*|wince* {
-        SOURCES += jit/ExecutableAllocatorWin.cpp \
-                  runtime/MarkStackWin.cpp
-    } else {
-        SOURCES += jit/ExecutableAllocatorPosix.cpp \
-                  runtime/MarkStackPosix.cpp
-    }
-}
-
 !contains(DEFINES, USE_SYSTEM_MALLOC) {
     SOURCES += wtf/TCSystemAlloc.cpp
-}
-
-!contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
-    SOURCES += wtf/qt/ThreadingQt.cpp
-} else {
-    DEFINES += ENABLE_JSC_MULTIPLE_THREADS=0
-    SOURCES += wtf/ThreadingNone.cpp
 }
 
 # GENERATOR 1-A: LUT creator

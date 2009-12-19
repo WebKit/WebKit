@@ -1,3 +1,20 @@
+2009-12-18  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move some build decisions from Qt build system into source files
+        https://bugs.webkit.org/show_bug.cgi?id=31956
+
+        * JavaScriptCore.pri: Compile files unconditionally
+        * jit/ExecutableAllocatorPosix.cpp: Guard with PLATFORM(UNIX) && !PLATFORM(SYMBIAN)
+        * jit/ExecutableAllocatorWin.cpp: Guard with PLATFORM(WIN_OS)
+        * runtime/MarkStackPosix.cpp: Guard with PLATFORM(UNIX) && !PLATFORM(SYMBIAN)
+        * runtime/MarkStackSymbian.cpp: Guard with PLATFORM(SYMBIAN)
+        * runtime/MarkStackWin.cpp: Guard with PLATFORM(WIN_OS)
+        * wtf/Platform.h: Guard ENABLE_JSC_MULTIPLE_THREADS with ENABLE_SINGLE_THREADED for the Qt port
+        * wtf/ThreadingNone.cpp: Guard with ENABLE(SINGLE_THREADED)
+        * wtf/qt/ThreadingQt.cpp: Guard with !ENABLE(SINGLE_THREADED)
+
 2009-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

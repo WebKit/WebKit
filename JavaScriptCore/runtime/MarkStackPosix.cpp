@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-
-
 #include "MarkStack.h"
+
+#if PLATFORM(UNIX) && !PLATFORM(SYMBIAN)
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -48,3 +48,5 @@ void MarkStack::releaseStack(void* addr, size_t size)
 }
 
 }
+
+#endif

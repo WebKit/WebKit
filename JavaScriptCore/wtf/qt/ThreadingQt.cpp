@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Threading.h"
 
+#if !ENABLE(SINGLE_THREADED)
+
 #include "CurrentTime.h"
 #include "HashMap.h"
 #include "MainThread.h"
@@ -267,3 +269,5 @@ void ThreadCondition::broadcast()
 }
 
 } // namespace WebCore
+
+#endif

@@ -20,6 +20,8 @@
 #include "config.h"
 #include "MarkStack.h"
 
+#if PLATFORM(SYMBIAN)
+
 #include <e32hal.h>
 
 namespace JSC {
@@ -42,3 +44,5 @@ void MarkStack::releaseStack(void* addr, size_t size)
 }
 
 }
+
+#endif
