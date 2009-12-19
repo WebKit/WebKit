@@ -1,3 +1,12 @@
+2009-12-19  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Don't use an icon for all spelling guess menu items.
+
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::gtkStockIDFromContextMenuAction):
+
 2009-12-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Missing \.

@@ -59,7 +59,7 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
     case ContextMenuItemTagSelectAll:
         return GTK_STOCK_SELECT_ALL;
     case ContextMenuItemTagSpellingGuess:
-        return GTK_STOCK_INFO;
+        return NULL;
     case ContextMenuItemTagIgnoreSpelling:
         return GTK_STOCK_NO;
     case ContextMenuItemTagLearnSpelling:
