@@ -1,3 +1,15 @@
+2009-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash when accessing webkitTransition property after setting webkitTransitionProperty with invalid value.
+        https://bugs.webkit.org/show_bug.cgi?id=31559
+        
+        Test accessing shorthand property after setting an individual property to a longer or shorter list.
+
+        * fast/css/shorthand-mismatched-list-crash-expected.txt: Added.
+        * fast/css/shorthand-mismatched-list-crash.html: Added.
+
 2009-12-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(r52233): MSAA: Accessibility role of lists is wrong

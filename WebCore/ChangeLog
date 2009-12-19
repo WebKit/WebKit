@@ -39,6 +39,21 @@
 
 2009-12-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Crash when accessing webkitTransition property after setting webkitTransitionProperty with invalid value.
+        https://bugs.webkit.org/show_bug.cgi?id=31559
+        
+        Fix an array bounds error when accessing the CSS value for a shorthand property that takes
+        a comma-separated list, after the list for one of the component properties has been set to a different length.
+
+        Test: fast/css/shorthand-mismatched-list-crash.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue):
+
+2009-12-18  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Mark Rowe.
 
         Remove WebCore.ClientBasedGeolocation.exp from Sources, and remove two IDL files from Resources.
