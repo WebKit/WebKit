@@ -1,3 +1,16 @@
+2009-12-18  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make DatabaseTrackerChromium::removeOpenDatabase() send and IPC on
+        the main thread when a database is being closed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32627
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::removeOpenDatabaseOnMainThread):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+
 2009-12-18  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix, no review.
@@ -7,7 +20,7 @@
         (WebCore::FontCache::createFontPlatformData): Conditionalize
           Safari-only call.
 
-2009-12-16  Dumitru Daniliuc  <dumi@chromium.org>
+2009-12-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dmitry Titov.
 
