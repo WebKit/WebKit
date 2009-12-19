@@ -1890,6 +1890,14 @@ RenderLayer::updateScrollInfoAfterLayout()
         if (pageStep < 0) pageStep = clientWidth;
         m_hBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_hBar->setProportion(clientWidth, m_scrollWidth);
+        // Explicitly set the horizontal scroll value.  This ensures that when a
+        // right-to-left scrollable area's width (or content width) changes, the
+        // top right corner of the content doesn't shift with respect to the top
+        // right corner of the area. Conceptually, right-to-left areas have
+        // their origin at the top-right, but RenderLayer is top-left oriented,
+        // so this is needed to keep everything working (see how scrollXOffset()
+        // differs from scrollYOffset() to get an idea of why the horizontal and
+        // vertical scrollbars need to be treated differently).
         m_hBar->setValue(scrollXOffset());
     }
     if (m_vBar) {

@@ -1,3 +1,14 @@
+2009-12-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Add a comment about some confusing code that otherwise would look like
+        it might be a bug.
+        https://bugs.webkit.org/show_bug.cgi?id=32534
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2009-12-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Messed up the XCode file, trying to fix.
