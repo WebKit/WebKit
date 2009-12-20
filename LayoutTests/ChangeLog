@@ -1,3 +1,17 @@
+2009-12-20  Dirk Pranke  <dpranke@fila-macpro.mtv.corp.google.com>
+
+        Reviewed by Darin Adler.
+
+        upstream test from chromium.org - this tests simulating italic
+        on glyphs that don't have an italic version.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32693
+
+        * fast/text/fake-italic.html: Added.
+        * platform/mac/fast/text/fake-italic-expected.checksum: Added.
+        * platform/mac/fast/text/fake-italic-expected.png: Added.
+        * platform/mac/fast/text/fake-italic-expected.txt: Added.
+
 2009-12-19  Adam Barth  <abarth@webkit.org>
 
         No review, rolling out r52399.
