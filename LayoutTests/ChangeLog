@@ -1,3 +1,16 @@
+2009-12-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32735
+
+        Upstream a test from chromium.org - ensure that creating a 
+        new Image is actually creating an HTML image element, regardless
+        of the doctype.
+
+        * svg/custom/new-image-is-html-element-expected.txt: Added.
+        * svg/custom/new-image-is-html-element.svg: Added.
+
 2009-12-20  Dirk Pranke  <dpranke@fila-macpro.mtv.corp.google.com>
 
         Reviewed by Darin Adler.
