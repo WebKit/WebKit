@@ -1,13 +1,34 @@
 body {
   font-family: Verdana, Helvetica, sans-serif;
+  width: 600px;
+  padding: 0px;
+  color: #444;
 }
 h1 {
+  background-color: #EEE;
   color: #444;
   font-size: 14pt;
   font-style: italic;
+  margin: 0px;
+  padding: 5px;
+}
+h2 {
+  background-color: #AAA;
+  color: white;
+  font-weight: bold;
+  font-size: 9pt;
+  margin: 0px;
+  padding: 5px;
+}
+ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+li {
+  padding: 5px;
 }
 table {
-  color: #444;
   border-spacing: 0px;
 }
 th {
@@ -15,18 +36,23 @@ th {
   color: white;
   padding: 5px;
   width: 100px;
-  font-size: 11px;
+  font-size: 9pt;
 }
 td {
   text-align: center;
 }
-tr:hover {
+tr:hover, li:hover {
   background-color: #EEE;
+}
+.status-date {
+  color: #AAA;
+  float: right;
+  font-size: 8pt;
 }
 .status {
   margin: 1px;
   padding: 1px 2px;
-  font-size: 11px;
+  font-size: 9pt;
   border: 1px solid transparent;
 }
 .status:hover {
@@ -34,13 +60,21 @@ tr:hover {
 }
 .pass {
   background-color: #8FDF5F;
+  cursor: pointer;
   /* border: 1px solid #4F8530; */
 }
 .fail {
   background-color: #E98080;
+  cursor: pointer;
   /* border: 1px solid #A77272; */
 }
 .pending {
   background-color: #FFFC6C;
+  cursor: pointer;
   /* border: 1px solid #C5C56D; */
+}
+.error {
+  background-color: #E0B0FF;
+  cursor: pointer;
+  /* border: 1px solid #ACA0B3; */
 }

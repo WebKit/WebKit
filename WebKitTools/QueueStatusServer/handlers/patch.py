@@ -26,38 +26,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Request a modern Django
-from google.appengine.dist import use_library
-use_library('django', '1.1')
-
 from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.ext.webapp import template
 
-from handlers.dashboard import Dashboard
-from handlers.patch import Patch
-from handlers.patchstatus import PatchStatus
-from handlers.recentstatus import RecentStatus
-from handlers.showresults import ShowResults
-from handlers.statusbubble import StatusBubble
-from handlers.updatestatus import UpdateStatus
+from model.queuestatus import QueueStatus
 
-webapp.template.register_template_library('filters.webkit_extras')
 
-routes = [
-    ('/', RecentStatus),
-    ('/queue-status/(.*)', RecentStatus),
-    ('/update-status', UpdateStatus),
-    ('/dashboard', Dashboard),
-    (r'/patch-status/(.*)/(.*)', PatchStatus),
-    (r'/patch/(.*)', Patch),
-    (r'/status-bubble/(.*)', StatusBubble),
-    (r'/results/(.*)', ShowResults)
-]
+class Patch(webapp.RequestHandler):
+    def get(self, attachment_id_string):
+        attachment_id = int(attachment_id_string)
+        statuses = QueueStatus.all().filter("active_patch_id =", attachment_id).order("-date")
 
-application = webapp.WSGIApplication(routes, debug=True)
+        bug_id = None
+        queue_status = {}
+        for status in statuses:
+            bug_id = status.active_bug_id # Should be the same for every status.
+            per_queue_statuses = queue_status.get(status.queue_name, [])
+            per_queue_statuses.append(status)
+            queue_status[status.queue_name] = per_queue_statuses
 
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
+        template_values = {
+            "attachment_id" : attachment_id,
+            "bug_id" : bug_id,
+            "queue_status" : queue_status,
+        }
+        self.response.out.write(template.render("templates/patch.html", template_values))

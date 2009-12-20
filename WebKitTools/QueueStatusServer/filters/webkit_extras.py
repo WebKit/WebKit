@@ -26,30 +26,34 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 from django.template.defaultfilters import stringfilter
 from google.appengine.ext import webapp
 
-import re
+register = webapp.template.create_template_register()
 
 bug_regexp = re.compile(r"bug (?P<bug_id>\d+)")
 patch_regexp = re.compile(r"patch (?P<patch_id>\d+)")
 
+@register.filter
 @stringfilter
 def webkit_linkify(value):
     value = bug_regexp.sub(r'<a href="http://webkit.org/b/\g<bug_id>">bug \g<bug_id></a>', value)
     value = patch_regexp.sub(r'<a href="https://bugs.webkit.org/attachment.cgi?id=\g<patch_id>&action=prettypatch">patch \g<patch_id></a>', value)
     return value
 
+@register.filter
 @stringfilter
 def webkit_bug_id(value):
     return '<a href="http://webkit.org/b/' + value + '">' + value + '</a>'
 
+@register.filter
 @stringfilter
 def webkit_attachment_id(value):
     return '<a href="https://bugs.webkit.org/attachment.cgi?id=' + value + '&action=prettypatch">' + value + '</a>'
 
-register = webapp.template.create_template_register()
-register.filter(webkit_linkify)
-register.filter(webkit_bug_id)
-register.filter(webkit_attachment_id)
-
+@register.filter
+@stringfilter
+def results_link(status):
+    return '<a href="/results/' + status.key().id() + '">results</a>'

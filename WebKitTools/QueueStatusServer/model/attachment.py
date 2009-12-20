@@ -78,8 +78,14 @@ class Attachment(object):
         table = {
             "Pass" : "pass",
             "Fail" : "fail",
+            "Error" : "error",
         }
-        return table.get(status.message, "none")
+        state = table.get(status.message)
+        if state:
+            return state
+        if status:
+            return "pending"
+        return None
 
     def _fetch_summary(self):
         summary = { "attachment_id" : self.id }
@@ -96,6 +102,7 @@ class Attachment(object):
             "chromium-ews",
             "qt-ews",
             "gtk-ews",
+            "commit-queue",
         ]
 
         for queue in queues:

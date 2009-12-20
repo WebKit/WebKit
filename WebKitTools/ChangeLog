@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        [QueueStatusServer] Add a per-patch details page
+        https://bugs.webkit.org/show_bug.cgi?id=32784
+
+        This is a first cut at a per-patch details page.  I'm sure we'll have
+        to iterate.
+
+        * QueueStatusServer/filters/webkit_extras.py:
+        * QueueStatusServer/handlers/patch.py: Added.
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/attachment.py:
+        * QueueStatusServer/stylesheets/dashboard.css:
+        * QueueStatusServer/templates/dashboard.html:
+        * QueueStatusServer/templates/patch.html: Added.
+
+2009-12-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Use memcache to make dashboard to fast
         https://bugs.webkit.org/show_bug.cgi?id=32780
 
