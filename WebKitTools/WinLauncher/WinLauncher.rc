@@ -42,6 +42,7 @@ IDC_WINLAUNCHER MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "&Print\tCtrl-P",              IDM_PRINT
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "&Help"
@@ -74,8 +75,8 @@ CAPTION "About"
 FONT 8, "System", 0, 0, 0x0
 BEGIN
     ICON            IDI_WINLAUNCHER,IDC_MYICON,14,9,20,20
-    LTEXT           "WinLauncher Version 1.1",IDC_STATIC,49,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2008",IDC_STATIC,49,20,119,8
+    LTEXT           "WinLauncher Version 1.2",IDC_STATIC,49,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2009",IDC_STATIC,49,20,119,8
     DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
 END
 

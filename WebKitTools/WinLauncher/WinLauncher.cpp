@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Brent Fulgha.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +29,12 @@
 #include <WebKit/WebKitCOMAPI.h>
 
 #include <commctrl.h>
+#include <commdlg.h>
 #include <objbase.h>
 #include <shlwapi.h>
 #include <wininet.h>
+
+#include "PrintWebUIDelegate.h"
 
 #define MAX_LOADSTRING 100
 #define URLBAR_HEIGHT  24
@@ -43,6 +47,7 @@ long DefEditProc;
 IWebView* gWebView = 0;
 HWND gViewWindow = 0;
 WinLauncherWebHost* gWebHost = 0;
+PrintWebUIDelegate* gPrintDelegate = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
@@ -187,6 +192,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (FAILED(hr))
         goto exit;
 
+    gPrintDelegate = new PrintWebUIDelegate;
+    gPrintDelegate->AddRef();
+    hr = gWebView->setUIDelegate(gPrintDelegate);
+    if (FAILED (hr))
+        goto exit;
+
     hr = gWebView->setHostWindow((OLE_HANDLE) hMainWnd);
     if (FAILED(hr))
         goto exit;
@@ -232,6 +243,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     }
 
 exit:
+    gPrintDelegate->Release();
     gWebView->Release();
     shutDownWebKit();
 #ifdef _CRTDBG_MAP_ALLOC
@@ -281,6 +293,86 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+static BOOL CALLBACK AbortProc(HDC hDC, int Error)
+{
+    MSG msg;
+    while (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+
+    return TRUE;
+}
+
+static HDC getPrinterDC()
+{
+    PRINTDLG pdlg;
+    memset(&pdlg, 0, sizeof(PRINTDLG));
+    pdlg.lStructSize = sizeof(PRINTDLG);
+    pdlg.Flags = PD_PRINTSETUP | PD_RETURNDC;
+
+    ::PrintDlg(&pdlg);
+
+    return pdlg.hDC;
+}
+
+static void initDocStruct(DOCINFO* di, TCHAR* docname)
+{
+    memset(di, 0, sizeof(DOCINFO));
+    di->cbSize = sizeof(DOCINFO);
+    di->lpszDocName = docname;
+}
+
+void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    HDC printDC = getPrinterDC();
+    if (!printDC) {
+        ::MessageBox(0, _T("Error creating printing DC"), _T("Error"), MB_APPLMODAL | MB_OK);
+        return;
+    }
+
+    if (::SetAbortProc(printDC, AbortProc) == SP_ERROR) {
+        ::MessageBox(0, _T("Error setting up AbortProc"), _T("Error"), MB_APPLMODAL | MB_OK);
+        return;
+    }
+
+    IWebFrame* frame = 0;
+    if (FAILED(gWebView->mainFrame(&frame)))
+        goto exit;
+
+    IWebFramePrivate* framePrivate = 0;
+    if (FAILED(frame->QueryInterface(&framePrivate)))
+        goto exit;
+
+    framePrivate->setInPrintingMode(TRUE, printDC);
+
+    UINT pageCount = 0;
+    framePrivate->getPrintedPageCount(printDC, &pageCount);
+
+    DOCINFO di;
+    initDocStruct(&di, _T("WebKit Doc"));
+    ::StartDoc(printDC, &di);
+
+    // FIXME: Need CoreGraphics implementation
+    void* graphicsContext = 0;
+    for (size_t page = 0; page < pageCount; ++page) {
+        ::StartPage(printDC);
+        framePrivate->spoolPages(printDC, page, page, graphicsContext);
+        ::EndPage(printDC);
+    }
+
+    framePrivate->setInPrintingMode(FALSE, printDC);
+
+    ::EndDoc(printDC);
+    ::DeleteDC(printDC);
+
+exit:
+    if (frame)
+        frame->Release();
+    if (framePrivate)
+        framePrivate->Release();
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
@@ -298,6 +390,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
+                break;
+            case IDM_PRINT:
+                PrintView(hWnd, message, wParam, lParam);
                 break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);

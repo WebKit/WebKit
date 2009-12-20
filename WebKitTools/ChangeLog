@@ -1,3 +1,115 @@
+2009-12-19  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Provide an example implementation for printing under Windows.
+        http://bugs.webkit.org/show_bug.cgi?id=32504.`
+
+        * WinLauncher/PrintWebUIDelegate.cpp: Added.
+        (PrintWebUIDelegate::QueryInterface):
+        (PrintWebUIDelegate::AddRef):
+        (PrintWebUIDelegate::Release):
+        (PrintWebUIDelegate::webViewPrintingMarginRect):
+        * WinLauncher/PrintWebUIDelegate.h: Added.
+        (PrintWebUIDelegate::PrintWebUIDelegate):
+        (PrintWebUIDelegate::createWebViewWithRequest):
+        (PrintWebUIDelegate::webViewShow):
+        (PrintWebUIDelegate::webViewClose):
+        (PrintWebUIDelegate::webViewFocus):
+        (PrintWebUIDelegate::webViewUnfocus):
+        (PrintWebUIDelegate::webViewFirstResponder):
+        (PrintWebUIDelegate::makeFirstResponder):
+        (PrintWebUIDelegate::setStatusText):
+        (PrintWebUIDelegate::webViewStatusText):
+        (PrintWebUIDelegate::webViewAreToolbarsVisible):
+        (PrintWebUIDelegate::setToolbarsVisible):
+        (PrintWebUIDelegate::webViewIsStatusBarVisible):
+        (PrintWebUIDelegate::setStatusBarVisible):
+        (PrintWebUIDelegate::webViewIsResizable):
+        (PrintWebUIDelegate::setResizable):
+        (PrintWebUIDelegate::setFrame):
+        (PrintWebUIDelegate::webViewFrame):
+        (PrintWebUIDelegate::setContentRect):
+        (PrintWebUIDelegate::webViewContentRect):
+        (PrintWebUIDelegate::runJavaScriptAlertPanelWithMessage):
+        (PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (PrintWebUIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (PrintWebUIDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (PrintWebUIDelegate::runOpenPanelForFileButtonWithResultListener):
+        (PrintWebUIDelegate::mouseDidMoveOverElement):
+        (PrintWebUIDelegate::contextMenuItemsForElement):
+        (PrintWebUIDelegate::validateUserInterfaceItem):
+        (PrintWebUIDelegate::shouldPerformAction):
+        (PrintWebUIDelegate::dragDestinationActionMaskForDraggingInfo):
+        (PrintWebUIDelegate::willPerformDragDestinationAction):
+        (PrintWebUIDelegate::dragSourceActionMaskForPoint):
+        (PrintWebUIDelegate::willPerformDragSourceAction):
+        (PrintWebUIDelegate::contextMenuItemSelected):
+        (PrintWebUIDelegate::hasCustomMenuImplementation):
+        (PrintWebUIDelegate::trackCustomPopupMenu):
+        (PrintWebUIDelegate::measureCustomMenuItem):
+        (PrintWebUIDelegate::drawCustomMenuItem):
+        (PrintWebUIDelegate::addCustomMenuDrawingData):
+        (PrintWebUIDelegate::cleanUpCustomMenuDrawingData):
+        (PrintWebUIDelegate::canTakeFocus):
+        (PrintWebUIDelegate::takeFocus):
+        (PrintWebUIDelegate::registerUndoWithTarget):
+        (PrintWebUIDelegate::removeAllActionsWithTarget):
+        (PrintWebUIDelegate::setActionTitle):
+        (PrintWebUIDelegate::undo):
+        (PrintWebUIDelegate::redo):
+        (PrintWebUIDelegate::canUndo):
+        (PrintWebUIDelegate::canRedo):
+        (PrintWebUIDelegate::printFrame):
+        (PrintWebUIDelegate::ftpDirectoryTemplatePath):
+        (PrintWebUIDelegate::webViewHeaderHeight):
+        (PrintWebUIDelegate::webViewFooterHeight):
+        (PrintWebUIDelegate::drawHeaderInRect):
+        (PrintWebUIDelegate::drawFooterInRect):
+        (PrintWebUIDelegate::canRunModal):
+        (PrintWebUIDelegate::createModalDialog):
+        (PrintWebUIDelegate::runModal):
+        (PrintWebUIDelegate::isMenuBarVisible):
+        (PrintWebUIDelegate::setMenuBarVisible):
+        (PrintWebUIDelegate::runDatabaseSizeLimitPrompt):
+        (PrintWebUIDelegate::paintCustomScrollbar):
+        (PrintWebUIDelegate::paintCustomScrollCorner):
+        * WinLauncher/WinLauncher.cpp: Add new UI delegate for print support.
+        (WinLauncherWebHost::updateAddressBar): check-webkit-style fixes.
+        (WinLauncherWebHost::QueryInterface): check-webkit-style fixes.
+        (WinLauncherWebHost::AddRef): check-webkit-style fixes.
+        (WinLauncherWebHost::Release): check-webkit-style fixes.
+        (resizeSubViews): check-webkit-style fixes.
+        (_tWinMain): check-webkit-style fixes.
+        (MyRegisterClass): check-webkit-style fixes.
+        (InitInstance): check-webkit-style fixes.
+        (AbortProc): New print support function.
+        (getPrinterDC): New print support function.
+        (initDocStruct): New print support function.
+        (PrintView): New printing implementation.
+        (WndProc): Add support for printing.
+        (MyEditProc): check-webkit-style fixes.
+        (About): check-webkit-style fixes.
+        (loadURL): check-webkit-style fixes.
+        * WinLauncher/WinLauncher.h:
+        (WinLauncherWebHost::WinLauncherWebHost):
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame):
+        (WinLauncherWebHost::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        (WinLauncherWebHost::didCommitLoadForFrame):
+        (WinLauncherWebHost::didReceiveTitle):
+        (WinLauncherWebHost::didReceiveIcon):
+        (WinLauncherWebHost::didFinishLoadForFrame):
+        (WinLauncherWebHost::didFailLoadWithError):
+        (WinLauncherWebHost::didChangeLocationWithinPageForFrame):
+        (WinLauncherWebHost::willPerformClientRedirectToURL):
+        (WinLauncherWebHost::didCancelClientRedirectForFrame):
+        (WinLauncherWebHost::willCloseFrame):
+        (WinLauncherWebHost::windowScriptObjectAvailable):
+        * WinLauncher/WinLauncher.rc: Add menu entry for printing.
+        * WinLauncher/WinLauncher.vcproj: Add new files.
+        * WinLauncher/resource.h: Add menu entry for printing.
+
 2009-12-19  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Tweak the CSS to make the dashboard prettier.
