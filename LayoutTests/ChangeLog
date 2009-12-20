@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Upstreaming two plugin tests from chromium.org.
+        https://bugs.webkit.org/show_bug.cgi?id=32750
+
+        * plugins/get-file-url-expected.txt: Added.
+        * plugins/get-file-url.html: Added.
+        * plugins/get-url-with-iframe-target-expected.txt: Added.
+        * plugins/get-url-with-iframe-target.html: Added.
+        * plugins/resources/get-file-url-subframe.html: Added.
+
+2009-12-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Upstream a test from chromium.org that verifies that calling
         document.clear() from an external script doesn't crash the browser.
         https://bugs.webkit.org/show_bug.cgi?id=32743
