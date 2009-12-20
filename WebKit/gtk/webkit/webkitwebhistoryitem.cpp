@@ -432,6 +432,33 @@ gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webH
     return item->lastVisitedTime();
 }
 
+/**
+ * webkit_web_history_item_copy :
+ * @web_history_item: a #WebKitWebHistoryItem
+ *
+ * Makes a copy of the item for use with other WebView objects.
+ *
+ * Since: 1.1.18
+ *
+ * Return value: the new #WebKitWebHistoryItem.
+ */
+WebKitWebHistoryItem* webkit_web_history_item_copy(WebKitWebHistoryItem* self)
+{
+    WebKitWebHistoryItemPrivate* selfPrivate = self->priv;
+
+    WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(g_object_new(WEBKIT_TYPE_WEB_HISTORY_ITEM, 0));
+    WebKitWebHistoryItemPrivate* priv = item->priv;
+
+    priv->title = selfPrivate->title;
+    priv->alternateTitle = selfPrivate->alternateTitle;
+    priv->uri = selfPrivate->uri;
+    priv->originalUri = selfPrivate->originalUri;
+
+    priv->historyItem = selfPrivate->historyItem->copy().releaseRef();
+
+    return item;
+}
+
 /* private methods */
 
 G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* webHistoryItem)
