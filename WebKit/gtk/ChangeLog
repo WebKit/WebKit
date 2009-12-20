@@ -1,3 +1,15 @@
+2009-12-20  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Disable the page cache by default since:
+
+        - It was previously off by default.
+        - There are still some issues when enabling it.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
 2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
