@@ -43,6 +43,7 @@
 #include <runtime/InitializeThreading.h>
 #include "SecurityOrigin.h"
 #include <stdlib.h>
+#include "TextEncodingRegistry.h"
 #include "webkitnetworkresponse.h"
 
 #if ENABLE(DATABASE)
@@ -245,6 +246,10 @@ void webkit_init()
 
     JSC::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();
+
+    // We make sure the text codecs have been initialized, because
+    // that may only be done by the main thread.
+    atomicCanonicalTextEncodingName("UTF-8");
 
     // Page cache capacity (in pages). Comment from Mac port:
     // (Research indicates that value / page drops substantially after 3 pages.)
