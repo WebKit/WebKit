@@ -121,6 +121,8 @@ static const char* const lastActivePanelSettingName = "lastActivePanel";
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
+static const unsigned maximumConsoleMessages = 1000;
+static const unsigned expireConsoleMessagesStep = 100;
 
 static unsigned s_inspectorControllerCount;
 
@@ -128,6 +130,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_page(0)
+    , m_expiredConsoleMessageCount(0)
     , m_scriptState(0)
     , m_windowVisible(false)
     , m_showAfterVisible(CurrentPanel)
@@ -355,12 +358,20 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
         if (windowVisible())
             m_previousMessage->addToConsole(m_frontend.get());
     }
+
+    if (!windowVisible() && m_consoleMessages.size() >= maximumConsoleMessages) {
+        m_expiredConsoleMessageCount += expireConsoleMessagesStep;
+        for (size_t i = 0; i < expireConsoleMessagesStep; ++i)
+            delete m_consoleMessages[i];
+        m_consoleMessages.remove(0, expireConsoleMessagesStep);
+    }
 }
 
 void InspectorController::clearConsoleMessages(bool clearUI)
 {
     deleteAllValues(m_consoleMessages);
     m_consoleMessages.clear();
+    m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_groupLevel = 0;
     releaseWrapperObjectGroup("console");
@@ -652,6 +663,8 @@ void InspectorController::populateScriptObjects()
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
         it->second->updateScriptObject(m_frontend.get());
 
+    if (m_expiredConsoleMessageCount)
+        m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToConsole(m_frontend.get());
@@ -1041,7 +1054,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     // FIXME: imported script and XHR response are currently viewed as the same
     // thing by the Inspector. They should be made into distinct types.
     resource->setXMLHttpResponseText(ScriptString(sourceString));
-    
+
     if (windowVisible())
         resource->updateScriptObject(m_frontend.get());
 }

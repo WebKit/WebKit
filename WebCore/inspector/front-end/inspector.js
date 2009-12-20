@@ -1237,6 +1237,12 @@ WebInspector.didCommitLoad = function()
     WebInspector.setDocument(null);
 }
 
+WebInspector.updateConsoleMessageExpiredCount = function(count)
+{
+    var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
+    WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
+}
+
 WebInspector.addConsoleMessage = function(payload)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(

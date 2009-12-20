@@ -323,6 +323,7 @@ private:
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
     Vector<ConsoleMessage*> m_consoleMessages;
+    unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
 #if ENABLE(DATABASE)

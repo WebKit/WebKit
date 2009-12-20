@@ -1,3 +1,24 @@
+2009-12-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Web Inspector: Constrain the number of messages the inspector shows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20919
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::updateConsoleMessageExpiredCount):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateConsoleMessageExpiredCount):
+
 2009-12-20  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.
