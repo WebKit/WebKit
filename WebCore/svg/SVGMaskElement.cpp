@@ -126,7 +126,7 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
     m_masker->invalidate();
 }
 
-PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect, IntRect& paintRect) const
+PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect) const
 {    
     // Determine specified mask size
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
@@ -169,15 +169,14 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);
 
-    TransformationMatrix contextTransform;
-    contextTransform.translate(-maskContextLocation.x(), -maskContextLocation.y());
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        contextTransform.scaleNonUniform(targetRect.width(), targetRect.height());
-
     maskImageContext->save();
-    maskImageContext->concatCTM(contextTransform);
+    maskImageContext->translate(-maskContextLocation.x(), -maskContextLocation.y());
 
-    FloatRect repaintRect;
+    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        maskImageContext->save();
+        maskImageContext->scale(FloatSize(targetRect.width(), targetRect.height()));
+    }
+
     // Render subtree into ImageBuffer
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         SVGElement* elem = 0;
@@ -192,16 +191,10 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targe
             continue;
 
         renderSubtreeToImage(maskImage.get(), item);
-        repaintRect.unite(item->repaintRectInLocalCoordinates());
     }
 
-    if (contextTransform.isInvertible()) {
-        contextTransform.inverse();
-        repaintRect = contextTransform.mapRect(repaintRect);
-        repaintRect.intersect(FloatRect(FloatPoint(), maskDestRect.size()));
-        paintRect = enclosingIntRect(repaintRect);
-    } else
-        paintRect = enclosingIntRect(FloatRect(FloatPoint(), maskDestRect.size()));
+    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        maskImageContext->restore();
 
     maskImageContext->restore();
     return maskImage.release();
