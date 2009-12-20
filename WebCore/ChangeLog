@@ -1,3 +1,18 @@
+2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Hopefully fix the assertion we are hitting by not forcing updating
+        the state of scrollbars when setting the adjustments. This was
+        leading to a premature layout.
+
+        fast/dom/open-and-close-by-DOM.html
+        fast/dom/Window/closure-access-after-navigation-window.html
+        fast/harness/use-page-cache.html
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments):
+
 2009-12-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Darin Adler.

@@ -101,7 +101,6 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
     /* reconsider having a scrollbar */
     setHasVerticalScrollbar(false);
     setHasHorizontalScrollbar(false);
-    updateScrollbars(m_scrollOffset);
 }
 
 void ScrollView::platformAddChild(Widget* child)
