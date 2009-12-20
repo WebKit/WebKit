@@ -1,3 +1,10 @@
+2009-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/editing/pasteboard/middle-button-paste-expected.txt:
+        * platform/gtk/editing/pasteboard/middle-button-paste.html:
+
 2009-12-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Darin Adler.
