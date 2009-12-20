@@ -1,3 +1,12 @@
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a test for window.open and JavaScript URLs.
+
+        * http/tests/security/xss-DENIED-window-open-javascript-url-expected.txt: Added.
+        * http/tests/security/xss-DENIED-window-open-javascript-url.html: Added.
+
 2009-12-19  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
