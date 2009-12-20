@@ -1,3 +1,13 @@
+2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Remove emission of signal that does not exist.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::inspectorDestroyed):
+        (WebKit::InspectorClient::webViewDestroyed):
+
 2009-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Gustavo Noronha.
