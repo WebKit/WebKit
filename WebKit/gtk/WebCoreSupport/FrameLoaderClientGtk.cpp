@@ -137,25 +137,6 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
 
 void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
 {
-    if (!m_pluginView) {
-        ASSERT(loader->frame());
-        // Setting the encoding on the frame loader is our way to get work done that is normally done
-        // when the first bit of data is received, even for the case of a document with no data (like about:blank).
-        String encoding = loader->overrideEncoding();
-        bool userChosen = !encoding.isNull();
-        if (!userChosen)
-            encoding = loader->response().textEncodingName();
-
-        FrameLoader* frameLoader = loader->frameLoader();
-        frameLoader->setEncoding(encoding, userChosen);
-        if (data)
-            frameLoader->addData(data, length);
-
-        Frame* coreFrame = loader->frame();
-        if (coreFrame && coreFrame->document() && coreFrame->document()->isMediaDocument())
-            loader->cancelMainResourceLoad(frameLoader->client()->pluginWillHandleLoadError(loader->response()));
-    }
-
     if (m_pluginView) {
         if (!m_hasSentResponseToPlugin) {
             m_pluginView->didReceiveResponse(loader->response());
@@ -165,11 +146,42 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
         // FIXME: We may want to investigate refactoring our plugin loading
         // code to be similar to mac's.
         // Also, see http://trac.webkit.org/changeset/24118.
-        if (!m_pluginView)
-            return;
+        if (m_pluginView)
+            m_pluginView->didReceiveData(data, length);
 
-        m_pluginView->didReceiveData(data, length);
+        return;
     }
+
+    ASSERT(loader->frame());
+    // Setting the encoding on the frame loader is our way to get work done that is normally done
+    // when the first bit of data is received, even for the case of a document with no data (like about:blank).
+    String encoding = loader->overrideEncoding();
+    bool userChosen = !encoding.isNull();
+    if (!userChosen)
+        encoding = loader->response().textEncodingName();
+
+    FrameLoader* frameLoader = loader->frameLoader();
+    frameLoader->setEncoding(encoding, userChosen);
+    if (data)
+        frameLoader->addData(data, length);
+
+    Frame* coreFrame = loader->frame();
+    if (!coreFrame || !coreFrame->document())
+        return;
+
+    if (coreFrame->document()->isMediaDocument()) {
+        loader->cancelMainResourceLoad(frameLoader->client()->pluginWillHandleLoadError(loader->response()));
+        return;
+    }
+
+    // We need to wait until the document is attached (a side
+    // effect of calling setEncoding previously) to set our gtk
+    // adjustments, since that process syncs the FrameView
+    // attached to the Document's content renderer with the new
+    // FrameView set after the new page is committed
+    WebKitWebView* containingWindow = getViewFromFrame(m_frame);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
+    coreFrame->view()->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
 }
 
 bool
@@ -1112,7 +1124,6 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
         return;
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
-    frame->view()->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
 
     if (priv->currentMenu) {
         GtkMenu* menu = priv->currentMenu;
