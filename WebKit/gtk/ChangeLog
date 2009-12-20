@@ -1,5 +1,17 @@
 2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Xan Lopez.
+
+        Create a new WebKitDataSource object when attaching to a frame, if
+        one does not exist. This may happen when we are fetching data from
+        the page cache.
+
+        * WebCoreSupport/DocumentLoaderGtk.cpp:
+        (WebKit::DocumentLoader::attachToFrame):
+        (WebKit::DocumentLoader::unrefDataSource):
+
+2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rubber-stamped by Xan Lopez.
 
         Make sure the text encoding machinery is initialized from the main
