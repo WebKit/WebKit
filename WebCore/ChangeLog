@@ -1,3 +1,21 @@
+2009-12-20  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove more GTK+ and GLib headers from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=32795
+
+        Remove most GTK+ and GLib includes from WebCore headers.
+
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/gtk/PasteboardHelper.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/ScrollbarGtk.cpp:
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/gtk/gtk2drawing.c:
+        * platform/gtk/gtkdrawing.h:
+
 2009-12-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] build fixes after recent changes.

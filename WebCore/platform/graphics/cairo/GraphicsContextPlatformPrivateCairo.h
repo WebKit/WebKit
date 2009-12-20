@@ -33,8 +33,8 @@
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(GTK)
-#include <gdk/gdk.h>
 #include <pango/pango.h>
+typedef struct _GdkExposeEvent GdkExposeEvent;
 #elif PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif

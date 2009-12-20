@@ -30,7 +30,12 @@
 
 #include "RenderTheme.h"
 
-#include <gtk/gtk.h>
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkStyle GtkStyle;
+typedef struct _GtkContainer GtkContainer;
+typedef struct _GdkRectangle GdkRectangle;
+typedef struct _GdkDrawable GdkDrawable;
+typedef struct _GtkBorder GtkBorder;
 
 namespace WebCore {
 

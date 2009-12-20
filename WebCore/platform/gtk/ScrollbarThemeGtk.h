@@ -28,6 +28,11 @@
 
 #include "ScrollbarTheme.h"
 
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkStyle GtkStyle;
+typedef struct _GtkContainer GtkContainer;
+typedef struct _GtkBorder GtkBorder;
+
 namespace WebCore {
 
 class ScrollbarThemeGtk : public ScrollbarTheme {

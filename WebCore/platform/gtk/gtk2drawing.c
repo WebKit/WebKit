@@ -44,14 +44,13 @@
  * Adapted from the gtkdrawing.c, and gtk+2.0 source.
  */
 
-#include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
-#include <string.h>
 #include "gtkdrawing.h"
 
 #include "Assertions.h"
 
 #include <math.h>
+#include <string.h>
 
 #define XTHICKNESS(style) (style->xthickness)
 #define YTHICKNESS(style) (style->ythickness)

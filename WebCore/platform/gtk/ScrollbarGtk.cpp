@@ -23,7 +23,6 @@
 #include "GraphicsContext.h"
 #include "FrameView.h"
 #include "ScrollbarTheme.h"
-#include "gtkdrawing.h"
 
 #include <gtk/gtk.h>
 
