@@ -30,6 +30,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
+from model.attachment import Attachment
 from model.queuestatus import QueueStatus
 
 
@@ -52,12 +53,15 @@ class UpdateStatus(webapp.RequestHandler):
         if users.get_current_user():
             queue_status.author = users.get_current_user()
 
-        queue_name = self.request.get('queue_name')
+        bug_id = self._int_from_request("bug_id")
+        patch_id = self._int_from_request("patch_id")
+        queue_name = self.request.get("queue_name")
         queue_status.queue_name = queue_name
-        queue_status.active_bug_id = self._int_from_request('bug_id')
-        queue_status.active_patch_id = self._int_from_request('patch_id')
-        queue_status.message = self.request.get('status')
+        queue_status.active_bug_id = bug_id
+        queue_status.active_patch_id = patch_id
+        queue_status.message = self.request.get("status")
         results_file = self.request.get("results_file")
         queue_status.results_file = db.Blob(str(results_file))
         queue_status.put()
+        Attachment.dirty(patch_id)
         self.response.out.write(queue_status.key().id())

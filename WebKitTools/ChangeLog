@@ -1,3 +1,15 @@
+2009-12-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use memcache to make dashboard to fast
+        https://bugs.webkit.org/show_bug.cgi?id=32780
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/handlers/dashboard.py:
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/model/attachment.py: Added.
+
 2009-12-19  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
