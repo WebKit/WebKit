@@ -34,7 +34,6 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "SecurityOrigin.h"
-#include "V8BindingState.h"
 
 namespace WebCore {
 

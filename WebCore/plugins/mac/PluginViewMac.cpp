@@ -46,6 +46,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "Image.h"

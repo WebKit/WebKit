@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "BackForwardList.h"
 #include "CString.h"
 #include "Document.h"
 #include "Editor.h"
@@ -33,6 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
+#include "HostWindow.h"
 #include "HTMLFrameOwnerElement.h"
 #include "markup.h"
 #include "Page.h"

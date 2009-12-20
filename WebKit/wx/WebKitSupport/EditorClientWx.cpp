@@ -32,6 +32,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "KeyboardEvent.h"
 #include "KeyboardCodes.h"
 #include "NotImplemented.h"

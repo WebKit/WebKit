@@ -1,3 +1,11 @@
+2009-12-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] build fixes after recent changes.
+
+        * bindings/BindingSecurityBase.cpp: Removed V8 header in common code.
+        * platform/wx/ContextMenuWx.cpp: Added missing header.
+        * plugins/mac/PluginViewMac.cpp: Added missing header.
+
 2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

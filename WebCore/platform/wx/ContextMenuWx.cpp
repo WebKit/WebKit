@@ -30,6 +30,8 @@
 #include "PlatformMenuDescription.h"
 #include "wx/menu.h"
 
+#include <wtf/HashMap.h>
+
 using namespace WebCore;
 
 typedef WTF::HashMap<int, ContextMenuAction> ItemActionMap;
