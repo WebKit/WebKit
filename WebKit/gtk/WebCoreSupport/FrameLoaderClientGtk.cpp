@@ -640,7 +640,9 @@ void FrameLoaderClient::setCopiesOnScroll()
 
 void FrameLoaderClient::detachedFromParent2()
 {
-    notImplemented();
+    FrameView *view = core(m_frame)->view();
+    if (view)
+        view->setGtkAdjustments(0, 0);
 }
 
 void FrameLoaderClient::detachedFromParent3()
