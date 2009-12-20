@@ -741,7 +741,7 @@ void FrameLoaderClient::dispatchDidCommitLoad()
 
     WebKitWebFramePrivate* priv = m_frame->priv;
     g_free(priv->uri);
-    priv->uri = g_strdup(core(m_frame)->loader()->url().prettyURL().utf8().data());
+    priv->uri = g_strdup(core(m_frame)->loader()->activeDocumentLoader()->url().prettyURL().utf8().data());
     g_free(priv->title);
     priv->title = NULL;
     g_object_notify(G_OBJECT(m_frame), "uri");

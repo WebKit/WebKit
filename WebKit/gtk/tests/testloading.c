@@ -220,6 +220,84 @@ static void test_loading_cancelled(WebLoadingFixture* fixture, gconstpointer dat
     g_main_loop_run(fixture->loop);
 }
 
+static void load_goback_status_changed_cb(GObject* object, GParamSpec* pspec, WebLoadingFixture* fixture)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(object));
+
+    switch(status) {
+    case WEBKIT_LOAD_PROVISIONAL:
+        g_assert(!fixture->has_been_provisional);
+        fixture->has_been_provisional = TRUE;
+        break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_assert(fixture->has_been_provisional);
+        fixture->has_been_committed = TRUE;
+        break;
+    case WEBKIT_LOAD_FAILED:
+        g_assert_not_reached();
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        g_assert(fixture->has_been_provisional);
+        g_assert(fixture->has_been_committed);
+        fixture->has_been_finished = TRUE;
+        g_main_loop_quit(fixture->loop);
+        break;
+    default:
+        break;
+    }
+}
+
+static void load_wentback_status_changed_cb(GObject* object, GParamSpec* pspec, WebLoadingFixture* fixture)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(object));
+
+    switch(status) {
+    case WEBKIT_LOAD_PROVISIONAL:
+        g_assert_cmpstr(webkit_web_view_get_uri(fixture->webView), ==, "http://www.debian.org/distrib/");
+        break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_assert_cmpstr(webkit_web_view_get_uri(fixture->webView), ==, "http://www.debian.org/");
+        break;
+    case WEBKIT_LOAD_FAILED:
+        g_assert_not_reached();
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        g_assert_cmpstr(webkit_web_view_get_uri(fixture->webView), ==, "http://www.debian.org/");
+        g_main_loop_quit(fixture->loop);
+        break;
+    default:
+        break;
+    }
+}
+
+static void test_loading_goback(WebLoadingFixture* fixture, gconstpointer data)
+{
+    g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_goback_status_changed_cb), fixture);
+
+    webkit_web_view_load_uri(fixture->webView, "http://www.debian.org/");
+    g_main_loop_run(fixture->loop);
+
+    fixture->has_been_provisional = FALSE;
+    fixture->has_been_committed = FALSE;
+    fixture->has_been_first_visually_non_empty_layout = FALSE;
+    fixture->has_been_finished = FALSE;
+    fixture->has_been_failed = FALSE;
+    fixture->has_been_load_error = FALSE;
+
+    webkit_web_view_load_uri(fixture->webView, "http://debian.org/distrib/");
+    g_main_loop_run(fixture->loop);
+
+    fixture->has_been_provisional = FALSE;
+    fixture->has_been_committed = FALSE;
+    fixture->has_been_first_visually_non_empty_layout = FALSE;
+    fixture->has_been_finished = FALSE;
+    fixture->has_been_failed = FALSE;
+    fixture->has_been_load_error = FALSE;
+
+    g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_wentback_status_changed_cb), fixture);
+    webkit_web_view_go_back(fixture->webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -240,6 +318,11 @@ int main(int argc, char** argv)
                WebLoadingFixture, NULL,
                web_loading_fixture_setup,
                test_loading_cancelled,
+               web_loading_fixture_teardown);
+    g_test_add("/webkit/loading/goback",
+               WebLoadingFixture, NULL,
+               web_loading_fixture_setup,
+               test_loading_goback,
                web_loading_fixture_teardown);
     return g_test_run();
 }

@@ -1,3 +1,19 @@
+2009-12-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Make sure we get the URI that is being loaded when updating
+        WebKitWebFrame's knowledge of it. This was causing problems now
+        that page cache is enabled.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+        * tests/testloading.c:
+        (load_goback_status_changed_cb):
+        (load_wentback_status_changed_cb):
+        (test_loading_goback):
+        (main):
+
 2009-12-20  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
