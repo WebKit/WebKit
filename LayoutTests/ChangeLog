@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        [GTK] Failing test platform/gtk/editing/pasteboard/middle-button-paste.html
+        https://bugs.webkit.org/show_bug.cgi?id=32788
+
+        Avoid using fixed values when moving mouse.
+
+        * platform/gtk/editing/pasteboard/middle-button-paste-expected.txt:
+        * platform/gtk/editing/pasteboard/middle-button-paste.html:
+
+2009-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
         * platform/gtk/editing/pasteboard/middle-button-paste-expected.txt:
         * platform/gtk/editing/pasteboard/middle-button-paste.html:
 

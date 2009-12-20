@@ -120,10 +120,10 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
     return JSValueMakeUndefined(context);
 }
 
-static void updateClickCount(int /* button */)
+static void updateClickCount(int button)
 {
     // FIXME: take the last clicked button number and the time of last click into account.
-    if (lastClickPositionX != lastMousePositionX || lastClickPositionY != lastMousePositionY)
+    if (lastClickPositionX != lastMousePositionX || lastClickPositionY != lastMousePositionY || currentEventButton != button)
         clickCount = 1;
     else
         clickCount++;
@@ -180,7 +180,7 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     event.button.x_root = x_root;
     event.button.y_root = y_root;
 
-    updateClickCount(1);
+    updateClickCount(event.button.button);
 
     if (!msgQueue[endOfQueue].delay) {
         webkit_web_frame_layout(mainFrame);

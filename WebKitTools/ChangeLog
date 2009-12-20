@@ -1,3 +1,14 @@
+2009-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Failing test platform/gtk/editing/pasteboard/middle-button-paste.html
+        https://bugs.webkit.org/show_bug.cgi?id=32788
+
+        Do not increase the click count if we are using a different button.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+
 2009-12-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

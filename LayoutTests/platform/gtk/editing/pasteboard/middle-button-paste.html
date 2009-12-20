@@ -22,9 +22,11 @@ function runTest()
 
     eventSender.mouseDown();
     eventSender.mouseMoveTo(x, y);
-    eventSender.mouseMoveTo(x + 50, y);
+    eventSender.mouseMoveTo(x, y + target.offsetHeight);
     eventSender.mouseUp();
-    eventSender.mouseMoveTo(x + 100, y);
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
     eventSender.mouseDown(1);
     eventSender.mouseUp(1);
 }
@@ -32,10 +34,9 @@ function runTest()
 </script>
 </head>
 <body onload="runTest()">
-<div style="font-size: 10px" id="text" contenteditable>Select me, select me, select me</div>
+<div id="text" contenteditable>Select me, select me, select me</div>
 
 <br/>
-<p>The original text was "Select me, select me, select me", after selecting and pasting the result should be "Select me, selecSelect mt me, select me"</p>
+<p>The original text was "Select me, select me, select me", after selecting and pasting the result should be "Select me, select me, select meSelect me, select me, select me"</p>
 </body>
 </html>
-
