@@ -101,26 +101,33 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
     m_url = url;
     m_protocol = protocol;
 
+    if (!m_url.isValid()) {
+        scriptExecutionContext()->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
+        m_state = CLOSED;
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
-        LOG(Network, "Wrong url scheme for WebSocket %s", url.string().utf8().data());
+        scriptExecutionContext()->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (m_url.hasFragmentIdentifier()) {
-        LOG(Network, "URL has fragment component %s", url.string().utf8().data());
+        scriptExecutionContext()->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!isValidProtocolString(m_protocol)) {
-        LOG(Network, "Wrong protocol for WebSocket %s", m_protocol.utf8().data());
+        scriptExecutionContext()->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket " + m_protocol, 0, scriptExecutionContext()->securityOrigin()->toString());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!portAllowed(url)) {
-        LOG(Network, "WebSocket port %d blocked", url.port());
+        scriptExecutionContext()->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("WebSocket port %d blocked", url.port()), 0, scriptExecutionContext()->securityOrigin()->toString());
         m_state = CLOSED;
         ec = SECURITY_ERR;
         return;

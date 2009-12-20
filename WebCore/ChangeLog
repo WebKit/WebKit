@@ -1,3 +1,16 @@
+2009-12-19  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Invalid url should raise SYNTAX_ERR exception.
+        https://bugs.webkit.org/show_bug.cgi?id=32700
+
+        Check url is valid in WebSocket::connect.
+        Also log the detailed reason of websocket failures to console.
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+
 2009-12-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
