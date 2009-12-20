@@ -1,3 +1,14 @@
+2009-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Up/down arrow keys do not step numeric CSS property values
+        https://bugs.webkit.org/show_bug.cgi?id=32776
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown): Call the focused element’s
+        handleKeyEvent method.
+
 2009-12-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

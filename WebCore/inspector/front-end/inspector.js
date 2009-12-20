@@ -630,6 +630,14 @@ WebInspector.documentClick = function(event)
 
 WebInspector.documentKeyDown = function(event)
 {
+    if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
+        this.currentFocusElement.handleKeyEvent(event);
+        if (event.handled) {
+            event.preventDefault();
+            return;
+        }
+    }
+
     if (this.currentPanel && this.currentPanel.handleShortcut) {
         this.currentPanel.handleShortcut(event);
         if (event.handled) {
