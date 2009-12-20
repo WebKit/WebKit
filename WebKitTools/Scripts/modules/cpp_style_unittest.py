@@ -3658,6 +3658,7 @@ class WebKitStyleTest(CppStyleTestBase):
                          'under_score' + name_error_message)
         self.assert_lint('goto under_score;',
                          'under_score' + name_error_message)
+        self.assert_lint('delete static_cast<Foo*>(p);', '')
 
         # Multiple variables in one line.
         self.assert_lint('void myFunction(int variable1, int another_variable);',
