@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="/stylesheets/dashboard.css" />
+</head>
+<body>
+<h1>Review Queue Status</h1>
+<table>
+  <theader>
+    <tr>
+      <th>Attachment</th>
+      <th>Bug</th>
+      <th>Style</th>
+      <th>Chromium</th>
+      <th>Qt</th>
+      <th>Gtk</th>
+    </tr>
+  </thead>{% for summary in summaries %}
+  <tbody>
+    <tr>
+      <td>
+        {{ summary.attachment_id|force_escape|webkit_attachment_id|safe }}
+      </td>
+      <td>
+        {{ summary.bug_id|force_escape|webkit_bug_id|safe }}
+      </td>
+      <td class="status {{ summary.style_queue.state|safe }}"
+          title="{{ summary.style_queue.status.date|timesince }} ago">
+        {{ summary.style_queue.status.message|safe }}
+      </td>
+      <td class="status {{ summary.chromium_ews.state|safe }}"
+          title="{{ summary.chromium_ews.status.date|timesince }} ago">
+        {{ summary.chromium_ews.status.message|safe }}
+      </td>
+      <td class="status {{ summary.qt_ews.state|safe }}"
+          title="{{ summary.qt_ews.status.date|timesince }} ago">
+        {{ summary.qt_ews.status.message|safe }}
+      </td>
+      <td class="status {{ summary.gtk_ews.state|safe }}"
+          title="{{ summary.gtk_ews.status.date|timesince }} ago"
+        {{ summary.gtk_ews.status.message|safe }}
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>
+</html>

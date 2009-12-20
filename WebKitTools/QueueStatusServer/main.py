@@ -33,6 +33,7 @@ use_library('django', '1.1')
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from handlers.dashboard import Dashboard
 from handlers.patchstatus import PatchStatus
 from handlers.recentstatus import RecentStatus
 from handlers.showresults import ShowResults
@@ -45,6 +46,7 @@ routes = [
     ('/', RecentStatus),
     ('/queue-status/(.*)', RecentStatus),
     ('/update-status', UpdateStatus),
+    ('/dashboard', Dashboard),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
     (r'/status-bubble/(.*)', StatusBubble),
     (r'/results/(.*)', ShowResults)

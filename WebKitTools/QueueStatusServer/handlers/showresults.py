@@ -28,7 +28,7 @@
 
 from google.appengine.ext import webapp
 
-from model import QueueStatus
+from model.queuestatus import QueueStatus
 
 
 class ShowResults(webapp.RequestHandler):

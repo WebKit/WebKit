@@ -40,5 +40,16 @@ def webkit_linkify(value):
     value = patch_regexp.sub(r'<a href="https://bugs.webkit.org/attachment.cgi?id=\g<patch_id>&action=prettypatch">patch \g<patch_id></a>', value)
     return value
 
+@stringfilter
+def webkit_bug_id(value):
+    return '<a href="http://webkit.org/b/' + value + '">' + value + '</a>'
+
+@stringfilter
+def webkit_attachment_id(value):
+    return '<a href="https://bugs.webkit.org/attachment.cgi?id=' + value + '&action=prettypatch">' + value + '</a>'
+
 register = webapp.template.create_template_register()
 register.filter(webkit_linkify)
+register.filter(webkit_bug_id)
+register.filter(webkit_attachment_id)
+

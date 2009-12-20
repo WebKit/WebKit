@@ -29,7 +29,7 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from model import QueueStatus
+from model.queuestatus import QueueStatus
 
 class RecentStatus(webapp.RequestHandler):
     def _title_case(self, string):

@@ -1,0 +1,40 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+}
+table {
+  color: #444;
+}
+th {
+  font-weight: normal;
+  background-color: #AAA;
+  color: white;
+  padding: 5px;
+  width: 100px;
+  border-radius: 5px;
+}
+td {
+  text-align: center;
+}
+.status {
+  margin: 1px;
+  padding: 1px 2px;
+  border-radius: 5px;
+  border: 1px solid #AAA;
+  font-size: 11px;
+}
+.status:hover {
+  border: 1px solid #000;
+  -webkit-transition: border 0.5s linear;
+}
+.pass {
+  background-color: #8FDF5F;
+  border: 1px solid #4F8530;
+}
+.fail {
+  background-color: #E98080;
+  border: 1px solid #A77272;
+}
+.pending {
+  background-color: #FFFC6C;
+  border: 1px solid #C5C56D;
+}

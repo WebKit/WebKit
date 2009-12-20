@@ -1,3 +1,27 @@
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        QueueStatusServer needs a human readable dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=32769
+
+        Here is a first cut at the dashboard.  There's a lot left to do.
+
+        * QueueStatusServer/filters/webkit_extras.py:
+        * QueueStatusServer/handlers/dashboard.py: Added.
+        * QueueStatusServer/handlers/patchstatus.py:
+        * QueueStatusServer/handlers/recentstatus.py:
+        * QueueStatusServer/handlers/showresults.py:
+        * QueueStatusServer/handlers/statusbubble.py:
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+        * QueueStatusServer/model/queuestatus.py: Renamed from WebKitTools/QueueStatusServer/model.py.
+        * QueueStatusServer/stylesheets/dashboard.css: Added.
+        * QueueStatusServer/templates/dashboard.html: Added.
+        * QueueStatusServer/templates/statusbubble.html: Renamed from WebKitTools/QueueStatusServer/status_bubble.html.
+        * QueueStatusServer/templates/updatestatus.html: Renamed from WebKitTools/QueueStatusServer/update_status.html.
+
 2009-12-19  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Timothy Hatcher.

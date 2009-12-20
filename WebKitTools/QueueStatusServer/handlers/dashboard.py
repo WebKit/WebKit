@@ -26,56 +26,66 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
 from model.queuestatus import QueueStatus
+from handlers.statusbubble import StatusSummary
+
+queues = [
+    "style-queue",
+    "chromium-ews",
+    "qt-ews",
+    "gtk-ews",
+]
+
+def dash_to_underscore(dashed_name):
+    regexp = re.compile("-")
+    return regexp.sub("_", dashed_name)
+
+def state_from_status(status):
+    table = {
+        "Pass" : "pass",
+        "Fail" : "fail",
+    }
+    return table.get(status.message, "none")
+
+def summarize(attachment_id):
+    summary = { "attachment_id" : attachment_id }
+
+    # FIXME: We shouldn't have to make another query to figure this out.
+    #        We'll fix this with memcache.  Notice that we can't grab it
+    #        below because the patch might not have been processed by one
+    #        these queues yet.
+    summary["bug_id"] = QueueStatus.all().filter('active_patch_id =', attachment_id).fetch(1)[0].active_bug_id
+
+    for queue in queues:
+        summary[queue] = None
+        status = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', attachment_id).order('-date').get()
+        if status:
+            summary[dash_to_underscore(queue)] = {
+                "state" : state_from_status(status),
+                "status" : status,
+            }
+    return summary
 
 
-# FIXME: This class is wrong.  I'm going to rebuid the functionality correctly
-#        for the dashboard and then kill this class.
-class StatusSummary(object):
-    def _status_to_code(self, status):
-        code_names = {
-            "Pass": "pass",
-            "Pending": "pending",
-            "Fail": "fail",
-            "Error": "error",
-        }
-        return code_names.get(status, "none")
-
-    def _queue_name_to_code(self, queue_name):
-        code_names = {
-            "style-queue": "style",
-        }
-        return code_names[queue_name]
-
-    queues = [
-        "style-queue",
-    ]
-
-    def __init__(self):
-        self._summary = {}
-
-    def summarize(self, attachment_id):
-        if self._summary.get(attachment_id):
-            return self._summary.get(attachment_id)
-
-        attachment_summary = {}
-        for queue in self.queues:
-            statuses = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', attachment_id).order('-date').fetch(1)
-            status_code = self._status_to_code(statuses[0].message if statuses else None)
-            queue_code = self._queue_name_to_code(queue)
-            attachment_summary[queue_code] = status_code
-
-        self._summary[attachment_id] = attachment_summary
-        return attachment_summary
-
-
-class StatusBubble(webapp.RequestHandler):
-    def get(self, attachment_id):
+class Dashboard(webapp.RequestHandler):
+    def get(self):
         status_summary = StatusSummary()
+        statuses = QueueStatus.all().order("-date")
+
+        attachment_ids = set()
+        for status in statuses:
+            if not status.active_patch_id:
+                continue
+            attachment_ids.add(status.active_patch_id)
+            if len(attachment_ids) >= 25:
+                break
+
         template_values = {
-            "queue_status" : status_summary.summarize(int(attachment_id)),
+            "summaries" : map(summarize, sorted(attachment_ids)),
         }
-        self.response.out.write(template.render("templates/statusbubble.html", template_values))
+        self.response.out.write(template.render("templates/dashboard.html", template_values))
