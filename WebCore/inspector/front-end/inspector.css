@@ -1070,16 +1070,8 @@ body.drawer-visible #drawer {
 
 .source-code {
     font-family: monospace;
-    font-size: 11px;
+    font-size: medium;
     white-space: pre-wrap;
-}
-
-body.platform-mac-tiger .source-code {
-    font-family: Monaco, monospace;
-}
-
-body.platform-mac-leopard .source-code {
-    font-family: Monaco, monospace;
 }
 
 body.platform-windows .source-code {

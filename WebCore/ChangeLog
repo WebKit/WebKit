@@ -1,3 +1,14 @@
+2009-12-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/7487689> REGRESSION (r52203): Inspector console uses
+        Monaco on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=32775
+
+        * inspector/front-end/inspector.css: Use the default monospace family
+        and size.
+
 2009-12-20  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.
