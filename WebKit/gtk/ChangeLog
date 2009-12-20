@@ -1,3 +1,21 @@
+2009-12-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Cache control APIs
+        https://bugs.webkit.org/show_bug.cgi?id=24001
+
+        Original patch by Bobby Powers <bobby@laptop.org>
+
+        Added new API to specify cache models for GTK port.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_init): set a default cache model.
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+        (webkit_set_cache_model): Added function.
+        (webkit_get_cache_model): Added function.
+
 2009-12-20  Xan Lopez  <xlopez@igalia.com>
 
         Revert the previous patch, it introduces some failures in the

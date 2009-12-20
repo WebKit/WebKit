@@ -9,6 +9,7 @@
  *  Copyright (C) 2008, 2009 Collabora Ltd.
  *  Copyright (C) 2009 Igalia S.L.
  *  Copyright (C) 2009 Movial Creative Technologies Inc.
+ *  Copyright (C) 2009 Bobby Powers
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,6 +42,7 @@
 #include "AXObjectCache.h"
 #include "NotImplemented.h"
 #include "BackForwardList.h"
+#include "Cache.h"
 #include "CString.h"
 #include "ChromeClientGtk.h"
 #include "ContextMenu.h"
@@ -65,6 +67,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "MouseEventWithHitTestResults.h"
+#include "PageCache.h"
 #include "Pasteboard.h"
 #include "PasteboardHelper.h"
 #include "PasteboardHelperGtk.h"
@@ -113,6 +116,7 @@
  */
 
 static const double defaultDPI = 96.0;
+static WebKitCacheModel cacheModel;
 
 using namespace WebKit;
 using namespace WebCore;
@@ -4066,4 +4070,82 @@ G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
     g_free(priv->iconURI);
     priv->iconURI = g_strdup(iconURL.utf8().data());
     return priv->iconURI;
+}
+
+/**
+ * webkit_set_cache_model:
+ * @cache_model: a #WebKitCacheModel
+ *
+ * Specifies a usage model for WebViews, which WebKit will use to
+ * determine its caching behavior. All web views follow the cache
+ * model. This cache model determines the RAM and disk space to use
+ * for caching previously viewed content .
+ *
+ * Research indicates that users tend to browse within clusters of
+ * documents that hold resources in common, and to revisit previously
+ * visited documents. WebKit and the frameworks below it include
+ * built-in caches that take advantage of these patterns,
+ * substantially improving document load speed in browsing
+ * situations. The WebKit cache model controls the behaviors of all of
+ * these caches, including various WebCore caches.
+ *
+ * Browsers can improve document load speed substantially by
+ * specifying WEBKIT_CACHE_MODEL_WEB_BROWSER. Applications without a
+ * browsing interface can reduce memory usage substantially by
+ * specifying WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER. Default value is
+ * WEBKIT_CACHE_MODEL_WEB_BROWSER.
+ *
+ * Since: 1.1.18
+ */
+void webkit_set_cache_model(WebKitCacheModel model)
+{
+    if (cacheModel == model)
+        return;
+
+    // FIXME: Add disk cache handling when soup has the API
+    guint cacheTotalCapacity;
+    guint cacheMinDeadCapacity;
+    guint cacheMaxDeadCapacity;
+    gdouble deadDecodedDataDeletionInterval;
+    guint pageCacheCapacity;
+
+    switch (model) {
+    case WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER:
+        pageCacheCapacity = 0;
+        cacheTotalCapacity = 0;
+        cacheMinDeadCapacity = 0;
+        cacheMaxDeadCapacity = 0;
+        deadDecodedDataDeletionInterval = 0;
+        break;
+    case WEBKIT_CACHE_MODEL_WEB_BROWSER:
+        pageCacheCapacity = 3;
+        cacheTotalCapacity = 32 * 1024 * 1024;
+        cacheMinDeadCapacity = cacheTotalCapacity / 4;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
+        deadDecodedDataDeletionInterval = 60;
+        break;
+    default:
+        g_return_if_reached();
+    }
+
+    cache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
+    cache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
+    pageCache()->setCapacity(pageCacheCapacity);
+    cacheModel = model;
+}
+
+/**
+ * webkit_get_cache_model:
+ *
+ * Returns the current cache model. For more information about this
+ * value check the documentation of the function
+ * webkit_set_cache_model().
+ *
+ * Return value: the current #WebKitCacheModel
+ *
+ * Since: 1.1.18
+ */
+WebKitCacheModel webkit_get_cache_model()
+{
+    return cacheModel;
 }

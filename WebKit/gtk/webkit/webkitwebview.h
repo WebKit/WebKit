@@ -49,6 +49,11 @@ typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
 } WebKitNavigationResponse;
 
+typedef enum {
+    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER = 1,
+    WEBKIT_CACHE_MODEL_WEB_BROWSER
+} WebKitCacheModel;
+
 typedef enum
 {
     WEBKIT_WEB_VIEW_TARGET_INFO_HTML,
@@ -369,6 +374,12 @@ webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
 
 WEBKIT_API G_CONST_RETURN gchar *
 webkit_web_view_get_icon_uri                    (WebKitWebView        *webView);
+
+WEBKIT_API void
+webkit_set_cache_model                          (WebKitCacheModel     cache_model);
+
+WEBKIT_API WebKitCacheModel
+webkit_get_cache_model                          (void);
 
 G_END_DECLS
 
