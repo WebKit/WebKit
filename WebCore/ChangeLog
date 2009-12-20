@@ -1,3 +1,25 @@
+2009-12-20  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Android] Android needs implementation of setCookies, cookies and cookiesEnabled functions.
+        https://bugs.webkit.org/show_bug.cgi?id=32559
+
+        Add implementation of the cookie functions.
+        Fix a crash caused by dereferencing a 0 MainResourceLoader pointer
+        in ResourceHandle::start().
+
+        No new tests, this is platform code.
+
+        * platform/android/PlatformBridge.h:
+        * platform/network/android/AuthenticationChallenge.h: Added.
+        * platform/network/android/CookieJarAndroid.cpp: Added.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/network/android/ResourceHandleAndroid.cpp:
+        (WebCore::ResourceHandle::start):
+
 2009-12-19  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52395.

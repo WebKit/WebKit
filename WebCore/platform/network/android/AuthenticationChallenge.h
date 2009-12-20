@@ -1,5 +1,6 @@
 /*
  * Copyright 2009, The Android Open Source Project
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformBridge_h
-#define PlatformBridge_h
+#ifndef AuthenticationChallenge_h
+#define AuthenticationChallenge_h
 
-#include "KURL.h"
-#include "PlatformString.h"
-
-#include <wtf/Vector.h>
+#include "AuthenticationChallengeBase.h"
 
 namespace WebCore {
 
-// An interface to the embedding layer, which has the ability to answer
-// questions about the system and so on...
-// This is very similar to ChromiumBridge and the two are likely to converge
-// in the future.
-//
-// The methods in this class all need to reach across a JNI layer to the Java VM
-// where the embedder runs. The JNI machinery is currently all in WebKit/android
-// but the long term plan is to move to the WebKit API and share the bridge and its
-// implementation with Chromium. The JNI machinery will then move outside of WebKit,
-// similarly to how Chromium's IPC layer lives outside of WebKit.
-class PlatformBridge {
-public:
-    // KeyGenerator
-    static WTF::Vector<String> getSupportedKeyStrengthList();
-    static String getSignedPublicKeyAndChallengeString(unsigned index, const String& challenge, const KURL&);
-    // Cookies
-    static void setCookies(const KURL&, const String& value);
-    static String cookies(const KURL&);
-    static bool cookiesEnabled();
+class AuthenticationChallenge : public AuthenticationChallengeBase {
 };
 
 }
-#endif // PlatformBridge_h
+
+#endif
