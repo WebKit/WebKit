@@ -1,5 +1,14 @@
 2009-12-20  Xan Lopez  <xlopez@igalia.com>
 
+        Revert the previous patch, it introduces some failures in the
+        bots.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::committedLoad):
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
+2009-12-20  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         [GTK] crash when loading new page
