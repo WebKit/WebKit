@@ -1,5 +1,12 @@
 2009-12-19  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Tweak the CSS to make the dashboard prettier.
+
+        * QueueStatusServer/stylesheets/dashboard.css:
+        * QueueStatusServer/templates/dashboard.html:
+
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         QueueStatusServer needs a human readable dashboard

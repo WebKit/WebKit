@@ -4,12 +4,12 @@
 <link type="text/css" rel="stylesheet" href="/stylesheets/dashboard.css" />
 </head>
 <body>
-<h1>Review Queue Status</h1>
+<h1>WebKit Bot Status</h1>
 <table>
   <theader>
     <tr>
-      <th>Attachment</th>
       <th>Bug</th>
+      <th>Attachment</th>
       <th>Style</th>
       <th>Chromium</th>
       <th>Qt</th>
@@ -18,11 +18,11 @@
   </thead>{% for summary in summaries %}
   <tbody>
     <tr>
-      <td>
-        {{ summary.attachment_id|force_escape|webkit_attachment_id|safe }}
-      </td>
-      <td>
+      <td class="status">
         {{ summary.bug_id|force_escape|webkit_bug_id|safe }}
+      </td>
+      <td class="status">
+        {{ summary.attachment_id|force_escape|webkit_attachment_id|safe }}
       </td>
       <td class="status {{ summary.style_queue.state|safe }}"
           title="{{ summary.style_queue.status.date|timesince }} ago">
