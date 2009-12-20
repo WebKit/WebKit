@@ -1,14 +1,3 @@
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 	
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket あ
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ￿
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ￾
-CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket 𠀋
 Test WebSocket bad sub-protocol names.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,5 +1,13 @@
 2009-12-19  Adam Barth  <abarth@webkit.org>
 
+        No review, rolling out r52399.
+        http://trac.webkit.org/changeset/52399
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Added a missing "not".

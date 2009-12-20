@@ -1,5 +1,14 @@
 2009-12-19  Adam Barth  <abarth@webkit.org>
 
+        No review, rolling out r52399.
+        http://trac.webkit.org/changeset/52399
+
+        * websocket/tests/bad-sub-protocol-expected.txt:
+        * websocket/tests/script-tests/url-parsing.js:
+        * websocket/tests/url-parsing-expected.txt:
+
+2009-12-19  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add a test for window.open and JavaScript URLs.
