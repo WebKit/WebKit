@@ -32,6 +32,8 @@
 
 #if ENABLE(DATABASE)
 
+#include "V8SQLTransaction.h"
+
 #include "Database.h"
 #include "SQLValue.h"
 #include "V8Binding.h"
@@ -45,7 +47,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(SQLTransactionExecuteSql)
+v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SQLTransaction.executeSql()");
 

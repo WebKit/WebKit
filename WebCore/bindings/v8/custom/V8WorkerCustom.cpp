@@ -31,6 +31,7 @@
 #include "config.h"
 
 #if ENABLE(WORKERS)
+#include "V8Worker.h"
 
 #include "Worker.h"
 
@@ -47,7 +48,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WorkerConstructor)
+v8::Handle<v8::Value> V8Custom::v8WorkerConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.Worker.Constructor");
 
@@ -87,7 +88,7 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
     return wrapperObject;
 }
 
-CALLBACK_FUNC_DECL(WorkerPostMessage)
+v8::Handle<v8::Value> V8Worker::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.postMessage");
     Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());

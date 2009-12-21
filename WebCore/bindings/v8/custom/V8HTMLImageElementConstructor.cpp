@@ -61,7 +61,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
     return cachedTemplate;
 }
 
-CALLBACK_FUNC_DECL(HTMLImageElementConstructor)
+v8::Handle<v8::Value> V8Custom::v8HTMLImageElementConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLImageElement.Contructor");
 

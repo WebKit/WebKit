@@ -29,16 +29,18 @@
  */
 
 #include "config.h"
-#include "History.h"
+#include "V8History.h"
 
 #include "ExceptionCode.h"
+#include "History.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
-CALLBACK_FUNC_DECL(HistoryPushState)
+
+v8::Handle<v8::Value> V8History::pushStateCallback(const v8::Arguments& args)
 {
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(toWebCoreString(args[0]));
 
@@ -59,7 +61,7 @@ CALLBACK_FUNC_DECL(HistoryPushState)
     return throwError(ec);
 }
 
-CALLBACK_FUNC_DECL(HistoryReplaceState)
+v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
 {
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(toWebCoreString(args[0]));
 

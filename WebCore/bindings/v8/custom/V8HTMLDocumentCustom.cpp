@@ -29,10 +29,11 @@
  */
 
 #include "config.h"
-#include "HTMLDocument.h"
+#include "V8HTMLDocument.h"
 
 #include "Frame.h"
 #include "HTMLAllCollection.h"
+#include "HTMLDocument.h"
 #include "HTMLCollection.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
@@ -115,7 +116,7 @@ static String writeHelperGetString(const v8::Arguments& args)
     return str;
 }
 
-CALLBACK_FUNC_DECL(HTMLDocumentWrite)
+v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.write()");
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
@@ -124,7 +125,7 @@ CALLBACK_FUNC_DECL(HTMLDocumentWrite)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(HTMLDocumentWriteln)
+v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.writeln()");
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
@@ -133,7 +134,7 @@ CALLBACK_FUNC_DECL(HTMLDocumentWriteln)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(HTMLDocumentOpen)
+v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.open()");
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());

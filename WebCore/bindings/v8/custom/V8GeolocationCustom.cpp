@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#include "V8Geolocation.h"
+
 #include "Geolocation.h"
 
 #include "V8Binding.h"
@@ -165,7 +167,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
     return options.release();
 }
 
-CALLBACK_FUNC_DECL(GeolocationGetCurrentPosition)
+v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Geolocation.getCurrentPosition()");
 
@@ -190,7 +192,7 @@ CALLBACK_FUNC_DECL(GeolocationGetCurrentPosition)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(GeolocationWatchPosition)
+v8::Handle<v8::Value> V8Geolocation::watchPositionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Geolocation.watchPosition()");
 

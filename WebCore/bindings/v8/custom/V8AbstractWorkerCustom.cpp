@@ -31,9 +31,9 @@
 #include "config.h"
 
 #if ENABLE(WORKERS)
+#include "V8AbstractWorker.h"
 
 #include "AbstractWorker.h"
-
 #include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"
@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(AbstractWorkerAddEventListener)
+v8::Handle<v8::Value> V8AbstractWorker::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.AbstractWorker.addEventListener()");
     AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());
@@ -60,7 +60,7 @@ CALLBACK_FUNC_DECL(AbstractWorkerAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(AbstractWorkerRemoveEventListener)
+v8::Handle<v8::Value> V8AbstractWorker::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.AbstractWorker.removeEventListener()");
     AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());

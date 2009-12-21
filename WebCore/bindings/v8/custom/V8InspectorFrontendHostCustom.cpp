@@ -29,10 +29,11 @@
  */
 
 #include "config.h"
-#include "InspectorFrontendHost.h"
+#include "V8InspectorFrontendHost.h"
 
 #include "ExceptionCode.h"
 #include "InspectorController.h"
+#include "InspectorFrontendHost.h"
 #include "Node.h"
 #include "Range.h"
 #include "Page.h"
@@ -45,7 +46,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(InspectorFrontendHostSearch)
+v8::Handle<v8::Value> V8InspectorFrontendHost::searchCallback(const v8::Arguments& args)
 {
     INC_STATS("InspectorFrontendHost.search()");
 
@@ -84,7 +85,7 @@ CALLBACK_FUNC_DECL(InspectorFrontendHostSearch)
     return result;
 }
 
-CALLBACK_FUNC_DECL(InspectorFrontendHostShowContextMenu)
+v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8::Arguments& args)
 {
     return v8::Undefined();
 }

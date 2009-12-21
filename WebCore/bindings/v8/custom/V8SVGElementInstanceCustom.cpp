@@ -31,10 +31,10 @@
 #include <config.h>
 
 #if ENABLE(SVG)
-
-#include "SVGElementInstance.h"
+#include "V8SVGElementInstance.h"
 
 #include "EventListener.h"
+#include "SVGElementInstance.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(SVGElementInstanceAddEventListener)
+v8::Handle<v8::Value> V8SVGElementInstance::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGElementInstance.AddEventListener()");
     SVGElementInstance* instance = V8DOMWrapper::convertDOMWrapperToNative<SVGElementInstance>(args.Holder());
@@ -60,7 +60,7 @@ CALLBACK_FUNC_DECL(SVGElementInstanceAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(SVGElementInstanceRemoveEventListener)
+v8::Handle<v8::Value> V8SVGElementInstance::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGElementInstance.RemoveEventListener()");
     SVGElementInstance* instance = V8DOMWrapper::convertDOMWrapperToNative<SVGElementInstance>(args.Holder());

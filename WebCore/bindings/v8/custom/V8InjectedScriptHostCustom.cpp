@@ -29,11 +29,12 @@
  */
 
 #include "config.h"
-#include "InjectedScriptHost.h"
+#include "V8InjectedScriptHost.h"
 
 #include "Database.h"
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "Node.h"
 #include "Page.h"
@@ -44,7 +45,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(InjectedScriptHostInspectedWindow)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectedWindowCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.inspectedWindow()");
 
@@ -55,13 +56,13 @@ CALLBACK_FUNC_DECL(InjectedScriptHostInspectedWindow)
     return V8DOMWrapper::convertToV8Object<DOMWindow>(V8ClassIndex::DOMWINDOW, ic->inspectedPage()->mainFrame()->domWindow());
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostWrapCallback)
+v8::Handle<v8::Value> V8InjectedScriptHost::wrapCallbackCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.wrapCallback()");
     return args[0];
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostNodeForId)
+v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.nodeForId()");
     if (args.Length() < 1)
@@ -80,7 +81,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostNodeForId)
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostWrapObject)
+v8::Handle<v8::Value> V8InjectedScriptHost::wrapObjectCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.wrapObject()");
     if (args.Length() < 2)
@@ -90,7 +91,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostWrapObject)
     return host->wrapObject(ScriptValue(args[0]), toWebCoreStringWithNullCheck(args[1])).v8Value();
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostUnwrapObject)
+v8::Handle<v8::Value> V8InjectedScriptHost::unwrapObjectCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.unwrapObject()");
     if (args.Length() < 1)
@@ -100,7 +101,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostUnwrapObject)
     return host->unwrapObject(toWebCoreStringWithNullCheck(args[0])).v8Value();
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostPushNodePathToFrontend)
+v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.pushNodePathToFrontend()");
     if (args.Length() < 2)
@@ -116,7 +117,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostPushNodePathToFrontend)
 }
 
 #if ENABLE(DATABASE)
-CALLBACK_FUNC_DECL(InjectedScriptHostDatabaseForId)
+v8::Handle<v8::Value> V8InjectedScriptHost::databaseForIdCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.databaseForId()");
     if (args.Length() < 1)
@@ -129,7 +130,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostDatabaseForId)
     return V8DOMWrapper::convertToV8Object<Database>(V8ClassIndex::DATABASE, database);
 }
 
-CALLBACK_FUNC_DECL(InjectedScriptHostSelectDatabase)
+v8::Handle<v8::Value> V8InjectedScriptHost::selectDatabaseCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.selectDatabase()");
     if (args.Length() < 1)
@@ -145,7 +146,7 @@ CALLBACK_FUNC_DECL(InjectedScriptHostSelectDatabase)
 #endif
 
 #if ENABLE(DOM_STORAGE)
-CALLBACK_FUNC_DECL(InjectedScriptHostSelectDOMStorage)
+v8::Handle<v8::Value> V8InjectedScriptHost::selectDOMStorageCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.selectDOMStorage()");
     if (args.Length() < 1)

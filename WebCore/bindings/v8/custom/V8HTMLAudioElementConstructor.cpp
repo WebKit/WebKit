@@ -61,7 +61,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLAudioElementConstructor::GetTemplate(
     return cachedTemplate;
 }
 
-CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
+v8::Handle<v8::Value> V8Custom::v8HTMLAudioElementConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLAudioElement.Contructor");
 

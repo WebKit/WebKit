@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebKitCSSMatrixConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebKitCSSMatrixConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebKitCSSMatrix.Constructor");
 

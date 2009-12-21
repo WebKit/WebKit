@@ -29,11 +29,12 @@
  */
 
 #include "config.h"
-#include "Element.h"
+#include "V8Element.h"
 
 #include "Attr.h"
 #include "CSSHelper.h"
 #include "Document.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
@@ -48,7 +49,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(ElementSetAttribute)
+v8::Handle<v8::Value> V8Element::setAttributeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttribute()");
     Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
@@ -66,7 +67,7 @@ CALLBACK_FUNC_DECL(ElementSetAttribute)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(ElementSetAttributeNode)
+v8::Handle<v8::Value> V8Element::setAttributeNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttributeNode()");
     if (!V8Attr::HasInstance(args[0]))
@@ -86,7 +87,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNode)
     return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
-CALLBACK_FUNC_DECL(ElementSetAttributeNS)
+v8::Handle<v8::Value> V8Element::setAttributeNSCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttributeNS()");
     Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
@@ -105,7 +106,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNS)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(ElementSetAttributeNodeNS)
+v8::Handle<v8::Value> V8Element::setAttributeNodeNSCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttributeNodeNS()");
     if (!V8Attr::HasInstance(args[0]))

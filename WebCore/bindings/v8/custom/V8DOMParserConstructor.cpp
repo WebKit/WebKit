@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(DOMParserConstructor)
+v8::Handle<v8::Value> V8Custom::v8DOMParserConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMParser.Contructor");
     return V8Proxy::constructDOMObject<V8ClassIndex::DOMPARSER, DOMParser>(args);

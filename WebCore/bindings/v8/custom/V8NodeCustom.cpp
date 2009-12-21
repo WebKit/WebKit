@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(NodeAddEventListener)
+v8::Handle<v8::Value> V8Node::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.addEventListener()");
     Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
@@ -60,7 +60,7 @@ CALLBACK_FUNC_DECL(NodeAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(NodeRemoveEventListener)
+v8::Handle<v8::Value> V8Node::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.removeEventListener()");
     Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
@@ -80,7 +80,7 @@ CALLBACK_FUNC_DECL(NodeRemoveEventListener)
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-CALLBACK_FUNC_DECL(NodeInsertBefore)
+v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.insertBefore");
     v8::Handle<v8::Object> holder = args.Holder();
@@ -99,7 +99,7 @@ CALLBACK_FUNC_DECL(NodeInsertBefore)
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-CALLBACK_FUNC_DECL(NodeReplaceChild)
+v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.replaceChild");
     v8::Handle<v8::Object> holder = args.Holder();
@@ -117,7 +117,7 @@ CALLBACK_FUNC_DECL(NodeReplaceChild)
     return v8::Null();
 }
 
-CALLBACK_FUNC_DECL(NodeRemoveChild)
+v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.removeChild");
     v8::Handle<v8::Object> holder = args.Holder();
@@ -135,7 +135,7 @@ CALLBACK_FUNC_DECL(NodeRemoveChild)
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-CALLBACK_FUNC_DECL(NodeAppendChild)
+v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.appendChild");
     v8::Handle<v8::Object> holder = args.Holder();

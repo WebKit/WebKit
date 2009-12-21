@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "XMLHttpRequest.h"
+#include "V8XMLHttpRequest.h"
 
 #include "Frame.h"
 #include "V8Binding.h"
@@ -41,6 +41,7 @@
 #include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include "XMLHttpRequest.h"
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ ACCESSOR_GETTER(XMLHttpRequestResponseText)
     return xmlHttpRequest->responseText().v8StringOrNull();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestAddEventListener)
+v8::Handle<v8::Value> V8XMLHttpRequest::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.addEventListener()");
     XMLHttpRequest* xmlHttpRequest = V8DOMWrapper::convertToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, args.Holder());
@@ -67,7 +68,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestRemoveEventListener)
+v8::Handle<v8::Value> V8XMLHttpRequest::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.removeEventListener()");
     XMLHttpRequest* xmlHttpRequest = V8DOMWrapper::convertToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, args.Holder());
@@ -84,7 +85,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestRemoveEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestOpen)
+v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.open()");
     // Four cases:
@@ -133,7 +134,7 @@ static bool IsDocumentType(v8::Handle<v8::Value> value)
     return V8Document::HasInstance(value) || V8HTMLDocument::HasInstance(value);
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestSend)
+v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.send()");
     XMLHttpRequest* xmlHttpRequest = V8DOMWrapper::convertToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, args.Holder());
@@ -163,7 +164,8 @@ CALLBACK_FUNC_DECL(XMLHttpRequestSend)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestSetRequestHeader) {
+v8::Handle<v8::Value> V8XMLHttpRequest::setRequestHeaderCallback(const v8::Arguments& args)
+{
     INC_STATS("DOM.XMLHttpRequest.setRequestHeader()");
     if (args.Length() < 2)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
@@ -178,7 +180,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestSetRequestHeader) {
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestGetResponseHeader)
+v8::Handle<v8::Value> V8XMLHttpRequest::getResponseHeaderCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.getResponseHeader()");
     if (args.Length() < 1)
@@ -193,7 +195,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestGetResponseHeader)
     return v8StringOrNull(result);
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestOverrideMimeType)
+v8::Handle<v8::Value> V8XMLHttpRequest::overrideMimeTypeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.overrideMimeType()");
     if (args.Length() < 1)
@@ -205,7 +207,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestOverrideMimeType)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestDispatchEvent)
+v8::Handle<v8::Value> V8XMLHttpRequest::dispatchEventCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.dispatchEvent()");
     return v8::Undefined();

@@ -31,6 +31,7 @@
 #include "config.h"
 
 #if ENABLE(DATABASE)
+#include "V8Database.h"
 
 #include "Database.h"
 #include "V8Binding.h"
@@ -42,7 +43,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(DatabaseChangeVersion)
+v8::Handle<v8::Value> V8Database::changeVersionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Database.changeVersion()");
 
@@ -123,13 +124,13 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(DatabaseTransaction)
+v8::Handle<v8::Value> V8Database::transactionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Database.transaction()");
     return createTransaction(args, false);
 }
 
-CALLBACK_FUNC_DECL(DatabaseReadTransaction)
+v8::Handle<v8::Value> V8Database::readTransactionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Database.readTransaction()");
     return createTransaction(args, true);

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebGLIntArrayConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebGLIntArrayConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.Contructor");
 
@@ -79,13 +79,13 @@ INDEXED_PROPERTY_SETTER(WebGLIntArray)
     return value;
 }
 
-CALLBACK_FUNC_DECL(WebGLIntArrayGet)
+v8::Handle<v8::Value> V8WebGLIntArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.get()");
     return getWebGLArrayElement<WebGLIntArray, int>(args, V8ClassIndex::WEBGLINTARRAY);
 }
 
-CALLBACK_FUNC_DECL(WebGLIntArraySet)
+v8::Handle<v8::Value> V8WebGLIntArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.set()");
     return setWebGLArray<WebGLIntArray, V8WebGLIntArray>(args, V8ClassIndex::WEBGLINTARRAY);

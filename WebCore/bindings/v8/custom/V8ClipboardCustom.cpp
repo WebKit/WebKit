@@ -29,8 +29,9 @@
  */
 
 #include "config.h"
-#include "Clipboard.h"
+#include "V8Clipboard.h"
 
+#include "Clipboard.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "IntPoint.h"
@@ -62,7 +63,7 @@ ACCESSOR_GETTER(ClipboardTypes)
     return result;
 }
 
-CALLBACK_FUNC_DECL(ClipboardClearData)
+v8::Handle<v8::Value> V8Clipboard::clearDataCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.clearData()");
     Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
@@ -80,7 +81,7 @@ CALLBACK_FUNC_DECL(ClipboardClearData)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(ClipboardGetData)
+v8::Handle<v8::Value> V8Clipboard::getDataCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.getData()");
     Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
@@ -96,7 +97,7 @@ CALLBACK_FUNC_DECL(ClipboardGetData)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(ClipboardSetData)
+v8::Handle<v8::Value> V8Clipboard::setDataCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.setData()");
     Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
@@ -109,7 +110,7 @@ CALLBACK_FUNC_DECL(ClipboardSetData)
     return v8Boolean(clipboard->setData(type, data));
 }
 
-CALLBACK_FUNC_DECL(ClipboardSetDragImage)
+v8::Handle<v8::Value> V8Clipboard::setDragImageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.setDragImage()");
     Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());

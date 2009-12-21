@@ -31,9 +31,9 @@
 #include <config.h>
 
 #if ENABLE(SVG)
+#include "V8SVGLength.h"
 
 #include "SVGLength.h"
-
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8SVGPODTypeWrapper.h"
@@ -49,7 +49,7 @@ ACCESSOR_GETTER(SVGLengthValue)
     return v8::Number::New(imp.value(V8Proxy::svgContext(wrapper)));
 }
 
-CALLBACK_FUNC_DECL(SVGLengthConvertToSpecifiedUnits)
+v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
     V8SVGPODTypeWrapper<SVGLength>* wrapper = V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<SVGLength> >(V8ClassIndex::SVGLENGTH, args.Holder());

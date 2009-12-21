@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebGLUnsignedByteArrayConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebGLUnsignedByteArrayConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.Contructor");
 
@@ -79,13 +79,13 @@ INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray)
     return value;
 }
 
-CALLBACK_FUNC_DECL(WebGLUnsignedByteArrayGet)
+v8::Handle<v8::Value> V8WebGLUnsignedByteArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.get()");
     return getWebGLArrayElement<WebGLUnsignedByteArray, unsigned char>(args, V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY);
 }
 
-CALLBACK_FUNC_DECL(WebGLUnsignedByteArraySet)
+v8::Handle<v8::Value> V8WebGLUnsignedByteArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.set()");
     return setWebGLArray<WebGLUnsignedByteArray, V8WebGLUnsignedByteArray>(args, V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY);

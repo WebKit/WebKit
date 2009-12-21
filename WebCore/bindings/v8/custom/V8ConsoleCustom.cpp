@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#include "V8Console.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -37,7 +38,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(ConsoleProfile)
+v8::Handle<v8::Value> V8Console::profileCallback(const v8::Arguments& args)
 {
     INC_STATS("console.profile()");
     v8::HandleScope scope;
@@ -46,7 +47,7 @@ CALLBACK_FUNC_DECL(ConsoleProfile)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(ConsoleProfileEnd)
+v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
 {
     INC_STATS("console.profileEnd()");
     v8::V8::PauseProfiler();

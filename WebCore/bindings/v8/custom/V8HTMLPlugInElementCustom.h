@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- *
+ * Copyright (c) 2009 Google Inc.
+ * All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,35 +29,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef V8HTMLPlugInElementCustom_h
+#define V8HTMLPlugInElementCustom_h
 
-#if ENABLE(WORKERS)
-#include "V8DedicatedWorkerContext.h"
-
-#include "DedicatedWorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
-#include "V8Binding.h"
-#include "V8MessagePortCustom.h"
-#include "V8Proxy.h"
-#include "V8WorkerContextEventListener.h"
+#include <v8.h>
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
-{
-    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
-    DedicatedWorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<DedicatedWorkerContext>(V8ClassIndex::DEDICATEDWORKERCONTEXT, args.Holder());
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(v8ValueToWebCoreString(args[0]));
-    MessagePortArray portArray;
-    if (args.Length() > 1) {
-        if (!getMessagePortArray(args[1], portArray))
-            return v8::Undefined();
-    }
-    ExceptionCode ec = 0;
-    workerContext->postMessage(message.release(), &portArray, ec);
-    return throwError(ec);
-}
+class V8HTMLPlugInElement {
+public:
+    static v8::Handle<v8::Value> defaultCallback(const v8::Arguments&);
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(WORKERS)
+#endif // V8HTMLPlugInElementCustom_h

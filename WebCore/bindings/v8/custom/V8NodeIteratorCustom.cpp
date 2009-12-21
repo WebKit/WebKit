@@ -29,8 +29,9 @@
  */
 
 #include "config.h"
-#include "NodeIterator.h"
+#include "V8NodeIterator.h"
 
+#include "NodeIterator.h"
 #include "ScriptState.h"
 
 #include "V8Binding.h"
@@ -56,7 +57,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
     return V8DOMWrapper::convertNodeToV8Object(object);
 }
 
-CALLBACK_FUNC_DECL(NodeIteratorNextNode)
+v8::Handle<v8::Value> V8NodeIterator::nextNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.NodeIterator.nextNode()");
     NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
@@ -67,7 +68,7 @@ CALLBACK_FUNC_DECL(NodeIteratorNextNode)
     return toV8(result.release(), ec, &state);
 }
 
-CALLBACK_FUNC_DECL(NodeIteratorPreviousNode)
+v8::Handle<v8::Value> V8NodeIterator::previousNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.NodeIterator.previousNode()");
     NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());

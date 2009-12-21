@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(SharedWorkerConstructor)
+v8::Handle<v8::Value> V8Custom::v8SharedWorkerConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.SharedWorker.Constructor");
 

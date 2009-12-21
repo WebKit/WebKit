@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "XSLTProcessor.h"
+#include "V8XSLTProcessor.h"
 
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -40,19 +40,20 @@
 #include "V8Document.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#include "XSLTProcessor.h"
 
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(XSLTProcessorConstructor)
+v8::Handle<v8::Value> V8Custom::v8XSLTProcessorConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.Constructor");
     return V8Proxy::constructDOMObject<V8ClassIndex::XSLTPROCESSOR, XSLTProcessor>(args);
 }
 
 
-CALLBACK_FUNC_DECL(XSLTProcessorImportStylesheet)
+v8::Handle<v8::Value> V8XSLTProcessor::importStylesheetCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.importStylesheet");
     if (!V8Node::HasInstance(args[0]))
@@ -66,7 +67,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorImportStylesheet)
 }
 
 
-CALLBACK_FUNC_DECL(XSLTProcessorTransformToFragment)
+v8::Handle<v8::Value> V8XSLTProcessor::transformToFragmentCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.transformToFragment");
     if (!V8Node::HasInstance(args[0]) || !V8Document::HasInstance(args[1]))
@@ -81,7 +82,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToFragment)
 }
 
 
-CALLBACK_FUNC_DECL(XSLTProcessorTransformToDocument)
+v8::Handle<v8::Value> V8XSLTProcessor::transformToDocumentCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.transformToDocument");
 
@@ -102,7 +103,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToDocument)
 }
 
 
-CALLBACK_FUNC_DECL(XSLTProcessorSetParameter)
+v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.setParameter");
     if (isUndefinedOrNull(args[1]) || isUndefinedOrNull(args[2]))
@@ -119,7 +120,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorSetParameter)
 }
 
 
-CALLBACK_FUNC_DECL(XSLTProcessorGetParameter)
+v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.getParameter");
     if (isUndefinedOrNull(args[1]))
@@ -136,7 +137,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorGetParameter)
     return v8String(result);
 }
 
-CALLBACK_FUNC_DECL(XSLTProcessorRemoveParameter)
+v8::Handle<v8::Value> V8XSLTProcessor::removeParameterCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.removeParameter");
     if (isUndefinedOrNull(args[1]))

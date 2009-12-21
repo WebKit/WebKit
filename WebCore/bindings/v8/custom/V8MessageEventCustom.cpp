@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+#include "V8MessageEvent.h"
+
 #include "MessageEvent.h"
 #include "SerializedScriptValue.h"
 
@@ -56,7 +58,7 @@ ACCESSOR_GETTER(MessageEventPorts)
     return portArray;
 }
 
-CALLBACK_FUNC_DECL(MessageEventInitMessageEvent)
+v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessageEvent.initMessageEvent");
     MessageEvent* event = V8DOMWrapper::convertToNativeObject<MessageEvent>(V8ClassIndex::MESSAGEEVENT, args.Holder());

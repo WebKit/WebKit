@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "Document.h"
+#include "V8Document.h"
 
 #include "CanvasRenderingContext.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
 #include "XPathNSResolver.h"
@@ -50,7 +51,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(DocumentEvaluate)
+v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Document.evaluate()");
 
@@ -81,7 +82,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHRESULT, result.release());
 }
 
-CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
+v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Document.getCSSCanvasContext");
     v8::Handle<v8::Object> holder = args.Holder();

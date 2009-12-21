@@ -282,6 +282,16 @@ END
 END
     }
 
+
+    foreach my $function (@{$dataNode->functions}) {
+        my $name = $function->signature->name;
+        push(@headerContent, <<END);
+  static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
+END
+    }
+
+    GenerateSpecialCaseHeaderDeclarations($dataNode);
+    
     push(@headerContent, <<END);
 
  private:
@@ -298,6 +308,14 @@ END
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
+sub GenerateSpecialCaseHeaderDeclarations
+{
+    my $dataNode = shift;
+    
+    if ($dataNode->name eq "HTMLCollection" || $dataNode->name eq "HTMLAllCollection") {
+        push(@headerContent, "  static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
+    }
+}
 
 sub GenerateSetDOMException
 {
@@ -838,12 +856,7 @@ sub GetFunctionTemplateCallbackName
             $function->signature->extendedAttributes->{"V8Custom"}) {
             die "Custom and V8Custom should be mutually exclusive!"
         }
-        my $customFunc = $function->signature->extendedAttributes->{"Custom"} ||
-                         $function->signature->extendedAttributes->{"V8Custom"};
-        if ($customFunc eq 1) {
-            $customFunc = $interfaceName . $codeGenerator->WK_ucfirst($name);
-        }
-        return "V8Custom::v8${customFunc}Callback";
+        return "V8${interfaceName}::${name}Callback";
     } else {
         return "${interfaceName}Internal::${name}Callback";
     }

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebGLFloatArrayConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebGLFloatArrayConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.Contructor");
 
@@ -76,13 +76,13 @@ INDEXED_PROPERTY_SETTER(WebGLFloatArray)
     return value;
 }
 
-CALLBACK_FUNC_DECL(WebGLFloatArrayGet)
+v8::Handle<v8::Value> V8WebGLFloatArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.get()");
     return getWebGLArrayElement<WebGLFloatArray, float>(args, V8ClassIndex::WEBGLFLOATARRAY);
 }
 
-CALLBACK_FUNC_DECL(WebGLFloatArraySet)
+v8::Handle<v8::Value> V8WebGLFloatArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.set()");
     return setWebGLArray<WebGLFloatArray, V8WebGLFloatArray>(args, V8ClassIndex::WEBGLFLOATARRAY);

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebGLArrayBufferConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebGLArrayBufferConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLArrayBuffer.Constructor");
 

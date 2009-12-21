@@ -31,6 +31,7 @@
 #include "config.h"
 
 #if ENABLE(WORKERS)
+#include "V8WorkerContext.h"
 
 #include "DOMTimer.h"
 #include "ExceptionCode.h"
@@ -94,7 +95,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
     return v8::Integer::New(timerId);
 }
 
-CALLBACK_FUNC_DECL(WorkerContextImportScripts)
+v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.importScripts()");
     if (!args.Length())
@@ -128,19 +129,19 @@ CALLBACK_FUNC_DECL(WorkerContextImportScripts)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(WorkerContextSetTimeout)
+v8::Handle<v8::Value> V8WorkerContext::setTimeoutCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.setTimeout()");
     return SetTimeoutOrInterval(args, true);
 }
 
-CALLBACK_FUNC_DECL(WorkerContextSetInterval)
+v8::Handle<v8::Value> V8WorkerContext::setIntervalCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.setInterval()");
     return SetTimeoutOrInterval(args, false);
 }
 
-CALLBACK_FUNC_DECL(WorkerContextAddEventListener)
+v8::Handle<v8::Value> V8WorkerContext::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.addEventListener()");
     WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
@@ -156,7 +157,7 @@ CALLBACK_FUNC_DECL(WorkerContextAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(WorkerContextRemoveEventListener)
+v8::Handle<v8::Value> V8WorkerContext::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.removeEventListener()");
     WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());

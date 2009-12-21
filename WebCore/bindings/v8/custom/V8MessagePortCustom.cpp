@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(MessagePortAddEventListener)
+v8::Handle<v8::Value> V8MessagePort::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.addEventListener()");
     MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
@@ -58,7 +58,7 @@ CALLBACK_FUNC_DECL(MessagePortAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(MessagePortRemoveEventListener)
+v8::Handle<v8::Value> V8MessagePort::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.removeEventListener()");
     MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
@@ -74,7 +74,7 @@ CALLBACK_FUNC_DECL(MessagePortRemoveEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(MessagePortPostMessage)
+v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.postMessage");
     MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());

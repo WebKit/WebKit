@@ -29,14 +29,15 @@
  */
 
 #include "config.h"
-#include "XPathEvaluator.h"
+#include "V8XPathEvaluator.h"
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "XPathEvaluator.h"
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(XPathEvaluatorConstructor)
+v8::Handle<v8::Value> V8Custom::v8XPathEvaluatorConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XPathEvaluator.Constructor");
     return V8Proxy::constructDOMObject<V8ClassIndex::XPATHEVALUATOR, XPathEvaluator>(args);

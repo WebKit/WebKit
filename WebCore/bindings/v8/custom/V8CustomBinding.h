@@ -36,8 +36,6 @@
 
 struct NPObject;
 
-#define CALLBACK_FUNC_DECL(NAME) v8::Handle<v8::Value> V8Custom::v8##NAME##Callback(const v8::Arguments& args)
-
 #define ACCESSOR_GETTER(NAME) \
     v8::Handle<v8::Value> V8Custom::v8##NAME##AccessorGetter( \
         v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -274,8 +272,6 @@ namespace WebCore {
 
         DECLARE_PROPERTY_ACCESSOR(DOMWindowEventHandler);
 
-        DECLARE_CALLBACK(HTMLCanvasElementGetContext);
-
         DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLFrameElementSrc);
         DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLFrameElementLocation);
         DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLIFrameElementSrc);
@@ -284,7 +280,6 @@ namespace WebCore {
 
         DECLARE_PROPERTY_ACCESSOR(HTMLOptionsCollectionLength);
 
-        DECLARE_CALLBACK(HTMLInputElementSetSelectionRange);
 
         DECLARE_PROPERTY_ACCESSOR(HTMLInputElementSelectionStart);
         DECLARE_PROPERTY_ACCESSOR(HTMLInputElementSelectionEnd);
@@ -295,42 +290,9 @@ namespace WebCore {
         DECLARE_NAMED_ACCESS_CHECK(History);
         DECLARE_INDEXED_ACCESS_CHECK(Location);
 
-        DECLARE_CALLBACK(HTMLCollectionItem);
-        DECLARE_CALLBACK(HTMLCollectionNamedItem);
-        DECLARE_CALLBACK(HTMLCollectionCallAsFunction);
-
-        DECLARE_CALLBACK(HTMLAllCollectionItem);
-        DECLARE_CALLBACK(HTMLAllCollectionNamedItem);
-        DECLARE_CALLBACK(HTMLAllCollectionCallAsFunction);
-
-        DECLARE_CALLBACK(HTMLSelectElementRemove);
-
-        DECLARE_CALLBACK(HTMLOptionsCollectionRemove);
-        DECLARE_CALLBACK(HTMLOptionsCollectionAdd);
-
-        DECLARE_CALLBACK(HTMLDocumentWrite);
-        DECLARE_CALLBACK(HTMLDocumentWriteln);
-        DECLARE_CALLBACK(HTMLDocumentOpen);
         DECLARE_PROPERTY_ACCESSOR(HTMLDocumentAll);
         DECLARE_NAMED_PROPERTY_GETTER(HTMLDocument);
         DECLARE_NAMED_PROPERTY_DELETER(HTMLDocument);
-
-        DECLARE_CALLBACK(DocumentEvaluate);
-        DECLARE_CALLBACK(DocumentGetCSSCanvasContext);
-
-        DECLARE_CALLBACK(DOMWindowAddEventListener);
-        DECLARE_CALLBACK(DOMWindowRemoveEventListener);
-        DECLARE_CALLBACK(DOMWindowPostMessage);
-        DECLARE_CALLBACK(DOMWindowSetTimeout);
-        DECLARE_CALLBACK(DOMWindowSetInterval);
-        DECLARE_CALLBACK(DOMWindowAtob);
-        DECLARE_CALLBACK(DOMWindowBtoa);
-        DECLARE_CALLBACK(DOMWindowNOP);
-        DECLARE_CALLBACK(DOMWindowToString);
-        DECLARE_CALLBACK(DOMWindowShowModalDialog);
-        DECLARE_CALLBACK(DOMWindowOpen);
-        DECLARE_CALLBACK(DOMWindowClearTimeout);
-        DECLARE_CALLBACK(DOMWindowClearInterval);
 
         DECLARE_CALLBACK(DOMParserConstructor);
         DECLARE_CALLBACK(HTMLAudioElementConstructor);
@@ -344,56 +306,7 @@ namespace WebCore {
         DECLARE_CALLBACK(XPathEvaluatorConstructor);
         DECLARE_CALLBACK(XSLTProcessorConstructor);
 
-        DECLARE_CALLBACK(XSLTProcessorImportStylesheet);
-        DECLARE_CALLBACK(XSLTProcessorTransformToFragment);
-        DECLARE_CALLBACK(XSLTProcessorTransformToDocument);
-        DECLARE_CALLBACK(XSLTProcessorSetParameter);
-        DECLARE_CALLBACK(XSLTProcessorGetParameter);
-        DECLARE_CALLBACK(XSLTProcessorRemoveParameter);
-
-        DECLARE_CALLBACK(CSSPrimitiveValueGetRGBColorValue);
-
-        DECLARE_CALLBACK(CanvasRenderingContext2DSetStrokeColor);
-        DECLARE_CALLBACK(CanvasRenderingContext2DSetFillColor);
-        DECLARE_CALLBACK(CanvasRenderingContext2DStrokeRect);
-        DECLARE_CALLBACK(CanvasRenderingContext2DSetShadow);
-        DECLARE_CALLBACK(CanvasRenderingContext2DDrawImage);
-        DECLARE_CALLBACK(CanvasRenderingContext2DDrawImageFromRect);
-        DECLARE_CALLBACK(CanvasRenderingContext2DCreatePattern);
-        DECLARE_CALLBACK(CanvasRenderingContext2DFillText);
-        DECLARE_CALLBACK(CanvasRenderingContext2DStrokeText);
-        DECLARE_CALLBACK(CanvasRenderingContext2DPutImageData);
-
 #if ENABLE(3D_CANVAS)
-        DECLARE_CALLBACK(WebGLRenderingContextBufferData);
-        DECLARE_CALLBACK(WebGLRenderingContextBufferSubData);
-        DECLARE_CALLBACK(WebGLRenderingContextGetBufferParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetFramebufferAttachmentParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetProgramParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetRenderbufferParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetShaderParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetTexParameter);
-        DECLARE_CALLBACK(WebGLRenderingContextGetUniform);
-        DECLARE_CALLBACK(WebGLRenderingContextGetVertexAttrib);
-        DECLARE_CALLBACK(WebGLRenderingContextTexImage2D);
-        DECLARE_CALLBACK(WebGLRenderingContextTexSubImage2D);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform1fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform1iv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform2fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform2iv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform3fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform3iv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform4fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniform4iv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix2fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix3fv);
-        DECLARE_CALLBACK(WebGLRenderingContextUniformMatrix4fv);
-        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib1fv);
-        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib2fv);
-        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib3fv);
-        DECLARE_CALLBACK(WebGLRenderingContextVertexAttrib4fv);
-
         DECLARE_CALLBACK(WebGLArrayBufferConstructor);
         DECLARE_CALLBACK(WebGLByteArrayConstructor);
         DECLARE_CALLBACK(WebGLFloatArrayConstructor);
@@ -405,20 +318,6 @@ namespace WebCore {
 #endif
 
         DECLARE_PROPERTY_ACCESSOR_GETTER(ClipboardTypes);
-        DECLARE_CALLBACK(ClipboardClearData);
-        DECLARE_CALLBACK(ClipboardGetData);
-        DECLARE_CALLBACK(ClipboardSetData);
-        DECLARE_CALLBACK(ClipboardSetDragImage);
-
-        DECLARE_CALLBACK(ElementQuerySelector);
-        DECLARE_CALLBACK(ElementQuerySelectorAll);
-        DECLARE_CALLBACK(ElementSetAttribute);
-        DECLARE_CALLBACK(ElementSetAttributeNode);
-        DECLARE_CALLBACK(ElementSetAttributeNS);
-        DECLARE_CALLBACK(ElementSetAttributeNodeNS);
-
-        DECLARE_CALLBACK(HistoryPushState);
-        DECLARE_CALLBACK(HistoryReplaceState);
 
         DECLARE_PROPERTY_ACCESSOR_SETTER(LocationProtocol);
         DECLARE_PROPERTY_ACCESSOR_SETTER(LocationHost);
@@ -431,17 +330,6 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR_GETTER(LocationAssign);
         DECLARE_PROPERTY_ACCESSOR_GETTER(LocationReplace);
         DECLARE_PROPERTY_ACCESSOR_GETTER(LocationReload);
-        DECLARE_CALLBACK(LocationAssign);
-        DECLARE_CALLBACK(LocationReplace);
-        DECLARE_CALLBACK(LocationReload);
-        DECLARE_CALLBACK(LocationToString);
-        DECLARE_CALLBACK(LocationValueOf);
-        DECLARE_CALLBACK(NodeAddEventListener);
-        DECLARE_CALLBACK(NodeRemoveEventListener);
-        DECLARE_CALLBACK(NodeInsertBefore);
-        DECLARE_CALLBACK(NodeReplaceChild);
-        DECLARE_CALLBACK(NodeRemoveChild);
-        DECLARE_CALLBACK(NodeAppendChild);
 
         // We actually only need this because WebKit has
         // navigator.appVersion as custom. Our version just
@@ -455,58 +343,12 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnprogress);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnreadystatechange);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestResponseText);
-        DECLARE_CALLBACK(XMLHttpRequestAddEventListener);
-        DECLARE_CALLBACK(XMLHttpRequestRemoveEventListener);
-        DECLARE_CALLBACK(XMLHttpRequestOpen);
-        DECLARE_CALLBACK(XMLHttpRequestSend);
-        DECLARE_CALLBACK(XMLHttpRequestSetRequestHeader);
-        DECLARE_CALLBACK(XMLHttpRequestGetResponseHeader);
-        DECLARE_CALLBACK(XMLHttpRequestOverrideMimeType);
-        DECLARE_CALLBACK(XMLHttpRequestDispatchEvent);
 
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnabort);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnerror);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnload);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnloadstart);
         DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnprogress);
-        DECLARE_CALLBACK(XMLHttpRequestUploadAddEventListener);
-        DECLARE_CALLBACK(XMLHttpRequestUploadRemoveEventListener);
-        DECLARE_CALLBACK(XMLHttpRequestUploadDispatchEvent);
-
-        DECLARE_CALLBACK(TreeWalkerParentNode);
-        DECLARE_CALLBACK(TreeWalkerFirstChild);
-        DECLARE_CALLBACK(TreeWalkerLastChild);
-        DECLARE_CALLBACK(TreeWalkerNextNode);
-        DECLARE_CALLBACK(TreeWalkerPreviousNode);
-        DECLARE_CALLBACK(TreeWalkerNextSibling);
-        DECLARE_CALLBACK(TreeWalkerPreviousSibling);
-
-        DECLARE_CALLBACK(InjectedScriptHostInspectedWindow);
-        DECLARE_CALLBACK(InjectedScriptHostNodeForId);
-        DECLARE_CALLBACK(InjectedScriptHostWrapObject);
-        DECLARE_CALLBACK(InjectedScriptHostUnwrapObject);
-        DECLARE_CALLBACK(InjectedScriptHostPushNodePathToFrontend);
-        DECLARE_CALLBACK(InjectedScriptHostWrapCallback);
-#if ENABLE(DATABASE)
-        DECLARE_CALLBACK(InjectedScriptHostSelectDatabase);
-        DECLARE_CALLBACK(InjectedScriptHostDatabaseForId);
-#endif
-#if ENABLE(DOM_STORAGE)
-        DECLARE_CALLBACK(InjectedScriptHostSelectDOMStorage);
-#endif
-
-        DECLARE_CALLBACK(InspectorFrontendHostSearch);
-        DECLARE_CALLBACK(InspectorFrontendHostShowContextMenu);
-
-        DECLARE_CALLBACK(ConsoleProfile);
-        DECLARE_CALLBACK(ConsoleProfileEnd);
-
-        DECLARE_CALLBACK(NodeIteratorNextNode);
-        DECLARE_CALLBACK(NodeIteratorPreviousNode);
-
-        DECLARE_CALLBACK(NodeFilterAcceptNode);
-
-        DECLARE_CALLBACK(HTMLFormElementSubmit);
 
         DECLARE_NAMED_PROPERTY_GETTER(DOMWindow);
         DECLARE_INDEXED_PROPERTY_GETTER(DOMWindow);
@@ -524,8 +366,6 @@ namespace WebCore {
         DECLARE_INDEXED_PROPERTY_GETTER(HTMLPlugInElement);
         DECLARE_INDEXED_PROPERTY_SETTER(HTMLPlugInElement);
 
-        DECLARE_CALLBACK(HTMLPlugInElement);
-
         DECLARE_NAMED_PROPERTY_GETTER(StyleSheetList);
         DECLARE_INDEXED_PROPERTY_GETTER(NamedNodeMap);
         DECLARE_INDEXED_PROPERTY_GETTER(HTMLFormElement);
@@ -538,57 +378,32 @@ namespace WebCore {
         DECLARE_NAMED_PROPERTY_GETTER(HTMLCollection);
 
 #if ENABLE(3D_CANVAS)
-        DECLARE_CALLBACK(WebGLByteArrayGet);
-        DECLARE_CALLBACK(WebGLByteArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLByteArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLByteArray);
 
-        DECLARE_CALLBACK(WebGLFloatArrayGet);
-        DECLARE_CALLBACK(WebGLFloatArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLFloatArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLFloatArray);
 
-        DECLARE_CALLBACK(WebGLIntArrayGet);
-        DECLARE_CALLBACK(WebGLIntArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLIntArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLIntArray);
 
-        DECLARE_CALLBACK(WebGLShortArrayGet);
-        DECLARE_CALLBACK(WebGLShortArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLShortArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLShortArray);
 
-        DECLARE_CALLBACK(WebGLUnsignedByteArrayGet);
-        DECLARE_CALLBACK(WebGLUnsignedByteArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedByteArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray);
 
-        DECLARE_CALLBACK(WebGLUnsignedIntArrayGet);
-        DECLARE_CALLBACK(WebGLUnsignedIntArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedIntArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedIntArray);
 
-        DECLARE_CALLBACK(WebGLUnsignedShortArrayGet);
-        DECLARE_CALLBACK(WebGLUnsignedShortArraySet);
         DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedShortArray);
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray);
 #endif
 
         DECLARE_PROPERTY_ACCESSOR_GETTER(MessageEventPorts);
-        DECLARE_CALLBACK(MessageEventInitMessageEvent);
 
         DECLARE_PROPERTY_ACCESSOR(MessagePortOnmessage);
         DECLARE_PROPERTY_ACCESSOR(MessagePortOnclose);
-        DECLARE_CALLBACK(MessagePortAddEventListener);
-        DECLARE_CALLBACK(MessagePortPostMessage);
-        DECLARE_CALLBACK(MessagePortRemoveEventListener);
-        DECLARE_CALLBACK(MessagePortStartConversation);
-
-        DECLARE_CALLBACK(DatabaseChangeVersion);
-        DECLARE_CALLBACK(DatabaseTransaction);
-        DECLARE_CALLBACK(DatabaseReadTransaction);
-        DECLARE_CALLBACK(SQLTransactionExecuteSql);
-        DECLARE_CALLBACK(SQLResultSetRowListItem);
 
 #if ENABLE(DATAGRID)
         DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);
@@ -613,35 +428,18 @@ namespace WebCore {
 
 #if ENABLE(SVG)
         DECLARE_PROPERTY_ACCESSOR_GETTER(SVGLengthValue);
-        DECLARE_CALLBACK(SVGLengthConvertToSpecifiedUnits);
-        DECLARE_CALLBACK(SVGMatrixMultiply);
-        DECLARE_CALLBACK(SVGMatrixInverse);
-        DECLARE_CALLBACK(SVGMatrixRotateFromVector);
-        DECLARE_CALLBACK(SVGElementInstanceAddEventListener);
-        DECLARE_CALLBACK(SVGElementInstanceRemoveEventListener);
 #endif
 
 #if ENABLE(WORKERS)
         DECLARE_PROPERTY_ACCESSOR(AbstractWorkerOnerror);
-        DECLARE_CALLBACK(AbstractWorkerAddEventListener);
-        DECLARE_CALLBACK(AbstractWorkerRemoveEventListener);
 
         DECLARE_PROPERTY_ACCESSOR(DedicatedWorkerContextOnmessage);
-        DECLARE_CALLBACK(DedicatedWorkerContextPostMessage);
 
         DECLARE_PROPERTY_ACCESSOR(WorkerOnmessage);
-        DECLARE_CALLBACK(WorkerPostMessage);
         DECLARE_CALLBACK(WorkerConstructor);
 
         DECLARE_PROPERTY_ACCESSOR_GETTER(WorkerContextSelf);
         DECLARE_PROPERTY_ACCESSOR(WorkerContextOnerror);
-        DECLARE_CALLBACK(WorkerContextImportScripts);
-        DECLARE_CALLBACK(WorkerContextSetTimeout);
-        DECLARE_CALLBACK(WorkerContextClearTimeout);
-        DECLARE_CALLBACK(WorkerContextSetInterval);
-        DECLARE_CALLBACK(WorkerContextClearInterval);
-        DECLARE_CALLBACK(WorkerContextAddEventListener);
-        DECLARE_CALLBACK(WorkerContextRemoveEventListener);
 
 #if ENABLE(NOTIFICATIONS)
         DECLARE_ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications);
@@ -649,20 +447,12 @@ namespace WebCore {
 #endif // ENABLE(WORKERS)
 
 #if ENABLE(NOTIFICATIONS)
-        DECLARE_CALLBACK(NotificationCenterRequestPermission);
-        DECLARE_CALLBACK(NotificationCenterCreateNotification);
-        DECLARE_CALLBACK(NotificationCenterCreateHTMLNotification);
-
-        DECLARE_CALLBACK(NotificationAddEventListener);
-        DECLARE_CALLBACK(NotificationRemoveEventListener);
         DECLARE_PROPERTY_ACCESSOR(NotificationEventHandler);
 #endif // ENABLE(NOTIFICATIONS)
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache);
         DECLARE_PROPERTY_ACCESSOR(DOMApplicationCacheEventHandler);
-        DECLARE_CALLBACK(DOMApplicationCacheAddEventListener);
-        DECLARE_CALLBACK(DOMApplicationCacheRemoveEventListener);
 #endif
 
 #if ENABLE(SHARED_WORKERS)
@@ -679,15 +469,9 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR(WebSocketOnmessage);
         DECLARE_PROPERTY_ACCESSOR(WebSocketOnclose);
         DECLARE_CALLBACK(WebSocketConstructor);
-        DECLARE_CALLBACK(WebSocketAddEventListener);
-        DECLARE_CALLBACK(WebSocketRemoveEventListener);
-        DECLARE_CALLBACK(WebSocketSend);
-        DECLARE_CALLBACK(WebSocketClose);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket);
 #endif
 
-        DECLARE_CALLBACK(GeolocationGetCurrentPosition);
-        DECLARE_CALLBACK(GeolocationWatchPosition);
         DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesAltitude);
         DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesAltitudeAccuracy);
         DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesHeading);
@@ -721,10 +505,7 @@ namespace WebCore {
 #if ENABLE(SVG)
         static V8ClassIndex::V8WrapperType DowncastSVGPathSeg(void* pathSeg);
 #endif
-
     private:
-        static v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments&, bool singleShot);
-        static void ClearTimeoutImpl(const v8::Arguments&);
         static void WindowSetLocation(DOMWindow*, const String&);
     };
 

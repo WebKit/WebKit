@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "HTMLFormElement.h"
+#include "V8HTMLFormElement.h"
 
 #include "HTMLCollection.h"
+#include "HTMLFormElement.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8NamedNodesCollection.h"
@@ -80,7 +81,8 @@ NAMED_PROPERTY_GETTER(HTMLFormElement)
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, collection);
 }
 
-CALLBACK_FUNC_DECL(HTMLFormElementSubmit) {
+v8::Handle<v8::Value> V8HTMLFormElement::submitCallback(const v8::Arguments& args)
+{
     INC_STATS("DOM.HTMLFormElement.submit()");
     HTMLFormElement* form = V8DOMWrapper::convertDOMWrapperToNative<HTMLFormElement>(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForEnteredContext();

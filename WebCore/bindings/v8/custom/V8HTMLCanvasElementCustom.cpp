@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "HTMLCanvasElement.h"
-#include "CanvasRenderingContext.h"
+#include "V8HTMLCanvasElement.h"
 
 #include "CanvasRenderingContext.h"
+#include "HTMLCanvasElement.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Node.h"
@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(HTMLCanvasElementGetContext)
+v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLCanvasElement.context");
     v8::Handle<v8::Object> holder = args.Holder();

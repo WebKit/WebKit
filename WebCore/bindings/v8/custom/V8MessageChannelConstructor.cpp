@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(MessageChannelConstructor)
+v8::Handle<v8::Value> V8Custom::v8MessageChannelConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessageChannel.Constructor");
     // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.

@@ -32,19 +32,20 @@
 
 #if ENABLE(WEB_SOCKETS)
 
-#include "WebSocket.h"
+#include "V8WebSocket.h"
 
 #include "Frame.h"
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
+#include "WebSocket.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(WebSocketAddEventListener)
+v8::Handle<v8::Value> V8WebSocket::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.addEventListener()");
     WebSocket* webSocket = V8DOMWrapper::convertToNativeObject<WebSocket>(V8ClassIndex::WEBSOCKET, args.Holder());
@@ -60,7 +61,7 @@ CALLBACK_FUNC_DECL(WebSocketAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(WebSocketRemoveEventListener)
+v8::Handle<v8::Value> V8WebSocket::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.removeEventListener()");
     WebSocket* webSocket = V8DOMWrapper::convertToNativeObject<WebSocket>(V8ClassIndex::WEBSOCKET, args.Holder());
@@ -75,7 +76,7 @@ CALLBACK_FUNC_DECL(WebSocketRemoveEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(WebSocketConstructor)
+v8::Handle<v8::Value> V8Custom::v8WebSocketConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.Constructor");
 
@@ -128,7 +129,7 @@ CALLBACK_FUNC_DECL(WebSocketConstructor)
     return args.Holder();
 }
 
-CALLBACK_FUNC_DECL(WebSocketSend)
+v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.send()");
     WebSocket* webSocket = V8DOMWrapper::convertToNativeObject<WebSocket>(V8ClassIndex::WEBSOCKET, args.Holder());
@@ -146,7 +147,7 @@ CALLBACK_FUNC_DECL(WebSocketSend)
     return v8Boolean(ret);
 }
 
-CALLBACK_FUNC_DECL(WebSocketClose)
+v8::Handle<v8::Value> V8WebSocket::closeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.close()");
     WebSocket* webSocket = V8DOMWrapper::convertToNativeObject<WebSocket>(V8ClassIndex::WEBSOCKET, args.Holder());

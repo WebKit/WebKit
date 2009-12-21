@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "CanvasRenderingContext2D.h"
+#include "V8CanvasRenderingContext2D.h"
 
 #include "CanvasGradient.h"
+#include "CanvasRenderingContext2D.h"
 #include "CanvasPattern.h"
 #include "CanvasStyle.h"
 #include "ExceptionCode.h"
@@ -99,7 +100,7 @@ ACCESSOR_SETTER(CanvasRenderingContext2DFillStyle)
 
 // TODO: SetStrokeColor and SetFillColor are similar except function names,
 // consolidate them into one.
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::setStrokeColorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setStrokeColor()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -129,7 +130,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::setFillColorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setFillColor()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -159,7 +160,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeRect)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeRectCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.strokeRect()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -174,7 +175,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeRect)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::setShadowCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setShadow()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -209,7 +210,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::drawImageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.drawImage()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -314,7 +315,8 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
     return notHandledByInterceptor();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
+
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::drawImageFromRectCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.drawImageFromRect()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -330,7 +332,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::createPatternCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.createPattern()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -363,7 +365,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
     return notHandledByInterceptor();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::fillTextCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.fillText()");
 
@@ -390,7 +392,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeText)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeTextCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.strokeText()");
     CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
@@ -416,7 +418,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeText)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(CanvasRenderingContext2DPutImageData)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::putImageDataCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.putImageData()");
 

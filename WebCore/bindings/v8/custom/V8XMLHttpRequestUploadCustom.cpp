@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "XMLHttpRequestUpload.h"
+#include "V8XMLHttpRequestUpload.h"
 
 #include "ExceptionCode.h"
 #include "V8Binding.h"
@@ -37,12 +37,13 @@
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "XMLHttpRequest.h"
+#include "XMLHttpRequestUpload.h"
 
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(XMLHttpRequestUploadAddEventListener)
+v8::Handle<v8::Value> V8XMLHttpRequestUpload::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequestUpload.addEventListener()");
     XMLHttpRequestUpload* xmlHttpRequestUpload = V8DOMWrapper::convertToNativeObject<XMLHttpRequestUpload>(V8ClassIndex::XMLHTTPREQUESTUPLOAD, args.Holder());
@@ -60,7 +61,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestUploadAddEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestUploadRemoveEventListener)
+v8::Handle<v8::Value> V8XMLHttpRequestUpload::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequestUpload.removeEventListener()");
     XMLHttpRequestUpload* xmlHttpRequestUpload = V8DOMWrapper::convertToNativeObject<XMLHttpRequestUpload>(V8ClassIndex::XMLHTTPREQUESTUPLOAD, args.Holder());
@@ -79,7 +80,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestUploadRemoveEventListener)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(XMLHttpRequestUploadDispatchEvent)
+v8::Handle<v8::Value> V8XMLHttpRequestUpload::dispatchEventCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequestUpload.dispatchEvent()");
     return throwError(NOT_SUPPORTED_ERR);

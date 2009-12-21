@@ -1,3 +1,79 @@
+2009-12-18  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam barth.
+
+        Generate V8 bindings non-constructor callback declarations 
+        in CodeGeneratorV8.pm instead of manually declaring them in
+        V8CustomBinding.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32638
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp:
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMApplicationCacheCustom.cpp:
+        * bindings/v8/custom/V8DOMParserConstructor.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.h: Added.
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        * bindings/v8/custom/V8NodeFilterCustom.cpp:
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SVGElementInstanceCustom.cpp:
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp:
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp:
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp:
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+        * bindings/v8/custom/V8XMLSerializerConstructor.cpp:
+        * bindings/v8/custom/V8XPathEvaluatorConstructor.cpp:
+        * bindings/v8/custom/V8XSLTProcessorCustom.cpp:
+
 2009-12-21  Nate Chapin  <japhet@chromium.org>
 
         Rubber-stamped by Darin Adler.

@@ -29,14 +29,15 @@
  */
 
 #include "config.h"
-#include "XMLSerializer.h"
+#include "V8XMLSerializer.h"
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "XMLSerializer.h"
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(XMLSerializerConstructor)
+v8::Handle<v8::Value> V8Custom::v8XMLSerializerConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLSerializer.Constructor");
     return V8Proxy::constructDOMObject<V8ClassIndex::XMLSERIALIZER, XMLSerializer>(args);

@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+#include "V8HTMLInputElement.h"
+
 #include "HTMLInputElement.h"
 
 #include "V8Binding.h"
@@ -90,7 +92,7 @@ ACCESSOR_SETTER(HTMLInputElementSelectionEnd)
     imp->setSelectionEnd(value->Int32Value());
 }
 
-CALLBACK_FUNC_DECL(HTMLInputElementSetSelectionRange)
+v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLInputElement.setSelectionRange");
     v8::Handle<v8::Object> holder = args.Holder();
