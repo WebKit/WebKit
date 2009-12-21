@@ -1,10 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>frametest/index.html</file>
-    <file>frametest/frame_a.html</file>
-    <file>frametest/iframe.html</file>
-    <file>frametest/iframe2.html</file>
-    <file>frametest/iframe3.html</file>
+    <file>resources/index.html</file>
+    <file>resources/frame_a.html</file>
+    <file>resources/iframe.html</file>
+    <file>resources/iframe2.html</file>
+    <file>resources/iframe3.html</file>
 </qresource>
 </RCC>
 

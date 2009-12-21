@@ -40,10 +40,6 @@
 #include <QPushButton>
 #include <QDir>
 
-#if defined(Q_OS_SYMBIAN)
-# define SRCDIR ""
-#endif
-
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
@@ -1275,7 +1271,7 @@ void tst_QWebPage::backActionUpdate()
     QAction *action = page->action(QWebPage::Back);
     QVERIFY(!action->isEnabled());
     QSignalSpy loadSpy(page, SIGNAL(loadFinished(bool)));
-    QUrl url = QUrl("qrc:///frametest/index.html");
+    QUrl url = QUrl("qrc:///resources/index.html");
     page->mainFrame()->load(url);
     QTRY_COMPARE(loadSpy.count(), 1);
     QVERIFY(!action->isEnabled());
@@ -1306,7 +1302,7 @@ void tst_QWebPage::frameAt()
     QWebView webView;
     QWebPage* webPage = webView.page();
     QSignalSpy loadSpy(webPage, SIGNAL(loadFinished(bool)));
-    QUrl url = QUrl("qrc:///frametest/iframe.html");
+    QUrl url = QUrl("qrc:///resources/iframe.html");
     webPage->mainFrame()->load(url);
     QTRY_COMPARE(loadSpy.count(), 1);
     frameAtHelper(webPage, webPage->mainFrame(), webPage->mainFrame()->pos());
@@ -1717,7 +1713,7 @@ void tst_QWebPage::errorPageExtensionInFrameset()
     ErrorPage* page = new ErrorPage;
     m_view->setPage(page);
 
-    m_view->load(QUrl("qrc:///frametest/index.html"));
+    m_view->load(QUrl("qrc:///resources/index.html"));
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
@@ -1766,13 +1762,16 @@ void tst_QWebPage::screenshot_data()
 
 void tst_QWebPage::screenshot()
 {
-    QDir::setCurrent(SRCDIR);
+    if (!QDir(TESTS_SOURCE_DIR).exists())
+        QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
+
+    QDir::setCurrent(TESTS_SOURCE_DIR);
 
     QFETCH(QString, html);
     QWebPage* page = new QWebPage;
     page->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebFrame* mainFrame = page->mainFrame();
-    mainFrame->setHtml(html, QUrl::fromLocalFile(QDir::currentPath()));
+    mainFrame->setHtml(html, QUrl::fromLocalFile(TESTS_SOURCE_DIR));
     if (html.contains("</embed>")) {
         // some reasonable time for the PluginStream to feed test.swf to flash and start painting
         QTest::qWait(2000);

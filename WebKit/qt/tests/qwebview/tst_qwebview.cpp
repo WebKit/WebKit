@@ -30,6 +30,8 @@
 #include <qwebkitversion.h>
 #include <qwebframe.h>
 
+#include <QDebug>
+
 class tst_QWebView : public QObject
 {
     Q_OBJECT
@@ -121,7 +123,10 @@ void tst_QWebView::reusePage_data()
 
 void tst_QWebView::reusePage()
 {
-    QDir::setCurrent(SRCDIR);
+    if (!QDir(TESTS_SOURCE_DIR).exists())
+        QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
+
+    QDir::setCurrent(TESTS_SOURCE_DIR);
 
     QFETCH(QString, html);
     QWebView* view1 = new QWebView;
@@ -129,7 +134,7 @@ void tst_QWebView::reusePage()
     view1->setPage(page);
     page->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebFrame* mainFrame = page->mainFrame();
-    mainFrame->setHtml(html, QUrl::fromLocalFile(QDir::currentPath()));
+    mainFrame->setHtml(html, QUrl::fromLocalFile(TESTS_SOURCE_DIR));
     if (html.contains("</embed>")) {
         // some reasonable time for the PluginStream to feed test.swf to flash and start painting
         waitForSignal(view1, SIGNAL(loadFinished(bool)), 2000);
@@ -193,7 +198,7 @@ void tst_QWebView::crashTests()
     // Test page should have frames.
     QWebView view;
     WebViewCrashTest tester(&view);
-    QUrl url("qrc:///data/index.html");
+    QUrl url("qrc:///resources/index.html");
     view.load(url);
     QTRY_VERIFY(tester.m_executed); // If fail it means that the test wasn't executed.
 }
