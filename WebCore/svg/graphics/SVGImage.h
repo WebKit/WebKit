@@ -47,6 +47,8 @@ namespace WebCore {
     private:
         virtual ~SVGImage();
 
+        virtual String filenameExtension() const;
+
         virtual void setContainerSize(const IntSize&);
         virtual bool usesContainerSize() const;
         virtual bool hasRelativeWidth() const;

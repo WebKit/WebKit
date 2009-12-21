@@ -1,3 +1,16 @@
+2009-12-21  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix assertion failure when dragging an SVG image.
+        https://bugs.webkit.org/show_bug.cgi?id=32511
+
+        Test: fast/images/drag-svg-as-image.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::filenameExtension): Return "svg"
+        * svg/graphics/SVGImage.h:
+
 2009-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

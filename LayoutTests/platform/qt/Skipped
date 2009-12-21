@@ -249,6 +249,9 @@ fast/forms/input-file-re-render.html
 fast/events/drag-file-crash.html
 http/tests/security/clipboard/clipboard-file-access.html
 
+# Missing drag & drop functionality in DRT
+fast/images/drag-svg-as-image.html
+
 # ------- missing eventSender.zoomPageIn
 fast/events/clientXY-in-zoom-and-scroll.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html

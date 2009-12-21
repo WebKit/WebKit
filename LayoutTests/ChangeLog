@@ -1,3 +1,15 @@
+2009-12-21  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Test that dragging an SVG as <img> doesn't crash the browser.
+        Note that this only works in debug mode as it's a failing assert.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32511
+
+        * fast/images/drag-svg-as-image.html: Added.
+        * platform/qt/Skipped: fast/images/drag-svg-as-image.html added.
+
 2009-12-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.
