@@ -48,6 +48,8 @@
 #include <math.h>
 #include <wtf/gtk/GOwnPtr.h>
 
+#define SENTINEL (void*) 0
+
 using namespace std;
 
 namespace WebCore {
@@ -130,8 +132,8 @@ static float playbackPosition(GstElement* playbin)
     gint64 position;
     gst_query_parse_position(query, 0, &position);
 
-    // Position is available only if the pipeline is not in NULL or
-    // READY state.
+    // Position is available only if the pipeline is not in GST_STATE_NULL or
+    // GST_STATE_READY state.
     if (position !=  static_cast<gint64>(GST_CLOCK_TIME_NONE))
         ret = static_cast<float>(position) / static_cast<float>(GST_SECOND);
 
@@ -412,7 +414,7 @@ bool MediaPlayerPrivate::hasVideo() const
 {
     gint currentVideo = -1;
     if (m_playBin)
-        g_object_get(G_OBJECT(m_playBin), "current-video", &currentVideo, NULL);
+        g_object_get(m_playBin, "current-video", &currentVideo, SENTINEL);
     return currentVideo > -1;
 }
 
@@ -420,7 +422,7 @@ bool MediaPlayerPrivate::hasAudio() const
 {
     gint currentAudio = -1;
     if (m_playBin)
-        g_object_get(G_OBJECT(m_playBin), "current-audio", &currentAudio, NULL);
+        g_object_get(m_playBin, "current-audio", &currentAudio, SENTINEL);
     return currentAudio > -1;
 }
 
@@ -429,7 +431,7 @@ void MediaPlayerPrivate::setVolume(float volume)
     if (!m_playBin)
         return;
 
-    g_object_set(G_OBJECT(m_playBin), "volume", static_cast<double>(volume), NULL);
+    g_object_set(m_playBin, "volume", static_cast<double>(volume), SENTINEL);
 }
 
 void MediaPlayerPrivate::volumeChanged()
@@ -487,7 +489,7 @@ void MediaPlayerPrivate::setRate(float rate)
                           GST_SEEK_TYPE_SET, end))
         LOG_VERBOSE(Media, "Set rate to %f failed", rate);
     else
-        g_object_set(m_playBin, "mute", mute, NULL);
+        g_object_set(m_playBin, "mute", mute, SENTINEL);
 }
 
 int MediaPlayerPrivate::dataRate() const
@@ -550,7 +552,7 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
     if (!dur)
         return 0;*/
 
-    return 1;//totalBytes() * maxTime / dur;
+    return 1; // totalBytes() * maxTime / dur;
 }
 
 bool MediaPlayerPrivate::totalBytesKnown() const
@@ -634,7 +636,7 @@ void MediaPlayerPrivate::updateStates()
 
         m_networkState = MediaPlayer::Loaded;
 
-        g_object_get(m_playBin, "source", &m_source, NULL);
+        g_object_get(m_playBin, "source", &m_source, SENTINEL);
         if (!m_source)
             LOG_VERBOSE(Media, "m_source is 0");
         break;
@@ -925,10 +927,9 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     g_signal_connect(bus, "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
     gst_object_unref(bus);
 
-    g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(),
-                 NULL);
+    g_object_set(m_playBin, "uri", url.utf8().data(), SENTINEL);
 
-    g_signal_connect(G_OBJECT(m_playBin), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
+    g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
 
     m_videoSink = webkit_video_sink_new();
 
@@ -938,16 +939,16 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     if (channel->state == WTFLogChannelOn) {
         m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-            g_object_set(G_OBJECT(m_fpsSink), "video-sink", m_videoSink, NULL);
+            g_object_set(m_fpsSink, "video-sink", m_videoSink, SENTINEL);
             g_object_ref_sink(m_fpsSink);
-            g_object_set(m_playBin, "video-sink", m_fpsSink, NULL);
+            g_object_set(m_playBin, "video-sink", m_fpsSink, SENTINEL);
         } else {
             m_fpsSink = 0;
-            g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+            g_object_set(m_playBin, "video-sink", m_videoSink, SENTINEL);
             LOG(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
         }
     } else
-        g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
+        g_object_set(m_playBin, "video-sink", m_videoSink, SENTINEL);
 
     g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 }

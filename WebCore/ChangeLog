@@ -1,3 +1,19 @@
+2009-12-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] G_OBJECT() cast is not necessary for signals connection and properties access
+        https://bugs.webkit.org/show_bug.cgi?id=32661
+
+        Removed useless calls to the G_OBJECT() macro and replaced NULL
+        occurences with a SENTINEL macro.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::hasAudio):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+
 2009-12-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.
