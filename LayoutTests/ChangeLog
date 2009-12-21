@@ -1,5 +1,17 @@
 2009-12-21  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, build fix.
+
+        Cleared instead of deleted some layout test files, making them fail. Delete them for real.
+
+        * http/tests/navigation/image-load-in-beforeunload-handler-expected.txt: Removed.
+        * http/tests/navigation/image-load-in-beforeunload-handler.html: Removed.
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt: Removed.
+        * http/tests/navigation/image-load-in-unload-handler.html: Removed.
+        * http/tests/navigation/resources/wait-then-notify-done.html: Removed.
+
+2009-12-21  Nate Chapin  <japhet@chromium.org>
+
         Rubber-stamped by Darin Adler.
 
         Revert r52446 due to crashiness.
