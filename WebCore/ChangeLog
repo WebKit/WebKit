@@ -1,3 +1,10 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Fix Windows build warnings
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude SVG files from the build that
+        are compiled via SVGAllInOne.cpp.
+
 2009-12-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
