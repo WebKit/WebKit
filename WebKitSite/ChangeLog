@@ -1,3 +1,13 @@
+2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Removed outdated contact information from bug life cycle page.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32494
+
+        * quality/lifecycle.html:
+
 2009-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
