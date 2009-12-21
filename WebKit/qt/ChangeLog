@@ -1,3 +1,11 @@
+2009-12-21  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Minor fixes to language.
+
+        * Api/qwebpage.cpp:
+
 2009-12-21  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
