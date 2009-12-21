@@ -1365,7 +1365,11 @@ HRESULT WebPreferences::setAcceleratedCompositingEnabled(BOOL enabled)
 
 HRESULT WebPreferences::acceleratedCompositingEnabled(BOOL* enabled)
 {
+#if USE(ACCELERATED_COMPOSITING)
     *enabled = WKCACFLayerRenderer::acceleratedCompositingAvailable() && boolValueForKey(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey));
+#else
+    *enabled = FALSE;
+#endif
     return S_OK;
 }
 

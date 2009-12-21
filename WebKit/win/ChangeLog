@@ -1,3 +1,11 @@
+2009-12-21  Adam Roben  <aroben@apple.com>
+
+        Fix non-ACCELERATED_COMPOSITING builds
+
+        * WebPreferences.cpp:
+        (WebPreferences::acceleratedCompositingEnabled): Guard use of
+        WKCACFLayerRenderer with USE(ACCELERATED_COMPOSITING).
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         Add IWebPreferencesPrivate::[set]AcceleratedCompositingEnabled
