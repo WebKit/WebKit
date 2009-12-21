@@ -42,8 +42,9 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
     def should_proceed_with_work_item(self, patch):
         try:
             self.run_bugzilla_tool(["build", self.port.flag(), "--force-clean", "--quiet"])
+            self._update_status("Building", patch)
         except ScriptError, e:
-            self._update_status("Unable to perform a build.")
+            self._update_status("Unable to perform a build")
             return False
         return True
 
@@ -58,21 +59,20 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
                 "--parent-command=%s" % self.name,
                 "--no-update",
                 patch["id"]])
-            self._patches.did_pass(patch)
+            self._did_pass(patch)
         except ScriptError, e:
-            self._patches.did_fail(patch)
+            self._did_fail(patch)
             raise e
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
+        status_id = cls._update_status_for_script_error(tool, state, script_error)
         # FIXME: This won't be right for ports that don't use build-webkit!
         if not script_error.command_name() == "build-webkit":
             return
-        patch = state["patch"]
-        status_id = tool.status_bot.update_status(cls.name, "patch %s failed: %s" % (patch["id"], script_error.message), patch, StringIO(script_error.output))
         results_link = tool.status_bot.results_url_for_status(status_id)
-        message = "Attachment %s did not build on %s:\nBuild output: %s" % (patch["id"], cls.port_name, results_link)
-        tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=cls.watchers)
+        message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"]["id"], cls.port_name, results_link)
+        tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
 
 
 class GtkEWS(AbstractEarlyWarningSystem):

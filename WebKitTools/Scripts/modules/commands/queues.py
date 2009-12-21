@@ -47,6 +47,11 @@ class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
         "webkit-bot-watchers@googlegroups.com",
     ]
+
+    _pass_status = "Pass"
+    _fail_status = "Fail"
+    _error_status = "Error"
+
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
@@ -62,6 +67,12 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_bot.update_status(self.name, message, patch, results_file)
 
+    def _did_pass(self, patch):
+        self._update_status(self._pass_status, patch)
+
+    def _did_fail(self, patch):
+        self._update_status(self._fail_status, patch)
+
     def queue_log_path(self):
         return "%s.log" % self.name
 
@@ -69,12 +80,12 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return os.path.join("%s-logs" % self.name, "%s.log" % patch["bug_id"])
 
     def begin_work_queue(self):
-        log("CAUTION: %s will discard all local changes in %s" % (self.name, self.tool.scm().checkout_root))
+        log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self.tool.scm().checkout_root))
         if self.options.confirm:
             response = raw_input("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
-        log("Running WebKit %s. %s" % (self.name, datetime.now().strftime(QueueEngine.log_date_format)))
+        log("Running WebKit %s." % self.name)
 
     def should_continue_work_queue(self):
         return True
@@ -101,11 +112,14 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def log_progress(self, patch_ids):
         log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
 
-    def execute(self, options, args, tool):
+    def execute(self, options, args, tool, engine=QueueEngine):
         self.options = options
         self.tool = tool
-        work_queue = QueueEngine(self.name, self)
-        return work_queue.run()
+        return engine(self.name, self).run()
+
+    @classmethod
+    def _update_status_for_script_error(cls, tool, state, script_error):
+        return tool.status_bot.update_status(cls.name, script_error.message, state["patch"], StringIO(script_error.output))
 
 
 class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
@@ -121,7 +135,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def next_work_item(self):
         patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
         if not patches:
-            self._update_status("Empty queue.")
+            self._update_status("Empty queue")
             return None
         # Only bother logging if we have patches in the queue.
         self.log_progress([patch['id'] for patch in patches])
@@ -131,14 +145,19 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
         if red_builders_names:
             red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
-            self._update_status("Builders [%s] are red. See http://build.webkit.org." % ", ".join(red_builders_names), None)
+            self._update_status("Builders [%s] are red. See http://build.webkit.org" % ", ".join(red_builders_names), None)
             return False
-        self._update_status("Landing patch %s from bug %s." % (patch["id"], patch["bug_id"]), patch)
+        self._update_status("Landing patch", patch)
         return True
 
     def process_work_item(self, patch):
-        self._cc_watchers(patch["bug_id"])
-        self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--quiet", patch["id"]])
+        try:
+            self._cc_watchers(patch["bug_id"])
+            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--quiet", patch["id"]])
+            self._did_pass(patch)
+        except ScriptError, e:
+            self._did_fail(patch)
+            raise e
 
     def handle_unexpected_error(self, patch, message):
         self.tool.bugs.reject_patch_from_commit_queue(patch["id"], message)
@@ -154,9 +173,8 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        patch = state["patch"]
-        status_id = tool.status_bot.update_status(cls.name, "patch %s failed: %s" % (patch['id'], script_error.message), patch, StringIO(script_error.output))
-        tool.bugs.reject_patch_from_commit_queue(patch["id"], cls._error_message_for_bug(tool, status_id, script_error))
+        status_id = cls._update_status_for_script_error(tool, state, script_error)
+        tool.bugs.reject_patch_from_commit_queue(state["patch"]["id"], cls._error_message_for_bug(tool, status_id, script_error))
 
 
 class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
@@ -184,7 +202,7 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         patch_id = self._patches.next()
         if patch_id:
             return self.tool.bugs.fetch_attachment(patch_id)
-        self._update_status("Empty queue.")
+        self._update_status("Empty queue")
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError, "subclasses must implement"
@@ -208,7 +226,7 @@ class StyleQueue(AbstractReviewQueue):
         AbstractReviewQueue.__init__(self)
 
     def should_proceed_with_work_item(self, patch):
-        self._update_status("Checking style for patch %s on bug %s." % (patch["id"], patch["bug_id"]), patch)
+        self._update_status("Checking style", patch)
         return True
 
     def process_work_item(self, patch):
@@ -216,14 +234,15 @@ class StyleQueue(AbstractReviewQueue):
             self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
             message = "%s ran check-webkit-style on attachment %s without any errors." % (self.name, patch["id"])
             self.tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=self.watchers)
-            self._patches.did_pass(patch)
+            self._did_pass(patch)
         except ScriptError, e:
-            self._patches.did_fail(patch)
+            self._did_fail(patch)
             raise e
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
+        status_id = cls._update_status_for_script_error(tool, state, script_error)
         if not script_error.command_name() == "check-webkit-style":
             return
-        message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=5*1024))
+        message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=3*1024))
         tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)

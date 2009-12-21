@@ -35,6 +35,7 @@ from modules.buildbot_unittest import *
 from modules.buildsteps_unittest import *
 from modules.changelogs_unittest import *
 from modules.commands.download_unittest import *
+from modules.commands.early_warning_system_unittest import *
 from modules.commands.upload_unittest import *
 from modules.commands.queries_unittest import *
 from modules.commands.queues_unittest import *

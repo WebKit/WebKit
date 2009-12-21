@@ -57,7 +57,7 @@ class MockBugzilla(Mock):
     def fetch_attachment_ids_from_review_queue(self):
         return [197, 128]
 
-    def fetch_patches_from_commit_queue(self):
+    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
         return [self.patch1, self.patch2]
 
     def fetch_patches_from_pending_commit_list(self):
@@ -145,6 +145,12 @@ class MockSCM(Mock):
 class MockStatusBot(object):
     def __init__(self):
         self.statusbot_host = "example.com"
+
+    def patch_status(self, queue_name, patch_id):
+        return None
+
+    def update_status(self, queue_name, status, patch=None, results_file=None):
+        return 187
 
 
 class MockBugzillaTool():

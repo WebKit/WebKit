@@ -26,10 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import unittest
 
 from modules.commands.commandtest import CommandsTest
 from modules.commands.queues import *
+from modules.commands.queuestest import QueuesTest
 from modules.mock_bugzillatool import MockBugzillaTool
 from modules.outputcapture import OutputCapture
 
@@ -59,3 +61,21 @@ class AbstractQueueTest(CommandsTest):
     def test_run_bugzilla_tool(self):
         self._assert_run_bugzilla_tool([1])
         self._assert_run_bugzilla_tool(["one", 2])
+
+
+class CommitQueueTest(QueuesTest):
+    def test_style_queue(self):
+        expected_stderr = {
+            "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % os.getcwd(),
+            "next_work_item" : "2 patches in commit-queue [197, 128]\n",
+        }
+        self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
+
+
+class StyleQueueTest(QueuesTest):
+    def test_style_queue(self):
+        expected_stderr = {
+            "begin_work_queue" : "CAUTION: style-queue will discard all local changes in \"%s\"\nRunning WebKit style-queue.\n" % os.getcwd(),
+            "handle_unexpected_error" : "Mock error message\n",
+        }
+        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr)

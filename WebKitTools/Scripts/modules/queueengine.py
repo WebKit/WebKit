@@ -39,9 +39,6 @@ from modules.logging import log, OutputTee
 from modules.statusbot import StatusBot
 
 class QueueEngineDelegate:
-    def queue_name(self):
-        raise NotImplementedError, "subclasses must implement"
-
     def queue_log_path(self):
         raise NotImplementedError, "subclasses must implement"
 
