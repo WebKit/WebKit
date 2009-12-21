@@ -156,7 +156,7 @@ void ResourceHandle::setDefersLoading(bool defers)
     if (d->m_defersLoading == defers)
         return;
 
-#if LIBCURL_VERSION_NUM > 0x071800
+#if LIBCURL_VERSION_NUM > 0x071200
     if (!d->m_handle)
         d->m_defersLoading = defers;
     else if (defers) {
@@ -179,9 +179,7 @@ void ResourceHandle::setDefersLoading(bool defers)
     }
 #else
     d->m_defersLoading = defers;
-#ifndef NDEBUG
-    printf("Deferred loading is implemented if libcURL version is above 7.18.0");
-#endif
+    LOG_ERROR("Deferred loading is implemented if libcURL version is above 7.18.0");
 #endif
 }
 

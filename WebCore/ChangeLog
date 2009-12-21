@@ -1,3 +1,22 @@
+2009-12-18  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Darin Adler.
+
+        defersLoading is disabled in current libcURL.
+        https://bugs.webkit.org/show_bug.cgi?id=32707
+
+        Basically this change reverts r49577 that was totally wrong.
+        According to curlver.h, LIBCURL_VERSION_NUM is a
+        "6-digit (24 bits) hexadecimal number".
+
+        The check should be against 0x071200 (7.18) as it was originally the case.
+
+       * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle): Use the right check.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setDefersLoading): Ditto. Also removed a print
+        to use a LOG_ERROR instead.
+ 
 2009-12-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
