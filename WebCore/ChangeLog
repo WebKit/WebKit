@@ -1,3 +1,25 @@
+2009-12-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler and Nikolas Zimmermann.
+
+        Speed-up SVG Masking
+        https://bugs.webkit.org/show_bug.cgi?id=32738
+
+        This patch makes SVG Masking faster. The luminance calculaton of the ImageBuffer,
+        that is created by pixel manipulation, got optimized. The ImageBuffer and it's
+        luminance is created once now, not on every call of applyMask.
+        The size of the intermediate ImageBuffer depends on the visible area now and is
+        clipped by the mask rect.
+        
+        The patch doesn't change functionality so no new tests needed.
+        The new ImageBuffer handling in Mask causes two updates of test results. The pixel
+        tests and LayoutTests pass, but the checksum doesn't match.
+
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+
 2009-12-21  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

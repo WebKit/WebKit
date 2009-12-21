@@ -25,9 +25,12 @@
 #if ENABLE(SVG)
 #include "SVGMaskElement.h"
 
+#include "CanvasPixelArray.h"
 #include "CSSStyleSelector.h"
 #include "GraphicsContext.h"
+#include "Image.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "MappedAttribute.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
@@ -37,6 +40,7 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 
 using namespace std;
 
@@ -126,77 +130,94 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
     m_masker->invalidate();
 }
 
-PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect) const
+PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& objectBoundingBox, FloatRect& maskDestRect) const
 {    
     // Determine specified mask size
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        maskDestRect = FloatRect(x().valueAsPercentage() * targetRect.width(),
-                                 y().valueAsPercentage() * targetRect.height(),
-                                 width().valueAsPercentage() * targetRect.width(),
-                                 height().valueAsPercentage() * targetRect.height());
+        maskDestRect = FloatRect(x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),
+                                 y().valueAsPercentage() * objectBoundingBox.height() + objectBoundingBox.y(),
+                                 width().valueAsPercentage() * objectBoundingBox.width(),
+                                 height().valueAsPercentage() * objectBoundingBox.height());
     else
         maskDestRect = FloatRect(x().value(this),
                                  y().value(this),
                                  width().value(this),
                                  height().value(this));
 
-    IntSize imageSize(lroundf(maskDestRect.width()), lroundf(maskDestRect.height()));
-    clampImageBufferSizeToViewport(document()->view(), imageSize);
+    // Calculate the smallest rect for the mask ImageBuffer.
+    FloatRect repaintRect;
+    Vector<RenderObject*> rendererList;
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !node->renderer())
+            continue;
+        // FIXME: repaintRectInLocalCoordinates() is not correctly implemented.
+        // The current implementation gives back the union rect of the
+        // the stroke and marker from every child. This is what we need here.
+        // We create the union of all direct childs to get the common drawing area.
+        // See also bug: https://bugs.webkit.org/show_bug.cgi?id=32815
+        rendererList.append(node->renderer());
+        repaintRect.unite(node->renderer()->repaintRectInLocalCoordinates());
+    }
 
-    if (imageSize.width() < static_cast<int>(maskDestRect.width()))
-        maskDestRect.setWidth(imageSize.width());
-
-    if (imageSize.height() < static_cast<int>(maskDestRect.height()))
-        maskDestRect.setHeight(imageSize.height());
+    TransformationMatrix contextTransform;
+    // We need to scale repaintRect for objectBoundingBox to get the drawing area.
+    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        contextTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
+        FloatPoint contextAdjustment = repaintRect.location();
+        repaintRect = contextTransform.mapRect(repaintRect);
+        repaintRect.move(objectBoundingBox.x(), objectBoundingBox.y());
+        contextTransform.translate(-contextAdjustment.x(), -contextAdjustment.y());
+    }
+    repaintRect.intersect(maskDestRect);
+    maskDestRect = repaintRect;
+    IntRect maskImageRect = enclosingIntRect(maskDestRect);
+    maskImageRect.setLocation(IntPoint());
 
     // FIXME: This changes color space to linearRGB, the default color space
     // for masking operations in SVG. We need a switch for the other color-space
     // attribute values sRGB, inherit and auto.
-    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(imageSize, LinearRGB);
+    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskImageRect.size(), LinearRGB);
     if (!maskImage)
         return 0;
-
-    FloatPoint maskContextLocation = maskDestRect.location();
-    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        maskDestRect.move(targetRect.x(), targetRect.y());
-        if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-            maskContextLocation.move(targetRect.x(), targetRect.y());
-    } else {
-        if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-            maskContextLocation.move(-targetRect.x(), -targetRect.y());
-    }
 
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);
 
     maskImageContext->save();
-    maskImageContext->translate(-maskContextLocation.x(), -maskContextLocation.y());
 
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        maskImageContext->save();
-        maskImageContext->scale(FloatSize(targetRect.width(), targetRect.height()));
-    }
+    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+        maskImageContext->translate(-maskDestRect.x(), -maskDestRect.y());
+    maskImageContext->concatCTM(contextTransform);
 
-    // Render subtree into ImageBuffer
-    for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        SVGElement* elem = 0;
-        if (n->isSVGElement())
-            elem = static_cast<SVGElement*>(n);
-        if (!elem || !elem->isStyled())
-            continue;
+    // draw the content into the ImageBuffer
+    Vector<RenderObject*>::iterator end = rendererList.end();
+    for (Vector<RenderObject*>::iterator it = rendererList.begin(); it != end; it++)
+        renderSubtreeToImage(maskImage.get(), *it);
 
-        SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
-        RenderObject* item = e->renderer();
-        if (!item)
-            continue;
-
-        renderSubtreeToImage(maskImage.get(), item);
-    }
-
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        maskImageContext->restore();
 
     maskImageContext->restore();
+
+    if (!maskImageRect.width() || !maskImageRect.height())
+        return maskImage.release();
+
+    // create the luminance mask
+    RefPtr<ImageData> imageData(maskImage->getUnmultipliedImageData(maskImageRect));
+    CanvasPixelArray* srcPixelArray(imageData->data());
+
+    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset += 4) {
+        unsigned char a = srcPixelArray->get(pixelOffset + 3);
+        if (!a)
+            continue;
+        unsigned char r = srcPixelArray->get(pixelOffset);
+        unsigned char g = srcPixelArray->get(pixelOffset + 1);
+        unsigned char b = srcPixelArray->get(pixelOffset + 2);
+
+        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
+        srcPixelArray->set(pixelOffset + 3, luma);
+    }
+
+    maskImage->putUnmultipliedImageData(imageData.get(), maskImageRect, IntPoint());
+
     return maskImage.release();
 }
  

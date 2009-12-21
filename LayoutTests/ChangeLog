@@ -1,3 +1,19 @@
+2009-12-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler and Nikolas Zimmermann.
+
+        Speed-up SVG Masking
+        https://bugs.webkit.org/show_bug.cgi?id=32738
+
+        Update pixel test results for two SVG masking operations. They don't fail
+        and there is no noticable difference between the old and new results. But
+        Masking uses smaller ImageBuffers now and that changed the checksum.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac/svg/batik/masking/maskRegions-expected.png:
+
 2009-12-21  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

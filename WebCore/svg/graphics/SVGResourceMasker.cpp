@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ *               2009 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +39,6 @@
 #include "SVGRenderStyle.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
-
 using namespace std;
 
 namespace WebCore {
@@ -68,34 +67,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     if (!m_mask)
         return;
 
-    IntSize imageSize(m_mask->size());
-    IntRect intImageRect(0, 0, imageSize.width(), imageSize.height());
-
-    // Create new ImageBuffer to apply luminance
-    OwnPtr<ImageBuffer> luminancedImage = ImageBuffer::create(imageSize);
-    if (!luminancedImage)
-        return;
-
-    PassRefPtr<CanvasPixelArray> srcPixelArray(m_mask->getUnmultipliedImageData(intImageRect)->data());
-    PassRefPtr<ImageData> destImageData(luminancedImage->getUnmultipliedImageData(intImageRect));
-
-    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset++) {
-        unsigned pixelByteOffset = pixelOffset * 4;
-
-        unsigned char r = 0, g = 0, b = 0, a = 0;
-        srcPixelArray->get(pixelByteOffset, r);
-        srcPixelArray->get(pixelByteOffset + 1, g);
-        srcPixelArray->get(pixelByteOffset + 2, b);
-        srcPixelArray->get(pixelByteOffset + 3, a);
-
-        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
-
-        destImageData->data()->set(pixelByteOffset + 3, luma);
-    }
-
-    luminancedImage->putUnmultipliedImageData(destImageData.get(), intImageRect, IntPoint(0, 0));
-
-    context->clipToImageBuffer(m_maskRect, luminancedImage.get());
+    context->clipToImageBuffer(m_maskRect, m_mask.get());
 }
 
 TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const
