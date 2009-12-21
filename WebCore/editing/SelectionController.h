@@ -45,10 +45,10 @@ public:
 
     SelectionController(Frame* = 0, bool isDragCaretController = false);
 
-    Element* rootEditableElement() const { return m_sel.rootEditableElement(); }
-    bool isContentEditable() const { return m_sel.isContentEditable(); }
-    bool isContentRichlyEditable() const { return m_sel.isContentRichlyEditable(); }
-    Node* shadowTreeRootNode() const { return m_sel.shadowTreeRootNode(); }
+    Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
+    bool isContentEditable() const { return m_selection.isContentEditable(); }
+    bool isContentRichlyEditable() const { return m_selection.isContentRichlyEditable(); }
+    Node* shadowTreeRootNode() const { return m_selection.shadowTreeRootNode(); }
      
     void moveTo(const Range*, EAffinity, bool userTriggered = false);
     void moveTo(const VisiblePosition&, bool userTriggered = false);
@@ -56,7 +56,7 @@ public:
     void moveTo(const Position&, EAffinity, bool userTriggered = false);
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
-    const VisibleSelection& selection() const { return m_sel; }
+    const VisibleSelection& selection() const { return m_selection; }
     void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
@@ -67,9 +67,9 @@ public:
 
     bool contains(const IntPoint&);
 
-    VisibleSelection::SelectionType selectionType() const { return m_sel.selectionType(); }
+    VisibleSelection::SelectionType selectionType() const { return m_selection.selectionType(); }
 
-    EAffinity affinity() const { return m_sel.affinity(); }
+    EAffinity affinity() const { return m_selection.affinity(); }
 
     bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered = false);
     bool modify(EAlteration, int verticalDistance, bool userTriggered = false);
@@ -80,10 +80,10 @@ public:
     void setExtent(const VisiblePosition&, bool userTriggered = false);
     void setExtent(const Position&, EAffinity, bool userTriggered = false);
 
-    Position base() const { return m_sel.base(); }
-    Position extent() const { return m_sel.extent(); }
-    Position start() const { return m_sel.start(); }
-    Position end() const { return m_sel.end(); }
+    Position base() const { return m_selection.base(); }
+    Position extent() const { return m_selection.extent(); }
+    Position start() const { return m_selection.start(); }
+    Position end() const { return m_selection.end(); }
 
     // Return the renderer that is responsible for painting the caret (in the selection start node)
     RenderObject* caretRenderer() const;
@@ -97,14 +97,14 @@ public:
     void setLastChangeWasHorizontalExtension(bool b) { m_lastChangeWasHorizontalExtension = b; }
     void willBeModified(EAlteration, EDirection);
     
-    bool isNone() const { return m_sel.isNone(); }
-    bool isCaret() const { return m_sel.isCaret(); }
-    bool isRange() const { return m_sel.isRange(); }
-    bool isCaretOrRange() const { return m_sel.isCaretOrRange(); }
+    bool isNone() const { return m_selection.isNone(); }
+    bool isCaret() const { return m_selection.isCaret(); }
+    bool isRange() const { return m_selection.isRange(); }
+    bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
     bool isInPasswordField() const;
-    bool isAll(StayInEditableContent stayInEditableContent = MustStayInEditableContent) const { return m_sel.isAll(stayInEditableContent); }
+    bool isAll(StayInEditableContent stayInEditableContent = MustStayInEditableContent) const { return m_selection.isAll(stayInEditableContent); }
     
-    PassRefPtr<Range> toNormalizedRange() const { return m_sel.toNormalizedRange(); }
+    PassRefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
     
@@ -162,7 +162,7 @@ private:
     Frame* m_frame;
     int m_xPosForVerticalArrowNavigation;
 
-    VisibleSelection m_sel;
+    VisibleSelection m_selection;
 
     IntRect m_caretRect;        // caret rect in coords local to the renderer responsible for painting the caret
     IntRect m_absCaretBounds;   // absolute bounding rect for the caret

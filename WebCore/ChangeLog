@@ -1,3 +1,43 @@
+2009-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Renamed m_sel to m_selection. Used do-webcore-rename.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        (WebCore::SelectionController::willBeModified):
+        (WebCore::SelectionController::directionOfEnclosingBlock):
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingRight):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingLeft):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingLeft):
+        (WebCore::SelectionController::modifyMovingBackward):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::expandUsingGranularity):
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::caretRenderer):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::paintCaret):
+        (WebCore::SelectionController::debugRenderer):
+        (WebCore::SelectionController::contains):
+        (WebCore::SelectionController::selectAll):
+        (WebCore::SelectionController::formatForDebugger):
+        (WebCore::SelectionController::showTreeForThis):
+        * editing/SelectionController.h:
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        Let the script do its thing. Made sure no tests broke.
+
 2009-12-21  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.
