@@ -25,6 +25,7 @@
 
 #if ENABLE(WML)
 #include "StringHash.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 

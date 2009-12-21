@@ -1,3 +1,16 @@
+2009-12-20  Nayan Kumar K  <nayankk@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for compilation errors in WML module, due to the changeset #52314.
+        https://bugs.webkit.org/show_bug.cgi?id=32786
+
+        No new tests, this is compilation error fix.
+
+        * wml/WMLDocument.cpp:
+        * wml/WMLPageState.cpp:
+        * wml/WMLPageState.h:
+
 2009-12-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
