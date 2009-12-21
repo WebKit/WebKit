@@ -1,3 +1,8 @@
+2009-12-21  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: Did a rename, so checking in the
+        version of the script I used.
+
 2009-12-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
