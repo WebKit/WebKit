@@ -469,7 +469,7 @@ class Bugzilla(object):
     def add_cc_to_bug(self, bug_id, email_address_list):
         self.authenticate()
 
-        log("Adding %s to the CC list for bug %s" % (email_address, bug_id))
+        log("Adding %s to the CC list for bug %s" % (email_address_list, bug_id))
         if self.dryrun:
             return
 

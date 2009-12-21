@@ -1,5 +1,17 @@
 2009-12-20  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        REGRESSION: error when running commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=32806
+
+        Fix typo and add test!
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/bugzilla_unittest.py:
+
+2009-12-20  Adam Barth  <abarth@webkit.org>
+
         [bzt] Optimize status updates for new dashboard
         https://bugs.webkit.org/show_bug.cgi?id=32797
 
