@@ -299,7 +299,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
         // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
         m_loader = 0;
-        m_loader = SubresourceLoader::create(m_document->frame(), this, request, securityCheck, sendLoadCallbacks, sniffContent);
+        m_loader = SubresourceLoader::create(m_document->frame(), this, request, securityCheck, DoNotOutlivePage, sendLoadCallbacks, sniffContent);
         return;
     }
     

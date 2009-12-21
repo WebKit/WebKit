@@ -61,18 +61,18 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheckPolicy, OutlivePagePolicy outlivePagePolicy, bool sendResourceLoadCallbacks, bool shouldContentSniff)
 {
     if (!frame)
         return 0;
 
     FrameLoader* fl = frame->loader();
-    if (securityCheck == DoSecurityCheck && (fl->state() == FrameStateProvisional || fl->activeDocumentLoader()->isStopping()))
+    if (outlivePagePolicy == DoNotOutlivePage && (fl->state() == FrameStateProvisional || fl->activeDocumentLoader()->isStopping()))
         return 0;
 
     ResourceRequest newRequest = request;
 
-    if (securityCheck == DoSecurityCheck
+    if (securityCheckPolicy == DoSecurityCheck
             && SecurityOrigin::restrictAccessToLocal()
             && !SecurityOrigin::canLoad(request.url(), String(), frame->document())) {
         FrameLoader::reportLocalLoadFailed(frame, request.url().string());

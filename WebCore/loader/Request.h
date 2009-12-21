@@ -24,16 +24,23 @@
 #define Request_h
 
 #include "FrameLoaderTypes.h"
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
     class CachedResource;
     class DocLoader;
+    class Frame;
+    
+    enum OutlivePagePolicy {
+        DoNotOutlivePage,
+        OutlivePage
+    };
 
     class Request : public Noncopyable {
     public:
-        Request(DocLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+        Request(DocLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, OutlivePagePolicy, bool sendResourceLoadCallbacks);
         ~Request();
         
         Vector<char>& buffer() { return m_buffer; }
@@ -49,6 +56,9 @@ namespace WebCore {
         SecurityCheckPolicy shouldDoSecurityCheck() const { return m_shouldDoSecurityCheck; }
         bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
         
+        OutlivePagePolicy canOutlivePage() const { return m_frameForRequestThatCanOutlivePage ? OutlivePage : DoNotOutlivePage; }
+        Frame* frame() const;
+        
     private:
         Vector<char> m_buffer;
         CachedResource* m_object;
@@ -57,6 +67,7 @@ namespace WebCore {
         bool m_multipart;
         SecurityCheckPolicy m_shouldDoSecurityCheck;
         bool m_sendResourceLoadCallbacks;
+        RefPtr<Frame> m_frameForRequestThatCanOutlivePage;
     };
 
 } //namespace WebCore

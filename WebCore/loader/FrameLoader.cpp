@@ -180,7 +180,8 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isExecutingJavaScriptFormAction(false)
     , m_didCallImplicitClose(false)
     , m_wasUnloadEventEmitted(false)
-    , m_unloadEventBeingDispatched(false)
+    , m_isDispatchingBeforeUnloadEvent(false)
+    , m_isDispatchingUnloadEvent(false)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
     , m_needsClear(false)
@@ -517,14 +518,16 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
-                m_unloadEventBeingDispatched = true;
+                ASSERT(!m_isDispatchingUnloadEvent);
+                m_isDispatchingUnloadEvent = true;
                 if (m_frame->domWindow()) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
                         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache())
                         m_frame->domWindow()->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), m_frame->domWindow()->document());
                 }
-                m_unloadEventBeingDispatched = false;
+                ASSERT(m_isDispatchingUnloadEvent);
+                m_isDispatchingUnloadEvent = false;
                 if (m_frame->document())
                     m_frame->document()->updateStyleIfNeeded();
                 m_wasUnloadEventEmitted = true;
@@ -1908,7 +1911,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         return;
     }
 
-    if (m_unloadEventBeingDispatched)
+    if (m_isDispatchingUnloadEvent)
         return;
 
     NavigationAction action(newURL, newLoadType, isFormSubmission, event);
@@ -2034,7 +2037,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     ASSERT(m_frame->view());
 
-    if (m_unloadEventBeingDispatched)
+    if (m_isDispatchingUnloadEvent)
         return;
 
     policyChecker()->setLoadType(type);
@@ -2276,7 +2279,7 @@ void FrameLoader::stopLoadingSubframes()
 void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy)
 {
     ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
-    if (m_unloadEventBeingDispatched)
+    if (m_isDispatchingUnloadEvent)
         return;
 
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
@@ -3433,7 +3436,11 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
     // The "before unload" event handler runs only for the main frame.
+    ASSERT(!m_isDispatchingBeforeUnloadEvent);
+    m_isDispatchingBeforeUnloadEvent = true;
     bool canContinue = shouldContinue && (!isLoadingMainFrame() || m_frame->shouldClose());
+    ASSERT(m_isDispatchingBeforeUnloadEvent);
+    m_isDispatchingBeforeUnloadEvent = false;
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
@@ -3627,10 +3634,12 @@ void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
 
 void FrameLoader::pageHidden()
 {
-    m_unloadEventBeingDispatched = true;
+    ASSERT(!m_isDispatchingUnloadEvent);
+    m_isDispatchingUnloadEvent = true;
     if (m_frame->domWindow())
         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, true), m_frame->document());
-    m_unloadEventBeingDispatched = false;
+    ASSERT(m_isDispatchingUnloadEvent);
+    m_isDispatchingUnloadEvent = false;
 
     // Send pagehide event for subframes as well
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())

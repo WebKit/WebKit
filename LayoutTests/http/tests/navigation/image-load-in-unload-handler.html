@@ -1,0 +1,24 @@
+<html><head>
+<title>Image load in unload handler</title>
+<script>
+function navigate() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpResourceLoadCallbacks();
+        layoutTestController.waitUntilDone();
+        var target = document.getElementById("link");
+        eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function requestImage() {
+    var img = new Image(1, 1);
+    img.src = "resources/slow-resource-1-sec.pl";
+}
+</script>
+</head>
+<body onload="navigate();" onunload="requestImage();">
+<a id="link" href="resources/wait-then-notify-done.html">link</a>
+</body></html>

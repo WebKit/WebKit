@@ -120,7 +120,16 @@ Loader::Priority Loader::determinePriority(const CachedResource* resource) const
 void Loader::load(DocLoader* docLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     ASSERT(docLoader);
-    Request* request = new Request(docLoader, resource, incremental, securityCheck, sendResourceLoadCallbacks);
+    
+    // If we are loading an image during an unload event, we want to allow the request to outlive the page
+    // that we are leaving. Some sites (most commonly ad networks) rely on image requests in beforeunload
+    // or unload event handlers to track time spent on the page. This will allow them to do the tracking
+    // that they are going to do anyway, but asynchronously so that they don't slow down navigation.
+    OutlivePagePolicy outlivePagePolicy = resource->isImage() && docLoader && docLoader->frame() 
+        && docLoader->frame()->loader()->isDispatchingUnloadFamilyEvent()
+        ? OutlivePage : DoNotOutlivePage;
+    
+    Request* request = new Request(docLoader, resource, incremental, securityCheck, outlivePagePolicy, sendResourceLoadCallbacks);
 
     RefPtr<Host> host;
     KURL url(ParsedURLString, resource->url());
@@ -138,8 +147,10 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     Priority priority = determinePriority(resource);
     host->addRequest(request, priority);
     docLoader->incrementRequestCount();
-
-    if (priority > Low || !url.protocolInHTTPFamily() || !hadRequests) {
+    
+    // We want to guarantee that requests which outlive the page are run asynchronously, so only
+    // serve the request immediately if the request doesn't need to outlive the page.
+    if (request->canOutlivePage() == DoNotOutlivePage && (priority > Low || !url.protocolInHTTPFamily() || !hadRequests)) {
         // Try to request important resources immediately
         host->servePendingRequests(priority);
     } else {
@@ -248,8 +259,6 @@ void Loader::cancelRequests(DocLoader* docLoader)
     }
 
     scheduleServePendingRequests();
-    
-    ASSERT(docLoader->requestCount() == (docLoader->loadInProgress() ? 1 : 0));
 }
 
 Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
@@ -346,8 +355,8 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
             }
         }
 
-        RefPtr<SubresourceLoader> loader = SubresourceLoader::create(docLoader->doc()->frame(),
-            this, resourceRequest, request->shouldDoSecurityCheck(), request->sendResourceLoadCallbacks());
+        RefPtr<SubresourceLoader> loader = SubresourceLoader::create(request->frame(),
+            this, resourceRequest, request->shouldDoSecurityCheck(), request->canOutlivePage(), request->sendResourceLoadCallbacks());
         if (loader) {
             m_requestsLoading.add(loader.release(), request);
             request->cachedResource()->setRequestedFromNetworkingLayer();
@@ -550,7 +559,7 @@ void Loader::Host::cancelPendingRequests(RequestQueue& requestsPending, DocLoade
     RequestQueue::iterator end = requestsPending.end();
     for (RequestQueue::iterator it = requestsPending.begin(); it != end; ++it) {
         Request* request = *it;
-        if (request->docLoader() == docLoader) {
+        if (request->canOutlivePage() == DoNotOutlivePage && request->docLoader() == docLoader) {
             cache()->remove(request->cachedResource());
             delete request;
             docLoader->decrementRequestCount();
@@ -570,7 +579,7 @@ void Loader::Host::cancelRequests(DocLoader* docLoader)
     RequestMap::iterator end = m_requestsLoading.end();
     for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
         Request* r = i->second;
-        if (r->docLoader() == docLoader)
+        if (r->canOutlivePage() == DoNotOutlivePage && r->docLoader() == docLoader)
             loadersToCancel.append(i->first.get());
     }
 

@@ -1,3 +1,46 @@
+2009-12-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        If an image load is started during an unload or beforeunload event, run it
+        asynchronously (and allow it to outlive its page) so navigation can continue 
+        while the load completes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30457
+
+        Tests: http/tests/navigation/image-load-in-beforeunload-handler.html
+               http/tests/navigation/image-load-in-unload-handler.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest): 
+        * loader/FrameLoader.cpp: Rename m_unloadEventBeingDispatched to m_isDispatchingUnloadEvent.
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Set m_isDispatchingBeforeUnloadEvent.
+        (WebCore::FrameLoader::pageHidden):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::isDispatchingUnloadFamilyEvent): Added.
+        * loader/Request.cpp:
+        (WebCore::Request::Request): Add OutlivePagePolicy to constructor parameters
+        * loader/Request.h:
+        (WebCore::): Add OutlivePagePolicy enum.
+        (WebCore::Request::shouldOutlivePage): Added.
+        (WebCore::Request::frame): Added.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create): Change one of the security checks to an outlive page check.
+        * loader/SubresourceLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load): Add OutlivePagePolicy to Request constructor call,
+             ensure requests that should outlive page are done asynchronously.
+        (WebCore::Loader::cancelRequests): Remove ending ASSERT since it will now be hard to predict how
+             many requests might possibly outlive a cancel in every case.
+        (WebCore::Loader::Host::servePendingRequests): Use the correct frame in the case of a request outliving its page.
+        (WebCore::Loader::Host::cancelPendingRequests): Ensure we don't cancel request that should outlive their page.
+        (WebCore::Loader::Host::cancelRequests): Ensure we don't cancel request that should outlive their page.
+
 2009-12-18  Adam Roben  <aroben@apple.com>
 
         Fix Windows build warnings
