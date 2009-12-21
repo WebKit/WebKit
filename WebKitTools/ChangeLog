@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Update status-bubble to show all the queues
+        https://bugs.webkit.org/show_bug.cgi?id=32838
+
+        Also, move statusbubble over to use memcache.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        * QueueStatusServer/templates/statusbubble.html:
+
+2009-12-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Delete the boring "Empty queue" status messages in QueueStatusServer
         https://bugs.webkit.org/show_bug.cgi?id=32818
 

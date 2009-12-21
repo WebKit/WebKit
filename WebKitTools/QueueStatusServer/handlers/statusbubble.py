@@ -29,53 +29,14 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from model.queuestatus import QueueStatus
-
-
-# FIXME: This class is wrong.  I'm going to rebuid the functionality correctly
-#        for the dashboard and then kill this class.
-class StatusSummary(object):
-    def _status_to_code(self, status):
-        code_names = {
-            "Pass": "pass",
-            "Pending": "pending",
-            "Fail": "fail",
-            "Error": "error",
-        }
-        return code_names.get(status, "none")
-
-    def _queue_name_to_code(self, queue_name):
-        code_names = {
-            "style-queue": "style",
-        }
-        return code_names[queue_name]
-
-    queues = [
-        "style-queue",
-    ]
-
-    def __init__(self):
-        self._summary = {}
-
-    def summarize(self, attachment_id):
-        if self._summary.get(attachment_id):
-            return self._summary.get(attachment_id)
-
-        attachment_summary = {}
-        for queue in self.queues:
-            statuses = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', attachment_id).order('-date').fetch(1)
-            status_code = self._status_to_code(statuses[0].message if statuses else None)
-            queue_code = self._queue_name_to_code(queue)
-            attachment_summary[queue_code] = status_code
-
-        self._summary[attachment_id] = attachment_summary
-        return attachment_summary
+from model.attachment import Attachment
 
 
 class StatusBubble(webapp.RequestHandler):
     def get(self, attachment_id):
-        status_summary = StatusSummary()
+        attachment = Attachment(int(attachment_id))
+
         template_values = {
-            "queue_status" : status_summary.summarize(int(attachment_id)),
+            "summary" : attachment.summary()
         }
         self.response.out.write(template.render("templates/statusbubble.html", template_values))
