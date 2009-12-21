@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Delete the boring "Empty queue" status messages in QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=32818
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/cron.yaml:
+        * QueueStatusServer/handlers/gc.py:
+        * QueueStatusServer/main.py:
+
+2009-12-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Exception on queue status server
         https://bugs.webkit.org/show_bug.cgi?id=32812
 
