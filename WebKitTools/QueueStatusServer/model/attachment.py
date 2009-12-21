@@ -30,6 +30,7 @@ import re
 
 from google.appengine.api import memcache
 
+from model.queues import queues
 from model.queuestatus import QueueStatus
 
 
@@ -95,15 +96,6 @@ class Attachment(object):
             # We don't have any record of this attachment.
             return summary
         summary["bug_id"] = first_status.active_bug_id
-
-        # FIXME: This should go somewhere else.
-        queues = [
-            "style-queue",
-            "chromium-ews",
-            "qt-ews",
-            "gtk-ews",
-            "commit-queue",
-        ]
 
         for queue in queues:
             summary[queue] = None

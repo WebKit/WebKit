@@ -1,3 +1,16 @@
+2009-12-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Prepare QueueStatusServer for new status messages
+        https://bugs.webkit.org/show_bug.cgi?id=32805
+
+        * QueueStatusServer/handlers/recentstatus.py:
+        * QueueStatusServer/index.html: Removed.
+        * QueueStatusServer/model/attachment.py:
+        * QueueStatusServer/model/queues.py: Added.
+        * QueueStatusServer/templates/recentstatus.html: Added.
+
 2009-12-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Adam Barth.
