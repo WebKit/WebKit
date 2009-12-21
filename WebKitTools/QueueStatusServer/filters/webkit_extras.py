@@ -46,14 +46,14 @@ def webkit_linkify(value):
 @register.filter
 @stringfilter
 def webkit_bug_id(value):
-    return '<a href="http://webkit.org/b/' + value + '">' + value + '</a>'
+    return '<a href="http://webkit.org/b/%s">%s</a>' % (value, value)
 
 @register.filter
 @stringfilter
 def webkit_attachment_id(value):
-    return '<a href="https://bugs.webkit.org/attachment.cgi?id=' + value + '&action=prettypatch">' + value + '</a>'
+    return '<a href="https://bugs.webkit.org/attachment.cgi?id=%s&action=prettypatch">%s</a>' % (value, value)
 
 @register.filter
 @stringfilter
-def results_link(status):
-    return '<a href="/results/' + status.key().id() + '">results</a>'
+def results_link(status_id):
+    return '<a href="/results/%s">results</a>' % status_id

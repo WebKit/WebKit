@@ -1,3 +1,16 @@
+2009-12-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Exception on queue status server
+        https://bugs.webkit.org/show_bug.cgi?id=32812
+
+        Turns out we need to pass the id to the filter.
+
+        * QueueStatusServer/filters/webkit_extras.py:
+        * QueueStatusServer/templates/patch.html:
+        * QueueStatusServer/templates/recentstatus.html:
+
 2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Eric Seidel.
