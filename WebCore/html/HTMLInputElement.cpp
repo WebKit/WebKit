@@ -1374,6 +1374,24 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     updateValidity();
 }
 
+double HTMLInputElement::valueAsDate() const
+{
+    // FIXME: This is a temporary implementation to check Date binding.
+    if (inputType() == MONTH)
+        return 0.0;
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
+void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
+{
+    // FIXME: This is a temporary implementation to check Date binding.
+    if (!isnan(value) && !isinf(value) && inputType() == MONTH) {
+        setValue(String("1970-01"));
+        return;
+    }
+    ec = INVALID_STATE_ERR;
+}
+
 String HTMLInputElement::placeholder() const
 {
     return getAttribute(placeholderAttr).string();

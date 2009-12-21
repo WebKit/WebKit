@@ -187,6 +187,8 @@ sub AddIncludesForType
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
+    } elsif ($type eq "Date") {
+        $implIncludes{"<runtime/DateInstance.h>"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -1863,6 +1865,7 @@ sub JSValueToNative
     return "$value.toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
     return "$value.toInt32(exec)" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
 
+    return "valueToDate(exec, $value)" if $type eq "Date";
     return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value.toInt32(exec))" if $type eq "SVGPaintType";
 
@@ -1987,6 +1990,9 @@ sub NativeToJSValue
     } elsif ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
         return "$value->deserialize(exec)";
+    } elsif ($type eq "Date") {
+        $implIncludes{"<runtime/DateInstance.h>"} = 1;
+        return "jsDateOrNull(exec, $value)";
     } else {
         # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;

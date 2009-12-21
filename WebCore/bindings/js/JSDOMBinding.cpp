@@ -49,9 +49,11 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "XMLHttpRequestException.h"
+#include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(SVG)
@@ -594,6 +596,22 @@ UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     if (value.isUndefinedOrNull())
         return UString();
     return value.toString(exec);
+}
+
+JSValue jsDateOrNull(ExecState* exec, double value)
+{
+    if (!isfinite(value))
+        return jsNull();
+    return new (exec) DateInstance(exec, value);
+}
+
+double valueToDate(ExecState* exec, JSValue value)
+{
+    if (value.isNumber())
+        return value.uncheckedGetNumber();
+    if (!value.inherits(&DateInstance::info))
+        return std::numeric_limits<double>::quiet_NaN();
+    return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
 }
 
 void reportException(ExecState* exec, JSValue exception)

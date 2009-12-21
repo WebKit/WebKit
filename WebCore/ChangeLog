@@ -2,6 +2,36 @@
 
         Reviewed by Darin Adler.
 
+        Add support for JavaScriptCore Date binding.
+        https://bugs.webkit.org/show_bug.cgi?id=32698
+
+        This is needed for HTMLInputElement::valueAsDate and
+        HTMLTimeElement::valueAsDate.
+
+        A Date instance is mapped to a double value in C++.
+        - If null or undefined is set to a JavaScript property, C++ setter
+          function receives NaN.
+        - If a getter C++ function returns NaN or infinity, a JavaScript
+          property returns null.
+
+        Test: fast/forms/input-valueasdate.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsDateOrNull): Implement the above.
+        (WebCore::valueToDate): ditto.
+        * bindings/js/JSDOMBinding.h: Declare them.
+        * bindings/scripts/CodeGeneratorJS.pm: Produce jsDateOrNull() or
+          valueToDate() for Date type.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueAsDate): Temporal implementation.
+        (WebCore::HTMLInputElement::setValueAsDate): ditto.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Declare valueAsDate.
+
+2009-12-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Introduce the followings:
           - ::-webkit-inner-spin-button pseudo CSS selector
           - ::-webkit-outer-spin-button pseudo CSS selector

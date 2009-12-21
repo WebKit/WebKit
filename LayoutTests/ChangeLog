@@ -1,3 +1,14 @@
+2009-12-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A test for Date binding.
+        https://bugs.webkit.org/show_bug.cgi?id=32698
+
+        * fast/forms/input-valueasdate-expected.txt: Added.
+        * fast/forms/input-valueasdate.html: Added.
+        * fast/forms/script-tests/input-valueasdate.js: Added.
+
 2009-12-20  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
