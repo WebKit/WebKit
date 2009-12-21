@@ -359,6 +359,17 @@ input::-webkit-input-list-button {
     display: inline-block;
 }
 
+input::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    display: inline-block;
+}
+
+input::-webkit-outer-spin-button {
+    -webkit-appearance: outer-spin-button;
+    display: inline-block;
+    margin-left: 2px;
+}
+
 textarea {
     -webkit-appearance: textarea;
     background-color: white;

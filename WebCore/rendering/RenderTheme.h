@@ -203,6 +203,11 @@ protected:
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setButtonSize(RenderStyle*) const { }
+
+    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintInnerSpinButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+    virtual void adjustOuterSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintOuterSpinButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
 #endif
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

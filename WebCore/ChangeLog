@@ -1,3 +1,51 @@
+2009-12-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce the followings:
+          - ::-webkit-inner-spin-button pseudo CSS selector
+          - ::-webkit-outer-spin-button pseudo CSS selector
+          - new appearance type: inner-spin-button
+          - new appearance type: outer-spin-button
+        They're going to be used for <input type=number> UI.
+        https://bugs.webkit.org/show_bug.cgi?id=31821
+
+        Inner-spin-button will be used for Windows, and outer-spin-button
+        will be used for Mac. A spin-button will represent a pair of an
+        increasing button part and a decreasing button part. SpinUpState,
+        which is defined in ThemeTypes.h, will be used to distinguish
+        these two parts.
+
+        The outer-spin-button implementation will use NSStepperCell.
+        NSStepperCell represents the pair of the parts and we can't draw them
+        independently. So a spin-button also represents the pair of the parts.
+
+        This change has no tests.  The following changes with tests will cover.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        * platform/ThemeTypes.h:
+        (WebCore::ControlState): Add SpinUpState.
+        (WebCore::ControlPart): Add InnerSpinButtonPart and OuterSpinButtonPart.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle): Add an empty implementation.
+        (WebCore::RenderTheme::adjustOuterSpinButtonStyle): Add an empty implementation.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintInnerSpinButton): Add an empty implementation.
+        (WebCore::RenderTheme::paintOuterSpinButton): Add an empty implementation.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::PseudoId): Add INNER_SPIN_BUTTON and OUTER_SPIN_BUTTON.
+
 2009-12-20  Nayan Kumar K  <nayankk@gmail.com>
 
         Reviewed by Darin Adler.

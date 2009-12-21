@@ -99,6 +99,7 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, focus, ("focus"));
     DEFINE_STATIC_LOCAL(AtomicString, hover, ("hover"));
     DEFINE_STATIC_LOCAL(AtomicString, indeterminate, ("indeterminate"));
+    DEFINE_STATIC_LOCAL(AtomicString, innerSpinButton, ("-webkit-inner-spin-button"));
 #if ENABLE(DATALIST)
     DEFINE_STATIC_LOCAL(AtomicString, inputListButton, ("-webkit-input-list-button"));
 #endif
@@ -127,6 +128,7 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, onlyChild, ("only-child"));
     DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, optional, ("optional"));
+    DEFINE_STATIC_LOCAL(AtomicString, outerSpinButton, ("-webkit-outer-spin-button"));
     DEFINE_STATIC_LOCAL(AtomicString, required, ("required"));
     DEFINE_STATIC_LOCAL(AtomicString, resizer, ("-webkit-resizer"));
     DEFINE_STATIC_LOCAL(AtomicString, root, ("root"));
@@ -235,7 +237,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoHover;
     else if (m_value == indeterminate)
         m_pseudoType = PseudoIndeterminate;
-    else if (m_value == link)
+    else if (m_value == innerSpinButton) {
+        m_pseudoType = PseudoInnerSpinButton;
+        element = true;
+    } else if (m_value == link)
         m_pseudoType = PseudoLink;
     else if (m_value == lang)
         m_pseudoType = PseudoLang;
@@ -297,7 +302,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoNthLastChild;
     else if (m_value == nthLastOfType)
         m_pseudoType = PseudoNthLastOfType;
-    else if (m_value == root)
+    else if (m_value == outerSpinButton) {
+        m_pseudoType = PseudoOuterSpinButton;
+        element = true;
+    } else if (m_value == root)
         m_pseudoType = PseudoRoot;
     else if (m_value == windowInactive)
         m_pseudoType = PseudoWindowInactive;
