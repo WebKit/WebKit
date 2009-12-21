@@ -1,3 +1,37 @@
+2009-12-21  Nate Chapin  <japhet@chromium.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Revert r52446 due to crashiness.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32839
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::pageHidden):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::suppressOpenerInNewFrame):
+        * loader/Request.cpp:
+        (WebCore::Request::Request):
+        (WebCore::Request::~Request):
+        * loader/Request.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::cancelPendingRequests):
+        (WebCore::Loader::Host::cancelRequests):
+
 2009-12-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

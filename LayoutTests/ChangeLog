@@ -1,3 +1,17 @@
+2009-12-21  Nate Chapin  <japhet@chromium.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Revert r52446 due to crashiness.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32839
+
+        * http/tests/navigation/image-load-in-beforeunload-handler-expected.txt:
+        * http/tests/navigation/image-load-in-beforeunload-handler.html:
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt:
+        * http/tests/navigation/image-load-in-unload-handler.html:
+        * http/tests/navigation/resources/wait-then-notify-done.html:
+
 2009-12-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler and Nikolas Zimmermann.

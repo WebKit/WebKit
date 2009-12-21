@@ -1,8 +1,0 @@
-<unknown> - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/navigation/image-load-in-beforeunload-handler.html">
-http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html, main document URL http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html, http method GET> redirectResponse (null)
-http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl, main document URL http://127.0.0.1:8000/navigation/image-load-in-beforeunload-handler.html, http method GET> redirectResponse (null)
-http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html, http status code 200>
-http://127.0.0.1:8000/navigation/resources/wait-then-notify-done.html - didFinishLoading
-http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl, http status code 200>
-http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl - didFinishLoading
-
