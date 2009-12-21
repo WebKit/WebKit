@@ -1,3 +1,34 @@
+2009-12-18  Adam Roben  <aroben@apple.com>
+
+        Add IWebPreferencesPrivate::[set]AcceleratedCompositingEnabled
+
+        Fixes <http://webkit.org/b/32745>.
+
+        Reviewed by Ada Chan.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added
+        [set]AcceleratedCompositingEnabled.
+
+        * Interfaces/WebKit.idl: Touched to force a build.
+
+        * WebPreferenceKeysPrivate.h: Added
+        WebKitAcceleratedCompositingEnabledPreferenceKey.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Make accelerated
+        compositing be on by default.
+        (WebPreferences::setAcceleratedCompositingEnabled): Store the new
+        value.
+        (WebPreferences::acceleratedCompositingEnabled): If accelerated
+        compositing isn't available, return false. Otherwise, return the value
+        stored in preferences.
+
+        * WebPreferences.h: Added [set]AcceleratedCompositingAvailable.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Just pass the value from
+        WebPreferences on down.
+
 2009-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of list items is wrong

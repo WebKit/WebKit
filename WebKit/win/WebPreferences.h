@@ -384,6 +384,8 @@ public:
     /* [in] */ BSTR key,
     /* [in] */ BSTR value);
 
+    virtual HRESULT STDMETHODCALLTYPE setAcceleratedCompositingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE acceleratedCompositingEnabled(BOOL*);
 
     // WebPreferences
 

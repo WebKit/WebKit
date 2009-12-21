@@ -32,14 +32,13 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
-#pragma warning( push, 0 )
 #include <WebCore/CString.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
+#include <WebCore/WKCACFLayerRenderer.h>
 #include "WebLocalizableStrings.h"
-#pragma warning( pop )
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <limits>
@@ -254,6 +253,8 @@ void WebPreferences::initializeDefaultSettings()
 
     RetainPtr<CFStringRef> pluginAllowedRunTime(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%u"), numeric_limits<unsigned>::max()));
     CFDictionaryAddValue(defaults, CFSTR(WebKitPluginAllowedRunTimePreferenceKey), pluginAllowedRunTime.get());
+
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanTrue);
 
     defaultSettings = defaults;
 }
@@ -1353,6 +1354,18 @@ HRESULT WebPreferences::setPreferenceForTest(BSTR key, BSTR value)
     RetainPtr<CFStringRef> valueString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(value), SysStringLen(value)));
     setValueForKey(keyString.get(), valueString.get());
     postPreferencesChangesNotification();
+    return S_OK;
+}
+
+HRESULT WebPreferences::setAcceleratedCompositingEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::acceleratedCompositingEnabled(BOOL* enabled)
+{
+    *enabled = WKCACFLayerRenderer::acceleratedCompositingAvailable() && boolValueForKey(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey));
     return S_OK;
 }
 
