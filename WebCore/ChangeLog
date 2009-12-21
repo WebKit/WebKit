@@ -1,5 +1,20 @@
 2009-12-20  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Can’t copy outer html of selected node.
+        Also adds "Copy as HTML" context menu item.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32802
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentCanCopy):
+
+2009-12-20  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Web Inspector: extract syntax highlighters into separate files.

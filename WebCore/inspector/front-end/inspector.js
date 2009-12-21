@@ -727,7 +727,8 @@ WebInspector.documentKeyDown = function(event)
 
 WebInspector.documentCanCopy = function(event)
 {
-    return this.currentPanel && this.currentPanel.handleCopyEvent;
+    if (this.currentPanel && this.currentPanel.handleCopyEvent)
+        event.preventDefault();
 }
 
 WebInspector.documentCopy = function(event)

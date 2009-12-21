@@ -603,6 +603,7 @@ WebInspector.ElementsTreeElement.prototype = {
         contextMenu.appendSeparator();
 
         // Add node-related actions.
+        contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
     },
 
@@ -959,6 +960,11 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var callId = WebInspector.Callback.wrap(removeNodeCallback);
         InspectorBackend.removeNode(callId, this.representedObject.id);
+    },
+
+    _copyHTML: function(node)
+    {
+        InspectorBackend.copyNode(this.representedObject.id);
     }
 }
 
