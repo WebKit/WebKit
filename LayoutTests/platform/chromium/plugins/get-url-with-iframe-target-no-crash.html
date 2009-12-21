@@ -1,0 +1,21 @@
+<html>
+<script>
+function runtest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        plg.getURLNotify("data:text/html,<body onload='layoutTestController.notifyDone()'></body>", "frame", "callback");
+        plg.parentNode.removeChild(plg)
+    } else {
+        document.write("Cannot run interactively");
+    }
+}
+</script>
+<body onload="runtest()">
+<embed id="plg" type="application/x-webkit-test-netscape"></embed>
+This tests that we do not crash upon trying to deliver NPP_URLNotify to
+a plugin that has been deleted.
+<div id="result">SUCCESS</div>
+<iframe id="frame"></iframe>
+</body>
+</html>

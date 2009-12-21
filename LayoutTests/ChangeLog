@@ -1,5 +1,27 @@
 2009-12-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Upstream a bunch of platform-specific Chromium plugin tests.
+        https://bugs.webkit.org/show_bug.cgi?id=32751
+
+        * platform/chromium/plugins/call-as-function-expected.txt: Added.
+        * platform/chromium/plugins/call-as-function.html: Added.
+        * platform/chromium/plugins/get-url-with-iframe-target-no-crash-expected.txt: Added.
+        * platform/chromium/plugins/get-url-with-iframe-target-no-crash.html: Added.
+        * platform/chromium/plugins/multiple-plugins-expected.txt: Added.
+        * platform/chromium/plugins/multiple-plugins.html: Added.
+        * platform/chromium/plugins/nested-plugin-objects-expected.txt: Added.
+        * platform/chromium/plugins/nested-plugin-objects.html: Added.
+        * platform/chromium/plugins/refcount-leaks-expected.txt: Added.
+        * platform/chromium/plugins/refcount-leaks.html: Added.
+        * platform/chromium/plugins/return-npobject-expected.txt: Added.
+        * platform/chromium/plugins/return-npobject.html: Added.
+        * platform/chromium/plugins/script-object-invoke-expected.txt: Added.
+        * platform/chromium/plugins/script-object-invoke.html: Added.
+
+2009-12-21  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Darin Adler.
 
         Upstream a test to ensure we handle variations on "javascript:" URL
