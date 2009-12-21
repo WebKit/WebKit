@@ -13,6 +13,7 @@
     <file>ConsoleView.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
+    <file>CSSSourceSyntaxHighlighter.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabaseTableView.js</file>
@@ -31,6 +32,7 @@
     <file>inspector.js</file>
     <file>InspectorBackendStub.js</file>
     <file>InspectorFrontendHostStub.js</file>
+    <file>JavaScriptSourceSyntaxHighlighter.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
@@ -57,6 +59,7 @@
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceFrame.js</file>
+    <file>SourceSyntaxHighlighter.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
     <file>StoragePanel.js</file>
