@@ -1,3 +1,15 @@
+2009-12-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Upstream a test to ensure we handle variations on "javascript:" URL
+        correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32740
+
+        * fast/dom/xss-DENIED-javascript-variations-expected.txt: Added.
+        * fast/dom/xss-DENIED-javascript-variations.html: Added.
+
 2009-12-21  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, build fix.
