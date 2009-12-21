@@ -1,3 +1,9 @@
+2009-12-21  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        * platform/gtk/Skipped: Unskip test fixed by patch from Bug 24001.
+
 2009-12-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
