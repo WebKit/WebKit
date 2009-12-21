@@ -1,3 +1,11 @@
+2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Created "style" folder for code supporting check-webkit-style.
+
+        * Scripts/modules/style: Added.
+
 2009-12-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
