@@ -38,7 +38,7 @@ using namespace HTMLNames;
 typedef HashMap<RefPtr<AtomicStringImpl>, CounterNode*> CounterMap;
 typedef HashMap<const RenderObject*, CounterMap*> CounterMaps;
 
-static CounterNode* makeCounterNode(RenderObject*, const AtomicString& counterName, bool alwaysCreateCounter);
+static CounterNode* makeCounterNode(RenderObject*, const AtomicString& identifier, bool alwaysCreateCounter);
 
 static CounterMaps& counterMaps()
 {
@@ -53,7 +53,7 @@ static inline RenderObject* previousSiblingOrParent(RenderObject* object)
     return object->parent();
 }
 
-static bool planCounter(RenderObject* object, const AtomicString& counterName, bool& isReset, int& value)
+static bool planCounter(RenderObject* object, const AtomicString& identifier, bool& isReset, int& value)
 {
     ASSERT(object);
 
@@ -66,7 +66,7 @@ static bool planCounter(RenderObject* object, const AtomicString& counterName, b
     ASSERT(style);
 
     if (const CounterDirectiveMap* directivesMap = style->counterDirectives()) {
-        CounterDirectives directives = directivesMap->get(counterName.impl());
+        CounterDirectives directives = directivesMap->get(identifier.impl());
         if (directives.m_reset) {
             value = directives.m_resetValue;
             if (directives.m_increment)
@@ -81,7 +81,7 @@ static bool planCounter(RenderObject* object, const AtomicString& counterName, b
         }
     }
 
-    if (counterName == "list-item") {
+    if (identifier == "list-item") {
         if (object->isListItem()) {
             if (toRenderListItem(object)->hasExplicitValue()) {
                 value = toRenderListItem(object)->explicitValue();
@@ -142,7 +142,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
             if (currentCounter) {
                 // We have a suitable counter on the EndSearchRenderer.
                 if (previousSibling) { // But we already found another counter that we come after.
-                    if (currentCounter->isReset()) {
+                    if (currentCounter->actsAsReset()) {
                         // We found a reset counter that is on a renderer that is a sibling of ours or a parent.
                         if (isReset && currentRenderer->parent() == counterOwner->parent()) {
                             // We are also a reset counter and the previous reset was on a sibling renderer
@@ -171,7 +171,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                     // In this case we follow pretty much the same logic as above but no ASSERTs about 
                     // previousSibling, and when we are a sibling of the end counter we must set previousSibling
                     // to currentCounter.
-                    if (currentCounter->isReset()) {
+                    if (currentCounter->actsAsReset()) {
                         if (isReset && currentRenderer->parent() == counterOwner->parent()) {
                             parent = currentCounter->parent();
                             previousSibling = currentCounter;
@@ -201,7 +201,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                 if (previousSibling) {
                     // Since we had a suitable previous counter before, we should only consider this one as our 
                     // previousSibling if it is a reset counter and hence the current previousSibling is its child.
-                    if (currentCounter->isReset()) {
+                    if (currentCounter->actsAsReset()) {
                         previousSibling = currentCounter;
                         // We are no longer interested in previous siblings of the currentRenderer or their children
                         // as counters they may have attached cannot be the previous sibling of the counter we are placing.
@@ -226,31 +226,25 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
     return false;
 }
 
-static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& counterName, bool alwaysCreateCounter)
+static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& identifier, bool alwaysCreateCounter)
 {
     ASSERT(object);
 
     if (object->m_hasCounterNodeMap)
         if (CounterMap* nodeMap = counterMaps().get(object))
-            if (CounterNode* node = nodeMap->get(counterName.impl()))
+            if (CounterNode* node = nodeMap->get(identifier.impl()))
                 return node;
 
     bool isReset = false;
     int value = 0;
-    if (!planCounter(object, counterName, isReset, value) && !alwaysCreateCounter)
+    if (!planCounter(object, identifier, isReset, value) && !alwaysCreateCounter)
         return 0;
 
     CounterNode* newParent = 0;
     CounterNode* newPreviousSibling = 0;
-    CounterNode* newNode;
-    if (findPlaceForCounter(object, counterName, isReset, newParent, newPreviousSibling)) {
-        newNode = new CounterNode(object, isReset, value);
-        newParent->insertAfter(newNode, newPreviousSibling, counterName);
-    } else {
-        // Make a reset node for counters that aren't inside an existing reset node.
-        newNode = new CounterNode(object, true, value);
-    }
-
+    CounterNode* newNode = new CounterNode(object, isReset, value);
+    if (findPlaceForCounter(object, identifier, isReset, newParent, newPreviousSibling))
+        newParent->insertAfter(newNode, newPreviousSibling, identifier);
     CounterMap* nodeMap;
     if (object->m_hasCounterNodeMap)
         nodeMap = counterMaps().get(object);
@@ -259,8 +253,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& co
         counterMaps().set(object, nodeMap);
         object->m_hasCounterNodeMap = true;
     }
-    nodeMap->set(counterName.impl(), newNode);
-
+    nodeMap->set(identifier.impl(), newNode);
     return newNode;
 }
 
@@ -290,12 +283,12 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
         m_counterNode = makeCounterNode(parent(), m_counter.identifier(), true);
 
     CounterNode* child = m_counterNode;
-    int value = child->isReset() ? child->value() : child->countInParent();
+    int value = child->actsAsReset() ? child->value() : child->countInParent();
 
     String text = listMarkerText(m_counter.listStyle(), value);
 
     if (!m_counter.separator().isNull()) {
-        if (!child->isReset())
+        if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
             text = listMarkerText(m_counter.listStyle(), child->countInParent())

@@ -1,3 +1,26 @@
+2009-12-21  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Inconsistent use of counterName and identifier in CSS counter code and loss of information about the counter type.
+        https://bugs.webkit.org/show_bug.cgi?id=31814
+
+        No new tests because there are no functional changes in this patch.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::computeCountInParent):
+        (WebCore::showTreeAndMark):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        (WebCore::findPlaceForCounter):
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::originalText):
+        Changed to use identifier instead of counterName and actsAsReset or hasResetType, as appropriate instead of isReset.
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::actsAsReset):
+        (WebCore::CounterNode::hasResetType):
+
 2009-12-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler and Nikolas Zimmermann.

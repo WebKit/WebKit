@@ -42,7 +42,8 @@ class CounterNode : public Noncopyable {
 public:
     CounterNode(RenderObject*, bool isReset, int value);
 
-    bool isReset() const { return m_isReset; }
+    bool actsAsReset() const { return m_hasResetType || !m_parent; }
+    bool hasResetType() const { return m_hasResetType; }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
     RenderObject* renderer() const { return m_renderer; }
@@ -58,15 +59,24 @@ public:
     CounterNode* nextInPreOrderAfterChildren(const CounterNode* stayWithin = 0) const;
 
     void insertAfter(CounterNode* newChild, CounterNode* beforeChild, const AtomicString& identifier);
+
+    // identifier must match the identifier of this counter.
     void removeChild(CounterNode*, const AtomicString& identifier);
 
 private:
     int computeCountInParent() const;
     void recount(const AtomicString& identifier);
+
+    // Invalidates the text in the renderer of this counter, if any.
+    // identifier must match the identifier of this counter.
     void resetRenderer(const AtomicString& identifier) const;
+
+    // Invalidates the text in the renderer of this counter, if any,
+    // and in the renderers of all descendants of this counter, if any.
+    // identifier must match the identifier of this counter.
     void resetRenderers(const AtomicString& identifier) const;
 
-    bool m_isReset;
+    bool m_hasResetType;
     int m_value;
     int m_countInParent;
     RenderObject* m_renderer;

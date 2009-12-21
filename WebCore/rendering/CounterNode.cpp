@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderObject* o, bool isReset, int value)
-    : m_isReset(isReset)
+CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
+    : m_hasResetType(hasResetType)
     , m_value(value)
     , m_countInParent(0)
     , m_renderer(o)
@@ -100,13 +100,12 @@ CounterNode* CounterNode::previousInPreOrder() const
 
 int CounterNode::computeCountInParent() const
 {
-    int increment = m_isReset ? 0 : m_value;
+    int increment = actsAsReset() ? 0 : m_value;
     if (m_previousSibling)
         return m_previousSibling->m_countInParent + increment;
     ASSERT(m_parent->m_firstChild == this);
     return m_parent->m_value + increment;
 }
-
 
 void CounterNode::resetRenderer(const AtomicString& identifier) const
 {
@@ -216,7 +215,7 @@ static void showTreeAndMark(const CounterNode* node)
         for (const CounterNode* parent = current; parent && parent != root; parent = parent->parent())
             fwrite("  ", 1, 2, stderr);
         fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
-            current, current->isReset() ? "reset____" : "increment", current->value(),
+            current, current->actsAsReset() ? "reset____" : "increment", current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
             current->nextSibling(), current->renderer());
     }
