@@ -1,3 +1,10 @@
+2009-12-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip layoutTestController.notifyDone() related test until fix.
+        https://bugs.webkit.org/show_bug.cgi?id=31626
+
+        * platform/qt/Skipped: http/tests/misc/set-window-opener-to-null.html added.
+
 2009-12-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
