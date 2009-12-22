@@ -54,18 +54,33 @@
 
         * platform/qt/Skipped: http/tests/misc/set-window-opener-to-null.html added.
 
-2009-12-21  Dirk Pranke  <dpranke@chromium.org>
+2009-12-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
 
-        Upstream chrome/fast/events/iframe-onload-remove-self-no-crash.html .
-        https://bugs.webkit.org/show_bug.cgi?id=32742 .
+        Upstream a bunch of forms tests from chromium.org.
+        https://bugs.webkit.org/show_bug.cgi?id=32755
 
-        * fast/frames/iframe-onload-remove-self-no-crash-expected.txt: Added.
-        * fast/frames/iframe-onload-remove-self-no-crash.html: Added.
-        * fast/frames/resources/iframe-onload-remove-self-no-crash-child.html: Added.
-        * fast/frames/resources/iframe-onload-remove-self-no-crash.js: Added.
-        (onWindowLoad):
+        * fast/forms/basic-selects.html: Added.
+        * fast/forms/basic-textareas-quirks.html: Added.
+        * fast/forms/document-write-empty-expected.txt: Added.
+        * fast/forms/document-write-empty.html: Added.
+        * fast/forms/form-action-expected.txt: Added.
+        * fast/forms/form-action.html: Added.
+        * fast/forms/lazy-event-listener-scope-chain-expected.txt: Added.
+        * fast/forms/lazy-event-listener-scope-chain.html: Added.
+        * fast/forms/resources/logo.gif: Added.
+        * fast/forms/selected-index-value-expected.txt: Added.
+        * fast/forms/selected-index-value.html: Added.
+        * fast/forms/style-display-none-expected.txt: Added.
+        * fast/forms/style-display-none.html: Added.
+        * platform/mac/fast/forms/basic-selects-expected.checksum: Added.
+        * platform/mac/fast/forms/basic-selects-expected.png: Added.
+        * platform/mac/fast/forms/basic-selects-expected.txt: Added.
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+
 
 2009-12-21  Fumitoshi Ukai  <ukai@chromium.org>
 
