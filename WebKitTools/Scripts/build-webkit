@@ -74,7 +74,7 @@ my @features = (
       define => "ENABLE_DATABASE", default => 1, value => \$databaseSupport },
 
     { option => "datagrid", desc => "Toggle Datagrid Support",
-      define => "ENABLE_DATAGRID", default => 1, value => \$datagridSupport },
+      define => "ENABLE_DATAGRID", default => 0, value => \$datagridSupport },
       
     { option => "datalist", desc => "Toggle HTML5 datalist support",
       define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },

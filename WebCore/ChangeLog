@@ -1,5 +1,18 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Turn off datagrid by default, at least for all platforms Apple ships.
+        The datagrid implementation isn't ready for general web use yet.
+
+        * Configurations/FeatureDefines.xcconfig: Turn off datagrid by default.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Ditto.
+        * WebCore.vcproj/build-generated-files.sh: Ditto.
+        * page/DOMWindow.idl: Sorted things here to touch the file to give
+        the Windows build a slightly better chance of success.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Dan Bernstein.
 
         * page/FrameView.h: Removed incorrect comment.

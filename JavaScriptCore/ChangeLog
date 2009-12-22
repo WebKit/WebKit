@@ -1,3 +1,12 @@
+2009-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Turn off datagrid by default, at least for all platforms Apple ships.
+        The datagrid implementation isn't ready for general web use yet.
+
+        * Configurations/FeatureDefines.xcconfig: Turn off datagrid by default.
+
 2009-12-22  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
