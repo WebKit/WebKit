@@ -23,20 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MainThread.h"
-
-#include "AndroidThreading.h"
+#ifndef AndroidThreading_h
+#define AndroidThreading_h
 
 namespace WTF {
 
-void initializeMainThreadPlatform()
-{
-}
-
-void scheduleDispatchFunctionsOnMainThread()
-{
-    AndroidThreading::scheduleDispatchFunctionsOnMainThread();
-}
+// An interface to the embedding layer, which provides threading support.
+class AndroidThreading {
+public:
+    static void scheduleDispatchFunctionsOnMainThread();
+};
 
 } // namespace WTF
+
+#endif // AndroidThreading_h

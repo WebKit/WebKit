@@ -1,3 +1,20 @@
+2009-12-22  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Updates Android's scheduleDispatchFunctionsOnMainThread() to use new
+        AndroidThreading class, rather than using JavaSharedClient directly.
+        This fixes the current layering violation.
+        https://bugs.webkit.org/show_bug.cgi?id=32651
+
+        The pattern is copied from Chromium, which uses the ChromiumThreading
+        class. This patch also fixes the style in ChromiumThreading.h.
+
+        * wtf/android/AndroidThreading.h: Added. Declares AndroidThreading.
+        * wtf/android/MainThreadAndroid.cpp: Modified
+        (WTF::scheduleDispatchFunctionsOnMainThread): Uses AndroidThreading.
+        * wtf/chromium/ChromiumThreading.h: Modified. Fixes style.
+
 2009-12-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
