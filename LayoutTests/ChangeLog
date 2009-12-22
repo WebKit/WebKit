@@ -1,3 +1,15 @@
+2009-12-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Attempting to upstream xss-inactive-closure test from the Chromium
+        test suite. https://bugs.webkit.org/show_bug.cgi?id=32691 .
+
+        * http/tests/security/listener/resources/xss-inactive-closure-child-2.html: Added.
+        * http/tests/security/listener/resources/xss-inactive-closure-child.html: Added.
+        * http/tests/security/listener/xss-inactive-closure-expected.txt: Added.
+        * http/tests/security/listener/xss-inactive-closure.html: Added.
+
 2009-12-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
