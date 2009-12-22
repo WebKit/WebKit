@@ -39,7 +39,6 @@
 #include "config.h"
 #include "PNGImageDecoder.h"
 #include "png.h"
-#include "assert.h"
 
 namespace WebCore {
 
@@ -292,7 +291,7 @@ void PNGImageDecoder::headerAvailable()
     // Update our info now
     png_read_update_info(png, info);
     channels = png_get_channels(png, info);
-    assert(channels == 3 || channels == 4);
+    ASSERT(channels == 3 || channels == 4);
 
     reader()->setHasAlpha(channels == 4);
 

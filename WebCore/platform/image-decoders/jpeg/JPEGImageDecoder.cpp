@@ -39,7 +39,6 @@
 
 #include "config.h"
 #include "JPEGImageDecoder.h"
-#include <assert.h>
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
 
 #if PLATFORM(WINCE)
@@ -271,7 +270,7 @@ public:
                         return true; /* I/O suspension */
       
                     /* If we've completed image output ... */
-                    assert(m_info.output_scanline == m_info.output_height);
+                    ASSERT(m_info.output_scanline == m_info.output_height);
                     m_state = JPEG_DONE;
                 }
             }
