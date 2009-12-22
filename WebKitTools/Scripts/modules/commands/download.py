@@ -52,6 +52,7 @@ class AbstractDeclarativeCommmand(Command):
         Command.__init__(self, self.help_text, self.argument_names, options)
 
 
+# FIXME: Move this to a more general location.
 class AbstractSequencedCommmand(AbstractDeclarativeCommmand):
     steps = None
     def __init__(self):

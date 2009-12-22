@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import StringIO
 
 from optparse import make_option
 
@@ -52,6 +53,10 @@ class CommandOptions(object):
     port = make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...).")
     reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
     complete_rollout = make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Commit the revert and re-open the original bug.")
+    obsolete_patches = make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one.")
+    review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
+    request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
+    description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
 
 
 class AbstractStep(object):
@@ -62,6 +67,7 @@ class AbstractStep(object):
 
     def _run_script(self, script_name, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
+        # FIXME: This should use self.port()
         self._tool.executive.run_and_throw_if_fail(port.script_path(script_name), quiet)
 
     # FIXME: The port should live on the tool.
@@ -105,8 +111,59 @@ class MetaStep(AbstractStep):
 
 
 class PrepareChangelogStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.port,
+            CommandOptions.quiet,
+            CommandOptions.non_interactive,
+        ]
+
     def run(self, state):
-        self._run_script("prepare-ChangeLog")
+        os.chdir(self._tool.scm().checkout_root)
+        args = [self.port().script_path("prepare-ChangeLog")]
+        if not self._options.non_interactive:
+            args.append("-o")
+        if state["bug_id"]:
+            args.append("--bug=%s" % state["bug_id"])
+        self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
+        if not self._options.non_interactive:
+            self._tool.user.prompt("Press enter when ready to continue.")
+
+
+class ObsoletePatchesOnBugStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.obsolete_patches,
+        ]
+
+    def run(self, state):
+        if not self._options.obsolete_patches:
+            return
+        bug_id = state["bug_id"]
+        patches = self._tool.bugs.fetch_patches_from_bug(bug_id)
+        if not patches:
+            return
+        log("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
+        for patch in patches:
+            self._tool.bugs.obsolete_attachment(patch["id"])
+
+
+class PostDiffToBugStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.description,
+            CommandOptions.review,
+            CommandOptions.request_commit,
+        ]
+
+    def run(self, state):
+        diff = self._tool.scm().create_patch()
+        diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
+        description = self._options.description or "Patch"
+        self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
 
 
 class PrepareChangelogForRevertStep(AbstractStep):

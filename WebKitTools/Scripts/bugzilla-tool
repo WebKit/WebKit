@@ -43,6 +43,8 @@ from modules.executive import Executive
 from modules.logging import log
 from modules.multicommandtool import MultiCommandTool
 from modules.scm import detect_scm_system
+from modules.user import User
+
 
 class BugzillaTool(MultiCommandTool):
     def __init__(self):
@@ -53,6 +55,7 @@ class BugzillaTool(MultiCommandTool):
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.executive = Executive()
+        self.user = User()
         self._scm = None
         self.status_bot = StatusBot()
 

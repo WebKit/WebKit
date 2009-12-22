@@ -108,6 +108,7 @@ class MockBuildBot(Mock):
     def red_core_builders_names(self):
         return []
 
+
 class MockSCM(Mock):
     def __init__(self):
         Mock.__init__(self)
@@ -142,6 +143,11 @@ class MockSCM(Mock):
         return []
 
 
+class MockUser(object):
+    def prompt(self, message):
+        return "Mock user response"
+
+
 class MockStatusBot(object):
     def __init__(self):
         self.statusbot_host = "example.com"
@@ -158,6 +164,7 @@ class MockBugzillaTool():
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = Mock()
+        self.user = MockUser()
         self._scm = MockSCM()
         self.status_bot = MockStatusBot()
 

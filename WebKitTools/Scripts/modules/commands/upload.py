@@ -36,6 +36,8 @@ import sys
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
+from modules.buildsteps import PrepareChangelogStep, CommandOptions, ObsoletePatchesOnBugStep, PostDiffToBugStep
+from modules.commands.download import AbstractSequencedCommmand
 from modules.comments import bug_comment_from_svn_revision
 from modules.grammar import pluralize
 from modules.logging import error, log
@@ -52,59 +54,50 @@ class CommitMessageForCurrentDiff(Command):
         print "%s" % tool.scm().commit_message_for_this_commit().message()
 
 
-class ObsoleteAttachments(Command):
+class ObsoleteAttachments(AbstractSequencedCommmand):
     name = "obsolete-attachments"
-    def __init__(self):
-        Command.__init__(self, "Mark all attachments on a bug as obsolete", "BUGID")
+    help_text = "Mark all attachments on a bug as obsolete"
+    argument_names = "BUGID"
+    steps = [
+        ObsoletePatchesOnBugStep,
+    ]
 
-    def execute(self, options, args, tool):
-        bug_id = args[0]
-        attachments = tool.bugs.fetch_attachments_from_bug(bug_id)
-        for attachment in attachments:
-            if not attachment["is_obsolete"]:
-                tool.bugs.obsolete_attachment(attachment["id"])
+    def _prepare_state(self, options, args, tool):
+        return { "bug_id" : args[0] }
 
 
-class PostDiff(Command):
+class PostDiff(AbstractSequencedCommmand):
     name = "post-diff"
+    help_text = "Attach the current working directory diff to a bug as a patch file"
+    argument_names = "[BUGID]"
     show_in_main_help = True
-    def __init__(self):
-        options = [
-            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")"),
-        ]
-        options += self.posting_options()
-        Command.__init__(self, "Attach the current working directory diff to a bug as a patch file", "[BUGID]", options=options)
+    steps = [
+        ObsoletePatchesOnBugStep,
+        PostDiffToBugStep,
+    ]
 
-    @staticmethod
-    def posting_options():
-        return [
-            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one."),
-            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
-            make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
-        ]
-
-    @staticmethod
-    def obsolete_patches_on_bug(bug_id, bugs):
-        patches = bugs.fetch_patches_from_bug(bug_id)
-        if len(patches):
-            log("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
-            for patch in patches:
-                bugs.obsolete_attachment(patch["id"])
-
-    def execute(self, options, args, tool):
+    def _prepare_state(self, options, args, tool):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
         bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
         if not bug_id:
             error("No bug id passed and no bug url found in diff, can't post.")
+        return { "bug_id" : bug_id }
 
-        if options.obsolete_patches:
-            self.obsolete_patches_on_bug(bug_id, tool.bugs)
 
-        diff = tool.scm().create_patch()
-        diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
+class SubmitPatch(AbstractSequencedCommmand):
+    name = "submit-patch"
+    help_text = "Experimental.  Creates a patch from the current working copy and uploads bugzilla"
+    argument_names = "BUGID"
+    steps = [
+        PrepareChangelogStep,
+        # FIXME: Add a CreateBugStep!
+        ObsoletePatchesOnBugStep,
+        PostDiffToBugStep,
+    ]
 
-        description = options.description or "Patch"
-        tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+    def _prepare_state(self, options, args, tool):
+        bug_id = args[0]
+        return { "bug_id" : bug_id }
 
 
 class PostCommits(Command):
@@ -115,8 +108,10 @@ class PostCommits(Command):
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
             make_option("--add-log-as-comment", action="store_true", dest="add_log_as_comment", default=False, help="Add commit log message as a comment when uploading the patch."),
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: description from commit message)"),
+            CommandOptions.obsolete_patches,
+            CommandOptions.review,
+            CommandOptions.request_commit,
         ]
-        options += PostDiff.posting_options()
         Command.__init__(self, "Attach a range of local commits to bugs as patch files", "COMMITISH", options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
@@ -147,7 +142,8 @@ class PostCommits(Command):
                 continue
 
             if options.obsolete_patches and bug_id not in have_obsoleted_patches:
-                PostDiff.obsolete_patches_on_bug(bug_id, tool.bugs)
+                state = { "bug_id": bug_id }
+                ObsoletePatchesOnBugStep(tool, options).run(state)
                 have_obsoleted_patches.add(bug_id)
 
             diff_file = self._diff_file_for_commit(tool, commit_id)
