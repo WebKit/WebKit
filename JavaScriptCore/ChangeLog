@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
 
+        RVCT (__ARMCC_VERSION < 400000) does not provide strcasecmp and strncasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=32857
+
+        Add implementation of strcasecmp and strncasecmp for RVCT < 4.0
+        because earlier versions of RVCT 4.0 does not provide these functions.
+
+        * wtf/StringExtras.cpp: Added.
+        (strcasecmp):
+        (strncasecmp):
+        * wtf/StringExtras.h:
+
+2009-12-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
         Define ALWAYS_INLINE and WTF_PRIVATE_INLINE to __forceinline for RVCT
         https://bugs.webkit.org/show_bug.cgi?id=32853
 
