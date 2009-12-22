@@ -2,9 +2,9 @@ TEMPLATE = app
 SOURCES += main.cpp
 CONFIG -= app_bundle
 CONFIG += uitools
-DESTDIR = ../../../bin
+DESTDIR = ../../bin
 
-include(../../../WebKit.pri)
+include(../../WebKit.pri)
 
 QT += network
 macx:QT+=xml

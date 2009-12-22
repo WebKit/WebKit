@@ -1,3 +1,13 @@
+2009-12-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Holger Freyther.
+
+        Moved QtLauncher to WebKitTools/
+
+        * QtLauncher: Removed.
+        * QtLauncher/QtLauncher.pro: Removed.
+        * QtLauncher/main.cpp: Removed.
+
 2009-12-21  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.

@@ -4,7 +4,7 @@ CONFIG += ordered
 SUBDIRS += \
         WebCore \
         JavaScriptCore/jsc.pro \
-        WebKit/qt/QtLauncher \
+        WebKitTools/QtLauncher \
         WebKit/qt/QGVLauncher \
         WebKit/qt/tests
 
