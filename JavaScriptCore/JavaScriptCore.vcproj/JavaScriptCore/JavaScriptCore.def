@@ -54,8 +54,6 @@ EXPORTS
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
-    ?computeHash@UStringImpl@JSC@@SAIPB_WH@Z
-    ?computeHash@UStringImpl@JSC@@SAIPBDH@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
@@ -101,8 +99,8 @@ EXPORTS
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXABVIdentifier@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
-    ?destroy@UStringImpl@JSC@@AAEXXZ
     ?destroyJSGlobalObjectData@JSGlobalObject@JSC@@CAXPAX@Z
+    ?destroy@UStringImpl@JSC@@AAEXXZ
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z

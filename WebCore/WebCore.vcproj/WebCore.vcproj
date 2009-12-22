@@ -42087,6 +42087,10 @@
 					RelativePath="..\ForwardingHeaders\runtime\UString.h"
 					>
 				</File>
+                <File
+					RelativePath="..\ForwardingHeaders\runtime\UStringImpl.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="pcre"

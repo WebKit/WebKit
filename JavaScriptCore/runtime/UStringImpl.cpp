@@ -28,7 +28,7 @@
 
 #include "Identifier.h"
 #include "UString.h"
-#include "UTF8.h"
+#include <wtf/unicode/UTF8.h>
 
 using namespace WTF::Unicode;
 using namespace std;
