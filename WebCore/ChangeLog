@@ -1,3 +1,19 @@
+2009-12-22  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Remove no longer necessary experimental single view #ifdefs from Widget and
+        ScrollView.
+
+        * page/Chrome.h:
+        * page/mac/ChromeMac.mm:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Widget.cpp:
+        * platform/Widget.h:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/WidgetMac.mm:
+
 2009-12-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
