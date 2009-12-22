@@ -2,6 +2,28 @@
 
         Reviewed by Darin Adler.
 
+        Allocate RemoteFontStream on the heap
+        https://bugs.webkit.org/show_bug.cgi?id=32850
+
+        RemoteFontStream is allocated on the stack, so its memory is freed
+        immediately when FontCustomPlatformData::createFontCustomPlatformData
+        returns. 
+
+        SkTypeface::CreateFromStream increments the reference count, but it keeps
+        the pointer to the memory allocated on the stack which is not valid
+        anymore.
+
+        RemoteFontStream is a descendant of SkRefCount and SkRefCount::unref
+        invokes SkDELETE(this) internally once the reference count reaches zero.
+        This means that SkRefCount-ed instances must be allocated on the heap.
+
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+
+2009-12-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
         when condition COMPILER(RVCT) is fulfilled, we are trying to free a pointer to array allocated on the stack
         https://bugs.webkit.org/show_bug.cgi?id=32861
 

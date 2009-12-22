@@ -190,8 +190,8 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
         return 0;
     return new FontCustomPlatformData(fontReference, fontName);
 #elif PLATFORM(LINUX)
-    RemoteFontStream stream(buffer);
-    SkTypeface* typeface = SkTypeface::CreateFromStream(&stream);
+    RemoteFontStream* stream = new RemoteFontStream(buffer);
+    SkTypeface* typeface = SkTypeface::CreateFromStream(stream);
     if (!typeface)
         return 0;
     return new FontCustomPlatformData(typeface);
