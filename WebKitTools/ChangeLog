@@ -1,3 +1,14 @@
+2009-12-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        validate-committer-lists fails when run from an SVN checkout
+        https://bugs.webkit.org/show_bug.cgi?id=31974
+
+        * Scripts/validate-committer-lists:
+         - Make it print a warning message instead of throwing
+           an exception when running from an SVN checkout.
+
 2009-12-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Adam Barth.

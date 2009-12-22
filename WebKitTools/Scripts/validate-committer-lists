@@ -38,6 +38,7 @@ import urllib2
 from datetime import date, datetime, timedelta
 from modules.committers import CommitterList
 from modules.logging import log, error
+from modules.scm import Git
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
@@ -243,7 +244,14 @@ class CommitterListFromGit:
 def main():
     committer_list = CommitterList()
     CommitterListFromMailingList().check_for_emails_missing_from_list(committer_list)
-
+ 
+    if not Git.in_working_directory("."):
+        print """\n\nWARNING: validate-committer-lists requires a git checkout.
+The following checks are disabled:
+ - List of committers ordered by last commit
+ - List of historical committers missing from committers.py
+"""
+        return 1
     svn_committer_list = CommitterListFromGit()
     svn_committer_list.print_possibly_expired_committers(committer_list)
     svn_committer_list.print_committers_missing_from_committer_list(committer_list)
