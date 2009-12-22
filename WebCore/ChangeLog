@@ -1,3 +1,12 @@
+2009-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure that we check for the right thread.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCScheduleDeallocateOnMainThread):
+
 2009-12-21  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.
