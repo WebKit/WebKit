@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,6 +124,10 @@ public:
     bool isFocusedAndActive() const;
     void pageActivationChanged();
 
+    // Selection display machinery
+    void setNeedsDisplayUpdate(bool = true);
+    bool needsDisplayUpdate() const { return m_needsDisplayUpdate; }
+
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
@@ -174,7 +178,7 @@ private:
     bool m_isDragCaretController : 1;
     bool m_isCaretBlinkingSuspended : 1;
     bool m_focused : 1;
-
+    bool m_needsDisplayUpdate : 1;
 };
 
 inline bool operator==(const SelectionController& a, const SelectionController& b)

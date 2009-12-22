@@ -1,3 +1,41 @@
+2009-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reentrancy problem with selection in some edge cases.
+        https://bugs.webkit.org/show_bug.cgi?id=32842
+        rdar://problem/7449974
+
+        Test: fast/forms/selection-layout-reentry-strange-case.html
+
+        Move the selection display update process done in the
+        selectionLayoutChanged function into the layout timer
+        instead of doing it immediately when selection changes occur.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        Initialize m_needsDisplayUpdate to false.
+        (WebCore::SelectionController::setSelection): Call
+        the new setNeedsDisplayUpdate function instead of the old
+        badly named Frame::selectionLayoutChanged function.
+        (WebCore::SelectionController::setNeedsDisplayUpdate):
+        Set m_needsDisplayUpdate. If it is just becoming true, then
+        call FrameView::scheduleRelayout.
+
+        * editing/SelectionController.h: Added setNeedsDisplayUpdate,
+        needsDisplayUpdate, and m_needsDisplayUpdate.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setCaretVisible): Call setNeedsDisplayUpdate.
+        (WebCore::Frame::selectionLayoutChanged): Call
+        setNeedsDisplayUpdate to set it to false, since this is the
+        function that performs "selection display update". Later I want
+        to rename this function.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsLayout): Add a new clause, since
+        we need a call to layout if needsDisplayUpdate is true.
+
 2009-12-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

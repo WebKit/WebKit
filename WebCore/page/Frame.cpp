@@ -563,7 +563,7 @@ void Frame::setCaretVisible(bool flag)
         return;
     clearCaretRectIfNeeded();
     m_caretVisible = flag;
-    selectionLayoutChanged();
+    selection()->setNeedsDisplayUpdate();
 }
 
 void Frame::clearCaretRectIfNeeded()
@@ -630,6 +630,8 @@ void Frame::setFocusedNodeIfNeeded()
 
 void Frame::selectionLayoutChanged()
 {
+    selection()->setNeedsDisplayUpdate(false);
+
     bool caretRectChanged = selection()->recomputeCaretRect();
 
 #if ENABLE(TEXT_CARET)

@@ -1198,7 +1198,8 @@ bool FrameView::needsLayout() const
         || m_layoutRoot
         || (document && document->childNeedsStyleRecalc()) // can occur when using WebKit ObjC interface
         || m_frame->needsReapplyStyles()
-        || (m_deferSetNeedsLayouts && m_setNeedsLayoutWasDeferred);
+        || (m_deferSetNeedsLayouts && m_setNeedsLayoutWasDeferred)
+        || m_frame->selection()->needsDisplayUpdate();
 }
 
 void FrameView::setNeedsLayout()
