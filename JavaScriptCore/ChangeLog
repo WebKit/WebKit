@@ -1,5 +1,10 @@
 2009-12-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows Build fix part 5.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2009-12-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (build fix).
         Fix breakage of world introduced in build fix to r52463.
 

@@ -1221,6 +1221,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\UStringImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\UStringImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\WeakGCMap.h"
 				>
 			</File>
