@@ -26,26 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Resource = function(requestHeaders, url, documentURL, domain, path, lastPathComponent, identifier, mainResource, cached, requestMethod, requestFormData)
+WebInspector.Resource = function(identifier, url)
 {
     this.identifier = identifier;
-
-    this.startTime = -1;
-    this.endTime = -1;
-    this.mainResource = mainResource;
-    this.requestHeaders = requestHeaders;
-    this.url = url;
-    this.documentURL = documentURL;
-    this.domain = domain;
-    this.path = path;
-    this.lastPathComponent = lastPathComponent;
-    this.cached = cached;
-    this.requestMethod = requestMethod || "";
-    this.requestFormData = requestFormData || "";
-
-    this.category = WebInspector.resourceCategories.other;
+    this._url = url;
+    this._startTime = -1;
+    this._endTime = -1;
+    this._requestMethod = "";
+    this._requestFormData = "";
+    this._category = WebInspector.resourceCategories.other;
 }
-
 
 WebInspector.Resource.StatusText = {
     100: "Continue",

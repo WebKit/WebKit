@@ -79,6 +79,8 @@ PassRefPtr<InspectorResource> InspectorResource::appendRedirect(unsigned long id
     redirect->m_changes.set(RedirectsChange);
 
     m_identifier = identifier;
+    // Re-send request info with new id.
+    m_changes.set(RequestChange);
     m_redirects.clear();
     return redirect;
 }

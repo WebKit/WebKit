@@ -971,36 +971,6 @@ WebInspector.showConsolePanel = function()
     this.currentPanel = this.panels.console;
 }
 
-WebInspector._addResource = function(identifier, payload)
-{
-    var resource = new WebInspector.Resource(
-        payload.requestHeaders,
-        payload.url,
-        payload.documentURL,
-        payload.host,
-        payload.path,
-        payload.lastPathComponent,
-        identifier,
-        payload.mainResource,
-        payload.cached,
-        payload.requestMethod,
-        payload.requestFormData);
-    this.resources[identifier] = resource;
-    this.resourceURLMap[resource.url] = resource;
-
-    if (resource.mainResource)
-        this.mainResource = resource;
-
-    if (this.panels.resources)
-        this.panels.resources.addResource(resource);
-
-    var match = payload.documentURL.match(/^(http[s]?|file):\/\/([\/]*[^\/]+)/i);
-    if (match)
-        this.addCookieDomain(match[1].toLowerCase() === "file" ? "" : match[2]);
-
-    return resource;
-}
-
 WebInspector.clearConsoleMessages = function()
 {
     WebInspector.console.clearMessages(false);
@@ -1022,13 +992,14 @@ WebInspector.updateResource = function(identifier, payload)
 {
     var resource = this.resources[identifier];
     if (!resource) {
-        resource = this._addResource(identifier, payload);
-        // Request info is already populated in constructor.
-        payload.didRequestChange = false;
+        resource = new WebInspector.Resource(identifier, payload.url);
+        this.resources[identifier] = resource;
+        this.resourceURLMap[resource.url] = resource;
+        if (this.panels.resources)
+            this.panels.resources.addResource(resource);
     }
 
     if (payload.didRequestChange) {
-        resource.url = payload.url;
         resource.host = payload.domain;
         resource.path = payload.path;
         resource.lastPathComponent = payload.lastPathComponent;
@@ -1036,6 +1007,15 @@ WebInspector.updateResource = function(identifier, payload)
         resource.mainResource = payload.mainResource;
         resource.requestMethod = payload.requestMethod;
         resource.requestFormData = payload.requestFormData;
+        resource.cached = payload.cached;
+        resource.documentURL = payload.documentURL;
+
+        if (resource.mainResource)
+            this.mainResource = resource;
+
+        var match = payload.documentURL.match(/^(http[s]?|file):\/\/([\/]*[^\/]+)/i);
+        if (match)
+            this.addCookieDomain(match[1].toLowerCase() === "file" ? "" : match[2]);
     }
 
     if (payload.didResponseChange) {
