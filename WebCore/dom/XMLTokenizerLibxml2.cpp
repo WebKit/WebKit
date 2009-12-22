@@ -899,7 +899,7 @@ void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
     if (m_parserStopped)
         return;
 
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || COMPILER(RVCT)
     char m[1024];
     vsnprintf(m, sizeof(m) - 1, message, args);
 #else

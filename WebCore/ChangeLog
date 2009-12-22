@@ -1,3 +1,15 @@
+2009-12-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Use vsnprintf instead of vasprintf for RVCT.
+        https://bugs.webkit.org/show_bug.cgi?id=32851
+
+        RVCT does not support vasprint, so use vsnprintf instead.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::error):
+
 2009-12-21  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
