@@ -1,3 +1,15 @@
+2009-12-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        when condition COMPILER(RVCT) is fulfilled, we are trying to free a pointer to array allocated on the stack
+        https://bugs.webkit.org/show_bug.cgi?id=32861
+
+        Don't free the pointer for COMPILER(RVCT).
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::error):
+
 2009-12-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
