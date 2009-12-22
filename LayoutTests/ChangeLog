@@ -1,5 +1,15 @@
 2009-12-22  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Add platform-specific chromium test.
+        https://bugs.webkit.org/show_bug.cgi?id=32741
+
+        * platform/chromium/fast/dom/interval-expected.txt: Added.
+        * platform/chromium/fast/dom/interval.html: Added.
+
+2009-12-22  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Barth.
 
         Attempting to upstream xss-inactive-closure test from the Chromium
