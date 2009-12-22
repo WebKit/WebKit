@@ -980,7 +980,7 @@ JSC::UString StringImpl::ustring()
 {
     SharedUChar* sharedBuffer = this->sharedBuffer();
     if (sharedBuffer)
-        return JSC::UString::Rep::create(const_cast<UChar*>(m_data), m_length, sharedBuffer);
+        return JSC::UString::Rep::create(sharedBuffer, const_cast<UChar*>(m_data), m_length);
 
     return JSC::UString(m_data, m_length);
 }

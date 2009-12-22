@@ -1,3 +1,17 @@
+2009-12-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32831
+        Replace UString::Rep implementation, following introduction of ropes to JSC.
+
+        * ForwardingHeaders/runtime/UStringImpl.h: Added.
+            - add forwarding header.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::ustring):
+            - order of arguments to UString::Rep constructor for shared strings changed.
+
 2009-12-18  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam barth.

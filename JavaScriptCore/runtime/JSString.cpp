@@ -96,13 +96,13 @@ void JSString::resolveRope(ExecState* exec) const
 
     // Allocate the buffer to hold the final string, position initially points to the end.
     UChar* buffer;
-    if (!tryFastMalloc(m_stringLength * sizeof(UChar)).getValue(buffer)) {
+    m_value = UString::createUninitialized(m_stringLength, buffer);
+    if (!buffer) {
         for (unsigned i = 0; i < m_ropeLength; ++i)
             m_fibers[i].deref();
         m_ropeLength = 0;
         ASSERT(!isRope());
         ASSERT(m_value == UString());
-
         throwOutOfMemoryError(exec);
         return;
     }
@@ -133,7 +133,6 @@ void JSString::resolveRope(ExecState* exec) const
             if (workQueue.isEmpty()) {
                 // Create a string from the UChar buffer, clear the rope RefPtr.
                 ASSERT(buffer == position);
-                m_value = UString::Rep::create(buffer, m_stringLength);
                 for (unsigned i = 0; i < m_ropeLength; ++i)
                     m_fibers[i].deref();
                 m_ropeLength = 0;
