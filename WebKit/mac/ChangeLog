@@ -1,3 +1,12 @@
+2009-12-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't allocate a WebGeolocationControllerClient unless that compile-time setting is enabled.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2009-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
