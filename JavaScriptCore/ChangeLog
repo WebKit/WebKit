@@ -1,3 +1,9 @@
+2009-12-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build, add UStringImpl.cpp to the build.
+
+        * JavaScriptCore.pri:
+
 2009-12-21  Gavin Barraclough  <barraclough@apple.com>
 
         Windows Build fix part 5.
