@@ -119,18 +119,31 @@ WebInspector.SourceSyntaxHighlighter.prototype = {
         
         for (var i = 0; i < this.rules.length; i++) {
             var rule = this.rules[i];
-            var ruleContinueStateCondition = typeof rule.continueStateCondition === "undefined" ? this.ContinueState.None : rule.continueStateCondition;
-            if (this.continueState === ruleContinueStateCondition) {
-                if (typeof rule.lexStateCondition !== "undefined" && this.lexState !== rule.lexStateCondition)
-                    continue;
-                var match = rule.pattern.exec(codeFragment);
-                if (match) {
-                    token = match[0];
-                    if (token) {
-                        if (!rule.dontAppendNonToken)
-                            this.appendNonToken();
-                        return rule.action.call(this, token);
-                    }
+            var ruleContinueStateCondition = ("preContinueState" in rule) ? rule.preContinueState : this.ContinueState.None;
+            if (this.continueState !== ruleContinueStateCondition)
+                continue;
+            if (("preLexState" in rule) && this.lexState !== rule.preLexState)
+                continue;
+
+            var match = rule.pattern.exec(codeFragment);
+            if (match) {
+                token = match[0];
+                if (token && (!rule.keywords || (token in rule.keywords))) {
+                    this.cursor += token.length;
+                    if (rule.style) {
+                        this.appendNonToken();
+                        var elem = this.createSpan(token, rule.style);
+                        this.newLine.appendChild(elem);
+                        if (rule.callback)
+                            rule.callback.call(this, elem);
+                    } else
+                        this.nonToken += token;
+
+                    if ("postLexState" in rule)
+                        this.lexState = rule.postLexState;
+                    if ("postContinueState" in rule)
+                        this.continueState = rule.postContinueState;
+                    return;
                 }
             }
         }

@@ -27,5 +27,5 @@ function frontend_dumpSyntaxHighlight(str, highlighterConstructor)
             node_parts.push("*");
         }
     }
-    return node_parts.join(",");
+    return str + ": " + node_parts.join(",");
 }

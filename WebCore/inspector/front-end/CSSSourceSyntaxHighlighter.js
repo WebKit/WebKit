@@ -53,926 +53,263 @@ WebInspector.CSSSourceSyntaxHighlighter = function(table, sourceFrame) {
     const identPattern = /^-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*/i;
     const startBlockPattern = /^{/i;
     const endBlockPattern = /^}/i;
+
+    const propertyKeywords = [
+        "background", "background-attachment", "background-clip", "background-color", "background-image",
+        "background-origin", "background-position", "background-position-x", "background-position-y",
+        "background-repeat", "background-repeat-x", "background-repeat-y", "background-size", "border",
+        "border-bottom", "border-bottom-color", "border-bottom-left-radius", "border-bottom-right-radius",
+        "border-bottom-style", "border-bottom-width", "border-collapse", "border-color", "border-left",
+        "border-left-color", "border-left-style", "border-left-width", "border-radius", "border-right",
+        "border-right-color", "border-right-style", "border-right-width", "border-spacing", "border-style",
+        "border-top", "border-top-color", "border-top-left-radius", "border-top-right-radius", "border-top-style",
+        "border-top-width", "border-width", "bottom", "caption-side", "clear", "clip", "color", "content",
+        "counter-increment", "counter-reset", "cursor", "direction", "display", "empty-cells", "float",
+        "font", "font-family", "font-size", "font-stretch", "font-style", "font-variant", "font-weight",
+        "height", "left", "letter-spacing", "line-height", "list-style", "list-style-image", "list-style-position",
+        "list-style-type", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "max-height",
+        "max-width", "min-height", "min-width", "opacity", "orphans", "outline", "outline-color", "outline-offset",
+        "outline-style", "outline-width", "overflow", "overflow-x", "overflow-y", "padding", "padding-bottom",
+        "padding-left", "padding-right", "padding-top", "page", "page-break-after", "page-break-before",
+        "page-break-inside", "pointer-events", "position", "quotes", "resize", "right", "size", "src",
+        "table-layout", "text-align", "text-decoration", "text-indent", "text-line-through", "text-line-through-color",
+        "text-line-through-mode", "text-line-through-style", "text-line-through-width", "text-overflow", "text-overline",
+        "text-overline-color", "text-overline-mode", "text-overline-style", "text-overline-width", "text-rendering",
+        "text-shadow", "text-transform", "text-underline", "text-underline-color", "text-underline-mode",
+        "text-underline-style", "text-underline-width", "top", "unicode-bidi", "unicode-range", "vertical-align",
+        "visibility", "white-space", "widows", "width", "word-break", "word-spacing", "word-wrap", "z-index", "zoom",
+        "-webkit-animation", "-webkit-animation-delay", "-webkit-animation-direction", "-webkit-animation-duration",
+        "-webkit-animation-iteration-count", "-webkit-animation-name", "-webkit-animation-play-state",
+        "-webkit-animation-timing-function", "-webkit-appearance", "-webkit-backface-visibility",
+        "-webkit-background-clip", "-webkit-background-composite", "-webkit-background-origin", "-webkit-background-size",
+        "-webkit-binding", "-webkit-border-fit", "-webkit-border-horizontal-spacing", "-webkit-border-image",
+        "-webkit-border-radius", "-webkit-border-vertical-spacing", "-webkit-box-align", "-webkit-box-direction",
+        "-webkit-box-flex", "-webkit-box-flex-group", "-webkit-box-lines", "-webkit-box-ordinal-group",
+        "-webkit-box-orient", "-webkit-box-pack", "-webkit-box-reflect", "-webkit-box-shadow", "-webkit-box-sizing",
+        "-webkit-column-break-after", "-webkit-column-break-before", "-webkit-column-break-inside", "-webkit-column-count",
+        "-webkit-column-gap", "-webkit-column-rule", "-webkit-column-rule-color", "-webkit-column-rule-style",
+        "-webkit-column-rule-width", "-webkit-column-width", "-webkit-columns", "-webkit-font-size-delta",
+        "-webkit-font-smoothing", "-webkit-highlight", "-webkit-line-break", "-webkit-line-clamp",
+        "-webkit-margin-bottom-collapse", "-webkit-margin-collapse", "-webkit-margin-start", "-webkit-margin-top-collapse",
+        "-webkit-marquee", "-webkit-marquee-direction", "-webkit-marquee-increment", "-webkit-marquee-repetition",
+        "-webkit-marquee-speed", "-webkit-marquee-style", "-webkit-mask", "-webkit-mask-attachment",
+        "-webkit-mask-box-image", "-webkit-mask-clip", "-webkit-mask-composite", "-webkit-mask-image",
+        "-webkit-mask-origin", "-webkit-mask-position", "-webkit-mask-position-x", "-webkit-mask-position-y",
+        "-webkit-mask-repeat", "-webkit-mask-repeat-x", "-webkit-mask-repeat-y", "-webkit-mask-size",
+        "-webkit-match-nearest-mail-blockquote-color", "-webkit-nbsp-mode", "-webkit-padding-start",
+        "-webkit-perspective", "-webkit-perspective-origin", "-webkit-perspective-origin-x", "-webkit-perspective-origin-y",
+        "-webkit-rtl-ordering", "-webkit-text-decorations-in-effect", "-webkit-text-fill-color", "-webkit-text-security",
+        "-webkit-text-size-adjust", "-webkit-text-stroke", "-webkit-text-stroke-color", "-webkit-text-stroke-width",
+        "-webkit-transform", "-webkit-transform-origin", "-webkit-transform-origin-x", "-webkit-transform-origin-y",
+        "-webkit-transform-origin-z", "-webkit-transform-style", "-webkit-transition", "-webkit-transition-delay",
+        "-webkit-transition-duration", "-webkit-transition-property", "-webkit-transition-timing-function",
+        "-webkit-user-drag", "-webkit-user-modify", "-webkit-user-select", "-webkit-variable-declaration-block"
+    ].keySet();
+    
+    const valueKeywords = [
+        "inherit", "initial", "none", "hidden", "inset", "groove", "ridge", "outset", "dotted", "dashed",
+        "solid", "double", "caption", "icon", "menu", "message-box", "small-caption", "-webkit-mini-control",
+        "-webkit-small-control", "-webkit-control", "status-bar", "italic", "oblique", "all", "small-caps",
+        "normal", "bold", "bolder", "lighter", "xx-small", "x-small", "small", "medium", "large", "x-large",
+        "xx-large", "-webkit-xxx-large", "smaller", "larger", "wider", "narrower", "ultra-condensed",
+        "extra-condensed", "condensed", "semi-condensed", "semi-expanded", "expanded", "extra-expanded",
+        "ultra-expanded", "serif", "sans-serif", "cursive", "fantasy", "monospace", "-webkit-body", "aqua",
+        "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple",
+        "red", "silver", "teal", "white", "yellow", "transparent", "-webkit-link", "-webkit-activelink",
+        "activeborder", "activecaption", "appworkspace", "background", "buttonface", "buttonhighlight",
+        "buttonshadow", "buttontext", "captiontext", "graytext", "highlight", "highlighttext", "inactiveborder",
+        "inactivecaption", "inactivecaptiontext", "infobackground", "infotext", "match", "menutext", "scrollbar",
+        "threeddarkshadow", "threedface", "threedhighlight", "threedlightshadow", "threedshadow", "window",
+        "windowframe", "windowtext", "-webkit-focus-ring-color", "currentcolor", "grey", "-webkit-text", "repeat",
+        "repeat-x", "repeat-y", "no-repeat", "clear", "copy", "source-over", "source-in", "source-out",
+        "source-atop", "destination-over", "destination-in", "destination-out", "destination-atop", "xor",
+        "plus-darker", "plus-lighter", "baseline", "middle", "sub", "super", "text-top", "text-bottom", "top",
+        "bottom", "-webkit-baseline-middle", "-webkit-auto", "left", "right", "center", "justify", "-webkit-left",
+        "-webkit-right", "-webkit-center", "outside", "inside", "disc", "circle", "square", "decimal",
+        "decimal-leading-zero", "lower-roman", "upper-roman", "lower-greek", "lower-alpha", "lower-latin",
+        "upper-alpha", "upper-latin", "hebrew", "armenian", "georgian", "cjk-ideographic", "hiragana", "katakana",
+        "hiragana-iroha", "katakana-iroha", "inline", "block", "list-item", "run-in", "compact", "inline-block",
+        "table", "inline-table", "table-row-group", "table-header-group", "table-footer-group", "table-row",
+        "table-column-group", "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box",
+        "-wap-marquee", "auto", "crosshair", "default", "pointer", "move", "vertical-text", "cell", "context-menu",
+        "alias", "progress", "no-drop", "not-allowed", "-webkit-zoom-in", "-webkit-zoom-out", "e-resize", "ne-resize",
+        "nw-resize", "n-resize", "se-resize", "sw-resize", "s-resize", "w-resize", "ew-resize", "ns-resize", "nesw-resize",
+        "nwse-resize", "col-resize", "row-resize", "text", "wait", "help", "all-scroll", "-webkit-grab", "-webkit-grabbing",
+        "ltr", "rtl", "capitalize", "uppercase", "lowercase", "visible", "collapse", "above", "absolute", "always",
+        "avoid", "below", "bidi-override", "blink", "both", "close-quote", "crop", "cross", "embed", "fixed", "hand",
+        "hide", "higher", "invert", "landscape", "level", "line-through", "local", "loud", "lower", "-webkit-marquee",
+        "mix", "no-close-quote", "no-open-quote", "nowrap", "open-quote", "overlay", "overline", "portrait", "pre",
+        "pre-line", "pre-wrap", "relative", "scroll", "separate", "show", "static", "thick", "thin", "underline",
+        "-webkit-nowrap", "stretch", "start", "end", "reverse", "horizontal", "vertical", "inline-axis", "block-axis",
+        "single", "multiple", "forwards", "backwards", "ahead", "up", "down", "slow", "fast", "infinite", "slide",
+        "alternate", "read-only", "read-write", "read-write-plaintext-only", "element", "ignore", "intrinsic",
+        "min-intrinsic", "clip", "ellipsis", "discard", "dot-dash", "dot-dot-dash", "wave", "continuous",
+        "skip-white-space", "break-all", "break-word", "space", "after-white-space", "checkbox", "radio", "push-button",
+        "square-button", "button", "button-bevel", "default-button", "list-button", "listbox", "listitem", 
+        "media-fullscreen-button", "media-mute-button", "media-play-button", "media-seek-back-button",
+        "media-seek-forward-button", "media-rewind-button", "media-return-to-realtime-button", "media-slider",
+        "media-sliderthumb", "media-volume-slider-container", "media-volume-slider", "media-volume-sliderthumb",
+        "media-controls-background", "media-current-time-display", "media-time-remaining-display", "menulist",
+        "menulist-button", "menulist-text", "menulist-textfield", "slider-horizontal", "slider-vertical",
+        "sliderthumb-horizontal", "sliderthumb-vertical", "caret", "searchfield", "searchfield-decoration", 
+        "searchfield-results-decoration", "searchfield-results-button", "searchfield-cancel-button", "textfield",
+        "textarea", "caps-lock-indicator", "round", "border", "border-box", "content", "content-box", "padding",
+        "padding-box", "contain", "cover", "logical", "visual", "lines", "running", "paused", "flat", "preserve-3d",
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "document", "reset", "visiblePainted", "visibleFill",
+        "visibleStroke", "painted", "fill", "stroke", "antialiased", "subpixel-antialiased", "optimizeSpeed",
+        "optimizeLegibility", "geometricPrecision"
+    ].keySet();
+
+    const mediaTypes = ["all", "aural", "braille", "embossed", "handheld", "print", "projection", "screen", "tty", "tv"].keySet();
+
     this.rules = [{
+        name: "commentAction",
         pattern: /^\/\*[^\*]*\*+([^\/*][^*]*\*+)*\//i,
-        action: commentAction
+        style: "webkit-css-comment"
     }, {
+        name: "commentStartAction",
         pattern: /^(?:\/\*(?:[^\*]|\*[^\/])*)/i,
-        action: commentStartAction
+        style: "webkit-css-comment",
+        postContinueState: this.ContinueState.Comment
     }, {
+        name: "commentEndAction",
         pattern: /^(?:(?:[^\*]|\*[^\/])*\*+\/)/i,
-        action: commentEndAction,
-        continueStateCondition: this.ContinueState.Comment
+        style: "webkit-css-comment",
+        preContinueState: this.ContinueState.Comment,
+        postContinueState: this.ContinueState.None
     }, {
+        name: "commentMiddleAction",
         pattern: /^.*/i,
-        action: commentMiddleAction,
-        continueStateCondition: this.ContinueState.Comment
+        style: "webkit-css-comment",
+        preContinueState: this.ContinueState.Comment
     }, {
+        name: "selectorAction",
         pattern: /^(?:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\*)(?:#-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\.-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\[\s*-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*(?:(?:=|~=|\|=)\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*'))\s*)?\]|:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\(\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*)?\)))*|(?:#-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\.-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|\[\s*-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*(?:(?:=|~=|\|=)\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*'))\s*)?\]|:(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*|-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\(\s*(?:-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*\s*)?\)))+)/i,
-        action: selectorAction,
-        lexStateCondition: this.LexState.Initial
+        style: "webkit-css-selector",
+        preLexState: this.LexState.Initial
     }, {
+        name: "startRulesetBlockAction",
         pattern: startBlockPattern,
-        action: startRulesetBlockAction,
-        lexStateCondition: this.LexState.Initial,
-        dontAppendNonToken: true
+        preLexState: this.LexState.Initial,
+        postLexState: this.LexState.DeclarationProperty
     }, {
+        name: "propertyAction",
         pattern: identPattern,
-        action: propertyAction,
-        lexStateCondition: this.LexState.DeclarationProperty,
-        dontAppendNonToken: true
+        style: "webkit-css-property",
+        keywords: propertyKeywords,
+        preLexState: this.LexState.DeclarationProperty,
     }, {
+        name: "declarationColonAction",
         pattern: /^:/i,
-        action: declarationColonAction,
-        lexStateCondition: this.LexState.DeclarationProperty,
-        dontAppendNonToken: true
+        preLexState: this.LexState.DeclarationProperty,
+        postLexState: this.LexState.DeclarationValue
     }, {
+        name: "colorAction",
         pattern: /^(?:#(?:[\da-f]{6}|[\da-f]{3})|rgba\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|hsla\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|rgb\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\)|hsl\(\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*,\s*(?:\d+|\d*\.\d+)%?\s*\))/i,
-        action: colorAction,
-        lexStateCondition: this.LexState.DeclarationValue
+        style: "webkit-css-color",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "numvalueAction",
         pattern: /^(?:-?(?:\d+|\d*\.\d+)(?:em|rem|__qem|ex|px|cm|mm|in|pt|pc|deg|rad|grad|turn|ms|s|Hz|kHz|%)?)/i,
-        action: numvalueAction,
-        lexStateCondition: this.LexState.DeclarationValue
+        style: "webkit-css-number",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "urlAction",
         pattern: urlPattern,
-        action: urlAction,
-        lexStateCondition: this.LexState.DeclarationValue
+        style: "webkit-css-url",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "stringAction",
         pattern: stringPattern,
-        action: stringAction,
-        lexStateCondition: this.LexState.DeclarationValue
+        style: "webkit-css-string",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "importantAction",
         pattern: /^!\s*important/i,
-        action: importantAction,
-        lexStateCondition: this.LexState.DeclarationValue
+        style: "webkit-css-important",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "valueIdentAction",
         pattern: identPattern,
-        action: valueIdentAction,
-        lexStateCondition: this.LexState.DeclarationValue,
-        dontAppendNonToken: true
+        keywords: valueKeywords,
+        style: "webkit-css-keyword",
+        preLexState: this.LexState.DeclarationValue
     }, {
+        name: "declarationSemicolonAction",
         pattern: /^;/i,
-        action: declarationSemicolonAction,
-        lexStateCondition: this.LexState.DeclarationValue,
-        dontAppendNonToken: true
+        preLexState: this.LexState.DeclarationValue,
+        postLexState: this.LexState.DeclarationProperty
     }, {
+        name: "endRulesetBlockAction",
         pattern: endBlockPattern,
-        action: endRulesetBlockAction,
-        lexStateCondition: this.LexState.DeclarationProperty,
-        dontAppendNonToken: true
+        preLexState: this.LexState.DeclarationProperty,
+        postLexState: this.LexState.Initial
     }, {
-        pattern: endBlockPattern,
-        action: endRulesetBlockAction,
-        lexStateCondition: this.LexState.DeclarationValue,
-        dontAppendNonToken: true
-    }, {
+        name: "atMediaAction",
         pattern: /^@media/i,
-        action: atMediaAction,
-        lexStateCondition: this.LexState.Initial
+        style: "webkit-css-at-rule",
+        preLexState: this.LexState.Initial,
+        postLexState: this.LexState.AtMedia
     }, {
+        name: "startAtMediaBlockAction",
         pattern: startBlockPattern,
-        action: startAtMediaBlockAction,
-        lexStateCondition: this.LexState.AtMedia,
-        dontAppendNonToken: true
+        preLexState: this.LexState.AtMedia,
+        postLexState: this.LexState.Initial
     }, {
+        name: "atKeyframesAction",
         pattern: /^@-webkit-keyframes/i,
-        action: atKeyframesAction,
-        lexStateCondition: this.LexState.Initial
+        style: "webkit-css-at-rule",
+        preLexState: this.LexState.Initial,
+        postLexState: this.LexState.AtKeyframes
     }, {
+        name: "startAtKeyframesBlockAction",
         pattern: startBlockPattern,
-        action: startAtMediaBlockAction,
-        lexStateCondition: this.LexState.AtKeyframes,
-        dontAppendNonToken: true
+        preLexState: this.LexState.AtKeyframes,
+        postLexState: this.LexState.Initial
     }, {
+        name: "atRuleAction",
+        style: "webkit-css-at-rule",
         pattern: /^@-?(?:\w|(?:\\[\da-f]{1,6}\s?|\.))(?:[-\w]|(?:\\[\da-f]{1,6}\s?|\.))*/i,
-        action: atRuleAction,
-        lexStateCondition: this.LexState.Initial
+        preLexState: this.LexState.Initial,
+        postLexState: this.LexState.AtRule
     }, {
+        name: "endAtRuleAction",
         pattern: /^;/i,
-        action: endAtRuleAction,
-        lexStateCondition: this.LexState.AtRule
+        preLexState: this.LexState.AtRule,
+        postLexState: this.LexState.Initial
     }, {
+        name: "urlAction",
         pattern: urlPattern,
-        action: urlAction,
-        lexStateCondition: this.LexState.AtRule
+        style: "webkit-css-url",
+        preLexState: this.LexState.AtRule
     }, {
+        name: "stringAction",
         pattern: stringPattern,
-        action: stringAction,
-        lexStateCondition: this.LexState.AtRule
+        style: "webkit-css-string",
+        preLexState: this.LexState.AtRule
     }, {
+        name: "stringAction",
         pattern: stringPattern,
-        action: stringAction,
-        lexStateCondition: this.LexState.AtKeyframes
+        style: "webkit-css-string",
+        preLexState: this.LexState.AtKeyframes
     }, {
+        name: "atRuleIdentAction",
         pattern: identPattern,
-        action: atRuleIdentAction,
-        lexStateCondition: this.LexState.AtRule,
-        dontAppendNonToken: true
+        keywords: mediaTypes,
+        style: "webkit-css-keyword",
+        preLexState: this.LexState.AtRule
     }, {
+        name: "atRuleIdentAction",
         pattern: identPattern,
-        action: atRuleIdentAction,
-        lexStateCondition: this.LexState.AtMedia,
-        dontAppendNonToken: true
+        keywords: mediaTypes,
+        style: "webkit-css-keyword",
+        preLexState: this.LexState.AtMedia,
     }, {
+        name: "startAtRuleBlockAction",
         pattern: startBlockPattern,
-        action: startAtRuleBlockAction,
-        lexStateCondition: this.LexState.AtRule,
-        dontAppendNonToken: true
+        preLexState: this.LexState.AtRule,
+        postLexState: this.LexState.DeclarationProperty
     }];
-    
-    function commentAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-comment"));
-    }
-    
-    function commentStartAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-comment"));
-        this.continueState = this.ContinueState.Comment;
-    }
-    
-    function commentEndAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-comment"));
-        this.continueState = this.ContinueState.None;
-    }
-
-    function commentMiddleAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-comment"));
-    }
-    
-    function selectorAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-selector"));
-    }
-    
-    function startRulesetBlockAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.DeclarationProperty;
-    }
-    
-    function endRulesetBlockAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.Initial;
-    }
-    
-    const propertyKeywords = {
-        "background": true,
-        "background-attachment": true,
-        "background-clip": true,
-        "background-color": true,
-        "background-image": true,
-        "background-origin": true,
-        "background-position": true,
-        "background-position-x": true,
-        "background-position-y": true,
-        "background-repeat": true,
-        "background-repeat-x": true,
-        "background-repeat-y": true,
-        "background-size": true,
-        "border": true,
-        "border-bottom": true,
-        "border-bottom-color": true,
-        "border-bottom-left-radius": true,
-        "border-bottom-right-radius": true,
-        "border-bottom-style": true,
-        "border-bottom-width": true,
-        "border-collapse": true,
-        "border-color": true,
-        "border-left": true,
-        "border-left-color": true,
-        "border-left-style": true,
-        "border-left-width": true,
-        "border-radius": true,
-        "border-right": true,
-        "border-right-color": true,
-        "border-right-style": true,
-        "border-right-width": true,
-        "border-spacing": true,
-        "border-style": true,
-        "border-top": true,
-        "border-top-color": true,
-        "border-top-left-radius": true,
-        "border-top-right-radius": true,
-        "border-top-style": true,
-        "border-top-width": true,
-        "border-width": true,
-        "bottom": true,
-        "caption-side": true,
-        "clear": true,
-        "clip": true,
-        "color": true,
-        "content": true,
-        "counter-increment": true,
-        "counter-reset": true,
-        "cursor": true,
-        "direction": true,
-        "display": true,
-        "empty-cells": true,
-        "float": true,
-        "font": true,
-        "font-family": true,
-        "font-size": true,
-        "font-stretch": true,
-        "font-style": true,
-        "font-variant": true,
-        "font-weight": true,
-        "height": true,
-        "left": true,
-        "letter-spacing": true,
-        "line-height": true,
-        "list-style": true,
-        "list-style-image": true,
-        "list-style-position": true,
-        "list-style-type": true,
-        "margin": true,
-        "margin-bottom": true,
-        "margin-left": true,
-        "margin-right": true,
-        "margin-top": true,
-        "max-height": true,
-        "max-width": true,
-        "min-height": true,
-        "min-width": true,
-        "opacity": true,
-        "orphans": true,
-        "outline": true,
-        "outline-color": true,
-        "outline-offset": true,
-        "outline-style": true,
-        "outline-width": true,
-        "overflow": true,
-        "overflow-x": true,
-        "overflow-y": true,
-        "padding": true,
-        "padding-bottom": true,
-        "padding-left": true,
-        "padding-right": true,
-        "padding-top": true,
-        "page": true,
-        "page-break-after": true,
-        "page-break-before": true,
-        "page-break-inside": true,
-        "pointer-events": true,
-        "position": true,
-        "quotes": true,
-        "resize": true,
-        "right": true,
-        "size": true,
-        "src": true,
-        "table-layout": true,
-        "text-align": true,
-        "text-decoration": true,
-        "text-indent": true,
-        "text-line-through": true,
-        "text-line-through-color": true,
-        "text-line-through-mode": true,
-        "text-line-through-style": true,
-        "text-line-through-width": true,
-        "text-overflow": true,
-        "text-overline": true,
-        "text-overline-color": true,
-        "text-overline-mode": true,
-        "text-overline-style": true,
-        "text-overline-width": true,
-        "text-rendering": true,
-        "text-shadow": true,
-        "text-transform": true,
-        "text-underline": true,
-        "text-underline-color": true,
-        "text-underline-mode": true,
-        "text-underline-style": true,
-        "text-underline-width": true,
-        "top": true,
-        "unicode-bidi": true,
-        "unicode-range": true,
-        "vertical-align": true,
-        "visibility": true,
-        "white-space": true,
-        "widows": true,
-        "width": true,
-        "word-break": true,
-        "word-spacing": true,
-        "word-wrap": true,
-        "z-index": true,
-        "zoom": true,
-        "-webkit-animation": true,
-        "-webkit-animation-delay": true,
-        "-webkit-animation-direction": true,
-        "-webkit-animation-duration": true,
-        "-webkit-animation-iteration-count": true,
-        "-webkit-animation-name": true,
-        "-webkit-animation-play-state": true,
-        "-webkit-animation-timing-function": true,
-        "-webkit-appearance": true,
-        "-webkit-backface-visibility": true,
-        "-webkit-background-clip": true,
-        "-webkit-background-composite": true,
-        "-webkit-background-origin": true,
-        "-webkit-background-size": true,
-        "-webkit-binding": true,
-        "-webkit-border-fit": true,
-        "-webkit-border-horizontal-spacing": true,
-        "-webkit-border-image": true,
-        "-webkit-border-radius": true,
-        "-webkit-border-vertical-spacing": true,
-        "-webkit-box-align": true,
-        "-webkit-box-direction": true,
-        "-webkit-box-flex": true,
-        "-webkit-box-flex-group": true,
-        "-webkit-box-lines": true,
-        "-webkit-box-ordinal-group": true,
-        "-webkit-box-orient": true,
-        "-webkit-box-pack": true,
-        "-webkit-box-reflect": true,
-        "-webkit-box-shadow": true,
-        "-webkit-box-sizing": true,
-        "-webkit-column-break-after": true,
-        "-webkit-column-break-before": true,
-        "-webkit-column-break-inside": true,
-        "-webkit-column-count": true,
-        "-webkit-column-gap": true,
-        "-webkit-column-rule": true,
-        "-webkit-column-rule-color": true,
-        "-webkit-column-rule-style": true,
-        "-webkit-column-rule-width": true,
-        "-webkit-column-width": true,
-        "-webkit-columns": true,
-        "-webkit-font-size-delta": true,
-        "-webkit-font-smoothing": true,
-        "-webkit-highlight": true,
-        "-webkit-line-break": true,
-        "-webkit-line-clamp": true,
-        "-webkit-margin-bottom-collapse": true,
-        "-webkit-margin-collapse": true,
-        "-webkit-margin-start": true,
-        "-webkit-margin-top-collapse": true,
-        "-webkit-marquee": true,
-        "-webkit-marquee-direction": true,
-        "-webkit-marquee-increment": true,
-        "-webkit-marquee-repetition": true,
-        "-webkit-marquee-speed": true,
-        "-webkit-marquee-style": true,
-        "-webkit-mask": true,
-        "-webkit-mask-attachment": true,
-        "-webkit-mask-box-image": true,
-        "-webkit-mask-clip": true,
-        "-webkit-mask-composite": true,
-        "-webkit-mask-image": true,
-        "-webkit-mask-origin": true,
-        "-webkit-mask-position": true,
-        "-webkit-mask-position-x": true,
-        "-webkit-mask-position-y": true,
-        "-webkit-mask-repeat": true,
-        "-webkit-mask-repeat-x": true,
-        "-webkit-mask-repeat-y": true,
-        "-webkit-mask-size": true,
-        "-webkit-match-nearest-mail-blockquote-color": true,
-        "-webkit-nbsp-mode": true,
-        "-webkit-padding-start": true,
-        "-webkit-perspective": true,
-        "-webkit-perspective-origin": true,
-        "-webkit-perspective-origin-x": true,
-        "-webkit-perspective-origin-y": true,
-        "-webkit-rtl-ordering": true,
-        "-webkit-text-decorations-in-effect": true,
-        "-webkit-text-fill-color": true,
-        "-webkit-text-security": true,
-        "-webkit-text-size-adjust": true,
-        "-webkit-text-stroke": true,
-        "-webkit-text-stroke-color": true,
-        "-webkit-text-stroke-width": true,
-        "-webkit-transform": true,
-        "-webkit-transform-origin": true,
-        "-webkit-transform-origin-x": true,
-        "-webkit-transform-origin-y": true,
-        "-webkit-transform-origin-z": true,
-        "-webkit-transform-style": true,
-        "-webkit-transition": true,
-        "-webkit-transition-delay": true,
-        "-webkit-transition-duration": true,
-        "-webkit-transition-property": true,
-        "-webkit-transition-timing-function": true,
-        "-webkit-user-drag": true,
-        "-webkit-user-modify": true,
-        "-webkit-user-select": true,
-        "-webkit-variable-declaration-block": true
-    };
-    function propertyAction(token)
-    {
-        this.cursor += token.length;
-        if (token in propertyKeywords) {
-            this.appendNonToken.call(this);
-            this.newLine.appendChild(this.createSpan(token, "webkit-css-property"));
-        } else
-            this.nonToken += token;
-    }
-    
-    function declarationColonAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.DeclarationValue;
-    }
-
-    const valueKeywords = {
-        "inherit": true,
-        "initial": true,
-        "none": true,
-        "hidden": true,
-        "inset": true,
-        "groove": true,
-        "ridge": true,
-        "outset": true,
-        "dotted": true,
-        "dashed": true,
-        "solid": true,
-        "double": true,
-        "caption": true,
-        "icon": true,
-        "menu": true,
-        "message-box": true,
-        "small-caption": true,
-        "-webkit-mini-control": true,
-        "-webkit-small-control": true,
-        "-webkit-control": true,
-        "status-bar": true,
-        "italic": true,
-        "oblique": true,
-        "all": true,
-        "small-caps": true,
-        "normal": true,
-        "bold": true,
-        "bolder": true,
-        "lighter": true,
-        "xx-small": true,
-        "x-small": true,
-        "small": true,
-        "medium": true,
-        "large": true,
-        "x-large": true,
-        "xx-large": true,
-        "-webkit-xxx-large": true,
-        "smaller": true,
-        "larger": true,
-        "wider": true,
-        "narrower": true,
-        "ultra-condensed": true,
-        "extra-condensed": true,
-        "condensed": true,
-        "semi-condensed": true,
-        "semi-expanded": true,
-        "expanded": true,
-        "extra-expanded": true,
-        "ultra-expanded": true,
-        "serif": true,
-        "sans-serif": true,
-        "cursive": true,
-        "fantasy": true,
-        "monospace": true,
-        "-webkit-body": true,
-        "aqua": true,
-        "black": true,
-        "blue": true,
-        "fuchsia": true,
-        "gray": true,
-        "green": true,
-        "lime": true,
-        "maroon": true,
-        "navy": true,
-        "olive": true,
-        "orange": true,
-        "purple": true,
-        "red": true,
-        "silver": true,
-        "teal": true,
-        "white": true,
-        "yellow": true,
-        "transparent": true,
-        "-webkit-link": true,
-        "-webkit-activelink": true,
-        "activeborder": true,
-        "activecaption": true,
-        "appworkspace": true,
-        "background": true,
-        "buttonface": true,
-        "buttonhighlight": true,
-        "buttonshadow": true,
-        "buttontext": true,
-        "captiontext": true,
-        "graytext": true,
-        "highlight": true,
-        "highlighttext": true,
-        "inactiveborder": true,
-        "inactivecaption": true,
-        "inactivecaptiontext": true,
-        "infobackground": true,
-        "infotext": true,
-        "match": true,
-        "menutext": true,
-        "scrollbar": true,
-        "threeddarkshadow": true,
-        "threedface": true,
-        "threedhighlight": true,
-        "threedlightshadow": true,
-        "threedshadow": true,
-        "window": true,
-        "windowframe": true,
-        "windowtext": true,
-        "-webkit-focus-ring-color": true,
-        "currentcolor": true,
-        "grey": true,
-        "-webkit-text": true,
-        "repeat": true,
-        "repeat-x": true,
-        "repeat-y": true,
-        "no-repeat": true,
-        "clear": true,
-        "copy": true,
-        "source-over": true,
-        "source-in": true,
-        "source-out": true,
-        "source-atop": true,
-        "destination-over": true,
-        "destination-in": true,
-        "destination-out": true,
-        "destination-atop": true,
-        "xor": true,
-        "plus-darker": true,
-        "plus-lighter": true,
-        "baseline": true,
-        "middle": true,
-        "sub": true,
-        "super": true,
-        "text-top": true,
-        "text-bottom": true,
-        "top": true,
-        "bottom": true,
-        "-webkit-baseline-middle": true,
-        "-webkit-auto": true,
-        "left": true,
-        "right": true,
-        "center": true,
-        "justify": true,
-        "-webkit-left": true,
-        "-webkit-right": true,
-        "-webkit-center": true,
-        "outside": true,
-        "inside": true,
-        "disc": true,
-        "circle": true,
-        "square": true,
-        "decimal": true,
-        "decimal-leading-zero": true,
-        "lower-roman": true,
-        "upper-roman": true,
-        "lower-greek": true,
-        "lower-alpha": true,
-        "lower-latin": true,
-        "upper-alpha": true,
-        "upper-latin": true,
-        "hebrew": true,
-        "armenian": true,
-        "georgian": true,
-        "cjk-ideographic": true,
-        "hiragana": true,
-        "katakana": true,
-        "hiragana-iroha": true,
-        "katakana-iroha": true,
-        "inline": true,
-        "block": true,
-        "list-item": true,
-        "run-in": true,
-        "compact": true,
-        "inline-block": true,
-        "table": true,
-        "inline-table": true,
-        "table-row-group": true,
-        "table-header-group": true,
-        "table-footer-group": true,
-        "table-row": true,
-        "table-column-group": true,
-        "table-column": true,
-        "table-cell": true,
-        "table-caption": true,
-        "-webkit-box": true,
-        "-webkit-inline-box": true,
-        "-wap-marquee": true,
-        "auto": true,
-        "crosshair": true,
-        "default": true,
-        "pointer": true,
-        "move": true,
-        "vertical-text": true,
-        "cell": true,
-        "context-menu": true,
-        "alias": true,
-        "progress": true,
-        "no-drop": true,
-        "not-allowed": true,
-        "-webkit-zoom-in": true,
-        "-webkit-zoom-out": true,
-        "e-resize": true,
-        "ne-resize": true,
-        "nw-resize": true,
-        "n-resize": true,
-        "se-resize": true,
-        "sw-resize": true,
-        "s-resize": true,
-        "w-resize": true,
-        "ew-resize": true,
-        "ns-resize": true,
-        "nesw-resize": true,
-        "nwse-resize": true,
-        "col-resize": true,
-        "row-resize": true,
-        "text": true,
-        "wait": true,
-        "help": true,
-        "all-scroll": true,
-        "-webkit-grab": true,
-        "-webkit-grabbing": true,
-        "ltr": true,
-        "rtl": true,
-        "capitalize": true,
-        "uppercase": true,
-        "lowercase": true,
-        "visible": true,
-        "collapse": true,
-        "above": true,
-        "absolute": true,
-        "always": true,
-        "avoid": true,
-        "below": true,
-        "bidi-override": true,
-        "blink": true,
-        "both": true,
-        "close-quote": true,
-        "crop": true,
-        "cross": true,
-        "embed": true,
-        "fixed": true,
-        "hand": true,
-        "hide": true,
-        "higher": true,
-        "invert": true,
-        "landscape": true,
-        "level": true,
-        "line-through": true,
-        "local": true,
-        "loud": true,
-        "lower": true,
-        "-webkit-marquee": true,
-        "mix": true,
-        "no-close-quote": true,
-        "no-open-quote": true,
-        "nowrap": true,
-        "open-quote": true,
-        "overlay": true,
-        "overline": true,
-        "portrait": true,
-        "pre": true,
-        "pre-line": true,
-        "pre-wrap": true,
-        "relative": true,
-        "scroll": true,
-        "separate": true,
-        "show": true,
-        "static": true,
-        "thick": true,
-        "thin": true,
-        "underline": true,
-        "-webkit-nowrap": true,
-        "stretch": true,
-        "start": true,
-        "end": true,
-        "reverse": true,
-        "horizontal": true,
-        "vertical": true,
-        "inline-axis": true,
-        "block-axis": true,
-        "single": true,
-        "multiple": true,
-        "forwards": true,
-        "backwards": true,
-        "ahead": true,
-        "up": true,
-        "down": true,
-        "slow": true,
-        "fast": true,
-        "infinite": true,
-        "slide": true,
-        "alternate": true,
-        "read-only": true,
-        "read-write": true,
-        "read-write-plaintext-only": true,
-        "element": true,
-        "ignore": true,
-        "intrinsic": true,
-        "min-intrinsic": true,
-        "clip": true,
-        "ellipsis": true,
-        "discard": true,
-        "dot-dash": true,
-        "dot-dot-dash": true,
-        "wave": true,
-        "continuous": true,
-        "skip-white-space": true,
-        "break-all": true,
-        "break-word": true,
-        "space": true,
-        "after-white-space": true,
-        "checkbox": true,
-        "radio": true,
-        "push-button": true,
-        "square-button": true,
-        "button": true,
-        "button-bevel": true,
-        "default-button": true,
-        "list-button": true,
-        "listbox": true,
-        "listitem": true,
-        "media-fullscreen-button": true,
-        "media-mute-button": true,
-        "media-play-button": true,
-        "media-seek-back-button": true,
-        "media-seek-forward-button": true,
-        "media-rewind-button": true,
-        "media-return-to-realtime-button": true,
-        "media-slider": true,
-        "media-sliderthumb": true,
-        "media-volume-slider-container": true,
-        "media-volume-slider": true,
-        "media-volume-sliderthumb": true,
-        "media-controls-background": true,
-        "media-current-time-display": true,
-        "media-time-remaining-display": true,
-        "menulist": true,
-        "menulist-button": true,
-        "menulist-text": true,
-        "menulist-textfield": true,
-        "slider-horizontal": true,
-        "slider-vertical": true,
-        "sliderthumb-horizontal": true,
-        "sliderthumb-vertical": true,
-        "caret": true,
-        "searchfield": true,
-        "searchfield-decoration": true,
-        "searchfield-results-decoration": true,
-        "searchfield-results-button": true,
-        "searchfield-cancel-button": true,
-        "textfield": true,
-        "textarea": true,
-        "caps-lock-indicator": true,
-        "round": true,
-        "border": true,
-        "border-box": true,
-        "content": true,
-        "content-box": true,
-        "padding": true,
-        "padding-box": true,
-        "contain": true,
-        "cover": true,
-        "logical": true,
-        "visual": true,
-        "lines": true,
-        "running": true,
-        "paused": true,
-        "flat": true,
-        "preserve-3d": true,
-        "ease": true,
-        "linear": true,
-        "ease-in": true,
-        "ease-out": true,
-        "ease-in-out": true,
-        "document": true,
-        "reset": true,
-        "visiblePainted": true,
-        "visibleFill": true,
-        "visibleStroke": true,
-        "painted": true,
-        "fill": true,
-        "stroke": true,
-        "antialiased": true,
-        "subpixel-antialiased": true,
-        "optimizeSpeed": true,
-        "optimizeLegibility": true,
-        "geometricPrecision": true
-    };
-    function valueIdentAction(token) {
-        this.cursor += token.length;
-        if (token in valueKeywords) {
-            this.appendNonToken.call(this);
-            this.newLine.appendChild(this.createSpan(token, "webkit-css-keyword"));
-        } else
-            this.nonToken += token;
-    }
-
-    function numvalueAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-number"));
-    }
-    
-    function declarationSemicolonAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.DeclarationProperty;
-    }
-    
-    function urlAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-url"));
-    }
-    
-    function stringAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-string"));
-    }
-    
-    function colorAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-color"));
-    }
-    
-    function importantAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-important"));
-    }
-    
-    function atMediaAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-at-rule"));
-        this.lexState = this.LexState.AtMedia;
-    }
-    
-    function startAtMediaBlockAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.Initial;
-    }
-    
-    function atKeyframesAction(token)
-    {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-at-rule"));
-        this.lexState = this.LexState.AtKeyframes;
-    }
-    
-    function startAtKeyframesBlockAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.Initial;
-    }
-    
-    function atRuleAction(token) {
-        this.cursor += token.length;
-        this.newLine.appendChild(this.createSpan(token, "webkit-css-at-rule"));
-        this.lexState = this.LexState.AtRule;
-    }
-    
-    function endAtRuleAction(token) {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.Initial;
-    }
-    
-    function startAtRuleBlockAction(token)
-    {
-        this.cursor += token.length;
-        this.nonToken += token;
-        this.lexState = this.LexState.DeclarationProperty;
-    }
-    
-    const mediaTypes = ["all", "aural", "braille", "embossed", "handheld", "print", "projection", "screen", "tty", "tv"];
-    function atRuleIdentAction(token) {
-        this.cursor += token.length;
-        if (mediaTypes.indexOf(token) === -1)
-            this.nonToken += token;
-        else {
-            this.appendNonToken.call(this);
-            this.newLine.appendChild(this.createSpan(token, "webkit-css-keyword"));
-        }
-    }
 }
 
 WebInspector.CSSSourceSyntaxHighlighter.prototype.__proto__ = WebInspector.SourceSyntaxHighlighter.prototype;

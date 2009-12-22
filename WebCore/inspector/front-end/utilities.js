@@ -628,6 +628,14 @@ Array.prototype.remove = function(value, onlyFirst)
     }
 }
 
+Array.prototype.keySet = function()
+{
+    var keys = {};
+    for (var i = 0; i < this.length; ++i)
+        keys[this[i]] = true;
+    return keys;
+}
+
 function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunction)
 {
     // indexOf returns (-lowerBound - 1). Taking (-result - 1) works out to lowerBound.

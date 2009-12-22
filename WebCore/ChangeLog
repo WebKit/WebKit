@@ -1,3 +1,21 @@
+2009-12-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: simplify highlighter definition.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32869
+
+        * inspector/front-end/CSSSourceSyntaxHighlighter.js:
+        (WebInspector.CSSSourceSyntaxHighlighter):
+        * inspector/front-end/JavaScriptSourceSyntaxHighlighter.js:
+        (WebInspector.JavaScriptSourceSyntaxHighlighter.):
+        (WebInspector.JavaScriptSourceSyntaxHighlighter):
+        * inspector/front-end/SourceSyntaxHighlighter.js:
+        (WebInspector.SourceSyntaxHighlighter.prototype.lex):
+        * inspector/front-end/utilities.js:
+        ():
+
 2009-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
