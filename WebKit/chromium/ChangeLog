@@ -1,3 +1,36 @@
+2009-12-22  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] WebGL crashes intermittently on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=32845
+        
+        The dlclose'ing of libGL.so.1 and dlopen'ing of it each time a
+        GraphicsContext3D was created was occasionally causing it to be
+        re-mapped at a different base address. Since GLEW is not
+        re-initialized every time, primarily for performance reasons, its
+        cached function pointers were pointing to garbage. Stopped closing
+        and re-opening libGL.so.1 each time; now it is loaded lazily, when
+        the first 3D context is created. Also reused the X display
+        connection since the GLX routines' correctness might hinge upon it
+        not resulting in a change of GL implementation.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GLConnection::chooseFBConfig):
+        (WebCore::GraphicsContext3DInternal::GLConnection::createNewContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::createPbuffer):
+        (WebCore::GraphicsContext3DInternal::GLConnection::destroyPbuffer):
+        (WebCore::GraphicsContext3DInternal::GLConnection::makeCurrent):
+        (WebCore::GraphicsContext3DInternal::GLConnection::destroyContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::getCurrentContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::GLConnection):
+        (WebCore::GraphicsContext3DInternal::GLConnection::tryLoad):
+        (WebCore::GraphicsContext3DInternal::GLConnection::create):
+        (WebCore::GraphicsContext3DInternal::GLConnection::~GLConnection):
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::makeContextCurrent):
+
 2009-12-22  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.
