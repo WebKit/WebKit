@@ -1,3 +1,26 @@
+2009-12-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a couple of problems with UntypedPtrAndBitfield.
+
+        Add a m_leaksPtr to reduce false positives from leaks in debug builds
+        (this isn't perfect because we'd like a solution for release builds,
+        but this is now at least as good as a PtrAndFlags would be).
+
+        Switch SmallStringsto use a regular string for the base, rather than
+        a static one.  UntypedPtrAndBitfield assumes all strings are at least
+        8 byte aligned; this migt not be true of static strings.  Shared buffers
+        are heap allocated, as are all UStringImpls other than static strings.
+        Static strings cannot end up being the owner string of substrings,
+        since the only static strings are length 0.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * runtime/UStringImpl.h:
+        (JSC::UntypedPtrAndBitfield::UntypedPtrAndBitfield):
+        (JSC::UStringImpl::UStringImpl):
+
 2009-12-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

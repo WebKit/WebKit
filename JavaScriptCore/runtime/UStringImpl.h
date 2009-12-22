@@ -44,6 +44,9 @@ public:
 
     UntypedPtrAndBitfield(void* ptrValue, uintptr_t bitValue)
         : m_value(reinterpret_cast<uintptr_t>(ptrValue) | bitValue)
+#ifndef NDEBUG
+        , m_leaksPtr(ptrValue)
+#endif
     {
         ASSERT(ptrValue == asPtr<void*>());
         ASSERT((*this & ~s_alignmentMask) == bitValue);
@@ -72,6 +75,9 @@ public:
 private:
     static const uintptr_t s_alignmentMask = ~static_cast<uintptr_t>(0x7);
     uintptr_t m_value;
+#ifndef NDEBUG
+        void* m_leaksPtr; // Only used to allow tools like leaks on OSX to detect that the memory is referenced.
+#endif
 };
 
 class UStringImpl : Noncopyable {
@@ -216,6 +222,11 @@ private:
         , m_identifierTable(0)
         , m_dataBuffer(base.releaseRef(), BufferSubstring)
     {
+        // Do use static strings as a base for substrings; UntypedPtrAndBitfield assumes
+        // that all pointers will be at least 8-byte aligned, we cannot guarantee that of
+        // UStringImpls that are not heap allocated.
+        ASSERT(m_dataBuffer.asPtr<UStringImpl*>()->size());
+        ASSERT(!m_dataBuffer.asPtr<UStringImpl*>()->isStatic());
         checkConsistency();
     }
 

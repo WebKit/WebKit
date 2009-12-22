@@ -41,22 +41,17 @@ public:
     UString::Rep* rep(unsigned char character) { return &m_reps[character]; }
 
 private:
-    UChar m_characters[numCharactersToStore];
-    UString::Rep m_base;
     UString::Rep m_reps[numCharactersToStore];
 };
 
 SmallStringsStorage::SmallStringsStorage()
-    : m_base(m_characters, numCharactersToStore, UStringImpl::ConstructStaticString)
 {
-    m_base.checkConsistency();
-
-    for (unsigned i = 0; i < numCharactersToStore; ++i)
-        m_characters[i] = i;
-
-    memset(&m_reps, 0, sizeof(m_reps));
-    for (unsigned i = 0; i < numCharactersToStore; ++i)
-        new (&m_reps[i]) UString::Rep(m_base.data() + i, 1, &m_base);
+    UChar* characterBuffer = 0;
+    RefPtr<UStringImpl> baseString = UStringImpl::createUninitialized(numCharactersToStore, characterBuffer);
+    for (unsigned i = 0; i < numCharactersToStore; ++i) {
+        characterBuffer[i] = i;
+        new (&m_reps[i]) UString::Rep(&characterBuffer[i], 1, PassRefPtr<UStringImpl>(baseString));
+    }
 }
 
 SmallStrings::SmallStrings()
