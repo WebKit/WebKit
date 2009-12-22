@@ -198,7 +198,7 @@ using WTF::fastMallocAllow;
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
 #elif COMPILER(GCC)
 #define WTF_PRIVATE_INLINE inline __attribute__((always_inline))
-#elif COMPILER(MSVC)
+#elif COMPILER(MSVC) || COMPILER(RVCT)
 #define WTF_PRIVATE_INLINE __forceinline
 #else
 #define WTF_PRIVATE_INLINE inline
