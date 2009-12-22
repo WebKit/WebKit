@@ -101,4 +101,9 @@ WebURL WebDocument::completeURL(const WebString& partialURL) const
     return constUnwrap<Document>()->completeURL(partialURL);
 }
 
+WebElement WebDocument::getElementById(const WebString& id) const
+{
+    return WebElement(constUnwrap<Document>()->getElementById(id));
+}
+
 } // namespace WebKit

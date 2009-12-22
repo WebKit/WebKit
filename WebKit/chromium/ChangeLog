@@ -1,3 +1,18 @@
+2009-12-22  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        autoComplete and getElementById methods for WebKit API
+
+        https://bugs.webkit.org/show_bug.cgi?id=32866
+
+        * public/WebDocument.h:
+        * public/WebInputElement.h:
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::getElementById):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::autoComplete):
+
 2009-12-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

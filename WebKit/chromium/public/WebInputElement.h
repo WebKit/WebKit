@@ -82,6 +82,7 @@ namespace WebKit {
             Week
         };
         
+        WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isEnabledFormControl() const;
         WEBKIT_API InputType inputType() const;
         WEBKIT_API WebString formControlType() const;
