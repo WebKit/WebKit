@@ -1,3 +1,15 @@
+2009-12-21  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Invalid url should raise SYNTAX_ERR exception.
+        https://bugs.webkit.org/show_bug.cgi?id=32700
+
+        * websocket/tests/bad-sub-protocol-expected.txt: add CONSOLE MESSAGEs
+        * websocket/tests/script-tests/url-parsing.js: add invalid url tests.
+          Also changed url from ws://127.0.0.1/ to ws://127.0.0.1:8880/websocket/tests/simple to make it sure no errors on console message for these tests by not receiving unexpected response from 127.0.0.1:80
+        * websocket/tests/url-parsing-expected.txt:
+
 2009-12-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
