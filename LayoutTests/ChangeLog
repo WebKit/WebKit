@@ -1,3 +1,16 @@
+2009-12-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Upstream chrome/fast/events/iframe-onload-remove-self-no-crash.html .
+        https://bugs.webkit.org/show_bug.cgi?id=32742 .
+
+        * fast/frames/iframe-onload-remove-self-no-crash-expected.txt: Added.
+        * fast/frames/iframe-onload-remove-self-no-crash.html: Added.
+        * fast/frames/resources/iframe-onload-remove-self-no-crash-child.html: Added.
+        * fast/frames/resources/iframe-onload-remove-self-no-crash.js: Added.
+        (onWindowLoad):
+
 2009-12-21  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
