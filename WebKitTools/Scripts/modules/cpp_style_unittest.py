@@ -3494,6 +3494,14 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.m')
 
+        # Make sure that the NULL check does not apply to g_object_{set,get}
+        self.assert_lint(
+            'g_object_get(foo, "prop", &bar, NULL);',
+            '')
+        self.assert_lint(
+            'g_object_set(foo, "prop", bar, NULL);',
+            '')
+
         # 2. C++ and C bool values should be written as true and
         #    false. Objective-C BOOL values should be written as YES and NO.
         # FIXME: Implement this.

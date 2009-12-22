@@ -2103,6 +2103,11 @@ def check_for_null(filename, clean_lines, line_number, error):
         return
 
     line = clean_lines.elided[line_number]
+
+    # Don't warn about NULL usage in g_object_{get,set}(). See Bug 32858
+    if search(r'\bg_object_[sg]et\b', line):
+        return
+
     if search(r'\bNULL\b', line):
         error(filename, line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return
