@@ -4,6 +4,16 @@
 
         Update WebKitSystemInterface.
 
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
+2009-12-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Samuel Weinig.
+
+        Update WebKitSystemInterface.
+
         * WebKitSystemInterface.h:
         * libWebKitSystemInterfaceLeopard.a:
         * libWebKitSystemInterfaceSnowLeopard.a:
