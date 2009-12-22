@@ -1,3 +1,18 @@
+2009-12-21  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(4.0.4-ToT): Indent deletes non highlighted text in gmail.
+        <rdar://problem/7489326>
+        https://bugs.webkit.org/show_bug.cgi?id=32843
+        
+        The fix for 7442387 did not handle the case where the end of paragraph
+        is not a descendant of the computed outer block.
+        Updated editing/execCommand/indent-with-style2.html to cover this case too.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement): 
+
 2009-12-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

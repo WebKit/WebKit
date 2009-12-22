@@ -771,9 +771,17 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     // cloning all the siblings until end.node() is reached.
     
     if (start.node() != end.node() && !start.node()->isDescendantOf(end.node())) {
+        // If end is not a descendant of outerNode we need to
+        // find the first common ancestor and adjust the insertion
+        // point accordingly.
+        while (!end.node()->isDescendantOf(outerNode)) {
+            outerNode = outerNode->parentNode();
+            topNode = topNode->parentNode();
+        }
+            
         for (Node* n = start.node()->traverseNextSibling(outerNode); n; n = n->nextSibling()) {
             if (n->parentNode() != start.node()->parentNode())
-                lastNode = topNode->firstChild();
+                lastNode = topNode->lastChild();
 
             RefPtr<Node> clonedNode = n->cloneNode(true);
             insertNodeAfter(clonedNode, lastNode);
