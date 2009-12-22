@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Upstream platform-specific variant of
+        plugins/get-url-with-blank-target.html . There is some uncertainty
+        over which behavior is correct - Chromium's and Safari/Win in this
+        test, or Safari/Mac in the generic test. See 
+        https://bugs.webkit.org/show_bug.cgi?id=32886 for the bug to converge
+        the two.
+        This patch is bug https://bugs.webkit.org/show_bug.cgi?32762 .
+
+        * platform/chromium/plugins/get-url-with-blank-target-expected.txt: Added.
+        * platform/chromium/plugins/get-url-with-blank-target.html: Added.
+
+2009-12-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Upstream a bunch of forms tests from chromium.org.
         https://bugs.webkit.org/show_bug.cgi?id=32755
 
