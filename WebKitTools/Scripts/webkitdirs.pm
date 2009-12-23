@@ -531,8 +531,13 @@ sub builtDylibPathForName
         $libraryName = "QtWebKit";
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
             return "$configurationProductDir/lib/$libraryName.framework/$libraryName";
-        } elsif (isWindows() or isCygwin()) {
-            return "$configurationProductDir/lib/$libraryName.dll";
+        } elsif (isWindows()) {
+            chomp(my $mkspec = `qmake -query QMAKE_MKSPECS`);
+            my $qtMajorVersion = retrieveQMakespecVar("$mkspec/qconfig.pri", "QT_MAJOR_VERSION");
+            if ($qtMajorVersion eq "unknown") {
+                $qtMajorVersion = "";
+            }
+            return "$configurationProductDir/lib/$libraryName$qtMajorVersion.dll";
         } else {
             return "$configurationProductDir/lib/lib$libraryName.so";
         }

@@ -1,3 +1,17 @@
+2009-12-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32680
+
+        Fixes an issue in builtDylibPathForName so that it returns the correct
+        path to the built QtWebKit library on the Qt Windows port. Currently,
+        it returns the path to the file named QtWebKit.dll but this file does
+        not exist on the Qt Windows build. Instead, the file is named
+        QtWebKit4.dll.
+
+        * Scripts/webkitdirs.pm:
+
 2009-12-22  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Adam Roben.
