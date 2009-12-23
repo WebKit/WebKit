@@ -1,5 +1,11 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        First cut at fixing Windows build.
+
+        * WebCorePrefix.cpp: Touch it.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         Turn off datagrid by default, at least for all platforms Apple ships.
