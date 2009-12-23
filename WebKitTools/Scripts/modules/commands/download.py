@@ -34,7 +34,7 @@ from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
 # FIXME: This list is rediculous.  We need to learn the ways of __all__.
-from modules.buildsteps import CommandOptions, EnsureBuildersAreGreenStep, EnsureLocalCommitIfNeeded, UpdateChangelogsWithReviewerStep, CleanWorkingDirectoryStep, CleanWorkingDirectoryWithLocalCommitsStep, UpdateStep, ApplyPatchStep, ApplyPatchWithLocalCommitStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangelogStep, PrepareChangelogForRevertStep, RevertRevisionStep, CompleteRollout
+from modules.buildsteps import CommandOptions, EnsureBuildersAreGreenStep, EnsureLocalCommitIfNeeded, UpdateChangeLogsWithReviewerStep, CleanWorkingDirectoryStep, CleanWorkingDirectoryWithLocalCommitsStep, UpdateStep, ApplyPatchStep, ApplyPatchWithLocalCommitStep, BuildStep, CheckStyleStep, RunTestsStep, CommitStep, ClosePatchStep, CloseBugStep, CloseBugForLandDiffStep, PrepareChangeLogForRevertStep, RevertRevisionStep, CompleteRollout
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
@@ -83,7 +83,7 @@ class LandDiff(AbstractSequencedCommmand):
     show_in_main_help = True
     steps = [
         EnsureBuildersAreGreenStep,
-        UpdateChangelogsWithReviewerStep,
+        UpdateChangeLogsWithReviewerStep,
         EnsureBuildersAreGreenStep,
         BuildStep,
         RunTestsStep,
@@ -250,7 +250,7 @@ class Rollout(Command):
             CleanWorkingDirectoryStep,
             UpdateStep,
             RevertRevisionStep,
-            PrepareChangelogForRevertStep,
+            PrepareChangeLogForRevertStep,
             CompleteRollout,
         ])
         Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=self._sequence.options())

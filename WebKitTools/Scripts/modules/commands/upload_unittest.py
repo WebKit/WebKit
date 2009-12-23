@@ -40,6 +40,8 @@ class UploadCommandsTest(CommandsTest):
         expected_stderr = "Obsoleting 2 old patches on bug 42\n"
         self.assert_execute_outputs(PostDiff(), [42], expected_stderr=expected_stderr)
 
-    def test_submit_patch(self):
-        expected_stderr = "Obsoleting 2 old patches on bug 42\n"
-        self.assert_execute_outputs(SubmitPatch(), [42], expected_stderr=expected_stderr)
+    def test_prepare_diff_with_arg(self):
+        self.assert_execute_outputs(PrepareDiff(), [42])
+
+    def test_prepare_diff(self):
+        self.assert_execute_outputs(PrepareDiff(), [])

@@ -365,10 +365,10 @@ class Bugzilla(object):
             error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
         raise BugzillaError("Bug not created: %s" % error_message)
 
-    def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False, mark_for_commit_queue=False):
+    def create_bug(self, bug_title, bug_description, component=None, patch_file_object=None, patch_description=None, cc=None, mark_for_review=False, mark_for_commit_queue=False):
         self.authenticate()
 
-        log('Creating bug with patch description "%s"' % patch_description)
+        log('Creating bug with title "%s"' % bug_title)
         if self.dryrun:
             log(bug_description)
             return
@@ -383,11 +383,11 @@ class Bugzilla(object):
         if cc:
             self.browser['cc'] = cc
         self.browser['short_desc'] = bug_title
-        if bug_description:
-            log(bug_description)
-            self.browser['comment'] = bug_description
+        self.browser['comment'] = bug_description
 
-        self._fill_attachment_form(patch_description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue)
+        if patch_file_object:
+            self._fill_attachment_form(patch_description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue)
+
         response = self.browser.submit()
 
         bug_id = self._check_create_bug_response(response.read())

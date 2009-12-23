@@ -1,3 +1,28 @@
+2009-12-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Create a prepare-diff command that creates a bug and a ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=32895
+
+        The workflow Maciej and I discussed is as follows:
+
+        1) Write code.
+        2) bugzilla-tool prepare-diff
+        3) Edit ChangeLogs
+        4) bugzilla-tool post-diff
+
+        We might want to experimenting with combining 2-4 into a single
+        command, but that might be stressful to edit the ChangeLogs modally.
+
+        Removed submit-patch since it has the modal ChangeLog editing but none
+        oof the bug creating fun.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/upload.py:
+        * Scripts/modules/commands/upload_unittest.py:
+
 2009-12-23  Gabor Loki  <loki@webkit.org>
 
         Unreviewed; added myself to the committers list.

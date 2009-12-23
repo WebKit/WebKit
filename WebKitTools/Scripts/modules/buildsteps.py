@@ -57,6 +57,8 @@ class CommandOptions(object):
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
+    cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
+    component = make_option("--component", action="store", type="string", dest="component", help="Component for the new bug.")
 
 
 class AbstractStep(object):
@@ -110,25 +112,52 @@ class MetaStep(AbstractStep):
              step.run(state)
 
 
-class PrepareChangelogStep(AbstractStep):
+class PromptForBugOrTitleStep(AbstractStep):
+    def run(self, state):
+        # No need to prompt if we alrady have the bug_id.
+        if state.get("bug_id"):
+            return
+        user_response = self._tool.user.prompt("Please enter a bug number or a title for a new bug:\n")
+        # If the user responds with a number, we assume it's bug number.
+        # Otherwise we assume it's a bug subject.
+        try:
+            state["bug_id"] = int(user_response)
+            return int_value
+        except ValueError, TypeError:
+            state["bug_title"] = user_response
+            # FIXME: This is kind of a lame description.
+            state["bug_description"] = user_response
+
+
+class CreateBugStep(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.cc,
+            CommandOptions.component,
+        ]
+
+    def run(self, state):
+        # No need to create a bug if we already have one.
+        if state.get("bug_id"):
+            return
+        state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], component=self._options.component, cc=self._options.cc)
+
+
+class PrepareChangeLogStep(AbstractStep):
     @classmethod
     def options(cls):
         return [
             CommandOptions.port,
             CommandOptions.quiet,
-            CommandOptions.non_interactive,
         ]
 
     def run(self, state):
         os.chdir(self._tool.scm().checkout_root)
         args = [self.port().script_path("prepare-ChangeLog")]
-        if not self._options.non_interactive:
-            args.append("-o")
         if state["bug_id"]:
             args.append("--bug=%s" % state["bug_id"])
         self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
-        if not self._options.non_interactive:
-            self._tool.user.prompt("Press enter when ready to continue.")
 
 
 class ObsoletePatchesOnBugStep(AbstractStep):
@@ -166,7 +195,7 @@ class PostDiffToBugStep(AbstractStep):
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
 
 
-class PrepareChangelogForRevertStep(AbstractStep):
+class PrepareChangeLogForRevertStep(AbstractStep):
     def run(self, state):
         # First, discard the ChangeLog changes from the rollout.
         os.chdir(self._tool.scm().checkout_root)
@@ -281,7 +310,7 @@ class EnsureLocalCommitIfNeeded(AbstractStep):
             error("--local-commit passed, but %s does not support local commits" % self._tool.scm.display_name())
 
 
-class UpdateChangelogsWithReviewerStep(AbstractStep):
+class UpdateChangeLogsWithReviewerStep(AbstractStep):
     @classmethod
     def options(cls):
         return [

@@ -36,7 +36,7 @@ import sys
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import PrepareChangelogStep, CommandOptions, ObsoletePatchesOnBugStep, PostDiffToBugStep
+from modules.buildsteps import PrepareChangeLogStep, CommandOptions, ObsoletePatchesOnBugStep, PostDiffToBugStep, PromptForBugOrTitleStep, CreateBugStep
 from modules.commands.download import AbstractSequencedCommmand
 from modules.comments import bug_comment_from_svn_revision
 from modules.grammar import pluralize
@@ -89,19 +89,18 @@ class PostDiff(AbstractSequencedCommmand):
         return state
 
 
-class SubmitPatch(AbstractSequencedCommmand):
-    name = "submit-patch"
-    help_text = "Experimental.  Creates a patch from the current working copy and uploads bugzilla"
-    argument_names = "BUGID"
+class PrepareDiff(AbstractSequencedCommmand):
+    name = "prepare-diff"
+    help_text = "Creates a bug (or prompts for an existing bug) and prepares the ChangeLogs"
+    argument_names = "[BUGID]"
     steps = [
-        PrepareChangelogStep,
-        # FIXME: Add a CreateBugStep!
-        ObsoletePatchesOnBugStep,
-        PostDiffToBugStep,
+        PromptForBugOrTitleStep,
+        CreateBugStep,
+        PrepareChangeLogStep,
     ]
 
     def _prepare_state(self, options, args, tool):
-        bug_id = args[0]
+        bug_id = args and args[0]
         return { "bug_id" : bug_id }
 
 
@@ -250,8 +249,8 @@ class CreateBug(Command):
     show_in_main_help = True
     def __init__(self):
         options = [
-            make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy."),
-            make_option("--component", action="store", type="string", dest="component", help="Component for the new bug."),
+            CommandOptions.cc,
+            CommandOptions.component,
             make_option("--no-prompt", action="store_false", dest="prompt", default=True, help="Do not prompt for bug title and comment; use commit log instead."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
@@ -277,8 +276,8 @@ class CreateBug(Command):
             comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
 
         diff = tool.scm().create_patch_from_local_commit(commit_id)
-        diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        diff_file = StringIO.StringIO(diff) # create_bug expects a file-like object
+        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
         if bug_id and len(commit_ids) > 1:
             options.bug_id = bug_id
@@ -297,8 +296,8 @@ class CreateBug(Command):
             comment_text = commit_message.body(lstrip=True)
 
         diff = tool.scm().create_patch()
-        diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
-        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        diff_file = StringIO.StringIO(diff) # create_bug expects a file-like object
+        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = raw_input("Bug title: ")
