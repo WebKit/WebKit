@@ -2047,6 +2047,7 @@ int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image,
                                                     colorSpace,
                                                     kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
+    CGContextSetBlendMode(tmpContext, kCGBlendModeCopy);
     CGContextDrawImage(tmpContext,
                        CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
                        cgImage);

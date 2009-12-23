@@ -1,3 +1,14 @@
+2009-12-22  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Garbage in transparent regions of images uploaded as textures
+        https://bugs.webkit.org/show_bug.cgi?id=32888
+
+        * fast/canvas/webgl/bug-32888-expected.txt: Added.
+        * fast/canvas/webgl/bug-32888.html: Added.
+        * fast/canvas/webgl/resources/bug-32888-texture.png: Added.
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         Removed DataGrid from results.
