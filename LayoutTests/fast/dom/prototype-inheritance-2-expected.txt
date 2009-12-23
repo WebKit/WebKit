@@ -224,9 +224,6 @@ Never found HTMLAllCollection
 Never found HTMLBaseElement
 Never found HTMLBaseFontElement
 Never found HTMLBlockquoteElement
-Never found HTMLDataGridCellElement
-Never found HTMLDataGridColElement
-Never found HTMLDataGridElement
 Never found HTMLDirectoryElement
 Never found HTMLDivElement
 Never found HTMLEmbedElement

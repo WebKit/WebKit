@@ -1,5 +1,14 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        Removed DataGrid from results.
+
+        * fast/dom/Window/window-properties-expected.txt: Removed DataGrid classes.
+        * fast/dom/prototype-inheritance-2-expected.txt: Ditto.
+        * fast/dom/prototype-inheritance-expected.txt: Ditto.
+        * fast/js/global-constructors-expected.txt: Ditto.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         Disabled DataGrid tests.
 
         * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html: Removed.
