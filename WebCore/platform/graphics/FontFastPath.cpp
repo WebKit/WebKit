@@ -135,13 +135,7 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
     UChar codeUnits[2];
     int codeUnitsLength;
     if (c <= 0xFFFF) {
-        UChar c16 = c;
-        if (Font::treatAsSpace(c16))
-            codeUnits[0] = ' ';
-        else if (Font::treatAsZeroWidthSpace(c16))
-            codeUnits[0] = zeroWidthSpace;
-        else
-            codeUnits[0] = c16;
+        codeUnits[0] = Font::normalizeSpaces(c);
         codeUnitsLength = 1;
     } else {
         codeUnits[0] = U16_LEAD(c);

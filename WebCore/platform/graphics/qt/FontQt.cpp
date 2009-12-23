@@ -44,24 +44,11 @@
 
 namespace WebCore {
 
-static const QString qstring(const TextRun& run)
+static const QString fromRawDataWithoutRef(const String& string)
 {
-    // We don't detach
-    return QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length());
-}
-
-static const QString fixSpacing(const QString &string)
-{
-    //Only detach if we're actually changing something
-    QString possiblyDetached = string;
-    for (int i = 0; i < string.length(); ++i) {
-        const QChar c = string.at(i);
-        if (c.unicode() != 0x20 && Font::treatAsSpace(c.unicode()))
-            possiblyDetached[i] = 0x20; // detach
-        else if (c.unicode() != 0x200c && Font::treatAsZeroWidthSpace(c.unicode()))
-            possiblyDetached[i] = 0x200c; // detach
-    }
-    return possiblyDetached;
+    // We don't detach. This assumes the WebCore string data will stay valid for the
+    // lifetime of the QString we pass back, since we don't ref the WebCore string.
+    return QString::fromRawData(reinterpret_cast<const QChar*>(string.characters()), string.length());
 }
 
 static QTextLine setupLayout(QTextLayout* layout, const TextRun& style)
@@ -110,7 +97,8 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
             p->setPen(QPen(QColor(ctx->strokeColor()), ctx->strokeThickness()));
     }
 
-    const QString string = fixSpacing(qstring(run));
+    String sanitized = Font::normalizeSpaces(String(run.characters(), run.length()));
+    QString string = fromRawDataWithoutRef(sanitized);
 
     // text shadow
     IntSize shadowSize;
@@ -185,7 +173,10 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 {
     if (!run.length())
         return 0;
-    const QString string = fixSpacing(qstring(run));
+
+    String sanitized = Font::normalizeSpaces(String(run.characters(), run.length()));
+    QString string = fromRawDataWithoutRef(sanitized);
+
     QTextLayout layout(string, font());
     QTextLine line = setupLayout(&layout, run);
     int w = int(line.naturalTextWidth());
@@ -198,7 +189,9 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForComplexText(const TextRun& run, int position, bool) const
 {
-    const QString string = fixSpacing(qstring(run));
+    String sanitized = Font::normalizeSpaces(String(run.characters(), run.length()));
+    QString string = fromRawDataWithoutRef(sanitized);
+
     QTextLayout layout(string, font());
     QTextLine line = setupLayout(&layout, run);
     return line.xToCursor(position);
@@ -206,7 +199,9 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int position, bool
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& pt, int h, int from, int to) const
 {
-    const QString string = fixSpacing(qstring(run));
+    String sanitized = Font::normalizeSpaces(String(run.characters(), run.length()));
+    QString string = fromRawDataWithoutRef(sanitized);
+
     QTextLayout layout(string, font());
     QTextLine line = setupLayout(&layout, run);
 

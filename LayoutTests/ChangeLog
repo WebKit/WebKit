@@ -1,3 +1,32 @@
+2009-12-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for newlines turning into missing-gyphs when using SVG fonts
+
+        https://bugs.webkit.org/show_bug.cgi?id=32710
+
+        Font::drawText() has three code paths:
+
+          - drawTextUsingSVGFont()
+          - drawSimpleText()
+          - drawComplexText()
+
+        The latter two both have logic to replace newlines and tabs, as well
+        as a few other control characters that are considered spaces, with
+        spaces, before actually drawing the text. Previously the SVG font
+        path did not have this kind of logic.
+
+        This change introduces two helper functions in Font to do this space
+        replacement, which are then used for the simple path, the SVG path,
+        and the Qt implementation of the complex path.
+
+        Test: svg/custom/svg-fonts-in-html-linebreaks.html
+
+        * svg/custom/resources/ABCFont.svg: Added. Font for test case
+        * svg/custom/svg-fonts-in-html-linebreaks-expected.txt: Added.
+        * svg/custom/svg-fonts-in-html-linebreaks.html: New test case
+
 2009-12-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

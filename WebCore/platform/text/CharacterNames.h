@@ -59,6 +59,7 @@ namespace WebCore {
     const UChar rightToLeftMark = 0x200F;
     const UChar rightToLeftOverride = 0x202E;
     const UChar softHyphen = 0x00AD;
+    const UChar space = 0x0020;
     const UChar whiteBullet = 0x25E6;
     const UChar zeroWidthSpace = 0x200B;
 

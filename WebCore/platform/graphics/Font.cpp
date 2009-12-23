@@ -24,7 +24,6 @@
 #include "config.h"
 #include "Font.h"
 
-#include "CharacterNames.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontFallbackList.h"
@@ -264,6 +263,22 @@ bool Font::isSVGFont() const
 FontSelector* Font::fontSelector() const
 {
     return m_fontList ? m_fontList->fontSelector() : 0;
+}
+
+String Font::normalizeSpaces(const String& string)
+{
+    unsigned length = string.length();
+    Vector<UChar, 256> buffer(length);
+    bool didReplacement = false;
+
+    for (unsigned i = 0; i < length; ++i) {
+        UChar originalCharacter = string[i];
+        buffer[i] = normalizeSpaces(originalCharacter);
+        if (buffer[i] != originalCharacter)
+            didReplacement = true;
+    }
+
+    return didReplacement ? String(buffer.data(), length) : string;
 }
 
 static bool shouldUseFontSmoothing = true;
