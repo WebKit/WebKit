@@ -1,5 +1,11 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        Another try at fixing Windows build.
+
+        * WebKitPrefix.cpp: Touch it.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         Turn off datagrid by default, at least for all platforms Apple ships.
