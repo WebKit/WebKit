@@ -1,3 +1,19 @@
+2009-12-22  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] The "Search" input type is not rendered correctly when styled.
+        https://bugs.webkit.org/show_bug.cgi?id=32417
+
+        There are no new tests because only pixel tests may be affected by
+        this change and those changes can only be done on the build bot.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintSearchField):
+        Since currently we paint the Search control as a QLineEdit, I have
+        deferred painting to WebCore, as in the case of the text input so 
+        that the painting is consistent.
+
 2009-12-22  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

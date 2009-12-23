@@ -643,8 +643,7 @@ bool RenderThemeQt::paintSliderThumb(RenderObject* o, const RenderObject::PaintI
 bool RenderThemeQt::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& pi,
                                      const IntRect& r)
 {
-    paintTextField(o, pi, r);
-    return false;
+    return true;
 }
 
 void RenderThemeQt::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style,
