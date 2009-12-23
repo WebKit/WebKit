@@ -936,67 +936,67 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     : m_type(CSS_IDENT)
 {
     switch (e) {
-        case LNONE:
+        case NoneListStyle:
             m_value.ident = CSSValueNone;
             break;
-        case DISC:
+        case Disc:
             m_value.ident = CSSValueDisc;
             break;
-        case CIRCLE:
+        case Circle:
             m_value.ident = CSSValueCircle;
             break;
-        case SQUARE:
+        case Square:
             m_value.ident = CSSValueSquare;
             break;
-        case LDECIMAL:
+        case DecimalListStyle:
             m_value.ident = CSSValueDecimal;
             break;
-        case DECIMAL_LEADING_ZERO:
+        case DecimalLeadingZero:
             m_value.ident = CSSValueDecimalLeadingZero;
             break;
-        case LOWER_ROMAN:
+        case LowerRoman:
             m_value.ident = CSSValueLowerRoman;
             break;
-        case UPPER_ROMAN:
+        case UpperRoman:
             m_value.ident = CSSValueUpperRoman;
             break;
-        case LOWER_GREEK:
+        case LowerGreek:
             m_value.ident = CSSValueLowerGreek;
             break;
-        case LOWER_ALPHA:
+        case LowerAlpha:
             m_value.ident = CSSValueLowerAlpha;
             break;
-        case LOWER_LATIN:
+        case LowerLatin:
             m_value.ident = CSSValueLowerLatin;
             break;
-        case UPPER_ALPHA:
+        case UpperAlpha:
             m_value.ident = CSSValueUpperAlpha;
             break;
-        case UPPER_LATIN:
+        case UpperLatin:
             m_value.ident = CSSValueUpperLatin;
             break;
-        case HEBREW:
+        case Hebrew:
             m_value.ident = CSSValueHebrew;
             break;
-        case ARMENIAN:
+        case Armenian:
             m_value.ident = CSSValueArmenian;
             break;
-        case GEORGIAN:
+        case Georgian:
             m_value.ident = CSSValueGeorgian;
             break;
-        case CJK_IDEOGRAPHIC:
+        case CJKIdeographic:
             m_value.ident = CSSValueCjkIdeographic;
             break;
-        case HIRAGANA:
+        case Hiragana:
             m_value.ident = CSSValueHiragana;
             break;
-        case KATAKANA:
+        case Katakana:
             m_value.ident = CSSValueKatakana;
             break;
-        case HIRAGANA_IROHA:
+        case HiraganaIroha:
             m_value.ident = CSSValueHiraganaIroha;
             break;
-        case KATAKANA_IROHA:
+        case KatakanaIroha:
             m_value.ident = CSSValueKatakanaIroha;
             break;
     }
@@ -1006,7 +1006,7 @@ template<> inline CSSPrimitiveValue::operator EListStyleType() const
 {
     switch (m_value.ident) {
         case CSSValueNone:
-            return LNONE;
+            return NoneListStyle;
         default:
             return static_cast<EListStyleType>(m_value.ident - CSSValueDisc);
     }

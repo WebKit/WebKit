@@ -51,8 +51,8 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    if (style()->listStyleType() != LNONE ||
-        (style()->listStyleImage() && !style()->listStyleImage()->errorOccurred())) {
+    if (style()->listStyleType() != NoneListStyle
+        || (style()->listStyleImage() && !style()->listStyleImage()->errorOccurred())) {
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         // The marker always inherits from the list item, regardless of where it might end
         // up (e.g., in some deeply nested line box). See CSS3 spec.

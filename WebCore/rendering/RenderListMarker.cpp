@@ -340,46 +340,46 @@ static String toCJKIdeographic(int number, const UChar table[16])
 String listMarkerText(EListStyleType type, int value)
 {
     switch (type) {
-        case LNONE:
+        case NoneListStyle:
             return "";
 
         // We use the same characters for text security.
         // See RenderText::setInternalString.
-        case CIRCLE:
+        case Circle:
             return String(&whiteBullet, 1);
-        case DISC:
+        case Disc:
             return String(&bullet, 1);
-        case SQUARE:
+        case Square:
             // The CSS 2.1 test suite uses U+25EE BLACK MEDIUM SMALL SQUARE
             // instead, but I think this looks better.
             return String(&blackSquare, 1);
 
-        case LDECIMAL:
+        case DecimalListStyle:
             return String::number(value);
-        case DECIMAL_LEADING_ZERO:
+        case DecimalLeadingZero:
             if (value < -9 || value > 9)
                 return String::number(value);
             if (value < 0)
                 return "-0" + String::number(-value); // -01 to -09
             return "0" + String::number(value); // 00 to 09
 
-        case LOWER_ALPHA:
-        case LOWER_LATIN: {
+        case LowerAlpha:
+        case LowerLatin: {
             static const UChar lowerLatinAlphabet[26] = {
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
             };
             return toAlphabetic(value, lowerLatinAlphabet, 26);
         }
-        case UPPER_ALPHA:
-        case UPPER_LATIN: {
+        case UpperAlpha:
+        case UpperLatin: {
             static const UChar upperLatinAlphabet[26] = {
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
             };
             return toAlphabetic(value, upperLatinAlphabet, 26);
         }
-        case LOWER_GREEK: {
+        case LowerGreek: {
             static const UChar lowerGreekAlphabet[24] = {
                 0x03B1, 0x03B2, 0x03B3, 0x03B4, 0x03B5, 0x03B6, 0x03B7, 0x03B8,
                 0x03B9, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BE, 0x03BF, 0x03C0,
@@ -388,7 +388,7 @@ String listMarkerText(EListStyleType type, int value)
             return toAlphabetic(value, lowerGreekAlphabet, 24);
         }
 
-        case HIRAGANA: {
+        case Hiragana: {
             // FIXME: This table comes from the CSS3 draft, and is probably
             // incorrect, given the comments in that draft.
             static const UChar hiraganaAlphabet[48] = {
@@ -401,7 +401,7 @@ String listMarkerText(EListStyleType type, int value)
             };
             return toAlphabetic(value, hiraganaAlphabet, 48);
         }
-        case HIRAGANA_IROHA: {
+        case HiraganaIroha: {
             // FIXME: This table comes from the CSS3 draft, and is probably
             // incorrect, given the comments in that draft.
             static const UChar hiraganaIrohaAlphabet[47] = {
@@ -414,7 +414,7 @@ String listMarkerText(EListStyleType type, int value)
             };
             return toAlphabetic(value, hiraganaIrohaAlphabet, 47);
         }
-        case KATAKANA: {
+        case Katakana: {
             // FIXME: This table comes from the CSS3 draft, and is probably
             // incorrect, given the comments in that draft.
             static const UChar katakanaAlphabet[48] = {
@@ -427,7 +427,7 @@ String listMarkerText(EListStyleType type, int value)
             };
             return toAlphabetic(value, katakanaAlphabet, 48);
         }
-        case KATAKANA_IROHA: {
+        case KatakanaIroha: {
             // FIXME: This table comes from the CSS3 draft, and is probably
             // incorrect, given the comments in that draft.
             static const UChar katakanaIrohaAlphabet[47] = {
@@ -441,7 +441,7 @@ String listMarkerText(EListStyleType type, int value)
             return toAlphabetic(value, katakanaIrohaAlphabet, 47);
         }
 
-        case CJK_IDEOGRAPHIC: {
+        case CJKIdeographic: {
             static const UChar traditionalChineseInformalTable[16] = {
                 0x842C, 0x5104, 0x5146,
                 0x5341, 0x767E, 0x5343,
@@ -451,19 +451,19 @@ String listMarkerText(EListStyleType type, int value)
             return toCJKIdeographic(value, traditionalChineseInformalTable);
         }
 
-        case LOWER_ROMAN:
+        case LowerRoman:
             return toRoman(value, false);
-        case UPPER_ROMAN:
+        case UpperRoman:
             return toRoman(value, true);
 
-        case ARMENIAN:
+        case Armenian:
             // CSS3 says "armenian" means "lower-armenian".
             // But the CSS2.1 test suite contains uppercase test results for "armenian",
             // so we'll match the test suite.
             return toArmenian(value, true);
-        case GEORGIAN:
+        case Georgian:
             return toGeorgian(value);
-        case HEBREW:
+        case Hebrew:
             return toHebrew(value);
     }
 
@@ -571,35 +571,35 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     context->setFillColor(color, style()->colorSpace());
 
     switch (style()->listStyleType()) {
-        case DISC:
+        case Disc:
             context->drawEllipse(marker);
             return;
-        case CIRCLE:
+        case Circle:
             context->setFillColor(Color::transparent, DeviceColorSpace);
             context->drawEllipse(marker);
             return;
-        case SQUARE:
+        case Square:
             context->drawRect(marker);
             return;
-        case LNONE:
+        case NoneListStyle:
             return;
-        case ARMENIAN:
-        case CJK_IDEOGRAPHIC:
-        case DECIMAL_LEADING_ZERO:
-        case GEORGIAN:
-        case HEBREW:
-        case HIRAGANA:
-        case HIRAGANA_IROHA:
-        case KATAKANA:
-        case KATAKANA_IROHA:
-        case LDECIMAL:
-        case LOWER_ALPHA:
-        case LOWER_GREEK:
-        case LOWER_LATIN:
-        case LOWER_ROMAN:
-        case UPPER_ALPHA:
-        case UPPER_LATIN:
-        case UPPER_ROMAN:
+        case Armenian:
+        case CJKIdeographic:
+        case DecimalLeadingZero:
+        case Georgian:
+        case Hebrew:
+        case Hiragana:
+        case HiraganaIroha:
+        case Katakana:
+        case KatakanaIroha:
+        case DecimalListStyle:
+        case LowerAlpha:
+        case LowerGreek:
+        case LowerLatin:
+        case LowerRoman:
+        case UpperAlpha:
+        case UpperLatin:
+        case UpperRoman:
             break;
     }
     if (m_text.isEmpty())
@@ -693,31 +693,31 @@ void RenderListMarker::calcPrefWidths()
     int width = 0;
     EListStyleType type = style()->listStyleType();
     switch (type) {
-        case LNONE:
+        case NoneListStyle:
             break;
-        case CIRCLE:
-        case DISC:
-        case SQUARE:
+        case Circle:
+        case Disc:
+        case Square:
             m_text = listMarkerText(type, 0); // value is ignored for these types
             width = (font.ascent() * 2 / 3 + 1) / 2 + 2;
             break;
-        case ARMENIAN:
-        case CJK_IDEOGRAPHIC:
-        case DECIMAL_LEADING_ZERO:
-        case GEORGIAN:
-        case HEBREW:
-        case HIRAGANA:
-        case HIRAGANA_IROHA:
-        case KATAKANA:
-        case KATAKANA_IROHA:
-        case LDECIMAL:
-        case LOWER_ALPHA:
-        case LOWER_GREEK:
-        case LOWER_LATIN:
-        case LOWER_ROMAN:
-        case UPPER_ALPHA:
-        case UPPER_LATIN:
-        case UPPER_ROMAN:
+        case Armenian:
+        case CJKIdeographic:
+        case DecimalLeadingZero:
+        case Georgian:
+        case Hebrew:
+        case Hiragana:
+        case HiraganaIroha:
+        case Katakana:
+        case KatakanaIroha:
+        case DecimalListStyle:
+        case LowerAlpha:
+        case LowerGreek:
+        case LowerLatin:
+        case LowerRoman:
+        case UpperAlpha:
+        case UpperLatin:
+        case UpperRoman:
             m_text = listMarkerText(type, m_listItem->value());
             if (m_text.isEmpty())
                 width = 0;
@@ -752,9 +752,9 @@ void RenderListMarker::updateMargins()
             else
                 marginLeft = cMarkerPadding;
         } else switch (style()->listStyleType()) {
-            case DISC:
-            case CIRCLE:
-            case SQUARE:
+            case Disc:
+            case Circle:
+            case Square:
                 if (style()->direction() == LTR) {
                     marginLeft = -1;
                     marginRight = font.ascent() - minPrefWidth() + 1;
@@ -773,12 +773,12 @@ void RenderListMarker::updateMargins()
             else {
                 int offset = font.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
-                    case DISC:
-                    case CIRCLE:
-                    case SQUARE:
+                    case Disc:
+                    case Circle:
+                    case Square:
                         marginLeft = -offset - cMarkerPadding - 1;
                         break;
-                    case LNONE:
+                    case NoneListStyle:
                         break;
                     default:
                         marginLeft = m_text.isEmpty() ? 0 : -minPrefWidth() - offset / 2;
@@ -790,12 +790,12 @@ void RenderListMarker::updateMargins()
             else {
                 int offset = font.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
-                    case DISC:
-                    case CIRCLE:
-                    case SQUARE:
+                    case Disc:
+                    case Circle:
+                    case Square:
                         marginLeft = offset + cMarkerPadding + 1 - minPrefWidth();
                         break;
-                    case LNONE:
+                    case NoneListStyle:
                         break;
                     default:
                         marginLeft = m_text.isEmpty() ? 0 : offset / 2;
@@ -836,34 +836,34 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         return IntRect(x(), y(), m_image->imageSize(this, style()->effectiveZoom()).width(), m_image->imageSize(this, style()->effectiveZoom()).height());
 
     switch (style()->listStyleType()) {
-        case DISC:
-        case CIRCLE:
-        case SQUARE: {
+        case Disc:
+        case Circle:
+        case Square: {
             // FIXME: Are these particular rounding rules necessary?
             const Font& font = style()->font();
             int ascent = font.ascent();
             int bulletWidth = (ascent * 2 / 3 + 1) / 2;
             return IntRect(x() + 1, y() + 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
         }
-        case LNONE:
+        case NoneListStyle:
             return IntRect();
-        case ARMENIAN:
-        case CJK_IDEOGRAPHIC:
-        case DECIMAL_LEADING_ZERO:
-        case GEORGIAN:
-        case HEBREW:
-        case HIRAGANA:
-        case HIRAGANA_IROHA:
-        case KATAKANA:
-        case KATAKANA_IROHA:
-        case LDECIMAL:
-        case LOWER_ALPHA:
-        case LOWER_GREEK:
-        case LOWER_LATIN:
-        case LOWER_ROMAN:
-        case UPPER_ALPHA:
-        case UPPER_LATIN:
-        case UPPER_ROMAN:
+        case Armenian:
+        case CJKIdeographic:
+        case DecimalLeadingZero:
+        case Georgian:
+        case Hebrew:
+        case Hiragana:
+        case HiraganaIroha:
+        case Katakana:
+        case KatakanaIroha:
+        case DecimalListStyle:
+        case LowerAlpha:
+        case LowerGreek:
+        case LowerLatin:
+        case LowerRoman:
+        case UpperAlpha:
+        case UpperLatin:
+        case UpperRoman:
             if (m_text.isEmpty())
                 return IntRect();
             const Font& font = style()->font();
