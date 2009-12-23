@@ -1,3 +1,9 @@
+2009-12-23  Gabor Loki  <loki@webkit.org>
+
+        Unreviewed; added myself to the committers list.
+
+        * Scripts/modules/committers.py:
+
 2009-12-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

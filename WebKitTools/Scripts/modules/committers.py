@@ -82,6 +82,7 @@ committers_unable_to_review = [
     Committer("Eric Roman", "eroman@chromium.org"),
     Committer("Feng Qian", "feng@chromium.org"),
     Committer("Fumitoshi Ukai", "ukai@chromium.org"),
+    Committer("Gabor Loki", "loki@webkit.org"),
     Committer("Girish Ramakrishnan", ["girish@forwardbias.in", "ramakrishnan.girish@gmail.com"]),
     Committer("Graham Dennis", ["Graham.Dennis@gmail.com", "gdennis@webkit.org"]),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
