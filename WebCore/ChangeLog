@@ -1,3 +1,19 @@
+2009-12-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        "Refused to execute a JavaScript script" error when embedding SWF with
+        a URL that is also a query parameter
+        https://bugs.webkit.org/show_bug.cgi?id=32908
+
+        Don't block direct injections into the object src attribute unless
+        there's an illegal character (like < or ") in the URL.  This change
+        lets some very unusual vulnerabilities through the filter but removes a
+        false positive that we've seen several times.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canLoadObject):
+
 2009-12-23  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dmitry Titov.

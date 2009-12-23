@@ -1,3 +1,15 @@
+2009-12-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        "Refused to execute a JavaScript script" error when embedding SWF with
+        a URL that is also a query parameter
+        https://bugs.webkit.org/show_bug.cgi?id=32908
+
+        Update expected results to show that we don't raise an alarm in this case.
+
+        * http/tests/security/xssAuditor/object-src-inject-expected.txt:
+
 2009-12-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
