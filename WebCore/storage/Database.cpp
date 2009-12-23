@@ -132,6 +132,8 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 
     if (!database->openAndVerifyVersion(e)) {
        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
+       document->removeOpenDatabase(database.get());
+       DatabaseTracker::tracker().removeOpenDatabase(database.get());
        return 0;
     }
 
