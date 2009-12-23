@@ -1,3 +1,21 @@
+2009-12-22  James Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Keyboard shortcut in dropdown not working.
+        https://bugs.webkit.org/show_bug.cgi?id=32008
+
+        Consider PlatformKeyboardEvent::Char type event as character type
+        event on all platforms. It fixes the "type ahead find" feature
+        of the popup listbox on Linux and Mac platforms.
+
+        Merge the case-sensitive type ahead find fix from
+        WebCore/dom/SelectElement.cpp. See
+        https://bugs.webkit.org/show_bug.cgi?id=29103
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::isCharacterTypeEvent):
+
 2009-12-22  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Eric Seidel.

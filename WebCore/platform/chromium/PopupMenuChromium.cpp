@@ -611,17 +611,10 @@ bool PopupListBox::isInterestedInEventForKey(int keyCode)
 static bool isCharacterTypeEvent(const PlatformKeyboardEvent& event)
 {
     // Check whether the event is a character-typed event or not.
-    // In Windows, PlatformKeyboardEvent::Char (not RawKeyDown) type event
-    // is considered as character type event. In Mac OS, KeyDown (not
-    // KeyUp) is considered as character type event.
-#if PLATFORM(WIN_OS)
-    if (event.type() == PlatformKeyboardEvent::Char)
-        return true;
-#else
-    if (event.type() == PlatformKeyboardEvent::KeyDown)
-        return true;
-#endif
-    return false;
+    // We use RawKeyDown/Char/KeyUp event scheme on all platforms,
+    // so PlatformKeyboardEvent::Char (not RawKeyDown) type event
+    // is considered as character type event.
+    return event.type() == PlatformKeyboardEvent::Char;
 }
 
 bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
@@ -745,13 +738,18 @@ void PopupListBox::typeAheadFind(const PlatformKeyboardEvent& event)
         }
     }
 
+    // Compute a case-folded copy of the prefix string before beginning the search for
+    // a matching element. This code uses foldCase to work around the fact that
+    // String::startWith does not fold non-ASCII characters. This code can be changed
+    // to use startWith once that is fixed.
+    String prefixWithCaseFolded(prefix.foldCase());
     int itemCount = numItems();
     int index = (max(0, m_selectedIndex) + searchStartOffset) % itemCount;
     for (int i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
         if (!isSelectableItem(index))
             continue;
 
-        if (stripLeadingWhiteSpace(m_items[index]->label).startsWith(prefix, false)) {
+        if (stripLeadingWhiteSpace(m_items[index]->label).foldCase().startsWith(prefixWithCaseFolded)) {
             selectIndex(index);
             return;
         }
