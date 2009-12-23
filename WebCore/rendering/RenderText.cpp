@@ -1060,8 +1060,15 @@ void RenderText::positionLineBox(InlineBox* box)
     if (!s->len()) {
         // We want the box to be destroyed.
         s->remove();
+        if (m_firstTextBox == s)
+            m_firstTextBox = s->nextTextBox();
+        else
+            s->prevTextBox()->setNextLineBox(s->nextTextBox());
+        if (m_lastTextBox == s)
+            m_lastTextBox = s->prevTextBox();
+        else
+            s->nextTextBox()->setPreviousLineBox(s->prevTextBox());
         s->destroy(renderArena());
-        m_firstTextBox = m_lastTextBox = 0;
         return;
     }
 
@@ -1362,7 +1369,7 @@ void RenderText::checkConsistency() const
 #ifdef CHECK_CONSISTENCY
     const InlineTextBox* prev = 0;
     for (const InlineTextBox* child = m_firstTextBox; child != 0; child = child->nextTextBox()) {
-        ASSERT(child->object() == this);
+        ASSERT(child->renderer() == this);
         ASSERT(child->prevTextBox() == prev);
         prev = child;
     }
