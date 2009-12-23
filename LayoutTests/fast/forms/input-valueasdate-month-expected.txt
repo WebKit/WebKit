@@ -1,0 +1,13 @@
+Tests for .valueAsDate with <input type=month>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueAsDateFor("") is null
+PASS valueAsDateFor("1969-12").getTime() is Date.UTC(1969, 11, 1, 0, 0, 0, 0)
+PASS valueAsDateFor("1970-01").getTime() is Date.UTC(1970, 0, 1)
+PASS valueAsDateFor("2009-12").getTime() is Date.UTC(2009, 11, 1)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

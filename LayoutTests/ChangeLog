@@ -1,3 +1,31 @@
+2009-12-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate getter support.
+        https://bugs.webkit.org/show_bug.cgi?id=32876
+
+        Tests for the valueAsDate getter with various types.
+
+        * fast/forms/input-valueasdate-date-expected.txt: Added.
+        * fast/forms/input-valueasdate-date.html: Added.
+        * fast/forms/input-valueasdate-datetime-expected.txt: Added.
+        * fast/forms/input-valueasdate-datetime.html: Added.
+        * fast/forms/input-valueasdate-datetimelocal-expected.txt: Added.
+        * fast/forms/input-valueasdate-datetimelocal.html: Added.
+        * fast/forms/input-valueasdate-month-expected.txt: Added.
+        * fast/forms/input-valueasdate-month.html: Added.
+        * fast/forms/input-valueasdate-time-expected.txt: Added.
+        * fast/forms/input-valueasdate-time.html: Added.
+        * fast/forms/input-valueasdate-week-expected.txt: Added.
+        * fast/forms/input-valueasdate-week.html: Added.
+        * fast/forms/script-tests/input-valueasdate-date.js: Added.
+        * fast/forms/script-tests/input-valueasdate-datetime.js: Added.
+        * fast/forms/script-tests/input-valueasdate-datetimelocal.js: Added.
+        * fast/forms/script-tests/input-valueasdate-month.js: Added.
+        * fast/forms/script-tests/input-valueasdate-time.js: Added.
+        * fast/forms/script-tests/input-valueasdate-week.js: Added.
+
 2009-12-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.

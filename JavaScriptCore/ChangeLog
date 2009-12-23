@@ -1,3 +1,18 @@
+2009-12-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate getter support.
+        https://bugs.webkit.org/show_bug.cgi?id=32876
+
+        Expose dateToDaysFrom1970().
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/DateMath.cpp:
+        (WTF::dateToDaysFrom1970):
+        * wtf/DateMath.h:
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

@@ -76,7 +76,16 @@ const double msPerHour = 60.0 * 60.0 * 1000.0;
 const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 const double msPerMonth = 2592000000.0;
 
+// Returns the number of days from 1970-01-01 to the specified date.
+double dateToDaysFrom1970(int year, int month, int day);
+
 } // namespace WTF
+
+using WTF::dateToDaysFrom1970;
+using WTF::minutesPerHour;
+using WTF::msPerDay;
+using WTF::msPerSecond;
+using WTF::secondsPerMinute;
 
 #if USE(JSC)
 namespace JSC {

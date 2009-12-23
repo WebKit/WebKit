@@ -1376,10 +1376,21 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 
 double HTMLInputElement::valueAsDate() const
 {
-    // FIXME: This is a temporary implementation to check Date binding.
-    if (inputType() == MONTH)
-        return 0.0;
-    return std::numeric_limits<double>::quiet_NaN();
+    switch (inputType()) {
+    // valueAsDate doesn't work for the DATETIMELOCAL type according to the standard.
+    case DATE:
+    case DATETIME:
+    case MONTH:
+    case TIME:
+    case WEEK: {
+        ISODateTime dateTime;
+        if (!formStringToISODateTime(inputType(), value(), &dateTime))
+            return ISODateTime::invalidMilliseconds();
+        return dateTime.millisecondsSinceEpoch();
+    }
+    default:
+        return ISODateTime::invalidMilliseconds();
+    }
 }
 
 void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
@@ -2129,6 +2140,8 @@ bool HTMLInputElement::formStringToDouble(const String& src, double* out)
 
 bool HTMLInputElement::formStringToISODateTime(InputType type, const String& formString, ISODateTime* out)
 {
+    if (formString.isEmpty())
+        return false;
     ISODateTime ignoredResult;
     if (!out)
         out = &ignoredResult;

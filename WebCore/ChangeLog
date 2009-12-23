@@ -1,3 +1,39 @@
+2009-12-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate getter support.
+        https://bugs.webkit.org/show_bug.cgi?id=32876
+
+        To implement the valueAsDate getter,
+        - Add a method to calculate milliseconds from 1970-01-01 to ISODateTime.
+        - Introduce m_type field to ISODateTime.
+
+        Tests: fast/forms/input-valueasdate-date.html
+               fast/forms/input-valueasdate-datetime.html
+               fast/forms/input-valueasdate-datetimelocal.html
+               fast/forms/input-valueasdate-month.html
+               fast/forms/input-valueasdate-time.html
+               fast/forms/input-valueasdate-week.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueAsDate):
+          Implement it with ISODateTime::millisecondsSinceEpoch().
+        (WebCore::HTMLInputElement::formStringToISODateTime):
+          Early exit for a null String. This avoids assertion failures in ISODateTime::parse*().
+        * html/ISODateTime.cpp:
+        (WebCore::ISODateTime::parseMonth): Sets m_type.
+        (WebCore::ISODateTime::parseDate): ditto.
+        (WebCore::ISODateTime::parseWeek): ditto.
+        (WebCore::ISODateTime::parseTime): ditto.
+        (WebCore::ISODateTime::parseDateTimeLocal): ditto.
+        (WebCore::ISODateTime::parseDateTime): ditto.
+        (WebCore::ISODateTime::millisecondsSinceEpochForTime): Added.
+        (WebCore::ISODateTime::millisecondsSinceEpoch): Added.
+        * html/ISODateTime.h:
+        (WebCore::ISODateTime::ISODateTime):
+        (WebCore::ISODateTime::invalidMilliseconds):
+
 2009-12-22  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

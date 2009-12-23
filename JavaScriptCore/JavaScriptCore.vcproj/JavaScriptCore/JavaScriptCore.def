@@ -86,6 +86,7 @@ EXPORTS
     ?createTypeError@JSC@@YA?AVJSValue@1@PAVExecState@1@PBD@Z
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
+    ?dateToDaysFrom1970@WTF@@YANHHH@Z
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultAttributes@PropertyDescriptor@JSC@@0IA
     ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
