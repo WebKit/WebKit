@@ -1,3 +1,15 @@
+2009-12-22  Adam Langley  <agl@google.com>
+
+        Build fix: not reviewed.
+
+        r52504 (https://bugs.webkit.org/show_bug.cgi?id=32845) broke the
+        Chromium build on Windows and Mac due to a misplaced #endif. The
+        buildbot didn't find the problem because it runs on Linux.
+
+        Have verified this patch with the author of the above.
+
+        * src/GraphicsContext3D.cpp:
+
 2009-12-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.

@@ -289,9 +289,9 @@ private:
 };
 
 bool GraphicsContext3DInternal::s_initializedGLEW = false;
+
 #if PLATFORM(LINUX)
 GraphicsContext3DInternal::GLConnection* GraphicsContext3DInternal::s_gl = 0;
-#endif
 
 GraphicsContext3DInternal::GLConnection* GraphicsContext3DInternal::GLConnection::create()
 {
@@ -351,6 +351,8 @@ GraphicsContext3DInternal::GLConnection::~GLConnection()
     XCloseDisplay(m_display);
     dlclose(m_libGL);
 }
+
+#endif  // PLATFORM(LINUX)
 
 GraphicsContext3DInternal::VertexAttribPointerState::VertexAttribPointerState()
     : enabled(false)
