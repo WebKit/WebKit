@@ -1,3 +1,16 @@
+2009-12-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        [bzt] Don't call create-patch twice during post-diff
+        https://bugs.webkit.org/show_bug.cgi?id=32893
+
+        If we call create-patch to get the bug number, cache the diff in the
+        state so we don't need to call it again.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/upload.py:
+
 2009-12-22  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

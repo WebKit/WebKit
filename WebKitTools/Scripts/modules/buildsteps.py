@@ -160,7 +160,7 @@ class PostDiffToBugStep(AbstractStep):
         ]
 
     def run(self, state):
-        diff = self._tool.scm().create_patch()
+        diff = state.get("diff") or self._tool.scm().create_patch()
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
         description = self._options.description or "Patch"
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)

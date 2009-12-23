@@ -78,10 +78,15 @@ class PostDiff(AbstractSequencedCommmand):
 
     def _prepare_state(self, options, args, tool):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
-        bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
+        state = {}
+        bug_id = args and args[0]
+        if not bug_id:
+            state["diff"] = tool.scm().create_patch()
+            bug_id = parse_bug_id(state["diff"])
         if not bug_id:
             error("No bug id passed and no bug url found in diff, can't post.")
-        return { "bug_id" : bug_id }
+        state["bug_id"] = bug_id
+        return state
 
 
 class SubmitPatch(AbstractSequencedCommmand):
