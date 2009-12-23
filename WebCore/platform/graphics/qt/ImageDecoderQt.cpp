@@ -59,18 +59,8 @@ ImageDecoderQt::~ImageDecoderQt()
     delete m_buffer;
 }
 
-void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
+void ImageDecoderQt::initializeDecoder()
 {
-    if (m_failed)
-        return;
-
-    // No progressive loading possible
-    if (!allDataReceived)
-        return;
-
-    // Cache our own new data.
-    ImageDecoder::setData(data, allDataReceived);
-
     // We expect to be only called once with allDataReceived
     ASSERT(!m_buffer);
     ASSERT(!m_reader);
@@ -87,6 +77,20 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
 
     // QImageReader only allows retrieving the format before reading the image
     m_format = m_reader->format();
+}
+
+void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
+{
+    if (m_failed)
+        return;
+
+    // No progressive loading possible
+    if (!allDataReceived)
+        return;
+
+    // Cache our own new data.
+    ImageDecoder::setData(data, allDataReceived);
+    initializeDecoder();
 }
 
 bool ImageDecoderQt::isSizeAvailable()
@@ -151,8 +155,20 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
-void ImageDecoderQt::clearFrameBufferCache(size_t /*index*/)
+void ImageDecoderQt::clearFrameBufferCache(size_t index)
 {
+    if (m_frameBufferCache.isEmpty())
+        return;
+
+    index = qMin(index, m_frameBufferCache.size() - 1);
+
+    for (int i = 0; i < index; ++i) {
+        RGBA32Buffer& frame = m_frameBufferCache[i];
+        frame.setStatus(RGBA32Buffer::FrameEmpty);
+        frame.setDecodedImage(QImage());
+    }
+
+    initializeDecoder();
 }
 
 void ImageDecoderQt::internalDecodeSize()

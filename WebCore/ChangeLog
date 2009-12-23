@@ -1,3 +1,16 @@
+2009-12-22  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32121
+        [Qt] implement ImageDecoderQt::clearFrameBufferCache().
+       
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::initializeDecoder):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::clearFrameBufferCache):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
 2009-12-22  Nayan Kumar K  <nayankk@gmail.com>
 
         Reviewed by Eric Seidel.
