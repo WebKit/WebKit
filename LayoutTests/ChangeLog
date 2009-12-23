@@ -1,5 +1,18 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        Disabled DataGrid tests.
+
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html-disabled: Copied from fast/dom/HTMLDataGridElement/DataGridColumns-basic.html.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html-disabled: Copied from fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom.html: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom.html-disabled: Copied from fast/dom/HTMLDataGridElement/DataGridColumns-dom.html.
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html-disabled: Copied from fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         ASSERTION FAILED: m_numNodeListCaches
