@@ -1,3 +1,18 @@
+2009-12-22  Nayan Kumar K  <nayankk@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix assert failure with WML pages having 'Refresh' task in
+        'onenterforward' event.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30989
+
+        Writing Layout test is not possible. Please refer to the discussion
+        in bug id #30989. A sample test case is attached in BugZilla.
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded):
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
