@@ -1,3 +1,11 @@
+2009-12-22  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Remove the only dependency on perl-libwin32 in cygwin
+
+        * Scripts/num-cpus:
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         * pywebsocket/mod_pywebsocket: Added property svn:ignore to ignore
