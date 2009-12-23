@@ -1,5 +1,20 @@
 2009-12-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        ASSERTION FAILED: m_numNodeListCaches
+        https://bugs.webkit.org/show_bug.cgi?id=19526
+        <rdar://problem/7431572>
+
+        Test: fast/dom/NodeList/adoptNode-node-list-cache.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): Call removeNodeListCache on the old
+        document and addNodeListCache on the new one if moving a node that
+        has node lists.
+
+2009-12-22  Darin Adler  <darin@apple.com>
+
         First cut at fixing Windows build.
 
         * WebCorePrefix.cpp: Touch it.
