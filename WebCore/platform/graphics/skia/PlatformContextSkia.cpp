@@ -234,7 +234,8 @@ void PlatformContextSkia::beginLayerClippedToImage(const WebCore::FloatRect& rec
     m_state->m_clip = rect;
     SkRect bounds = { SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()),
                       SkFloatToScalar(rect.right()), SkFloatToScalar(rect.bottom()) };
-                      
+
+    canvas()->clipRect(bounds);
     canvas()->saveLayerAlpha(&bounds, 255,
                              static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag));
     // Copy off the image as |imageBuffer| may be deleted before restore is invoked.

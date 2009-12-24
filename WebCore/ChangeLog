@@ -1,3 +1,22 @@
+2009-12-23  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        PlatformContextSkia::beginLayerClippedToImage() needs to clip outside of the image.
+        
+        This method should limit the current painting window to the bounds of the given
+        image, but it did not. Due to this bug, unnecessary contents were rendered in
+        some (limited) situations.
+
+        [Skia] PlatformContextSkia::beginLayerClippedToImage does not clip outside of the image
+        https://bugs.webkit.org/show_bug.cgi?id=32817
+        
+        No new tests, because this is a fix of an existing test which is currently failing in
+        Chromium.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::beginLayerClippedToImage): Add clipRect() call.
+
 2009-12-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Eric Seidel.
