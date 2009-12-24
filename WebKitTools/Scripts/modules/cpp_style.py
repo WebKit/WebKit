@@ -37,7 +37,6 @@
 """Support for check-webkit-style."""
 
 import codecs
-import getopt
 import math  # for log
 import os
 import os.path
@@ -48,115 +47,7 @@ import sys
 import unicodedata
 
 
-# This is set by check-webkit-style.
 _USAGE = ''
-
-
-# Default options
-_DEFAULT_VERBOSITY = 1
-_DEFAULT_OUTPUT_FORMAT = 'emacs'
-
-
-# FIXME: For style categories we will never want to have, remove them.
-#        For categories for which we want to have similar functionality,
-#        modify the implementation and enable them.
-# FIXME: Add a unit test to ensure the corresponding categories
-#        are elements of _STYLE_CATEGORIES.
-#
-# For unambiguous terminology, we use "filter rule" rather than "filter"
-# for an individual boolean filter flag like "+foo". This allows us to 
-# reserve "filter" for what one gets by collectively applying all of 
-# the filter rules as specified by a --filter flag.
-_WEBKIT_FILTER_RULES = [
-    '-build/endif_comment',
-    '-build/include_what_you_use',  # <string> for std::string
-    '-build/storage_class',  # const static
-    '-legal/copyright',
-    '-readability/multiline_comment',
-    '-readability/braces',  # int foo() {};
-    '-readability/fn_size',
-    '-readability/casting',
-    '-readability/function',
-    '-runtime/arrays',  # variable length array
-    '-runtime/casting',
-    '-runtime/sizeof',
-    '-runtime/explicit',  # explicit
-    '-runtime/virtual',  # virtual dtor
-    '-runtime/printf',
-    '-runtime/threadsafe_fn',
-    '-runtime/rtti',
-    '-whitespace/blank_line',
-    '-whitespace/end_of_line',
-    '-whitespace/labels',
-    ]
-
-
-# We categorize each style rule we print.  Here are the categories.
-# We want an explicit list so we can list them all in cpp_style --filter=.
-# If you add a new error message with a new category, add it to the list
-# here!  cpp_style_unittest.py should tell you if you forget to do this.
-_STYLE_CATEGORIES = [
-    'build/class',
-    'build/deprecated',
-    'build/endif_comment',
-    'build/forward_decl',
-    'build/header_guard',
-    'build/include',
-    'build/include_order',
-    'build/include_what_you_use',
-    'build/namespaces',
-    'build/printf_format',
-    'build/storage_class',
-    'build/using_std',
-    'legal/copyright',
-    'readability/braces',
-    'readability/casting',
-    'readability/check',
-    'readability/comparison_to_zero',
-    'readability/constructors',
-    'readability/control_flow',
-    'readability/fn_size',
-    'readability/function',
-    'readability/multiline_comment',
-    'readability/multiline_string',
-    'readability/naming',
-    'readability/null',
-    'readability/streams',
-    'readability/todo',
-    'readability/utf8',
-    'runtime/arrays',
-    'runtime/casting',
-    'runtime/explicit',
-    'runtime/init',
-    'runtime/int',
-    'runtime/invalid_increment',
-    'runtime/max_min_macros',
-    'runtime/memset',
-    'runtime/printf',
-    'runtime/printf_format',
-    'runtime/references',
-    'runtime/rtti',
-    'runtime/sizeof',
-    'runtime/string',
-    'runtime/threadsafe_fn',
-    'runtime/virtual',
-    'whitespace/blank_line',
-    'whitespace/braces',
-    'whitespace/comma',
-    'whitespace/comments',
-    'whitespace/declaration',
-    'whitespace/end_of_line',
-    'whitespace/ending_newline',
-    'whitespace/indent',
-    'whitespace/labels',
-    'whitespace/line_length',
-    'whitespace/newline',
-    'whitespace/operators',
-    'whitespace/parens',
-    'whitespace/semicolon',
-    'whitespace/tab',
-    'whitespace/todo',
-    ]
 
 
 # The default state of the category filter. This is overrided by the --filter=
@@ -360,7 +251,7 @@ class _CppStyleState(object):
     """Maintains module-wide state.."""
 
     def __init__(self):
-        self.verbose_level = _DEFAULT_VERBOSITY  # global setting.
+        self.verbose_level = 1  # global setting.
         self.error_count = 0    # global count of reported errors
         # filters to apply when emitting error messages
         self.filters = _DEFAULT_FILTER_RULES[:]
@@ -368,7 +259,7 @@ class _CppStyleState(object):
         # output format:
         # "emacs" - format that emacs can parse (default)
         # "vs7" - format that Microsoft Visual Studio 7 can parse
-        self.output_format = _DEFAULT_OUTPUT_FORMAT
+        self.output_format = 'emacs'
 
     def set_output_format(self, output_format):
         """Sets the output format for errors."""
@@ -3161,98 +3052,6 @@ def process_file(filename, error=error):
             error(filename, 0, 'whitespace/newline', 1,
                   'One or more unexpected \\r (^M) found;'
                   'better to use only a \\n')
-
-
-def exit_with_usage(error_message, display_help=False):
-    """Exit and print a usage string with an optional error message.
-
-    Args:
-      error_message: The optional error message.
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
-    """
-    if display_help:
-        sys.stderr.write(_USAGE)
-    if error_message:
-        sys.exit('\nFATAL ERROR: ' + error_message)
-    else:
-        sys.exit(1)
-
-
-def exit_with_categories(display_help=False):
-    """Exit and print all style categories, along with the default filter.
-
-    These category names appear in error messages.  They can be filtered
-    using the --filter flag.
-
-    Args:
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
-    """
-    if display_help:
-        sys.stderr.write('\nAll categories:\n')
-        for category in sorted(_STYLE_CATEGORIES):
-            sys.stderr.write('    ' + category + '\n')
-
-        sys.stderr.write('\nDefault filter rules**:\n')
-        for filter_rule in sorted(_WEBKIT_FILTER_RULES):
-            sys.stderr.write('    ' + filter_rule + '\n')
-        sys.stderr.write('\n**The command always evaluates the above '
-                         'rules, and before any --filter flag.\n\n')
-
-    sys.exit(0)
-
-
-def parse_arguments(args, additional_flags=[], display_help=False):
-    """Parses the command line arguments.
-
-    This may set the output format and verbosity level as side-effects.
-
-    Args:
-      args: The command line arguments:
-      additional_flags: A list of strings which specifies flags we allow.
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
-
-    Returns:
-      A tuple of (filenames, flags)
-
-      filenames: The list of filenames to lint.
-      flags: The dict of the flag names and the flag values.
-    """
-    flags = ['help', 'output=', 'verbose=', 'filter='] + additional_flags
-    additional_flag_values = {}
-    try:
-        (opts, filenames) = getopt.getopt(args, '', flags)
-    except getopt.GetoptError:
-        exit_with_usage('Invalid arguments.', display_help)
-
-    verbosity = _verbose_level()
-    output_format = _output_format()
-    filters = ''
-
-    for (opt, val) in opts:
-        if opt == '--help':
-            exit_with_usage(None, display_help)
-        elif opt == '--output':
-            if not val in ('emacs', 'vs7'):
-                exit_with_usage('The only allowed output formats are emacs and vs7.',
-                                display_help)
-            output_format = val
-        elif opt == '--verbose':
-            verbosity = int(val)
-        elif opt == '--filter':
-            filters = val
-            if not filters:
-                exit_with_categories(display_help)
-        else:
-            additional_flag_values[opt] = val
-
-    _set_output_format(output_format)
-    _set_verbose_level(verbosity)
-    _set_filters(filters)
-
-    return (filenames, additional_flag_values)
 
 
 def can_handle(filename):

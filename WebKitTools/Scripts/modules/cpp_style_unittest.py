@@ -41,13 +41,14 @@ import random
 import re
 import unittest
 import cpp_style
-
+# FIXME: Remove the need to import something from style.
+from style import _STYLE_CATEGORIES
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
 # is in cpp_style._STYLE_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
-    _all_style_categories = cpp_style._STYLE_CATEGORIES
+    _all_style_categories = _STYLE_CATEGORIES
     # This a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
@@ -1566,81 +1567,6 @@ class CppStyleTest(CppStyleTestBase):
                          'Tab found; better to use spaces  [whitespace/tab] [1]')
         self.assert_lint('int a = 5;\t// set a to 5',
                          'Tab found; better to use spaces  [whitespace/tab] [1]')
-
-    def test_parse_arguments(self):
-        old_usage = cpp_style._USAGE
-        old_style_categories = cpp_style._STYLE_CATEGORIES
-        old_webkit_filter_rules = cpp_style._WEBKIT_FILTER_RULES
-        old_output_format = cpp_style._cpp_style_state.output_format
-        old_verbose_level = cpp_style._cpp_style_state.verbose_level
-        old_filters = cpp_style._cpp_style_state.filters
-        try:
-            # Don't print usage during the tests, or filter categories
-            cpp_style._USAGE = ''
-            cpp_style._STYLE_CATEGORIES = []
-            cpp_style._WEBKIT_FILTER_RULES = []
-
-            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--badopt'])
-            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--help'])
-            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--filter='])
-            # This is illegal because all filters must start with + or -
-            self.assertRaises(ValueError, cpp_style.parse_arguments, ['--filter=foo'])
-            self.assertRaises(ValueError, cpp_style.parse_arguments,
-                              ['--filter=+a,b,-c'])
-
-            self.assertEquals((['foo.cpp'], {}), cpp_style.parse_arguments(['foo.cpp']))
-            self.assertEquals(old_output_format, cpp_style._cpp_style_state.output_format)
-            self.assertEquals(old_verbose_level, cpp_style._cpp_style_state.verbose_level)
-
-            self.assertEquals(([], {}), cpp_style.parse_arguments([]))
-            self.assertEquals(([], {}), cpp_style.parse_arguments(['--v=0']))
-
-            self.assertEquals((['foo.cpp'], {}),
-                              cpp_style.parse_arguments(['--v=1', 'foo.cpp']))
-            self.assertEquals(1, cpp_style._cpp_style_state.verbose_level)
-            self.assertEquals((['foo.h'], {}),
-                              cpp_style.parse_arguments(['--v=3', 'foo.h']))
-            self.assertEquals(3, cpp_style._cpp_style_state.verbose_level)
-            self.assertEquals((['foo.cpp'], {}),
-                              cpp_style.parse_arguments(['--verbose=5', 'foo.cpp']))
-            self.assertEquals(5, cpp_style._cpp_style_state.verbose_level)
-            self.assertRaises(ValueError,
-                              cpp_style.parse_arguments, ['--v=f', 'foo.cpp'])
-
-            self.assertEquals((['foo.cpp'], {}),
-                              cpp_style.parse_arguments(['--output=emacs', 'foo.cpp']))
-            self.assertEquals('emacs', cpp_style._cpp_style_state.output_format)
-            self.assertEquals((['foo.h'], {}),
-                              cpp_style.parse_arguments(['--output=vs7', 'foo.h']))
-            self.assertEquals('vs7', cpp_style._cpp_style_state.output_format)
-            self.assertRaises(SystemExit,
-                              cpp_style.parse_arguments, ['--output=blah', 'foo.cpp'])
-
-            filt = '-,+whitespace,-whitespace/indent'
-            self.assertEquals((['foo.h'], {}),
-                              cpp_style.parse_arguments(['--filter='+filt, 'foo.h']))
-            self.assertEquals(['-', '+whitespace', '-whitespace/indent'],
-                              cpp_style._cpp_style_state.filters)
-
-            self.assertEquals((['foo.cpp', 'foo.h'], {}),
-                              cpp_style.parse_arguments(['foo.cpp', 'foo.h']))
-
-            self.assertEquals((['foo.cpp'], {'--foo': ''}),
-                              cpp_style.parse_arguments(['--foo', 'foo.cpp'], ['foo']))
-            self.assertEquals((['foo.cpp'], {'--foo': 'bar'}),
-                              cpp_style.parse_arguments(['--foo=bar', 'foo.cpp'], ['foo=']))
-            self.assertEquals((['foo.cpp'], {}),
-                              cpp_style.parse_arguments(['foo.cpp'], ['foo=']))
-            self.assertRaises(SystemExit,
-                              cpp_style.parse_arguments,
-                              ['--footypo=bar', 'foo.cpp'], ['foo='])
-        finally:
-            cpp_style._USAGE = old_usage
-            cpp_style._STYLE_CATEGORIES = old_style_categories
-            cpp_style._WEBKIT_FILTER_RULES = old_webkit_filter_rules
-            cpp_style._cpp_style_state.output_format = old_output_format
-            cpp_style._cpp_style_state.verbose_level = old_verbose_level
-            cpp_style._cpp_style_state.filters = old_filters
 
     def test_filter(self):
         old_filters = cpp_style._cpp_style_state.filters

@@ -46,74 +46,8 @@ import os
 import os.path
 import sys
 
-import modules.cpp_style as cpp_style
 import modules.style as style
 from modules.scm import detect_scm_system
-
-
-# FIXME: Avoid cpp_style dependency.
-cpp_style._USAGE = """
-Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
-        [--filter=-x,+y,...] [file] ...
-
-  The style guidelines this tries to follow are here:
-    http://webkit.org/coding/coding-style.html
-
-  Every style error is given a confidence score from 1-5, with 5 meaning
-  we are certain of the problem, and 1 meaning it could be a legitimate
-  construct.  This can miss some errors and does not substitute for
-  code review.
-
-  To prevent specific lines from being linted, add a '// NOLINT' comment to the
-  end of the line.
-
-  Linted extensions are .cpp, .c and .h.  Other file types are ignored.
-
-  The file parameter is optional and accepts multiple files.  Leaving
-  out the file parameter applies the check to all files considered changed
-  by your source control management system.
-
-  Flags:
-
-    verbose=#
-      A number 0-5 to restrict errors to certain verbosity levels.
-      Defaults to %(default_verbosity)s.
-
-    git-commit=<SingleCommit>
-      Checks the style of everything from the given commit to the local tree.
-
-    output=vs7
-      The output format, which may be one of
-        emacs : to ease emacs parsing
-        vs7   : compatible with Visual Studio
-      Defaults to "%(default_output_format)s". Other formats are unsupported.
-
-    filter=-x,+y,...
-      A comma-separated list of boolean filter rules used to filter
-      which categories of style guidelines to check.  The script checks
-      a category if the category passes the filter rules, as follows.
-
-      Any webkit category starts out passing.  All filter rules are then
-      evaluated left to right, with later rules taking precedence.  For
-      example, the rule "+foo" passes any category that starts with "foo",
-      and "-foo" fails any such category.  The filter input "-whitespace,
-      +whitespace/braces" fails the category "whitespace/tab" and passes
-      "whitespace/braces".
-
-      Examples: --filter=-whitespace,+whitespace/braces
-                --filter=-whitespace,-runtime/printf,+runtime/printf_format
-                --filter=-,+build/include_what_you_use
-
-      Category names appear in error messages in brackets, for example
-      [whitespace/indent].  To see a list of all categories available to
-      %(program_name)s, along with which are enabled by default, pass
-      the empty filter as follows:
-         --filter=
-""" % {
-    'program_name': os.path.basename(sys.argv[0]),
-    'default_verbosity': cpp_style._DEFAULT_VERBOSITY,
-    'default_output_format': cpp_style._DEFAULT_OUTPUT_FORMAT
-    }
 
 
 def main():
@@ -130,9 +64,9 @@ def main():
                                            'replace')
 
     if files and "--git-commit" in flags:
-        cpp_style.exit_with_usage('It is not possible to check files and a '
-                                  'specific commit at the same time.',
-                                  display_help=True)
+        style.exit_with_usage('It is not possible to check files and a '
+                              'specific commit at the same time.',
+                              display_help=True)
 
     if files:
         for filename in files:

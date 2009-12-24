@@ -1,3 +1,39 @@
+2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Levin.
+
+        Moved some sections of code in preparation to refactor
+        check-webkit-style's argument parser to avoid setting
+        global variables.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32592
+
+        * Scripts/check-webkit-style:
+          - Moved _USAGE string to style.py.
+          - Addressed FIXME by eliminating dependencies on cpp_style.py.
+
+        * Scripts/modules/cpp_style.py:
+          - Moved default arguments and style categories to style.py.
+          - Moved exit_with_usage(), exit_with_categories(), and
+            parse_arguments() to style.py.
+          - Removed references in _CppStyleState to the global
+            variables now in style.py.
+
+        * Scripts/modules/cpp_style_unittest.py:
+          - Moved parse_arguments() unit tests to style_unittest.py.
+
+        * Scripts/modules/style.py:
+          - Added _USAGE string from check-webkit-style.
+          - Added default arguments and style categories from cpp_style.py.
+          - Added exit_with_usage(), exit_with_categories(), and
+            parse_arguments() from cpp_sstyle.py.
+
+        * Scripts/modules/style_unittest.py: Added.
+          - Added parse_arguments() unit tests from cpp_style_unittest.py.
+
+        * Scripts/run-webkit-unittests:
+          - Added unit tests from style_unittest.py.
+
 2009-12-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
