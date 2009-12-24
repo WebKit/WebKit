@@ -26,6 +26,7 @@
 #ifndef ExecutableAllocator_h
 #define ExecutableAllocator_h
 
+#include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
