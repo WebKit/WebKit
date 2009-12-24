@@ -1,3 +1,13 @@
+2009-12-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should mention bug 30084 when rejecting patches until it can be fixed
+        https://bugs.webkit.org/show_bug.cgi?id=32911
+
+        * Scripts/modules/bugzilla.py: Make the message even more fancy.
+        * Scripts/modules/bugzilla_unittest.py: Test our new fancy message.
+
 2009-12-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Not reviewed, adding myself to the reviewers list.

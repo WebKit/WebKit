@@ -173,11 +173,16 @@ class Bugzilla(object):
         return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):
-        committer_list = "WebKitTools/Scripts/modules/committers.py"
-        contribution_guidlines_url = "http://webkit.org/coding/contributing.html"
+        committer_list = "WebKitTools/Scripts/modules/committers.py" # This could be computed from CommitterList.__file__
+        contribution_guidlines_url = "http://webkit.org/coding/contributing.html" # Should come from some webkit_config.py
+        queue_administrator = "eseidel@chromium.org" # This could be queried from the status_bot.
+        queue_name = "commit-queue" # This could be queried from the tool.
         rejection_message = "%s does not have %s permissions according to %s." % (setter_email, flag_name, self._view_source_link(committer_list))
-        rejection_message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed) and then set the %s flag again." % (flag_name, committer_list, flag_name)
         rejection_message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (flag_name, contribution_guidlines_url)
+        rejection_message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed)." % (flag_name, committer_list)
+        rejection_message += "  Due to bug 30084 the %s will require a restart after your change." % queue_name
+        rejection_message += "  Please contact %s to request a %s restart." % (queue_administrator, queue_name)
+        rejection_message += "  After restart the %s will correctly respect your %s rights." % (queue_name, flag_name)
         return rejection_message
 
     def _validate_setter_email(self, patch, result_key, lookup_function, rejection_function, reject_invalid_patches):
