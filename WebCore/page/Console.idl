@@ -28,7 +28,7 @@
 
 module window {
 
-    interface Console {
+    interface [OmitConstructor] Console {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         readonly attribute [CustomGetter] Array profiles;

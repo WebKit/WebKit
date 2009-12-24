@@ -26,7 +26,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGExternalResourcesRequired { 
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGExternalResourcesRequired { 
         readonly attribute SVGAnimatedBoolean externalResourcesRequired;
     };
 

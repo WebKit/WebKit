@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, CustomToJS] WebGLArray {
+    interface [Conditional=3D_CANVAS, CustomToJS, OmitConstructor] WebGLArray {
         readonly attribute WebGLArrayBuffer buffer;
         readonly attribute unsigned long byteOffset;
         readonly attribute unsigned long byteLength;

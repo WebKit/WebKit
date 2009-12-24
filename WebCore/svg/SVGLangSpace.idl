@@ -26,7 +26,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGLangSpace {
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGLangSpace {
                  attribute core::DOMString xmllang
                      /*setter raises(DOMException)*/;
                  attribute core::DOMString xmlspace

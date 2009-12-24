@@ -28,7 +28,7 @@
 
 module window {
 
-    interface BarInfo {
+    interface [OmitConstructor] BarInfo {
         readonly attribute boolean visible;
     };
 

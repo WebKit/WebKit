@@ -26,7 +26,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGTests {
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGTests {
         readonly attribute SVGStringList requiredFeatures;
         readonly attribute SVGStringList requiredExtensions;
         readonly attribute SVGStringList systemLanguage;

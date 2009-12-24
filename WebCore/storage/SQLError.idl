@@ -29,7 +29,8 @@
 module storage {
 
     interface [
-        Conditional=DATABASE
+        Conditional=DATABASE,
+        OmitConstructor
     ] SQLError {
         readonly attribute unsigned long code;
         readonly attribute DOMString message;

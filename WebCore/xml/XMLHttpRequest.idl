@@ -31,7 +31,8 @@ module xml {
     interface [
         CustomMarkFunction,
         EventTarget,
-        NoStaticTables
+        NoStaticTables,
+        OmitConstructor
     ] XMLHttpRequest {
         // From XMLHttpRequestEventTarget
         // event handler attributes

@@ -22,7 +22,7 @@
 
 module html {
 
-    interface ValidityState {
+    interface [OmitConstructor] ValidityState {
         readonly attribute boolean         valueMissing;
         readonly attribute boolean         typeMismatch;
         readonly attribute boolean         patternMismatch;

@@ -29,7 +29,8 @@
 module storage {
 
     interface [
-        Conditional=DATABASE
+        Conditional=DATABASE,
+        OmitConstructor
     ] Database {
         readonly attribute DOMString version;
         [Custom] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);

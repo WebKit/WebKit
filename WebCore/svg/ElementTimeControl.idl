@@ -26,7 +26,7 @@
  
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] ElementTimeControl { 
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] ElementTimeControl { 
         void beginElement();
         void beginElementAt(in float offset);
         void endElement();

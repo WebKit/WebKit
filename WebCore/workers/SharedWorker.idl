@@ -34,7 +34,8 @@ module threads {
         Conditional=SHARED_WORKERS,
         CustomMarkFunction,
         GenerateNativeConverter,
-        GenerateToJS
+        GenerateToJS,
+        OmitConstructor
     ] SharedWorker : AbstractWorker {
         readonly attribute MessagePort port;
     };

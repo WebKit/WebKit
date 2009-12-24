@@ -1,3 +1,83 @@
+2009-12-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Reverse JS GenerateConstructor logic
+        https://bugs.webkit.org/show_bug.cgi?id=32910
+
+        Make 'GenerateConstructor' the default setting for all classes, defined in IDL files. The flag is now obsolete and
+        can be removed from all IDL files in a follow-up patch. Add new 'OmitConstructor' flag, that allows to restore the
+        old default behaviour: do not generate JSFoobarConstructor class.
+
+        No change in functionality, despite the fact that we're generating a lot more constructors now, as they have to
+        be exposed through DOMWindow.idl -- this can be done per affected class in follow-up patches. Especially the SVG
+        classes have to be exposed, most of them are missing JS constructors so far.
+
+        As side effect HTMLOptionsCollection is now correctly exposing its constructor, thus fixing a test in fast/dom/wrapper-classes.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSUnknownRule.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * dom/MessageChannel.idl:
+        * html/TimeRanges.idl:
+        * html/ValidityState.idl:
+        * html/VoidCallback.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasPattern.idl:
+        * html/canvas/CanvasPixelArray.idl:
+        * html/canvas/WebGLActiveInfo.idl:
+        * html/canvas/WebGLArray.idl:
+        * html/canvas/WebGLArrayBuffer.idl:
+        * html/canvas/WebGLBuffer.idl:
+        * html/canvas/WebGLByteArray.idl:
+        * html/canvas/WebGLFloatArray.idl:
+        * html/canvas/WebGLFramebuffer.idl:
+        * html/canvas/WebGLIntArray.idl:
+        * html/canvas/WebGLProgram.idl:
+        * html/canvas/WebGLRenderbuffer.idl:
+        * html/canvas/WebGLShader.idl:
+        * html/canvas/WebGLShortArray.idl:
+        * html/canvas/WebGLTexture.idl:
+        * html/canvas/WebGLUniformLocation.idl:
+        * html/canvas/WebGLUnsignedByteArray.idl:
+        * html/canvas/WebGLUnsignedIntArray.idl:
+        * html/canvas/WebGLUnsignedShortArray.idl:
+        * inspector/JavaScriptCallFrame.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * notifications/Notification.idl:
+        * notifications/NotificationCenter.idl:
+        * page/AbstractView.idl:
+        * page/BarInfo.idl:
+        * page/Console.idl:
+        * page/Coordinates.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/Geolocation.idl:
+        * page/Geoposition.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/Screen.idl:
+        * page/WebKitPoint.idl:
+        * page/WorkerNavigator.idl:
+        * storage/Database.idl:
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        * websockets/WebSocket.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/SharedWorker.idl:
+        * workers/SharedWorkerContext.idl:
+        * workers/Worker.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathNSResolver.idl:
+        * xml/XSLTProcessor.idl:
+
 2009-12-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -26,7 +26,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGURIReference {
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGURIReference {
         readonly attribute SVGAnimatedString href;
     };
 

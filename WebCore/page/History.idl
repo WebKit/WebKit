@@ -32,7 +32,8 @@ module window {
         DelegatingGetOwnPropertySlot,
         DelegatingPutFunction,
         CustomDeleteProperty,
-        CustomGetPropertyNames
+        CustomGetPropertyNames,
+        OmitConstructor
     ] History {
         readonly attribute unsigned long length;
 

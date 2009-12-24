@@ -25,7 +25,7 @@
 
 module window {
 
-    interface WebKitPoint {
+    interface [OmitConstructor] WebKitPoint {
         attribute float x;
         attribute float y;
     };

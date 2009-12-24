@@ -30,7 +30,7 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        GenerateCustomConstructor,
+        OmitConstructor,
         CustomToJS
     ] WebGLByteArray : WebGLArray {
         long get(in unsigned long index);

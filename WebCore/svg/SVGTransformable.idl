@@ -26,7 +26,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGTransformable : SVGLocatable {
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGTransformable : SVGLocatable {
         readonly attribute SVGAnimatedTransformList transform;
     };
 

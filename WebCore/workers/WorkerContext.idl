@@ -34,7 +34,8 @@ module threads {
         ExtendsDOMGlobalObject,
         IsWorkerContext,
         LegacyParent=JSWorkerContextBase,
-        NoStaticTables
+        NoStaticTables,
+        OmitConstructor
     ] WorkerContext {
 
         // WorkerGlobalScope

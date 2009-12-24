@@ -33,7 +33,8 @@ module websockets {
     interface [
         Conditional=WEB_SOCKETS,
         EventTarget,
-        NoStaticTables
+        NoStaticTables,
+        OmitConstructor
     ] WebSocket {
         readonly attribute DOMString URL;
 

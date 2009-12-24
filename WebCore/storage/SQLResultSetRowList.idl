@@ -29,7 +29,8 @@
 module storage {
 
     interface [
-        Conditional=DATABASE
+        Conditional=DATABASE,
+        OmitConstructor
     ] SQLResultSetRowList {
         readonly attribute unsigned long length;
         [Custom] DOMObject item(in unsigned long index);

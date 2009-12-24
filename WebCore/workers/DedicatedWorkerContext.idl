@@ -35,7 +35,8 @@ module threads {
         ExtendsDOMGlobalObject,
         IsWorkerContext,
         GenerateNativeConverter,
-        NoStaticTables
+        NoStaticTables,
+        OmitConstructor
     ] DedicatedWorkerContext : WorkerContext {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
