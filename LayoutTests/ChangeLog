@@ -1,3 +1,10 @@
+2009-12-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r52545, adding missing tests.
+
+        * inspector/console-clear-expected.txt: Added.
+        * inspector/console-clear.html: Added.
+
 2009-12-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
