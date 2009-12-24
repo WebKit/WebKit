@@ -1,3 +1,27 @@
+2009-12-24  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for WebKit bug 29968 - Selecting text with text-overflow ellipsis
+        should not show cut off text
+        https://bugs.webkit.org/show_bug.cgi?id=29968
+        
+        Also fixes the issue on both Mac OS X and Windows where the highlight
+        would extend only partway into the ellipsis based on the size of the
+        characters being truncated.
+        
+        Places the expected results under the mac and win platforms separately
+        because they are pixel test results and also the size of the
+        RenderBlocks are showing up as slightly different between mac and win.
+
+        * editing/selection/select-text-overflow-ellipsis.html: Added.
+        * platform/mac/editing/selection/select-text-overflow-ellipsis-expected.checksum: Added.
+        * platform/mac/editing/selection/select-text-overflow-ellipsis-expected.png: Added.
+        * platform/mac/editing/selection/select-text-overflow-ellipsis-expected.txt: Added.
+        * platform/win/editing/selection/select-text-overflow-ellipsis-expected.checksum: Added.
+        * platform/win/editing/selection/select-text-overflow-ellipsis-expected.png: Added.
+        * platform/win/editing/selection/select-text-overflow-ellipsis-expected.txt: Added.
+
 2009-12-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

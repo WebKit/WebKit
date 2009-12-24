@@ -26,6 +26,7 @@
 #include "RenderText.h"
 
 #include "CharacterNames.h"
+#include "EllipsisBox.h"
 #include "FloatQuad.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
@@ -1171,8 +1172,24 @@ IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContain
         return IntRect();
 
     IntRect rect;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         rect.unite(box->selectionRect(0, 0, startPos, endPos));
+
+        // Check if there are ellipsis which fall within the selection.
+        unsigned short truncation = box->truncation();
+        if (truncation != cNoTruncation) {
+            if (EllipsisBox* ellipsis = box->root()->ellipsisBox()) {
+                int ePos = min<int>(endPos - box->start(), box->len());
+                int sPos = max<int>(startPos - box->start(), 0);
+                // The ellipsis should be considered to be selected if the end of
+                // the selection is past the beginning of the truncation and the
+                // beginning of the selection is before or at the beginning of the
+                // truncation.
+                if (ePos >= truncation && sPos <= truncation)
+                    rect.unite(ellipsis->selectionRect(0, 0));
+            }
+        }
+    }
 
     if (clipToVisibleContent)
         computeRectForRepaint(repaintContainer, rect);

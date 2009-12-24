@@ -1,3 +1,61 @@
+2009-12-24  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for WebKit bug 29968 - Selecting text with text-overflow ellipsis
+        should not show cut off text
+        https://bugs.webkit.org/show_bug.cgi?id=29968
+
+        Also fixes the issue on both Mac OS X and Windows where the highlight
+        would extend only partway into the ellipsis based on the size of the
+        characters being truncated.
+
+        Test: editing/selection/select-text-overflow-ellipsis.html
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        When the ellipsis have been selected, paints them with the color for
+        selected text.
+        (WebCore::EllipsisBox::selectionRect):
+        Returns the selection rect for the ellipsis text.
+        (WebCore::EllipsisBox::paintSelection):
+        Paints the selection highlight around the ellipsis text.
+
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        Default the selection state of the EllipsisBox to SelectionNone.
+        (WebCore::EllipsisBox::setSelectionState):
+        Allow the selection state to be explicitly set by the InlineTextBox
+        that it is associated with, since the selection state depends on the
+        position of the selection within the truncated text.
+        (WebCore::EllipsisBox::selectionState):
+        Return the cached selection state.
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState):
+        If the text is truncated and the selection extends into the truncation
+        where there are ellipsis, set the selection state on the EllipsisBox.
+        (WebCore::paintTextWithShadows):
+        Allow for an upper bound to be specified on the maximum length of the
+        text to be painted.
+        (WebCore::InlineTextBox::paint):
+        Make sure the text that is drawn gets appropriately truncated. This was
+        not an issue before on Mac OS X because it wasn't necessary to draw the
+        selected text separately (the selected text had the same color as the
+        non-selected text).
+        (WebCore::InlineTextBox::paintSelection):
+        If the text is being truncated, let whatever is being painted in the
+        space after the truncated text paint its own highlight. 
+        
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::truncation):
+        Allow RenderText to access the truncation status.
+        
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRectForRepaint):
+        Make sure that any ellipsis box that falls within the selection also
+        gets repainted.
+
 2009-12-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

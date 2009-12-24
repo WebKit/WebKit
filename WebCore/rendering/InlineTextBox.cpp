@@ -27,6 +27,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Editor.h"
+#include "EllipsisBox.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -82,6 +83,23 @@ RenderObject::SelectionState InlineTextBox::selectionState()
         else if (state == RenderObject::SelectionBoth)
             state = RenderObject::SelectionNone;
     }
+
+    // If there are ellipsis following, make sure their selection is updated.
+    if (m_truncation != cNoTruncation && root()->ellipsisBox()) {
+        EllipsisBox* ellipsis = root()->ellipsisBox();
+        if (state != RenderObject::SelectionNone) {
+            int start, end;
+            selectionStartEnd(start, end);
+            // The ellipsis should be considered to be selected if the end of
+            // the selection is past the beginning of the truncation and the
+            // beginning of the selection is before or at the beginning of the
+            // truncation.
+            ellipsis->setSelectionState(end >= m_truncation && start <= m_truncation ?
+                RenderObject::SelectionInside : RenderObject::SelectionNone);
+        } else
+            ellipsis->setSelectionState(RenderObject::SelectionNone);
+    }
+
     return state;
 }
 
@@ -255,7 +273,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
     return false;
 }
 
-static void paintTextWithShadows(GraphicsContext* context, const Font& font, const TextRun& textRun, int startOffset, int endOffset, const IntPoint& textOrigin, int x, int y, int w, int h, ShadowData* shadow, bool stroked)
+static void paintTextWithShadows(GraphicsContext* context, const Font& font, const TextRun& textRun, int startOffset, int endOffset, int truncationPoint, const IntPoint& textOrigin, int x, int y, int w, int h, ShadowData* shadow, bool stroked)
 {
     Color fillColor = context->fillColor();
     ColorSpace fillColorSpace = context->fillColorSpace();
@@ -290,8 +308,8 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
         else {
             if (endOffset > 0)
                 context->drawText(font, textRun, textOrigin + extraOffset,  0, endOffset);
-            if (startOffset < textRun.length())
-                context->drawText(font, textRun, textOrigin + extraOffset, startOffset);
+            if (startOffset < truncationPoint)
+                context->drawText(font, textRun, textOrigin + extraOffset, startOffset, truncationPoint);
         }
 
         if (!shadow)
@@ -461,6 +479,13 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     if (paintSelectedTextOnly || paintSelectedTextSeparately)
         selectionStartEnd(sPos, ePos);
 
+    int length = m_len;
+    if (m_truncation != cNoTruncation) {
+        sPos = min<int>(sPos, m_truncation);
+        ePos = min<int>(ePos, m_truncation);
+        length = m_truncation;
+    }
+
     if (!paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.
@@ -470,9 +495,9 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         updateGraphicsContext(context, textFillColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
         if (!paintSelectedTextSeparately || ePos <= sPos) {
             // FIXME: Truncate right-to-left text correctly.
-            paintTextWithShadows(context, font, textRun, 0, m_truncation == cNoTruncation ? m_len : m_truncation, textOrigin, m_x + tx, m_y + ty, width(), height(), textShadow, textStrokeWidth > 0);
+            paintTextWithShadows(context, font, textRun, 0, length, length, textOrigin, m_x + tx, m_y + ty, width(), height(), textShadow, textStrokeWidth > 0);
         } else
-            paintTextWithShadows(context, font, textRun, ePos, sPos, textOrigin, m_x + tx, m_y + ty, width(), height(), textShadow, textStrokeWidth > 0);
+            paintTextWithShadows(context, font, textRun, ePos, sPos, length, textOrigin, m_x + tx, m_y + ty, width(), height(), textShadow, textStrokeWidth > 0);
 
         if (textStrokeWidth > 0)
             context->restore();
@@ -484,7 +509,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             context->save();
 
         updateGraphicsContext(context, selectionFillColor, selectionStrokeColor, selectionStrokeWidth, styleToUse->colorSpace());
-        paintTextWithShadows(context, font, textRun, sPos, ePos, textOrigin, m_x + tx, m_y + ty, width(), height(), selectionShadow, selectionStrokeWidth > 0);
+        paintTextWithShadows(context, font, textRun, sPos, ePos, length, textOrigin, m_x + tx, m_y + ty, width(), height(), selectionShadow, selectionStrokeWidth > 0);
 
         if (selectionStrokeWidth > 0)
             context->restore();
@@ -566,8 +591,11 @@ void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, Ren
     updateGraphicsContext(context, c, c, 0, style->colorSpace());  // Don't draw text at all!
     int y = selectionTop();
     int h = selectionHeight();
+    // If the text is truncated, let the thing being painted in the truncation
+    // draw its own highlight.
+    int length = m_truncation != cNoTruncation ? m_truncation : m_len;
     context->clip(IntRect(m_x + tx, y + ty, m_width, h));
-    context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, 
+    context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, length, textRenderer()->allowTabs(), textPos(), m_toAdd, 
                                   direction() == RTL, m_dirOverride || style->visuallyOrdered()),
                                   IntPoint(m_x + tx, y + ty), h, c, style->colorSpace(), sPos, ePos);
     context->restore();
