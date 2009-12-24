@@ -1,3 +1,20 @@
+2009-12-23  David Levin  <levin@chromium.org>
+
+        REGRESSION (r52494): Assertion failure in Frame::caretBlinkTimerFired() (selection()->isCaret())
+        https://bugs.webkit.org/show_bug.cgi?id=32903
+
+        No review but ok'ed by Darin Adler. Rolling out r52494 due to above regression.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::setSelection):
+        * editing/SelectionController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setCaretVisible):
+        (WebCore::Frame::selectionLayoutChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsLayout):
+
 2009-12-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
