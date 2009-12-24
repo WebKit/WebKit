@@ -58,7 +58,6 @@ public:
     InspectorController* inspectorController() { return m_inspectorController; }
     void disconnectController() { m_inspectorController = 0; }
 
-    void clearMessages(bool clearUI);
     void storeLastActivePanel(const String& panelName);
 
     void toggleNodeSearch();

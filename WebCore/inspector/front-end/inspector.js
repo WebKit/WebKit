@@ -973,7 +973,7 @@ WebInspector.showConsolePanel = function()
 
 WebInspector.clearConsoleMessages = function()
 {
-    WebInspector.console.clearMessages(false);
+    WebInspector.console.clearMessages();
 }
 
 WebInspector.selectDatabase = function(o)

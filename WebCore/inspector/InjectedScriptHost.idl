@@ -34,6 +34,8 @@ module core {
     interface InjectedScriptHost {
         [Custom] DOMWindow inspectedWindow();
         [Custom] DOMObject wrapCallback(in DOMObject callback);
+        void clearConsoleMessages();
+
         void copyText(in DOMString text);
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);

@@ -92,7 +92,7 @@ WebInspector.ConsoleView = function(drawer)
     this._shortcuts = {};
 
     var shortcut;
-    var clearConsoleHandler = this.clearMessages.bind(this, true);
+    var clearConsoleHandler = this.requestClearMessages.bind(this);
 
     shortcut = WebInspector.KeyboardShortcut.makeKey("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
     this._shortcuts[shortcut] = clearConsoleHandler;
@@ -290,10 +290,13 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    clearMessages: function(clearInspectorController)
+    requestClearMessages: function()
     {
-        if (clearInspectorController)
-            InspectorBackend.clearMessages(false);
+        InjectedScriptAccess.clearConsoleMessages(function() {});
+    },
+
+    clearMessages: function()
+    {
         if (WebInspector.panels.resources)
             WebInspector.panels.resources.clearMessages();
 
@@ -376,9 +379,9 @@ WebInspector.ConsoleView.prototype = {
 
     _clearButtonClicked: function()
     {
-        this.clearMessages(true);
+        this.requestClearMessages();
     },
-    
+
     _handleContextMenuEvent: function(event)
     {
         if (!window.getSelection().isCollapsed) {

@@ -142,7 +142,7 @@ public:
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*);
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
-    void clearConsoleMessages(bool clearUI);
+    void clearConsoleMessages();
     const Vector<ConsoleMessage*>& consoleMessages() const { return m_consoleMessages; }
 
     void attachWindow();

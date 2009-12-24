@@ -59,6 +59,7 @@ InjectedScriptAccess._installHandler("addInspectedNode");
 InjectedScriptAccess._installHandler("addStyleSelector");
 InjectedScriptAccess._installHandler("applyStyleRuleText");
 InjectedScriptAccess._installHandler("applyStyleText");
+InjectedScriptAccess._installHandler("clearConsoleMessages");
 InjectedScriptAccess._installHandler("evaluate");
 InjectedScriptAccess._installHandler("evaluateInCallFrame");
 InjectedScriptAccess._installHandler("getCompletions");

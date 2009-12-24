@@ -1,11 +1,12 @@
 // Inspected Page functions.
 
-function dumpConsoleMessages() {
+function dumpConsoleMessages(noNotifyDone) {
     function callback(result)
     {
         for (var i = 0; i < result.length; ++i)
             output(result[i].text);
-        notifyDone();
+        if (!noNotifyDone)
+            notifyDone();
     }
     evaluateInWebInspector("frontend_dumpConsoleMessages", callback);
 }

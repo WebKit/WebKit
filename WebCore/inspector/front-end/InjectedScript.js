@@ -877,9 +877,10 @@ InjectedScript._callFrameForId = function(id)
     return callFrame;
 }
 
-InjectedScript._clearConsoleMessages = function()
+InjectedScript.clearConsoleMessages = function()
 {
-    InjectedScriptHost.clearMessages(true);
+    InjectedScriptHost.clearConsoleMessages();
+    return true;
 }
 
 InjectedScript._inspectObject = function(o)
@@ -986,7 +987,7 @@ InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObjec
         get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] }, \n\
     };");
 
-    inspectorCommandLineAPI.clear = InjectedScriptHost.wrapCallback(InjectedScript._clearConsoleMessages);
+    inspectorCommandLineAPI.clear = InjectedScriptHost.wrapCallback(InjectedScript.clearConsoleMessages);
     inspectorCommandLineAPI.inspect = InjectedScriptHost.wrapCallback(InjectedScript._inspectObject);
     inspectorCommandLineAPI.copy = InjectedScriptHost.wrapCallback(InjectedScript._copy);
 }

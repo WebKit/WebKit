@@ -367,7 +367,7 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
     }
 }
 
-void InspectorController::clearConsoleMessages(bool clearUI)
+void InspectorController::clearConsoleMessages()
 {
     deleteAllValues(m_consoleMessages);
     m_consoleMessages.clear();
@@ -377,7 +377,7 @@ void InspectorController::clearConsoleMessages(bool clearUI)
     releaseWrapperObjectGroup("console");
     if (m_domAgent)
         m_domAgent->releaseDanglingNodes();
-    if (clearUI && m_frontend)
+    if (m_frontend)
         m_frontend->clearConsoleMessages();
 }
 
@@ -746,7 +746,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
     if (loader->frame() == m_inspectedPage->mainFrame()) {
         m_client->inspectedURLChanged(loader->url().string());
 
-        clearConsoleMessages(false);
+        clearConsoleMessages();
 
         m_times.clear();
         m_counts.clear();
