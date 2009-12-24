@@ -141,16 +141,19 @@ WebInspector.ResourcesPanel.prototype = {
     _createStatusbarButtons: function()
     {
         this.largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "resources-larger-resources-status-bar-item");
-        this.largerResourcesButton.toggled = Preferences.resourcesLargeRows;
-        this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
-        if (!Preferences.resourcesLargeRows) {
-            Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
-            this._toggleLargerResources(); // this will toggle the preference back to the original
-        }
 
+        WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+        this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
         this.sortingSelectElement = document.createElement("select");
         this.sortingSelectElement.className = "status-bar-item";
         this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
+    },
+
+    _settingsLoaded: function()
+    {
+        this.largerResourcesButton.toggled = WebInspector.settings.resourcesLargeRows;
+        if (!WebInspector.settings.resourcesLargeRows)
+            this._setLargerResources(WebInspector.settings.resourcesLargeRows);
     },
 
     get mainResourceLoadTime()
@@ -624,19 +627,21 @@ WebInspector.ResourcesPanel.prototype = {
         if (!this.itemsTreeElement._childrenListNode)
             return;
 
-        this.itemsTreeElement.smallChildren = !this.itemsTreeElement.smallChildren;
-        Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
-        InspectorFrontendHost.setSetting("resources-large-rows", Preferences.resourcesLargeRows);
+        WebInspector.settings.resourcesLargeRows = !WebInspector.settings.resourcesLargeRows;
+        this._setLargerResources(this.itemsTreeElement.smallChildren);
+    },
 
-        if (this.itemsTreeElement.smallChildren) {
+    _setLargerResources: function(enabled)
+    {
+        this.largerResourcesButton.toggled = enabled;
+        this.itemsTreeElement.smallChildren = !enabled;
+        if (!enabled) {
             this.itemsGraphsElement.addStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
-            this.largerResourcesButton.toggled = false;
             this.adjustScrollPosition();
         } else {
             this.itemsGraphsElement.removeStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
-            this.largerResourcesButton.toggled = true;
         }
     },
 

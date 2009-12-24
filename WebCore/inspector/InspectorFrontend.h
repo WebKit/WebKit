@@ -64,6 +64,8 @@ namespace WebCore {
 
         void didCommitLoad();
 
+        void populateFrontendSettings(const String& settings);
+
         void updateConsoleMessageExpiredCount(unsigned count);
         void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message);
         void updateConsoleMessageRepeatCount(unsigned count);

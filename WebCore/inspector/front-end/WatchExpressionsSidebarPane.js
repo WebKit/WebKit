@@ -31,35 +31,39 @@
 WebInspector.WatchExpressionsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Watch Expressions"));
-
-    this.section = new WebInspector.WatchExpressionsSection();
-
-    this.bodyElement.appendChild(this.section.element);
-
-    var addElement = document.createElement("button");
-    addElement.setAttribute("type", "button");
-    addElement.textContent = WebInspector.UIString("Add");
-    addElement.addEventListener("click", this.section.addExpression.bind(this.section), false);
-
-    var refreshElement = document.createElement("button");
-    refreshElement.setAttribute("type", "button");
-    refreshElement.textContent = WebInspector.UIString("Refresh");
-    refreshElement.addEventListener("click", this.section.update.bind(this.section), false);
-
-    var centerElement = document.createElement("div");
-    centerElement.addStyleClass("watch-expressions-buttons-container");
-    centerElement.appendChild(addElement);
-    centerElement.appendChild(refreshElement);
-    this.bodyElement.appendChild(centerElement);
-
-    this.expanded = this.section.loadSavedExpressions().length > 0;
-    this.onexpand = this.refreshExpressions.bind(this);
+    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
 }
 
 WebInspector.WatchExpressionsSidebarPane.prototype = {
+    _settingsLoaded: function()
+    {
+        this.expanded = WebInspector.settings.watchExpressions.length > 0;
+        this.section = new WebInspector.WatchExpressionsSection();
+        this.bodyElement.appendChild(this.section.element);
+
+        var addElement = document.createElement("button");
+        addElement.setAttribute("type", "button");
+        addElement.textContent = WebInspector.UIString("Add");
+        addElement.addEventListener("click", this.section.addExpression.bind(this.section), false);
+
+        var refreshElement = document.createElement("button");
+        refreshElement.setAttribute("type", "button");
+        refreshElement.textContent = WebInspector.UIString("Refresh");
+        refreshElement.addEventListener("click", this.section.update.bind(this.section), false);
+
+        var centerElement = document.createElement("div");
+        centerElement.addStyleClass("watch-expressions-buttons-container");
+        centerElement.appendChild(addElement);
+        centerElement.appendChild(refreshElement);
+        this.bodyElement.appendChild(centerElement);
+
+        this.onexpand = this.refreshExpressions.bind(this);
+    },
+
     refreshExpressions: function()
     {
-        this.section.update();
+        if (this.section)
+            this.section.update();
     }
 }
 
@@ -71,7 +75,7 @@ WebInspector.WatchExpressionsSection = function()
 
     WebInspector.ObjectPropertiesSection.call(this);
 
-    this.watchExpressions = this.loadSavedExpressions();
+    this.watchExpressions = WebInspector.settings.watchExpressions;
 
     this.headerElement.className = "hidden";
     this.editable = true;
@@ -181,21 +185,6 @@ WebInspector.WatchExpressionsSection.prototype = {
                 return children[i];
     },
 
-    loadSavedExpressions: function()
-    {
-        var json = InspectorFrontendHost.setting("watchExpressions");
-        if (!json)
-            return [];
-
-        try {
-            json = JSON.parse(json);
-        } catch(e) {
-            return [];
-        }
-
-        return json.expressions || [];
-    },
-
     saveExpressions: function()
     {
         var toSave = [];
@@ -203,9 +192,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             if (this.watchExpressions[i])
                 toSave.push(this.watchExpressions[i]);
 
-        var json = JSON.stringify({expressions: toSave});
-        InspectorFrontendHost.setSetting("watchExpressions", json);
-
+        WebInspector.settings.watchExpressions = toSave;
         return toSave.length;
     }
 }

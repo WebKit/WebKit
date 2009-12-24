@@ -28,24 +28,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var Preferences = {
-    showUserAgentStyles: true,
-    maxInlineTextChildLength: 80,
-    minConsoleHeight: 75,
-    minSidebarWidth: 100,
-    minElementsSidebarWidth: 200,
-    minScriptsSidebarWidth: 200,
-    showInheritedComputedStyleProperties: false,
-    styleRulesExpandedState: {},
-    showMissingLocalizedStrings: false,
-    heapProfilerPresent: false,
-    samplingCPUProfiler: false,
-    showColorNicknames: true,
-    colorFormat: "hex",
-    eventListenersFilter: "all",
-    resourcesLargeRows: true
-}
-
 function preloadImages()
 {
     (new Image()).src = "Images/clearConsoleButtonGlyph.png";
@@ -197,21 +179,6 @@ var WebInspector = {
             this.panels.storage = new WebInspector.StoragePanel();
         if (hiddenPanels.indexOf("console") === -1)
             this.panels.console = new WebInspector.ConsolePanel();
-    },
-
-    _loadPreferences: function()
-    {
-        var colorFormat = InspectorFrontendHost.setting("color-format");
-        if (colorFormat)
-            Preferences.colorFormat = colorFormat;
-
-        var eventListenersFilter = InspectorFrontendHost.setting("event-listeners-filter");
-        if (eventListenersFilter)
-            Preferences.eventListenersFilter = eventListenersFilter;
-
-        var resourcesLargeRows = InspectorFrontendHost.setting("resources-large-rows");
-        if (typeof resourcesLargeRows !== "undefined")
-            Preferences.resourcesLargeRows = resourcesLargeRows;
     },
 
     get attached()
@@ -422,7 +389,7 @@ WebInspector.loaded = function()
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
-    this._loadPreferences();
+    this.settings = new WebInspector.Settings();
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);

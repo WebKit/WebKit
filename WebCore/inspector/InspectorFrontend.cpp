@@ -77,6 +77,14 @@ void InspectorFrontend::didCommitLoad()
     callSimpleFunction("didCommitLoad");
 }
 
+void InspectorFrontend::populateFrontendSettings(const String& settings)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch");
+    function.appendArgument("populateFrontendSettings");
+    function.appendArgument(settings);
+    function.call();
+}
+
 void InspectorFrontend::updateConsoleMessageExpiredCount(unsigned count)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 

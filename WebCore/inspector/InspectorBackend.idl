@@ -34,6 +34,8 @@ module core {
     interface InspectorBackend {
         void storeLastActivePanel(in DOMString panelName);
 
+        void saveFrontendSettings(in DOMString settings);
+
         void toggleNodeSearch();
         boolean searchingForNode();
 

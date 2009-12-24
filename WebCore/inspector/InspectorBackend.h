@@ -58,6 +58,8 @@ public:
     InspectorController* inspectorController() { return m_inspectorController; }
     void disconnectController() { m_inspectorController = 0; }
 
+    void saveFrontendSettings(const String&);
+
     void storeLastActivePanel(const String& panelName);
 
     void toggleNodeSearch();

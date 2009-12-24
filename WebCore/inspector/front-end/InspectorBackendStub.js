@@ -38,7 +38,6 @@ WebInspector.InspectorBackendStub = function()
     this._profilerEnabled = true;
     this._resourceTrackingEnabled = false;
     this._timelineEnabled = false;
-    this._settings = {};
 }
 
 WebInspector.InspectorBackendStub.prototype = {
@@ -266,9 +265,8 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    setSetting: function(setting, value)
+    saveFrontendSettings: function()
     {
-        this._settings[setting] = value;
     },
 
     dispatchOnInjectedScript: function()
@@ -277,11 +275,6 @@ WebInspector.InspectorBackendStub.prototype = {
 
     releaseWrapperObjectGroup: function()
     {
-    },
-
-    setting: function(setting)
-    {
-        return this._settings[setting];
     }
 }
 

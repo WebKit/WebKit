@@ -36,24 +36,18 @@ WebInspector.StylesSidebarPane = function()
     var option = document.createElement("option");
     option.value = "hex";
     option.action = this._changeColorFormat.bind(this);
-    if (Preferences.colorFormat === "hex")
-        option.selected = true;
     option.label = WebInspector.UIString("Hex Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
     option.value = "rgb";
     option.action = this._changeColorFormat.bind(this);
-    if (Preferences.colorFormat === "rgb")
-        option.selected = true;
     option.label = WebInspector.UIString("RGB Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
     option.value = "hsl";
     option.action = this._changeColorFormat.bind(this);
-    if (Preferences.colorFormat === "hsl")
-        option.selected = true;
     option.label = WebInspector.UIString("HSL Colors");
     this.settingsSelectElement.appendChild(option);
 
@@ -66,11 +60,23 @@ WebInspector.StylesSidebarPane = function()
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-
+    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);        
+    
     this.titleElement.appendChild(this.settingsSelectElement);
 }
 
 WebInspector.StylesSidebarPane.prototype = {
+    _settingsLoaded: function()
+    {
+        var format = WebInspector.settings.colorFormat;
+        if (format === "hex")
+            this.settingsSelectElement[0].selected = true;
+        if (format === "rgb")
+            this.settingsSelectElement[1].selected = true;
+        if (format === "hsl")
+            this.settingsSelectElement[2].selected = true;
+    },
+
     update: function(node, editedSection, forceUpdate)
     {
         var refresh = false;
@@ -109,7 +115,7 @@ WebInspector.StylesSidebarPane.prototype = {
             self._update(refresh, body, node, editedSection, forceUpdate);
         }
 
-        InjectedScriptAccess.getStyles(node.id, !Preferences.showUserAgentStyles, callback);
+        InjectedScriptAccess.getStyles(node.id, !WebInspector.settings.showUserAgentStyles, callback);
     },
 
     _update: function(refresh, body, node, editedSection, forceUpdate)
@@ -156,7 +162,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 styleRules.push(inlineStyle);
             }
 
-            var matchedStyleRules = node.ownerDocument.defaultView.getMatchedCSSRules(node, "", !Preferences.showUserAgentStyles);
+            var matchedStyleRules = node.ownerDocument.defaultView.getMatchedCSSRules(node, "", !WebInspector.settings.showUserAgentStyles);
             if (matchedStyleRules) {
                 // Add rules in reverse order to match the cascade order.
                 for (var i = (matchedStyleRules.length - 1); i >= 0; --i) {
@@ -320,7 +326,7 @@ WebInspector.StylesSidebarPane.prototype = {
         // Select the correct color format setting again, since it needs to be selected.
         var selectedIndex = 0;
         for (var i = 0; i < options.length; ++i) {
-            if (options[i].value === Preferences.colorFormat) {
+            if (options[i].value === WebInspector.settings.colorFormat) {
                 selectedIndex = i;
                 break;
             }
@@ -332,9 +338,7 @@ WebInspector.StylesSidebarPane.prototype = {
     _changeColorFormat: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        Preferences.colorFormat = selectedOption.value;
-
-        InspectorFrontendHost.setSetting("color-format", Preferences.colorFormat);
+        WebInspector.settings.colorFormat = selectedOption.value;
 
         for (var i = 0; i < this.sections.length; ++i)
             this.sections[i].update(true);
@@ -397,18 +401,18 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     if (computedStyle) {
         this.element.addStyleClass("computed-style");
 
-        if (Preferences.showInheritedComputedStyleProperties)
+        if (WebInspector.settings.showInheritedComputedStyleProperties)
             this.element.addStyleClass("show-inherited");
 
         var showInheritedLabel = document.createElement("label");
         var showInheritedInput = document.createElement("input");
         showInheritedInput.type = "checkbox";
-        showInheritedInput.checked = Preferences.showInheritedComputedStyleProperties;
+        showInheritedInput.checked = WebInspector.settings.showInheritedComputedStyleProperties;
 
         var computedStyleSection = this;
         var showInheritedToggleFunction = function(event) {
-            Preferences.showInheritedComputedStyleProperties = showInheritedInput.checked;
-            if (Preferences.showInheritedComputedStyleProperties)
+            WebInspector.settings.showInheritedComputedStyleProperties = showInheritedInput.checked;
+            if (WebInspector.settings.showInheritedComputedStyleProperties)
                 computedStyleSection.element.addStyleClass("show-inherited");
             else
                 computedStyleSection.element.removeStyleClass("show-inherited");
@@ -916,9 +920,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var format;
                 if (Preferences.showColorNicknames && color.nickname)
                     format = "nickname";
-                else if (Preferences.colorFormat === "rgb")
+                else if (WebInspector.settings.colorFormat === "rgb")
                     format = (color.simple ? "rgb" : "rgba");
-                else if (Preferences.colorFormat === "hsl")
+                else if (WebInspector.settings.colorFormat === "hsl")
                     format = (color.simple ? "hsl" : "hsla");
                 else if (color.simple)
                     format = (color.hasShortHex() ? "shorthex" : "hex");

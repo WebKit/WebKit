@@ -42924,6 +42924,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Settings.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SidebarPane.js"
 					>
 				</File>

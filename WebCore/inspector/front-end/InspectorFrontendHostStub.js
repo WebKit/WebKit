@@ -33,7 +33,6 @@ if (!window.InspectorFrontendHost) {
 WebInspector.InspectorFrontendHostStub = function()
 {
     this._attachedWindowHeight = 0;
-    this._settings = {};
 }
 
 WebInspector.InspectorFrontendHostStub.prototype = {
@@ -93,16 +92,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     hiddenPanels: function()
     {
         return "";
-    },
-
-    setSetting: function(setting, value)
-    {
-        this._settings[setting] = value;
-    },
-
-    setting: function(setting)
-    {
-        return this._settings[setting];
     }
 }
 
