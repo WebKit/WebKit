@@ -180,11 +180,19 @@ int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
     if (result)
         *result = static_cast<ThreadPrivate*>(thread)->getReturnValue();
 
+    delete thread;
+
     return !res;
 }
 
-void detachThread(ThreadIdentifier)
+void detachThread(ThreadIdentifier threadID)
 {
+    ASSERT(threadID);
+
+    QThread* thread = threadForIdentifier(threadID);
+    if (thread)
+        thread->deleteLater();
+    clearThreadForIdentifier(threadID);
 }
 
 ThreadIdentifier currentThread()
