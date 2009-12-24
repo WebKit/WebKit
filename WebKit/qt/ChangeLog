@@ -1,3 +1,11 @@
+2009-12-24  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Gustavo Noronha.
+
+        Doc : QGraphicsWebView::zoomFactor was introduced in 4.6.
+        
+        * Api/qgraphicswebview.cpp:
+
 2009-12-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Holger Freyther.

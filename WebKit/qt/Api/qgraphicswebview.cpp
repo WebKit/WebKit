@@ -508,7 +508,6 @@ QIcon QGraphicsWebView::icon() const
 
 /*!
     \property QGraphicsWebView::zoomFactor
-    \since 4.5
     \brief the zoom factor for the view
 */
 
