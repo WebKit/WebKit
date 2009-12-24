@@ -60,7 +60,7 @@ WebInspector.ObjectProxy.getPropertiesAsync = function(objectProxy, propertiesTo
                 result[propertiesPayload[i].name] = propertiesPayload[i].value.description;
         callback(result);
     };
-    InjectedScriptAccess.getProperties(objectProxy, true, createPropertiesMapThenCallback);
+    InjectedScriptAccess.getProperties(objectProxy, true, false, createPropertiesMapThenCallback);
 }
 
 WebInspector.ObjectPropertyProxy = function(name, value)

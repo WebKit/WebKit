@@ -442,7 +442,7 @@ InjectedScript.getPrototypes = function(nodeId)
     return result;
 }
 
-InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
+InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbreviate)
 {
     var object = InjectedScript._resolveObject(objectProxy);
     if (!object)
@@ -461,7 +461,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
             var childObject = object[propertyName];
-            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, true);
+            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, abbreviate);
             childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
             childObjectProxy.path.push(propertyName);
             childObjectProxy.protoDepth = objectProxy.protoDepth || 0;

@@ -720,6 +720,18 @@ body.drawer-visible #drawer {
     padding-left: 0 !important;
 }
 
+.console-formatted-number {
+    color: rgb(28, 0, 207);
+}
+
+.console-formatted-string, .console-formatted-regexp {
+    color: rgb(196, 26, 22);
+}
+
+.console-formatted-null, .console-formatted-undefined {
+    color: rgb(128, 128, 128);
+}
+
 .error-message {
     color: red;
 }

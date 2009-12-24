@@ -109,7 +109,8 @@ WebInspector.ConsoleView = function(drawer)
     this._customFormatters = {
         "object": this._formatobject,
         "array":  this._formatarray,
-        "node":   this._formatnode
+        "node":   this._formatnode,
+        "string": this._formatstring
     };
 }
 
@@ -496,7 +497,6 @@ WebInspector.ConsoleView.prototype = {
         if (!formatter || !isProxy) {
             formatter = this._formatvalue;
             output = output.description || output;
-            type = "undecorated";
         }
 
         var span = document.createElement("span");
@@ -535,7 +535,20 @@ WebInspector.ConsoleView.prototype = {
 
     _formatarray: function(arr, elem)
     {
-        InjectedScriptAccess.getProperties(arr, false, this._printArray.bind(this, elem));
+        InjectedScriptAccess.getProperties(arr, false, false, this._printArray.bind(this, elem));
+    },
+
+    _formatstring: function(output, elem)
+    {
+        var span = document.createElement("span");
+        span.className = "console-formatted-string source-code";
+        span.appendChild(WebInspector.linkifyStringAsFragment(output.description));
+
+        // Make black quotes.
+        elem.removeStyleClass("console-formatted-string");
+        elem.appendChild(document.createTextNode("\""));
+        elem.appendChild(span);
+        elem.appendChild(document.createTextNode("\""));
     },
 
     _printArray: function(elem, properties)
@@ -626,9 +639,13 @@ WebInspector.ConsoleMessage.prototype = {
             if (typeof parameters[i] !== "object" && typeof parameters[i] !== "function")
                 parameters[i] = WebInspector.ObjectProxy.wrapPrimitiveValue(parameters[i]);
 
+        // There can be string log and string eval result. We distinguish between them based on message type.
+        var shouldFormatMessage = Object.proxyType(parameters[0]) === "string" && this.type !== WebInspector.ConsoleMessage.MessageType.Result;
+
         // Multiple parameters with the first being a format string. Save unused substitutions.
-        if (parameters.length > 1 && Object.proxyType(parameters[0]) === "string") {
-            var result = this._formatWithSubstitutionString(parameters, formattedResult)
+        if (shouldFormatMessage) {
+            // Multiple parameters with the first being a format string. Save unused substitutions.
+            var result = this._formatWithSubstitutionString(parameters, formattedResult);
             parameters = result.unusedSubstitutions;
             if (parameters.length)
                 formattedResult.appendChild(document.createTextNode(" "));
@@ -636,11 +653,14 @@ WebInspector.ConsoleMessage.prototype = {
 
         // Single parameter, or unused substitutions from above.
         for (var i = 0; i < parameters.length; ++i) {
-            this._formatIndividualValue(parameters[i], formattedResult);
+            // Inline strings when formatting.
+            if (shouldFormatMessage && parameters[i].type === "string")
+                formattedResult.appendChild(document.createTextNode(parameters[i].description));
+            else
+                formattedResult.appendChild(WebInspector.console._format(parameters[i]));
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
-
         return formattedResult;
     },
 
@@ -675,18 +695,6 @@ WebInspector.ConsoleMessage.prototype = {
 
         // String.format does treat formattedResult like a Builder, result is an object.
         return String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
-    },
-
-    _formatIndividualValue: function(param, formattedResult)
-    {
-        if (Object.proxyType(param) === "string") {
-            if (this.originatingCommand && this.level === WebInspector.ConsoleMessage.MessageLevel.Log) {
-                var quotedString = "\"" + param.description.replace(/"/g, "\\\"") + "\"";
-                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(quotedString));
-            } else
-                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(param.description));
-        } else
-            formattedResult.appendChild(WebInspector.console._format(param));
     },
 
     toMessageElement: function()
@@ -833,6 +841,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageType.Assert:
                 typeString = "Assert";
                 break;
+            case WebInspector.ConsoleMessage.MessageType.Result:
+                typeString = "Result";
+                break;
         }
         
         var levelString;
@@ -889,7 +900,8 @@ WebInspector.ConsoleMessage.MessageType = {
     Trace: 2,
     StartGroup: 3,
     EndGroup: 4,
-    Assert: 5
+    Assert: 5,
+    Result: 6
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
@@ -933,12 +945,17 @@ WebInspector.ConsoleCommandResult = function(result, exception, originatingComma
 {
     var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     var message = result;
+    if (exception) {
+        // Distinguish between strings and errors (no need to quote latter).
+        message = WebInspector.ObjectProxy.wrapPrimitiveValue(result);
+        message.type = "error";
+    }
     var line = (exception ? result.line : -1);
     var url = (exception ? result.sourceURL : null);
 
     this.originatingCommand = originatingCommand;
 
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, line, url, null, 1, message);
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, line, url, null, 1, message);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {

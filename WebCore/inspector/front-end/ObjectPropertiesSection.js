@@ -50,7 +50,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 return;
             self.updateProperties(properties);
         };
-        InjectedScriptAccess.getProperties(this.object, this.ignoreHasOwnProperty, callback);
+        InjectedScriptAccess.getProperties(this.object, this.ignoreHasOwnProperty, true, callback);
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -147,7 +147,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        InjectedScriptAccess.getProperties(this.property.value, false, callback.bind(this));
+        InjectedScriptAccess.getProperties(this.property.value, false, true, callback.bind(this));
     },
 
     ondblclick: function(event)

@@ -14,14 +14,18 @@ function doit()
     console.log('Object %o', {'foo' : 'bar' });
 
     var array = ["test", "test2"];
-    array.foo = "bar";
+    array.foo = "bar"; 
     array[4] = "test4";
+
     console.log(array);
+    console.log("%o", array);
+    console.log("%O", array);
 
     // Populate Globals
     var regex1 = /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i;
     var regex2 = new RegExp("foo\\\\bar\\sbaz", "i");
     var str = "test";
+    var str2 = "test named \"test\"";
     var error = new Error;
     var node = document.body;
     var func = function() { return 1; };
@@ -31,7 +35,7 @@ function doit()
     var num = 1.2e-1;
     var linkify = "http://webkit.org/";
 
-    globals = [regex1, regex2, str, error, node, func, multilinefunc, num, linkify, null, undefined];
+    globals = [regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify, null, undefined];
     loopOverGlobals(0);
 }
 
@@ -45,7 +49,6 @@ function loopOverGlobals(current)
         else
             loopOverGlobals(next);
     }
-
     console.log(globals[current]);
     console.log([globals[current]]);
     evaluateInWebInspector("frontend_evaluateGlobal", advance);
