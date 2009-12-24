@@ -1,3 +1,16 @@
+2009-12-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed; revert of r52550.
+
+        The change regressed the following LayoutTests for QtWebKit.
+
+        fast/workers/worker-call.html -> crashed
+        fast/workers/worker-close.html -> crashed
+
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+
 2009-12-24  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
