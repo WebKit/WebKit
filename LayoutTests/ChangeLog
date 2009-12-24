@@ -1,3 +1,11 @@
+2009-12-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        Added Windows specific results for a test that was committed in r52505.
+
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt: Added.
+
 2009-12-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
