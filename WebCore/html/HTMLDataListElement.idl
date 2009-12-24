@@ -30,7 +30,6 @@
 
 module html {
     interface [
-        GenerateConstructor,
         Conditional=DATALIST
     ] HTMLDataListElement : HTMLElement {
         readonly attribute HTMLCollection options;

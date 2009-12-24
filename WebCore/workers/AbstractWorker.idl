@@ -33,8 +33,7 @@ module threads {
     interface [
         Conditional=WORKERS,
         CustomToJS,
-        EventTarget,
-        GenerateConstructor
+        EventTarget
     ] AbstractWorker {
 
         attribute EventListener onerror;

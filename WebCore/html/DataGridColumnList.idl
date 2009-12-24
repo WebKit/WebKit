@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         HasIndexGetter,
         HasNameGetter,
         Conditional=DATAGRID

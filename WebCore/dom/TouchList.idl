@@ -27,7 +27,6 @@ module events {
 
     interface [
         Conditional=TOUCH_EVENTS,
-        GenerateConstructor,
         HasIndexGetter
     ] TouchList {
         readonly attribute unsigned long length;

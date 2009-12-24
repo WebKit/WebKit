@@ -22,7 +22,6 @@ module core {
 
     interface [
         CustomMarkFunction,
-        GenerateConstructor,
         HasIndexGetter,
         HasNameGetter,
         InterfaceUUID=08DAF7A4-4C32-4709-B72F-622721FF0FB8,

@@ -31,9 +31,7 @@
  */
 
 module core {
-    interface [
-        GenerateConstructor
-    ] InspectorBackend {
+    interface InspectorBackend {
         void clearMessages(in boolean clearUI);
         void storeLastActivePanel(in DOMString panelName);
 

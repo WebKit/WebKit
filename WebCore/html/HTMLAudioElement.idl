@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [GenerateConstructor, Conditional=VIDEO] HTMLAudioElement : HTMLMediaElement {
+    interface [Conditional=VIDEO] HTMLAudioElement : HTMLMediaElement {
     
     };
 }

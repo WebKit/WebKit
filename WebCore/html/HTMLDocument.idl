@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         HasOverridingNameGetter,
         InterfaceUUID=a183339c-8d74-412a-933d-6f6a4ad6266e,
         ImplementationUUID=d0f7d966-033c-4cbf-847c-1461dacc2f6a

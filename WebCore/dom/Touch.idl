@@ -26,8 +26,7 @@
 module events {
 
     interface [
-        Conditional=TOUCH_EVENTS,
-        GenerateConstructor
+        Conditional=TOUCH_EVENTS
     ] Touch {
         readonly attribute long             clientX;
         readonly attribute long             clientY;

@@ -25,9 +25,7 @@
 
 module events {
 
-    interface [
-        GenerateConstructor
-    ] ProgressEvent : Event {
+    interface ProgressEvent : Event {
          readonly attribute boolean         lengthComputable;
          readonly attribute unsigned long   loaded;
          readonly attribute unsigned long   total;

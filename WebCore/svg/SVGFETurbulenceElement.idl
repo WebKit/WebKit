@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS, GenerateConstructor] SVGFETurbulenceElement : SVGElement,
+    interface [Conditional=SVG&FILTERS] SVGFETurbulenceElement : SVGElement,
                                                          SVGFilterPrimitiveStandardAttributes { 
         // Turbulence Types
         const unsigned short SVG_TURBULENCE_TYPE_UNKNOWN      = 0;

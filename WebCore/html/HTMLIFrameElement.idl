@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=32265f2e-79b1-4e4e-b0d1-86b050298883,
         ImplementationUUID=370c6318-f804-49f9-bc8a-46b99cd87399
     ] HTMLIFrameElement : HTMLElement {

@@ -26,9 +26,7 @@
 
 module view {
 
-    interface [
-        GenerateConstructor
-    ] ClientRect {
+    interface ClientRect {
         readonly attribute float top;
         readonly attribute float right;
         readonly attribute float bottom;

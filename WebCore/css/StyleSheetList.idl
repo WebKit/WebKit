@@ -23,7 +23,6 @@ module stylesheets {
     // Introduced in DOM Level 2:
     interface [
         CustomMarkFunction,
-        GenerateConstructor,
         HasIndexGetter,
         HasNameGetter,
         InterfaceUUID=707da1d7-7c8f-42b1-bbbf-c009e429663f,

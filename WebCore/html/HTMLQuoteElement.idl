@@ -20,7 +20,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=a011e1a3-19ec-4999-a225-79ebdc64abdd,
         ImplementationUUID=85c885ee-cc47-4d98-852c-fb907d573024
     ] HTMLQuoteElement : HTMLElement {

@@ -26,7 +26,6 @@
 module css {
 
     interface [
-        GenerateConstructor,
         HasIndexGetter
     ] CSSVariablesDeclaration {
         attribute DOMString         cssText;

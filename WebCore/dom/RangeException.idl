@@ -19,9 +19,7 @@
 
 module ranges {
 
-    interface [
-        GenerateConstructor
-    ] RangeException {
+    interface RangeException {
 
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;

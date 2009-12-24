@@ -25,7 +25,6 @@ module core {
         CustomPushEventHandlerScope,
         CustomToJS,
         EventTarget,
-        GenerateConstructor,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
         Polymorphic,

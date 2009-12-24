@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=84050abc-45e6-4fd8-bdc3-29c7b4efb5cb,
         ImplementationUUID=e6de0d19-883e-4e87-9569-fd068e5ee17d
     ] HTMLPreElement : HTMLElement {

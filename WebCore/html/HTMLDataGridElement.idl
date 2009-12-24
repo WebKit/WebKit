@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         Conditional=DATAGRID
     ] HTMLDataGridElement : HTMLElement {
         attribute [Custom] DataGridDataSource dataSource;

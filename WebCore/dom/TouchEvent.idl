@@ -26,8 +26,7 @@
 module events {
 
     interface [
-        Conditional=TOUCH_EVENTS,
-        GenerateConstructor
+        Conditional=TOUCH_EVENTS
     ] TouchEvent : UIEvent {
         readonly attribute TouchList touches;
         readonly attribute TouchList targetTouches;

@@ -31,9 +31,7 @@
  */
 
 module core {
-    interface [
-        GenerateConstructor
-    ] InjectedScriptHost {
+    interface InjectedScriptHost {
         [Custom] DOMWindow inspectedWindow();
         [Custom] DOMObject wrapCallback(in DOMObject callback);
         void copyText(in DOMString text);

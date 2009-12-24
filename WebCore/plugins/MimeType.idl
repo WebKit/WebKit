@@ -20,9 +20,7 @@
 
 module window {
 
-    interface [
-        GenerateConstructor
-    ] MimeType {
+    interface MimeType {
         readonly attribute DOMString type;
         readonly attribute DOMString suffixes;
         readonly attribute DOMString description;

@@ -29,7 +29,6 @@ module events {
     interface [
         CustomMarkFunction,
         EventTarget,
-        GenerateConstructor,
         NoStaticTables
     ] MessagePort {
 // We need to have something as an ObjC binding, because MessagePort is used in MessageEvent, which already has one,

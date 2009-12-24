@@ -22,7 +22,6 @@ module core {
 
     interface [
         CustomMarkFunction,
-        GenerateConstructor,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
         InterfaceUUID=FEFE9C21-E58C-4b5b-821A-61A514613763,

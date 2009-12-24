@@ -30,7 +30,6 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        GenerateConstructor,
         HasIndexGetter,
         InterfaceUUID=49f5644a-5dbb-4e31-ac6b-9446ae3895c9,
         ImplementationUUID=a7c78aaa-5883-4ef2-a8bd-f2f1a1fd025a

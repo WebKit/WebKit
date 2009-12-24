@@ -20,7 +20,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=e4112bea-13de-40f6-93d0-41e285ae1491,
         ImplementationUUID=23cec074-660f-490a-996d-167d66c164d5
     ] HTMLBaseElement : HTMLElement {

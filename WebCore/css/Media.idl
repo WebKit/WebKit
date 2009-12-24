@@ -24,9 +24,7 @@
  */
 
 module view {
-    interface [
-        GenerateConstructor,
-    ] Media {
+    interface Media {
         readonly attribute DOMString type;
         boolean matchMedium(in DOMString mediaquery);
     };

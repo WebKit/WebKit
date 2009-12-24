@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         DelegatingPutFunction,
         DelegatingGetOwnPropertySlot,
         CustomCall,

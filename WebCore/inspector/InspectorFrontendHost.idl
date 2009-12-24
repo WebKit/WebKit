@@ -31,9 +31,7 @@
  */
 
 module core {
-    interface [
-        GenerateConstructor
-    ] InspectorFrontendHost {
+    interface InspectorFrontendHost {
         void loaded();
         void attach();
         void detach();

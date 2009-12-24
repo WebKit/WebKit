@@ -25,9 +25,7 @@
 
 module html {
 
-    interface [
-        GenerateConstructor
-    ] File {
+    interface File {
         readonly attribute DOMString fileName;
         readonly attribute unsigned long long fileSize;
     };

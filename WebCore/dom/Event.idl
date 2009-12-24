@@ -23,7 +23,6 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         CustomToJS,
-        GenerateConstructor,
         NoStaticTables,
         Polymorphic,
         InterfaceUUID=D17495FA-ACAD-4d27-9362-E19E057B189D,

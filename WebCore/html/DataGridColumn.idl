@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         Conditional=DATAGRID
     ] DataGridColumn {
         attribute DOMString id; // The identifier for the column.

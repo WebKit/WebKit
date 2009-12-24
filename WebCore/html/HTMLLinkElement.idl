@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=a9e9ef29-f20b-429d-848e-e5dadd32694a,
         ImplementationUUID=2d9b944e-88e3-451a-8640-06c593c339a8
     ] HTMLLinkElement : HTMLElement {

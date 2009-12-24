@@ -23,7 +23,6 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         CustomMarkFunction,
-        GenerateConstructor,
         DelegatingPutFunction,
         HasNameGetter,
         HasIndexGetter,

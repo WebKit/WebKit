@@ -25,9 +25,7 @@
 
 module core {
 
-    interface [
-        GenerateConstructor
-    ] PositionError {
+    interface PositionError {
         readonly attribute unsigned short code;
         readonly attribute DOMString message;
 

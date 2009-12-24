@@ -31,7 +31,6 @@ module xml {
     interface [
         CustomMarkFunction,
         EventTarget,
-        GenerateConstructor,
         NoStaticTables
     ] XMLHttpRequestUpload {
         // From XMLHttpRequestEventTarget

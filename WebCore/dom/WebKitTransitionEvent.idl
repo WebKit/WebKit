@@ -25,9 +25,7 @@
 
 module events {
 
-    interface [
-        GenerateConstructor
-    ] WebKitTransitionEvent : Event {
+    interface WebKitTransitionEvent : Event {
      readonly attribute DOMString          propertyName;
      readonly attribute double             elapsedTime;
      void               initWebKitTransitionEvent(in DOMString typeArg,

@@ -28,9 +28,7 @@
 
 module core {
 
-    interface [
-        GenerateConstructor
-    ] DOMCoreException {
+    interface DOMCoreException {
 
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;

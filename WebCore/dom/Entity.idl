@@ -20,7 +20,6 @@
 module core {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=5CDB5ACA-F3A7-47ea-B89C-F335E4342C55,
         ImplementationUUID=DDD2A621-59FD-4bb2-9F95-7061C3FB9F06
     ] Entity : Node {

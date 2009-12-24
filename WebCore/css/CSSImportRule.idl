@@ -22,7 +22,6 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        GenerateConstructor,
         InterfaceUUID=8f60b3a2-ebf0-484d-a714-47a9974a6a9e,
         ImplementationUUID=437ea93c-68e5-4897-85fe-e161653801eb
     ] CSSImportRule : CSSRule {

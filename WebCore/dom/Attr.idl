@@ -22,7 +22,6 @@ module core {
 
     interface [
         CustomMarkFunction,
-        GenerateConstructor,
         GenerateNativeConverter,
         InterfaceUUID=EEE8E22B-22C3-4e50-95F4-5E0B8AAD8231,
         ImplementationUUID=41B16348-D8E7-4d21-BFDB-125705B7E91F

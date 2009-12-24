@@ -21,8 +21,7 @@
 module svg {
 
     interface [
-        Conditional=SVG,
-        GenerateConstructor
+        Conditional=SVG
     ] SVGException {
 
         readonly attribute unsigned short   code;

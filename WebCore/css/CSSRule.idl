@@ -23,7 +23,6 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         CustomToJS,
-        GenerateConstructor,
         Polymorphic,
         InterfaceUUID=548139b4-31ab-4978-b1d5-cfcfdfbaea0e,
         ImplementationUUID=0268e673-2489-4743-9a3a-197dae4b4d9c

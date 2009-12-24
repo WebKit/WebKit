@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, GenerateConstructor, PODType=SVGPreserveAspectRatio] SVGPreserveAspectRatio {
+    interface [Conditional=SVG, PODType=SVGPreserveAspectRatio] SVGPreserveAspectRatio {
         // Alignment Types
         const unsigned short SVG_PRESERVEASPECTRATIO_UNKNOWN  = 0;
         const unsigned short SVG_PRESERVEASPECTRATIO_NONE     = 1;

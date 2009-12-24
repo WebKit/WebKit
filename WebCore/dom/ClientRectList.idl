@@ -27,7 +27,6 @@
 module view {
 
     interface [
-        GenerateConstructor,
         HasIndexGetter
     ] ClientRectList {
         readonly attribute unsigned long length;

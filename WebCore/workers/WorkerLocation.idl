@@ -30,7 +30,6 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        GenerateConstructor,
         NoStaticTables
     ] WorkerLocation {
         readonly attribute DOMString href;

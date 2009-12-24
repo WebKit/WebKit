@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        GenerateConstructor,
         NoStaticTables
     ] MessageEvent : Event {
         readonly attribute SerializedScriptValue data;

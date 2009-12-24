@@ -21,7 +21,6 @@
 module core {
 
     interface [
-        GenerateConstructor,
         InterfaceUUID=B0CC344F-963C-4acc-9FC6-EB22649345E5,
         ImplementationUUID=9E835092-2CA3-426b-826B-8272A8105E49
     ] DOMImplementation {

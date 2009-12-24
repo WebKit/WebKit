@@ -25,9 +25,7 @@
 
 module html {
 
-    interface [
-        GenerateConstructor
-    ] TextMetrics {
+    interface TextMetrics {
         readonly attribute float width;
     };
 

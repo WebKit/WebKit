@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        GenerateConstructor,
         NoStaticTables
     // We should also inherit from LSProgressEvent when the idl is added.
     ] XMLHttpRequestProgressEvent : ProgressEvent {

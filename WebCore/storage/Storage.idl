@@ -26,7 +26,6 @@
 module storage {
 
     interface [
-        GenerateConstructor,
         HasNameGetter,
         CustomDeleteProperty,
         CustomGetPropertyNames,

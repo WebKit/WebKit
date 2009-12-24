@@ -22,8 +22,7 @@ module traversal {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomMarkFunction,
-        GenerateConstructor
+        CustomMarkFunction
     ] TreeWalker {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;

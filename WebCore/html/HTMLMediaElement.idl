@@ -24,7 +24,7 @@
  */
 
 module html {
-interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElement {
+interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
 
     // error state
     readonly attribute MediaError error;

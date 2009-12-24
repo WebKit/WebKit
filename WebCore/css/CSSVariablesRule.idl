@@ -25,9 +25,7 @@
 
 module css {
 
-    interface [
-        GenerateConstructor
-    ] CSSVariablesRule : CSSRule {
+    interface CSSVariablesRule : CSSRule {
         readonly attribute stylesheets::MediaList  media;
         readonly attribute CSSVariablesDeclaration variables;
     };

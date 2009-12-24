@@ -26,9 +26,7 @@
 
 module events {
 
-    interface [
-        GenerateConstructor
-    ] PopStateEvent : Event {
+    interface PopStateEvent : Event {
         [Custom] void initPopStateEvent(in DOMString typeArg, 
                                in boolean canBubbleArg, 
                                in boolean cancelableArg, 

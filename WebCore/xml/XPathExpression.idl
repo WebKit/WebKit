@@ -22,8 +22,7 @@ module xpath {
 
 
     interface [
-        Conditional=XPATH,
-        GenerateConstructor
+        Conditional=XPATH
     ] XPathExpression {
         [OldStyleObjC] XPathResult evaluate(in Node contextNode, 
                                             in unsigned short type, 

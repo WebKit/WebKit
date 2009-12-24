@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS, GenerateConstructor] SVGFEMorphologyElement : SVGElement,
+    interface [Conditional=SVG&FILTERS] SVGFEMorphologyElement : SVGElement,
                                                              SVGFilterPrimitiveStandardAttributes {
         // Morphology Operators
         const unsigned short SVG_MORPHOLOGY_OPERATOR_UNKNOWN  = 0;
