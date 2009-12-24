@@ -47,10 +47,13 @@ from modules.user import User
 
 
 class BugzillaTool(MultiCommandTool):
+    global_options = [
+        make_option("--dry-run", action="store_true", dest="dry_run", default=False, help="do not touch remote servers"),
+        make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
+    ]
+
     def __init__(self):
         MultiCommandTool.__init__(self)
-        self.global_option_parser.add_option("--dry-run", action="callback", help="do not touch remote servers", callback=self.dry_run_callback)
-        self.global_option_parser.add_option("--status-host", action="callback", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted.", callback=self.status_host_callback)
 
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
@@ -58,13 +61,6 @@ class BugzillaTool(MultiCommandTool):
         self.user = User()
         self._scm = None
         self.status_bot = StatusBot()
-
-    def dry_run_callback(self, option, opt, value, parser):
-        self.scm().dryrun = True
-        self.bugs.dryrun = True
-
-    def status_host_callback(self, option, opt, value, parser):
-        self.status_bot.set_host(value)
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
@@ -92,6 +88,14 @@ class BugzillaTool(MultiCommandTool):
         if command.requires_local_commits:
             return self.scm().supports_local_commits()
         return True
+
+    # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
+    def handle_global_options(self, options):
+        if options.dry_run:
+            self.scm().dryrun = True
+            self.bugs.dryrun = True
+        if options.status_host:
+            self.status_bot.set_host(options.status_host)
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

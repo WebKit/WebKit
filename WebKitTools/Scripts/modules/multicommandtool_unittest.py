@@ -64,7 +64,7 @@ class CommandTest(unittest.TestCase):
     def test_required_arguments(self):
         two_required_arguments = TrivialCommand(argument_names="ARG1 ARG2 [ARG3]")
         expected_missing_args_error = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
-        exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [["foo"], TrivialTool()], expected_stderr=expected_missing_args_error)
+        exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [None, ["foo"], TrivialTool()], expected_stderr=expected_missing_args_error)
         self.assertEqual(exit_code, 1)
 
 
@@ -81,20 +81,20 @@ class TrivialTool(MultiCommandTool):
 
 class MultiCommandToolTest(unittest.TestCase):
     def _assert_split(self, args, expected_split):
-        self.assertEqual(MultiCommandTool._split_args(args), expected_split)
+        self.assertEqual(MultiCommandTool._split_command_name_from_args(args), expected_split)
 
     def test_split_args(self):
-        # MultiCommandToolTest._split_args returns: (global_args, command, command_args)
+        # MultiCommandToolTest._split_command_name_from_args returns: (command, args)
         full_args = ["--global-option", "command", "--option", "arg"]
-        full_args_expected = (["--global-option"], "command", ["--option", "arg"])
+        full_args_expected = ("command", ["--global-option", "--option", "arg"])
         self._assert_split(full_args, full_args_expected)
 
         full_args = []
-        full_args_expected = ([], None, [])
+        full_args_expected = (None, [])
         self._assert_split(full_args, full_args_expected)
 
         full_args = ["command", "arg"]
-        full_args_expected = ([], "command", ["arg"])
+        full_args_expected = ("command", ["arg"])
         self._assert_split(full_args, full_args_expected)
 
     def test_command_by_name(self):
@@ -121,6 +121,7 @@ See 'trivial-tool help --all-commands' to list all commands.
 See 'trivial-tool help COMMAND' for more information on a specific command.
 
 """
+        self._assert_tool_main_outputs(tool, ["tool"], expected_common_commands_help)
         self._assert_tool_main_outputs(tool, ["tool", "help"], expected_common_commands_help)
         expected_all_commands_help = """Usage: trivial-tool [options] COMMAND [ARGS]
 
@@ -137,6 +138,9 @@ See 'trivial-tool help COMMAND' for more information on a specific command.
 
 """
         self._assert_tool_main_outputs(tool, ["tool", "help", "--all-commands"], expected_all_commands_help)
+        # Test that arguments can be passed before commands as well
+        self._assert_tool_main_outputs(tool, ["tool", "--all-commands", "help"], expected_all_commands_help)
+
 
     def test_command_help(self):
         command_with_options = TrivialCommand(options=[make_option("--my_option")])

@@ -1,3 +1,27 @@
+2009-12-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool should accept global options anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=26912
+
+        * Scripts/bugzilla-tool:
+         - Use the new global_options class property.
+         - Add a handle_global_options callback to avoid needing callbacks for each global option.
+        * Scripts/modules/multicommandtool.py:
+         - Make the code use one combined option parser.
+           This allows us to accept global options anywhere and
+           individual command options before commands.
+         - Add a handle_global_options callback to avoid needing callbacks for each global option.
+         - Make the Command hold the option parser, but allow the tool to override it.
+         - The default option parser is used for help printing and when Commands are run stand alone,
+           but are otherwise not used.
+         - Add Command.main to codify the idea that Commands should support being run stand-alone.
+         - Change _split_args to _split_command_name_from_args now that args are unified.
+        * Scripts/modules/multicommandtool_unittest.py:
+         - Test that "tool" and "tool help" show the same help.
+         - Test that args are accepted before commands
+
 2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by David Levin.

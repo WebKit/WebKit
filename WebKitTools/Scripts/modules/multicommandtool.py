@@ -46,9 +46,23 @@ class Command(object):
         self.argument_names = argument_names
         self.required_arguments = self._parse_required_arguments(argument_names)
         self.options = options
-        self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
         self.requires_local_commits = requires_local_commits
         self.tool = None
+        # option_parser can be overriden by the tool using set_option_parser
+        # This default parser will be used for standalone_help printing.
+        self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
+
+    # This design is slightly awkward, but we need the
+    # the tool to be able to create and modify the option_parser
+    # before it knows what Command to run.
+    def set_option_parser(self, option_parser):
+        self.option_parser = option_parser
+        self._add_options_to_parser()
+
+    def _add_options_to_parser(self):
+        options = self.options or []
+        for option in options:
+            self.option_parser.add_option(option)
 
     # The tool calls bind_to_tool on each Command after adding it to its list.
     def bind_to_tool(self, tool):
@@ -84,19 +98,17 @@ class Command(object):
     def parse_args(self, args):
         return self.option_parser.parse_args(args)
 
-    def check_arguments_and_execute(self, args_after_command_name, tool):
-        (command_options, command_args) = self.parse_args(args_after_command_name)
-
-        if len(command_args) < len(self.required_arguments):
+    def check_arguments_and_execute(self, options, args, tool=None):
+        if len(args) < len(self.required_arguments):
             log("%s required, %s provided.  Provided: %s  Required: %s\nSee '%s help %s' for usage." % (
                 pluralize("argument", len(self.required_arguments)),
-                pluralize("argument", len(command_args)),
-                "'%s'" % " ".join(command_args),
+                pluralize("argument", len(args)),
+                "'%s'" % " ".join(args),
                 " ".join(self.required_arguments),
                 tool.name(),
                 self.name))
             return 1
-        return self.execute(command_options, command_args, tool) or 0
+        return self.execute(options, args, tool) or 0
 
     def standalone_help(self):
         help_text = self.name_with_arguments().ljust(len(self.name_with_arguments()) + 3) + self.help_text + "\n"
@@ -106,6 +118,12 @@ class Command(object):
     def execute(self, options, args, tool):
         raise NotImplementedError, "subclasses must implement"
 
+    # main() exists so that Commands can be turned into stand-alone scripts.
+    # Other parts of the code will likely require modification to work stand-alone.
+    def main(self, args=sys.argv):
+        (options, args) = self.parse_args(args)
+        # Some commands might require a dummy tool
+        return self.check_arguments_and_execute(options, args)
 
 class HelpPrintingOptionParser(OptionParser):
     def __init__(self, epilog_method=None, *args, **kwargs):
@@ -115,6 +133,7 @@ class HelpPrintingOptionParser(OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
         error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
+        # This method is overriden to add this one line to the output:
         error_message += "\nType \"%s --help\" to see usage.\n" % self.get_prog_name()
         self.exit(1, error_message)
 
@@ -150,7 +169,12 @@ class HelpCommand(Command):
         epilog += "%s\n" % "".join(command_help_texts)
         epilog += "See '%prog help --all-commands' to list all commands.\n"
         epilog += "See '%prog help COMMAND' for more information on a specific command.\n"
-        return self.tool.global_option_parser.expand_prog_name(epilog)
+        return epilog.replace("%prog", self.tool.name()) # Use of %prog here mimics OptionParser.expand_prog_name().
+
+    # FIXME: This is a hack so that we don't show --all-commands as a global option:
+    def _remove_help_options(self):
+        for option in self.options:
+            self.option_parser.remove_option(option.get_opt_string())
 
     def execute(self, options, args, tool):
         if args:
@@ -160,12 +184,16 @@ class HelpCommand(Command):
                 return 0
 
         self.show_all_commands = options.show_all_commands
-        tool.global_option_parser.print_help()
+        self._remove_help_options()
+        self.option_parser.print_help()
         return 0
 
 
 class MultiCommandTool(object):
+    global_options = None
+
     def __init__(self, name=None, commands=None):
+        self._name = name or OptionParser(prog=name).get_prog_name() # OptionParser has nice logic for fetching the name.
         # Allow the unit tests to disable command auto-discovery.
         self.commands = commands or [cls() for cls in self._find_all_commands() if cls.name]
         self.help_command = self.command_by_name(HelpCommand.name)
@@ -175,7 +203,6 @@ class MultiCommandTool(object):
             self.commands.append(self.help_command)
         for command in self.commands:
             command.bind_to_tool(self)
-        self.global_option_parser = HelpPrintingOptionParser(epilog_method=self.help_command._help_epilog, prog=name, usage=self._usage_line())
 
     @classmethod
     def _add_all_subclasses(cls, class_to_crawl, seen_classes):
@@ -190,21 +217,15 @@ class MultiCommandTool(object):
         cls._add_all_subclasses(Command, commands)
         return sorted(commands)
 
-    @staticmethod
-    def _usage_line():
-        return "Usage: %prog [options] COMMAND [ARGS]"
-
     def name(self):
-        return self.global_option_parser.get_prog_name()
+        return self._name
 
-    def handle_global_args(self, args):
-        (options, args) = self.global_option_parser.parse_args(args)
-        # We should never hit this because _split_args splits at the first arg without a leading "-".
-        if args:
-            self.global_option_parser.error("Extra arguments before command: %s" % args)
+    def _create_option_parser(self):
+        usage = "Usage: %prog [options] COMMAND [ARGS]"
+        return HelpPrintingOptionParser(epilog_method=self.help_command._help_epilog, prog=self.name(), usage=usage)
 
     @staticmethod
-    def _split_args(args):
+    def _split_command_name_from_args(args):
         # Assume the first argument which doesn't start with "-" is the command name.
         command_index = 0
         for arg in args:
@@ -212,12 +233,10 @@ class MultiCommandTool(object):
                 break
             command_index += 1
         else:
-            return (args[:], None, [])
+            return (None, args[:])
 
-        global_args = args[:command_index]
         command = args[command_index]
-        command_args = args[command_index + 1:]
-        return (global_args, command, command_args)
+        return (command, args[:command_index] + args[command_index + 1:])
 
     def command_by_name(self, command_name):
         for command in self.commands:
@@ -232,21 +251,33 @@ class MultiCommandTool(object):
         return command.show_in_main_help
 
     def should_execute_command(self, command):
-        raise NotImplementedError, "subclasses must implement"
+        return True
+
+    def _add_global_options(self, option_parser):
+        global_options = self.global_options or []
+        for option in global_options:
+            option_parser.add_option(option)
+
+    def handle_global_options(self, options):
+        pass
 
     def main(self, argv=sys.argv):
-        (global_args, command_name, args_after_command_name) = self._split_args(argv[1:])
+        (command_name, args) = self._split_command_name_from_args(argv[1:])
 
-        # Handle --help, etc:
-        self.handle_global_args(global_args)
+        option_parser = self._create_option_parser()
+        self._add_global_options(option_parser)
 
         command = self.command_by_name(command_name) or self.help_command
         if not command:
-            self.global_option_parser.error("%s is not a recognized command" % command_name)
+            option_parser.error("%s is not a recognized command" % command_name)
+
+        command.set_option_parser(option_parser)
+        (options, args) = command.parse_args(args)
+        self.handle_global_options(options)
 
         (should_execute, failure_reason) = self.should_execute_command(command)
         if not should_execute:
             log(failure_reason)
-            return 0
+            return 0 # FIXME: Should this really be 0?
 
-        return command.check_arguments_and_execute(args_after_command_name, self)
+        return command.check_arguments_and_execute(options, args, self)
