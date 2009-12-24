@@ -1391,8 +1391,11 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
 
     insertText(text, 0);
 
-    if (preserveSelection)
+    if (preserveSelection) {
         m_frame->selection()->setSelection(oldSelection, false, false);
+        // An open typing command that disagrees about current selection would cause issues with typing later on.
+        TypingCommand::closeTyping(m_lastEditCommand.get());
+    }
 
     setIgnoreCompositionSelectionChange(false);
 }
