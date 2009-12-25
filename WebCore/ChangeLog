@@ -1,3 +1,97 @@
+2009-12-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        AuditsPanel for Web Inspector (hidden, no preset audits).
+
+        https://bugs.webkit.org/show_bug.cgi?id=31665
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AuditLauncherView.js: Added.
+        (WebInspector.AuditLauncherView.categorySortFunction):
+        (WebInspector.AuditLauncherView):
+        (WebInspector.AuditLauncherView.prototype.updateResourceTrackingState):
+        (WebInspector.AuditLauncherView.prototype._setAuditRunning):
+        (WebInspector.AuditLauncherView.prototype._launchButtonClicked.profilingFinishedCallback):
+        (WebInspector.AuditLauncherView.prototype._launchButtonClicked):
+        (WebInspector.AuditLauncherView.prototype._selectAllClicked):
+        (WebInspector.AuditLauncherView.prototype._categoryClicked):
+        (WebInspector.AuditLauncherView.prototype._createCategoryElement):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        (WebInspector.AuditLauncherView.prototype._updateButton):
+        (WebInspector.AuditLauncherView.prototype.resize):
+        * inspector/front-end/AuditResultView.js: Added.
+        (WebInspector.AuditResultView.entrySortFunction):
+        (WebInspector.AuditResultView):
+        (WebInspector.AuditCategoryResultPane):
+        (WebInspector.AuditRuleResultPane):
+        (WebInspector.AuditRuleResultPane.prototype._decorateRuleResult):
+        (WebInspector.AuditRuleResultChildSection):
+        (WebInspector.AuditRuleResultChildSection.prototype.set title):
+        (WebInspector.AuditRuleResultChildSection.prototype.expand):
+        * inspector/front-end/AuditsPanel.js: Added.
+        (WebInspector.AuditsPanel):
+        (WebInspector.AuditsPanel.prototype.toolbarItemClass.get toolbarItemLabel):
+        (WebInspector.AuditsPanel.prototype.get statusBarItems):
+        (WebInspector.AuditsPanel.prototype.get mainResourceLoadTime):
+        (WebInspector.AuditsPanel.prototype.set mainResourceLoadTime):
+        (WebInspector.AuditsPanel.prototype.get mainResourceDOMContentTime):
+        (WebInspector.AuditsPanel.prototype.set mainResourceDOMContentTime):
+        (WebInspector.AuditsPanel.prototype.get categoriesById):
+        (WebInspector.AuditsPanel.prototype.get visibleView):
+        (WebInspector.AuditsPanel.prototype._constructCategories):
+        (WebInspector.AuditsPanel.prototype._executeAudit.ruleResultReadyCallback):
+        (WebInspector.AuditsPanel.prototype._executeAudit):
+        (WebInspector.AuditsPanel.prototype._auditFinishedCallback):
+        (WebInspector.AuditsPanel.prototype.initiateAudit.initiateAuditCallback):
+        (WebInspector.AuditsPanel.prototype.initiateAudit):
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        (WebInspector.AuditsPanel.prototype._didMainResourceLoad):
+        (WebInspector.AuditsPanel.prototype.showResults):
+        (WebInspector.AuditsPanel.prototype.showLauncherView):
+        (WebInspector.AuditsPanel.prototype.showView):
+        (WebInspector.AuditsPanel.prototype.show):
+        (WebInspector.AuditsPanel.prototype.attach):
+        (WebInspector.AuditsPanel.prototype.resize):
+        (WebInspector.AuditsPanel.prototype.updateMainViewWidth):
+        (WebInspector.AuditsPanel.prototype._updateLauncherViewControls):
+        (WebInspector.AuditsPanel.prototype._clearButtonClicked):
+        (WebInspector.AuditsPanel.prototype._closeVisibleView):
+        (WebInspector.AuditCategory):
+        (WebInspector.AuditCategory.prototype.get id):
+        (WebInspector.AuditCategory.prototype.get displayName):
+        (WebInspector.AuditCategory.prototype.get ruleCount):
+        (WebInspector.AuditCategory.prototype.addRule):
+        (WebInspector.AuditCategory.prototype.runRules):
+        (WebInspector.AuditRule):
+        (WebInspector.AuditRule.prototype.get id):
+        (WebInspector.AuditRule.prototype.get displayName):
+        (WebInspector.AuditRule.prototype.run):
+        (WebInspector.AuditRule.prototype.doRun):
+        (WebInspector.AuditRule.prototype.getValue):
+        (WebInspector.AuditCategoryResult):
+        (WebInspector.AuditCategoryResult.prototype.addEntry):
+        (WebInspector.AuditRuleResult):
+        (WebInspector.AuditRuleResult.prototype.appendChild):
+        (WebInspector.AuditRuleResult.prototype.set type):
+        (WebInspector.AuditRuleResult.prototype.get type):
+        (WebInspector.AuditsSidebarTreeElement):
+        (WebInspector.AuditsSidebarTreeElement.prototype.onattach):
+        (WebInspector.AuditsSidebarTreeElement.prototype.onselect):
+        (WebInspector.AuditsSidebarTreeElement.prototype.get selectable):
+        (WebInspector.AuditsSidebarTreeElement.prototype.refresh):
+        (WebInspector.AuditResultSidebarTreeElement):
+        (WebInspector.AuditResultSidebarTreeElement.prototype.onselect):
+        (WebInspector.AuditResultSidebarTreeElement.prototype.get selectable):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/audits.css: Added.
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+        (WebInspector.updateResource):
+
 2009-12-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

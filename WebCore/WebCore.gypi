@@ -3646,6 +3646,9 @@
 
             'inspector/front-end/inspector.html',
             'inspector/front-end/AbstractTimelinePanel.js',
+            'inspector/front-end/AuditLauncherView.js',
+            'inspector/front-end/AuditResultView.js',
+            'inspector/front-end/AuditsPanel.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
             'inspector/front-end/Breakpoint.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
@@ -3721,6 +3724,7 @@
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',
             'inspector/front-end/WatchExpressionsSidebarPane.js',
+            'inspector/front-end/audits.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',
         ],

@@ -177,6 +177,11 @@ var WebInspector = {
 
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();
+
+        // FIXME: Uncomment when ready.
+        // if (hiddenPanels.indexOf("audits") === -1)
+        //    this.panels.audits = new WebInspector.AuditsPanel();
+
         if (hiddenPanels.indexOf("console") === -1)
             this.panels.console = new WebInspector.ConsolePanel();
     },
@@ -967,7 +972,7 @@ WebInspector.updateResource = function(identifier, payload)
     }
 
     if (payload.didRequestChange) {
-        resource.host = payload.domain;
+        resource.domain = payload.host;
         resource.path = payload.path;
         resource.lastPathComponent = payload.lastPathComponent;
         resource.requestHeaders = payload.requestHeaders;
@@ -1021,6 +1026,8 @@ WebInspector.updateResource = function(identifier, payload)
             // of the resources panel instead of the individual resource.
             if (this.panels.resources)
                 this.panels.resources.mainResourceLoadTime = payload.loadEventTime;
+            if (this.panels.audits)
+                this.panels.audits.mainResourceLoadTime = payload.loadEventTime;
         }
 
         if (payload.domContentEventTime) {
@@ -1028,6 +1035,8 @@ WebInspector.updateResource = function(identifier, payload)
             // the resources panel for the same reasons as above.
             if (this.panels.resources)
                 this.panels.resources.mainResourceDOMContentTime = payload.domContentEventTime;
+            if (this.panels.audits)
+                this.panels.audits.mainResourceDOMContentTime = payload.domContentEventTime;
         }
     }
 }

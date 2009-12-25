@@ -2,6 +2,9 @@
 <qresource prefix="/webkit/inspector">
     <file>inspector.html</file>
     <file>AbstractTimelinePanel.js</file>
+    <file>AuditLauncherView.js</file>
+    <file>AuditResultView.js</file>
+    <file>AuditsPanel.js</file>
     <file>BottomUpProfileDataGridTree.js</file>
     <file>Breakpoint.js</file>
     <file>BreakpointsSidebarPane.js</file>
@@ -77,6 +80,7 @@
     <file>utilities.js</file>
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
+    <file>audits.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>
     <file>Images/back.png</file>
