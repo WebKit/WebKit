@@ -1,3 +1,18 @@
+2009-12-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] svg/custom/global-constructors.html skipped 
+        temporarily (until fix) because of missing variables.
+        Platform dependent expected files updated after r52559.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32941
+
+        * platform/qt/Skipped: svg/custom/global-constructors.html added until fix.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: updated.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: updated.
+        * platform/qt/fast/js/global-constructors-expected.txt: updated.
+
 2009-12-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
