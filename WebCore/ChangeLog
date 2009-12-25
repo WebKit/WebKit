@@ -1,3 +1,15 @@
+2009-12-24  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed Chromium test fix by reverting r52536.
+
+        Do not a new Database pointer to any structure until its version has been verified
+        https://bugs.webkit.org/show_bug.cgi?id=32913
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+
 2009-12-24  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Dan Bernstein.
